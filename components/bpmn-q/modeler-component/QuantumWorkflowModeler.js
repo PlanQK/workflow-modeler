@@ -1,4 +1,3 @@
-// import "./modeler-canvas/ModelerCanvas.js";
 import "./css/modeler.css"
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
@@ -14,14 +13,9 @@ class QuantumWorkflowModeler extends HTMLElement {
     }
 
     connectedCallback() {
-        // const shadowRoot = this.attachShadow({mode: 'open'});
         this.innerHTML = `<div id="canvas" style="height: 100%; width: 100%">
         
                           </div>`;
-        // const modeler = this.getAttribute('modeler')
-        // const containerId = '#properties-panel';// this.getAttribute('container')
-        // const $modelerContainer = document.querySelector('#modeler-container');
-        // const $propertiesContainer = document.querySelector('#properties-container');
 
         const diagramXML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
             '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
@@ -37,10 +31,7 @@ class QuantumWorkflowModeler extends HTMLElement {
             '  </bpmndi:BPMNDiagram>\n' +
             '</bpmn2:definitions>';
 
-        // const test = BpmnJS()
-
-        const modelerContainerId = '#canvas' //this.getAttribute('modeler-container');
-        const propertiesContainerId = this.getAttribute('properties-container');
+        const modelerContainerId = '#canvas'
 
         const modeler = new BpmnModeler({
             container: modelerContainerId,
@@ -59,29 +50,12 @@ class QuantumWorkflowModeler extends HTMLElement {
 
                 await modeler.importXML(xml);
 
-                // container
-                //     .removeClass('with-error')
-                //     .addClass('with-diagram');
             } catch (err) {
-
-                // container
-                //     .removeClass('with-diagram')
-                //     .addClass('with-error');
-                //
-                // container.find('.error pre').text(err.message);
-
                 console.error(err);
             }
         }
 
         openDiagram(diagramXML)
-
-        // const propertiesPanel = new PropertiesPanel({
-        //     container: propertiesContainerId,
-        //     modeler
-        // });
-
-        // modeler.importXML(diagramXML);
     }
 }
 

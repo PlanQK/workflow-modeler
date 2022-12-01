@@ -2,16 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test Web Component</title>
+    <title>Workflow Modeler</title>
 </head>
 <body>
-<!-- BPMN diagram container -->
-<div id="canvas">div</div>
-<p>Felix</p>
-<quantum-workflow name="proof of concept"></quantum-workflow>
-<!--<link rel="stylesheet" href="../node_modules/bpmn-js/dist/assets/diagram-js.css" />-->
-<!--<link rel="stylesheet" href="../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn.css" />-->
-
+<div style="height: 100vh;
+  border: solid 3px #EEE;
+  position: relative;">
+    <quantum-workflow></quantum-workflow>
+</div>
 <script src="QuantumWorkflowModeler.js"></script>
 </body>
 </html>
