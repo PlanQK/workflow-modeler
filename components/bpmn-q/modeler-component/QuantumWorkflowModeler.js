@@ -1,11 +1,13 @@
 import "./css/modeler.css"
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
-import customModdleExtension from "./custom.json";
+import QuantMEModule from "./modeler-extensions/modeling";
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
+// import QuantMEReplaceMenuProvider from "./modeler-extensions/QuantMEReplaceMenuProvider";
+// import QuantMERenderer from "./modeler-extensions/QuantMERenderer";
 
 class QuantumWorkflowModeler extends HTMLElement {
     constructor() {
@@ -36,12 +38,10 @@ class QuantumWorkflowModeler extends HTMLElement {
         const modeler = new BpmnModeler({
             container: modelerContainerId,
             BpmnPalletteModule,
-            moddleExtensions: {
-                custom: customModdleExtension
-            },
+            QuantMEModule,
             keyboard: {
                 bindTo: document
-            }
+            },
         });
 
         async function openDiagram(xml) {
