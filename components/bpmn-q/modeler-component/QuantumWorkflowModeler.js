@@ -10,6 +10,10 @@ import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/el
 import quantMEModdleExtension from './modeler-extensions/modeling/resources/quantum4bpmn.json';
 import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda';
 
+let propertiesPanelModule = require('bpmn-js-properties-panel');
+let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/bpmn');
+
+
 class QuantumWorkflowModeler extends HTMLElement {
     constructor() {
         super();
@@ -19,7 +23,7 @@ class QuantumWorkflowModeler extends HTMLElement {
         this.innerHTML = `<div id="canvas" style="height: 100%; width: 100%">
         
                           </div>
-                           <div id="prope5rties"></div>`;
+                           <div id="properties"></div>`;
 
         const diagramXML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
             '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
@@ -45,6 +49,9 @@ class QuantumWorkflowModeler extends HTMLElement {
             additionalModules: [
                 BpmnPalletteModule,
                 QuantMEModule,
+                elementTemplates,
+                propertiesPanelModule,
+                propertiesProviderModule,
             ],
             elementTemplates: elementTemplates,
             keyboard: {
@@ -67,7 +74,7 @@ class QuantumWorkflowModeler extends HTMLElement {
             }
         }
 
-        openDiagram(diagramXML)
+        openDiagram(diagramXML);
     }
 }
 
