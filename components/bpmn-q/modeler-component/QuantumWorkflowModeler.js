@@ -1,4 +1,4 @@
-import "./css/modeler.css"
+import "./css/modeler.less"
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 import QuantMEModule from "./modeler-extensions/modeling/";
@@ -6,9 +6,11 @@ import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
+import './css/modeler.less'
 import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
 import quantMEModdleExtension from './modeler-extensions/modeling/resources/quantum4bpmn.json';
 import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda';
+import QuantMEPropertiesProvider from './modeler-extensions/modeling/QuantMEPropertiesProvider.js'
 
 let propertiesPanelModule = require('bpmn-js-properties-panel');
 let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/bpmn');
@@ -20,10 +22,10 @@ class QuantumWorkflowModeler extends HTMLElement {
     }
 
     connectedCallback() {
-        this.innerHTML = `<div id="canvas" style="height: 100%; width: 100%">
-        
-                          </div>
-                           <div id="properties"></div>`;
+        this.innerHTML = `<div style="display: flex; height: 100%">
+                            <div id="canvas" style="height: 100%; width: 75%"></div>
+                            <div id="properties" style="height: 100%; width: 25%;"></div>
+                          </div>`;
 
         const diagramXML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
             '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
@@ -52,6 +54,7 @@ class QuantumWorkflowModeler extends HTMLElement {
                 elementTemplates,
                 propertiesPanelModule,
                 propertiesProviderModule,
+                QuantMEPropertiesProvider,
             ],
             elementTemplates: elementTemplates,
             keyboard: {
