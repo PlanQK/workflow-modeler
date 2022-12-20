@@ -1,7 +1,6 @@
 import "./css/modeler.less"
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
-import QuantMEModule from "./modeler-extensions/modeling/";
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
@@ -9,12 +8,16 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 import './css/modeler.less'
 import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
 import quantMEModdleExtension from './modeler-extensions/modeling/resources/quantum4bpmn.json';
-import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda';
 import QuantMEPropertiesProvider from './modeler-extensions/modeling/QuantMEPropertiesProvider.js'
 
+import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
+import QuantMERenderer from "./modeler-extensions/modeling/QuantMERenderer";
+import QuantMEReplaceMenuProvider from "./modeler-extensions/modeling/QuantMEReplaceMenuProvider";
+import QuantMEFactory from "./modeler-extensions/modeling/QuantMEFactory";
+import QuantMEPathMap from "./modeler-extensions/modeling/QuantMEPathMap";
 let propertiesPanelModule = require('bpmn-js-properties-panel');
-let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/bpmn');
-
+let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
+let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda');
 
 class QuantumWorkflowModeler extends HTMLElement {
     constructor() {
@@ -23,8 +26,8 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = `<div style="display: flex; height: 100%">
-                            <div id="canvas" style="height: 100%; width: 75%"></div>
-                            <div id="properties" style="height: 100%; width: 25%; background: #f8f8f8;"></div>
+                            <div id="canvas" style="width: 75%"></div>
+                            <div id="properties" style="overflow: auto; max-height: 100%; width: 25%; background: #f8f8f8;"></div>
                           </div>`;
 
         const diagramXML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -50,19 +53,26 @@ class QuantumWorkflowModeler extends HTMLElement {
             },
             additionalModules: [
                 BpmnPalletteModule,
-                // QuantMEModule,
                 elementTemplates,
                 propertiesPanelModule,
                 propertiesProviderModule,
-                // QuantMEPropertiesProvider,
+                CamundaExtensionModule,
+                {
+                    __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider'],
+                    quantMERenderer: ['type', QuantMERenderer],
+                    quantMEReplaceMenu: ['type', QuantMEReplaceMenuProvider],
+                    bpmnFactory: ['type', QuantMEFactory],
+                    quantMEPathMap: ['type', QuantMEPathMap],
+                    propertiesProvider: ['type', QuantMEPropertiesProvider]
+                }
             ],
-            elementTemplates: elementTemplates,
+            // elementTemplates: elementTemplates,
             keyboard: {
                 bindTo: document
             },
             moddleExtensions: {
-                camunda: camundaModdlePackage,
-                // quantME: quantMEModdleExtension
+                camunda: camundaModdleDescriptor,
+                quantME: quantMEModdleExtension
             },
         });
 
