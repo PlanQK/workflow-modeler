@@ -1,11 +1,13 @@
-import "./css/modeler.less"
-import BpmnModeler from "bpmn-js/lib/Modeler";
-import BpmnPalletteModule from "bpmn-js/lib/features/palette";
+import './styling/styles/style.less';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
-import './css/modeler.less'
+import './styling/modeler.less'
+import './styling/quantme.css'
+
+import BpmnModeler from "bpmn-js/lib/Modeler";
+import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
 import quantMEModdleExtension from './modeler-extensions/modeling/resources/quantum4bpmn.json';
 import QuantMEPropertiesProvider from './modeler-extensions/modeling/QuantMEPropertiesProvider.js'
