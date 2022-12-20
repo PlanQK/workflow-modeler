@@ -24,7 +24,7 @@ class QuantumWorkflowModeler extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `<div style="display: flex; height: 100%">
                             <div id="canvas" style="height: 100%; width: 75%"></div>
-                            <div id="properties" style="height: 100%; width: 25%;"></div>
+                            <div id="properties" style="height: 100%; width: 25%; background: #f8f8f8;"></div>
                           </div>`;
 
         const diagramXML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -50,11 +50,11 @@ class QuantumWorkflowModeler extends HTMLElement {
             },
             additionalModules: [
                 BpmnPalletteModule,
-                QuantMEModule,
+                // QuantMEModule,
                 elementTemplates,
                 propertiesPanelModule,
                 propertiesProviderModule,
-                QuantMEPropertiesProvider,
+                // QuantMEPropertiesProvider,
             ],
             elementTemplates: elementTemplates,
             keyboard: {
@@ -62,7 +62,7 @@ class QuantumWorkflowModeler extends HTMLElement {
             },
             moddleExtensions: {
                 camunda: camundaModdlePackage,
-                quantME: quantMEModdleExtension
+                // quantME: quantMEModdleExtension
             },
         });
 
