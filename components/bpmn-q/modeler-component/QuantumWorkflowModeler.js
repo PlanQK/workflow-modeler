@@ -10,7 +10,7 @@ import './styling/modeler.less'
 import './styling/quantme.css'
 
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
@@ -23,7 +23,7 @@ import QuantMERenderer from "./modeler-extensions/modeling/QuantMERenderer";
 import QuantMEReplaceMenuProvider from "./modeler-extensions/modeling/QuantMEReplaceMenuProvider";
 import QuantMEFactory from "./modeler-extensions/modeling/QuantMEFactory";
 import QuantMEPathMap from "./modeler-extensions/modeling/QuantMEPathMap";
-import DeploymentButton from "./deployment/Deployment";
+import ButtonToolbar from "./ui/ButtonToolbar";
 
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
@@ -38,7 +38,7 @@ class QuantumWorkflowModeler extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `
             <div style="height: 100%">
-                <div id="button-container" style="display: flex">
+                <div id="button-container">
                 </div>
                 <div style="display: flex; height: 100%">
                     <div id="canvas" style="width: 75%"></div>
@@ -74,7 +74,8 @@ class QuantumWorkflowModeler extends HTMLElement {
         });
 
         // integrate react components into the html component
-        ReactDOM.render(<DeploymentButton bpmnJS={modeler} />, document.querySelector('#button-container'));
+        const root = createRoot(document.getElementById('button-container'))
+        root.render(<ButtonToolbar/>);
 
         async function openDiagram(xml) {
 
