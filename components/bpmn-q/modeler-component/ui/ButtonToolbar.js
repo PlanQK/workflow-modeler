@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react';
 import SaveButton from "./SaveButton";
 import OpenButton from "./OpenButton";
-import NewFileButton from "./NewFileButton";
+import NewDiagramButton from "./NewDiagramButton";
 
 export default function ButtonToolbar(props) {
 
@@ -11,7 +11,7 @@ export default function ButtonToolbar(props) {
         <Fragment>
             <div className="toolbar">
                 <hr className="toolbar-splitter"/>
-                <NewFileButton modeler={modeler}/>
+                <NewDiagramButton modeler={modeler}/>
                 <SaveButton modeler={modeler}/>
                 <OpenButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
