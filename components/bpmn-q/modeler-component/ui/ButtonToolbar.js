@@ -1,4 +1,5 @@
 import React, {Fragment, PureComponent} from 'react';
+import SaveButton from "./SaveButton";
 
 export default class ButtonToolbar extends PureComponent {
 
@@ -13,9 +14,14 @@ export default class ButtonToolbar extends PureComponent {
         return (
             <Fragment>
                 <div  style={{display: 'flex'}}>
-                    <button>Button1</button>
-                    <button>Button2</button>
-                    <button>Button3</button>
+                    <SaveButton/>
+                    <button className="toolbar-btn">
+                        <span className="config">
+                            <span className="indent">Service Deployment</span>
+                        </span>
+                    </button>
+                    <button className="toolbar-btn">Button2</button>
+                    <button className="btn-secondary">Button3</button>
                 </div>
             </Fragment>
         );

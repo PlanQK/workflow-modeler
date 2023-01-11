@@ -1,0 +1,24 @@
+.toolbar-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 15px;
+    font-family: Arial, serif;
+    font-weight: bold;
+    margin: 5px;
+    color: #636363;
+}
+
+.icon-saving:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/ui/save-outline-icon.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
+
+.tmp {
+    background: url("../resources/ui/save-outline-icon.png") no-repeat center center;
+}

@@ -8,6 +8,7 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 import './styling/modeler.less'
 import './styling/quantme.css'
+import './styling/editor-ui.css'
 
 import React from 'react'
 import { createRoot } from 'react-dom/client'
@@ -87,6 +88,7 @@ class QuantumWorkflowModeler extends HTMLElement {
                 console.error(err);
             }
         }
+
 
         openDiagram(diagramXML)
     }
