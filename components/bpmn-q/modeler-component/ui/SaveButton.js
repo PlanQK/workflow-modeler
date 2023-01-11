@@ -5,6 +5,10 @@ export default class SaveButton extends PureComponent {
 
     constructor(props) {
         super(props);
+        const { modeler } = props;
+        this.state = {
+            modeler: modeler
+        };
     }
 
     componentDidMount() {

@@ -8,12 +8,44 @@
     color: #636363;
 }
 
+.toolbar-splitter {
+    margin: 5px;
+    border: 1px solid #cccccc;
+}
+
+.toolbar {
+    background: #ffffff;
+    display: flex;
+}
+
 .icon-saving:before {
     content: "";
     width: 15px;
     height: 15px;
     background-size: contain;
     background-image: url("../resources/ui/save-outline-icon.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
+
+.icon-open-file:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/ui/open-folder-outline-icon-quad.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
+
+.icon-new-file:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/ui/blank-file-outline-icon.png");
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
