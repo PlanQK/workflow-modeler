@@ -1,35 +1,21 @@
-import React, {Fragment, PureComponent} from 'react';
+import React, {Fragment} from 'react';
 import SaveButton from "./SaveButton";
 import OpenButton from "./OpenButton";
 import NewFileButton from "./NewFileButton";
 
-export default class ButtonToolbar extends PureComponent {
+export default function ButtonToolbar(props) {
 
-    constructor(props) {
-        super(props);
-        const { modeler } = props;
-        this.state = {
-            modeler: modeler
-        }
-    }
+    const {modeler} = props;
 
-    componentDidMount() {
-        const { modeler } = this.props;
-        this.modeler = modeler;
-    }
-
-    render() {
-        return (
-            <Fragment>
-                <div className="toolbar">
-                    <hr className="toolbar-splitter"/>
-                    <NewFileButton modeler={this.state.modeler}/>
-                    <OpenButton modeler={this.state.modeler}/>
-                    <SaveButton modeler={this.state.modeler}/>
-                    <hr className="toolbar-splitter"/>
-                </div>
-            </Fragment>
-        );
-    }
-
+    return (
+        <Fragment>
+            <div className="toolbar">
+                <hr className="toolbar-splitter"/>
+                <NewFileButton modeler={modeler}/>
+                <SaveButton modeler={modeler}/>
+                <OpenButton modeler={modeler}/>
+                <hr className="toolbar-splitter"/>
+            </div>
+        </Fragment>
+    );
 }

@@ -1,29 +1,15 @@
-import React, { PureComponent } from "react"
+import React from "react"
 import {saveModelerAsLocalFile} from "../io/IoUtilities";
 
-export default class SaveButton extends PureComponent {
+export default function SaveButton(props) {
 
-    constructor(props) {
-        super(props);
-        const { modeler } = props;
-        this.state = {
-            modeler: modeler
-        };
-    }
+    const {modeler} = props;
 
-    componentDidMount() {
-
-        const { modeler } = this.props;
-        this.modeler = modeler;
-    }
-
-    render() {
-        return (
-            <button className="toolbar-btn" onClick={() => saveModelerAsLocalFile(this.modeler)}>
-                <span className="icon-saving">
-                    <span className="indent">Save</span>
-                </span>
-            </button>
-        )
-    }
+    return (
+        <button className="toolbar-btn" onClick={() => saveModelerAsLocalFile(modeler)}>
+            <span className="icon-saving">
+                <span className="indent">Save</span>
+            </span>
+        </button>
+    )
 }

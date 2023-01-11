@@ -1,9 +1,9 @@
-import React, { PureComponent } from "react"
+import React from "react"
 import {createNewDiagram} from "../io/IoUtilities";
 
 export default function NewFileButton(props) {
 
-    const { modeler } = props;
+    const {modeler} = props;
 
     return (
         <button className="toolbar-btn" onClick={() => createNewDiagram(modeler)}>

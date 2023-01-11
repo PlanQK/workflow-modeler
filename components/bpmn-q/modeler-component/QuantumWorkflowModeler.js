@@ -7,8 +7,8 @@ import './styling/modeler.less'
 import './styling/quantme.css'
 import './styling/editor-ui.css'
 
-import React, {Fragment} from 'react'
-import { createRoot } from 'react-dom/client'
+import React from 'react'
+import {createRoot} from 'react-dom/client'
 
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
@@ -22,10 +22,7 @@ import QuantMEReplaceMenuProvider from "./modeler-extensions/modeling/QuantMERep
 import QuantMEFactory from "./modeler-extensions/modeling/QuantMEFactory";
 import QuantMEPathMap from "./modeler-extensions/modeling/QuantMEPathMap";
 import ButtonToolbar from "./ui/ButtonToolbar";
-import {createNewDiagram, loadDiagram} from "./io/IoUtilities";
-import SaveButton from "./ui/SaveButton";
-import OpenButton from "./ui/OpenButton";
-import NewFileButton from "./ui/NewFileButton";
+import {createNewDiagram} from "./io/IoUtilities";
 
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');

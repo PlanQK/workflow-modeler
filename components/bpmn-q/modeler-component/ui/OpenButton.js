@@ -1,9 +1,9 @@
-import React, {PureComponent, useRef} from "react"
-import {getXml, loadDiagram} from "../io/IoUtilities";
+import React, {useRef} from "react"
+import {loadDiagram} from "../io/IoUtilities";
 
-export default function OpenButton(props){
+export default function OpenButton(props) {
 
-    const { modeler } = props;
+    const {modeler} = props;
 
     const inputRef = useRef(null);
 
@@ -29,12 +29,13 @@ export default function OpenButton(props){
 
     return (
         <>
-            <input ref={inputRef} className="toolbar-btn" style={{display: 'none'}} type="file" accept=".bpmn" onChange={(event) => handleChange(event)}/>
+            <input ref={inputRef} className="toolbar-btn" style={{display: 'none'}} type="file" accept=".bpmn"
+                   onChange={(event) => handleChange(event)}/>
             <button className="toolbar-btn" onClick={() => handleClick()}>
                 <span className="icon-open-file">
                     <span className="indent">Open</span>
                 </span>
             </button>
         </>
-        );
+    );
 }
