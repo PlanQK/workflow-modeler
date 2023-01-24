@@ -1,5 +1,5 @@
 {
-  "name": "bpmn-q",
+  "name": "@planqk/quantum-workflow-modeler",
   "version": "1.0.0",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
@@ -11,6 +11,7 @@
   },
   "author": "",
   "license": "Apache-2.0",
+  "repository": "https://github.com/PlanQK/workflow-modeler.git",
   "publishConfig": {
     "@PlanQK:registry": "https://npm.pkg.github.com"
   },
