@@ -2,14 +2,18 @@
   "name": "bpmn-q",
   "version": "1.0.0",
   "description": "",
+  "package name": "@PlanQK/workflow-modeler",
   "main": "modeler-component/index.html",
   "scripts": {
-    "test": "test",
+    "test": "exit 0",
     "build": "webpack",
     "dev": "webpack-dev-server --open"
   },
   "author": "",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "@PlanQK:registry": "https://npm.pkg.github.com"
+  },
   "dependencies": {
     "bpmn-js": "^10.3.0",
     "diagram-js-origin": "^1.3.4",
