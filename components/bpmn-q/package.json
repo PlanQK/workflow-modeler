@@ -1,6 +1,6 @@
 {
   "name": "@planqk/quantum-workflow-modeler",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
   "main": "modeler-component/index.html",
@@ -12,6 +12,7 @@
   "author": "",
   "license": "Apache-2.0",
   "repository": "https://github.com/PlanQK/workflow-modeler.git",
+  "prepublishOnly": "webpack --mode=production",
   "publishConfig": {
     "@PlanQK:registry": "https://npm.pkg.github.com"
   },
