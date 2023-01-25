@@ -2,8 +2,8 @@ import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
-import './css/modeler.css'
-import './css/editor-ui.css'
+import './resources/styling/modeler.css'
+import './resources/styling/editor-ui.css'
 
 import React from 'react'
 import {createRoot} from 'react-dom/client'

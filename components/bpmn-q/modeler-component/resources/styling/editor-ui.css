@@ -23,7 +23,7 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background-image: url("../resources/ui/save-outline-icon.png");
+    background-image: url("../ui/save-outline-icon.png");
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
@@ -34,7 +34,7 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background-image: url("../resources/ui/open-folder-outline-icon-quad.png");
+    background-image: url("../ui/open-folder-outline-icon-quad.png");
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
@@ -45,12 +45,12 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background-image: url("../resources/ui/blank-file-outline-icon.png");
+    background-image: url("../ui/blank-file-outline-icon.png");
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
 }
 
 .tmp {
-    background: url("../resources/ui/save-outline-icon.png") no-repeat center center;
+    background: url("../ui/save-outline-icon.png") no-repeat center center;
 }
