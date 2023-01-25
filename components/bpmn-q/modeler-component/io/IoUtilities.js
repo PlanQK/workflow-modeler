@@ -14,8 +14,6 @@ const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
 
 export async function saveXmlAsLocalFile(xml, fileName = 'quantum-bpmn-model.bpmn') {
     const bpmnFile = await new File([xml], fileName, {type: 'text/xml'});
-    console.log(xml);
-    console.log(fileName);
 
     const link = document.createElement('a');
     link.download = fileName;
@@ -24,10 +22,7 @@ export async function saveXmlAsLocalFile(xml, fileName = 'quantum-bpmn-model.bpm
 }
 
 export async function saveModelerAsLocalFile(modeler, fileName = 'quantum-bpmn-model.bpmn') {
-    console.log('saveModelerAsLocalFile')
-    console.log(modeler);
     const xml = await getXml(modeler);
-    console.log(xml)
     return saveXmlAsLocalFile(xml, fileName);
 }
 
