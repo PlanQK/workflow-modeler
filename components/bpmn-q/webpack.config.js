@@ -14,6 +14,21 @@ module.exports = {
                 test: /\.bpmn$/,
                 use: 'raw-loader'
             },
+            // {
+            //     test: /\.(png|jpg|jpeg|gif|ico|svg)$/,
+            //     type: 'asset/resource',
+            //     use: [
+            //         'file-loader'
+            //     ]
+            // },
+            {
+                test: /\.(png|jpg)$/,
+                loader: 'file-loader'
+            },
+            // {
+            //     test: /\.(png|jpg)$/,
+            //     loader: 'url-loader'
+            // },
             {
                 test: /\.css$/i,
                 use: ["style-loader", "css-loader"],
