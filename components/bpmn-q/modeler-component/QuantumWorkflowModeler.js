@@ -8,7 +8,7 @@ import './styling/quantme.css'
 
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
-import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
+// import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
 import quantMEModdleExtension from './modeler-extensions/modeling/resources/quantum4bpmn.json';
 import QuantMEPropertiesProvider from './modeler-extensions/modeling/QuantMEPropertiesProvider.js'
 
@@ -17,8 +17,14 @@ import QuantMERenderer from "./modeler-extensions/modeling/QuantMERenderer";
 import QuantMEReplaceMenuProvider from "./modeler-extensions/modeling/QuantMEReplaceMenuProvider";
 import QuantMEFactory from "./modeler-extensions/modeling/QuantMEFactory";
 import QuantMEPathMap from "./modeler-extensions/modeling/QuantMEPathMap";
-let propertiesPanelModule = require('bpmn-js-properties-panel');
-let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
+import {
+    BpmnPropertiesPanelModule,
+    BpmnPropertiesProviderModule,
+    CamundaPlatformPropertiesProviderModule
+} from 'bpmn-js-properties-panel';
+
+// let propertiesPanelModule = require('bpmn-js-properties-panel');
+// let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda');
 
 class QuantumWorkflowModeler extends HTMLElement {
@@ -55,9 +61,12 @@ class QuantumWorkflowModeler extends HTMLElement {
             },
             additionalModules: [
                 BpmnPalletteModule,
-                elementTemplates,
-                propertiesPanelModule,
-                propertiesProviderModule,
+                // elementTemplates,
+                // propertiesPanelModule,
+                // propertiesProviderModule,
+                BpmnPropertiesPanelModule,
+                BpmnPropertiesProviderModule,
+                CamundaPlatformPropertiesProviderModule,
                 CamundaExtensionModule,
                 {
                     __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider'],
