@@ -12,6 +12,13 @@ const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '  </bpmndi:BPMNDiagram>\n' +
     '</bpmn2:definitions>';
 
+/**
+ * Saves a given bpmn diagram as a bpmn file to the locale storage of the user.
+ *
+ * @param xml The bpmn diagram as xml diagram.
+ * @param fileName The name of the file.
+ * @returns {Promise<void>}
+ */
 export async function saveXmlAsLocalFile(xml, fileName = 'quantum-bpmn-model.bpmn') {
     const bpmnFile = await new File([xml], fileName, {type: 'text/xml'});
 
@@ -21,16 +28,36 @@ export async function saveXmlAsLocalFile(xml, fileName = 'quantum-bpmn-model.bpm
     link.click();
 }
 
+/**
+ * Saves the bpmn diagram which is currently opened in the given bpmn modeler as a bpmn file to the locale storage of the user.
+ *
+ * @param modeler The bpmn modeler the bpmn diagram is opened in.
+ * @param fileName The name of the file.
+ * @returns {Promise<void>}
+ */
 export async function saveModelerAsLocalFile(modeler, fileName = 'quantum-bpmn-model.bpmn') {
     const xml = await getXml(modeler);
     return saveXmlAsLocalFile(xml, fileName);
 }
 
+/**
+ * Simple Getter which returns the opened bpmn diagram of the given bpmn modeler as a xml diagram.
+ *
+ * @param modeler The bpmn modeler the bpmn diagram is opened in.
+ * @returns {Promise<*>} The xml diagram.
+ */
 export async function getXml(modeler) {
     const { xml } = await modeler.saveXML({ format: true });
     return xml;
 }
 
+/**
+ * Opens the given xml diagram as a bpmn diagram in the given bpmn modeler.
+ *
+ * @param xml The bpmn diagram to open encoded in xml.
+ * @param modeler The bpmn modeler to open the diagram in.
+ * @returns {Promise<undefined|*>} Undefined, if an error occurred during import.
+ */
 export async function loadDiagram(xml, modeler) {
 
     try {
@@ -41,12 +68,11 @@ export async function loadDiagram(xml, modeler) {
     return undefined;
 }
 
-export async function openDiagram(filePath = '') {
-    if (filePath === '') {
-
-    }
-}
-
+/**
+ * Create a new empty bpmn diagram with only a start event and open this diagram in the given bpmn modeler.
+ *
+ * @param modeler the given modeler to open the new bpmn diagram in.
+ */
 export function createNewDiagram(modeler) {
     loadDiagram(NEW_DIAGRAM_XML, modeler).then();
 }
