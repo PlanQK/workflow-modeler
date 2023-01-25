@@ -16,7 +16,7 @@ export default function OpenButton(props) {
 
         const file = event.target.files[0];
 
-        if (file.name.endsWith('.bpmn')) {
+        if (file.name.endsWith('.bpmn') || file.name.endsWith('.xml')) {
             const reader = new FileReader();
             reader.onload = (e) => {
 

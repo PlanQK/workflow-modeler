@@ -1,5 +1,3 @@
-import {exportXmlFromModeler} from "../modeler-extensions/quantme/utilities/Utilities";
-
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
     '  <bpmn2:process id="Process_1" isExecutable="false">\n' +
@@ -16,6 +14,8 @@ const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
 
 export async function saveXmlAsLocalFile(xml, fileName = 'quantum-bpmn-model.bpmn') {
     const bpmnFile = await new File([xml], fileName, {type: 'text/xml'});
+    console.log(xml);
+    console.log(fileName);
 
     const link = document.createElement('a');
     link.download = fileName;
@@ -24,13 +24,16 @@ export async function saveXmlAsLocalFile(xml, fileName = 'quantum-bpmn-model.bpm
 }
 
 export async function saveModelerAsLocalFile(modeler, fileName = 'quantum-bpmn-model.bpmn') {
-
+    console.log('saveModelerAsLocalFile')
+    console.log(modeler);
     const xml = await getXml(modeler);
+    console.log(xml)
     return saveXmlAsLocalFile(xml, fileName);
 }
 
 export async function getXml(modeler) {
-    return await exportXmlFromModeler(modeler);
+    const { xml } = await modeler.saveXML({ format: true });
+    return xml;
 }
 
 export async function loadDiagram(xml, modeler) {
