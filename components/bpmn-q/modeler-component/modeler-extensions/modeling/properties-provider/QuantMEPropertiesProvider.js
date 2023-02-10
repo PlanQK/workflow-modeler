@@ -1,7 +1,15 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from "../../quantme/Constants";
-import {isTextFieldEntryEdited} from "@bpmn-io/properties-panel";
-import {AlgorithmEntry} from "./QuantMEPropertyEntryHandler.js";
+
+import {
+    DataPreparationTaskProperties,
+    HardwareSelectionSubprocessProperties,
+    OracleExpansionTaskProperties,
+    QuantumCircuitExecutionTaskProperties,
+    QuantumCircuitLoadingTaskProperties,
+    QuantumComputationTaskProperties,
+    ReadoutErrorMitigationTaskProperties
+} from "./QuantMETaskProperties";
 
 const LOW_PRIORITY = 500;
 
@@ -11,7 +19,10 @@ const LOW_PRIORITY = 500;
  * that exposes groups for a diagram element.
  *
  * @param {PropertiesPanel} propertiesPanel
+ * @param injector
  * @param {Function} translate
+ * @param eventBus
+ * @param bpmnFactory
  */
 export default function QuantMEPropertiesProvider(propertiesPanel, injector, translate, eventBus, bpmnFactory) {
 
@@ -91,96 +102,32 @@ function createServiceTaskGroup(element, translate) {
  * @param translate
  */
 function QuantMEProps(element, translate) {
+
     switch (element.type) {
+
         case consts.QUANTUM_COMPUTATION_TASK:
-            return addQuantumComputationTaskEntries(element, translate);
-        // case consts.QUANTUM_CIRCUIT_LOADING_TASK:
-        //     return addQuantumCircuitLoadingTaskEntries(element);
-        // case consts.DATA_PREPARATION_TASK:
-        //     return addDataPreparationTaskEntries(element);
-        // case consts.ORACLE_EXPANSION_TASK:
-        //     return addOracleExpansionTaskEntries(element);
-        // case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
-        //     return addQuantumCircuitExecutionTaskEntries(element);
-        // case consts.READOUT_ERROR_MITIGATION_TASK:
-        //     return addReadoutErrorMitigationTaskEntries(element);
-        // case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
-        //     return addHardwareSelectionSubprocessEntries(element);
+            return QuantumComputationTaskProperties(element);
+
+        case consts.QUANTUM_CIRCUIT_LOADING_TASK:
+            return QuantumCircuitLoadingTaskProperties(element);
+
+        case consts.DATA_PREPARATION_TASK:
+            return DataPreparationTaskProperties(element);
+
+        case consts.ORACLE_EXPANSION_TASK:
+            return OracleExpansionTaskProperties(element);
+
+        case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
+            return QuantumCircuitExecutionTaskProperties(element);
+
+        case consts.READOUT_ERROR_MITIGATION_TASK:
+            return ReadoutErrorMitigationTaskProperties(element);
+
+        case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
+            return HardwareSelectionSubprocessProperties(element);
+
         default:
             console.log('Unsupported QuantME element of type: ', element.type);
 
     }
 }
-//
-function addQuantumComputationTaskEntries(element, translate) {
-
-    // add algorithm and provider attributes
-    return [
-        {
-            id: consts.ALGORITHM,
-            element,
-            translate,
-            component: AlgorithmEntry,
-            isEdited: isTextFieldEntryEdited
-        }
-    ];
-    // QuantMEPropertyEntryHandler.addProviderEntry(group, translate);
-}
-//
-// function addQuantumCircuitLoadingTaskEntries(group, translate) {
-//
-//     // add quantumCircuit and url attributes
-//     QuantMEPropertyEntryHandler.addQuantumCircuitEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addUrlEntry(group, translate);
-// }
-//
-// function addDataPreparationTaskEntries(group, translate) {
-//
-//     // add encodingSchema and programmingLanguage attributes
-//     QuantMEPropertyEntryHandler.addEncodingSchemaEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addProgrammingLanguageEntry(group, translate);
-// }
-//
-// function addOracleExpansionTaskEntries(group, translate) {
-//
-//     // add oracleId, oracleCircuit, oracleFunction and programmingLanguage attributes
-//     QuantMEPropertyEntryHandler.addOracleIdEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addOracleCircuitEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addOracleURLEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addProgrammingLanguageEntry(group, translate);
-// }
-//
-// function addQuantumCircuitExecutionTaskEntries(group, translate) {
-//
-//     // add provider, qpu, shots and programmingLanguage attributes
-//     QuantMEPropertyEntryHandler.addProviderEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addQpuEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addShotsEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addProgrammingLanguageEntry(group, translate);
-// }
-//
-// function addReadoutErrorMitigationTaskEntries(group, translate) {
-//
-//     // add provider, qpu, mitigation method, calibration method, shots, method-specific and restriction attributes
-//     QuantMEPropertyEntryHandler.addProviderEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addQpuEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addMitigationMethodEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addCalibrationMethodEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addShotsEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addDNNHiddenLayersEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addNeighborhoodRangeEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addObjectiveFunctionEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addOptimizerEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addMaxAgeEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addMaxCMSizeEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addMaxREMCostsEntry(group, translate);
-//
-// }
-//
-// function addHardwareSelectionSubprocessEntries(group, translate) {
-//
-//     // add providers, simulatorsAllowed, and selectionStrategy attributes
-//     QuantMEPropertyEntryHandler.addProvidersEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addSimulatorsAllowedEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addSelectionStrategyEntry(group, translate);
-// }
