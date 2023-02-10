@@ -11,7 +11,7 @@ const LOW_PRIORITY = 500;
  * @param {PropertiesPanel} propertiesPanel
  * @param {Function} translate
  */
-export default function QuantMEPropertiesProvider(propertiesPanel, translate, eventBus, bpmnFactory) {
+export default function QuantMEPropertiesProvider(propertiesPanel, injector, translate, eventBus, bpmnFactory) {
 
     // subscribe to config updates to retrieve the currently defined Winery endpoint
     const self = this;
@@ -59,7 +59,7 @@ export default function QuantMEPropertiesProvider(propertiesPanel, translate, ev
     propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
-QuantMEPropertiesProvider.$inject = [ 'propertiesPanel', 'translate', 'eventBus', 'bpmnFactory' ];
+QuantMEPropertiesProvider.$inject = [ 'propertiesPanel', 'injector', 'translate', 'eventBus', 'bpmnFactory' ];
 
 function createQuantMEGroup(element, translate) {
 

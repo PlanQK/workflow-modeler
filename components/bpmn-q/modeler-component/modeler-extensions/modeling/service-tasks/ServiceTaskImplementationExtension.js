@@ -9,9 +9,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {getExtension, removeEntry} from "../../quantme/utilities/Utilities";
+
 const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
       cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
-      extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper'),
+      // extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper'),
       elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
 const assign = require('lodash/assign');
@@ -165,9 +167,9 @@ export function addImplementationDetails(element, bpmnFactory, options, translat
       commands.push(cmdHelper.updateBusinessObject(element, bo, props));
 
       if (hasServiceTaskLikeSupport) {
-        const connectors = extensionElementsHelper.getExtensionElements(bo, 'camunda:Connector');
+        const connectors = getExtension(bo, 'camunda:Connector');
         commands.push(map(connectors, function(connector) {
-          return extensionElementsHelper.removeEntry(bo, element, connector);
+          return removeEntry(bo, element, connector);
         }));
 
         if (newType === 'connector') {

@@ -9,7 +9,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const extensionsElementHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
+import {getExtension} from "../../quantme/utilities/Utilities";
+
+// const extensionsElementHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
 const implementationTypeHelper = require('bpmn-js-properties-panel/lib/helper/ImplementationTypeHelper');
 
 export function getImplementationType(element) {
@@ -32,7 +34,7 @@ export function getImplementationType(element) {
   }
 
   if (implementationTypeHelper.isServiceTaskLike(bo)) {
-    const connectors = extensionsElementHelper.getExtensionElements(bo, 'camunda:Connector');
+    const connectors = getExtension(bo, 'camunda:Connector');
     if (typeof connectors !== 'undefined') {
       return 'connector';
     }
