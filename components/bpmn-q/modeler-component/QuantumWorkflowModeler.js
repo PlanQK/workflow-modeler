@@ -12,7 +12,7 @@ import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 // import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
 import quantMEModdleExtension from './modeler-extensions/modeling/resources/quantum4bpmn.json';
-import QuantMEPropertiesProvider from './modeler-extensions/modeling/QuantMEPropertiesProvider.js'
+import QuantMEPropertiesProvider from './modeler-extensions/modeling/properties-provider/QuantMEPropertiesProvider.js'
 
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
 import QuantMERenderer from "./modeler-extensions/modeling/QuantMERenderer";
@@ -27,7 +27,7 @@ import {
 
 // let propertiesPanelModule = require('bpmn-js-properties-panel');
 // let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
-let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda');
+let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
 class QuantumWorkflowModeler extends HTMLElement {
     constructor() {

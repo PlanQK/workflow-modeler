@@ -14,7 +14,7 @@
 import * as consts from '../quantme/Constants';
 import { serviceTaskDelegateProps } from './service-tasks/ServiceTaskDelegateProps';
 
-let QuantMEPropertyEntryHandler = require('./QuantMEPropertyEntryHandler');
+let QuantMEPropertyEntryHandler = require('./properties-provider/QuantMEPropertyEntryHandler');
 
 /**
  * This class extends the default PropertiesActivator with the properties of the newly introduced QuantME task types
@@ -172,7 +172,7 @@ function addQuantMEEntries(group, element, translate) {
 function addQuantumComputationTaskEntries(group, translate) {
 
   // add algorithm and provider attributes
-  QuantMEPropertyEntryHandler.addAlgorithmEntry(group, translate);
+  QuantMEPropertyEntryHandler.AlgorithmEntry(group, translate);
   QuantMEPropertyEntryHandler.addProviderEntry(group, translate);
 }
 

@@ -9,38 +9,59 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-let EntryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
+import React from "@bpmn-io/properties-panel/preact/compat";
+// let EntryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
 let ModelUtil = require('bpmn-js/lib/util/ModelUtil');
-let CmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-import * as consts from '../quantme/Constants';
+// let CmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+import {TextFieldEntry, isTextFieldEntryEdited,  TextAreaEntry, SelectEntry} from '@bpmn-io/properties-panel';
+import * as consts from '../../quantme/Constants';
+import {useService} from 'bpmn-js-properties-panel';
 
-export function addAlgorithmEntry(group, translate) {
-  group.entries.push(EntryFactory.textField({
-    id: consts.ALGORITHM,
-    label: translate('Algorithm'),
-    modelProperty: consts.ALGORITHM,
+export function AlgorithmEntry({ element }) {
 
-    get: function(element, node) {
-      let bo = ModelUtil.getBusinessObject(element);
-      let algorithm = bo && bo.algorithm;
-      return { algorithm: algorithm };
-    },
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const debounce = useService('debounceInput');
 
-    set: function(element, values, node) {
-      let bo = ModelUtil.getBusinessObject(element);
-      return CmdHelper.updateBusinessObject(element, bo, {
-        algorithm: values.algorithm || undefined
-      });
-    },
+  const getValue = function () {
+    return element.businessObject.algorithm || '';
+  };
 
-    validate: function(element, values, node) {
-      return true;
-    },
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      algorithm: newValue
+    });
+    // return CmdHelper.updateBusinessObject(element, bo, {
+    //   algorithm:  || undefined
+    // });
+  };
 
-    hidden: function(element, node) {
-      return false;
-    }
-  }));
+  // const validate = function(element, values, node) {
+  //   return true;
+  // };
+  //
+  // const hidden = function(element, node) {
+  //   return false;
+  // };
+
+  return <TextFieldEntry
+      id={ consts.ALGORITHM }
+      element={ element }
+      description={ translate('Apply a black magic spell') }
+      label={ translate('Algorithm') }
+      getValue={ getValue }
+      setValue={ setValue }
+      debounce={ debounce }
+  />;
+  // return TextFieldEntry({
+  //   element,
+  //   id: consts.ALGORITHM,
+  //   label: translate('Algorithm'),
+  //   description: translate('Apply a black magic spell'),
+  //   getValue,
+  //   setValue,
+  //   debounce,
+  // });
 }
 
 export function addProviderEntry(group, translate) {

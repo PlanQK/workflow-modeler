@@ -1,5 +1,7 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
-import * as consts from "../quantme/Constants";
+import * as consts from "../../quantme/Constants";
+import {isTextFieldEntryEdited} from "@bpmn-io/properties-panel";
+import {AlgorithmEntry} from "./QuantMEPropertyEntryHandler.js";
 
 const LOW_PRIORITY = 500;
 
@@ -43,9 +45,9 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
             //     groups.unshift(createSubscriptionGroup(element, translate));
             // }
             // add properties of QuantME tasks to panel
-            // if (element.type && element.type.startsWith('quantme:')) {
-            //     groups.push(handleQuantMETasks(element, translate));
-            // }
+            if (element.type && element.type.startsWith('quantme:')) {
+                groups.unshift(createQuantMEGroup(element, translate));
+            }
             //
             // // update ServiceTasks with the deployment extension
             // if (element.type && element.type === 'bpmn:ServiceTask') {
@@ -67,7 +69,7 @@ function createQuantMEGroup(element, translate) {
     return {
         id: 'quantme',
         label: translate('QuantME Properties'),
-        entries: addQuantMEEntries(element)
+        entries: QuantMEProps(element, translate)
     };
 }
 
@@ -86,34 +88,44 @@ function createServiceTaskGroup(element, translate) {
  * Add the property entries for the QuantME attributes to the given group
  *
  * @param element the QuantME element
+ * @param translate
  */
-// function addQuantMEEntries(element) {
-//     switch (element.type) {
-//         case consts.QUANTUM_COMPUTATION_TASK:
-//             return addQuantumComputationTaskEntries(element);
-//         case consts.QUANTUM_CIRCUIT_LOADING_TASK:
-//             return addQuantumCircuitLoadingTaskEntries(element);
-//         case consts.DATA_PREPARATION_TASK:
-//             return addDataPreparationTaskEntries(element);
-//         case consts.ORACLE_EXPANSION_TASK:
-//             return addOracleExpansionTaskEntries(element);
-//         case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
-//             return addQuantumCircuitExecutionTaskEntries(element);
-//         case consts.READOUT_ERROR_MITIGATION_TASK:
-//             return addReadoutErrorMitigationTaskEntries(element);
-//         case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
-//             return addHardwareSelectionSubprocessEntries(element);
-//         default:
-//             console.log('Unsupported QuantME element of type: ', element.type);
-//     }
-// }
+function QuantMEProps(element, translate) {
+    switch (element.type) {
+        case consts.QUANTUM_COMPUTATION_TASK:
+            return addQuantumComputationTaskEntries(element, translate);
+        // case consts.QUANTUM_CIRCUIT_LOADING_TASK:
+        //     return addQuantumCircuitLoadingTaskEntries(element);
+        // case consts.DATA_PREPARATION_TASK:
+        //     return addDataPreparationTaskEntries(element);
+        // case consts.ORACLE_EXPANSION_TASK:
+        //     return addOracleExpansionTaskEntries(element);
+        // case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
+        //     return addQuantumCircuitExecutionTaskEntries(element);
+        // case consts.READOUT_ERROR_MITIGATION_TASK:
+        //     return addReadoutErrorMitigationTaskEntries(element);
+        // case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
+        //     return addHardwareSelectionSubprocessEntries(element);
+        default:
+            console.log('Unsupported QuantME element of type: ', element.type);
+
+    }
+}
 //
-// function addQuantumComputationTaskEntries(group, translate) {
-//
-//     // add algorithm and provider attributes
-//     QuantMEPropertyEntryHandler.addAlgorithmEntry(group, translate);
-//     QuantMEPropertyEntryHandler.addProviderEntry(group, translate);
-// }
+function addQuantumComputationTaskEntries(element, translate) {
+
+    // add algorithm and provider attributes
+    return [
+        {
+            id: consts.ALGORITHM,
+            element,
+            translate,
+            component: AlgorithmEntry,
+            isEdited: isTextFieldEntryEdited
+        }
+    ];
+    // QuantMEPropertyEntryHandler.addProviderEntry(group, translate);
+}
 //
 // function addQuantumCircuitLoadingTaskEntries(group, translate) {
 //
