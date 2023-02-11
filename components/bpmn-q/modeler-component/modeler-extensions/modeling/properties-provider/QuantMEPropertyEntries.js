@@ -14,6 +14,7 @@ let ModelUtil = require('bpmn-js/lib/util/ModelUtil');
 import {TextFieldEntry, isTextFieldEntryEdited,  TextAreaEntry, SelectEntry} from '@bpmn-io/properties-panel';
 import * as consts from '../../quantme/Constants';
 import {useService} from 'bpmn-js-properties-panel';
+import {useState} from "@bpmn-io/properties-panel/preact/hooks";
 
 export function AlgorithmEntry({ element }) {
 
@@ -515,13 +516,13 @@ export function DNNHiddenLayersEntry({ element }) {
     return !(mitigationMethod === 'dnnREM');
   }
 
-  return hidden() && <TextFieldEntry
+  return <HiddenTextFieldEntry
     id={consts.DNN_HIDDEN_LAYER}
     label={translate('Number of DNN Hidden Layers')}
     getValue={ getValue }
     setValue={ setValue }
-    // disabled={() => hidden()}
     debounce={ debounce }
+    hidden={ hidden }
   />;
 }
 
@@ -551,7 +552,7 @@ export function NeighborhoodRangeEntry({ element }) {
     return !(calibrationMethod === 'sclableTMatrix');
   };
 
-  return <TextFieldEntry
+  return <HiddenTextFieldEntry
     id={consts.NEIGHBORHOOD_RANGE}
     label={translate('Neighborhood Range')}
     modelProperty={consts.NEIGHBORHOOD_RANGE}
@@ -584,7 +585,7 @@ export function ObjectiveFunctionEntry({ element }) {
         return !(mitigationMethod === 'geneticBasedREM');
    };
 
-  return <TextFieldEntry
+  return <HiddenTextFieldEntry
     id={consts.OBJECTIVE_FUNCTION}
     label= {translate('Objective Function')}
     getValue={ getValue }
@@ -610,19 +611,20 @@ export function OptimizerEntry({ element }) {
     });
   };
 
-  const hidden = function() {
-    let mitigationMethod = element.businessObject.mitigationMethod;
-    return !(mitigationMethod === 'geneticBasedREM');
+  const hidden = function(mitigationMethod) {
+    const hide = !(mitigationMethod === 'geneticBasedREM');
+    console.log('Should hide OptimizerEntry: ' + hide);
+    return hide;
   };
 
-  return <TextFieldEntry
-    id={consts.OPTIMIZER}
-    label= {translate('Optimizer')}
-    getValue={ getValue }
-    setValue={ setValue }
-    debounce={ debounce }
-    hidden={hidden}
-  />;
+  return <HiddenTextFieldEntry
+      id={consts.OPTIMIZER}
+      label= {translate('Optimizer')}
+      getValue={ getValue }
+      setValue={ setValue }
+      debounce={ debounce }
+      hidden={hidden}
+    />;
 }
 
 export function MaxREMCostsEntry({ element }) {
@@ -630,6 +632,8 @@ export function MaxREMCostsEntry({ element }) {
   const modeling = useService('modeling');
   const translate = useService('translate') || function(str){return str};
   const debounce = useService('debounceInput');
+
+  const [hide, setHide] = useState(false);
 
   const getValue = function() {
     return element.businessObject.maxREMCosts;
@@ -680,7 +684,7 @@ export function MaxCMSizeEntry({ element }) {
     return !(mitigationMethod === 'matrixInversion' || mitigationMethod === 'pertubativeREM' || mitigationMethod === 'geneticBasedREM' || mitigationMethod === 'mthree');
   };
 
-  return <TextFieldEntry
+  return <HiddenTextFieldEntry
     id={consts.MAX_CM_SIZE}
     label={translate('Max CM Size (in MB)')}
     getValue={ getValue }
@@ -689,4 +693,24 @@ export function MaxCMSizeEntry({ element }) {
     validate={validate}
     hidden={hidden}
   />;
+}
+
+function HiddenTextFieldEntry({ id, element, label, getValue, setValue, debounce, hidden }) {
+
+  const [hide, setHide] = useState(true);
+  const set = function(newValue) {
+    setHide(hidden(newValue));
+    return setValue(newValue);
+  };
+
+  return <>
+    {!hide && (<TextFieldEntry
+        id={id}
+        element={element}
+        label= {label}
+        getValue={ getValue }
+        setValue={ set }
+        debounce={ debounce }
+    />)}
+  </>;
 }
