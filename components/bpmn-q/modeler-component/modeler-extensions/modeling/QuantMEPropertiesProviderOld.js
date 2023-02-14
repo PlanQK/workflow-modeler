@@ -12,7 +12,7 @@
 // import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
 // import CamundaPropertiesProvider from 'bpmn-js-properties-panel/lib/provider/camunda/CamundaPropertiesProvider';
 import * as consts from '../quantme/Constants';
-import { serviceTaskDelegateProps } from './service-tasks/ServiceTaskDelegateProps';
+import { ServiceTaskDelegateProps } from './service-tasks/ServiceTaskDelegateProps';
 
 let QuantMEPropertyEntryHandler = require('./properties-provider/QuantMEPropertyEntryHandler');
 
@@ -98,7 +98,7 @@ function handleServiceTask(element, tabs, translate, bpmnFactory, wineryEndpoint
   detailsGroup.entries = [];
 
   // add new entries comprising the extension
-  serviceTaskDelegateProps(detailsGroup, element, bpmnFactory, translate, wineryEndpoint);
+  ServiceTaskDelegateProps(detailsGroup, element, bpmnFactory, translate, wineryEndpoint);
 }
 
 /**

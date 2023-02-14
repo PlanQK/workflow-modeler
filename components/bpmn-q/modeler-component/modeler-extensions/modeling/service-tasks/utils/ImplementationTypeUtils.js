@@ -6,15 +6,8 @@ import {
 import {
   isAny
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
-
-import {
-  getMessageEventDefinition
-} from '../../bpmn/utils/EventDefinitionUtil';
-
-import {
-  getExtensionElementsList
-} from '../../../utils/ExtensionElementsUtil';
-
+import {getMessageEventDefinition} from "./EventDefinitionUtil";
+import {getExtensionElementsList} from "./ExtensionElementsUtil";
 
 /**
  * Check whether an element is camunda:ServiceTaskLike
@@ -143,6 +136,10 @@ export function getImplementationType(element) {
   if (typeof script !== 'undefined') {
     return 'script';
   }
+}
+
+export function isListener(element) {
+  return this.isTaskListener(element) || this.isExecutionListener(element);
 }
 
 function getListenerBusinessObject(businessObject) {

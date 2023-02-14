@@ -9,38 +9,45 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getExtension} from "../../quantme/utilities/Utilities";
+import {getExtension} from "../../../quantme/utilities/Utilities";
+import {
+  getServiceTaskLikeBusinessObject,
+  isDmnCapable,
+  isExternalCapable,
+  isListener,
+  isServiceTaskLike
+} from "./ImplementationTypeUtils";
 
 // const extensionsElementHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
-const implementationTypeHelper = require('bpmn-js-properties-panel/lib/helper/ImplementationTypeHelper');
+// const implementationTypeHelper = require('./ImplementationTypeHelper');
 
 export function getImplementationType(element) {
 
-  let bo = implementationTypeHelper.getServiceTaskLikeBusinessObject(element);
+  let bo = getServiceTaskLikeBusinessObject(element);
 
   if (!bo) {
-    if (implementationTypeHelper.isListener(element)) {
+    if (isListener(element)) {
       bo = element;
     } else {
       return;
     }
   }
 
-  if (implementationTypeHelper.isDmnCapable(bo)) {
+  if (isDmnCapable(bo)) {
     const decisionRef = bo.get('camunda:decisionRef');
     if (typeof decisionRef !== 'undefined') {
       return 'dmn';
     }
   }
 
-  if (implementationTypeHelper.isServiceTaskLike(bo)) {
+  if (isServiceTaskLike(bo)) {
     const connectors = getExtension(bo, 'camunda:Connector');
     if (typeof connectors !== 'undefined') {
       return 'connector';
     }
   }
 
-  if (implementationTypeHelper.isExternalCapable(bo)) {
+  if (isExternalCapable(bo)) {
     const type = bo.get('camunda:type');
     if (type === 'external') {
       return 'external';
@@ -67,7 +74,7 @@ export function getImplementationType(element) {
     return 'deploymentModel';
   }
 
-  if (implementationTypeHelper.isListener(bo)) {
+  if (isListener(bo)) {
     const script = bo.get('script');
     if (typeof script !== 'undefined') {
       return 'script';

@@ -10,6 +10,7 @@ import {
     QuantumComputationTaskProperties,
     ReadoutErrorMitigationTaskProperties
 } from "./QuantMETaskProperties";
+import {ServiceTaskDelegateProps} from "../service-tasks/ServiceTaskDelegateProps";
 
 const LOW_PRIORITY = 500;
 
@@ -28,8 +29,9 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
 
     // subscribe to config updates to retrieve the currently defined Winery endpoint
     const self = this;
+    let wineryEndpoint;
     eventBus.on('config.updated', function(config) {
-        self.wineryEndpoint = config.wineryEndpoint;
+        wineryEndpoint = config.wineryEndpoint;
     });
 
     /**
@@ -59,11 +61,11 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
             if (element.type && element.type.startsWith('quantme:')) {
                 groups.unshift(createQuantMEGroup(element, translate));
             }
-            //
-            // // update ServiceTasks with the deployment extension
-            // if (element.type && element.type === 'bpmn:ServiceTask') {
-            //     groups.push(handleServiceTask(element, translate, bpmnFactory, this.wineryEndpoint));
-            // }
+
+            // update ServiceTasks with the deployment extension
+            if (element.type && element.type === 'bpmn:ServiceTask') {
+                groups.push(createServiceTaskGroup(element, translate, bpmnFactory, wineryEndpoint));
+            }
 
             return groups;
         }
@@ -78,19 +80,19 @@ function createQuantMEGroup(element, translate) {
 
     // add required properties to general tab
     return {
-        id: 'quantme',
-        label: translate('QuantME Properties'),
+        id: 'quantmeServiceDetails',
+        label: translate('Details'),
         entries: QuantMEProps(element, translate)
     };
 }
 
 
-function createServiceTaskGroup(element, translate) {
+function createServiceTaskGroup(element, translate, bpmnFactory, wineryEndpoint) {
 
     return {
         id: 'quantmeServiceProperties',
         label: translate('Subscription'),
-        entries: planqkServiceProps(element)
+        entries: ServiceTaskDelegateProps(element, bpmnFactory, translate, wineryEndpoint)
     };
 
 }

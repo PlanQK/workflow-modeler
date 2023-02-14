@@ -6,16 +6,7 @@ import {
   getBusinessObject,
   is
 } from 'bpmn-js/lib/util/ModelUtil';
-
-import {
-  createElement,
-  nextId
-} from '../../../utils/ElementUtil';
-
-import {
-  getExtensionElementsList
-} from '../../../utils/ExtensionElementsUtil';
-
+import {getExtensionElementsList} from "./ExtensionElementsUtil";
 
 function getElements(businessObject, type, property) {
   const elements = getExtensionElementsList(businessObject, type);

@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
-      cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+// const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
+//       cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 const jquery = require('jquery');
 
