@@ -13,12 +13,12 @@
 // import React from
 import { ImplementationDetails } from './ServiceTaskImplementationExtension';
 import {
-  getImplementationType,
   getServiceTaskLikeBusinessObject, isDmnCapable, isExternalCapable,
   isServiceTaskLike
 } from './utils/ImplementationTypeUtils';
 import { deployment } from './Deployment';
 import {isTextFieldEntryEdited} from "@bpmn-io/properties-panel";
+import {getImplementationType} from "./utils/ImplementationTypeHelperExtension";
 
 // const ImplementationTypeHelper = require('bpmn-js-properties-panel/lib/helper/ImplementationTypeHelper'),
 //       InputOutputHelper = require('bpmn-js-properties-panel/lib/helper/InputOutputHelper');

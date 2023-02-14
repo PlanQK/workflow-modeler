@@ -63,7 +63,6 @@ class QuantumWorkflowModeler extends HTMLElement {
             },
             additionalModules: [
                 BpmnPalletteModule,
-                // elementTemplates,
                 // propertiesPanelModule,
                 // propertiesProviderModule,
                 BpmnPropertiesPanelModule,
@@ -79,7 +78,6 @@ class QuantumWorkflowModeler extends HTMLElement {
                     propertiesProvider: ['type', QuantMEPropertiesProvider]
                 }
             ],
-            // elementTemplates: elementTemplates,
             keyboard: {
                 bindTo: document
             },

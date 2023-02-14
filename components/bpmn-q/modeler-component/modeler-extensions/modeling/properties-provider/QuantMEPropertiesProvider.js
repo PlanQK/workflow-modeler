@@ -11,6 +11,8 @@ import {
     ReadoutErrorMitigationTaskProperties
 } from "./QuantMETaskProperties";
 import {ServiceTaskDelegateProps} from "../service-tasks/ServiceTaskDelegateProps";
+import {ImplementationProps} from "./service-task/ImplementationProps";
+import {Group} from "@bpmn-io/properties-panel";
 
 const LOW_PRIORITY = 500;
 
@@ -64,7 +66,7 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
 
             // update ServiceTasks with the deployment extension
             if (element.type && element.type === 'bpmn:ServiceTask') {
-                groups.push(createServiceTaskGroup(element, translate, bpmnFactory, wineryEndpoint));
+                groups[2] = ImplementationGroup(element, injector, bpmnFactory, wineryEndpoint);
             }
 
             return groups;
@@ -92,9 +94,28 @@ function createServiceTaskGroup(element, translate, bpmnFactory, wineryEndpoint)
     return {
         id: 'quantmeServiceProperties',
         label: translate('Subscription'),
-        entries: ServiceTaskDelegateProps(element, bpmnFactory, translate, wineryEndpoint)
+        entries: ImplementationProps(element, bpmnFactory, translate, wineryEndpoint)
     };
 
+}
+
+function ImplementationGroup(element, injector, bpmnFactory, wineryEndpoint) {
+    const translate = injector.get('translate');
+
+    const group = {
+        label: translate('Implementation'),
+        id: 'CamundaPlatform__Implementation',
+        component: Group,
+        entries: [
+            ...ImplementationProps({ element })
+        ]
+    };
+
+    if (group.entries.length) {
+        return group;
+    }
+
+    return null;
 }
 
 /**

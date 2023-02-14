@@ -1,8 +1,8 @@
 import {
-  getImplementationType,
   getServiceTaskLikeBusinessObject
 } from './ImplementationTypeUtils';
 import {getExtensionElementsList} from "./ExtensionElementsUtil";
+import {getImplementationType} from "./ImplementationTypeHelperExtension";
 
 export function areConnectorsSupported(element) {
   const businessObject = getServiceTaskLikeBusinessObject(element);

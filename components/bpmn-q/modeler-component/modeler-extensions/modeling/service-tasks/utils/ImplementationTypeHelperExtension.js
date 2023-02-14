@@ -11,73 +11,72 @@
 
 import {getExtension} from "../../../quantme/utilities/Utilities";
 import {
+  getListenerBusinessObject,
   getServiceTaskLikeBusinessObject,
   isDmnCapable,
   isExternalCapable,
   isListener,
   isServiceTaskLike
 } from "./ImplementationTypeUtils";
+import {getExtensionElementsList} from "./ExtensionElementsUtil";
 
 // const extensionsElementHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
 // const implementationTypeHelper = require('./ImplementationTypeHelper');
 
 export function getImplementationType(element) {
 
-  let bo = getServiceTaskLikeBusinessObject(element);
+  const businessObject = (
+      getListenerBusinessObject(element) ||
+      getServiceTaskLikeBusinessObject(element)
+  );
 
-  if (!bo) {
-    if (isListener(element)) {
-      bo = element;
-    } else {
-      return;
-    }
+  if (!businessObject) {
+    return;
   }
 
-  if (isDmnCapable(bo)) {
-    const decisionRef = bo.get('camunda:decisionRef');
+  if (isDmnCapable(businessObject)) {
+    const decisionRef = businessObject.get('camunda:decisionRef');
     if (typeof decisionRef !== 'undefined') {
       return 'dmn';
     }
   }
 
-  if (isServiceTaskLike(bo)) {
-    const connectors = getExtension(bo, 'camunda:Connector');
-    if (typeof connectors !== 'undefined') {
+  if (isServiceTaskLike(businessObject)) {
+    const connectors = getExtensionElementsList(businessObject, 'camunda:Connector');
+    if (connectors.length) {
       return 'connector';
     }
   }
 
-  if (isExternalCapable(bo)) {
-    const type = bo.get('camunda:type');
+  if (isExternalCapable(businessObject)) {
+    const type = businessObject.get('camunda:type');
     if (type === 'external') {
       return 'external';
     }
   }
 
-  const cls = bo.get('camunda:class');
+  const cls = businessObject.get('camunda:class');
   if (typeof cls !== 'undefined') {
     return 'class';
   }
 
-  const expression = bo.get('camunda:expression');
+  const expression = businessObject.get('camunda:expression');
   if (typeof expression !== 'undefined') {
     return 'expression';
   }
 
-  const delegateExpression = bo.get('camunda:delegateExpression');
+  const delegateExpression = businessObject.get('camunda:delegateExpression');
   if (typeof delegateExpression !== 'undefined') {
     return 'delegateExpression';
   }
 
-  const deploymentModelUrl = bo.get('quantme:deploymentModelUrl');
+  const deploymentModelUrl = businessObject.get('quantme:deploymentModelUrl');
   if (typeof deploymentModelUrl !== 'undefined') {
     return 'deploymentModel';
   }
 
-  if (isListener(bo)) {
-    const script = bo.get('script');
-    if (typeof script !== 'undefined') {
-      return 'script';
-    }
+  const script = businessObject.get('script');
+  if (typeof script !== 'undefined') {
+    return 'script';
   }
 }
