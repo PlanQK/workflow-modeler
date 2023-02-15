@@ -1,5 +1,5 @@
 <script setup>
-    import '../../../bpmn-q/public/app.js
+    import '../../../bpmn-q/public/app.js';
 </script>
 <script>
     export default {

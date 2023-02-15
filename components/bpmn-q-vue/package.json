@@ -8,6 +8,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "qflow": "file:../bpmn-q/public/",
     "vue": "^3.2.41"
   },
   "devDependencies": {
