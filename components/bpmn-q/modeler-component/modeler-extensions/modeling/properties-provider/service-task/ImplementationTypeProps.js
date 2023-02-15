@@ -4,13 +4,14 @@ import {
 
 import { SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
 import {useService} from "bpmn-js-properties-panel";
-import {getImplementationType} from "../../service-tasks/utils/ImplementationTypeHelperExtension";
+import {getImplementationType} from "./utils/ImplementationTypeHelperExtension";
+import {createElement} from "./utils/ElementUtil"
 import {
-  getServiceTaskLikeBusinessObject,
+  getServiceTaskLikeBusinessObject, isDeploymentCapable,
   isDmnCapable,
   isExternalCapable, isServiceTaskLike
-} from "../../service-tasks/utils/ImplementationTypeUtils";
-import {getExtensionElementsList} from "../../service-tasks/utils/ExtensionElementsUtil";
+} from "./utils/ImplementationTypeUtils";
+import {getExtensionElementsList} from "./utils/ExtensionElementsUtil";
 
 
 const DELEGATE_PROPS = {
@@ -39,7 +40,8 @@ const IMPLEMENTATION_TYPE_NONE_LABEL = '<none>',
       IMPLEMENTATION_TYPE_DELEGATE_LABEL = 'Delegate expression',
       IMPLEMENTATION_TYPE_DMN_LABEL = 'DMN',
       IMPLEMENTATION_TYPE_EXTERNAL_LABEL = 'External',
-      IMPLEMENTATION_TYPE_CONNECTOR_LABEL = 'Connector';
+      IMPLEMENTATION_TYPE_CONNECTOR_LABEL = 'Connector',
+      IMPLEMENTATION_TYPE_DEPLOYMENT_LABEL = 'Deployment Model';
 
 
 export function ImplementationTypeProps(props) {
@@ -171,6 +173,22 @@ function ImplementationType(props) {
 
     }
 
+    // (5) deployment
+    if (isDeploymentCapable(businessObject)) {
+      updatedProperties = {
+        ...updatedProperties,
+        'quantme:deploymentModelUrl': undefined
+      };
+
+      if (value === 'deploymentModel') {
+        updatedProperties = {
+          ...updatedProperties,
+          'quantme:deploymentModelUrl': ''
+        };
+      }
+    }
+
+
     // (5) collect all property updates
     commands.push(UpdateModdlePropertiesCommand(element, businessObject, updatedProperties));
 
@@ -200,13 +218,18 @@ function ImplementationType(props) {
       options.push({ value: 'connector', label: translate(IMPLEMENTATION_TYPE_CONNECTOR_LABEL) });
     }
 
+    // add deployment
+    if (isDeploymentCapable(businessObject)) {
+      options.push({ value: 'deploymentModel', label: translate(IMPLEMENTATION_TYPE_DEPLOYMENT_LABEL) });
+    }
+
     return sortByPriority(options);
   };
 
   return SelectEntry({
     element,
     id: 'implementationType',
-    label: translate('Types in Real'),
+    label: translate('Type'),
     getValue,
     setValue,
     getOptions

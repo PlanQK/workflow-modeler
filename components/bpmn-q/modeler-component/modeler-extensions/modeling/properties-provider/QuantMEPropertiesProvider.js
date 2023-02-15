@@ -66,9 +66,8 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
 
             // update ServiceTasks with the deployment extension
             if (element.type && element.type === 'bpmn:ServiceTask') {
-                groups[2] = ImplementationGroup(element, injector, bpmnFactory, wineryEndpoint);
+                groups[2] = ImplementationGroup(element, injector, wineryEndpoint);
             }
-
             return groups;
         }
     };
@@ -89,17 +88,17 @@ function createQuantMEGroup(element, translate) {
 }
 
 
-function createServiceTaskGroup(element, translate, bpmnFactory, wineryEndpoint) {
+// function createServiceTaskGroup(element, translate, bpmnFactory, wineryEndpoint) {
+//
+//     return {
+//         id: 'quantmeServiceProperties',
+//         label: translate('Subscription'),
+//         entries: ImplementationProps(element, bpmnFactory, translate, wineryEndpoint)
+//     };
+//
+// }
 
-    return {
-        id: 'quantmeServiceProperties',
-        label: translate('Subscription'),
-        entries: ImplementationProps(element, bpmnFactory, translate, wineryEndpoint)
-    };
-
-}
-
-function ImplementationGroup(element, injector, bpmnFactory, wineryEndpoint) {
+function ImplementationGroup(element, injector, wineryEndpoint) {
     const translate = injector.get('translate');
 
     const group = {
@@ -107,7 +106,7 @@ function ImplementationGroup(element, injector, bpmnFactory, wineryEndpoint) {
         id: 'CamundaPlatform__Implementation',
         component: Group,
         entries: [
-            ...ImplementationProps({ element })
+            ...ImplementationProps({ element, wineryEndpoint, translate })
         ]
     };
 

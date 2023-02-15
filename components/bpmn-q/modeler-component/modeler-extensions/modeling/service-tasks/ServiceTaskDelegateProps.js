@@ -15,10 +15,10 @@ import { ImplementationDetails } from './ServiceTaskImplementationExtension';
 import {
   getServiceTaskLikeBusinessObject, isDmnCapable, isExternalCapable,
   isServiceTaskLike
-} from './utils/ImplementationTypeUtils';
+} from '../properties-provider/service-task/utils/ImplementationTypeUtils';
 import { deployment } from './Deployment';
 import {isTextFieldEntryEdited} from "@bpmn-io/properties-panel";
-import {getImplementationType} from "./utils/ImplementationTypeHelperExtension";
+import {getImplementationType} from "../properties-provider/service-task/utils/ImplementationTypeHelperExtension";
 
 // const ImplementationTypeHelper = require('bpmn-js-properties-panel/lib/helper/ImplementationTypeHelper'),
 //       InputOutputHelper = require('bpmn-js-properties-panel/lib/helper/InputOutputHelper');

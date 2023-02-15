@@ -43,6 +43,17 @@ export function isExternalCapable(element) {
 }
 
 /**
+ * Returns 'true'
+ *
+ * @param {djs.model.Base} element
+ *
+ * @return {boolean} true
+ */
+export function isDeploymentCapable(element) {
+  return true;
+}
+
+/**
  * getServiceTaskLikeBusinessObject - Get a 'camunda:ServiceTaskLike' business object.
  *
  * If the given element is not a 'camunda:ServiceTaskLike', then 'false'
