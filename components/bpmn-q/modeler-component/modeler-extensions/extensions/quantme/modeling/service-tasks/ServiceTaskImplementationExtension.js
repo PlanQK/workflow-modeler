@@ -9,9 +9,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getExtension, removeEntry} from "../../quantme/utilities/Utilities";
+import {getExtension, removeEntry} from "../../utilities/Utilities";
 import {SelectEntry} from "@bpmn-io/properties-panel";
-import * as consts from "../../quantme/Constants";
+import * as consts from "../../Constants";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import {useService} from "bpmn-js-properties-panel";
 

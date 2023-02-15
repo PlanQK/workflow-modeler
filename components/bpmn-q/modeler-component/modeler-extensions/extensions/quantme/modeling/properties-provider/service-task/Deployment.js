@@ -1,5 +1,5 @@
 import {SelectEntry} from "@bpmn-io/properties-panel";
-import * as consts from "../../../quantme/Constants";
+import * as consts from "../../../Constants";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import {useService} from "bpmn-js-properties-panel";
 import {getServiceTaskLikeBusinessObject} from "./utils/ImplementationTypeUtils";

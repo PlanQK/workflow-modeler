@@ -13,7 +13,7 @@ import React from "@bpmn-io/properties-panel/preact/compat";
 
 let ModelUtil = require('bpmn-js/lib/util/ModelUtil');
 import {TextFieldEntry, isTextFieldEntryEdited, TextAreaEntry, SelectEntry} from '@bpmn-io/properties-panel';
-import * as consts from '../../quantme/Constants';
+import * as consts from '../../Constants';
 import {useService} from 'bpmn-js-properties-panel';
 import {useState} from "@bpmn-io/properties-panel/preact/hooks";
 

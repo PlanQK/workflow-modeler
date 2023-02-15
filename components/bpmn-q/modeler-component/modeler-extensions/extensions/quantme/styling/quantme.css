@@ -11,7 +11,7 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background: url("../modeler-extensions/modeling/resources/qrm-reload-icon.png") no-repeat center center;
+    background: url("../resources/qrm-reload-icon.png") no-repeat center center;
     float: left;
 }
 
@@ -21,7 +21,7 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background: url("../modeler-extensions/modeling/resources/hybrid-loop-adapation-icon.png") no-repeat center center;
+    background: url("../resources/hybrid-loop-adapation-icon.png") no-repeat center center;
     float: left;
 }
 
@@ -31,7 +31,7 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background: url("../modeler-extensions/modeling/resources/worklow-transformation-icon.png") no-repeat center center;
+    background: url("../resources/worklow-transformation-icon.png") no-repeat center center;
     float: left;
 }
 
@@ -41,7 +41,7 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background: url("../modeler-extensions/modeling/resources/workflow-deployment-icon.png") no-repeat center center;
+    background: url("../resources/workflow-deployment-icon.png") no-repeat center center;
     float: left;
 }
 
@@ -51,7 +51,7 @@
     width: 15px;
     height: 15px;
     background-size: contain;
-    background: url("../modeler-extensions/modeling/resources/config-icon.png") no-repeat center center;
+    background: url("../resources/config-icon.png") no-repeat center center;
     float: left;
 }
 
@@ -149,7 +149,7 @@ html, body, #container {
 .bpmn-icon-hardware-selection-subprocess:before {
     content: "";
     display: block;
-    background: url("../modeler-extensions/modeling/resources/menu-icon-hardware-selection-subprocess.png") no-repeat;
+    background: url("../resources/menu-icon-hardware-selection-subprocess.png") no-repeat;
     width: 20px;
     height: 20px;
     float: left;
@@ -159,7 +159,7 @@ html, body, #container {
 .bpmn-icon-task-quantum-computation:before {
     content: "";
     display: block;
-    background: url("../modeler-extensions/modeling/resources/menu-icon-quantum-computation-task.png") no-repeat;
+    background: url("../resources/menu-icon-quantum-computation-task.png") no-repeat;
     width: 20px;
     height: 20px;
     float: left;
@@ -169,7 +169,7 @@ html, body, #container {
 .bpmn-icon-circuit-loading:before {
     content: "";
     display: block;
-    background: url("../modeler-extensions/modeling/resources/menu-icon-quantum-circuit-loading-task.png") no-repeat;
+    background: url("../resources/menu-icon-quantum-circuit-loading-task.png") no-repeat;
     width: 20px;
     height: 20px;
     float: left;
@@ -179,7 +179,7 @@ html, body, #container {
 .bpmn-icon-data-preparation:before {
     content: "";
     display: block;
-    background: url("../modeler-extensions/modeling/resources/menu-icon-data-preparation-task.png") no-repeat;
+    background: url("../resources/menu-icon-data-preparation-task.png") no-repeat;
     width: 20px;
     height: 20px;
     float: left;
@@ -189,7 +189,7 @@ html, body, #container {
 .bpmn-icon-oracle-expansion:before {
     content: "";
     display: block;
-    background: url("../modeler-extensions/modeling/resources/menu-icon-oracle-expansion-task.png") no-repeat;
+    background: url("../resources/menu-icon-oracle-expansion-task.png") no-repeat;
     width: 20px;
     height: 20px;
     float: left;
@@ -199,7 +199,7 @@ html, body, #container {
 .bpmn-icon-circuit-execution:before {
     content: "";
     display: block;
-    background: url("../modeler-extensions/modeling/resources/menu-icon-circuit-execution-task.png") no-repeat;
+    background: url("../resources/menu-icon-circuit-execution-task.png") no-repeat;
     width: 20px;
     height: 20px;
     float: left;
@@ -209,7 +209,7 @@ html, body, #container {
 .bpmn-icon-error-mitigation:before {
     content: "";
     display: block;
-    background: url("../modeler-extensions/modeling/resources/menu-icon-readout-error-task.png") no-repeat;
+    background: url("../resources/menu-icon-readout-error-task.png") no-repeat;
     width: 20px;
     height: 20px;
     float: left;
@@ -249,7 +249,7 @@ html, body, #container {
     width: 15px;
     height: 15px;
     background-size: contain;
-    background: url("../modeler-extensions/modeling/resources/info.png") no-repeat center center;
+    background: url("../resources/info.png") no-repeat center center;
     float: right;
     padding-left: 20px;
 }

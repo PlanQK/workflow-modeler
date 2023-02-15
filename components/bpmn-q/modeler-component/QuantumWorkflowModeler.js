@@ -6,19 +6,20 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
 import './styling/modeler.less';
-import './styling/quantme.css';
+import './modeler-extensions/extensions/quantme/styling/quantme.css';
 
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 // import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
-import quantMEModdleExtension from './modeler-extensions/modeling/resources/quantum4bpmn.json';
-import QuantMEPropertiesProvider from './modeler-extensions/modeling/properties-provider/QuantMEPropertiesProvider.js'
+import quantMEModdleExtension from './modeler-extensions/extensions/quantme/resources/quantum4bpmn.json';
+import QuantMEPropertiesProvider from './modeler-extensions/extensions/quantme/modeling/properties-provider/QuantMEPropertiesProvider.js'
 
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
-import QuantMERenderer from "./modeler-extensions/modeling/QuantMERenderer";
-import QuantMEReplaceMenuProvider from "./modeler-extensions/modeling/QuantMEReplaceMenuProvider";
-import QuantMEFactory from "./modeler-extensions/modeling/QuantMEFactory";
-import QuantMEPathMap from "./modeler-extensions/modeling/QuantMEPathMap";
+import QuantMEExtensionModule from './modeler-extensions/extensions/quantme/modeling/'
+import QuantMERenderer from "./modeler-extensions/extensions/quantme/modeling/QuantMERenderer";
+import QuantMEReplaceMenuProvider from "./modeler-extensions/extensions/quantme/modeling/QuantMEReplaceMenuProvider";
+import QuantMEFactory from "./modeler-extensions/extensions/quantme/modeling/QuantMEFactory";
+import QuantMEPathMap from "./modeler-extensions/extensions/quantme/modeling/QuantMEPathMap";
 import {
     BpmnPropertiesPanelModule,
     BpmnPropertiesProviderModule,
@@ -35,10 +36,15 @@ class QuantumWorkflowModeler extends HTMLElement {
     }
 
     connectedCallback() {
-        this.innerHTML = `<div style="display: flex; height: 100%">
-                            <div id="canvas" style="width: 75%"></div>
-                            <div id="properties" style="overflow: auto; max-height: 100%; width: 25%; background: #f8f8f8;"></div>
-                          </div>`;
+        this.innerHTML = '' +
+            `<div style="height: 100%">
+                <div id="button-container"></div>
+                <hr class="toolbar-splitter" />
+                <div style="display: flex; height: 100%">
+                    <div id="canvas" style="width: 100%"></div>
+                    <div id="properties" style="overflow: auto; max-height: 100%; width: 25%; background: #f8f8f8;"></div>
+                </div>
+            </div>`;
 
         const diagramXML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
             '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
@@ -54,29 +60,18 @@ class QuantumWorkflowModeler extends HTMLElement {
             '  </bpmndi:BPMNDiagram>\n' +
             '</bpmn2:definitions>';
 
-        const modelerContainerId = '#canvas'
-
         const modeler = new BpmnModeler({
-            container: modelerContainerId,
+            container: '#canvas',
             propertiesPanel: {
                 parent: '#properties'
             },
             additionalModules: [
                 BpmnPalletteModule,
-                // propertiesPanelModule,
-                // propertiesProviderModule,
                 BpmnPropertiesPanelModule,
                 BpmnPropertiesProviderModule,
                 CamundaPlatformPropertiesProviderModule,
                 CamundaExtensionModule,
-                {
-                    __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider'],
-                    quantMERenderer: ['type', QuantMERenderer],
-                    quantMEReplaceMenu: ['type', QuantMEReplaceMenuProvider],
-                    bpmnFactory: ['type', QuantMEFactory],
-                    quantMEPathMap: ['type', QuantMEPathMap],
-                    propertiesProvider: ['type', QuantMEPropertiesProvider]
-                }
+                QuantMEExtensionModule,
             ],
             keyboard: {
                 bindTo: document

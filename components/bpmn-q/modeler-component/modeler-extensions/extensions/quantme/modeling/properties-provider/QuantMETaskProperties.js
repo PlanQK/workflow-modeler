@@ -1,5 +1,5 @@
 //
-import * as consts from "../../quantme/Constants";
+import * as consts from "../../Constants";
 import {isTextFieldEntryEdited, isSelectEntryEdited} from "@bpmn-io/properties-panel";
 import {AlgorithmEntry} from "./QuantMEPropertyEntries.js";
 import {
@@ -19,7 +19,7 @@ import {
     ShotsEntry, SimulatorsAllowedEntry,
     UrlEntry
 } from "./QuantMEPropertyEntries";
-import {ORACLE_ID} from "../../quantme/Constants";
+import {ORACLE_ID} from "../../Constants";
 
 export function QuantumComputationTaskProperties(element) {
 

@@ -13,7 +13,7 @@
 import $ from 'jquery';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 // import { elementTemplates } from '@bpmn-io/properties-panel';
-import quantMEModdleExtension from '../../modeling/resources/quantum4bpmn.json';
+import quantMEModdleExtension from '../resources/quantum4bpmn.json';
 import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
 
 // let cmdHelper = require('')

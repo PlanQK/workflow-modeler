@@ -11,7 +11,7 @@
 
 // import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
 // import CamundaPropertiesProvider from 'bpmn-js-properties-panel/lib/provider/camunda/CamundaPropertiesProvider';
-import * as consts from '../quantme/Constants';
+import * as consts from '../Constants';
 import { ServiceTaskDelegateProps } from './service-tasks/ServiceTaskDelegateProps';
 
 let QuantMEPropertyEntryHandler = require('./properties-provider/QuantMEPropertyEntryHandler');

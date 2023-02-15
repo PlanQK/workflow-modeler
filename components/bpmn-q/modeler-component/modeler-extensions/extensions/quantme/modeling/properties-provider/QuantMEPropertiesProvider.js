@@ -1,5 +1,5 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
-import * as consts from "../../quantme/Constants";
+import * as consts from "../../Constants";
 
 import {
     DataPreparationTaskProperties,

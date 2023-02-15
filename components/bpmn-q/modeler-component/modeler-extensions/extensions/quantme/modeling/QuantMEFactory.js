@@ -10,8 +10,8 @@
  */
 
 import BpmnFactory from 'bpmn-js/lib/features/modeling/BpmnFactory';
-import { isQuantMETask } from '../quantme/utilities/Utilities';
-import { READOUT_ERROR_MITIGATION_TASK } from '../quantme/Constants';
+import { isQuantMETask } from '../utilities/Utilities';
+import { READOUT_ERROR_MITIGATION_TASK } from '../Constants';
 
 /**
  * This class implements functionality when creating shapes representing QuantME tasks
