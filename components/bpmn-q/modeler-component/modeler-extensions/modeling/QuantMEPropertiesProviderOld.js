@@ -9,12 +9,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
-import CamundaPropertiesProvider from 'bpmn-js-properties-panel/lib/provider/camunda/CamundaPropertiesProvider';
+// import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
+// import CamundaPropertiesProvider from 'bpmn-js-properties-panel/lib/provider/camunda/CamundaPropertiesProvider';
 import * as consts from '../quantme/Constants';
-import { serviceTaskDelegateProps } from './service-tasks/ServiceTaskDelegateProps';
+import { ServiceTaskDelegateProps } from './service-tasks/ServiceTaskDelegateProps';
 
-let QuantMEPropertyEntryHandler = require('./QuantMEPropertyEntryHandler');
+let QuantMEPropertyEntryHandler = require('./properties-provider/QuantMEPropertyEntryHandler');
 
 /**
  * This class extends the default PropertiesActivator with the properties of the newly introduced QuantME task types
@@ -98,7 +98,7 @@ function handleServiceTask(element, tabs, translate, bpmnFactory, wineryEndpoint
   detailsGroup.entries = [];
 
   // add new entries comprising the extension
-  serviceTaskDelegateProps(detailsGroup, element, bpmnFactory, translate, wineryEndpoint);
+  ServiceTaskDelegateProps(detailsGroup, element, bpmnFactory, translate, wineryEndpoint);
 }
 
 /**
@@ -172,7 +172,7 @@ function addQuantMEEntries(group, element, translate) {
 function addQuantumComputationTaskEntries(group, translate) {
 
   // add algorithm and provider attributes
-  QuantMEPropertyEntryHandler.addAlgorithmEntry(group, translate);
+  QuantMEPropertyEntryHandler.AlgorithmEntry(group, translate);
   QuantMEPropertyEntryHandler.addProviderEntry(group, translate);
 }
 

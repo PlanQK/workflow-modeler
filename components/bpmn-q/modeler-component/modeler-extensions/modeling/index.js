@@ -13,7 +13,7 @@ import QuantMERenderer from './QuantMERenderer';
 import QuantMEReplaceMenuProvider from './QuantMEReplaceMenuProvider';
 import QuantMEFactory from './QuantMEFactory';
 import QuantMEPathMap from './QuantMEPathMap';
-import QuantMEPropertiesProvider from './QuantMEPropertiesProvider';
+import QuantMEPropertiesProvider from './properties-provider/QuantMEPropertiesProvider';
 
 export default {
   __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider'],

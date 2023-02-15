@@ -17,8 +17,8 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
  */
 export default class QuantMEReplaceMenuProvider extends ReplaceMenuProvider {
-  constructor(popupMenu, modeling, moddle, bpmnReplace, rules, translate) {
-    super(popupMenu, modeling, moddle, bpmnReplace, rules, translate);
+  constructor(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate) {
+    super(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate);
   }
 
   /**
@@ -44,6 +44,7 @@ export default class QuantMEReplaceMenuProvider extends ReplaceMenuProvider {
 }
 
 QuantMEReplaceMenuProvider.$inject = [
+    'bpmnFactory',
   'popupMenu',
   'modeling',
   'moddle',

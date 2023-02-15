@@ -27,7 +27,21 @@ module.exports = {
                     "less-loader",
                 ],
             },
+            {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        cacheDirectory: true,
+                        cacheCompression: false,
+                    }
+                }
+            }
         ]
+    },
+    resolve: {
+        extensions: ['.jsx', '.js']
     },
     plugins: [
         new CopyWebpackPlugin([

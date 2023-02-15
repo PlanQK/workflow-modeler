@@ -9,13 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import extensionElementsHelper from 'bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper';
+// import extensionElementsHelper from 'bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper';
 import $ from 'jquery';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
-import { elementTemplates } from 'bpmn-js-properties-panel/lib/provider/camunda/element-templates';
+// import { elementTemplates } from '@bpmn-io/properties-panel';
 import quantMEModdleExtension from '../../modeling/resources/quantum4bpmn.json';
-import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda';
+import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
 
+// let cmdHelper = require('')
 /**
  * Get the root process element of the diagram
  */
@@ -81,19 +82,19 @@ export function getSingleFlowElement(process) {
 export function getCamundaInputOutput(bo, bpmnFactory) {
 
   // retrieve InputOutput element if already defined
-  let inputOutput = extensionElementsHelper.getExtensionElements(bo, 'camunda:InputOutput');
+  let inputOutput = getExtension(bo, 'camunda:InputOutput');
 
   // create new InputOutput element if non existing
   if (!inputOutput || inputOutput.length === 0) {
 
-    const extensionEntry = extensionElementsHelper.addEntry(bo, bo, bpmnFactory.create('camunda:InputOutput'), bpmnFactory);
+    const extensionEntry = addEntry(bo, bo, bpmnFactory.create('camunda:InputOutput'), bpmnFactory);
 
     if (extensionEntry['extensionElements']) {
       bo.extensionElements = extensionEntry['extensionElements'];
     } else {
       bo.extensionElements = extensionEntry['context']['currentObject'];
     }
-    inputOutput = extensionElementsHelper.getExtensionElements(bo, 'camunda:InputOutput');
+    inputOutput = getExtension(bo, 'camunda:InputOutput');
 
     if (!inputOutput) {
       let inout = bpmnFactory.create('camunda:InputOutput');
@@ -211,7 +212,7 @@ export function createModeler() {
 
   return new BpmnModeler({
     additionalModules: [
-      elementTemplates
+      // elementTemplates
     ],
     moddleExtensions: {
       camunda: camundaModdlePackage,
@@ -238,4 +239,73 @@ export function performAjax(targetUrl, dataToSend) {
       }
     });
   });
+}
+
+export function getExtension(element, type) {
+  if (!element.extensionElements) {
+    return null;
+  }
+
+  return element.extensionElements.filter(function(e) {
+    return e.$instanceOf(type);
+  })[0];
+}
+
+export function addEntry(bo, element, entry, bpmnFactory) {
+  let extensionElements = bo.get('extensionElements');
+
+  // if there is no extensionElements list, create one
+  if (!extensionElements) {
+
+    extensionElements = createElement('bpmn:ExtensionElements', { values: [entry] }, bo, bpmnFactory);
+    return { extensionElements : extensionElements };
+  } else {
+    // add new failedJobRetryExtensionElement to existing extensionElements list
+    return addElementsTolist(element, extensionElements, 'values', [entry]);
+  }
+}
+
+export function createElement(elementType, properties, parent, factory) {
+  let element = factory.create(elementType, properties);
+  element.$parent = parent;
+
+  return element;
+}
+
+export function addElementsTolist(element, businessObject, listPropertyName, objectsToAdd) {
+  return {
+    cmd: 'properties-panel.update-businessobject-list',
+    context: {
+      element: element,
+      currentObject: businessObject,
+      propertyName: listPropertyName,
+      objectsToAdd: objectsToAdd
+    }
+  };
+}
+
+export function removeEntry(bo, element, entry) {
+  let extensionElements = bo.get('extensionElements');
+
+  if (!extensionElements) {
+
+    // return an empty command when there is no extensionElements list
+    return {};
+  }
+
+  return removeElementsFromList(element, extensionElements, 'values', 'extensionElements', [entry]);
+}
+
+export function removeElementsFromList(element, businessObject, listPropertyName, referencePropertyName, objectsToRemove) {
+
+  return {
+    cmd: 'properties-panel.update-businessobject-list',
+    context: {
+      element: element,
+      currentObject: businessObject,
+      propertyName: listPropertyName,
+      referencePropertyName: referencePropertyName,
+      objectsToRemove: objectsToRemove
+    }
+  };
 }

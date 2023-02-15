@@ -10,75 +10,79 @@
  */
 
 // adapted from 'bpmn-js-properties-panel/lib/provider/camunda/parts/ServiceTaskDelegateProps' to support the Service Task extension
-
-import { addImplementationDetails } from './ServiceTaskImplementationExtension';
-import { getImplementationType } from './ImplementationTypeHelperExtension';
+// import React from
+import { ImplementationDetails } from './ServiceTaskImplementationExtension';
+import {
+  getServiceTaskLikeBusinessObject, isDmnCapable, isExternalCapable,
+  isServiceTaskLike
+} from '../properties-provider/service-task/utils/ImplementationTypeUtils';
 import { deployment } from './Deployment';
+import {isTextFieldEntryEdited} from "@bpmn-io/properties-panel";
+import {getImplementationType} from "../properties-provider/service-task/utils/ImplementationTypeHelperExtension";
 
-const ImplementationTypeHelper = require('bpmn-js-properties-panel/lib/helper/ImplementationTypeHelper'),
-      InputOutputHelper = require('bpmn-js-properties-panel/lib/helper/InputOutputHelper');
+// const ImplementationTypeHelper = require('bpmn-js-properties-panel/lib/helper/ImplementationTypeHelper'),
+//       InputOutputHelper = require('bpmn-js-properties-panel/lib/helper/InputOutputHelper');
 
-const utils = require('bpmn-js-properties-panel/lib/Utils'),
+const utils = require('bpmn-js-properties-panel'),
       escapeHTML = utils.escapeHTML,
       triggerClickEvent = utils.triggerClickEvent;
 
-const delegate = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/Delegate'),
-      external = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/External'),
-      callable = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/Callable'),
-      resultVariable = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ResultVariable');
+const delegate = require('bpmn-js-properties-panel'),
+      external = require('bpmn-js-properties-panel'),
+      callable = require('bpmn-js-properties-panel'),
+      resultVariable = require('bpmn-js-properties-panel');
 
-const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
+// const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
 
 const domQuery = require('min-dom').query,
       domClosest = require('min-dom').closest,
       domClasses = require('min-dom').classes;
 
 function getBusinessObject(element) {
-  return ImplementationTypeHelper.getServiceTaskLikeBusinessObject(element);
+  return getServiceTaskLikeBusinessObject(element);
 }
 
-function isDmnCapable(element) {
-  return ImplementationTypeHelper.isDmnCapable(element);
-}
+export function ServiceTaskDelegateProps(element, bpmnFactory, translate, wineryEndpoint) {
 
-function isExternalCapable(element) {
-  return ImplementationTypeHelper.isExternalCapable(element);
-}
-
-function isServiceTaskLike(element) {
-  return ImplementationTypeHelper.isServiceTaskLike(element);
-}
-
-export function serviceTaskDelegateProps(group, element, bpmnFactory, translate, wineryEndpoint) {
-
-  if (!isServiceTaskLike(getBusinessObject(element))) {
+  if (!isServiceTaskLike(element)) {
     return;
   }
 
   const hasDmnSupport = isDmnCapable(element);
   const hasExternalSupport = isExternalCapable(getBusinessObject(element));
 
-  // implementation type ////////////////////////////////////
+  const entries = []
 
-  group.entries = group.entries.concat(addImplementationDetails(element, bpmnFactory, {
-    getBusinessObject: getBusinessObject,
-    getImplementationType: getImplementationType,
-    hasDmnSupport: hasDmnSupport,
-    hasExternalSupport: hasExternalSupport,
-    hasServiceTaskLikeSupport: true,
-    hasDeploymentSupport: true
-  }, translate));
+  // implementation type ///////////////////////////////////
+
+  const options = {
+        getBusinessObject: getBusinessObject,
+        getImplementationType: getImplementationType,
+        hasDmnSupport: hasDmnSupport,
+        hasExternalSupport: hasExternalSupport,
+        hasServiceTaskLikeSupport: true,
+        hasDeploymentSupport: true
+  };
+  entries.push({
+    id: 'implementationDetails',
+    element,
+    bpmnFactory,
+    options,
+    translate,
+    component: ImplementationDetails,
+    isEdited: isTextFieldEntryEdited
+  });
 
   // delegate (class, expression, delegateExpression) //////////
 
-  group.entries = group.entries.concat(delegate(element, bpmnFactory, {
+  entries.push(delegate(element, bpmnFactory, {
     getBusinessObject: getBusinessObject,
     getImplementationType: getImplementationType
   }, translate));
 
   // result variable /////////////////////////////////////////
 
-  group.entries = group.entries.concat(resultVariable(element, bpmnFactory, {
+  entries.push(resultVariable(element, bpmnFactory, {
     getBusinessObject: getBusinessObject,
     getImplementationType: getImplementationType,
     hideResultVariable: function(element, node) {
@@ -88,7 +92,7 @@ export function serviceTaskDelegateProps(group, element, bpmnFactory, translate,
 
   // deployment //////////////////////////////////////////////////
 
-  group.entries = group.entries.concat(deployment(element, bpmnFactory, {
+  entries.push(deployment(element, bpmnFactory, {
     getBusinessObject: getBusinessObject,
     getImplementationType: getImplementationType
   }, translate, wineryEndpoint));
@@ -96,7 +100,7 @@ export function serviceTaskDelegateProps(group, element, bpmnFactory, translate,
   // external //////////////////////////////////////////////////
 
   if (hasExternalSupport) {
-    group.entries = group.entries.concat(external(element, bpmnFactory, {
+    entries.push(external(element, bpmnFactory, {
       getBusinessObject: getBusinessObject,
       getImplementationType: getImplementationType
     }, translate));
@@ -105,7 +109,7 @@ export function serviceTaskDelegateProps(group, element, bpmnFactory, translate,
   // dmn ////////////////////////////////////////////////////////
 
   if (hasDmnSupport) {
-    group.entries = group.entries.concat(callable(element, bpmnFactory, {
+    entries.push(callable(element, bpmnFactory, {
       getCallableType: getImplementationType
     }, translate));
   }
@@ -116,7 +120,7 @@ export function serviceTaskDelegateProps(group, element, bpmnFactory, translate,
     return getImplementationType(element) === 'connector';
   };
 
-  group.entries.push(entryFactory.link({
+  entries.push(entryFactory.link({
     id: 'configureConnectorLink',
     label: translate('Configure Connector'),
     handleClick: function(element, node, event) {
@@ -151,6 +155,8 @@ export function serviceTaskDelegateProps(group, element, bpmnFactory, translate,
       return false;
     }
   }));
+
+  return entries;
 }
 
 // helpers ///////////////////////////

@@ -9,10 +9,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
-      cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
-      extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper'),
-      elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
+import {getExtension, removeEntry} from "../../quantme/utilities/Utilities";
+import {SelectEntry} from "@bpmn-io/properties-panel";
+import * as consts from "../../quantme/Constants";
+import React from "@bpmn-io/properties-panel/preact/compat";
+import {useService} from "bpmn-js-properties-panel";
+
+// const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
+//       cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
+//       // extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper'),
+//       elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
 const assign = require('lodash/assign');
 const map = require('lodash/map');
@@ -39,7 +45,10 @@ const EXTERNAL_CAPABLE_PROPS = {
   'camunda:topic': undefined
 };
 
-export function addImplementationDetails(element, bpmnFactory, options, translate) {
+export function ImplementationDetails(element, bpmnFactory, options, translate) {
+
+  const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const DEFAULT_OPTIONS = [
     { value: 'class', name: translate('Java Class') },
@@ -102,95 +111,109 @@ export function addImplementationDetails(element, bpmnFactory, options, translat
 
   selectOptions.push({ value: '' });
 
-  entries.push(entryFactory.selectBox({
-    id: 'implementation',
-    label: translate('Implementation'),
-    selectOptions: selectOptions,
-    modelProperty: 'implType',
+  const get = function() {
+    return {
+      implType: getType(element) || ''
+    };
+  };
 
-    get: function(element, node) {
-      return {
-        implType: getType(element) || ''
-      };
-    },
+  const set = function(values) {
+    const bo = getBusinessObject(element);
+    const oldType = getType(element);
+    const newType = values.implType;
 
-    set: function(element, values, node) {
-      const bo = getBusinessObject(element);
-      const oldType = getType(element);
-      const newType = values.implType;
+    let props = assign({}, DELEGATE_PROPS);
 
-      let props = assign({}, DELEGATE_PROPS);
+    if (DEFAULT_DELEGATE_PROPS.indexOf(newType) !== -1) {
 
-      if (DEFAULT_DELEGATE_PROPS.indexOf(newType) !== -1) {
-
-        let newValue = '';
-        if (DEFAULT_DELEGATE_PROPS.indexOf(oldType) !== -1) {
-          newValue = bo.get('camunda:' + oldType);
-        }
-        props['camunda:' + newType] = newValue;
+      let newValue = '';
+      if (DEFAULT_DELEGATE_PROPS.indexOf(oldType) !== -1) {
+        newValue = bo.get('camunda:' + oldType);
       }
+      props['camunda:' + newType] = newValue;
+    }
 
-      if (hasDmnSupport) {
-        props = assign(props, DMN_CAPABLE_PROPS);
-        if (newType === 'dmn') {
-          props['camunda:decisionRef'] = '';
-        }
+    if (hasDmnSupport) {
+      props = assign(props, DMN_CAPABLE_PROPS);
+      if (newType === 'dmn') {
+        props['camunda:decisionRef'] = '';
       }
+    }
 
-      if (hasExternalSupport) {
-        props = assign(props, EXTERNAL_CAPABLE_PROPS);
-        if (newType === 'external') {
-          props['camunda:type'] = 'external';
-          props['camunda:topic'] = '';
-        }
+    if (hasExternalSupport) {
+      props = assign(props, EXTERNAL_CAPABLE_PROPS);
+      if (newType === 'external') {
+        props['camunda:type'] = 'external';
+        props['camunda:topic'] = '';
       }
+    }
 
-      if (hasScriptSupport) {
-        props['camunda:script'] = undefined;
+    if (hasScriptSupport) {
+      props['camunda:script'] = undefined;
 
-        if (newType === 'script') {
-          props['camunda:script'] = elementHelper.createElement('camunda:Script', {}, bo, bpmnFactory);
-        }
+      if (newType === 'script') {
+        props['camunda:script'] = elementHelper.createElement('camunda:Script', {}, bo, bpmnFactory);
       }
+    }
 
-      if (hasDeploymentSupport) {
-        props['quantme:deploymentModelUrl'] = undefined;
+    if (hasDeploymentSupport) {
+      props['quantme:deploymentModelUrl'] = undefined;
 
-        if (newType === 'deploymentModel') {
-          props['quantme:deploymentModelUrl'] = '';
-        }
+      if (newType === 'deploymentModel') {
+        props['quantme:deploymentModelUrl'] = '';
       }
+    }
 
-      const commands = [];
-      commands.push(cmdHelper.updateBusinessObject(element, bo, props));
+    const commands = [];
+    modeling.updateProperties(element, props);
+    // commands.push(cmdHelper.updateBusinessObject(element, bo, ));
 
-      if (hasServiceTaskLikeSupport) {
-        const connectors = extensionElementsHelper.getExtensionElements(bo, 'camunda:Connector');
-        commands.push(map(connectors, function(connector) {
-          return extensionElementsHelper.removeEntry(bo, element, connector);
-        }));
+    if (hasServiceTaskLikeSupport) {
+      const connectors = getExtension(bo, 'camunda:Connector');
+      commands.push(map(connectors, function(connector) {
+        return removeEntry(bo, element, connector);
+      }));
 
-        if (newType === 'connector') {
-          let extensionElements = bo.get('extensionElements');
-          if (!extensionElements) {
-            extensionElements = elementHelper.createElement('bpmn:ExtensionElements', { values: [] }, bo, bpmnFactory);
-            commands.push(cmdHelper.updateBusinessObject(element, bo, { extensionElements: extensionElements }));
-          }
-          const connector = elementHelper.createElement('camunda:Connector', {}, extensionElements, bpmnFactory);
-          commands.push(cmdHelper.addAndRemoveElementsFromList(
+      if (newType === 'connector') {
+        let extensionElements = bo.get('extensionElements');
+        if (!extensionElements) {
+          extensionElements = elementHelper.createElement('bpmn:ExtensionElements', { values: [] }, bo, bpmnFactory);
+          commands.push(cmdHelper.updateBusinessObject(element, bo, { extensionElements: extensionElements }));
+        }
+        const connector = elementHelper.createElement('camunda:Connector', {}, extensionElements, bpmnFactory);
+        commands.push(cmdHelper.addAndRemoveElementsFromList(
             element,
             extensionElements,
             'values',
             'extensionElements',
             [connector],
             []
-          ));
-        }
+        ));
       }
-
-      return commands;
     }
-  }));
 
-  return entries;
+    return commands;
+  };
+
+  // entries.push(entryFactory.selectBox({
+  //   id: 'implementation',
+  //   label: translate('Implementation'),
+  //   selectOptions: selectOptions,
+  //   modelProperty: 'implType',
+  //
+  //
+  // }));
+
+  const getOptions = function (element) {
+    return selectOptions;
+  }
+
+  return <SelectEntry
+      id={'implementation'}
+      label={translate('Implementation')}
+      getValue={get}
+      setValue={set}
+      getOptions={getOptions}
+      debounce={debounce}
+  />;
 }
