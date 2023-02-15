@@ -1,12 +1,16 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require('path');
 
 module.exports = {
-    entry: {
-        bundle: [ './modeler-component/QuantumWorkflowModeler.js' ]
-    },
+    entry: './modeler-component/QuantumWorkflowModeler.js',
     output: {
-        path: __dirname + '/public',
-        filename: 'app.js'
+        filename: 'app.js',
+        path: path.resolve(__dirname + '/public'),
+        globalObject: 'this',
+        library: {
+            name: 'qFlowModeler',
+            type: 'umd',
+        },
     },
     module: {
         rules: [
@@ -21,14 +25,19 @@ module.exports = {
             //         'file-loader'
             //     ]
             // },
-            {
-                test: /\.(png|jpg)$/,
-                loader: 'file-loader'
-            },
+            // {
+            //     test: /\.(png|jpg)$/,
+            //     loader: 'file-loader'
+            // },
             // {
             //     test: /\.(png|jpg)$/,
             //     loader: 'url-loader'
             // },
+            {
+
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+            },
             {
                 test: /\.css$/i,
                 use: ["style-loader", "css-loader"],
@@ -60,8 +69,8 @@ module.exports = {
     },
     plugins: [
         new CopyWebpackPlugin([
-            { from: 'assets/**', to: 'vendor/bpmn-js', context: 'node_modules/bpmn-js/dist/' },
-            { from: '**/*.{html,css}', context: 'app/' }
+            { from: 'assets/**', to: 'vendor/bpmn-js', context: 'node_modules/bpmn-js/dist/' }
+            // { from: '**/*.{html,css}', context: 'app/' }
         ])
     ],
     mode: 'development',
