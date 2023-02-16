@@ -10,8 +10,8 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'camunda-modeler-plugin-helpers/react';
-import { Modal } from 'camunda-modeler-plugin-helpers/components';
+// import React, { useState } from 'camunda-modeler-plugin-helpers/react';
+// import { Modal } from 'camunda-modeler-plugin-helpers/components';
 
 // polyfill upcoming structural components
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);

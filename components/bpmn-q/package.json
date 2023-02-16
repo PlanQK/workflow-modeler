@@ -42,7 +42,6 @@
     "@babel/runtime": "^7.20.7",
     "babel-loader": "^9.1.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "camunda-modeler-plugin-helpers": "^5.1.0",
     "canvg-browser": "^1.0.0",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^6.7.2",

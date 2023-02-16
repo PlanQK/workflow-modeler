@@ -10,8 +10,8 @@
  */
 
 /* eslint-disable no-unused-vars*/
-import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
-import { Fill } from 'camunda-modeler-plugin-helpers/components';
+// import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
+// import { Fill } from 'camunda-modeler-plugin-helpers/components';
 
 import ServiceDeploymentOverviewModal from './ServiceDeploymentOverviewModal';
 import ServiceDeploymentInputModal from './ServiceDeploymentInputModal';

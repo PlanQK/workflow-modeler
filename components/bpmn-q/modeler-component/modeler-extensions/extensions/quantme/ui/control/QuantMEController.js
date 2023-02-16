@@ -10,8 +10,8 @@
  */
 
 /* eslint-disable no-unused-vars*/
-import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
-import { Fill } from 'camunda-modeler-plugin-helpers/components';
+// import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
+// import { Fill } from 'camunda-modeler-plugin-helpers/components';
 
 import { startReplacementProcess } from '../../replacement/QuantMETransformator';
 import { configureBasedOnHardwareSelection } from '../../replacement/hardware-selection/QuantMEHardwareSelectionHandler';
