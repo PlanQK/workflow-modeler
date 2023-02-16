@@ -25,6 +25,12 @@ import {
     BpmnPropertiesProviderModule,
     CamundaPlatformPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
+import Toolbar from "./modeler-extensions/editor/Toolbar";
+import React from "@bpmn-io/properties-panel/preact/compat";
+import AdaptationPlugin from "./modeler-extensions/extensions/quantme/ui/adaptation/AdaptationPlugin";
+import ConfigPlugin from "./modeler-extensions/extensions/quantme/ui/config/ConfigPlugin";
+import DeploymentPlugin from "./modeler-extensions/extensions/quantme/ui/deployment/services/DeploymentPlugin";
+import QuantMEController from "./modeler-extensions/extensions/quantme/ui/control/QuantMEController";
 
 // let propertiesPanelModule = require('bpmn-js-properties-panel');
 // let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
@@ -94,6 +100,11 @@ class QuantumWorkflowModeler extends HTMLElement {
         }
 
         openDiagram(diagramXML);
+
+        const buttons = [AdaptationPlugin, QuantMEController, DeploymentPlugin, ConfigPlugin]
+
+        const root = createRoot(document.getElementById('button-container'))
+        root.render(<Toolbar buttons={buttons} />);
     }
 }
 

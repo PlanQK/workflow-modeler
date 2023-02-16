@@ -16,11 +16,11 @@ import { Fill } from 'camunda-modeler-plugin-helpers/components';
 import ServiceDeploymentOverviewModal from './ServiceDeploymentOverviewModal';
 import ServiceDeploymentInputModal from './ServiceDeploymentInputModal';
 import ServiceDeploymentBindingModal from './ServiceDeploymentBindingModal';
-import { getRootProcess } from 'client/src/app/quantme/utilities/Utilities';
+import { getRootProcess } from '../../../utilities/Utilities';
 
-import { createServiceInstance, uploadCSARToContainer } from 'client/src/app/quantme/deployment/OpenTOSCAUtils';
-import { bindUsingPull, bindUsingPush } from 'client/src/app/quantme/deployment/BindingUtils';
-import { getServiceTasksToDeploy } from 'client/src/app/quantme/deployment/DeploymentUtils';
+import { createServiceInstance, uploadCSARToContainer } from '../../../deployment/OpenTOSCAUtils';
+import { bindUsingPull, bindUsingPush } from '../../../deployment/BindingUtils';
+import { getServiceTasksToDeploy } from '../../../deployment/DeploymentUtils';
 
 const defaultState = {
   windowOpenDeploymentOverview: false,
