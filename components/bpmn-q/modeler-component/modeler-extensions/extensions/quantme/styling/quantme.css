@@ -216,6 +216,56 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
+.bpmn-icon-parameter-optimization:before {
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-parameter-optimization-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.bpmn-icon-result-evaluation:before {
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-result-evaluation-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.bpmn-icon-variational-quantum-algorithm:before {
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-variational-quantum-algorithm-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.bpmn-icon-warm-starting:before {
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-warm-starting-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.bpmn-icon-circuit-cutting:before {
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-cutting-subprocess.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
 .adaptation-tab {
     overflow: hidden;
     border: 1px solid #ccc;

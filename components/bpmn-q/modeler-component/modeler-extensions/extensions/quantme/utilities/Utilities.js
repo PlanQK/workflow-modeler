@@ -15,6 +15,7 @@ import BpmnModeler from 'bpmn-js/lib/Modeler';
 // import { elementTemplates } from '@bpmn-io/properties-panel';
 import quantMEModdleExtension from '../resources/quantum4bpmn.json';
 import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
+import quantMEModule from '../modeling';
 
 // let cmdHelper = require('')
 /**
@@ -26,6 +27,38 @@ export function getRootProcess(definitions) {
       return definitions.rootElements[i];
     }
   }
+}
+
+/**
+ * Get the definitions from a xml string representing a BPMN diagram
+ *
+ * @param xml the xml representing the BPMN diagram
+ * @return the definitions from the xml definitions
+ */
+export async function getDefinitionsFromXml(xml) {
+  let bpmnModeler = await createModelerFromXml(xml);
+  return bpmnModeler.getDefinitions();
+}
+
+/**
+ * Create a new modeler object and import the given XML BPMN diagram
+ *
+ * @param xml the xml representing the BPMN diagram
+ * @return the modeler containing the BPMN diagram
+ */
+export async function createModelerFromXml(xml) {
+
+  // create new modeler with the custom QuantME extensions
+  const bpmnModeler = createModeler();
+
+  // import the xml containing the definitions
+  try {
+    await bpmnModeler.importXML(xml);
+    return bpmnModeler;
+  } catch (err) {
+    console.error(err);
+  }
+  return undefined;
 }
 
 /**
@@ -212,7 +245,8 @@ export function createModeler() {
 
   return new BpmnModeler({
     additionalModules: [
-      // elementTemplates
+      // elementTemplates,
+      quantMEModule
     ],
     moddleExtensions: {
       camunda: camundaModdlePackage,

@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getExtension} from "../../../../utilities/Utilities";
+import {getExtension} from "./Utilities";
 import {
   getListenerBusinessObject,
   getServiceTaskLikeBusinessObject,

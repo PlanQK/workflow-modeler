@@ -8,7 +8,7 @@ import {
   SelectEntry,
   isSelectEntryEdited
 } from '@bpmn-io/properties-panel';
-import {getImplementationType} from "./utils/ImplementationTypeHelperExtension";
+import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
 import {useService} from "bpmn-js-properties-panel";
 
 export function DmnImplementationProps(props) {

@@ -4,13 +4,13 @@ import {DmnImplementationProps} from './DmnImplementationProps';
 import {ImplementationTypeProps} from './ImplementationTypeProps';
 
 import {useService} from "bpmn-js-properties-panel";
-import {getImplementationType} from "./utils/ImplementationTypeHelperExtension";
+import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
 import {
     getServiceTaskLikeBusinessObject,
     isDmnCapable,
     isExternalCapable
-} from "./utils/ImplementationTypeUtils";
-import {getExtensionElementsList} from "./utils/ExtensionElementsUtil";
+} from "../../../utilities/ImplementationTypeUtils";
+import {getExtensionElementsList} from "../../../utilities/ExtensionElementsUtil";
 import {Deployment} from "./Deployment";
 
 

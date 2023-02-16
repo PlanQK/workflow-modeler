@@ -4,14 +4,14 @@ import {
 
 import { SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
 import {useService} from "bpmn-js-properties-panel";
-import {getImplementationType} from "./utils/ImplementationTypeHelperExtension";
-import {createElement} from "./utils/ElementUtil"
+import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
+import {createElement} from "../../../utilities/ElementUtil"
 import {
   getServiceTaskLikeBusinessObject, isDeploymentCapable,
   isDmnCapable,
   isExternalCapable, isServiceTaskLike
-} from "./utils/ImplementationTypeUtils";
-import {getExtensionElementsList} from "./utils/ExtensionElementsUtil";
+} from "../../../utilities/ImplementationTypeUtils";
+import {getExtensionElementsList} from "../../../utilities/ExtensionElementsUtil";
 
 
 const DELEGATE_PROPS = {

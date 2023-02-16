@@ -40,6 +40,32 @@
         ]
       },
       {
+        "name": "CircuitCuttingSubprocess",
+        "superClass": [ "bpmn:SubProcess" ],
+        "properties": [
+          {
+            "name": "cuttingMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxSubCircuitWidth",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxNumberOfCuts",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxNumSubCircuits",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
         "name": "QuantumComputationTask",
         "superClass": [ "bpmn:Task" ],
         "properties": [
@@ -132,6 +158,148 @@
           },
           {
             "name": "programmingLanguage",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "ParameterOptimizationTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "optimizer",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxIterations",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "toleranceThreshold",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "learningRate",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "VariationalQuantumAlgorithmTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "quantumAlgorithm",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "algorithmicProblem",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "qpu",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "provider",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "optimizer",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "objectiveFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "costFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "cuttingMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "warmStartingMethod",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "ResultEvaluationTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "objectiveFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "costFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "eta",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "alpha",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "WarmStartingTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "warmStartingMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "quantumAlgorithm",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "classicalAlgorithm",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "repetitions",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "rounded",
             "isAttr": true,
             "type": "String"
           }

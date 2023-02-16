@@ -10,6 +10,7 @@
  */
 
 import * as consts from '../Constants';
+import { getDefinitionsFromXml, getRootProcess, getSingleFlowElement, isQuantMETask } from '../utilities/Utilities';
 
 /**
  * Check if the given task matches the detector, i.e., has the same QuantME type and matching attributes
@@ -196,4 +197,19 @@ function matchAlternativeProperties(detectorProperties, taskProperties) {
 
   // check if the found alternative property matches the detector
   return matchesProperty(detectorAlternative, taskAlternative, true);
+}
+
+export async function matchesQRM(qrm, task) {
+  console.log('Matching QRM %s and task with id %s!', qrm.qrmUrl, task.id);
+
+  // check whether the detector is valid and contains exactly one QuantME task
+  let rootProcess = getRootProcess(await getDefinitionsFromXml(qrm.detector));
+  let detectorElement = getSingleFlowElement(rootProcess);
+  if (detectorElement === undefined || !isQuantMETask(detectorElement)) {
+    console.log('Unable to retrieve QuantME task from detector: ', qrm.detector);
+    return false;
+  }
+
+  // check if QuantME task of the QRM matches the given task
+  return taskMatchesDetector(detectorElement, task);
 }
