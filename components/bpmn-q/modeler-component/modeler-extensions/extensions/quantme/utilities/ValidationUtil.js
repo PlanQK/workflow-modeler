@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2015 camunda Services GmbH
+ *
+ * This code and the accompanying materials are made available under the
+ * terms of the MIT License.
+ */
 const SPACE_REGEX = /\s/;
 
 // for QName validation as per http://www.w3.org/TR/REC-xml/#NT-NameChar

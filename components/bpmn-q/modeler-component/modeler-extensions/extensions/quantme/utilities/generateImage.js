@@ -1,11 +1,8 @@
 /**
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH
- * under one or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information regarding copyright
- * ownership.
+ * Copyright (c) 2015 camunda Services GmbH
  *
- * Camunda licenses this file to you under the MIT; you may not use this file
- * except in compliance with the MIT License.
+ * This code and the accompanying materials are made available under the
+ * terms of the MIT License.
  */
 
 import canvg from 'canvg-browser';

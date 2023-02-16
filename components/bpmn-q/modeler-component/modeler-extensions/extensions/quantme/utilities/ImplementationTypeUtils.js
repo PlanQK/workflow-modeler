@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2015 camunda Services GmbH
+ *
+ * This code and the accompanying materials are made available under the
+ * terms of the MIT License.
+ */
 import {
   getBusinessObject,
   is
