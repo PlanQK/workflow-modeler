@@ -28,6 +28,13 @@ module.exports = {
                 ],
             },
             {
+                test: /\.(png|jpg|jpeg|gif|ico|svg)$/,
+                type: 'asset/resource',
+                use: [
+                    'file-loader'
+                ]
+            },
+            {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 use: {
