@@ -1,36 +1,36 @@
-import './styling/styles/style.less';
+import './editor/styling/styles/style.less';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
-import './styling/modeler.less';
-import './modeler-extensions/extensions/quantme/styling/quantme.css';
+import './editor/styling/modeler.less';
+import './extensions/quantme/styling/quantme.css';
 
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 // import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
-import quantMEModdleExtension from './modeler-extensions/extensions/quantme/resources/quantum4bpmn.json';
-import QuantMEPropertiesProvider from './modeler-extensions/extensions/quantme/modeling/properties-provider/QuantMEPropertiesProvider.js'
+import quantMEModdleExtension from './extensions/quantme/resources/quantum4bpmn.json';
+import QuantMEPropertiesProvider from './extensions/quantme/modeling/properties-provider/QuantMEPropertiesProvider.js'
 
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
-import QuantMEExtensionModule from './modeler-extensions/extensions/quantme/modeling/'
-import QuantMERenderer from "./modeler-extensions/extensions/quantme/modeling/QuantMERenderer";
-import QuantMEReplaceMenuProvider from "./modeler-extensions/extensions/quantme/modeling/QuantMEReplaceMenuProvider";
-import QuantMEFactory from "./modeler-extensions/extensions/quantme/modeling/QuantMEFactory";
-import QuantMEPathMap from "./modeler-extensions/extensions/quantme/modeling/QuantMEPathMap";
+import QuantMEExtensionModule from './extensions/quantme/modeling/'
+import QuantMERenderer from "./extensions/quantme/modeling/QuantMERenderer";
+import QuantMEReplaceMenuProvider from "./extensions/quantme/modeling/QuantMEReplaceMenuProvider";
+import QuantMEFactory from "./extensions/quantme/modeling/QuantMEFactory";
+import QuantMEPathMap from "./extensions/quantme/modeling/QuantMEPathMap";
 import {
     BpmnPropertiesPanelModule,
     BpmnPropertiesProviderModule,
     CamundaPlatformPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
-import Toolbar from "./modeler-extensions/editor/Toolbar";
+import Toolbar from "./editor/Toolbar";
 import React from "@bpmn-io/properties-panel/preact/compat";
-import AdaptationPlugin from "./modeler-extensions/extensions/quantme/ui/adaptation/AdaptationPlugin";
-import ConfigPlugin from "./modeler-extensions/extensions/quantme/ui/config/ConfigPlugin";
-import DeploymentPlugin from "./modeler-extensions/extensions/quantme/ui/deployment/services/DeploymentPlugin";
-import QuantMEController from "./modeler-extensions/extensions/quantme/ui/control/QuantMEController";
+import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
+import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
+import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
+import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
 
 // let propertiesPanelModule = require('bpmn-js-properties-panel');
 // let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
