@@ -70,18 +70,12 @@ class QuantumWorkflowModeler extends HTMLElement {
                 parent: '#properties'
             },
             additionalModules: [
-
-                // basic modeling modules
                 BpmnPalletteModule,
-                CamundaExtensionModule,
-
-                // extension modules
-                QuantMEExtensionModule,
-
-                // properties panel module
                 BpmnPropertiesPanelModule,
                 BpmnPropertiesProviderModule,
-                CamundaPlatformPropertiesProviderModule
+                CamundaPlatformPropertiesProviderModule,
+                CamundaExtensionModule,
+                QuantMEExtensionModule,
             ],
             keyboard: {
                 bindTo: document
