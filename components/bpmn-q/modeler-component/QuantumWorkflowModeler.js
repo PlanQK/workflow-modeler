@@ -6,20 +6,13 @@ import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
 import './editor/styling/modeler.less';
 import './editor/styling/styles/style.less';
-import './extensions/quantme/styling/quantme.css';import './resources/styling/modeler.css'
+import './extensions/quantme/styling/quantme.css';
+import './resources/styling/modeler.css'
 import './resources/styling/editor-ui.css'
 
 import React from 'react'
 import {createRoot} from 'react-dom/client'
 
-import BpmnModeler from "bpmn-js/lib/Modeler";
-import BpmnPalletteModule from "bpmn-js/lib/features/palette";
-import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
-import {
-    BpmnPropertiesPanelModule,
-    BpmnPropertiesProviderModule,
-    CamundaPlatformPropertiesProviderModule
-} from 'bpmn-js-properties-panel';
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 // import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
@@ -38,18 +31,17 @@ import {
     CamundaPlatformPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 import Toolbar from "./editor/Toolbar";
-import React from "@bpmn-io/properties-panel/preact/compat";
-import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
+
 // import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
 // import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
 // import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
 
 // let propertiesPanelModule = require('bpmn-js-properties-panel');
 // let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
-let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
-
+// let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
 import ButtonToolbar from "./ui/ButtonToolbar";
+import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
 import {createNewDiagram} from "./io/IoUtilities";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
