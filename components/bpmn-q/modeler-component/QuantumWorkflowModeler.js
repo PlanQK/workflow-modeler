@@ -86,11 +86,17 @@ class QuantumWorkflowModeler extends HTMLElement {
             },
         });
 
-        const buttons = [AdaptationPlugin];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
+        const eventBus = modeler.get('eventBus');
+        eventBus.on('bpmn.modeler.created', function (event) {
+            console.log('############### event ####################');
+            console.log(event)
+        })
+
+        const buttons = [AdaptationPlugin,];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
 
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
-        root.render(<ButtonToolbar modeler={modeler}/>);
+        root.render(<ButtonToolbar modeler={modeler} buttons={buttons}/>);
         // root.render(<Toolbar buttons={buttons} />);
 
         createNewDiagram(modeler)
