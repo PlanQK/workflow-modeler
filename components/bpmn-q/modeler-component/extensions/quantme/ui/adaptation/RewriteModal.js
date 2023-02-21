@@ -14,6 +14,9 @@
 // import { Modal } from 'camunda-modeler-plugin-helpers/components';
 
 // polyfill upcoming structural components
+import Modal from "../../../../camunda-components/modal/Modal";
+import React from "@bpmn-io/properties-panel/preact/compat";
+
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);

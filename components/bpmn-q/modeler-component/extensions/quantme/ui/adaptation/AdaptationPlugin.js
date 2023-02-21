@@ -12,13 +12,15 @@
 /* eslint-disable no-unused-vars*/
 // import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
 // import { Fill } from 'camunda-modeler-plugin-helpers/components';
-
+import React, {PureComponent} from "@bpmn-io/properties-panel/preact/compat";
 import AdaptationModal from './AdaptationModal';
 import { findOptimizationCandidates } from './CandidateDetector';
 import RewriteModal from './RewriteModal';
 import { getQiskitRuntimeProgramDeploymentModel } from './runtimes/QiskitRuntimeHandler';
 import { getAWSRuntimeProgramDeploymentModel } from './runtimes/AwsRuntimeHandler';
 import { rewriteWorkflow } from './WorkflowRewriter';
+import {Fragment} from "@bpmn-io/properties-panel/preact";
+import Fill from "../../../../camunda-components/slot-fill/Fill";
 
 const defaultState = {
   adaptationOpen: false

@@ -28,9 +28,9 @@ import {
 import Toolbar from "./editor/Toolbar";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
-import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
-import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
-import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
+// import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
+// import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
+// import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
 
 // let propertiesPanelModule = require('bpmn-js-properties-panel');
 // let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
@@ -101,7 +101,7 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         openDiagram(diagramXML);
 
-        const buttons = [AdaptationPlugin, QuantMEController, DeploymentPlugin, ConfigPlugin]
+        const buttons = [AdaptationPlugin];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
 
         const root = createRoot(document.getElementById('button-container'))
         root.render(<Toolbar buttons={buttons} />);

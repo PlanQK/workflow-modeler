@@ -11,6 +11,7 @@
 
 /* eslint-disable no-unused-vars */
 import React, { useState } from "@bpmn-io/properties-panel/preact/compat";
+import Modal from "../../../../camunda-components/modal/Modal";
 // import { Modal } from 'camunda-modeler-plugin-helpers/components';
 
 // polyfill upcoming structural components
