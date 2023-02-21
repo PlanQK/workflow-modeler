@@ -17,8 +17,8 @@ import {
   isExternalCapable,
   isListener,
   isServiceTaskLike
-} from "./ImplementationTypeUtils";
-import {getExtensionElementsList} from "./ExtensionElementsUtil";
+} from "../../../common/util/camunda-utils/ImplementationTypeUtils";
+import {getExtensionElementsList} from "../../../common/util/camunda-utils/ExtensionElementsUtil";
 
 // const extensionsElementHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
 // const implementationTypeHelper = require('./ImplementationTypeHelper');

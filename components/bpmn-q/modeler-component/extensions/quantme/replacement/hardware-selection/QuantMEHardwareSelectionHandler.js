@@ -19,7 +19,7 @@ import {
   SELECT_ON_QUEUE_SIZE_SCRIPT
 } from './HardwareSelectionScripts';
 import * as consts from '../../Constants';
-import { addExtensionElements } from '../../utilities/ExtensionElementsUtil';
+import { addExtensionElements } from '../../../../common/util/camunda-utils/ExtensionElementsUtil';
 import { createModeler, createModelerFromXml } from '../../utilities/Utilities';
 
 /**

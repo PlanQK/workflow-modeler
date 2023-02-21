@@ -14,7 +14,7 @@ import { mount } from 'enzyme';
 
 import {
   Fill,
-} from '..';
+} from '../index';
 
 
 describe('<Fill>', function() {

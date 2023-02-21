@@ -15,7 +15,7 @@ import {
   SlotFillRoot,
   Fill,
   Slot
-} from '..';
+} from '../index';
 
 import FillContext from '../FillContext';
 import SlotContext from '../SlotContext';

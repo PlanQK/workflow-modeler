@@ -1,5 +1,5 @@
 import React from "react"
-import {createNewDiagram} from "../io/IoUtilities";
+import {createNewDiagram} from "../../common/util/IoUtilities";
 
 export default function NewDiagramButton(props) {
 

@@ -20,7 +20,7 @@ import { getQiskitRuntimeProgramDeploymentModel } from './runtimes/QiskitRuntime
 import { getAWSRuntimeProgramDeploymentModel } from './runtimes/AwsRuntimeHandler';
 import { rewriteWorkflow } from './WorkflowRewriter';
 import {Fragment} from "@bpmn-io/properties-panel/preact";
-import Fill from "../../../../camunda-components/slot-fill/Fill";
+import Fill from "../../../../common/camunda-components/slot-fill/Fill";
 
 const defaultState = {
   adaptationOpen: false

@@ -1,5 +1,5 @@
 import React, {useRef} from "react"
-import {loadDiagram} from "../io/IoUtilities";
+import {loadDiagram} from "../../common/util/IoUtilities";
 
 export default function OpenButton(props) {
 

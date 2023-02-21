@@ -4,11 +4,11 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
-import './editor/styling/modeler.less';
-import './editor/styling/styles/style.less';
+// import './editor/styling/modeler.less';
+// import './editor/styling/styles/style.less';
 import './extensions/quantme/styling/quantme.css';
-import './resources/styling/modeler.css'
-import './resources/styling/editor-ui.css'
+import './editor/resources/styling/modeler.css'
+import './editor/resources/styling/editor-ui.css'
 
 import React from 'react'
 import {createRoot} from 'react-dom/client'
@@ -40,9 +40,9 @@ import Toolbar from "./editor/Toolbar";
 // let propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/camunda');
 // let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
-import ButtonToolbar from "./ui/ButtonToolbar";
+import ButtonToolbar from "./editor/ui/ButtonToolbar";
 import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
-import {createNewDiagram} from "./io/IoUtilities";
+import {createNewDiagram} from "./common/util/IoUtilities";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
