@@ -15,7 +15,7 @@ import { ImplementationDetails } from './ServiceTaskImplementationExtension';
 import {
   getServiceTaskLikeBusinessObject, isDmnCapable, isExternalCapable,
   isServiceTaskLike
-} from '../../utilities/ImplementationTypeUtils';
+} from '../../../../common/util/camunda-utils/ImplementationTypeUtils';
 import { deployment } from './Deployment';
 import {isTextFieldEntryEdited} from "@bpmn-io/properties-panel";
 import {getImplementationType} from "../../utilities/ImplementationTypeHelperExtension";

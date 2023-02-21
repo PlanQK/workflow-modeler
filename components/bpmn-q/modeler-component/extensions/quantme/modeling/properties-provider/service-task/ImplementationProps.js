@@ -9,8 +9,8 @@ import {
     getServiceTaskLikeBusinessObject,
     isDmnCapable,
     isExternalCapable
-} from "../../../utilities/ImplementationTypeUtils";
-import {getExtensionElementsList} from "../../../utilities/ExtensionElementsUtil";
+} from "../../../../../common/util/camunda-utils/ImplementationTypeUtils";
+import {getExtensionElementsList} from "../../../../../common/util/camunda-utils/ExtensionElementsUtil";
 import {Deployment} from "./Deployment";
 
 

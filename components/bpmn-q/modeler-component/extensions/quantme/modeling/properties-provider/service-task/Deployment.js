@@ -2,7 +2,7 @@ import {SelectEntry} from "@bpmn-io/properties-panel";
 import * as consts from "../../../Constants";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import {useService} from "bpmn-js-properties-panel";
-import {getServiceTaskLikeBusinessObject} from "../../../utilities/ImplementationTypeUtils";
+import {getServiceTaskLikeBusinessObject} from "../../../../../common/util/camunda-utils/ImplementationTypeUtils";
 import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
 
 /**

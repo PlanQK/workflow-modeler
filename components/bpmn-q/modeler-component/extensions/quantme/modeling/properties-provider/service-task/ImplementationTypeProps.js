@@ -5,13 +5,13 @@ import {
 import { SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
 import {useService} from "bpmn-js-properties-panel";
 import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
-import {createElement} from "../../../utilities/ElementUtil"
+import {createElement} from "../../../../../common/util/camunda-utils/ElementUtil"
 import {
   getServiceTaskLikeBusinessObject, isDeploymentCapable,
   isDmnCapable,
   isExternalCapable, isServiceTaskLike
-} from "../../../utilities/ImplementationTypeUtils";
-import {getExtensionElementsList} from "../../../utilities/ExtensionElementsUtil";
+} from "../../../../../common/util/camunda-utils/ImplementationTypeUtils";
+import {getExtensionElementsList} from "../../../../../common/util/camunda-utils/ExtensionElementsUtil";
 
 
 const DELEGATE_PROPS = {

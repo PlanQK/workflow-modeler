@@ -14,7 +14,7 @@ import {
   getRootProcess,
   createModelerFromXml
 } from '../../utilities/Utilities';
-import generateImage from '../../utilities/generateImage';
+import generateImage from '../../../../common/util/camunda-utils/generateImage';
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
