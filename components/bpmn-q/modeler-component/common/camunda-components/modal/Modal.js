@@ -9,7 +9,6 @@
  */
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
-import '../../../extensions/quantme/styling/styles/style.less'
 
 import classNames from 'classnames';
 

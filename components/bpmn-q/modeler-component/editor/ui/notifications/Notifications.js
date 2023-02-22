@@ -16,7 +16,6 @@ import Notification from './Notification';
 import css from './Notifications.less';
 import {NOTIFICATION_TYPES} from "./NotificationHandler";
 
-
 export default class Notifications extends PureComponent {
   constructor(props) {
     super(props);
@@ -36,7 +35,7 @@ export default class Notifications extends PureComponent {
   }
 
   displayNotification({ type = 'info', title, content, duration = 4000 }) {
-    const notifications = this.notifications.getNotifications();
+    const notifications = this.state.notifications;
 
     if (!NOTIFICATION_TYPES.includes(type)) {
       throw new Error('Unknown notification type');
@@ -65,10 +64,12 @@ export default class Notifications extends PureComponent {
       type
     };
 
-    this.notifications.setNotifications([
+    this.setState({
+      notifications: [
       ...notifications,
       notification
-    ]);
+    ]
+    });
 
     return {
       close,
@@ -77,23 +78,23 @@ export default class Notifications extends PureComponent {
   }
 
   closeNotifications() {
-    this.notifications.setNotifications([]);
+    this.setState({ notifications: []});
   }
 
   _updateNotification(id, options) {
-    const notifications = this.notifications.getNotifications().map(notification => {
+    const notifications = this.state.notifications.map(notification => {
       const { id: currentId } = notification;
 
       return currentId !== id ? notification : { ...notification, ...options };
     });
 
-    this.notifications.setNotifications(notifications);
+    this.setState({ notifications: notifications})
   }
 
   _closeNotification(id) {
-    const notifications = this.notifications.getNotifications().filter(({ id: currentId }) => currentId !== id);
+    const notifications = this.state.notifications.filter(({ id: currentId }) => currentId !== id);
 
-    this.notifications.setNotifications(notifications);
+    this.setState({ notifications: notifications})
   }
 
   render() {

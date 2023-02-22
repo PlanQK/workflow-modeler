@@ -10,20 +10,14 @@
  */
 
 /* eslint-disable no-unused-vars*/
-// import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
-// // import { Fill } from 'camunda-modeler-plugin-helpers/components';
-// import React from "react";
-
 import AdaptationModal from './AdaptationModal';
 import { findOptimizationCandidates } from './CandidateDetector';
 import RewriteModal from './RewriteModal';
 import { getQiskitRuntimeProgramDeploymentModel } from './runtimes/QiskitRuntimeHandler';
 import { getAWSRuntimeProgramDeploymentModel } from './runtimes/AwsRuntimeHandler';
 import { rewriteWorkflow } from './WorkflowRewriter';
-// import {Fragment} from "@bpmn-io/properties-panel/preact";
-import Fill from "../../../../common/camunda-components/slot-fill/Fill";
-import {useService} from "bpmn-js-properties-panel";
 import React, {PureComponent} from "react";
+import {getModeler} from "../../../../editor/ModelerHandler";
 
 const defaultState = {
   adaptationOpen: false
@@ -35,7 +29,8 @@ export default class AdaptationPlugin extends PureComponent {
     super(props);
 
     // modelers for all tabs to enable switching between them
-    this.modelers = {};
+    // this.modelers = {};
+    this.modeler = getModeler();
 
     this.state = defaultState;
 
@@ -47,8 +42,6 @@ export default class AdaptationPlugin extends PureComponent {
 
     // get config to update details in the backend
     this.backendConfig = '';//props._getGlobal('config');
-
-    this.handleOnClick = this.handleOnClick.bind(this)
   }
 
   componentDidMount() {
@@ -231,25 +224,13 @@ export default class AdaptationPlugin extends PureComponent {
     this.setState({ rewriteOpen: false });
   }
 
-  handleOnClick(event) {
-    this.setState((prevState) => ({ adaptationOpen: true }));
-    console.log(this.state)
-  }
-
   render() {
-    // const setState = this.setState;
-    // const onClick = (event) => {setState({ adaptationOpen: true });};
-
-    // function handleOnClick(event) {
-    //   this.setState({ adaptationOpen: true });
-    //   console.log(this.state)
-    // }
     // render loop analysis button and pop-up menu
     return (<>
       <div style={{display: 'flex'}}>
         <button type="button" className="toolbar-btn"
                 title="Open menu to analyse and improve hybrid loops"
-                onClick={this.handleOnClick}>
+                onClick={() => this.setState({ adaptationOpen: true })}>
           <span className="hybrid-loop-adaptation"><span className="indent">Improve Hybrid Loops</span></span>
         </button>
       </div>

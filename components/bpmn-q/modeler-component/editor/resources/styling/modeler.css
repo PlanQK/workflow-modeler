@@ -2,16 +2,16 @@
     box-sizing: border-box;
 }
 
-/*body, html {*/
+body, html {
 
-/*    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-/*    font-size: 12px;*/
+    font-size: 12px;
 
-/*    height: 100%;*/
-/*    padding: 0;*/
-/*    margin: 0;*/
-/*}*/
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
 
 a:link {
     text-decoration: none;
