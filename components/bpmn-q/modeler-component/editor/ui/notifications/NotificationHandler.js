@@ -1,76 +1,62 @@
+import React from "react";
+import Notifications from "./Notifications";
+
 export const NOTIFICATION_TYPES = [ 'info', 'success', 'error', 'warning' ];
 
+/**
+ * Handler to manage notifications displayed to the user. Use getInstance() to get the current instance of the handler.
+ *
+ * Implements the Singleton pattern.
+ */
 export default class NotificationHandler {
+
+    static instance = undefined;
+
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        } else {
+            this.instance = new NotificationHandler([]);
+            return this.instance;
+        }
+    }
 
     constructor(notifications) {
         this.notifications = notifications;
         this.currentNotificationId = -1;
-
-        // this.state = { notifications: notifications.getNotifications() || [] };
+        this.notificationRef = React.createRef();
     }
 
-    setNotifications(notifications) {
-        this.notifications = notifications;
-    }
-
-    displayNotification({ type = 'info', title, content, duration = 4000 }) {
-        const notifications = this.notifications.getNotifications();
-
-        if (!NOTIFICATION_TYPES.includes(type)) {
-            throw new Error('Unknown notification type');
+    /**
+     * Creates a new Notifications React Component with a fixed ref to access the methods of the component.
+     *
+     * @param notifications The initial set of components to display wright after creation.
+     * @returns the created Notifications React Component
+     */
+    createNotificationsComponent(notifications) {
+        if (notifications) {
+            this.notifications = notifications;
         }
-
-        // if (!isString(title)) {
-        //     throw new Error('Title should be string');
-        // }
-
-        const id = this.currentNotificationId++;
-
-        const close = () => {
-            this._closeNotification(id);
-        };
-
-        const update = newProps => {
-            this._updateNotification(id, newProps);
-        };
-
-        const notification = {
-            content,
-            duration,
-            id,
-            close,
-            title,
-            type
-        };
-
-        this.notifications.setNotifications([
-            ...notifications,
-            notification
-        ]);
-
-        return {
-            close,
-            update
-        };
+        return <Notifications ref={this.notificationRef} notifications={this.notifications}/>
     }
 
+    /**
+     * Creates and displays a new Notification with the given properties. Calls effectively the respective method of the
+     * Notification Component.
+     *
+     * @param type The NOTIFICATION_TYPES of the notification.
+     * @param title The title of the notification.
+     * @param content The text displayed by the the notification.
+     * @param duration The duration in milliseconds.
+     */
+    displayNotification({ type = 'info', title, content, duration = 4000 }) {
+        this.notificationRef.current.displayNotification({type: type, title: title, content: content, duration: duration});
+    }
+
+    /**
+     * Close all open notifications.
+     */
     closeNotifications() {
-        this.notifications.setNotifications([]);
-    }
-
-    _updateNotification(id, options) {
-        const notifications = this.notifications.getNotifications().map(notification => {
-            const { id: currentId } = notification;
-
-            return currentId !== id ? notification : { ...notification, ...options };
-        });
-
-        this.notifications.setNotifications(notifications);
-    }
-
-    _closeNotification(id) {
-        const notifications = this.notifications.getNotifications().filter(({ id: currentId }) => currentId !== id);
-
-        this.notifications.setNotifications(notifications);
+        this.notificationRef.current.closeNotifications();
     }
 }

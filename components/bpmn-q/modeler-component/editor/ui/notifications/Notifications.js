@@ -13,7 +13,8 @@ import { createPortal } from 'react-dom';
 
 import Notification from './Notification';
 
-import css from './Notifications.less';
+// import css from './Notifications.less';
+import './NotificationsCSS.css'
 import {NOTIFICATION_TYPES} from "./NotificationHandler";
 
 export default class Notifications extends PureComponent {
@@ -24,6 +25,7 @@ export default class Notifications extends PureComponent {
     this.state = {
       notifications: props.notifications || []
     }
+    this.currentNotificationId = -1;
   }
 
   componentDidMount() {
@@ -41,13 +43,10 @@ export default class Notifications extends PureComponent {
       throw new Error('Unknown notification type');
     }
 
-    // if (!isString(title)) {
-    //     throw new Error('Title should be string');
-    // }
-
     const id = this.currentNotificationId++;
 
     const close = () => {
+      console.log('close');
       this._closeNotification(id);
     };
 
@@ -93,7 +92,6 @@ export default class Notifications extends PureComponent {
 
   _closeNotification(id) {
     const notifications = this.state.notifications.filter(({ id: currentId }) => currentId !== id);
-
     this.setState({ notifications: notifications})
   }
 
@@ -107,6 +105,6 @@ export default class Notifications extends PureComponent {
     }).reverse();
 
     // className={ css.Notifications }
-    return createPortal(<div>{ notificationComponents }</div>, this.container);
+    return createPortal(<div className="Notifications">{ notificationComponents }</div>, this.container);
   }
 }

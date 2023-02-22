@@ -1,11 +1,21 @@
 .toolbar-btn {
     background-color: transparent;
     border: none;
+    border-radius: 6px;
     font-size: 15px;
     font-family: Arial, serif;
     font-weight: bold;
-    margin: 5px;
+    margin: 2px;
+    padding: 8px;
     color: #636363;
+}
+
+.toolbar-btn:hover {
+    background-color: #f7f7f9;
+}
+
+.toolbar-btn:active {
+    background-color: #e8e8e8;
 }
 
 .toolbar-splitter {

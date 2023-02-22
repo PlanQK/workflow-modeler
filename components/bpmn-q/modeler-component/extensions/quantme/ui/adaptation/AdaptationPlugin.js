@@ -18,6 +18,7 @@ import { getAWSRuntimeProgramDeploymentModel } from './runtimes/AwsRuntimeHandle
 import { rewriteWorkflow } from './WorkflowRewriter';
 import React, {PureComponent} from "react";
 import {getModeler} from "../../../../editor/ModelerHandler";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 const defaultState = {
   adaptationOpen: false
@@ -136,12 +137,12 @@ export default class AdaptationPlugin extends PureComponent {
       }
 
       if (rewriteButton === undefined) {
-        // this.props.displayNotification({
-        //   type: 'error',
-        //   title: 'Unable to analyse workflow',
-        //   content: 'Error during workflow analysis. Aborting rewriting modal!',
-        //   duration: 20000
-        // });
+        NotificationHandler.getInstance().displayNotification({
+          type: 'error',
+          title: 'Unable to analyse workflow',
+          content: 'Error during workflow analysis. Aborting rewriting modal!',
+          duration: 20000
+        });
         console.log('Error during workflow analysis. Aborting rewriting modal!')
 
         this.setState({ rewriteOpen: false });

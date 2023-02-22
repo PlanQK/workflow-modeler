@@ -12,7 +12,8 @@ import React, { PureComponent } from 'react';
 
 import classnames from 'classnames';
 
-import css from './Notification.less';
+// import css from './Notification.less';
+import './NotifiationCSS.css'
 
 export const NOTIFICATION_TYPES = [ 'info', 'success', 'error', 'warning' ];
 
@@ -71,7 +72,7 @@ export default class Notification extends PureComponent {
       type
     } = this.props;
 
-    return this.state.error ? null : <div className={ classnames(css.Notification, type) }>
+    return this.state.error ? null : <div className="Notification">
       <span className="close" onClick={ close } />
       <h2>
         { title }

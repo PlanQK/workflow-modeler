@@ -9,7 +9,7 @@ import './editor/resources/styling/modeler.css';
 import './editor/resources/styling/editor-ui.css';
 import './common/camunda-components/styles/style.less';
 
-import React, {createRef} from 'react'
+import React, {useRef} from 'react'
 import {createRoot} from 'react-dom/client'
 // import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
 
@@ -23,6 +23,7 @@ import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 // import Notifications from "./editor/ui/notifications/NotificationHandler";
 import Notifications from "./editor/ui/notifications";
 import {createModeler} from "./editor/ModelerHandler";
+import {Toggle} from "./editor/ui/Toggle";
 
 export const notificationHandler = new NotificationHandler([]);
 
@@ -51,10 +52,12 @@ class QuantumWorkflowModeler extends HTMLElement {
             console.log(event)
         })
 
-        const buttons = [AdaptationPlugin];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
+        const buttons = [AdaptationPlugin, Toggle];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
 
         // const notificationComponentRef = React.createRef();
-        const notificationComponent = <Notifications notifications={[]}/>;
+        const handler = NotificationHandler.getInstance();
+        // const ref = useRef
+        const notificationComponent = handler.createNotificationsComponent([]);//<Notifications notifications={[]}/>;
 
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
