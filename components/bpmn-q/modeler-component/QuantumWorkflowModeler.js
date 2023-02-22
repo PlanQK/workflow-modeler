@@ -10,7 +10,7 @@ import './extensions/quantme/styling/quantme.css';
 import './editor/resources/styling/modeler.css'
 import './editor/resources/styling/editor-ui.css'
 
-import React from 'react'
+import React, {createRef} from 'react'
 import {createRoot} from 'react-dom/client'
 
 import BpmnModeler from "bpmn-js/lib/Modeler";
@@ -44,8 +44,8 @@ import ButtonToolbar from "./editor/ui/ButtonToolbar";
 import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
 import {createNewDiagram} from "./common/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
-import Notifications from "./editor/ui/notifications/NotificationHandler";
-import Notification from "./editor/ui/notifications/Notification";
+// import Notifications from "./editor/ui/notifications/NotificationHandler";
+import Notifications from "./editor/ui/notifications";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
@@ -58,15 +58,24 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = `
-            <div id="container" style="display: flex; flex-direction: column; height: 100%">
-            <div id="button-container" style="flex-shrink: 0"></div>
-            <hr class="toolbar-splitter"/>
-            <div id="main-div" style="display: flex; flex: 1">
-                <div id="canvas" style="width: 100%"/>
-                <div id="properties" style="overflow: auto; max-height: 100%; width: 25%; background: #f8f8f8;"/>
-            </div>
-            <div id="notification-container"></div>
-        </div>`;
+            <div style="display: flex; flex-direction: column; height: 100%">
+              <div id="button-container" style="flex-shrink: 0"></div>
+              <hr class="toolbar-splitter" />
+              <div id="main-div" style="display: flex; flex: 1">
+                <div id="canvas" style="width: 100%"></div>
+                <div id="properties" style="overflow: auto; max-height: 100%; width: 25%; background: #f8f8f8;"></div>
+              </div>
+              <div id="notification-container"></div>
+            </div>`;
+//         this.innerHTML = `<div style="display: flex; flex-direction: column; height: 100%">
+//             <div id="button-container" style="flex-shrink: 0"></div>
+//             <hr class="toolbar-splitter"/>
+//             <div id="main-div" style="display: flex; flex: 1">
+//                 <div id="canvas" style="background: red; width: 100%"/>
+//                 <div id="properties" style="background: green; overflow: auto; max-height: 100%; width: 25%; background: #f8f8f8;"/>
+//             </div>
+// <!--            <div id="notification-container"></div>-->
+//         </div>`;
 
         const modelerContainerId = '#canvas'
 
@@ -100,7 +109,8 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         const buttons = [AdaptationPlugin,];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
 
-        const notificationComponent = <Notifications notifications={[]}/>;
+        // const notificationComponentRef = React.createRef();
+        // const notificationComponent = <Notifications ref={notificationComponentRef} notifications={[]}/>;
         // const ui = <>
         //     <div id="button-container" style="flex-shrink: 0"></div>
         //     <hr className="toolbar-splitter"/>
@@ -115,13 +125,17 @@ class QuantumWorkflowModeler extends HTMLElement {
         const root = createRoot(document.getElementById('button-container'))
         root.render(<ButtonToolbar modeler={modeler} buttons={buttons}/>);
 
-        const root2 = createRoot(document.getElementById('notification-container'))
-        root2.render(<>{notificationComponent}</>);
+        // const root2 = createRoot(document.getElementById('notification-container'))
+        // root2.render(<>{notificationComponent}</>);
         // root.render(<Toolbar buttons={buttons} />);
-        const notifications = notificationComponent..getNotifications();
-        console.log(notifications);
-        notificationHandler.setNotifications(notificationComponent);
-        notificationHandler.displayNotification({type: 'info', title: 'TestTtitle', content: 'Long sentence.'})
+
+        // window.requestAnimationFrame(() => {
+        //     const notifications = notificationComponentRef.current.getNotifications();
+        //     console.log(notifications);
+        //     console.log('hjgfjsdflakjglkglkfjw')
+        // })
+        // notificationHandler.setNotifications(notificationComponent);
+        // notificationHandler.displayNotification({type: 'info', title: 'TestTtitle', content: 'Long sentence.'})
 
         createNewDiagram(modeler)
     }

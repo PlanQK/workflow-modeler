@@ -49,32 +49,32 @@ export default class AdaptationPlugin extends PureComponent {
 
   componentDidMount() {
 
-    const eventBus = useService('eventBus');
-
-    // get modeler to access current workflow
-    eventBus.on('bpmn.modeler.created', (event) => {
-
-      const {
-        modeler, tab
-      } = event;
-
-      // save modeler and activate as current modeler
-      this.modelers[tab.id] = modeler;
-      this.modeler = modeler;
-    });
-
-    // change to modeler corresponding to the active tab
-    //TODO: reactivate if tabs are added
-    eventBus.on('app.activeTabChanged', ({ activeTab }) => {
-      this.modeler = this.modelers[activeTab.id];
-      this.state = defaultState;
-    });
-
-    //TODO: reactivate if tabs are added
-    //remove corresponding modeler if tab is closed
-    eventBus.on('app.closedTab', ({ tab }) => {
-      delete this.modelers[tab.id];
-    });
+    // const eventBus = useService('eventBus');
+    //
+    // // get modeler to access current workflow
+    // eventBus.on('bpmn.modeler.created', (event) => {
+    //
+    //   const {
+    //     modeler, tab
+    //   } = event;
+    //
+    //   // save modeler and activate as current modeler
+    //   this.modelers[tab.id] = modeler;
+    //   this.modeler = modeler;
+    // });
+    //
+    // // change to modeler corresponding to the active tab
+    // //TODO: reactivate if tabs are added
+    // eventBus.on('app.activeTabChanged', ({ activeTab }) => {
+    //   this.modeler = this.modelers[activeTab.id];
+    //   this.state = defaultState;
+    // });
+    //
+    // //TODO: reactivate if tabs are added
+    // //remove corresponding modeler if tab is closed
+    // eventBus.on('app.closedTab', ({ tab }) => {
+    //   delete this.modelers[tab.id];
+    // });
   }
 
   async handleAdaptationClosed(result) {

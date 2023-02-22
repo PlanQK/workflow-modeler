@@ -46,13 +46,15 @@ export default class Notifications extends PureComponent {
   }
 
   render() {
-    const {
-      nots
+    let {
+      notifications
     } = this.state;
-    const notifications = nots.map(({ id, ...props }) => {
+    notifications = notifications || [];
+    const notificationComponents = notifications.map(({ id, ...props }) => {
       return <Notification key={ id } { ...props } />;
     }).reverse();
 
-    return createPortal(<div className={ css.Notifications }>{ notifications }</div>, this.container);
+    // className={ css.Notifications }
+    return createPortal(<div>{ notificationComponents }</div>, this.container);
   }
 }
