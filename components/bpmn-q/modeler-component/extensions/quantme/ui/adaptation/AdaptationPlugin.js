@@ -12,7 +12,7 @@
 /* eslint-disable no-unused-vars*/
 // import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
 // import { Fill } from 'camunda-modeler-plugin-helpers/components';
-import React, {PureComponent, Fragment} from "@bpmn-io/properties-panel/preact/compat";
+import React, {PureComponent, Fragment} from "react";
 import AdaptationModal from './AdaptationModal';
 import { findOptimizationCandidates } from './CandidateDetector';
 import RewriteModal from './RewriteModal';
@@ -21,6 +21,7 @@ import { getAWSRuntimeProgramDeploymentModel } from './runtimes/AwsRuntimeHandle
 import { rewriteWorkflow } from './WorkflowRewriter';
 // import {Fragment} from "@bpmn-io/properties-panel/preact";
 import Fill from "../../../../common/camunda-components/slot-fill/Fill";
+import {useService} from "bpmn-js-properties-panel";
 
 const defaultState = {
   adaptationOpen: false
@@ -48,8 +49,10 @@ export default class AdaptationPlugin extends PureComponent {
 
   componentDidMount() {
 
+    const eventBus = useService('eventBus');
+
     // get modeler to access current workflow
-    this.props.subscribe('bpmn.modeler.created', (event) => {
+    eventBus.on('bpmn.modeler.created', (event) => {
 
       const {
         modeler, tab
@@ -62,16 +65,16 @@ export default class AdaptationPlugin extends PureComponent {
 
     // change to modeler corresponding to the active tab
     //TODO: reactivate if tabs are added
-    // this.props.subscribe('app.activeTabChanged', ({ activeTab }) => {
-    //   this.modeler = this.modelers[activeTab.id];
-    //   this.state = defaultState;
-    // });
+    eventBus.on('app.activeTabChanged', ({ activeTab }) => {
+      this.modeler = this.modelers[activeTab.id];
+      this.state = defaultState;
+    });
 
     //TODO: reactivate if tabs are added
-    // remove corresponding modeler if tab is closed
-    // this.props.subscribe('app.closedTab', ({ tab }) => {
-    //   delete this.modelers[tab.id];
-    // });
+    //remove corresponding modeler if tab is closed
+    eventBus.on('app.closedTab', ({ tab }) => {
+      delete this.modelers[tab.id];
+    });
   }
 
   async handleAdaptationClosed(result) {
@@ -233,17 +236,17 @@ export default class AdaptationPlugin extends PureComponent {
           <span className="hybrid-loop-adaptation"><span className="indent">Improve Hybrid Loops</span></span>
         </button>
       </Fill>
-      {/*{this.state.adaptationOpen && (*/}
-      {/*  <AdaptationModal*/}
-      {/*    onClose={this.handleAdaptationClosed}*/}
-      {/*  />*/}
-      {/*)}*/}
-      {/*{this.state.rewriteOpen && (*/}
-      {/*  <RewriteModal*/}
-      {/*    onClose={this.handleRewriteClosed}*/}
-      {/*    candidates={this.candidateList}*/}
-      {/*  />*/}
-      {/*)}*/}
+      {this.state.adaptationOpen && (
+        <AdaptationModal
+          onClose={this.handleAdaptationClosed}
+        />
+      )}
+      {this.state.rewriteOpen && (
+        <RewriteModal
+          onClose={this.handleRewriteClosed}
+          candidates={this.candidateList}
+        />
+      )}
     </Fragment>;
 
     // render loop analysis button and pop-up menu
