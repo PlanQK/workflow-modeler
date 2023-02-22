@@ -6,9 +6,10 @@ import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
 // import './editor/styling/modeler.less';
 // import './editor/styling/styles/style.less';
-import './extensions/quantme/styling/quantme.css';
-import './editor/resources/styling/modeler.css'
-import './editor/resources/styling/editor-ui.css'
+import './extensions/quantme/styling/quantme.less';
+import './editor/resources/styling/modeler.css';
+import './editor/resources/styling/editor-ui.css';
+import './extensions/quantme/styling/styles/style.less';
 
 import React, {createRef} from 'react'
 import {createRoot} from 'react-dom/client'
@@ -46,6 +47,7 @@ import {createNewDiagram} from "./common/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 // import Notifications from "./editor/ui/notifications/NotificationHandler";
 import Notifications from "./editor/ui/notifications";
+import {Toggle} from "./editor/ui/Toggle";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
@@ -107,10 +109,10 @@ class QuantumWorkflowModeler extends HTMLElement {
             console.log(event)
         })
 
-        const buttons = [AdaptationPlugin,];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
+        const buttons = [AdaptationPlugin, Toggle];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
 
         // const notificationComponentRef = React.createRef();
-        // const notificationComponent = <Notifications ref={notificationComponentRef} notifications={[]}/>;
+        const notificationComponent = <Notifications notifications={[]}/>;
         // const ui = <>
         //     <div id="button-container" style="flex-shrink: 0"></div>
         //     <hr className="toolbar-splitter"/>
@@ -125,8 +127,8 @@ class QuantumWorkflowModeler extends HTMLElement {
         const root = createRoot(document.getElementById('button-container'))
         root.render(<ButtonToolbar modeler={modeler} buttons={buttons}/>);
 
-        // const root2 = createRoot(document.getElementById('notification-container'))
-        // root2.render(<>{notificationComponent}</>);
+        const root2 = createRoot(document.getElementById('notification-container'))
+        root2.render(<>{notificationComponent}</>);
         // root.render(<Toolbar buttons={buttons} />);
 
         // window.requestAnimationFrame(() => {

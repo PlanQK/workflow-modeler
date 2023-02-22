@@ -7,9 +7,9 @@
  * Camunda licenses this file to you under the MIT; you may not use this file
  * except in compliance with the MIT License.
  */
-
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
+import '../../../extensions/quantme/styling/styles/style.less'
 
 import classNames from 'classnames';
 
@@ -108,7 +108,7 @@ function Close(props) {
 
   return (
     <button className="close" onClick={ onClick } aria-label="Close">
-      <CloseIcon aria-hidden="true" />
+      <img src={CloseIcon} aria-hidden="true" />
     </button>
   );
 }

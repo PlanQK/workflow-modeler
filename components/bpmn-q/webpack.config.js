@@ -19,8 +19,12 @@ module.exports = {
                 use: 'raw-loader'
             },
             {
+                test: /\.svg$/,
+                use: ['svg-url-loader'],
+            },
+            {
 
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                test: /\.(png|jpg|jpeg|gif)$/i,
                 type: 'asset/resource',
             },
             // {
@@ -61,8 +65,8 @@ module.exports = {
     },
     plugins: [
         new CopyWebpackPlugin([
-            { from: 'assets/**', to: 'vendor/bpmn-js', context: 'node_modules/bpmn-js/dist/' }
-            // { from: '**/*.{html,css}', context: 'app/' }
+            { from: 'assets/**', to: 'vendor/bpmn-js', context: 'node_modules/bpmn-js/dist/' },
+            { from: '**/*.{html,css}', context: 'app/' }
         ])
     ],
     mode: 'development',

@@ -11,8 +11,9 @@
 
 /* eslint-disable no-unused-vars*/
 // import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
-// import { Fill } from 'camunda-modeler-plugin-helpers/components';
-import React, {PureComponent, Fragment} from "react";
+// // import { Fill } from 'camunda-modeler-plugin-helpers/components';
+// import React from "react";
+
 import AdaptationModal from './AdaptationModal';
 import { findOptimizationCandidates } from './CandidateDetector';
 import RewriteModal from './RewriteModal';
@@ -22,6 +23,7 @@ import { rewriteWorkflow } from './WorkflowRewriter';
 // import {Fragment} from "@bpmn-io/properties-panel/preact";
 import Fill from "../../../../common/camunda-components/slot-fill/Fill";
 import {useService} from "bpmn-js-properties-panel";
+import React, {PureComponent} from "react";
 
 const defaultState = {
   adaptationOpen: false
@@ -45,6 +47,8 @@ export default class AdaptationPlugin extends PureComponent {
 
     // get config to update details in the backend
     this.backendConfig = '';//props._getGlobal('config');
+
+    this.handleOnClick = this.handleOnClick.bind(this)
   }
 
   componentDidMount() {
@@ -139,12 +143,13 @@ export default class AdaptationPlugin extends PureComponent {
       }
 
       if (rewriteButton === undefined) {
-        this.props.displayNotification({
-          type: 'error',
-          title: 'Unable to analyse workflow',
-          content: 'Error during workflow analysis. Aborting rewriting modal!',
-          duration: 20000
-        });
+        // this.props.displayNotification({
+        //   type: 'error',
+        //   title: 'Unable to analyse workflow',
+        //   content: 'Error during workflow analysis. Aborting rewriting modal!',
+        //   duration: 20000
+        // });
+        console.log('Error during workflow analysis. Aborting rewriting modal!')
 
         this.setState({ rewriteOpen: false });
         return;
@@ -226,16 +231,28 @@ export default class AdaptationPlugin extends PureComponent {
     this.setState({ rewriteOpen: false });
   }
 
-  render() {
+  handleOnClick(event) {
+    this.setState((prevState) => ({ adaptationOpen: true }));
+    console.log(this.state)
+  }
 
-    const test = <Fragment>
-      <Fill slot="toolbar">
-        <button type="button" className="src-app-primitives-Button__Button--3Ffn0"
+  render() {
+    // const setState = this.setState;
+    // const onClick = (event) => {setState({ adaptationOpen: true });};
+
+    // function handleOnClick(event) {
+    //   this.setState({ adaptationOpen: true });
+    //   console.log(this.state)
+    // }
+    // render loop analysis button and pop-up menu
+    return (<>
+      <div style={{display: 'flex'}}>
+        <button type="button" className="toolbar-btn"
                 title="Open menu to analyse and improve hybrid loops"
-                onClick={() => this.setState({ adaptationOpen: true })}>
+                onClick={this.handleOnClick}>
           <span className="hybrid-loop-adaptation"><span className="indent">Improve Hybrid Loops</span></span>
         </button>
-      </Fill>
+      </div>
       {this.state.adaptationOpen && (
         <AdaptationModal
           onClose={this.handleAdaptationClosed}
@@ -247,9 +264,6 @@ export default class AdaptationPlugin extends PureComponent {
           candidates={this.candidateList}
         />
       )}
-    </Fragment>;
-
-    // render loop analysis button and pop-up menu
-    return (<button>test</button>);
+    </>);
   }
 }
