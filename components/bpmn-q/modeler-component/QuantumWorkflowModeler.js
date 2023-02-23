@@ -26,6 +26,7 @@ import {createModeler} from "./editor/ModelerHandler";
 import {Toggle} from "./editor/ui/Toggle";
 import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
 import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
+import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
 
 export const notificationHandler = new NotificationHandler([]);
 
@@ -62,7 +63,7 @@ class QuantumWorkflowModeler extends HTMLElement {
         const root2 = createRoot(document.getElementById('notification-container'))
         root2.render(<div>{notificationComponent}</div>);
 
-        const buttons = [AdaptationPlugin, QuantMEController, DeploymentPlugin, Toggle];//, ConfigPlugin]
+        const buttons = [AdaptationPlugin, QuantMEController, DeploymentPlugin, ConfigPlugin, Toggle];//]
 
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
