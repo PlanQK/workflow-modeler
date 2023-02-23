@@ -16,6 +16,7 @@ import BpmnModeler from 'bpmn-js/lib/Modeler';
 import quantMEModdleExtension from '../resources/quantum4bpmn.json';
 import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
 import quantMEModule from '../modeling';
+import {createTempModeler} from "../../../editor/ModelerHandler";
 
 // let cmdHelper = require('')
 /**
@@ -243,16 +244,7 @@ export function getPropertiesToCopy(element) {
  */
 export function createModeler() {
 
-  return new BpmnModeler({
-    additionalModules: [
-      // elementTemplates,
-      quantMEModule
-    ],
-    moddleExtensions: {
-      camunda: camundaModdlePackage,
-      quantME: quantMEModdleExtension
-    }
-  });
+  return createTempModeler();
 }
 
 export function performAjax(targetUrl, dataToSend) {

@@ -18,8 +18,7 @@ import {
   getCamundaInputOutput,
   getPropertiesToCopy,
   exportXmlFromModeler,
-  getDefinitionsFromXml,
-  createModelerFromXml
+  getDefinitionsFromXml, createModelerFromXml
 } from '../utilities/Utilities';
 import { addQuantMEInputParameters } from './InputOutputHandler';
 import * as Constants from '../Constants';
@@ -134,7 +133,7 @@ export function getQuantMETasks(process, elementRegistry) {
     }
 
     // recursively retrieve QuantME tasks if subprocess is found
-    if (flowElement.$type && (flowElement.$type === 'bpmn:SubProcess' || flowElement.$type === CIRCUIT_CUTTING_SUBPROCESS)) {
+    if (flowElement.$type && (flowElement.$type === 'bpmn:SubProcess' || flowElement.$type === Constants.CIRCUIT_CUTTING_SUBPROCESS)) {
       Array.prototype.push.apply(quantmeTasks, getQuantMETasks(flowElement, elementRegistry));
     }
   }

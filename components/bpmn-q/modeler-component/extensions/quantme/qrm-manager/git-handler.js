@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
+// const fetch = require('node-fetch');
 
 /**
  * Get the URLs to all folders in the given public repository
@@ -18,7 +19,7 @@ const fetch = require('node-fetch');
  * @param repoName the name of the repository
  * @param repoPath the path to the root folder in the repository to use
  */
-module.exports.getFoldersInRepository = async function(userName, repoName, repoPath) {
+export const getFoldersInRepository = async function(userName, repoName, repoPath) {
   const directoryURLs = [];
   let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`);
   const contents = await response.json();
@@ -42,7 +43,7 @@ module.exports.getFoldersInRepository = async function(userName, repoName, repoP
  * @param fileURL the URL to the file to retrieve
  * @returns the content of the given file
  */
-module.exports.getFileContent = async function(fileURL) {
+export const getFileContent = async function(fileURL) {
   let response = await fetch(fileURL);
   return await response.text();
 };
@@ -52,7 +53,7 @@ module.exports.getFileContent = async function(fileURL) {
  *
  * @param folderURL the URL to the folder in the github repository
  */
-module.exports.getFilesInFolder = async function(folderURL) {
+export const getFilesInFolder = async function(folderURL) {
   const fileURLs = [];
   let response = await fetch(folderURL);
   const contents = await response.json();

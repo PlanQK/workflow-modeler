@@ -24,7 +24,7 @@
     "jquery": "^3.6.1",
     "jszip": "^3.10.1",
     "min-dash": "^4.0.0",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^2.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tiny-svg": "^3.0.0",

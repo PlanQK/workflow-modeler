@@ -14,12 +14,12 @@ const qrmHandler = require('./qrm-handler');
 
 let QRMs = [];
 
-module.exports.getQRMs = function() {
+export const getQRMs = function() {
   console.log('Retrieving QRMs from backend. Number of QRMs: %i', QRMs.length);
   return QRMs;
 };
 
-module.exports.updateQRMs = async function() {
+export const updateQRMs = async function() {
   console.log('Updating QRMs in backend.');
   try {
     QRMs = await qrmHandler.getCurrentQRMs();

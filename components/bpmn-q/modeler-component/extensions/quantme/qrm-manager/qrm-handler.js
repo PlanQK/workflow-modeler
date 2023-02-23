@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const config = require('../../framework-config');
+// const config = require('../../framework-config');
 
 const gitHandler = require('./git-handler');
 
@@ -18,7 +18,7 @@ const gitHandler = require('./git-handler');
  *
  * @returns {Promise<[QRM]>} an array with the current QRMs
  */
-module.exports.getCurrentQRMs = async function() {
+export const getCurrentQRMs = async function() {
 
   // get all folders of the defined QRM repository which could contain a QRM
   let folders = [];

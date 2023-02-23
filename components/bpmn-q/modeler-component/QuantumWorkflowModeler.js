@@ -24,6 +24,7 @@ import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import Notifications from "./editor/ui/notifications";
 import {createModeler} from "./editor/ModelerHandler";
 import {Toggle} from "./editor/ui/Toggle";
+import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
 
 export const notificationHandler = new NotificationHandler([]);
 
@@ -52,19 +53,22 @@ class QuantumWorkflowModeler extends HTMLElement {
             console.log(event)
         })
 
-        const buttons = [AdaptationPlugin, Toggle];//, QuantMEController, DeploymentPlugin, ConfigPlugin]
-
         // const notificationComponentRef = React.createRef();
         const handler = NotificationHandler.getInstance();
         // const ref = useRef
         const notificationComponent = handler.createNotificationsComponent([]);//<Notifications notifications={[]}/>;
 
+        const root2 = createRoot(document.getElementById('notification-container'))
+        root2.render(<div>{notificationComponent}</div>);
+
+        const buttons = [AdaptationPlugin, QuantMEController, Toggle];//, DeploymentPlugin, ConfigPlugin]
+
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
         root.render(<ButtonToolbar modeler={modeler} buttons={buttons}/>);
 
-        const root2 = createRoot(document.getElementById('notification-container'))
-        root2.render(<>{notificationComponent}</>);
+
+
         // root.render(<Toolbar buttons={buttons} />);
 
         // window.requestAnimationFrame(() => {
