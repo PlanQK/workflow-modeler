@@ -1,0 +1,50 @@
+/* Project colors */
+$planqk-blue: #3D78B5;
+$planqk-blue-darken: darken($planqk-blue, 10% );
+$planqk-blue-lighten: lighten($planqk-blue, 45% );
+$planqk-red: #e12d32;
+$planqk-red-darken: darken($planqk-red, 10% );
+$planqk-red-lighten: lighten($planqk-red, 40% );
+$planqk-green: #75c257;
+$planqk-green-darken: darken($planqk-green, 15% );
+$planqk-white: #fff;
+$planqk-black: #000000;
+$planqk-grey: #4b4b4b;
+$planqk-grey-lighten: lighten($planqk-grey, 40% );
+$planqk-cancel: #7a7a7a;
+$planqk-cancel-darken: #292929;
+$planqk-placeholder: #909090;
+$planqk-background-grey: #f3f3f3;
+$planqk-background-grey-darken: darken($planqk-background-grey, 1% ); // #f0f0f0
+$planqk-error: #dc3545;
+$planqk-warning: #ffeb3b;
+$planqk-warning-dark: #ffc107;
+$planqk-success: #75c257;
+$planqk-selected: #b5cce4;
+$planqk-button-blue: #4289d1;
+$planqk-button-blue-darken: darken($planqk-button-blue, 10% );
+
+$planqk-sidebar-hover-background: #f9f9f9;
+$planqk-sidebar-active-background: #f9f9f9;
+
+/* Borders */
+$border-grey: #e8e8e8;
+$border-red: #E22D32;
+
+/* Input fields */
+$input-field-border-color: rgb(206, 212, 218);
+$input-field-focus-border-color: rgb(206, 212, 218);
+$input-field-font-color: #495057;
+
+/* DropDown */
+$dropdown-option-selected-background: #f8f9fa;
+
+/* pre */
+$pre-background-color: #eeeeee;
+
+/* resources */
+$resource-get: #61affe;
+$resource-put: #fca130;
+$resource-post: #49cc90;
+$resource-delete: #f93e3e;
+$resource-patch: #50e3c2;

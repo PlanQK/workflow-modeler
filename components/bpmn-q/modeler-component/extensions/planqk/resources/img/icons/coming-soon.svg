@@ -1,0 +1,30 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 86" width="90" height="86">
+	<title>New Project</title>
+	<defs>
+		<linearGradient id="g1" x1="9.9" y1="97.8" x2="80.1" y2="32.4" gradientUnits="userSpaceOnUse">
+			<stop offset="0" stop-color="#3d78b5"/>
+			<stop offset="1" stop-color="#3671b0"/>
+		</linearGradient>
+	</defs>
+	<style>
+		tspan { white-space:pre } 
+		.s0 { fill: #618ab3 } 
+		.s1 { fill: url(#g1);stroke: #7ca1c9;stroke-linejoin: round } 
+		.t2 { font-size: 22px;fill: #ffffff;font-weight: 400;font-family: "Almarai-Regular", "Almarai" } 
+		.s3 { fill: #3d78b5 } 
+	</style>
+	<g id="Folder 1 copy">
+		<path id="Layer 2" class="s0" d="m5.9 35.3l-1.1-1.7 39.6-26.5 1.2 1.7z"/>
+		<path id="Layer 2 copy" class="s0" d="m77.4 41.6l-1.5 1.3-31-36.2 1.5-1.3z"/>
+		<path id="Layer" class="s1" d="m85.4 95.6l-1.9 2.2m-77.1-65.1l77-0.3q2.9-0.2 4.8 1.8 2 1.9 2 4.9l0.1 40.7q0.2 2.9-1.8 4.8-1.9 2-4.9 2l-77 0.3q-2.7 0-4.6-2-2.1-2.1-2.1-4.8l-0.2-40.7q0-2.7 2.1-4.8 1.9-1.9 4.6-1.9z"/>
+		<text id="coming" style="transform: matrix(1,0,0,1,46,57)" >
+			<tspan x="-34.8" y="0" class="t2">c</tspan><tspan  y="0" class="t2">o</tspan><tspan  y="0" class="t2">m</tspan><tspan  y="0" class="t2">i</tspan><tspan  y="0" class="t2">n</tspan><tspan  y="0" class="t2">g
+</tspan>
+		</text>
+		<text id="soon" style="transform: matrix(1,0,0,1,46,77)" >
+			<tspan x="-23.4" y="0" class="t2">s</tspan><tspan  y="0" class="t2">o</tspan><tspan  y="0" class="t2">o</tspan><tspan  y="0" class="t2">n
+</tspan>
+		</text>
+		<path id="Layer 1" class="s3" d="m47 14.8c-3.8 0.9-7.6-1.4-8.4-5.2-0.9-3.8 1.4-7.5 5.2-8.4 3.7-0.9 7.5 1.4 8.4 5.2 0.9 3.8-1.5 7.5-5.2 8.4z"/>
+	</g>
+</svg>

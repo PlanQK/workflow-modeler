@@ -4,8 +4,8 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
-import './resources/styling/modeler.css'
-import './resources/styling/editor-ui.css'
+import './editor/resources/styling/modeler.css'
+import './editor/resources/styling/editor-ui.css'
 
 import React from 'react'
 import {createRoot} from 'react-dom/client'
@@ -19,10 +19,13 @@ import {
     CamundaPlatformPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 
-import ButtonToolbar from "./ui/ButtonToolbar";
-import {createNewDiagram} from "./io/IoUtilities";
+import ButtonToolbar from "./editor/ui/ButtonToolbar";
+import {createNewDiagram} from "./common/util/IoUtilities";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
+
+import PlanQKExtensionModule from './extensions/planqk'
+let planqkModdleDescriptor = require('./extensions/planqk/resources/workflow/planqk-service-task-ext.json')
 
 class QuantumWorkflowModeler extends HTMLElement {
     constructor() {
@@ -52,6 +55,7 @@ class QuantumWorkflowModeler extends HTMLElement {
                 // basic modeling modules
                 BpmnPalletteModule,
                 CamundaExtensionModule,
+                PlanQKExtensionModule,
 
                 // properties panel module
                 BpmnPropertiesPanelModule,
@@ -63,6 +67,7 @@ class QuantumWorkflowModeler extends HTMLElement {
             },
             moddleExtensions: {
                 camunda: camundaModdleDescriptor,
+                planqk: planqkModdleDescriptor,
             },
         });
 

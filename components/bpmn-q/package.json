@@ -16,8 +16,10 @@
     "bpmn-js-properties-panel": "^1.17.2",
     "camunda-bpmn-moddle": "^7.0.1",
     "diagram-js-origin": "^1.3.4",
+    "lz-string": "^1.4.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tiny-svg": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

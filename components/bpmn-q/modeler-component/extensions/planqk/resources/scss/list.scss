@@ -1,0 +1,46 @@
+@import "colors";
+
+.list-header {
+    border-top-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+}
+.list-header > div {
+    font-weight: bold;
+}
+
+.list-group {
+    > li.list-group-item:nth-of-type(odd), /* 1) li with class list-group-item follows the ul tag directly */
+    > a.list-group-item-link:nth-of-type(odd) li.list-group-item { /* 2) link with class list-group-item-link follows the ul tag directly */
+        background-color: #f2f2f2;
+    }
+
+    > li.list-group-item:first-child, /* 1) li with class list-group-item follows the ul tag directly */
+    > a.list-group-item-link:first-child li.list-group-item { /* 2) link with class list-group-item-link follows the ul tag directly */
+        border-top-left-radius: 0.5em;
+        border-top-right-radius: 0.5em;
+    }
+
+    > li.list-group-item:last-child,
+    > a.list-group-item-link:last-child li.list-group-item {
+        border-bottom-left-radius: 0.5em;
+        border-bottom-right-radius: 0.5em;
+    }
+
+    > li.list-group-item {
+        border-radius: 0;
+    }
+
+    > a.list-group-item-link li.list-group-item {
+        border-top-width: 0;
+    }
+
+    > a.list-group-item-link:first-child li.list-group-item {
+        border-top-width: 1px;
+    }
+
+    .icon-person,
+    .icon-stars {
+        color: $planqk-blue;
+        padding: 0.2em;
+    }
+}
