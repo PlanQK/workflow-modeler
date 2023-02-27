@@ -46,6 +46,8 @@ export default class ConfigPlugin extends PureComponent {
     const editorActions = this.modeler.get('editorActions');
     const eventBus = this.modeler.get('eventBus');
 
+    // config.qrmUserName = this.modeler.config.qrmUserName || ''
+
     // initialize config in the frontend
     // this.backendConfig.getConfigFromBackend().then(config => {
     //   this.modeler.config = config;
@@ -235,7 +237,7 @@ export default class ConfigPlugin extends PureComponent {
     // update configuration in frontend and backend if passed through the modal
     if (newConfig) {
       this.modeler.config = newConfig;
-      this.backendConfig.setConfigFromModal(newConfig);
+      // this.backendConfig.setConfigFromModal(newConfig);
     }
   }
 

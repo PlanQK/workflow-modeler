@@ -19,9 +19,9 @@ const config = {
   awsRuntimeHandlerEndpoint: 'http://localhost:8890',
   scriptSplitterEndpoint: 'http://localhost:8891',
   scriptSplitterThreshold: 5,
-  githubUsername: '',
-  githubRepositoryName: '',
-  githubRepositoryPath: '',
+  qrmRepoName: '',
+  qrmUserName: '',
+  qrmRepoPath: '',
   hybridRuntimeProvenance: false
 };
 export default config;
