@@ -19,6 +19,8 @@ import { rewriteWorkflow } from './WorkflowRewriter';
 import React, {PureComponent} from "react";
 import {getModeler} from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+import {getQRMs} from "../../qrm-manager";
+import config from "../../../../editor/framework-config/config";
 
 const defaultState = {
   adaptationOpen: false
@@ -166,10 +168,10 @@ export default class AdaptationPlugin extends PureComponent {
       let programGenerationResult;
       switch (result.runtimeName) {
       case 'Qiskit Runtime':
-        programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(rewriteCandidate, this.modeler.config, await this.quantME.getQRMs());
+        programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(rewriteCandidate, config, getQRMs());
         break;
       case 'AWS Runtime':
-        programGenerationResult = await getAWSRuntimeProgramDeploymentModel(rewriteCandidate, this.modeler.config, await this.quantME.getQRMs());
+        programGenerationResult = await getAWSRuntimeProgramDeploymentModel(rewriteCandidate, config, getQRMs());
         break;
       default:
         programGenerationResult = { error: 'Unable to find suitable runtime handler for: ' + result.runtimeName };
@@ -195,7 +197,7 @@ export default class AdaptationPlugin extends PureComponent {
         console.log('Hybrid program generation successful!');
 
         // rewrite the workflow and display the result for the user
-        let rewritingResult = await rewriteWorkflow(this.modeler, rewriteCandidate, this.modeler.config.hybridRuntimeProvenance, programGenerationResult.hybridProgramId);
+        let rewritingResult = await rewriteWorkflow(this.modeler, rewriteCandidate, config.hybridRuntimeProvenance, programGenerationResult.hybridProgramId);
         if (rewritingResult.error) {
           console.log('Rewriting workflow failed with error: ', rewritingResult.error);
 

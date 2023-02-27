@@ -15,7 +15,7 @@
 
 // polyfill upcoming structural components
 import Modal from "../../../../common/camunda-components/modal/Modal";
-import React from "@bpmn-io/properties-panel/preact/compat";
+import React from "react";
 
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -84,6 +84,10 @@ export default function RewriteModal({ onClose, candidates }) {
     }
   }
 
+  // reference to change the content depending on the selected tab
+  let candidatesRootRef = React.createRef();
+  let buttonsRootRef = React.createRef();
+
   const onSubmit = (i, runtimeName) => onClose({
     rewriteStarted: true,
     rewriteCandidateId: i,
@@ -91,10 +95,6 @@ export default function RewriteModal({ onClose, candidates }) {
     runtimeName : runtimeName,
     candidatesRootRef: candidatesRootRef
   });
-
-  // reference to change the content depending on the selected tab
-  let candidatesRootRef = React.createRef();
-  let buttonsRootRef = React.createRef();
 
   // method to enable tab functionality by hiding and displaying different div elements
   function openTab(id) {

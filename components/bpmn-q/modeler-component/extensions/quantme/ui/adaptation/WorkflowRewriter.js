@@ -10,6 +10,7 @@
  */
 
 import { createModelerFromXml } from '../../utilities/Utilities';
+import {getXml} from "../../../../common/util/IoUtilities";
 
 /**
  * Rewrite the workflow available within the given modeler using the given optimization candidate
@@ -170,11 +171,7 @@ function calculatePosition(coordinate1, coordinate2) {
 }
 
 function exportXmlWrapper(modeler) {
-  return new Promise((resolve) => {
-    modeler.saveXML((err, successResponse) => {
-      resolve(successResponse);
-    });
-  });
+  return getXml(modeler);
 }
 
 /**

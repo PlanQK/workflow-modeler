@@ -26,6 +26,7 @@ import {
   getRequiredPrograms,
   getTaskOrder
 } from './RuntimeHandlerUtils';
+import {getXml} from "../../../../../common/util/IoUtilities";
 
 /**
  * Generate a Qiskit Runtime program for the given candidate
@@ -47,15 +48,15 @@ export async function getQiskitRuntimeProgramDeploymentModel(candidate, modelerC
   }
 
   // extract workflow XML
-  function exportXmlWrapper() {
-    return new Promise((resolve) => {
-      candidate.modeler.saveXML((err, successResponse) => {
-        resolve(successResponse);
-      });
-    });
-  }
+  // function exportXmlWrapper() {
+  //   return new Promise((resolve) => {
+  //     getXml(candidate.modeler).catch((err, successResponse) => {
+  //       resolve(successResponse);
+  //     });
+  //   });
+  // }
 
-  let xml = await exportXmlWrapper();
+  let xml = await getXml(candidate.modeler);
 
   // transform QuantME tasks within candidate
   let transformationResult = await startReplacementProcess(xml, qrms, modelerConfig);

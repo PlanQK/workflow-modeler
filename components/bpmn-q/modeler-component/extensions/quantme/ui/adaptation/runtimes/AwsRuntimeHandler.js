@@ -16,7 +16,6 @@ import {
   performAjax,
   createModelerFromXml
 } from '../../../utilities/Utilities';
-// import {  } from '../../quantme/Utilities';
 import { startReplacementProcess } from '../../../replacement/QuantMETransformator';
 import {
   createNewArtifactTemplate,
