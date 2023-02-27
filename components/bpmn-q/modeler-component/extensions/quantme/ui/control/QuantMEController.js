@@ -26,7 +26,7 @@ import {getModeler} from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import {getQRMs, updateQRMs} from "../../qrm-manager";
 import {getXml, loadDiagram} from "../../../../common/util/IoUtilities";
-import config from "../../../../editor/framework-config/config";
+import config from "../../framework-config/config";
 
 export default class QuantMEController extends PureComponent {
 

@@ -16,7 +16,7 @@ import React, { PureComponent, Fragment } from 'react';
 
 import ConfigModal from './ConfigModal';
 import {getModeler} from "../../../../editor/ModelerHandler";
-import config from "../../../../editor/framework-config/config";
+import config from "../../framework-config/config";
 
 const defaultState = {
   configOpen: false
@@ -46,7 +46,10 @@ export default class ConfigPlugin extends PureComponent {
     const editorActions = this.modeler.get('editorActions');
     const eventBus = this.modeler.get('eventBus');
 
-    // config.qrmUserName = this.modeler.config.qrmUserName || ''
+    // init modeler config
+    if (!this.modeler.config) {
+      this.modeler.config = config;
+    }
 
     // initialize config in the frontend
     // this.backendConfig.getConfigFromBackend().then(config => {
@@ -254,7 +257,7 @@ export default class ConfigPlugin extends PureComponent {
       {this.state.configOpen && (
         <ConfigModal
           onClose={this.handleConfigClosed}
-          initValues={config}
+          initValues={this.modeler.config}
         />
       )}
     </Fragment>);

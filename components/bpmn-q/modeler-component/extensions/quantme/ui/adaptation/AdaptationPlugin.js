@@ -20,7 +20,7 @@ import React, {PureComponent} from "react";
 import {getModeler} from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import {getQRMs} from "../../qrm-manager";
-import config from "../../../../editor/framework-config/config";
+import config from "../../framework-config/config";
 
 const defaultState = {
   adaptationOpen: false
