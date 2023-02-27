@@ -55,6 +55,10 @@ export default class QuantMEController extends PureComponent {
     // register actions to enable invocation over the menu and the API
     this.editorActions = this.modeler.get('editorActions');
 
+    if (!this.modeler.config) {
+      this.modeler.config = config;
+    }
+
     // transform the workflow passed through the API to a native workflow
     this.editorActions.register({
       transformWorkflow: async function (params) {

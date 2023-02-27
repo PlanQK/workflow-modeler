@@ -17,6 +17,10 @@ import quantMEModdleExtension from '../resources/quantum4bpmn.json';
 import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
 import quantMEModule from '../modeling';
 import {createTempModeler} from "../../../editor/ModelerHandler";
+import {addExtensionElements, getExtensionElementsList} from "../../../common/util/camunda-utils/ExtensionElementsUtil";
+import {getInputOutput} from "../../../common/util/camunda-utils/InputOutputUtil";
+import {useService} from "bpmn-js-properties-panel";
+import {getXml} from "../../../common/util/IoUtilities";
 
 // let cmdHelper = require('')
 /**
@@ -81,15 +85,16 @@ export function isQuantMETask(task) {
 export async function exportXmlFromModeler(modeler) {
 
   // export the xml and return to requester
-  function exportXmlWrapper(definitions) {
-    return new Promise((resolve) => {
-      modeler._moddle.toXML(definitions, (err, successResponse) => {
-        resolve(successResponse);
-      });
-    });
-  }
-
-  return await exportXmlWrapper(modeler.getDefinitions());
+  // function exportXmlWrapper(definitions) {
+  //   return new Promise((resolve) => {
+  //     modeler._moddle.toXML(definitions, (err, successResponse) => {
+  //       resolve(successResponse);
+  //     });
+  //   });
+  // }
+  //
+  // return await exportXmlWrapper(modeler.getDefinitions());
+  return getXml(modeler);
 }
 
 /**
@@ -116,7 +121,7 @@ export function getSingleFlowElement(process) {
 export function getCamundaInputOutput(bo, bpmnFactory) {
 
   // retrieve InputOutput element if already defined
-  let inputOutput = getExtension(bo, 'camunda:InputOutput');
+  let inputOutput = getInputOutput(bo);
 
   // create new InputOutput element if non existing
   if (!inputOutput || inputOutput.length === 0) {
@@ -139,11 +144,11 @@ export function getCamundaInputOutput(bo, bpmnFactory) {
     } else {
 
       // initialize parameters as empty arrays to avoid access errors
-      inputOutput[0].inputParameters = [];
-      inputOutput[0].outputParameters = [];
+      inputOutput.inputParameters = [];
+      inputOutput.outputParameters = [];
 
       // if there are multiple input/output definitions, take the first one as the modeler only uses this one
-      return inputOutput[0];
+      return inputOutput;
     }
   }
 }
@@ -268,27 +273,59 @@ export function performAjax(targetUrl, dataToSend) {
 }
 
 export function getExtension(element, type) {
-  if (!element.extensionElements) {
+  const extensionElements = getExtensionElementsList(element);
+  if (!extensionElements) {
     return null;
   }
 
-  return element.extensionElements.filter(function(e) {
+  return extensionElements.filter(function(e) {
     return e.$instanceOf(type);
   })[0];
 }
 
-export function addEntry(bo, element, entry, bpmnFactory) {
-  let extensionElements = bo.get('extensionElements');
+export function addEntry(businessObject, element, entry, bpmnFactory) {
+  const commands = [];
+
+  let extensionElements = businessObject.get('extensionElements');
 
   // if there is no extensionElements list, create one
   if (!extensionElements) {
 
-    extensionElements = createElement('bpmn:ExtensionElements', { values: [entry] }, bo, bpmnFactory);
+    extensionElements = createElement('bpmn:ExtensionElements', { values: [entry] }, businessObject, bpmnFactory);
+
+    commands.push({
+      cmd: 'element.updateModdleProperties',
+      context: {
+        element,
+        moddleElement: businessObject,
+        properties: {
+          extensionElements
+        }
+      }
+    });
+
     return { extensionElements : extensionElements };
-  } else {
-    // add new failedJobRetryExtensionElement to existing extensionElements list
-    return addElementsTolist(element, extensionElements, 'values', [entry]);
   }
+  entry.$parent = extensionElements;
+
+  // (2) add extension element to list
+  commands.push({
+    cmd: 'element.updateModdleProperties',
+    context: {
+      element,
+      moddleElement: extensionElements,
+      properties: {
+        values: [ ...extensionElements.get('values'), entry ]
+      }
+    }
+  });
+
+  const commandStack = useService('commandStack');
+  commandStack.execute('properties-panel.multi-command-executor', commands);
+  // else {
+  //   // add new failedJobRetryExtensionElement to existing extensionElements list
+  //   return addElementsTolist(element, extensionElements, 'values', [entry]);
+  // }
 }
 
 export function createElement(elementType, properties, parent, factory) {

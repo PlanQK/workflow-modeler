@@ -33,7 +33,6 @@ export function getExtensionElementsList(businessObject, type = undefined) {
   if (type) {
     return values.filter(value => is(value, type));
   }
-
   return values;
 }
 

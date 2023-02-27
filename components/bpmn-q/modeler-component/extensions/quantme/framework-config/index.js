@@ -8,5 +8,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
-module.exports = require('./config-manager');
+import configManager from './config-manager';
+const config = configManager;
+export default config;

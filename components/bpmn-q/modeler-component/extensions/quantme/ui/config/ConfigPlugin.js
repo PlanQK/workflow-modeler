@@ -17,6 +17,17 @@ import React, { PureComponent, Fragment } from 'react';
 import ConfigModal from './ConfigModal';
 import {getModeler} from "../../../../editor/ModelerHandler";
 import config from "../../framework-config/config";
+import configManager, {
+  setAWSRuntimeHandlerEndpoint,
+  setCamundaEndpoint, setHybridRuntimeProvenance,
+  setNisqAnalyzerEndpoint,
+  setOpenTOSCAEndpoint,
+  setQiskitRuntimeHandlerEndpoint, setQRMRepositoryName, setQRMRepositoryPath, setQRMUserName,
+  setScriptSplitterEndpoint,
+  setScriptSplitterThreshold,
+  setTransformationFrameworkEndpoint,
+  setWineryEndpoint
+} from "../../framework-config/config-manager"
 
 const defaultState = {
   configOpen: false
@@ -240,6 +251,32 @@ export default class ConfigPlugin extends PureComponent {
     // update configuration in frontend and backend if passed through the modal
     if (newConfig) {
       this.modeler.config = newConfig;
+      setCamundaEndpoint(newConfig.camundaEndpoint);
+      setOpenTOSCAEndpoint(newConfig.opentoscaEndpoint);
+      setWineryEndpoint(newConfig.wineryEndpoint);
+      setNisqAnalyzerEndpoint(newConfig.nisqAnalyzerEndpoint);
+      setTransformationFrameworkEndpoint(newConfig.transformationFrameworkEndpoint);
+      setQiskitRuntimeHandlerEndpoint(newConfig.qiskitRuntimeHandlerEndpoint);
+      setAWSRuntimeHandlerEndpoint(newConfig.awsRuntimeHandlerEndpoint);
+      setScriptSplitterEndpoint(newConfig.scriptSplitterEndpoint);
+      setScriptSplitterThreshold(newConfig.scriptSplitterThreshold);
+      setQRMRepositoryName(newConfig.qrmRepoName);
+      setQRMUserName(newConfig.qrmUserName);
+      setQRMRepositoryPath(newConfig.qrmRepoPath);
+      setHybridRuntimeProvenance(newConfig.hybridRuntimeProvenance);
+      // config.camundaEndpoint = newConfig.camundaEndpoint
+      // config.opentoscaEndpoint = newConfig.opentoscaEndpoint
+      // config.wineryEndpoint = newConfig
+      // config.nisqAnalyzerEndpoint = newConfig
+      // config.transformationFrameworkEndpoint = newConfig
+      // config.qiskitRuntimeHandlerEndpoint = newConfig
+      // config.awsRuntimeHandlerEndpoint = newConfig
+      // config.scriptSplitterEndpoint = newConfig
+      // config.scriptSplitterThreshold = newConfig
+      // config.qrmRepoName = newConfig
+      // config.qrmUserName = new
+      // config.qrmRepoPath =
+      // config.hybridRuntimeProvenance =
       // this.backendConfig.setConfigFromModal(newConfig);
     }
   }

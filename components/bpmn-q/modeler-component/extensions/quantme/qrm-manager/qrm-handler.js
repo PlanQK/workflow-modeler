@@ -10,7 +10,8 @@
  */
 
 // const config = require('../../framework-config');
-
+// import config from '../framework-config/config-manager';
+const config = require('../framework-config/config-manager');
 const gitHandler = require('./git-handler');
 
 /**
