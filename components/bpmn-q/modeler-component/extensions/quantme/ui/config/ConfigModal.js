@@ -25,9 +25,9 @@ export default function ConfigModal({ initValues, onClose }) {
   const [wineryEndpoint, setWineryEndpoint] = useState(initValues.wineryEndpoint);
   const [transformationFrameworkEndpoint, setTransformationFrameworkEndpoint] = useState(initValues.transformationFrameworkEndpoint);
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(initValues.nisqAnalyzerEndpoint);
-  const [qrmRepoName, setQrmRepoName] = useState(initValues.qrmRepoName);
-  const [qrmUserName, setQrmUserName] = useState(initValues.qrmUserName);
-  const [qrmRepoPath, setQrmRepoPath] = useState(initValues.qrmRepoPath);
+  const [githubRepositoryName, setGithubRepositoryName] = useState(initValues.githubRepositoryName);
+  const [githubUsername, setGithubUsername] = useState(initValues.githubUsername);
+  const [githubRepositoryPath, setGithubRepositoryPath] = useState(initValues.githubRepositoryPath);
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] = useState(initValues.qiskitRuntimeHandlerEndpoint);
   const [scriptSplitterEndpoint, setScriptSplitterEndpoint] = useState(initValues.scriptSplitterEndpoint);
   const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(initValues.scriptSplitterThreshold);
@@ -43,9 +43,9 @@ export default function ConfigModal({ initValues, onClose }) {
     wineryEndpoint,
     transformationFrameworkEndpoint,
     nisqAnalyzerEndpoint,
-    qrmUserName,
-    qrmRepoName,
-    qrmRepoPath,
+    githubUsername,
+    githubRepositoryName,
+    githubRepositoryPath,
     qiskitRuntimeHandlerEndpoint,
     awsRuntimeHandlerEndpoint,
     scriptSplitterEndpoint,
@@ -192,8 +192,8 @@ export default function ConfigModal({ initValues, onClose }) {
                     <input
                       type="string"
                       name="qrmUserName"
-                      value={qrmUserName}
-                      onChange={event => setQrmUserName(event.target.value)}/>
+                      value={githubUsername}
+                      onChange={event => setGithubUsername(event.target.value)}/>
                   </td>
                 </tr>
                 <tr className="spaceUnder">
@@ -202,8 +202,8 @@ export default function ConfigModal({ initValues, onClose }) {
                     <input
                       type="string"
                       name="qrmRepoName"
-                      value={qrmRepoName}
-                      onChange={event => setQrmRepoName(event.target.value)}/>
+                      value={githubRepositoryName}
+                      onChange={event => setGithubRepositoryName(event.target.value)}/>
                   </td>
                 </tr>
                 <tr>
@@ -212,8 +212,8 @@ export default function ConfigModal({ initValues, onClose }) {
                     <input
                       type="string"
                       name="qrmRepoPath"
-                      value={qrmRepoPath}
-                      onChange={event => setQrmRepoPath(event.target.value)}/>
+                      value={githubRepositoryPath}
+                      onChange={event => setGithubRepositoryPath(event.target.value)}/>
                   </td>
                 </tr>
               </tbody>

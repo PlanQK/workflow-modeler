@@ -41,11 +41,13 @@ export default async function deployWorkflow(workflowName, workflowXml, viewMap)
   }
 
   // add diagram to the body
-  const blob = new Blob([workflowXml], { type: 'text/xml' });
-  form.append('file', blob, {
-    filename: fileName,
-    contentType: 'text/xml'
-  });
+  const bpmnFile = new File([workflowXml], fileName, {type: 'text/xml'});
+  form.append('data', bpmnFile);
+  // const blob = new Blob([workflowXml], { type: 'text/xml' });
+  // form.append('file', blob, {
+  //   filename: fileName,
+  //   contentType: 'text/xml'
+  // });
 
   // upload all provided views
   for (const [key, value] of Object.entries(viewMap)) {
@@ -62,7 +64,12 @@ export default async function deployWorkflow(workflowName, workflowXml, viewMap)
   try {
     const response = await fetch(config.getCamundaEndpoint() + '/deployment/create', {
       method: 'POST',
-      body: form
+      body: form,
+      // headers: {
+      //   'Access-Control-Allow-Origin': '*',
+      //   'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
+      //   'Access-Control-Allow-Headers': 'Content-Type'
+      // }
     });
 
     if (response.ok) {

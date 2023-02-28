@@ -340,7 +340,7 @@ export default class DeploymentPlugin extends PureComponent {
 
     // get XML of the current workflow
     const rootElement = getRootProcess(this.modeler.getDefinitions());
-    const xml = (await this.modeler.saveXML()).xml;
+    const xml = (await this.modeler.saveXML({ format: true })).xml;
 
     // check if there are views defined for the modeler and include them in the deployment
     let viewsDict = {};
