@@ -85,17 +85,17 @@ export default class ConfigPlugin extends PureComponent {
     });
     editorActions.register({
       qrmRepoNameChanged: function(qrmRepoName) {
-        self.modeler.config.qrmRepoName = qrmRepoName;
+        self.modeler.config.githubRepositoryName = qrmRepoName;
       }
     });
     editorActions.register({
       qrmUserNameChanged: function(qrmUserName) {
-        self.modeler.config.qrmUserName = qrmUserName;
+        self.modeler.config.githubUsername = qrmUserName;
       }
     });
     editorActions.register({
       qrmRepoPathChanged: function(qrmRepoPath) {
-        self.modeler.config.qrmRepoPath = qrmRepoPath;
+        self.modeler.config.githubRepositoryPath = qrmRepoPath;
       }
     });
     editorActions.register({

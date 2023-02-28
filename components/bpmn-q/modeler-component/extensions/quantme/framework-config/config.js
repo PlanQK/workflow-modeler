@@ -19,9 +19,9 @@ const config = {
   awsRuntimeHandlerEndpoint: 'http://localhost:8890',
   scriptSplitterEndpoint: 'http://localhost:8891',
   scriptSplitterThreshold: 5,
-  qrmRepoName: 'QuantME-UseCases',
-  qrmUserName: 'UST-QuAntiL',
-  qrmRepoPath: '2022-closer/qrms',
+  githubRepositoryName: 'QuantME-UseCases',
+  githubUsername: 'UST-QuAntiL',
+  githubRepositoryPath: '2022-closer/qrms',
   hybridRuntimeProvenance: false
 };
 export default config;
