@@ -24,6 +24,10 @@ import { bindUsingPull, bindUsingPush } from '../../../deployment/BindingUtils';
 import { getServiceTasksToDeploy } from '../../../deployment/DeploymentUtils';
 import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
+import {getXml} from "../../../../../common/util/IoUtilities";
+
+// const deployment = require('../../../deployment');
+import deployWorkflow from '../../../deployment/workflow';
 
 const defaultState = {
   windowOpenDeploymentOverview: false,
@@ -346,7 +350,7 @@ export default class DeploymentPlugin extends PureComponent {
     }
 
     // start deployment of workflow and views
-    let result = await this.backend.send('deployment:deploy-workflow', rootElement.id, xml, viewsDict);
+    let result = await deployWorkflow(rootElement.id, xml, viewsDict);
 
     if (result.status === 'failed') {
       NotificationHandler.getInstance().displayNotification({
