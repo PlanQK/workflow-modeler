@@ -4,13 +4,8 @@ const path = require('path');
 module.exports = {
     entry: './modeler-component/QuantumWorkflowModeler.js',
     output: {
-        filename: 'app.js',
-        path: path.resolve(__dirname + '/public'),
-        globalObject: 'this',
-        library: {
-            name: 'qFlowModeler',
-            type: 'umd',
-        },
+        path: __dirname + '/public',
+        filename: 'app.js'
     },
     module: {
         rules: [
