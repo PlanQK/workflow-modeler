@@ -72,6 +72,12 @@ class QuantumWorkflowModeler extends HTMLElement {
 
 
         createNewDiagram(modeler)
+
+        const beforeUnloadListener = (event) => {
+            event.preventDefault();
+            return event.returnValue = '';
+        };
+        addEventListener("beforeunload", beforeUnloadListener, {capture: true});
     }
 }
 
