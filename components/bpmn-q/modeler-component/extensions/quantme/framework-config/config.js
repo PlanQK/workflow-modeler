@@ -10,14 +10,14 @@
  */
 
 const config = {
-  camundaEndpoint: 'http://localhost:8080/engine-rest',
-  opentoscaEndpoint: 'http://localhost:1337/csars',
-  wineryEndpoint: 'http://localhost:8081/winery',
-  nisqAnalyzerEndpoint: 'http://localhost:8098/nisq-analyzer',
-  transformationFrameworkEndpoint: 'http://localhost:8888',
-  qiskitRuntimeHandlerEndpoint: 'http://localhost:8889',
-  awsRuntimeHandlerEndpoint: 'http://localhost:8890',
-  scriptSplitterEndpoint: 'http://localhost:8891',
+  camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
+  opentoscaEndpoint: 'http://192.168.178.20:1337/csars',
+  wineryEndpoint: 'http://192.168.178.20:8093/winery',
+  nisqAnalyzerEndpoint: 'http://192.168.178.20:8098/nisq-analyzer',
+  transformationFrameworkEndpoint: 'http://192.168.178.20:8888',
+  qiskitRuntimeHandlerEndpoint: 'http://192.168.178.20:8889',
+  awsRuntimeHandlerEndpoint: 'http://192.168.178.20:8890',
+  scriptSplitterEndpoint: 'http://192.168.178.20:8891',
   scriptSplitterThreshold: 5,
   githubRepositoryName: 'QuantME-UseCases',
   githubUsername: 'UST-QuAntiL',
