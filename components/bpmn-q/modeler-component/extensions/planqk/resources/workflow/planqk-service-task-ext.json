@@ -9,27 +9,25 @@
   "types": [
     {
       "name": "ServiceTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": [
+        "bpmn:Task"
+      ],
       "properties": [
         {
           "name": "subscriptionId",
           "isAttr": true,
           "type": "String"
         },
-
         {
           "name": "applicationName",
           "isAttr": true,
           "type": "String"
         },
-
         {
           "name": "tokenEndpoint",
           "isAttr": true,
           "type": "String"
         },
-
-
         {
           "name": "consumerKey",
           "isAttr": true,
@@ -40,7 +38,6 @@
           "isAttr": true,
           "type": "String"
         },
-
         {
           "name": "serviceName",
           "isAttr": true,
@@ -51,7 +48,6 @@
           "isAttr": true,
           "type": "String"
         },
-
         {
           "name": "data",
           "isAttr": true,
@@ -68,6 +64,11 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "DataPool",
+      "superClass": [ "bpmn:DataStoreReference" ],
+      "properties": []
     }
   ],
   "emumerations": [],

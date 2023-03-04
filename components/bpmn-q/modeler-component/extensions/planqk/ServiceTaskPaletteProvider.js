@@ -1,4 +1,5 @@
 import PaletteProvider from "bpmn-js/lib/features/palette/PaletteProvider";
+import * as consts from './utilities/Constants';
 
 export default class ServiceTaskPaletteProvider extends PaletteProvider {
 
@@ -33,9 +34,24 @@ export default class ServiceTaskPaletteProvider extends PaletteProvider {
         title: translate('Creates a task that calls a PlanQK service you subscribed to'),
         action: {
           click: function(event) {
-            const businessObject = bpmnFactory.create('planqk:ServiceTask');
+            const businessObject = bpmnFactory.create(consts.PLANQK_SERVICE_TASK);
             let shape = elementFactory.createShape({
-              type: "planqk:ServiceTask",
+              type: consts.PLANQK_SERVICE_TASK,
+              businessObject: businessObject
+            });
+            create.start(event, shape);
+          }
+        }
+      },
+      'create.planqk-data-pool': {
+        group: "activity",
+        className: "bpmn-icon-data-store",
+        title: translate('Creates a PlanQK Data Pool to fetch data from'),
+        action: {
+          click: function(event) {
+            const businessObject = bpmnFactory.create(consts.PLANQK_DATA_POOL);
+            let shape = elementFactory.createShape({
+              type: consts.PLANQK_DATA_POOL,
               businessObject: businessObject
             });
             create.start(event, shape);

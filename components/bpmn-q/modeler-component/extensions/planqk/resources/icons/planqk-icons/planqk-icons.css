@@ -24,6 +24,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.planqk-icon-service-task:before {
+  content: "\e946";
+}
+
+.planqk-icon-data-pool:before {
+  content: "\e946";
+}
+
 .planqk-icon-applications:before {
   content: "\e946";
 }

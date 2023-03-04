@@ -15,6 +15,8 @@ import {
 
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 
+import * as consts from './utilities/Constants';
+
 const HIGH_PRIORITY = 1500,
     TASK_BORDER_RADIUS = 2;
 
@@ -35,10 +37,10 @@ export default class ServiceTaskRenderer extends BpmnRenderer {
     }
 
     this.planqkHandlers = {
-      ["planqk:ServiceTask"]: function(self, parentGfx, element) {
-        var task = self.renderer('bpmn:Task')(parentGfx, element);
+      [consts.PLANQK_SERVICE_TASK]: function(self, parentGfx, element) {
+        const task = self.renderer('bpmn:Task')(parentGfx, element);
 
-        var pathDataBG = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
+        const pathDataBG = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
           abspos: {
             x: 12,
             y: 18
@@ -52,6 +54,24 @@ export default class ServiceTaskRenderer extends BpmnRenderer {
         });
 
         return task;
+      },
+      [consts.PLANQK_DATA_POOL]: function(self, parentGfx, element) {
+        const store = self.renderer('bpmn:DataStoreReference')(parentGfx, element);
+
+        const pathDataBG = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
+          abspos: {
+            x: 12,
+            y: 18
+          }
+        });
+
+        drawPath(parentGfx, pathDataBG, {
+          strokeWidth: 1,
+          fill: getFillColor(element, 'white'),
+          stroke: getStrokeColor(element, 'black')
+        });
+
+        return store;
       },
     }
 

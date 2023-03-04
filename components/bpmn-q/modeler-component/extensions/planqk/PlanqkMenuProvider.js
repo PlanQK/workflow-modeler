@@ -37,12 +37,17 @@ export default class PlanqkMenuProvider {
         return self.createServiceTaskEntries(element, self.activeSubscriptions);
       }
 
+      if (is(element, 'bpmn:DataStoreReference')) {
+        return self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+      }
+
       if (is(element, 'bpmn:Task')) {
         const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.TASK);
         entries = Object.assign(entries, planqkEntries);
         console.log(entries);
         return entries;
       }
+
       return entries;
     };
   }
