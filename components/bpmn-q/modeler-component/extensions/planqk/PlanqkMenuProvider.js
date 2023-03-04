@@ -1,4 +1,3 @@
-import ReplaceMenuProvider from 'bpmn-js/lib/features/popup-menu/ReplaceMenuProvider';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
 import * as planqkReplaceOptions from './PlanQKReplaceOptions';
@@ -6,13 +5,22 @@ import './resources/icons/planqk-icons/planqk-icons.css'
 
 const serviceEndpointBaseUrl = '';//process.env.VUE_APP_WSO2_GATEWAY_BASE_URL;
 
-export default class PlanqkMenuProvider extends ReplaceMenuProvider {
+export default class PlanqkMenuProvider {
 
-  constructor(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate, eventBus, activeSubscriptions, oauthInfoByAppMap) {
-    super(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate);
+  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, oauthInfoByAppMap) {
+    popupMenu.registerProvider("bpmn-replace", this);
+    this.replaceElement = bpmnReplace.replaceElement;
     this.activeSubscriptions = activeSubscriptions;
     this.oauthInfoByAppMap = oauthInfoByAppMap;
     this.modeling = modeling;
+    this.translate = translate;
+  }
+
+  getPopupMenuHeaderEntries(element) {
+    return function (entries) {
+      console.log(entries)
+      return entries;
+    };
   }
 
   /**
@@ -21,88 +29,101 @@ export default class PlanqkMenuProvider extends ReplaceMenuProvider {
    * @param element the element for which the replacement entries are requested
    * @returns {*} an array with menu entries
    */
-  getEntries(element) {
-    // Predefined menu entries can be retrieved through super.getEntries(element);
-    let entries = [];
+  getPopupMenuEntries(element) {
+    const self = this;
+    return function (entries) {
 
-    if (is(element, consts.PLANQK_SERVICE_TASK)) {
+      if (is(element, consts.PLANQK_SERVICE_TASK)) {
+        return self.createServiceTaskEntries(element, self.activeSubscriptions);
+      }
 
-      return entries.concat(this.createServiceTaskEntries(element, this.activeSubscriptions));
+      if (is(element, 'bpmn:Task')) {
+        const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.TASK);
+        entries = Object.assign(entries, planqkEntries);
+        console.log(entries);
+        return entries;
+      }
+      return entries;
+    };
+  }
+
+  createMenuEntries(element, definitions) {
+
+    const self = this;
+    let menuEntries = {};
+
+    for (let definition of definitions) {
+      const entry = self.createMenuEntry(element, definition);
+      menuEntries = Object.assign(menuEntries, entry);
     }
+    return menuEntries;
+  }
 
-    if (is(element, 'bpmn:Task')) {
-      return entries.concat(super._createEntries(element, planqkReplaceOptions.TASK));
-    }
+  createMenuEntry(element, definition, action) {
+    const translate = this.translate;
+    const replaceElement = this.replaceElement;
 
-    entries = entries.concat(super.getEntries(element));
-    return entries;
+    const replaceAction = function () {
+      return replaceElement(element, definition.target);
+    };
+
+    const label = definition.label;
+
+    action = action || replaceAction;
+
+    const menuEntry = {}
+    menuEntry[definition.id] = {
+      label: translate(label),
+      className: definition.className,
+      action: action
+    };
+    return menuEntry;
   }
 
   createServiceTaskEntries(element, subscriptions) {
-    const subscriptionEntries = [];
+    const subscriptionEntries = {};
 
     for (let subscription of subscriptions) {
-      subscriptionEntries.push(this.createServiceTaskEntry(element, subscription));
+      subscriptionEntries['replace-with-' + subscription.id + ' (2)'] = this.createServiceTaskEntryNew(element, subscription);
     }
     return subscriptionEntries;
   }
 
-  createServiceTaskEntry(element, subscription) {
-    const subscriptionEntryDef = {
-      id: subscription.id,
-      label: subscription.api.name + '@' + subscription.application.name,
-      actionName: 'replace-with-' + subscription.id,
-      className: 'bpmn-icon-service',
-      target: {
-        type: 'planqk:ServiceTask'
-      }
-    };
+  createServiceTaskEntryNew(element, subscription) {
 
     const self = this.modeling;
     const oauthInfoByAppMap = this.oauthInfoByAppMap;
-    const subscriptionMenuEntry = super._createMenuEntry(subscriptionEntryDef, element, function(event, entry) {
-      const oAuthInfo = oauthInfoByAppMap.get(subscription.application.id);
-      console.log(oAuthInfo.consumerKey);
-      console.log(oAuthInfo.consumerSecret);
-      self.updateProperties(element, {
-        subscriptionId: subscription.id,
-        applicationName: subscription.application.name,
-        serviceName: subscription.api.name,
-        tokenEndpoint: subscription.api.gatewayEndpoint,
-        consumerKey: oAuthInfo.consumerKey,
-        consumerSecret: oAuthInfo.consumerSecret,
-        serviceEndpoint: serviceEndpointBaseUrl + subscription.api.context + '/' + subscription.api.version,
-        data: '{}',
-        params: '{}',
-        result: '${output}'});
-    });
 
-    return subscriptionMenuEntry;
+    return {
+      label: subscription.api.name + '@' + subscription.application.name,
+      className: 'bpmn-icon-service',
+      action: function () {
+        const oAuthInfo = oauthInfoByAppMap.get(subscription.application.id);
+        console.log(oAuthInfo.consumerKey);
+        console.log(oAuthInfo.consumerSecret);
+        self.updateProperties(element, {
+          subscriptionId: subscription.id,
+          applicationName: subscription.application.name,
+          serviceName: subscription.api.name,
+          tokenEndpoint: subscription.api.gatewayEndpoint,
+          consumerKey: oAuthInfo.consumerKey,
+          consumerSecret: oAuthInfo.consumerSecret,
+          serviceEndpoint: serviceEndpointBaseUrl + subscription.api.context + '/' + subscription.api.version,
+          data: '{}',
+          params: '{}',
+          result: '${output}'
+        });
+      }
+    }
   }
-
-  // getServiceSubEntry(subscription) {
-  //
-  //   return [{
-  //     id: subscription.id,
-  //     label: subscription.api.name + '@' + subscription.application.name,
-  //     actionName: 'replace-with-' + subscription.id,
-  //     className: 'bpmn-icon-service',
-  //     target: {
-  //       type: 'planqk:ServiceTask'
-  //     }
-  //   }]
-  // }
 }
 
 // @ts-ignore
 PlanqkMenuProvider.$inject = [
-  'bpmnFactory',
   'popupMenu',
+  'translate',
   'modeling',
-  'moddle',
   'bpmnReplace',
-  'rules',
-  'translate','eventBus',
   'activeSubscriptions',
   'oauthInfoByAppMap'
 ];
