@@ -1,5 +1,8 @@
 import ReplaceMenuProvider from 'bpmn-js/lib/features/popup-menu/ReplaceMenuProvider';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import * as consts from './utilities/Constants';
+import * as planqkReplaceOptions from './PlanQKReplaceOptions';
+import './resources/icons/planqk-icons/planqk-icons.css'
 
 const serviceEndpointBaseUrl = '';//process.env.VUE_APP_WSO2_GATEWAY_BASE_URL;
 
@@ -22,8 +25,12 @@ export default class PlanqkMenuProvider extends ReplaceMenuProvider {
     // Predefined menu entries can be retrieved through super.getEntries(element);
     let entries = [];
 
+    if (is(element, 'bpmn:Task')) {
+      entries = entries.concat(super._createEntries(element, planqkReplaceOptions.TASK));
+    }
+
     // add additional elements to replace tasks
-    if (is(element, 'planqk:ServiceTask')) {
+    if (is(element, consts.PLANQK_SERVICE_TASK)) {
       for (let subscription of this.activeSubscriptions) {
         entries = entries.concat(this.createServiceTaskEntries(element, subscription));
       }

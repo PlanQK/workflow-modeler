@@ -6,8 +6,8 @@ import ServiceTaskRenderer from "./ServiceTaskRenderer";
 import ServiceTaskPropertiesProvider from './servicetask-properties/ServiceTaskPropertiesProvider'
 
 export default {
-    __init__: ["paletteProvider", "customRenderer", "customPropertiesProvider", "replaceMenuProvider", "activeSubscriptions"],
-    replaceMenuProvider: ["type", PlanqkMenuProvider],
+    __init__: ["paletteProvider", "customRenderer", "customPropertiesProvider", "planqkReplaceMenuProvider", "activeSubscriptions"],
+    planqkReplaceMenuProvider: ["type", PlanqkMenuProvider],
     paletteProvider: ["type", ServiceTaskPaletteProvider],
     customRenderer: ['type', ServiceTaskRenderer],
     customPropertiesProvider: ['type', ServiceTaskPropertiesProvider],
