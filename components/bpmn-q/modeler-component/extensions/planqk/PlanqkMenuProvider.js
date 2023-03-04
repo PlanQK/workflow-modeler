@@ -25,21 +25,29 @@ export default class PlanqkMenuProvider extends ReplaceMenuProvider {
     // Predefined menu entries can be retrieved through super.getEntries(element);
     let entries = [];
 
-    if (is(element, 'bpmn:Task')) {
-      entries = entries.concat(super._createEntries(element, planqkReplaceOptions.TASK));
-    }
-
-    // add additional elements to replace tasks
     if (is(element, consts.PLANQK_SERVICE_TASK)) {
-      for (let subscription of this.activeSubscriptions) {
-        entries = entries.concat(this.createServiceTaskEntries(element, subscription));
-      }
 
+      return entries.concat(this.createServiceTaskEntries(element, this.activeSubscriptions));
     }
+
+    if (is(element, 'bpmn:Task')) {
+      return entries.concat(super._createEntries(element, planqkReplaceOptions.TASK));
+    }
+
+    entries = entries.concat(super.getEntries(element));
     return entries;
   }
 
-  createServiceTaskEntries(element, subscription) {
+  createServiceTaskEntries(element, subscriptions) {
+    const subscriptionEntries = [];
+
+    for (let subscription of subscriptions) {
+      subscriptionEntries.push(this.createServiceTaskEntry(element, subscription));
+    }
+    return subscriptionEntries;
+  }
+
+  createServiceTaskEntry(element, subscription) {
     const subscriptionEntryDef = {
       id: subscription.id,
       label: subscription.api.name + '@' + subscription.application.name,
@@ -69,21 +77,21 @@ export default class PlanqkMenuProvider extends ReplaceMenuProvider {
         result: '${output}'});
     });
 
-    return [subscriptionMenuEntry];
+    return subscriptionMenuEntry;
   }
 
-  getServiceSubEntry(subscription) {
-
-    return [{
-      id: subscription.id,
-      label: subscription.api.name + '@' + subscription.application.name,
-      actionName: 'replace-with-' + subscription.id,
-      className: 'bpmn-icon-service',
-      target: {
-        type: 'planqk:ServiceTask'
-      }
-    }]
-  }
+  // getServiceSubEntry(subscription) {
+  //
+  //   return [{
+  //     id: subscription.id,
+  //     label: subscription.api.name + '@' + subscription.application.name,
+  //     actionName: 'replace-with-' + subscription.id,
+  //     className: 'bpmn-icon-service',
+  //     target: {
+  //       type: 'planqk:ServiceTask'
+  //     }
+  //   }]
+  // }
 }
 
 // @ts-ignore
