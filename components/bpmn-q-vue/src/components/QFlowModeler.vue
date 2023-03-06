@@ -1,4 +1,3 @@
-
 <script setup>
     import '@planqk/quantum-workflow-modeler/public/app.js'
 </script>
@@ -9,5 +8,5 @@
 </script>
 
 <template>
-        <quantum-workflow style="height: 100%; width: 100%"></quantum-workflow>
+    <quantum-workflow style="height: 100%; width: 100%"></quantum-workflow>
 </template>
