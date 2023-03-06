@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation} from '@angular/core';
-import '../../../bpmn-q/public/app.js'
+import '@planqk/quantum-workflow-modeler/public/app.js'
 
 @Component({
   selector: 'app-root',

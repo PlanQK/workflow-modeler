@@ -1,9 +1,12 @@
 {
   "name": "@planqk/quantum-workflow-modeler",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
-  "main": "modeler-component/index.html",
+  "main": "public/app.js",
+  "files": [
+    "public/**/*"
+  ],
   "scripts": {
     "test": "exit 0",
     "build": "webpack",
