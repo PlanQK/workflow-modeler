@@ -19,7 +19,7 @@ export const DATA_STORE = [
         actionName: 'replace-with-planqk-data-pool',
         className: 'planqk-icon-data-pool',
         target: {
-            type: consts.PLANQK_SERVICE_TASK
+            type: consts.PLANQK_DATA_POOL
         }
-    }
-]
+    },
+];

@@ -37,13 +37,18 @@ export default class PlanqkMenuProvider {
         return self.createServiceTaskEntries(element, self.activeSubscriptions);
       }
 
-      if (is(element, 'bpmn:DataStoreReference')) {
+      if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
         return self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+      }
+
+      if (is(element, 'bpmn:DataObjectReference')) {
+        const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+        return Object.assign(entries, planqkEntries);
       }
 
       if (is(element, 'bpmn:Task')) {
         const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.TASK);
-        entries = Object.assign(entries, planqkEntries);
+        entries = Object.assign(planqkEntries, entries);
         console.log(entries);
         return entries;
       }
@@ -69,6 +74,7 @@ export default class PlanqkMenuProvider {
     const replaceElement = this.replaceElement;
 
     const replaceAction = function () {
+      console.log(definition.target);
       return replaceElement(element, definition.target);
     };
 
