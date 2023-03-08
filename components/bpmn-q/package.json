@@ -1,6 +1,6 @@
 {
   "name": "@planqk/quantum-workflow-modeler",
-  "version": "0.0.3.1",
+  "version": "0.0.4",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
   "main": "public/index.js",
@@ -41,6 +41,7 @@
     "@babel/runtime": "^7.20.7",
     "babel-loader": "^9.1.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^6.7.2",
     "jquery": "^3.6.3",
@@ -48,6 +49,7 @@
     "react-url-loader": "^0.0.4",
     "resolve-url-loader": "^5.0.0",
     "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.6",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.0",
     "webpack-dev-server": "^4.11.1"
