@@ -7,10 +7,11 @@ const serviceEndpointBaseUrl = '';//process.env.VUE_APP_WSO2_GATEWAY_BASE_URL;
 
 export default class PlanqkMenuProvider {
 
-  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, oauthInfoByAppMap) {
+  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap) {
     popupMenu.registerProvider("bpmn-replace", this);
     this.replaceElement = bpmnReplace.replaceElement;
     this.activeSubscriptions = activeSubscriptions;
+    this.dataPools = dataPools;
     this.oauthInfoByAppMap = oauthInfoByAppMap;
     this.modeling = modeling;
     this.translate = translate;
@@ -37,8 +38,14 @@ export default class PlanqkMenuProvider {
         return self.createServiceTaskEntries(element, self.activeSubscriptions);
       }
 
+      if (is(element, consts.PLANQK_DATA_POOL)) {
+        const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools)
+        return Object.assign(dataPoolEntries, entries);
+      }
+
       if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
-        return self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+        const dataStoreEntries = self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+        return Object.assign(dataStoreEntries, entries);
       }
 
       if (is(element, 'bpmn:DataObjectReference')) {
@@ -127,6 +134,35 @@ export default class PlanqkMenuProvider {
       }
     }
   }
+
+  createDataPoolEntries(element, dataPools) {
+    const dataPoolEntries = {};
+
+    for (let dataPool of dataPools) {
+      dataPoolEntries['replace-with-' + dataPool.id + ' (2)'] = this.createNewDataPoolEntry(element, dataPool);
+    }
+    return dataPoolEntries;
+  }
+
+  createNewDataPoolEntry(element, dataPool) {
+
+    const self = this.modeling;
+
+    console.log(dataPool)
+
+    return {
+      label: dataPool.name,
+      className: 'planqk-logo',
+      action: function () {
+        self.updateProperties(element, {
+          dataPoolName: dataPool.name,
+          dataPoolId: dataPool.id,
+          dataPoolLink: dataPool.link,
+          dataPoolDescription: dataPool.description,
+        });
+      }
+    }
+  }
 }
 
 // @ts-ignore
@@ -136,5 +172,6 @@ PlanqkMenuProvider.$inject = [
   'modeling',
   'bpmnReplace',
   'activeSubscriptions',
+  'dataPools',
   'oauthInfoByAppMap'
 ];

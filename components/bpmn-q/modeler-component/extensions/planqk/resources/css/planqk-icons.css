@@ -26,8 +26,18 @@
     content: "";
     display: block;
     background: url("../icons/planqk-data-pool-icon.jpg") no-repeat;
-    width: 20px;
+    width: 21px;
     height: 20px;
     float: left;
     margin: 0 6px 0 0;
+}
+
+.planqk-logo:before {
+    content: "";
+    display: block;
+    background: url("../icons/planqk-icon.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    /*margin: 0 6px 0 0;*/
 }

@@ -68,7 +68,28 @@
     {
       "name": "DataPool",
       "superClass": [ "bpmn:DataStoreReference" ],
-      "properties": []
+      "properties": [
+        {
+          "name": "dataPoolName",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "dataPoolId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "dataPoolLink",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "dataPoolDescription",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "emumerations": [],
