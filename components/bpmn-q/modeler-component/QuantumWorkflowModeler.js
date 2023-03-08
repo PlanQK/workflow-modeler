@@ -25,7 +25,7 @@ import {createNewDiagram} from "./common/util/IoUtilities";
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
 import PlanQKExtensionModule from './extensions/planqk'
-let planqkModdleDescriptor = require('./extensions/planqk/resources/workflow/planqk-service-task-ext.json')
+let planqkModdleDescriptor = require('./extensions/planqk/resources/planqk-service-task-ext.json')
 
 class QuantumWorkflowModeler extends HTMLElement {
     constructor() {

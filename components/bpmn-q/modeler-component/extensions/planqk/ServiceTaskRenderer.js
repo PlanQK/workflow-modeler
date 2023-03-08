@@ -1,7 +1,8 @@
 import {
   append as svgAppend,
   attr as svgAttr,
-  create as svgCreate
+  create as svgCreate, innerSVG,
+  select as svgSelect
 } from 'tiny-svg';
 
 import {
@@ -16,6 +17,7 @@ import {
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 
 import * as consts from './utilities/Constants';
+import {getSVG} from "./SVGMap";
 
 const HIGH_PRIORITY = 1500,
     TASK_BORDER_RADIUS = 2;
@@ -36,40 +38,45 @@ export default class ServiceTaskRenderer extends BpmnRenderer {
       return path;
     }
 
+    function drawTaskSVG(parentGfx, iconID) {
+      var importsvg = getSVG(iconID);
+      var innerSVGstring = importsvg.svg;
+      var transformDef = importsvg.transform;
+
+      const groupDef = svgCreate('g');
+      svgAttr(groupDef, { transform: transformDef });
+      innerSVG(groupDef, innerSVGstring);
+
+      // set task box opacity to 0 such that icon can be in the background
+      svgAttr(svgSelect(parentGfx, 'rect'), { 'fill-opacity': 0 });
+
+      // draw svg in the background
+      parentGfx.prepend(groupDef);
+    }
+
+    function drawDataStoreSVG(parentGfx, iconID) {
+      var importsvg = getSVG(iconID);
+      var innerSVGstring = importsvg.svg;
+      var transformDef = importsvg.transform;
+
+      const groupDef = svgCreate('g');
+      svgAttr(groupDef, { transform: transformDef });
+      innerSVG(groupDef, innerSVGstring);
+
+      // draw svg in the background
+      parentGfx.append(groupDef);
+    }
+
     this.planqkHandlers = {
       [consts.PLANQK_SERVICE_TASK]: function(self, parentGfx, element) {
         const task = self.renderer('bpmn:Task')(parentGfx, element);
-
-        const pathDataBG = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
-          abspos: {
-            x: 12,
-            y: 18
-          }
-        });
-
-       drawPath(parentGfx, pathDataBG, {
-          strokeWidth: 1,
-          fill: getFillColor(element, 'white'),
-          stroke: getStrokeColor(element, 'black')
-        });
+        drawTaskSVG(parentGfx, 'TASK_TYPE_PLANQK_SERVICE_TASK');
 
         return task;
       },
       [consts.PLANQK_DATA_POOL]: function(self, parentGfx, element) {
         const store = self.renderer('bpmn:DataStoreReference')(parentGfx, element);
-
-        const pathDataBG = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
-          abspos: {
-            x: 12,
-            y: 18
-          }
-        });
-
-        drawPath(parentGfx, pathDataBG, {
-          strokeWidth: 1,
-          fill: getFillColor(element, 'white'),
-          stroke: getStrokeColor(element, 'black')
-        });
+        drawDataStoreSVG(parentGfx, 'DATA_TYPE_DATA_POOL');
 
         return store;
       },

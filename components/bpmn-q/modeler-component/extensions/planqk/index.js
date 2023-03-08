@@ -1,4 +1,3 @@
-
 import {oauthInfo, subscriptions} from "./DummyData";
 import PlanqkMenuProvider from "./PlanqkMenuProvider";
 import ServiceTaskPaletteProvider from "./ServiceTaskPaletteProvider";
