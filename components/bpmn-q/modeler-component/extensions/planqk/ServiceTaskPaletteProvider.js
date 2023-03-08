@@ -15,11 +15,6 @@ export default class ServiceTaskPaletteProvider extends PaletteProvider {
   getPaletteEntries(element) {
     let paletteEntries = super.getPaletteEntries(element);
 
-    // Remove not supported palette entries
-    delete paletteEntries['create.subprocess-expanded'];
-    delete paletteEntries['create.participant-expanded'];
-    delete paletteEntries['create.data-store'];
-
     paletteEntries = Object.assign(paletteEntries, this.createPlanqkServiceTaskEntry());
 
     return paletteEntries;
@@ -30,8 +25,9 @@ export default class ServiceTaskPaletteProvider extends PaletteProvider {
     return {
       'create.planqk-service-task': {
         group: "activity",
-        className: "bpmn-icon-service-task red",
+        className: "planqk-icon-palette-service-task",
         title: translate('Creates a task that calls a PlanQK service you subscribed to'),
+        // imageURL: './resources/icons/planqk-service-task.jpg',
         action: {
           click: function(event) {
             const businessObject = bpmnFactory.create(consts.PLANQK_SERVICE_TASK);
@@ -45,7 +41,7 @@ export default class ServiceTaskPaletteProvider extends PaletteProvider {
       },
       'create.planqk-data-pool': {
         group: "activity",
-        className: "bpmn-icon-data-store",
+        className: "planqk-icon-palette-data-pool",
         title: translate('Creates a PlanQK Data Pool to fetch data from'),
         action: {
           click: function(event) {
