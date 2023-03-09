@@ -1,4 +1,4 @@
-import {TextFieldEntry, isTextFieldEntryEdited,  TextAreaEntry, SelectEntry} from '@bpmn-io/properties-panel';
+import {TextFieldEntry, isTextFieldEntryEdited,  TextAreaEntry} from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 export default function DataPoolProperties(element) {
@@ -8,13 +8,6 @@ export default function DataPoolProperties(element) {
       id: 'name',
       element,
       component: Name,
-      isEdited: isTextFieldEntryEdited
-    },
-
-    {
-      id: 'id',
-      element,
-      component: ID,
       isEdited: isTextFieldEntryEdited
     },
 
@@ -35,81 +28,85 @@ export default function DataPoolProperties(element) {
 }
 
 function Name(props) {
-  const { element, id } = props;
+  const { element } = props;
 
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const getValue = () => {
-    return element.businessObject.dataPoolName || 'Select a data pool';
+    return element.businessObject.dataPoolName;
   }
+
+  const setValue = (value) => {
+    modeling.updateProperties(element, {
+      dataPoolName: value,
+    });
+  };
 
   return TextFieldEntry({
     element,
     id: 'data_pool_name',
     label: translate('Data Pool Name'),
+    description: translate('Provide a name or select a data pool.'),
     getValue,
-    disabled: true,
-    debounce,
-  });
-}
-
-function ID(props) {
-  const { element, id } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-
-  const getValue = () => {
-    return element.businessObject.dataPoolId || 'Select a data pool';
-  }
-
-  return TextFieldEntry({
-    element,
-    id: 'data_pool_id',
-    label: translate('ID'),
-    getValue,
-    disabled: true,
+    setValue,
     debounce,
   });
 }
 
 function Link(props) {
-  const { element, id } = props;
+  const { element } = props;
 
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const getValue = () => {
-    return element.businessObject.dataPoolLink || 'Select a data pool';
+    return element.businessObject.dataPoolLink;
   }
+
+  const setValue = (value) => {
+    modeling.updateProperties(element, {
+      dataPoolLink: value,
+    });
+  };
 
   return TextFieldEntry({
     element,
     id: 'data_pool_link',
     label: translate('Link to PlanQK Platform'),
+    description: translate('Provide a link or select a data pool.'),
     getValue,
-    disabled: true,
+    setValue,
     debounce,
   });
 }
 
 function Description(props) {
-  const { element, id } = props;
+  const { element } = props;
 
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const getValue = () => {
-    return element.businessObject.dataPoolDescription || 'Select a data pool';
+    return element.businessObject.dataPoolDescription;
   }
+
+  const setValue = (value) => {
+    modeling.updateProperties(element, {
+      dataPoolDescription: value,
+    });
+  };
 
   return TextAreaEntry({
     element,
     id: 'data_pool_description',
     label: translate('Short Description'),
+    description: translate('Provide a description or select a data pool.'),
     getValue,
-    disabled: true,
+    setValue,
     debounce,
     rows: 3
   });
