@@ -1,4 +1,4 @@
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
 import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import './resources/css/planqk-icons.css'
@@ -85,7 +85,7 @@ export default class PlanqkMenuProvider {
       return replaceElement(element, definition.target);
     };
 
-    const label = definition.label;
+    const label = definition.label || '';
 
     action = action || replaceAction;
 
@@ -136,7 +136,15 @@ export default class PlanqkMenuProvider {
   }
 
   createDataPoolEntries(element, dataPools) {
-    const dataPoolEntries = {};
+    let dataPoolEntries = {};
+
+    // add entry for a generic, unspecific data pool
+    dataPoolEntries['replace-with-generic-data-pool'] = this.createNewDataPoolEntry(element, {
+      label: 'PlanQK Data Pool', name: '', link: '', description: ''
+    });
+    // const genericDataPool = this.createMenuEntries(element, planqkReplaceOptions.DATA_POOL);
+    // Object.assign(dataPoolEntries, genericDataPool);
+    // dataPoolEntries[planqkReplaceOptions.DATA_POOL.id] = genericDataPool;
 
     for (let dataPool of dataPools) {
       dataPoolEntries['replace-with-' + dataPool.id + ' (2)'] = this.createNewDataPoolEntry(element, dataPool);
@@ -148,10 +156,12 @@ export default class PlanqkMenuProvider {
 
     const self = this.modeling;
 
+    const label = dataPool.label || dataPool.name;
+
     console.log(dataPool)
 
     return {
-      label: dataPool.name,
+      label: label,
       className: 'planqk-logo',
       action: function () {
         self.updateProperties(element, {

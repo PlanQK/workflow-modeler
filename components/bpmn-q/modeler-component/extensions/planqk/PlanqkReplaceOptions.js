@@ -1,6 +1,6 @@
 import * as consts from './utilities/Constants';
 
-export var TASK = [
+export const TASK = [
     {
         id: 'planqk-service-task',
         label: 'PlanQK Service Task',
