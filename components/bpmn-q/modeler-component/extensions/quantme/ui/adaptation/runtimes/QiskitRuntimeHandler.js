@@ -169,6 +169,11 @@ async function invokeQiskitRuntimeHandler(candidate, requiredPrograms, qiskitRun
 
   // create request containing information about the candidate and sent to Qiskit Runtime handler
   // eslint-disable-next-line no-undef
+  console.log('beforeLoop: ' + beforeLoop);
+  console.log('afterLoop: ' + afterLoop);
+  console.log('loopCondition: ' + candidate.expression.body);
+  console.log('requiredPrograms: ' + requiredPrograms.programs);
+  console.log('provenanceCollection: ' + provenanceCollection);
   const fd = new FormData();
   fd.append('beforeLoop', beforeLoop);
   fd.append('afterLoop', afterLoop);
