@@ -30,7 +30,7 @@ export async function replaceHardwareSelectionSubprocess(subprocess, parent, mod
   let bpmnFactory = modeler.get('bpmnFactory');
   let modeling = modeler.get('modeling');
   let elementRegistry = modeler.get('elementRegistry');
-  let commandStack = modeler.get('commandStack'); // TODO: test that the get works, alternative: const commandStack = useService('commandStack');
+  let commandStack = modeler.get('commandStack');
 
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), { type: 'bpmn:SubProcess' });
