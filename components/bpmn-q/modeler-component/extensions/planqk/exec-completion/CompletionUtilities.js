@@ -1,6 +1,18 @@
 import BpmnModeler from 'bpmn-js/lib/Modeler';
-import planqkServiceTaskExtension from "../resources/workflow/planqk-service-task-ext.json";
+import planqkServiceTaskExtension from "../resources/workflows/planqk-service-task-ext.json";
 import CamundaBpmnModdle from 'camunda-bpmn-moddle/resources/camunda.json'
+import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
+import {loadDiagram} from "../../../common/util/IoUtilities";
+import BpmnPalletteModule from "bpmn-js/lib/features/palette";
+import PlanQKExtensionModule from "../index";
+import {
+  BpmnPropertiesPanelModule,
+  BpmnPropertiesProviderModule,
+  CamundaPlatformPropertiesProviderModule
+} from "bpmn-js-properties-panel";
+
+let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
+let planqkModdleDescriptor = require('../resources/planqk-service-task-ext.json')
 // import {getExtensionElementsList} from 'bpmn-js-properties-panel';
 
 /**
@@ -25,15 +37,7 @@ export async function createModelerFromXml(xml) {
   const bpmnModeler = createModeler();
 
   // import the xml containing the definitions
-  function importXmlWrapper(xml) {
-    return new Promise((resolve) => {
-      bpmnModeler.importXML(xml, (successResponse) => {
-        resolve(successResponse);
-      });
-    });
-  }
-
-  await importXmlWrapper(xml);
+  await loadDiagram(xml, bpmnModeler);
 
   return bpmnModeler;
 }
@@ -47,11 +51,25 @@ export function createModeler() {
 
   // create new modeler with the custom QuantME extensions
   return new BpmnModeler({
-    additionalModules: [],
+    additionalModules: [
+
+      // basic modeling modules
+      BpmnPalletteModule,
+      CamundaExtensionModule,
+      PlanQKExtensionModule,
+
+      // properties panel module
+      BpmnPropertiesPanelModule,
+      BpmnPropertiesProviderModule,
+      CamundaPlatformPropertiesProviderModule
+    ],
+    keyboard: {
+      bindTo: document
+    },
     moddleExtensions: {
-      camunda: CamundaBpmnModdle,
-      planqk: planqkServiceTaskExtension
-    }
+      camunda: camundaModdleDescriptor,
+      planqk: planqkModdleDescriptor,
+    },
   });
 }
 

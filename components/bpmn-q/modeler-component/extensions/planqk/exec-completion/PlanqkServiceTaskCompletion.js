@@ -8,6 +8,7 @@ import {
   setInputParameter
 } from './CompletionUtilities';
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
+import {getXml} from "../../../common/util/IoUtilities";
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
@@ -43,7 +44,7 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
 
     let replacementSuccess = false;
     console.log('Replacing task with id %s with PlanQK service interaction subprocess ', planqkServiceTask.task.id);
-    const replacementSubprocess = require('../../../assets/workflow/planqk_service_call_subprocess.bpmn')
+    const replacementSubprocess = require('../resources/workflows/planqk_service_call_subprocess.bpmn')
     replacementSuccess = await replaceByInteractionSubprocess(definitions, planqkServiceTask.task, planqkServiceTask.parent, replacementSubprocess, modeler);
 
     if (!replacementSuccess) {
@@ -55,11 +56,8 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
     }
   }
 
-  modeler.saveXML({ format: true }, function(err, xml) {
-    console.log(xml);
-    saveResultXmlFn(xml);
-  });
-
+  const transformedXml = await getXml(modeler);
+  await saveResultXmlFn(transformedXml);
 }
 
 /**
