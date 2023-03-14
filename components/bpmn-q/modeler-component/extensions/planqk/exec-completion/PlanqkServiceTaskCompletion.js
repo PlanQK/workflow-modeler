@@ -4,11 +4,12 @@ import {
   getRootProcess,
   getSingleFlowElement,
   isFlowLikeElement,
-  PLANQK_SERVICE_TASK,
   setInputParameter
 } from './CompletionUtilities';
+import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
 import {getXml} from "../../../common/util/IoUtilities";
+import {addExecutionListener, getProcess} from "../../../common/util/ModellingUtilities";
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
@@ -32,12 +33,15 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
   // Mark process as executable
   rootProcess.isExecutable = true;
 
+  let isTransformed = false;
+
   // get all PlanQK modeling constructs from the process
   const planqkServiceTasks = getPlanqkServiceTasks(rootProcess, elementRegistry);
   console.log('Process contains ' + planqkServiceTasks.length + ' Planqk service tasks to replace...');
-  if (!planqkServiceTasks || !planqkServiceTasks.length) {
-    return { status: 'transformed', xml: xml };
-  }
+  isTransformed = !planqkServiceTasks || !planqkServiceTasks.length;
+  // if (!planqkServiceTasks || !planqkServiceTasks.length) {
+  //   return { status: 'transformed', xml: xml };
+  // }
 
   // replace each planqk:serviceTask with the subprocess that implements service interaction to retrieve standard-compliant BPMN
   for (let planqkServiceTask of planqkServiceTasks) {
@@ -52,6 +56,35 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
       return {
         status: 'failed',
         cause: 'Replacement of service task with id ' + planqkServiceTask.task.id + ' failed. Aborting process!'
+      };
+    }
+  }
+
+  // get all PlanQK data pools
+  const planqkDataPools = getPlanqkDataPools(rootProcess, elementRegistry);
+  console.log('Process contains ' + planqkDataPools.length + ' Planqk data pools to replace...');
+  isTransformed = !planqkDataPools || !planqkDataPools.length;
+  // if (!planqkDataPools || !planqkDataPools.length) {
+  //   return { status: 'transformed', xml: xml };
+  // }
+
+  // check if transformation was necessary
+  if (isTransformed) {
+    return { status: 'transformed', xml: xml };
+  }
+
+  // replace each planqk:dataPool with a bpmn:dataPool and a process variable
+  for (let dataPool of planqkDataPools) {
+
+    let replacementSuccess = false;
+    console.log('Replacing data pool with id %s ', dataPool.pool.id);
+    replacementSuccess = await replaceByDataStore(definitions, dataPool.pool, dataPool.parent, modeler);
+
+    if (!replacementSuccess) {
+      console.log('Replacement of data pool with id ' + dataPool.pool.id + ' failed. Aborting process!');
+      return {
+        status: 'failed',
+        cause: 'Replacement of data pool with id ' + dataPool.pool.id + ' failed. Aborting process!'
       };
     }
   }
@@ -72,7 +105,7 @@ export function getPlanqkServiceTasks(process, elementRegistry) {
   const flowElements = process.flowElements;
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
-    if (flowElement.$type && flowElement.$type === PLANQK_SERVICE_TASK) {
+    if (flowElement.$type && flowElement.$type === consts.PLANQK_SERVICE_TASK) {
       planqkServiceTasks.push({ task: flowElement, parent: processBo });
     }
 
@@ -84,49 +117,93 @@ export function getPlanqkServiceTasks(process, elementRegistry) {
   return planqkServiceTasks;
 }
 
-  /**
-   * Replace the given task by the content of the replacement fragment
-   */
-  async function replaceByInteractionSubprocess(definitions, task, parent, replacement, modeler) {
+/**
+ * Get planqk:DataPools from process
+ */
+export function getPlanqkDataPools(process, elementRegistry) {
 
-    if (!replacement) {
-      console.log('Replacement interaction subprocess is undefined. Aborting replacement!');
-      return false;
+  // retrieve parent object for later replacement
+  const processBo = elementRegistry.get(process.id);
+
+  const planqkDataPools = [];
+  const flowElements = process.flowElements;
+  for (let i = 0; i < flowElements.length; i++) {
+    let flowElement = flowElements[i];
+    if (flowElement.$type && flowElement.$type === consts.PLANQK_DATA_POOL) {
+      planqkDataPools.push({ pool: flowElement, parent: processBo });
     }
 
-    // get the root process of the replacement fragment
-    let replacementProcess = getRootProcess(await getDefinitionsFromXml(replacement['default']));
-    let replacementIASubprocess = getSingleFlowElement(replacementProcess);
-    if (replacementIASubprocess === null || replacementIASubprocess === undefined) {
-      console.log('Unable to retrieve replacement subprocess: ', replacement);
-      return false;
+    // recursively retrieve service tasks if subprocess is found
+    if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
+      Array.prototype.push.apply(planqkDataPools, getPlanqkDataPools(flowElement, elementRegistry));
     }
+  }
+  return planqkDataPools;
+}
 
-    console.log('Replacement interaction subprocess: ', replacementIASubprocess);
-    let result = insertShape(definitions, parent, replacementIASubprocess, {}, true, modeler, task);
-    const subprocessShape = result['element'];
-    subprocessShape.collapsed = false;
-    subprocessShape.isExpanded = true;
+/**
+ * Replace the given task by the content of the replacement fragment
+ */
+async function replaceByInteractionSubprocess(definitions, task, parent, replacement, modeler) {
 
-    applyTaskInput2Subprocess(task, result['element'].businessObject);
-    applyTaskOutput2Subprocess(task, result['element'].businessObject);
-
-    return result['success'];
+  if (!replacement) {
+    console.log('Replacement interaction subprocess is undefined. Aborting replacement!');
+    return false;
   }
 
-  function applyTaskInput2Subprocess(taskBO, subprocessBO) {
-
-    setInputParameter(subprocessBO, "params", taskBO.params);
-    setInputParameter(subprocessBO, "data", taskBO.data);
-    setInputParameter(subprocessBO, "serviceEndpoint", taskBO.serviceEndpoint);
-    setInputParameter(subprocessBO, "tokenEndpoint", taskBO.tokenEndpoint);
-    setInputParameter(subprocessBO, "consumerSecret", taskBO.consumerSecret);
-    setInputParameter(subprocessBO, "consumerKey", taskBO.consumerKey);
+  // get the root process of the replacement fragment
+  let replacementProcess = getRootProcess(await getDefinitionsFromXml(replacement['default']));
+  let replacementIASubprocess = getSingleFlowElement(replacementProcess);
+  if (replacementIASubprocess === null || replacementIASubprocess === undefined) {
+    console.log('Unable to retrieve replacement subprocess: ', replacement);
+    return false;
   }
 
-  function applyTaskOutput2Subprocess(taskBO, subprocessBO) {
-    setInputParameter(subprocessBO, "result", taskBO.params);
-  }
+  console.log('Replacement interaction subprocess: ', replacementIASubprocess);
+  let result = insertShape(definitions, parent, replacementIASubprocess, {}, true, modeler, task);
+  const subprocessShape = result['element'];
+  subprocessShape.collapsed = false;
+  subprocessShape.isExpanded = true;
+
+  applyTaskInput2Subprocess(task, result['element'].businessObject);
+  applyTaskOutput2Subprocess(task, result['element'].businessObject);
+
+  return result['success'];
+}
+
+function applyTaskInput2Subprocess(taskBO, subprocessBO) {
+
+  setInputParameter(subprocessBO, "params", taskBO.params);
+  setInputParameter(subprocessBO, "data", taskBO.data);
+  setInputParameter(subprocessBO, "serviceEndpoint", taskBO.serviceEndpoint);
+  setInputParameter(subprocessBO, "tokenEndpoint", taskBO.tokenEndpoint);
+  setInputParameter(subprocessBO, "consumerSecret", taskBO.consumerSecret);
+  setInputParameter(subprocessBO, "consumerKey", taskBO.consumerKey);
+}
+
+function applyTaskOutput2Subprocess(taskBO, subprocessBO) {
+  setInputParameter(subprocessBO, "result", taskBO.params);
+}
+
+/**
+ * Replace the given data pool by a data store
+ */
+async function replaceByDataStore(definitions, dataPool, parent, modeler) {
+
+  const bpmnFactory = modeler.get('bpmnFactory');
+  const moddle = modeler.get('moddle');
+
+  const newDataStore = bpmnFactory.create('bpmn:DataStoreReference');
+  let result = insertShape(definitions, parent, newDataStore, {}, true, modeler, dataPool);
+
+  // get next process for data pool element
+  const process = getRootProcess(definitions);
+
+  // add execution listener to publish process variable on start
+  addExecutionListener(process, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
+
+  return result['success'];
+}
 
 /**
  * Insert the given element and all child elements into the diagram

@@ -1,6 +1,4 @@
 import BpmnModeler from 'bpmn-js/lib/Modeler';
-import planqkServiceTaskExtension from "../resources/workflows/planqk-service-task-ext.json";
-import CamundaBpmnModdle from 'camunda-bpmn-moddle/resources/camunda.json'
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
 import {loadDiagram} from "../../../common/util/IoUtilities";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
@@ -13,7 +11,6 @@ import {
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 let planqkModdleDescriptor = require('../resources/planqk-service-task-ext.json')
-// import {getExtensionElementsList} from 'bpmn-js-properties-panel';
 
 /**
  * Get the definitions from a xml string representing a BPMN diagram
@@ -145,25 +142,6 @@ export function isFlowLikeElement(type) {
 }
 
 /**
- * Export the current diagram in the given modeler as XML
- *
- * @param modeler the modeler to export the diagram
- * @return the XML
- */
-export async function exportXmlFromModeler(modeler) {
-
-  // export the xml and return to requester
-  function exportXmlWrapper(definitions) {
-    return new Promise((resolve) => {
-      modeler._moddle.toXML(definitions, (err, successResponse) => {
-        resolve(successResponse);
-      });
-    });
-  }
-  return await exportXmlWrapper(modeler.getDefinitions());
-}
-
-/**
  * Check if the given process contains only one flow element and return it
  *
  * @param process the process to retrieve the flow element from
@@ -177,6 +155,3 @@ export function getSingleFlowElement(process) {
   }
   return flowElements[0];
 }
-
-
-export const PLANQK_SERVICE_TASK = "planqk:ServiceTask";

@@ -120,6 +120,7 @@ export default class PlanqkMenuProvider {
         console.log(oAuthInfo.consumerKey);
         console.log(oAuthInfo.consumerSecret);
         self.updateProperties(element, {
+          name: subscription.api.name,
           subscriptionId: subscription.id,
           applicationName: subscription.application.name,
           serviceName: subscription.api.name,
@@ -142,9 +143,6 @@ export default class PlanqkMenuProvider {
     dataPoolEntries['replace-with-generic-data-pool'] = this.createNewDataPoolEntry(element, {
       label: 'PlanQK Data Pool', name: '', link: '', description: ''
     });
-    // const genericDataPool = this.createMenuEntries(element, planqkReplaceOptions.DATA_POOL);
-    // Object.assign(dataPoolEntries, genericDataPool);
-    // dataPoolEntries[planqkReplaceOptions.DATA_POOL.id] = genericDataPool;
 
     for (let dataPool of dataPools) {
       dataPoolEntries['replace-with-' + dataPool.id + ' (2)'] = this.createNewDataPoolEntry(element, dataPool);
@@ -165,6 +163,7 @@ export default class PlanqkMenuProvider {
       className: 'planqk-logo',
       action: function () {
         self.updateProperties(element, {
+          name: dataPool.name,
           dataPoolName: dataPool.name,
           dataPoolId: dataPool.id,
           dataPoolLink: dataPool.link,
