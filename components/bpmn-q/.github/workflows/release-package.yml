@@ -2,7 +2,7 @@ name: Quantum Workflow Modeler Package
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   build:
