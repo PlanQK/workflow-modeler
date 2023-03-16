@@ -18,10 +18,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: cd components/bpmn-q
-      - run: npm ci
-      - run: npm run build
-      - run: npm test
+      - name: run tests
+        run: |
+          npm ci
+          npm run build
+          npm test
+        working-directory: ./components/bpmn-q
 
   publish-gpr:
     needs: build
@@ -35,9 +37,11 @@ jobs:
         with:
           node-version: 18
           registry-url: https://npm.pkg.github.com/
-      - run: cd components/bpmn-q
-      - run: npm ci
-      - run: npm run build
-      - run: npm publish
+      - name: run build and publish
+        run: |
+          npm ci
+          npm run build
+          npm publish
+        working-directory: ./components/bpmn-q
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
