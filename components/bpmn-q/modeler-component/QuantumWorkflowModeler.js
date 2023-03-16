@@ -80,6 +80,12 @@ class QuantumWorkflowModeler extends HTMLElement {
         // notificationHandler.displayNotification({type: 'info', title: 'TestTtitle', content: 'Long sentence.'})
 
         createNewDiagram(modeler)
+
+        const beforeUnloadListener = (event) => {
+            event.preventDefault();
+            return event.returnValue = '';
+        };
+        addEventListener("beforeunload", beforeUnloadListener, {capture: true});
     }
 }
 
