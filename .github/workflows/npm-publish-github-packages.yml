@@ -37,6 +37,7 @@ jobs:
         with:
           node-version: 18
           registry-url: https://npm.pkg.github.com/
+          scope: '@planqk'
       - name: run build and publish
         run: |
           npm ci
