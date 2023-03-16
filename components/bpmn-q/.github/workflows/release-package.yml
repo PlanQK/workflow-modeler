@@ -12,6 +12,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: cd components/bpmn-q    
       - run: npm ci
       - run: npm test
 
