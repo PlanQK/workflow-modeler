@@ -1,7 +1,7 @@
 
 <script setup>
-    // import '@planqk/quantum-workflow-modeler/public/app.js'
-    import '../../../bpmn-q/public/'
+    import '@planqk/quantum-workflow-modeler/public'
+    // import '../../../bpmn-q/public/'
 </script>
 <script>
     export default {

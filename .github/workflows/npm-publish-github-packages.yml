@@ -6,9 +6,9 @@ name: Node.js Package of Quantum Workflow Modeler
 on:
   release:
     types: [created, edited]
-  push:
-    branches:
-      - 'github-action-publish-npm'
+#  push:
+#    branches:
+#      - 'github-action-publish-npm'
 
 jobs:
 #  build:
