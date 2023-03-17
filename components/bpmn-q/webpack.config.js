@@ -39,8 +39,12 @@ module.exports = {
                 type: "asset/source",
             },
             {
+                test: /\.svg$/,
+                use: ['svg-url-loader'],
+            },
+            {
 
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                test: /\.(png|jpg|jpeg|gif)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'image/[name][hash][ext]'

@@ -1,0 +1,414 @@
+{
+    "name": "Quantum4BPMN",
+    "uri": "https://github.com/UST-QuAntiL/QuantME-Quantum4BPMN",
+    "prefix": "quantme",
+    "xml": {
+        "tagAlias": "lowerCase"
+    },
+    "types": [
+      {
+        "name": "QuantMEProcess",
+        "extends": [ "bpmn:Process" ],
+        "properties": [
+          {
+            "name": "flowElements",
+            "isMany": true,
+            "replaces": "bpmn:Process#flowElements",
+            "type": "bpmn:FlowElement"
+          }
+        ]
+      },
+      {
+        "name": "QuantumHardwareSelectionSubprocess",
+        "superClass": [ "bpmn:SubProcess" ],
+        "properties": [
+          {
+            "name": "providers",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "simulatorsAllowed",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "selectionStrategy",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "CircuitCuttingSubprocess",
+        "superClass": [ "bpmn:SubProcess" ],
+        "properties": [
+          {
+            "name": "cuttingMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxSubCircuitWidth",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxNumberOfCuts",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxNumSubCircuits",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "QuantumComputationTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "algorithm",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "provider",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "QuantumCircuitLoadingTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "quantumCircuit",
+            "type": "String"
+          },
+          {
+            "name": "url",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "DataPreparationTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "encodingSchema",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "programmingLanguage",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "OracleExpansionTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "oracleId",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "oracleCircuit",
+            "type": "String"
+          },
+          {
+            "name": "oracleURL",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "programmingLanguage",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "QuantumCircuitExecutionTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "provider",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "qpu",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "shots",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "programmingLanguage",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "ParameterOptimizationTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "optimizer",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxIterations",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "toleranceThreshold",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "learningRate",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "VariationalQuantumAlgorithmTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "quantumAlgorithm",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "algorithmicProblem",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "qpu",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "provider",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "optimizer",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "objectiveFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "costFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "cuttingMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "warmStartingMethod",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "ResultEvaluationTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "objectiveFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "costFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "eta",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "alpha",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "WarmStartingTask",
+        "superClass": [
+          "bpmn:Task"
+        ],
+        "properties": [
+          {
+            "name": "warmStartingMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "quantumAlgorithm",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "classicalAlgorithm",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "repetitions",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "rounded",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "ReadoutErrorMitigationTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "provider",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "qpu",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "shots",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "calibrationMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "mitigationMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "timeOfExecution",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "dnnHiddenLayer",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "neighborhoodRange",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "objectiveFunction",
+            "isAttr": true,
+            "type": "String"
+          },
+		  {
+            "name": "optimizer",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxAge",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxREMCosts",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxCMSize",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "ServiceTask",
+        "extends": [ "bpmn:ServiceTask" ],
+        "properties": [
+          {
+            "name": "deploymentModelUrl",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "Task",
+        "extends": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "hybridRuntimeExecution",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "hybridProgramId",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "hybridProgramEntryPoint",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      }
+    ],
+    "enumerations": [],
+    "associations": []
+}
