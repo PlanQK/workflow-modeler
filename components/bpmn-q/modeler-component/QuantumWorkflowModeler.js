@@ -30,6 +30,9 @@ import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
 
 export const notificationHandler = new NotificationHandler([]);
 
+import PlanQKExtensionModule from './extensions/planqk'
+let planqkModdleDescriptor = require('./extensions/planqk/resources/planqk-service-task-ext.json')
+
 class QuantumWorkflowModeler extends HTMLElement {
     constructor() {
         super();

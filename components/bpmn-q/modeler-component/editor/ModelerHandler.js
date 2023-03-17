@@ -8,7 +8,9 @@ import {
 import QuantMEExtensionModule from "../extensions/quantme/modeling";
 import quantMEModdleExtension from "../extensions/quantme/resources/quantum4bpmn.json";
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
+import PlanQKExtensionModule from '../extensions/planqk'
 
+let planqkModdleDescriptor = require('../extensions/planqk/resources/planqk-service-task-ext.json')
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
 let modeler = undefined;
@@ -26,13 +28,15 @@ export function createModeler(containerId, propertiesParentId) {
             CamundaPlatformPropertiesProviderModule,
             CamundaExtensionModule,
             QuantMEExtensionModule,
+            PlanQKExtensionModule,
         ],
         keyboard: {
             bindTo: document
         },
         moddleExtensions: {
             camunda: camundaModdleDescriptor,
-            quantME: quantMEModdleExtension
+            quantME: quantMEModdleExtension,
+            planqk: planqkModdleDescriptor,
         },
     });
     return getModeler();

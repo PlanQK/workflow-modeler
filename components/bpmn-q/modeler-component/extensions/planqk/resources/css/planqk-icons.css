@@ -1,0 +1,43 @@
+.planqk-icon-palette-service-task {
+    content: url("../icons/planqk-service-task.png");
+    padding: 11px 10px 11px 10px;
+    /*margin: 5px;*/
+    /*width: 20px;*/
+    /*height: 20px;*/
+    /*display: block;*/
+}
+
+.planqk-icon-palette-data-pool {
+    content: url("../icons/planqk-data-pool.jpg");
+    padding: 10px;
+}
+
+.planqk-icon-service-task:before {
+    content: "";
+    display: block;
+    background: url("../icons/planqk-service-task-replace-icon.png") no-repeat;
+    width: 20px;
+    height: 16px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.planqk-icon-data-pool:before {
+    content: "";
+    display: block;
+    background: url("../icons/planqk-data-pool-icon.jpg") no-repeat;
+    width: 21px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.planqk-logo:before {
+    content: "";
+    display: block;
+    background: url("../icons/planqk-icon.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
