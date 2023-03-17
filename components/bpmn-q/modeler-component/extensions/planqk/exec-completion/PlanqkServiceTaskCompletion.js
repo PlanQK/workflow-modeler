@@ -9,7 +9,7 @@ import {
 import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
 import {getXml} from "../../../common/util/IoUtilities";
-import {addExecutionListener, getProcess} from "../../../common/util/ModellingUtilities";
+import {addExecutionListener} from "../../../common/util/ModellingUtilities";
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
@@ -33,15 +33,10 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
   // Mark process as executable
   rootProcess.isExecutable = true;
 
-  let isTransformed = false;
-
   // get all PlanQK modeling constructs from the process
   const planqkServiceTasks = getPlanqkServiceTasks(rootProcess, elementRegistry);
   console.log('Process contains ' + planqkServiceTasks.length + ' Planqk service tasks to replace...');
-  isTransformed = !planqkServiceTasks || !planqkServiceTasks.length;
-  // if (!planqkServiceTasks || !planqkServiceTasks.length) {
-  //   return { status: 'transformed', xml: xml };
-  // }
+  let isTransformed = !planqkServiceTasks || !planqkServiceTasks.length;
 
   // replace each planqk:serviceTask with the subprocess that implements service interaction to retrieve standard-compliant BPMN
   for (let planqkServiceTask of planqkServiceTasks) {
@@ -63,10 +58,7 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
   // get all PlanQK data pools
   const planqkDataPools = getPlanqkDataPools(rootProcess, elementRegistry);
   console.log('Process contains ' + planqkDataPools.length + ' Planqk data pools to replace...');
-  isTransformed = !planqkDataPools || !planqkDataPools.length;
-  // if (!planqkDataPools || !planqkDataPools.length) {
-  //   return { status: 'transformed', xml: xml };
-  // }
+  isTransformed = isTransformed && (!planqkDataPools || !planqkDataPools.length);
 
   // check if transformation was necessary
   if (isTransformed) {
@@ -188,19 +180,16 @@ function applyTaskOutput2Subprocess(taskBO, subprocessBO) {
 /**
  * Replace the given data pool by a data store
  */
-async function replaceByDataStore(definitions, dataPool, parent, modeler) {
+async function replaceByDataStore(definitions, dataPool, parentProcess, modeler) {
 
   const bpmnFactory = modeler.get('bpmnFactory');
   const moddle = modeler.get('moddle');
 
   const newDataStore = bpmnFactory.create('bpmn:DataStoreReference');
-  let result = insertShape(definitions, parent, newDataStore, {}, true, modeler, dataPool);
-
-  // get next process for data pool element
-  const process = getRootProcess(definitions);
+  let result = insertShape(definitions, parentProcess, newDataStore, {}, true, modeler, dataPool);
 
   // add execution listener to publish process variable on start
-  addExecutionListener(process, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
+  addExecutionListener(parentProcess, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
 
   return result['success'];
 }
@@ -410,35 +399,6 @@ export function getPropertiesToCopy(element) {
   }
 
   return properties;
-}
-
-export function setIASubprocessInputParameters(task, inputOutputExtension, bpmnFactory) {
-  console.log('Adding QuantME attributes to replacing workflow fragment: ', task);
-
-  inputOutputExtension.inputParameters.push(
-      bpmnFactory.set('camunda:InputParameter', {
-        name: name,
-        value: "doni"
-      })
-  );
-
-  // let propertiesToCopy = getPropertiesToCopy(task);
-  // for (let name in propertiesToCopy) {
-  //
-  //   // skip non QuantME attributes
-  //   if (!QUANTME_ATTRIBUTES.includes(name)) {
-  //     continue;
-  //   }
-  //
-  //   // create the input parameter with the QuantME attribute name and the value of the replaced task
-  //   inputOutputExtension.inputParameters.push(
-  //       bpmnFactory.create('camunda:InputParameter', {
-  //         name: name,
-  //         value: propertiesToCopy[name]
-  //       })
-  //   );
-  // }
-  return inputOutputExtension;
 }
 
 
