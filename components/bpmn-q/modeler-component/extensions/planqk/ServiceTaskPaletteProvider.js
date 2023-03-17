@@ -1,30 +1,31 @@
-import PaletteProvider from "bpmn-js/lib/features/palette/PaletteProvider";
 import * as consts from './utilities/Constants';
 
-export default class ServiceTaskPaletteProvider extends PaletteProvider {
+export default class ServiceTaskPaletteProvider {
 
-  constructor(bpmnFactory, create, elementFactory, globalConnect,
-              handTool, lassoTool, palette, spaceTool, translate) {
-    super(palette, create, elementFactory, spaceTool, lassoTool, handTool, globalConnect, translate);
+  constructor(bpmnFactory, create, elementFactory, palette, translate) {
+
     this.bpmnFactory = bpmnFactory;
     this.create = create;
     this.elementFactory = elementFactory;
     this.translate = translate;
+
+    palette.registerProvider(this);
   }
 
-  getPaletteEntries(element) {
-    let paletteEntries = super.getPaletteEntries(element);
-
-    paletteEntries = Object.assign(paletteEntries, this.createPlanqkServiceTaskEntry());
-
-    return paletteEntries;
+  getPaletteEntries() {
+    return this.createPlanqkServiceTaskEntry();
   }
 
   createPlanqkServiceTaskEntry() {
     const { bpmnFactory, create, elementFactory, translate } = this;
     return {
+      // add separator line to delimit the new group
+      'planqk-separator': {
+        group: 'planqk',
+        separator: true
+      },
       'create.planqk-service-task': {
-        group: "activity",
+        group: "planqk",
         className: "planqk-icon-palette-service-task",
         title: translate('Creates a task that calls a PlanQK service you subscribed to'),
         // imageURL: './resources/icons/planqk-service-task.jpg',
@@ -40,7 +41,7 @@ export default class ServiceTaskPaletteProvider extends PaletteProvider {
         }
       },
       'create.planqk-data-pool': {
-        group: "activity",
+        group: "planqk",
         className: "planqk-icon-palette-data-pool",
         title: translate('Creates a PlanQK Data Pool to fetch data from'),
         action: {
@@ -60,13 +61,9 @@ export default class ServiceTaskPaletteProvider extends PaletteProvider {
 
 // @ts-ignore
 ServiceTaskPaletteProvider.$inject = [
-    "bpmnFactory",
+  "bpmnFactory",
   "create",
   "elementFactory",
-  "globalConnect",
-  "handTool",
-  "lassoTool",
   "palette",
-  "spaceTool",
   "translate"
 ];

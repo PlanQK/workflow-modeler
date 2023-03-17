@@ -6,9 +6,9 @@ import ServiceTaskPropertiesProvider from './propeties/service-task-properties/S
 import DataPoolPropertiesProvider from "./propeties/data-pool-properties/DataPoolPropertiesProvider";
 
 export default {
-    __init__: ["paletteProvider","customRenderer", "serviceTaskPropertiesProvider", "dataPoolPropertiesProvider", "planqkReplaceMenuProvider", "activeSubscriptions", "dataPools"],
+    __init__: ["planqkPaletteProvider","customRenderer", "serviceTaskPropertiesProvider", "dataPoolPropertiesProvider", "planqkReplaceMenuProvider", "activeSubscriptions", "dataPools"],
     planqkReplaceMenuProvider: ["type", PlanqkMenuProvider],
-    paletteProvider: ["type", ServiceTaskPaletteProvider],
+    planqkPaletteProvider: ["type", ServiceTaskPaletteProvider],
     customRenderer: ['type', ServiceTaskRenderer],
     serviceTaskPropertiesProvider: ['type', ServiceTaskPropertiesProvider],
     dataPoolPropertiesProvider: ['type', DataPoolPropertiesProvider],
