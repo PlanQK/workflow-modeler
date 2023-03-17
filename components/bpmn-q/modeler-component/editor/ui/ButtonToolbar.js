@@ -6,7 +6,14 @@ import TransformationButton from "../../extensions/planqk/ui/TransformationButto
 
 export default function ButtonToolbar(props) {
 
-    const {modeler} = props;
+    const {
+        modeler,
+        buttons
+    } = props;
+
+    const buttonList = buttons.map((ButtonComponent, index) => (
+        <ButtonComponent key={index}/>
+    ));
 
     return (
         <Fragment>
@@ -16,6 +23,7 @@ export default function ButtonToolbar(props) {
                 <SaveButton modeler={modeler}/>
                 <OpenButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
+                {buttonList}
                 <TransformationButton modeler={modeler}/>
             </div>
         </Fragment>
