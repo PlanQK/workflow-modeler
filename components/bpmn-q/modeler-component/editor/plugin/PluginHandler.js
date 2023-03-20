@@ -1,7 +1,9 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
+import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 
 const PLUGINS = [
     PlanQKPlugin,
+    QuantMEPlugin,
 ];
 
 let pluginConfigList = [];
