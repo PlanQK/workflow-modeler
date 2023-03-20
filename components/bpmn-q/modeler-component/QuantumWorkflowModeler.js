@@ -31,12 +31,36 @@ import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
 export const notificationHandler = new NotificationHandler([]);
 
 import PlanQKExtensionModule from './extensions/planqk'
+import {setPluginConfig} from "./editor/plugin/PluginHandler";
 let planqkModdleDescriptor = require('./extensions/planqk/resources/planqk-service-task-ext.json')
 
 class QuantumWorkflowModeler extends HTMLElement {
-    constructor() {
+    constructor(props) {
         super();
+        // console.log("fdkasdjflkajlfkjadlöfkjaödlkfjlödakjfasjdfölkajsdlfjalfjlasdjflskkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+        // console.log(this.getAttribute("pluginConfigs"));
+        // this.pluginConfigs = JSON.parse(this.getAttribute("pluginConfigs"));
+
+        // https://medium.com/@mariusbongarts/the-complete-web-component-guide-attributes-and-properties-9b74d19bc043
+
+        // console.log(this.pluginConfigs);
+        // const {
+        //     pluginConfigs,
+        // } = props;
+        // console.log(pluginConfigs);
     }
+
+    // static get observedAttributes() {
+    //     return ["pluginConfigs"];
+    // }
+    //
+    // attributeChangedCallback(name, oldValue, newValue) {
+    //     if (oldValue === newValue) {
+    //         return;
+    //     }
+    //
+    //     this.connectedCallback();
+    // }
 
     connectedCallback() {
         this.innerHTML = `
@@ -50,6 +74,15 @@ class QuantumWorkflowModeler extends HTMLElement {
               <div id="notification-container"></div>
             </div>`;
 
+
+    }
+
+    startModeler() {
+        const configs = this.pluginConfigsList;
+        console.log("/////////////////////////////////////////////////");
+        console.log(configs);
+        setPluginConfig(configs);
+
         const modeler = createModeler('#canvas', '#properties');
 
         const eventBus = modeler.get('eventBus');
@@ -61,19 +94,16 @@ class QuantumWorkflowModeler extends HTMLElement {
         // const notificationComponentRef = React.createRef();
         const handler = NotificationHandler.getInstance();
         // const ref = useRef
-        const notificationComponent = handler.createNotificationsComponent([]);//<Notifications notifications={[]}/>;
+        const notificationComponent = handler.createNotificationsComponent([]);
 
         const root2 = createRoot(document.getElementById('notification-container'))
         root2.render(<div>{notificationComponent}</div>);
 
-        const buttons = [AdaptationPlugin, QuantMEController, DeploymentPlugin, ConfigPlugin, Toggle];//]
-
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
-        root.render(<ButtonToolbar modeler={modeler} buttons={buttons}/>);
+        root.render(<ButtonToolbar modeler={modeler} buttons={[]}/>);
 
         // root.render(<Toolbar buttons={buttons} />);
-
         // window.requestAnimationFrame(() => {
         //     const notifications = notificationComponentRef.current.getNotifications();
         //     console.log(notifications);
@@ -89,6 +119,16 @@ class QuantumWorkflowModeler extends HTMLElement {
             return event.returnValue = '';
         };
         addEventListener("beforeunload", beforeUnloadListener, {capture: true});
+    }
+
+    get pluginConfigs() {
+        return this.pluginConfigsList || [];
+    }
+
+    set pluginConfigs(pluginConfigs) {
+        console.log(pluginConfigs);
+        this.pluginConfigsList = pluginConfigs;
+        this.startModeler();
     }
 }
 

@@ -8,8 +8,23 @@
 <div style="height: 100vh;
   border: solid 3px #EEE;
   position: relative;">
-    <quantum-workflow></quantum-workflow>
+    <quantum-workflow id="qflow"></quantum-workflow>
 </div>
-<script src="QuantumWorkflowModeler.js"></script>
+<!--<script src="./QuantumWorkflowModeler.js"></script>-->
+<script>
+    import './QuantumWorkflowModeler.js';
+
+    console.log("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+
+    const modelerComponent = document.get('qflow');
+    modelerComponent.pluginConsifgs = [
+        {
+            name: 'planqk',
+            config: {
+                test: 'test',
+            }
+        }
+    ]
+</script>
 </body>
 </html>

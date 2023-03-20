@@ -12,7 +12,10 @@ export default function ButtonToolbar(props) {
     } = props;
 
     const buttonList = buttons.map((ButtonComponent, index) => (
-        <ButtonComponent key={index}/>
+        <>
+            <ButtonComponent key={index}/>
+            <hr className="toolbar-splitter"/>
+        </>
     ));
 
     return (
@@ -24,7 +27,6 @@ export default function ButtonToolbar(props) {
                 <OpenButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
                 {buttonList}
-                <TransformationButton modeler={modeler}/>
             </div>
         </Fragment>
     );
