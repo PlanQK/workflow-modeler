@@ -19,7 +19,7 @@ import {getModeler} from "../../../../editor/ModelerHandler";
 import config from "../../framework-config/config";
 import configManager, {
   setAWSRuntimeHandlerEndpoint,
-  setCamundaEndpoint, setHybridRuntimeProvenance,
+  setHybridRuntimeProvenance,
   setNisqAnalyzerEndpoint,
   setOpenTOSCAEndpoint,
   setQiskitRuntimeHandlerEndpoint, setQRMRepositoryName, setQRMRepositoryPath, setQRMUserName,
@@ -28,6 +28,7 @@ import configManager, {
   setTransformationFrameworkEndpoint,
   setWineryEndpoint
 } from "../../framework-config/config-manager"
+import {setCamundaEndpoint} from "../../../../common/config/EditorConfigManager";
 
 const defaultState = {
   configOpen: false

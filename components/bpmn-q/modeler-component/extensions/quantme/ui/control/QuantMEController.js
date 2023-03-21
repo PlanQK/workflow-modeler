@@ -27,6 +27,7 @@ import NotificationHandler from "../../../../editor/ui/notifications/Notificatio
 import {getQRMs, updateQRMs} from "../../qrm-manager";
 import {getXml, loadDiagram} from "../../../../common/util/IoUtilities";
 import config from "../../framework-config/config";
+import TransformationButton from "../../../../editor/ui/TransformationButton";
 
 export default class QuantMEController extends PureComponent {
 
@@ -372,10 +373,13 @@ export default class QuantMEController extends PureComponent {
         onClick={() => this.updateQRMs()}>
         <span className="qrm-reload"><span className="indent">Update QRMs</span></span>
       </button>
-      <button type="button" className="toolbar-btn" title="Transform the current workflow"
-        onClick={() => this.transformWorkflow()}>
+      <TransformationButton transformWorkflow={this.transformWorkflow}>
         <span className="workflow-transformation"><span className="indent">Transformation</span></span>
-      </button>
+      </TransformationButton>
+      {/*<button type="button" className="toolbar-btn" title="Transform the current workflow"*/}
+      {/*  onClick={() => this.transformWorkflow()}>*/}
+      {/*  <span className="workflow-transformation"><span className="indent">Transformation</span></span>*/}
+      {/*</button>*/}
     </div>;
   }
 }

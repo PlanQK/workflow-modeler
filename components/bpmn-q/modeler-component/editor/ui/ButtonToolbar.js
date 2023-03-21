@@ -2,16 +2,19 @@ import React, {Fragment} from 'react';
 import SaveButton from "./SaveButton";
 import OpenButton from "./OpenButton";
 import NewDiagramButton from "./NewDiagramButton";
-import TransformationButton from "../../extensions/planqk/ui/TransformationButton";
+import TransformationButton from "./TransformationButton";
+import ExtensibleButton from "./ExtensibleButton";
+import DeploymentButton from "./DeploymentButton";
 
 export default function ButtonToolbar(props) {
 
     const {
         modeler,
-        buttons
+        pluginButtons,
+        transformButtons,
     } = props;
 
-    const buttonList = buttons.map((ButtonComponent, index) => (
+    const buttonList = pluginButtons.map((ButtonComponent, index) => (
         <>
             <ButtonComponent key={index}/>
             <hr className="toolbar-splitter"/>
@@ -25,6 +28,9 @@ export default function ButtonToolbar(props) {
                 <NewDiagramButton modeler={modeler}/>
                 <SaveButton modeler={modeler}/>
                 <OpenButton modeler={modeler}/>
+                <hr className="toolbar-splitter"/>
+                <ExtensibleButton subButtons={transformButtons} title='Transform Workflow'/>
+                <DeploymentButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
                 {buttonList}
             </div>

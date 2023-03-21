@@ -101,7 +101,7 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
-        root.render(<ButtonToolbar modeler={modeler} buttons={[]}/>);
+        root.render(<ButtonToolbar modeler={modeler} pluginButtons={[]} transformButtons={[]}/>);
 
         // root.render(<Toolbar buttons={buttons} />);
         // window.requestAnimationFrame(() => {
