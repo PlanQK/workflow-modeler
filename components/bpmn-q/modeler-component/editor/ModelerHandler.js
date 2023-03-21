@@ -5,13 +5,9 @@ import {
     BpmnPropertiesProviderModule,
     CamundaPlatformPropertiesProviderModule
 } from "bpmn-js-properties-panel";
-import QuantMEExtensionModule from "../extensions/quantme/modeling";
-import quantMEModdleExtension from "../extensions/quantme/resources/quantum4bpmn.json";
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
-import PlanQKExtensionModule from '../extensions/planqk'
 import {getAdditionalModules, getModdleExtension} from "./plugin/PluginHandler";
 
-let planqkModdleDescriptor = require('../extensions/planqk/resources/planqk-service-task-ext.json')
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
 let modeler = undefined;
@@ -54,8 +50,6 @@ function getModules() {
         BpmnPropertiesProviderModule,
         CamundaPlatformPropertiesProviderModule,
         CamundaExtensionModule,
-        // QuantMEExtensionModule,
-        // PlanQKExtensionModule,
     ].concat(pluginModules);
 
     console.log('\n Additional modules of the modeler: ');
@@ -67,9 +61,6 @@ function getModules() {
 function getExtensions() {
     let moddleExtension = Object.assign({
         camunda: camundaModdleDescriptor,
-
-        // quantME: quantMEModdleExtension,
-        // planqk: planqkModdleDescriptor,
     }, getModdleExtension());
 
     console.log('\n Moddle extensions of the modeler: ');

@@ -58,10 +58,10 @@ export function getAdditionalModules() {
 
 export function getModdleExtension() {
     // const extensions = getActivePlugins().forEach(element => element.moddleDescription) || {};
-    const extensions = []
+    const extensions = {}
 
     for (let plugin of getActivePlugins()) {
-        extensions.push(plugin.moddleDescription);
+        extensions[plugin.name] = plugin.moddleDescription;
     }
 
     console.log('\n Get Moddle Extensions: ');
