@@ -116,7 +116,7 @@ export default class PlanqkMenuProvider {
       label: subscription.api.name + '@' + subscription.application.name,
       className: 'bpmn-icon-service',
       action: function () {
-        const oAuthInfo = oauthInfoByAppMap.get(subscription.application.id);
+        const oAuthInfo = oauthInfoByAppMap[subscription.application.id];
         console.log(oAuthInfo.consumerKey);
         console.log(oAuthInfo.consumerSecret);
         self.updateProperties(element, {
@@ -143,6 +143,8 @@ export default class PlanqkMenuProvider {
     dataPoolEntries['replace-with-generic-data-pool'] = this.createNewDataPoolEntry(element, {
       label: 'PlanQK Data Pool', name: '', link: '', description: ''
     });
+
+    console.log(dataPools);
 
     for (let dataPool of dataPools) {
       dataPoolEntries['replace-with-' + dataPool.id + ' (2)'] = this.createNewDataPoolEntry(element, dataPool);

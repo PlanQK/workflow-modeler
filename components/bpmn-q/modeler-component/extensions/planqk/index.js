@@ -4,7 +4,8 @@ import ServiceTaskPaletteProvider from "./ServiceTaskPaletteProvider";
 import ServiceTaskRenderer from "./ServiceTaskRenderer";
 import ServiceTaskPropertiesProvider from './propeties/service-task-properties/ServiceTaskPropertiesProvider'
 import DataPoolPropertiesProvider from "./propeties/data-pool-properties/DataPoolPropertiesProvider";
-import {getPluginConfig} from "../../editor/plugin/PluginHandler";
+// import * as pluginHandler from "../../editor/plugin/PluginHandler";
+import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
 export default {
     __init__: ["planqkPaletteProvider","customRenderer", "serviceTaskPropertiesProvider", "dataPoolPropertiesProvider", "planqkReplaceMenuProvider", "activeSubscriptions", "dataPools"],
@@ -14,13 +15,13 @@ export default {
     serviceTaskPropertiesProvider: ['type', ServiceTaskPropertiesProvider],
     dataPoolPropertiesProvider: ['type', DataPoolPropertiesProvider],
     activeSubscriptions: ['type', () => {
-        return subscriptions();
+        return getPluginConfig('planqk').subscriptions;
     }],
     oauthInfoByAppMap: ['type', () => {
-        return oauthInfo();
+        return getPluginConfig('planqk').oauthInfoByAppMap;
     }],
     dataPools: ['type', () => {
-        return dataPools();
+        return getPluginConfig('planqk').dataPools;
     }],
     // activeSubscriptions: ['type', () => getPluginConfig('planqk').subscriptions()],
     // oauthInfoByAppMap: ['type', () => getPluginConfig('planqk').oauthInfoByAppMap()],

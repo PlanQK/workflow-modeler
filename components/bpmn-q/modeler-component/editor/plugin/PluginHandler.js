@@ -1,23 +1,26 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
+import {getAllConfigs} from "./PluginConfigHandler";
 
 const PLUGINS = [
     PlanQKPlugin,
     QuantMEPlugin,
 ];
 
-let pluginConfigList = [];
+// let pluginConfigList = [];
 let activePlugins = [];
 
-export function setPluginConfig(pluginConfig) {
-    pluginConfigList = pluginConfig || [];
-    console.log('New plugin config set: ');
-    console.log(pluginConfig);
-}
-
-export function getPluginConfig(pluginName) {
-    return pluginConfigList.find(element => element.name === pluginName).config;
-}
+// export function setPluginConfig(pluginConfig) {
+//     pluginConfigList = pluginConfig || [];
+//     console.log('New plugin config set: ');
+//     console.log(pluginConfig);
+// }
+//
+// export function getPluginConfig(pluginName) {
+//     const plugin = pluginConfigList.find(element => element.name === pluginName) || {};
+//     return plugin.config;
+//     // return {};
+// }
 
 export function getActivePlugins() {
     if (activePlugins.length > 0) {
@@ -29,7 +32,7 @@ export function getActivePlugins() {
         activePlugins = [];
 
         let plugin;
-        for (let pluginConfig of pluginConfigList) {
+        for (let pluginConfig of getAllConfigs()) {
 
             plugin = PLUGINS.find(plugin => plugin.name === pluginConfig.name);
 

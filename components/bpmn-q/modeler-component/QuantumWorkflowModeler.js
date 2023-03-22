@@ -31,8 +31,9 @@ import ConfigPlugin from "./editor/config/ConfigPlugin";
 export const notificationHandler = new NotificationHandler([]);
 
 import PlanQKExtensionModule from './extensions/planqk'
-import {getPluginButtons, getTransformations, setPluginConfig} from "./editor/plugin/PluginHandler";
+import {getPluginButtons, getTransformations} from "./editor/plugin/PluginHandler";
 import TransformationButton from "./editor/ui/TransformationButton";
+import {setPluginConfig} from "./editor/plugin/PluginConfigHandler";
 let planqkModdleDescriptor = require('./extensions/planqk/resources/planqk-service-task-ext.json')
 
 class QuantumWorkflowModeler extends HTMLElement {
