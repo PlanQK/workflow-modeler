@@ -18,9 +18,11 @@ export default function TransformationButton(props) {
     // }
 
     return (
-        <button type="button" className="toolbar-btn" title="Transform the current workflow"
-                onClick={() => transformWorkflow()}>
-            <span className="workflow-transformation"><span className="indent">Transformation</span></span>
-        </button>
+        <>
+            <button type="button" className="toolbar-btn" title="Transform the current workflow"
+                    onClick={() => transformWorkflow()}>
+                <span className="workflow-transformation-btn"><span className="indent">Transformation</span></span>
+            </button>
+        </>
     )
 }

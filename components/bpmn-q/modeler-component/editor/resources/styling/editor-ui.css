@@ -1,4 +1,4 @@
-.toolbar-btn {
+.extensible-btn, .toolbar-btn {
     background-color: transparent;
     border: none;
     border-radius: 6px;
@@ -21,11 +21,28 @@
 .toolbar-splitter {
     margin: 5px;
     border: 1px solid #cccccc;
+    max-height: 100%;
 }
 
 .toolbar {
     background: #ffffff;
     display: flex;
+    /*align-items: flex-start;*/
+    overflow: auto;
+}
+
+.extensible-btn {
+    background-color: #e8e8e8;
+}
+
+.extensible-buttons-list {
+    background: #ffffff;
+    position: absolute;
+    display: flex;
+    padding: 4px;
+    border: 2px solid #e8e8e8;
+    border-radius: 6px;
+    z-index: 9999;
 }
 
 .icon-saving:before {
@@ -58,6 +75,26 @@
     background-image: url("../icons/blank-file-outline-icon.png");
     background-repeat: no-repeat;
     display: inline-block;
+    float: left;
+}
+
+.workflow-deployment-btn:before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../icons/workflow-deployment-icon.png") no-repeat center center;
+    float: left;
+}
+
+.workflow-transformation-btn:before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../icons/worklow-transformation-icon.png") no-repeat center center;
     float: left;
 }
 

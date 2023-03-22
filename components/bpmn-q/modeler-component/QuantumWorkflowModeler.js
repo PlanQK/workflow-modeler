@@ -31,7 +31,8 @@ import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
 export const notificationHandler = new NotificationHandler([]);
 
 import PlanQKExtensionModule from './extensions/planqk'
-import {setPluginConfig} from "./editor/plugin/PluginHandler";
+import {getPluginButtons, getTransformations, setPluginConfig} from "./editor/plugin/PluginHandler";
+import TransformationButton from "./editor/ui/TransformationButton";
 let planqkModdleDescriptor = require('./extensions/planqk/resources/planqk-service-task-ext.json')
 
 class QuantumWorkflowModeler extends HTMLElement {
@@ -99,9 +100,16 @@ class QuantumWorkflowModeler extends HTMLElement {
         const root2 = createRoot(document.getElementById('notification-container'))
         root2.render(<div>{notificationComponent}</div>);
 
+        // create a transformation button for each transformation method of a active plugin
+        const transformationButtons = []
+
+        for (let transformationMethod of getTransformations()) {
+            transformationButtons.push(<TransformationButton transformWorkflow={transformationMethod}/>);
+        }
+
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
-        root.render(<ButtonToolbar modeler={modeler} pluginButtons={[]} transformButtons={[]}/>);
+        root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()} transformButtons={transformationButtons}/>);
 
         // root.render(<Toolbar buttons={buttons} />);
         // window.requestAnimationFrame(() => {

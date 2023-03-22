@@ -8,7 +8,7 @@ import {Toggle} from "../../editor/ui/Toggle";
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json')
 
 export default {
-    buttons: [AdaptationPlugin, QuantMEController, DeploymentPlugin, ConfigPlugin, Toggle],
+    buttons: [<AdaptationPlugin/>, <QuantMEController/>, <DeploymentPlugin/>, <ConfigPlugin/>],
     configTabs: [],
     name: 'quantme',
     extensionModule: QuantMEExtensionModule,

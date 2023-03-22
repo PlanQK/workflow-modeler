@@ -42,9 +42,7 @@ export function getActivePlugins() {
 }
 
 export function getAdditionalModules() {
-    console.log('\n Active Plugins: ');
-    console.log(getActivePlugins())
-    // const modules = getActivePlugins().forEach(element => element.extensionModule) || [];
+
     const modules = [];
 
     for (let plugin of getActivePlugins()) {
@@ -57,7 +55,6 @@ export function getAdditionalModules() {
 }
 
 export function getModdleExtension() {
-    // const extensions = getActivePlugins().forEach(element => element.moddleDescription) || {};
     const extensions = {}
 
     for (let plugin of getActivePlugins()) {
@@ -69,23 +66,39 @@ export function getModdleExtension() {
     return extensions;
 }
 
+export function getTransformations() {
+    const transformations = []
 
+    for (let plugin of getActivePlugins()) {
+        transformations.push(plugin.transformExtension);
+    }
 
-// /**
-//  * Handler which manages the registration and rendering of the plugins
-//  */
-// export default class PluginHandler {
-//
-//     plugins = [
-//         PlanQKPlugin,
-//     ];
-//
-//     constructor(props) {
-//         const {
-//             pluginConfigList,
-//         } = props;
-//         this.pluginConfigList = pluginConfigList || [];
-//     }
-//
-//
-// }
+    console.log('\n Got ' + transformations.length + ' Transformations');
+    return transformations;
+}
+
+export function getPluginButtons() {
+    const pluginButtons = []
+
+    for (let plugin of getActivePlugins()) {
+        pluginButtons.push(plugin.buttons);
+    }
+
+    console.log('\n Got ' + pluginButtons.length + ' Plugin Buttons');
+    console.log(pluginButtons);
+
+    return pluginButtons;
+}
+
+export function getConfigTabs() {
+    const configTabs = []
+
+    for (let plugin of getActivePlugins()) {
+        configTabs.push(plugin.configTabs);
+    }
+
+    console.log('\n Got ' + configTabs.length + ' Config Tabs');
+    console.log(configTabs);
+
+    return configTabs;
+}

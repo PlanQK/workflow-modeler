@@ -9,7 +9,7 @@ import {getModeler} from "../../editor/ModelerHandler";
 let planqkModdleDescriptor = require('./resources/planqk-service-task-ext.json')
 
 export default {
-    buttons: [<TransformationButton modeler = {getModeler()}/>],
+    buttons: [],//<TransformationButton modeler = {getModeler()}/>
     configTabs: [],
     name: 'planqk',
     extensionModule: PlanQKExtensionModule,

@@ -14,12 +14,14 @@ export default function ButtonToolbar(props) {
         transformButtons,
     } = props;
 
-    const buttonList = pluginButtons.map((ButtonComponent, index) => (
-        <>
-            <ButtonComponent key={index}/>
-            <hr className="toolbar-splitter"/>
-        </>
-    ));
+    const hasTransformations = transformButtons.length > 0;
+
+    // const buttonList = pluginButtons.map((ButtonComponent, index) => (
+    //     <>
+    //         <ButtonComponent key={index}/>
+    //         <hr className="toolbar-splitter"/>
+    //     </>
+    // ));
 
     return (
         <Fragment>
@@ -29,10 +31,10 @@ export default function ButtonToolbar(props) {
                 <SaveButton modeler={modeler}/>
                 <OpenButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
-                <ExtensibleButton subButtons={transformButtons} title='Transform Workflow'/>
+                {hasTransformations && <ExtensibleButton subButtons={transformButtons} title='Transform Workflow' styleClass="workflow-transformation-btn"/>}
                 <DeploymentButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
-                {buttonList}
+                {pluginButtons}
             </div>
         </Fragment>
     );
