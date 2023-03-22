@@ -13,6 +13,7 @@
 <!--<script src="./QuantumWorkflowModeler.js"></script>-->
 <script>
     import './QuantumWorkflowModeler.js';
+    import {dataPools, oauthInfo, subscriptions} from "./extensions/planqk/DummyData";
 
     console.log("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
@@ -21,7 +22,10 @@
         {
             name: 'planqk',
             config: {
-                test: 'test',
+                test: 'etst',
+                // subscriptions: () => subscriptions(),
+                // oauthInfoByAppMap: () => oauthInfo(),
+                // dataPools: () => dataPools(),
             }
         }
     ]
