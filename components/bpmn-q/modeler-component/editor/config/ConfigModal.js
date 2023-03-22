@@ -10,9 +10,8 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from "../../common/camunda-components/modal/Modal";
-// import { Modal } from 'camunda-modeler-plugin-helpers/components';
 
 // polyfill upcoming structural components
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
@@ -21,49 +20,14 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function ConfigModal({ onClose, configTabs }) {
 
-
-  // const [camundaEndpoint, setCamundaEndpoint] = useState(initValues.camundaEndpoint);
-  // const [transformationFrameworkEndpoint, setTransformationFrameworkEndpoint] = useState(initValues.transformationFrameworkEndpoint);
-  // const [scriptSplitterEndpoint, setScriptSplitterEndpoint] = useState(initValues.scriptSplitterEndpoint);
-  // const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(initValues.scriptSplitterThreshold);
-
-  // const [opentoscaEndpoint, setOpentoscaEndpoint] = useState(initValues.opentoscaEndpoint);
-  // const [wineryEndpoint, setWineryEndpoint] = useState(initValues.wineryEndpoint);
-  //
-  // const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(initValues.nisqAnalyzerEndpoint);
-  //
-  // const [githubRepositoryName, setGithubRepositoryName] = useState(initValues.githubRepositoryName);
-  // const [githubUsername, setGithubUsername] = useState(initValues.githubUsername);
-  // const [githubRepositoryPath, setGithubRepositoryPath] = useState(initValues.githubRepositoryPath);
-  //
-  // const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] = useState(initValues.qiskitRuntimeHandlerEndpoint);
-  // const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(initValues.hybridRuntimeProvenance);
-  // const [awsRuntimeHandlerEndpoint, setAWSRuntimeHandlerEndpoint] = useState(initValues.awsRuntimeHandlerEndpoint);
-
-  // let hybridRuntimeProvenanceBoolean = (hybridRuntimeProvenance === 'true');
-
   // return the new values to the config plugin
   const onSubmit = () => {
 
     onClose();
+
     for (let tab of configTabs) {
       tab.configTab.prototype.onClose();
     }
-    // onClose({
-    //   // camundaEndpoint,
-    //   opentoscaEndpoint,
-    //   wineryEndpoint,
-    //   // transformationFrameworkEndpoint,
-    //   nisqAnalyzerEndpoint,
-    //   githubUsername,
-    //   githubRepositoryName,
-    //   githubRepositoryPath,
-    //   qiskitRuntimeHandlerEndpoint,
-    //   awsRuntimeHandlerEndpoint,
-    //   // scriptSplitterEndpoint,
-    //   // scriptSplitterThreshold,
-    //   hybridRuntimeProvenance
-    // });
   }
 
   // refs to enable changing the state through the plugin
@@ -73,10 +37,6 @@ export default function ConfigModal({ onClose, configTabs }) {
   function openTab(tabName, id) {
     console.log(id);
     const elements = elementsRootRef.current.children;
-
-    // for (let element of elements) {
-    //   element.hidden = element.id === tabName;
-    // }
 
     for (let i = 0; i < elements.length; i++) {
       elements[i].hidden = true;
@@ -94,196 +54,10 @@ export default function ConfigModal({ onClose, configTabs }) {
 
         <div id="quantmeConfigButtons">
           {React.Children.toArray(configTabs.map((tab, index) => <button type="button" className="innerConfig btn-primary" onClick={() => openTab(tab.tabId, index)}>{tab.tabTitle}</button>))}
-          {/*<button type="button" className="innerConfig btn-primary" onClick={() => openTab('BPMNTab', 0)}>Workflows</button>*/}
-          {/*<button type="button" className="innerConfig btn-primary" onClick={() => openTab('OpenTOSCAEndpointTab', 1)}>OpenTOSCA</button>*/}
-          {/*<button type="button" className="innerConfig btn-primary" onClick={() => openTab('NISQAnalyzerEndpointTab', 2)}>NISQ Analyzer</button>*/}
-          {/*<button type="button" className="innerConfig btn-primary" onClick={() => openTab('QRMDataTab', 3)}>QRM Data</button>*/}
-          {/*<button type="button" className="innerConfig btn-primary" onClick={() => openTab('HybridRuntimesTab', 4)}>Hybrid Runtimes</button>*/}
         </div>
 
         <div id="quantmeConfigElements" ref={elementsRootRef}>
           {React.Children.toArray(configTabs.map(tab => tab.configTab()))}
-          {/*<div className="spaceAbove" hidden={false} id="BPMNTab">*/}
-          {/*  <h3>BPMN related configurations:</h3>*/}
-          {/*  <table>*/}
-          {/*    <tbody>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">Camunda Engine Endpoint</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="camundaEndpoint"*/}
-          {/*            value={camundaEndpoint}*/}
-          {/*            onChange={event => setCamundaEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">QuantME Framework Endpoint</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="transformationFrameworkEndpoint"*/}
-          {/*            value={transformationFrameworkEndpoint}*/}
-          {/*            onChange={event => setTransformationFrameworkEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*    </tbody>*/}
-          {/*  </table>*/}
-          {/*  <h3>Workflow generation:</h3>*/}
-          {/*  <table>*/}
-          {/*    <tbody>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">Script Splitter Endpoint</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="scriptSplitterEndpoint"*/}
-          {/*            value={scriptSplitterEndpoint}*/}
-          {/*            onChange={event => setScriptSplitterEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">Script Splitter Threshold</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="int"*/}
-          {/*            name="scriptSplitterThreshold"*/}
-          {/*            value={scriptSplitterThreshold}*/}
-          {/*            onChange={event => setScriptSplitterThreshold(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*    </tbody>*/}
-          {/*  </table>*/}
-          {/*</div>*/}
-
-          {/*<div className="spaceAbove" hidden={true} id="OpenTOSCAEndpointTab">*/}
-          {/*  <h3>OpenTOSCA</h3>*/}
-          {/*  <table>*/}
-          {/*    <tbody>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">OpenTOSCA Endpoint:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="opentoscaEndpoint"*/}
-          {/*            value={opentoscaEndpoint}*/}
-          {/*            onChange={event => setOpentoscaEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">Winery Endpoint:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="wineryEndpoint"*/}
-          {/*            value={wineryEndpoint}*/}
-          {/*            onChange={event => setWineryEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*    </tbody>*/}
-          {/*  </table>*/}
-          {/*</div>*/}
-
-          {/*<div className="spaceAbove" hidden={true} id="NISQAnalyzerEndpointTab">*/}
-          {/*  <h3>NISQ Analyzer</h3>*/}
-          {/*  <table>*/}
-          {/*    <tbody>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">NISQ Analyzer Endpoint:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="nisqAnalyzerEndpoint"*/}
-          {/*            value={nisqAnalyzerEndpoint}*/}
-          {/*            onChange={event => setNisqAnalyzerEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*    </tbody>*/}
-          {/*  </table>*/}
-          {/*</div>*/}
-
-          {/*<div className="spaceAbove" hidden={true} id="QRMDataTab">*/}
-          {/*  <h3>QRM Data</h3>*/}
-          {/*  <table>*/}
-          {/*    <tbody>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">QRM Repository User:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="qrmUserName"*/}
-          {/*            value={githubUsername}*/}
-          {/*            onChange={event => setGithubUsername(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">QRM Repository Name:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="qrmRepoName"*/}
-          {/*            value={githubRepositoryName}*/}
-          {/*            onChange={event => setGithubRepositoryName(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*      <tr>*/}
-          {/*        <td align="right">QRM Repository Path:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="qrmRepoPath"*/}
-          {/*            value={githubRepositoryPath}*/}
-          {/*            onChange={event => setGithubRepositoryPath(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*    </tbody>*/}
-          {/*  </table>*/}
-          {/*</div>*/}
-
-          {/*<div className="spaceAbove" hidden={true} id="HybridRuntimesTab">*/}
-          {/*  <h3>Hybrid Runtime Handler Endpoints</h3>*/}
-          {/*  <table>*/}
-          {/*    <tbody>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">Qiskit Runtime Handler Endpoint:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="qiskitRuntimeHandlerEndpoint"*/}
-          {/*            value={qiskitRuntimeHandlerEndpoint}*/}
-          {/*            onChange={event => setQiskitRuntimeHandlerEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*      <tr>*/}
-          {/*        <td align="right">AWS Runtime Handler Endpoint:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="string"*/}
-          {/*            name="awsRuntimeHandlerEndpoint"*/}
-          {/*            value={awsRuntimeHandlerEndpoint}*/}
-          {/*            onChange={event => setAWSRuntimeHandlerEndpoint(event.target.value)}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*    </tbody>*/}
-          {/*  </table>*/}
-          {/*  <h3>Provenance Collection for Hybrid Runtime</h3>*/}
-          {/*  <table>*/}
-          {/*    <tbody>*/}
-          {/*      <tr className="spaceUnder">*/}
-          {/*        <td align="right">Retrieve Intermediate Results:</td>*/}
-          {/*        <td align="left">*/}
-          {/*          <input*/}
-          {/*            type="checkbox"*/}
-          {/*            name="hybridRuntimeProvenance"*/}
-          {/*            checked={hybridRuntimeProvenanceBoolean}*/}
-          {/*            onChange={() => {*/}
-          {/*              hybridRuntimeProvenanceBoolean = !hybridRuntimeProvenanceBoolean;*/}
-          {/*              setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean.toString());}}/>*/}
-          {/*        </td>*/}
-          {/*      </tr>*/}
-          {/*    </tbody>*/}
-          {/*  </table>*/}
-          {/*</div>*/}
         </div>
       </form>
     </Body>

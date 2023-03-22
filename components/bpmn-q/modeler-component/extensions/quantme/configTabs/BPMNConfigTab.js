@@ -10,13 +10,6 @@ export default function BPMNConfigTab() {
     const [scriptSplitterEndpoint, setScriptSplitterEndpoint] = useState(config.getScriptSplitterEndpoint());
     const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(config.getScriptSplitterThreshold());
 
-    // const onSubmit = () => onClose({
-    //     camundaEndpoint,
-    //     transformationFrameworkEndpoint,
-    //     scriptSplitterEndpoint,
-    //     scriptSplitterThreshold,
-    // });
-
     const modeler = getModeler();
     // const self = this;
 
