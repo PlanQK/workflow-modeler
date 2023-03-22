@@ -41,6 +41,10 @@ export default class ConfigPlugin extends PureComponent {
     this.modeler = getModeler();
     const self = this;
 
+    if (!this.modeler.config) {
+      this.modeler.config = {};
+    }
+
     // // change to modeler corresponding to the active tab
     // this.props.subscribe('app.activeTabChanged', ({ activeTab }) => {
     //   if (this.modeler) {
