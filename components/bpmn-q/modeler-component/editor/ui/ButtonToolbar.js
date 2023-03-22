@@ -5,7 +5,7 @@ import NewDiagramButton from "./NewDiagramButton";
 import TransformationButton from "./TransformationButton";
 import ExtensibleButton from "./ExtensibleButton";
 import DeploymentButton from "./DeploymentButton";
-import ConfigPlugin from "../../extensions/quantme/ui/config/ConfigPlugin";
+import ConfigPlugin from "../config/ConfigPlugin";
 
 export default function ButtonToolbar(props) {
 

@@ -104,10 +104,10 @@ export function getPluginButtons() {
 // }
 
 export function getConfigTabs() {
-    const configTabs = []
+    let configTabs = []
 
     for (let plugin of getActivePlugins()) {
-        configTabs.push(plugin.configTabs);
+        configTabs = configTabs.concat(plugin.configTabs);
     }
 
     console.log('\n Got ' + configTabs.length + ' Config Tabs');

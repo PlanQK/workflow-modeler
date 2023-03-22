@@ -1,6 +1,6 @@
 // import fetch from "node-fetch";
 
-const config = require('../config/EditorConfigManager');
+const config = require('../../editor/config/EditorConfigManager');
 
 // import FormData from 'form-data';
 let FormData = require('form-data');
