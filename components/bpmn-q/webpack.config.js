@@ -24,16 +24,16 @@ module.exports = {
 
     module: {
         rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env']
-                    }
-                }
-            },
+            // {
+            //     test: /\.js$/,
+            //     exclude: /node_modules/,
+            //     use: {
+            //         loader: 'babel-loader',
+            //         options: {
+            //             presets: ['@babel/preset-env']
+            //         }
+            //     }
+            // },
             {
                 test: /\.bpmn$/,
                 type: "asset/source",
@@ -79,19 +79,19 @@ module.exports = {
     resolve: {
         extensions: ['.jsx', '.js']
     },
-    optimization: {
-        minimize: true,
-        minimizer: [
-            new TerserPlugin({
-                extractComments: false,
-                terserOptions: {
-                    format: {
-                        comments: false
-                    }
-                }
-            })
-        ]
-    },
+    // optimization: {
+    //     minimize: true,
+    //     minimizer: [
+    //         new TerserPlugin({
+    //             extractComments: false,
+    //             terserOptions: {
+    //                 format: {
+    //                     comments: false
+    //                 }
+    //             }
+    //         })
+    //     ]
+    // },
     plugins: [
         new CopyWebpackPlugin([
             { from: 'assets/**', to: 'vendor/bpmn-js', context: 'node_modules/bpmn-js/dist/' },

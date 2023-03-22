@@ -90,6 +90,19 @@ export function getPluginButtons() {
     return pluginButtons;
 }
 
+// export function getTransformationButtons() {
+//     const transformationButtons = []
+//
+//     for (let plugin of getActivePlugins()) {
+//         transformationButtons.push(plugin.transformationButtons);
+//     }
+//
+//     console.log('\n Got ' + transformationButtons.length + ' Transformation Buttons');
+//     console.log(transformationButtons);
+//
+//     return transformationButtons;
+// }
+
 export function getConfigTabs() {
     const configTabs = []
 

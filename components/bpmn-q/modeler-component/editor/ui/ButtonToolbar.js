@@ -5,6 +5,7 @@ import NewDiagramButton from "./NewDiagramButton";
 import TransformationButton from "./TransformationButton";
 import ExtensibleButton from "./ExtensibleButton";
 import DeploymentButton from "./DeploymentButton";
+import ConfigPlugin from "../../extensions/quantme/ui/config/ConfigPlugin";
 
 export default function ButtonToolbar(props) {
 
@@ -16,13 +17,6 @@ export default function ButtonToolbar(props) {
 
     const hasTransformations = transformButtons.length > 0;
 
-    // const buttonList = pluginButtons.map((ButtonComponent, index) => (
-    //     <>
-    //         <ButtonComponent key={index}/>
-    //         <hr className="toolbar-splitter"/>
-    //     </>
-    // ));
-
     return (
         <Fragment>
             <div className="toolbar">
@@ -31,10 +25,15 @@ export default function ButtonToolbar(props) {
                 <SaveButton modeler={modeler}/>
                 <OpenButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
-                {hasTransformations && <ExtensibleButton subButtons={transformButtons} title='Transform Workflow' styleClass="workflow-transformation-btn"/>}
+                {hasTransformations && <ExtensibleButton
+                    subButtons={transformButtons}
+                    title='Transform Workflow'
+                    styleClass="workflow-transformation-btn"/>
+                }
                 <DeploymentButton modeler={modeler}/>
+                <ConfigPlugin/>
                 <hr className="toolbar-splitter"/>
-                {pluginButtons}
+                {React.Children.toArray(pluginButtons)}
             </div>
         </Fragment>
     );

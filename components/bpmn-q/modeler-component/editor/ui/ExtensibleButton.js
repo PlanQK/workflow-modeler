@@ -20,8 +20,6 @@ export default class ExtensibleButton extends Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    // const [isToggleOn, setToggle] = useState(false);
-
     handleClick() {
         this.setState(state => ({
             isToggleOn: !state.isToggleOn
@@ -38,7 +36,7 @@ export default class ExtensibleButton extends Component {
                 </button>
                 {this.state.isToggleOn &&
                 <div className="extensible-buttons-list">
-                    {this.state.subButtons}
+                    {React.Children.toArray(this.state.subButtons)}
                 </div>
                 }
             </div>

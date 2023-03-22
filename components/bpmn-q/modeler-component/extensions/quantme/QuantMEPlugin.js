@@ -5,10 +5,11 @@ import QuantMEController from "./ui/control/QuantMEController";
 import DeploymentPlugin from "./ui/deployment/services/DeploymentPlugin";
 import ConfigPlugin from "./ui/config/ConfigPlugin";
 import {Toggle} from "../../editor/ui/Toggle";
+import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json')
 
 export default {
-    buttons: [<AdaptationPlugin/>, <QuantMEController/>, <DeploymentPlugin/>, <ConfigPlugin/>],
+    buttons: [<ExtensibleButton subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <DeploymentPlugin/>]} title="QuantME" styleClass="quantme-logo"/>],
     configTabs: [],
     name: 'quantme',
     extensionModule: QuantMEExtensionModule,

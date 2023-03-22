@@ -43,6 +43,7 @@
     border: 2px solid #e8e8e8;
     border-radius: 6px;
     z-index: 9999;
+    overflow: auto;
 }
 
 .icon-saving:before {

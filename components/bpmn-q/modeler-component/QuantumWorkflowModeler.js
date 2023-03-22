@@ -101,24 +101,11 @@ class QuantumWorkflowModeler extends HTMLElement {
         root2.render(<div>{notificationComponent}</div>);
 
         // create a transformation button for each transformation method of a active plugin
-        const transformationButtons = []
-
-        for (let transformationMethod of getTransformations()) {
-            transformationButtons.push(<TransformationButton transformWorkflow={transformationMethod}/>);
-        }
+        const transformationButtons = getTransformations().map(method => <TransformationButton transformWorkflow={method}/>);
 
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()} transformButtons={transformationButtons}/>);
-
-        // root.render(<Toolbar buttons={buttons} />);
-        // window.requestAnimationFrame(() => {
-        //     const notifications = notificationComponentRef.current.getNotifications();
-        //     console.log(notifications);
-        //     console.log('hjgfjsdflakjglkglkfjw')
-        // })
-        // notificationHandler.setNotifications(notificationComponent);
-        // notificationHandler.displayNotification({type: 'info', title: 'TestTtitle', content: 'Long sentence.'})
 
         createNewDiagram(modeler)
 
