@@ -341,49 +341,12 @@ export default class QuantMEController extends PureComponent {
       });
     });
   }
-
-  async transformWorkflow() {
-    NotificationHandler.getInstance().displayNotification({
-      type: 'info',
-      title: 'Workflow Transformation Started!',
-      content: 'Successfully started transformation process for the current workflow!',
-      duration: 7000
-    });
-    let xml = await this.modeler.get('bpmnjs').saveXML();
-    let currentQRMs = getQRMs();
-    let result = await startReplacementProcess(xml.xml, currentQRMs,
-      {
-        nisqAnalyzerEndpoint: config.nisqAnalyzerEndpoint,
-        transformationFrameworkEndpoint: config.transformationFrameworkEndpoint,
-        camundaEndpoint: config.camundaEndpoint
-      });
-
-    if (result.status === 'transformed') {
-      await loadDiagram(result.xml, this.modeler);
-      // await this.modeler.get('bpmnjs').importXML(result.xml);
-    } else {
-      NotificationHandler.getInstance().displayNotification({
-        type: 'warning',
-        title: 'Unable to transform workflow',
-        content: result.cause.toString(),
-        duration: 10000
-      });
-    }
-  }
-
   render() {
     return <div style={{display: 'flex'}}>
       <button type="button" className="toolbar-btn" title="Update QRMs from repository"
         onClick={() => this.updateQRMs()}>
         <span className="qrm-reload"><span className="indent">Update QRMs</span></span>
       </button>
-      <TransformationButton transformWorkflow={this.transformWorkflow}>
-        <span className="workflow-transformation"><span className="indent">Transformation</span></span>
-      </TransformationButton>
-      {/*<button type="button" className="toolbar-btn" title="Transform the current workflow"*/}
-      {/*  onClick={() => this.transformWorkflow()}>*/}
-      {/*  <span className="workflow-transformation"><span className="indent">Transformation</span></span>*/}
-      {/*</button>*/}
     </div>;
   }
 }

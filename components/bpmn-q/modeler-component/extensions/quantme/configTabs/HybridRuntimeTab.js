@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
-import * as configManager from "../../../editor/config/EditorConfigManager";
 import * as config from "../framework-config/config-manager";
 
 export default function HybridRuntimeTab() {
