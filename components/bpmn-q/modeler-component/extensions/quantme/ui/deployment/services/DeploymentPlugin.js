@@ -26,9 +26,6 @@ import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import {getXml} from "../../../../../common/util/IoUtilities";
 
-// const deployment = require('../../../deployment');
-import deployWorkflow from '../../../deployment/workflow';
-
 const defaultState = {
   windowOpenDeploymentOverview: false,
   windowOpenDeploymentInput: false,

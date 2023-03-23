@@ -8,6 +8,8 @@ import {
   BpmnPropertiesProviderModule,
   CamundaPlatformPropertiesProviderModule
 } from "bpmn-js-properties-panel";
+import NotificationHandler from "../../../editor/ui/notifications/NotificationHandler";
+import {createTempModeler} from "../../../editor/ModelerHandler";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 let planqkModdleDescriptor = require('../resources/planqk-service-task-ext.json')
@@ -34,9 +36,15 @@ export async function createModelerFromXml(xml) {
   const bpmnModeler = createModeler();
 
   // import the xml containing the definitions
-  await loadDiagram(xml, bpmnModeler);
+  try {
+    await bpmnModeler.importXML(xml);
 
-  return bpmnModeler;
+    return bpmnModeler;
+  } catch (error) {
+    console.log(error);
+  }
+  return undefined;
+
 }
 
 /**
@@ -46,28 +54,8 @@ export async function createModelerFromXml(xml) {
  */
 export function createModeler() {
 
-  // create new modeler with the custom QuantME extensions
-  return new BpmnModeler({
-    additionalModules: [
-
-      // basic modeling modules
-      BpmnPalletteModule,
-      CamundaExtensionModule,
-      PlanQKExtensionModule,
-
-      // properties panel module
-      BpmnPropertiesPanelModule,
-      BpmnPropertiesProviderModule,
-      CamundaPlatformPropertiesProviderModule
-    ],
-    keyboard: {
-      bindTo: document
-    },
-    moddleExtensions: {
-      camunda: camundaModdleDescriptor,
-      planqk: planqkModdleDescriptor,
-    },
-  });
+  // create new modeler
+  return createTempModeler();
 }
 
 /**
