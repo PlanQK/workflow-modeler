@@ -107,6 +107,7 @@ export default function BPMNConfigTab() {
 BPMNConfigTab.prototype.config = () => {
     const modeler = getModeler();
 
-    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
-    modeler.config.wineryEndpoint = config.getWineryEndpoint();
+    modeler.config.transformationFrameworkEndpoint = config.getTransformationFrameworkEndpoint();
+    modeler.config.scriptSplitterEndpoint = config.getScriptSplitterEndpoint();
+    modeler.config.scriptSplitterThreshold = config.getScriptSplitterThreshold();
 }

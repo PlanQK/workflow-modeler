@@ -49,6 +49,5 @@ export default function NisqAnalyzerTab() {
 NisqAnalyzerTab.prototype.config = () => {
     const modeler = getModeler();
 
-    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
-    modeler.config.wineryEndpoint = config.getWineryEndpoint();
+    modeler.config.nisqAnalyzerEndpoint = config.getNisqAnalyzerEndpoint();
 }

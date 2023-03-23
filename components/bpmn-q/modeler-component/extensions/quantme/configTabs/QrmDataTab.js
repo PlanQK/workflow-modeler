@@ -89,6 +89,7 @@ export default function QrmDataTab() {
 QrmDataTab.prototype.config = () => {
     const modeler = getModeler();
 
-    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
-    modeler.config.wineryEndpoint = config.getWineryEndpoint();
+    modeler.config.githubRepositoryName = config.getQRMRepositoryName();
+    modeler.config.githubUsername = config.getQRMRepositoryUserName();
+    modeler.config.githubRepositoryPath = config.getQRMRepositoryPath();
 }

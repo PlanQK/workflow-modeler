@@ -102,6 +102,7 @@ export default function HybridRuntimeTab() {
 HybridRuntimeTab.prototype.config = () => {
     const modeler = getModeler();
 
-    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
-    modeler.config.wineryEndpoint = config.getWineryEndpoint();
+    modeler.config.qiskitRuntimeHandlerEndpoint = config.getQiskitRuntimeHandlerEndpoint();
+    modeler.config.hybridRuntimeProvenance = config.getHybridRuntimeProvenance();
+    modeler.config.awsRuntimeHandlerEndpoint = config.getAWSRuntimeHandlerEndpoint();
 }

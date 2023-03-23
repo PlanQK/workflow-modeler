@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {getModeler} from "../ModelerHandler";
 import * as configManager from "./EditorConfigManager";
-import * as config from "../../extensions/quantme/framework-config/config-manager";
 
 export default function WorkflowEngineTab() {
 
@@ -47,6 +46,5 @@ export default function WorkflowEngineTab() {
 WorkflowEngineTab.prototype.config = () => {
     const modeler = getModeler();
 
-    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
-    modeler.config.wineryEndpoint = config.getWineryEndpoint();
+    modeler.config.camundaEndpoint = configManager.getCamundaEndpoint();
 }
