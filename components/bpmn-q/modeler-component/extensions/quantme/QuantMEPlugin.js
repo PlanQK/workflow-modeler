@@ -3,8 +3,6 @@ import React from "react";
 import AdaptationPlugin from "./ui/adaptation/AdaptationPlugin";
 import QuantMEController from "./ui/control/QuantMEController";
 import DeploymentPlugin from "./ui/deployment/services/DeploymentPlugin";
-import ConfigPlugin from "../../editor/config/ConfigPlugin";
-import {Toggle} from "../../editor/ui/Toggle";
 import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import BPMNConfigTab from "./configTabs/BPMNConfigTab";
 import OpenToscaTab from "./configTabs/OpenToscaTab";
@@ -15,15 +13,16 @@ let quantMEModdleExtension = require('./resources/quantum4bpmn.json')
 
 export default {
     buttons: [<ExtensibleButton subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <DeploymentPlugin/>]} title="QuantME" styleClass="quantme-logo"/>],
-    configTabs: [{
-            tabId: 'BPMNTab',
-            tabTitle: 'Workflow',
-            configTab: BPMNConfigTab,
-        },
+    configTabs: [
         {
             tabId: 'OpenTOSCAEndpointTab',
             tabTitle: 'OpenTOSCA',
             configTab: OpenToscaTab,
+        },
+        {
+            tabId: 'BPMNTab',
+            tabTitle: 'Workflow',
+            configTab: BPMNConfigTab,
         },
         {
             tabId: 'NISQAnalyzerEndpointTab',

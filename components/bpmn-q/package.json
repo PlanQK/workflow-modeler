@@ -5,7 +5,8 @@
   "package name": "@PlanQK/workflow-modeler",
   "main": "public/index.js",
   "files": [
-    "public/**/*"
+    "public/**/*",
+    "!public/index.html"
   ],
   "scripts": {
     "test": "karma start",

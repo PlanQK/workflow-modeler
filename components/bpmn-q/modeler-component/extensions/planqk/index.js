@@ -1,10 +1,8 @@
-import {dataPools, oauthInfo, subscriptions} from "./DummyData";
 import PlanqkMenuProvider from "./PlanqkMenuProvider";
 import ServiceTaskPaletteProvider from "./ServiceTaskPaletteProvider";
 import ServiceTaskRenderer from "./ServiceTaskRenderer";
 import ServiceTaskPropertiesProvider from './propeties/service-task-properties/ServiceTaskPropertiesProvider'
 import DataPoolPropertiesProvider from "./propeties/data-pool-properties/DataPoolPropertiesProvider";
-// import * as pluginHandler from "../../editor/plugin/PluginHandler";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
 export default {
@@ -23,7 +21,4 @@ export default {
     dataPools: ['type', () => {
         return getPluginConfig('planqk').dataPools;
     }],
-    // activeSubscriptions: ['type', () => getPluginConfig('planqk').subscriptions()],
-    // oauthInfoByAppMap: ['type', () => getPluginConfig('planqk').oauthInfoByAppMap()],
-    // dataPools: ['type', () => getPluginConfig('planqk').dataPools()],
 };

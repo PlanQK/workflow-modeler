@@ -12,6 +12,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import Modal from "../../common/camunda-components/modal/Modal";
+import './config-modal.css'
 
 // polyfill upcoming structural components
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
@@ -46,25 +47,25 @@ export default function ConfigModal({ onClose, configTabs }) {
 
   return <Modal onClose={onClose} openTab={openTab}>
     <Title>
-      QuantME Modeler Configuration
+      Modeler Configuration
     </Title>
 
     <Body>
-      <form id="quantmeConfigForm" onSubmit={onSubmit}>
+      <form id="configForm" onSubmit={onSubmit}>
 
-        <div id="quantmeConfigButtons">
+        <div id="configButtons">
           {React.Children.toArray(configTabs.map((tab, index) => <button type="button" className="innerConfig btn-primary" onClick={() => openTab(tab.tabId, index)}>{tab.tabTitle}</button>))}
         </div>
 
-        <div id="quantmeConfigElements" ref={elementsRootRef}>
-          {React.Children.toArray(configTabs.map(tab => tab.configTab()))}
+        <div id="configElements" ref={elementsRootRef}>
+          {React.Children.toArray(configTabs.map((tab, index) => <div className="spaceAbove" hidden={!(index === 0)} id={tab.tabId}>{tab.configTab()}</div>))}
         </div>
       </form>
     </Body>
 
     <Footer>
-      <div id="quantmeConfigFormButtons">
-        <button type="submit" className="btn btn-primary" form="quantmeConfigForm">Save</button>
+      <div id="configFormButtons">
+        <button type="submit" className="btn btn-primary" form="configForm">Save</button>
         <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Cancel</button>
       </div>
     </Footer>

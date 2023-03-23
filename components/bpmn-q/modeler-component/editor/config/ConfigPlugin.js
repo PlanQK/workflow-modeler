@@ -43,6 +43,10 @@ export default class ConfigPlugin extends PureComponent {
 
     if (!this.modeler.config) {
       this.modeler.config = {};
+
+      for (let tab of getConfigTabs()) {
+        tab.configTab.prototype.config();
+      }
     }
 
     // // change to modeler corresponding to the active tab

@@ -39,7 +39,7 @@ export default function OpenToscaTab() {
 
     }
 
-    return <div className="spaceAbove" hidden={true} id="OpenTOSCAEndpointTab">
+    return <>
         <h3>OpenTOSCA</h3>
         <table>
             <tbody>
@@ -65,5 +65,12 @@ export default function OpenToscaTab() {
             </tr>
             </tbody>
         </table>
-    </div>
+    </>
+}
+
+OpenToscaTab.prototype.config = () => {
+    const modeler = getModeler();
+
+    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
+    modeler.config.wineryEndpoint = config.getWineryEndpoint();
 }

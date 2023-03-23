@@ -10,12 +10,8 @@
   position: relative;">
     <quantum-workflow id="qflow"></quantum-workflow>
 </div>
-<!--<script src="./QuantumWorkflowModeler.js"></script>-->
+<script src="./QuantumWorkflowModeler.js"></script>
 <script>
-    import './QuantumWorkflowModeler.js';
-    import {dataPools, oauthInfo, subscriptions} from "./extensions/planqk/DummyData";
-
-    console.log("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
     const modelerComponent = document.get('qflow');
     modelerComponent.pluginConsifgs = [
@@ -23,9 +19,9 @@
             name: 'planqk',
             config: {
                 test: 'etst',
-                subscriptions: subscriptions(),
-                oauthInfoByAppMap: oauthInfo(),
-                dataPools: dataPools(),
+                subscriptions: 'subscriptions',
+                oauthInfoByAppMap: 'oauthInfo',
+                dataPools: 'dataPools',
             }
         }
     ]

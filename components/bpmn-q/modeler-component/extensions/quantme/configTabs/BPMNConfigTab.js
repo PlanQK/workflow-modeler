@@ -5,7 +5,7 @@ import * as config from "../framework-config/config-manager"
 
 export default function BPMNConfigTab() {
 
-    const [camundaEndpoint, setCamundaEndpoint] = useState(configManager.getCamundaEndpoint());
+    // const [camundaEndpoint, setCamundaEndpoint] = useState(configManager.getCamundaEndpoint());
     const [transformationFrameworkEndpoint, setTransformationFrameworkEndpoint] = useState(config.getTransformationFrameworkEndpoint());
     const [scriptSplitterEndpoint, setScriptSplitterEndpoint] = useState(config.getScriptSplitterEndpoint());
     const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(config.getScriptSplitterThreshold());
@@ -16,13 +16,13 @@ export default function BPMNConfigTab() {
     const editorActions = modeler.get('editorActions');
     const eventBus = modeler.get('eventBus');
 
-    if (!editorActions._actions.hasOwnProperty('camundaEndpointChanged')) {
-        editorActions.register({
-            camundaEndpointChanged: function (camundaEndpoint) {
-                modeler.config.camundaEndpoint = camundaEndpoint;
-            }
-        });
-    }
+    // if (!editorActions._actions.hasOwnProperty('camundaEndpointChanged')) {
+    //     editorActions.register({
+    //         camundaEndpointChanged: function (camundaEndpoint) {
+    //             modeler.config.camundaEndpoint = camundaEndpoint;
+    //         }
+    //     });
+    // }
 
     if (!editorActions._actions.hasOwnProperty('transformationFrameworkEndpointChanged')) {
         editorActions.register({
@@ -50,31 +50,20 @@ export default function BPMNConfigTab() {
     }
 
     BPMNConfigTab.prototype.onClose = () => {
-        modeler.config.camundaEndpoint = camundaEndpoint;
+        // modeler.config.camundaEndpoint = camundaEndpoint;
         modeler.config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
         modeler.config.scriptSplitterEndpoint = scriptSplitterEndpoint;
         modeler.config.scriptSplitterThreshold = scriptSplitterThreshold;
-        configManager.setCamundaEndpoint(camundaEndpoint);
+        // configManager.setCamundaEndpoint(camundaEndpoint);
         config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
         config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
         config.setScriptSplitterThreshold(scriptSplitterThreshold);
-
     }
 
-    return <div className="spaceAbove" hidden={false} id="BPMNTab">
+    return <>
         <h3>BPMN related configurations:</h3>
         <table>
             <tbody>
-            <tr className="spaceUnder">
-                <td align="right">Camunda Engine Endpoint</td>
-                <td align="left">
-                    <input
-                        type="string"
-                        name="camundaEndpoint"
-                        value={camundaEndpoint}
-                        onChange={event => setCamundaEndpoint(event.target.value)}/>
-                </td>
-            </tr>
             <tr className="spaceUnder">
                 <td align="right">QuantME Framework Endpoint</td>
                 <td align="left">
@@ -112,5 +101,12 @@ export default function BPMNConfigTab() {
             </tr>
             </tbody>
         </table>
-    </div>
+    </>
+}
+
+BPMNConfigTab.prototype.config = () => {
+    const modeler = getModeler();
+
+    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
+    modeler.config.wineryEndpoint = config.getWineryEndpoint();
 }

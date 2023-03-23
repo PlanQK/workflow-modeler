@@ -47,7 +47,7 @@ export default function QrmDataTab() {
         config.setQRMRepositoryName(githubRepositoryPath);
     }
 
-    return <div className="spaceAbove" hidden={true} id="QRMDataTab">
+    return <>
         <h3>QRM Data</h3>
         <table>
             <tbody>
@@ -83,5 +83,12 @@ export default function QrmDataTab() {
             </tr>
             </tbody>
         </table>
-    </div>
+    </>
+}
+
+QrmDataTab.prototype.config = () => {
+    const modeler = getModeler();
+
+    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
+    modeler.config.wineryEndpoint = config.getWineryEndpoint();
 }

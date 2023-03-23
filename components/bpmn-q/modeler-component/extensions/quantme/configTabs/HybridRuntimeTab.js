@@ -53,7 +53,7 @@ export default function HybridRuntimeTab() {
         config.setHybridRuntimeProvenance(hybridRuntimeProvenance);
     }
 
-    return <div className="spaceAbove" hidden={true} id="HybridRuntimesTab">
+    return <>
         <h3>Hybrid Runtime Handler Endpoints</h3>
         <table>
             <tbody>
@@ -96,5 +96,12 @@ export default function HybridRuntimeTab() {
             </tr>
             </tbody>
         </table>
-    </div>
+    </>
+}
+
+HybridRuntimeTab.prototype.config = () => {
+    const modeler = getModeler();
+
+    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
+    modeler.config.wineryEndpoint = config.getWineryEndpoint();
 }

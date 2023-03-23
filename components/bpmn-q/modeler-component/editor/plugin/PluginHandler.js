@@ -1,6 +1,7 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import {getAllConfigs} from "./PluginConfigHandler";
+import WorkflowEngineTab from "../config/WorkflowEngineTab";
 
 const PLUGINS = [
     PlanQKPlugin,
@@ -107,7 +108,12 @@ export function getPluginButtons() {
 // }
 
 export function getConfigTabs() {
-    let configTabs = []
+    // add default workflow tab to configure the path to the workflow engine
+    let configTabs = [{
+            tabId: 'EngineTab',
+            tabTitle: 'Engine',
+            configTab: WorkflowEngineTab,
+        }];
 
     for (let plugin of getActivePlugins()) {
         configTabs = configTabs.concat(plugin.configTabs);

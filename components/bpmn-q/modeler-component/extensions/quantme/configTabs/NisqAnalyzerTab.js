@@ -27,7 +27,7 @@ export default function NisqAnalyzerTab() {
 
     }
 
-    return <div className="spaceAbove" hidden={true} id="NISQAnalyzerEndpointTab">
+    return <>
         <h3>NISQ Analyzer</h3>
         <table>
             <tbody>
@@ -43,5 +43,12 @@ export default function NisqAnalyzerTab() {
             </tr>
             </tbody>
         </table>
-    </div>
+    </>
+}
+
+NisqAnalyzerTab.prototype.config = () => {
+    const modeler = getModeler();
+
+    modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();
+    modeler.config.wineryEndpoint = config.getWineryEndpoint();
 }
