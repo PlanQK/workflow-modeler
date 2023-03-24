@@ -44,7 +44,7 @@ export default function QrmDataTab() {
         modeler.config.githubRepositoryPath = githubRepositoryPath;
         config.setQRMRepositoryName(githubRepositoryName);
         config.setQRMUserName(githubUsername);
-        config.setQRMRepositoryName(githubRepositoryPath);
+        config.setQRMRepositoryPath(githubRepositoryPath);
     }
 
     return <>

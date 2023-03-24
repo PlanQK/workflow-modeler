@@ -1,7 +1,7 @@
 // import config from "../../extensions/quantme/framework-config/config";
 
 const config = {
-    camundaEndpoint: 'http://localhost:8080/engine-rest',
+    camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
 }
 
 /**
