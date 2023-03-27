@@ -6,6 +6,7 @@ import {
     CamundaPlatformPropertiesProviderModule
 } from "bpmn-js-properties-panel";
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
+import CustomPopupMenuModule from "./popup/";
 import {getAdditionalModules, getModdleExtension} from "./plugin/PluginHandler";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
@@ -50,6 +51,7 @@ function getModules() {
         BpmnPropertiesProviderModule,
         CamundaPlatformPropertiesProviderModule,
         CamundaExtensionModule,
+        CustomPopupMenuModule,
     ].concat(pluginModules);
 
     console.log('\n Additional modules of the modeler: ');

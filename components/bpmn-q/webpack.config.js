@@ -38,13 +38,13 @@ module.exports = {
                 test: /\.bpmn$/,
                 type: "asset/source",
             },
-            {
-                test: /\.svg$/,
-                use: ['svg-url-loader'],
-            },
+            // {
+            //     test: /\.svg$/,
+            //     use: ['svg-url-loader'],
+            // },
             {
 
-                test: /\.(png|jpg|jpeg|gif)$/i,
+                test: /\.(png|jpg|jpeg|gif|svg)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'image/[name][hash][ext]'

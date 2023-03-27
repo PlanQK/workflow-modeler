@@ -4,12 +4,13 @@ import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import './resources/css/planqk-icons.css'
 import {assign} from "min-dash";
 import {ObjectiveFunctionEntry} from "../quantme/modeling/properties-provider/QuantMEPropertyEntries";
+import {createMoreOptionsEntry} from "../../common/util/PopupMenuUtil";
 
 const serviceEndpointBaseUrl = '';//process.env.VUE_APP_WSO2_GATEWAY_BASE_URL;
 
 export default class PlanqkMenuProvider {
 
-  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap, contextPad, bpmnFactory) {
+  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap, contextPad, bpmnFactory, replace) {
     popupMenu.registerProvider("bpmn-replace", this);
     this.popupMenu = popupMenu;
     this.replaceElement = bpmnReplace.replaceElement;
@@ -20,11 +21,12 @@ export default class PlanqkMenuProvider {
     this.translate = translate;
     this.contextPad = contextPad;
     this.bpmnFactory = bpmnFactory;
+    this.bpmnReplace = bpmnReplace;
   }
 
   getPopupMenuHeaderEntries(element) {
     return function (entries) {
-      console.log(entries)
+      // console.log(entries)
       return entries;
     };
   }
@@ -60,10 +62,7 @@ export default class PlanqkMenuProvider {
 
       if (is(element, 'bpmn:Task')) {
         const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.TASK);
-        const moreOptions = self.createMoreOptionsEntry(element);
         entries = Object.assign(planqkEntries, entries);
-        entries = Object.assign(moreOptions, entries);
-        console.log(entries);
         return entries;
       }
 
@@ -118,56 +117,6 @@ export default class PlanqkMenuProvider {
     }
     // subscriptionEntries['test'] = this.createMoreOptionsEntry();
     return subscriptionEntries;
-  }
-
-  createMoreOptionsEntry(realElement) {
-    const self = this.modeling;
-    const oauthInfoByAppMap = this.oauthInfoByAppMap;
-    const popupMenu = this.popupMenu;
-    const getReplaceMenuPosition = this.getReplaceMenuPosition;
-    const contextPad = this.contextPad;
-    const bpmnFactory = this.bpmnFactory;
-
-    const subscriptionEntries = {};
-
-    subscriptionEntries['test'] = {
-      label: 'gjsjfgkj',
-      className: 'bpmn-icon-service',
-      action: function (event, element) {
-        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++')
-        const position = assign(getReplaceMenuPosition(element, contextPad), {
-          cursor: {x: event.x, y: event.y},
-        });
-
-        // const realElement = bpmnFactory.create('bpmn:Task');
-
-        popupMenu.close()
-        popupMenu.open(realElement, "bpmn-replace", position,
-        //     {
-        //   title: 'fadfasfdasdf',
-        //   width: 300,
-        //   search: true,
-        // }
-        );
-      }
-    }
-    return subscriptionEntries;
-  }
-
-  getReplaceMenuPosition(element, contextPad) {
-
-    var Y_OFFSET = 5;
-
-    var pad = contextPad.getPad(element).html;
-
-    var padRect = pad.getBoundingClientRect();
-
-    var pos = {
-      x: padRect.left,
-      y: padRect.bottom + Y_OFFSET
-    };
-
-    return pos;
   }
 
   createServiceTaskEntryNew(element, subscription) {
@@ -250,4 +199,5 @@ PlanqkMenuProvider.$inject = [
   'oauthInfoByAppMap',
   'contextPad',
   'bpmnFactory',
+  'replace',
 ];
