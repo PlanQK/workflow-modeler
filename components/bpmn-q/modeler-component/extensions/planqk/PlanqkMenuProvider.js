@@ -2,15 +2,12 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
 import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import './resources/css/planqk-icons.css'
-import {assign} from "min-dash";
-import {ObjectiveFunctionEntry} from "../quantme/modeling/properties-provider/QuantMEPropertyEntries";
-import {createMenuEntries, createMoreOptionsEntry} from "../../common/util/PopupMenuUtil";
-
-const serviceEndpointBaseUrl = '';//process.env.VUE_APP_WSO2_GATEWAY_BASE_URL;
+import {createMenuEntries} from "../../common/util/PopupMenuUtil";
+import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
 export default class PlanqkMenuProvider {
 
-  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap, contextPad, bpmnFactory, replace) {
+  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap, contextPad, bpmnFactory) {
     popupMenu.registerProvider("bpmn-replace", this);
     this.popupMenu = popupMenu;
     this.replaceElement = bpmnReplace.replaceElement;
@@ -24,7 +21,7 @@ export default class PlanqkMenuProvider {
     this.bpmnReplace = bpmnReplace;
   }
 
-  getPopupMenuHeaderEntries(element) {
+  getPopupMenuHeaderEntries() {
     return function (entries) {
       return entries;
     };
@@ -40,12 +37,17 @@ export default class PlanqkMenuProvider {
     const self = this;
     return function (entries) {
 
+      // do not show entries for extension elements of other plugins
+      if (!(element.type.startsWith('bpmn') || element.type.startsWith('planqk'))) {
+        return entries;
+      }
+
       if (is(element, consts.PLANQK_SERVICE_TASK)) {
         return self.createServiceTaskEntries(element, self.activeSubscriptions);
       }
 
       if (is(element, consts.PLANQK_DATA_POOL)) {
-        const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools)
+        const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools);
         return Object.assign(dataPoolEntries, entries);
       }
 
@@ -80,7 +82,6 @@ export default class PlanqkMenuProvider {
     for (let subscription of subscriptions) {
       subscriptionEntries['replace-with-' + subscription.id + ' (2)'] = this.createServiceTaskEntryNew(element, subscription);
     }
-    // subscriptionEntries['test'] = this.createMoreOptionsEntry();
     return subscriptionEntries;
   }
 
@@ -88,6 +89,7 @@ export default class PlanqkMenuProvider {
 
     const self = this.modeling;
     const oauthInfoByAppMap = this.oauthInfoByAppMap;
+    const serviceEndpointBaseUrl = getPluginConfig('planqk').serviceEndpointBaseUrl;
 
     return {
       label: subscription.api.name + '@' + subscription.application.name,
@@ -153,7 +155,6 @@ export default class PlanqkMenuProvider {
   }
 }
 
-// @ts-ignore
 PlanqkMenuProvider.$inject = [
   'popupMenu',
   'translate',
@@ -164,5 +165,4 @@ PlanqkMenuProvider.$inject = [
   'oauthInfoByAppMap',
   'contextPad',
   'bpmnFactory',
-  'replace',
 ];

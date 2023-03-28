@@ -109,6 +109,7 @@
     height: 16px;
     float: left;
     margin-left: 6px;
+    margin-top: 2px;
 }
 
 .popup-menu-less-options:before {
@@ -120,6 +121,7 @@
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
+    margin-top: 2px;
 }
 
 .tmp {

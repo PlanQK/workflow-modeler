@@ -6,21 +6,19 @@
  * @param optionsType: The type which defines the entries of the opened menu. It does not have to be a real element type,
  * it can also be a arbitrary string which identifies the entries of the new menu.
  * @param title: The title of the new menu.
- * @param id
  * @param entryName: The label of the popup entry.
  * @param entries
  * @param popupMenu: The current popup menu of the bpmn-js modeler.
  * @returns {{ label: string, className: string, action: function}}: The popup menu entry which shows another popup menu
  * when clicked.
  */
-export function createMoreOptionsEntry(optionsType, title, id, entryName, popupMenu, entries) {
+export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu, entries) {
 
     // create a pop up menu entry which triggers a new popup menu for the optionsType
     return {
-        id: id,
         label: entryName,
         className: 'popup-menu-more-options',
-        action: function (event, element) {
+        action: function () {
 
             popupMenu.openWithEntries({ type: optionsType }, "bpmn-replace", entries,
                     {
@@ -33,14 +31,13 @@ export function createMoreOptionsEntry(optionsType, title, id, entryName, popupM
     }
 }
 
-export function createLessOptionsEntry(originalElement, title, id, entryName, popupMenu, entries) {
+export function createLessOptionsEntry(originalElement, title, entryName, popupMenu, entries) {
 
     // create a pop up menu entry which triggers a new popup menu for the optionsType
     return {
-        id: id,
         label: entryName,
         className: 'popup-menu-less-options',
-        action: function (event, element) {
+        action: function () {
             popupMenu.openWithEntries(originalElement, "bpmn-replace", entries,
                 {
                     title: title,
@@ -50,6 +47,28 @@ export function createLessOptionsEntry(originalElement, title, id, entryName, po
             );
         }
     }
+}
+
+export function createMoreOptionsEntryWithReturn(originalElement, title, entryName, popupMenu, options) {
+
+    const lessOptionsEntry = createLessOptionsEntry(
+        originalElement,
+        'Change Element',
+        'All Entries',
+        popupMenu,
+    );
+
+    let entries = {};
+    entries['replace-by-more-options'] = lessOptionsEntry;
+    entries = Object.assign(entries, options);
+
+    return createMoreOptionsEntry(
+        title,
+        title,
+        entryName,
+        popupMenu,
+        entries,
+    );
 }
 
 export function createMenuEntries(element, definitions, translate, replaceElement) {
