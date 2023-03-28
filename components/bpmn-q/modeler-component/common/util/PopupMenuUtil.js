@@ -54,36 +54,33 @@ export function createLessOptionsEntry(originalElement, title, id, entryName, po
     }
 }
 
-// export function createMoreOptionsEntry(realElement) {
-//     const modeling;
-//     const oauthInfoByAppMap = this.oauthInfoByAppMap;
-//     const popupMenu = this.popupMenu;
-//     const getReplaceMenuPosition = getReplaceMenuPosition;
-//     const contextPad = this.contextPad;
-//     const bpmnFactory = this.bpmnFactory;
-//
-//     const subscriptionEntries = {};
-//
-//     subscriptionEntries['more-options'] = {
-//         label: 'gjsjfgkj',
-//         className: 'popup-menu-less-options',
-//         action: function (event, element) {
-//             console.log('+++++++++++++++++++++++++++++++++++++++++++++++++')
-//             const position = assign(getReplaceMenuPosition(element, contextPad), {
-//                 cursor: {x: event.x, y: event.y},
-//             });
-//
-//             // const realElement = bpmnFactory.create('bpmn:Task');
-//
-//             popupMenu.close()
-//             popupMenu.open(realElement, "bpmn-replace", position,
-//                 //     {
-//                 //   title: 'fadfasfdasdf',
-//                 //   width: 300,
-//                 //   search: true,
-//                 // }
-//             );
-//         }
-//     }
-//     return subscriptionEntries;
-// }
+export function createMenuEntries(element, definitions, translate, replaceElement) {
+
+    let menuEntries = {};
+
+    for (let definition of definitions) {
+        const entry = createMenuEntry(element, definition, translate, replaceElement);
+        menuEntries = Object.assign(menuEntries, entry);
+    }
+    return menuEntries;
+}
+
+export function createMenuEntry(element, definition, translate, replaceElement, action) {
+
+    const replaceAction = function () {
+        console.log(definition.target);
+        return replaceElement(element, definition.target);
+    };
+
+    const label = definition.label || '';
+
+    action = action || replaceAction;
+
+    const menuEntry = {}
+    menuEntry[definition.id] = {
+        label: translate(label),
+        className: definition.className,
+        action: action
+    };
+    return menuEntry;
+}

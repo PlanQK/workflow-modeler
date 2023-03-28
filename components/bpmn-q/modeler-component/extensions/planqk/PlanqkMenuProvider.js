@@ -4,7 +4,7 @@ import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import './resources/css/planqk-icons.css'
 import {assign} from "min-dash";
 import {ObjectiveFunctionEntry} from "../quantme/modeling/properties-provider/QuantMEPropertyEntries";
-import {createMoreOptionsEntry} from "../../common/util/PopupMenuUtil";
+import {createMenuEntries, createMoreOptionsEntry} from "../../common/util/PopupMenuUtil";
 
 const serviceEndpointBaseUrl = '';//process.env.VUE_APP_WSO2_GATEWAY_BASE_URL;
 
@@ -26,7 +26,6 @@ export default class PlanqkMenuProvider {
 
   getPopupMenuHeaderEntries(element) {
     return function (entries) {
-      // console.log(entries)
       return entries;
     };
   }
@@ -51,17 +50,17 @@ export default class PlanqkMenuProvider {
       }
 
       if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
-        const dataStoreEntries = self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+        const dataStoreEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
         return Object.assign(dataStoreEntries, entries);
       }
 
       if (is(element, 'bpmn:DataObjectReference')) {
-        const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+        const planqkEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
         return Object.assign(entries, planqkEntries);
       }
 
       if (is(element, 'bpmn:Task')) {
-        const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.TASK);
+        const planqkEntries = createMenuEntries(element, planqkReplaceOptions.TASK, self.translate, self.replaceElement);
         entries = Object.assign(planqkEntries, entries);
         return entries;
       }
@@ -73,40 +72,6 @@ export default class PlanqkMenuProvider {
 
       return entries;
     };
-  }
-
-  createMenuEntries(element, definitions) {
-
-    const self = this;
-    let menuEntries = {};
-
-    for (let definition of definitions) {
-      const entry = self.createMenuEntry(element, definition);
-      menuEntries = Object.assign(menuEntries, entry);
-    }
-    return menuEntries;
-  }
-
-  createMenuEntry(element, definition, action) {
-    const translate = this.translate;
-    const replaceElement = this.replaceElement;
-
-    const replaceAction = function () {
-      console.log(definition.target);
-      return replaceElement(element, definition.target);
-    };
-
-    const label = definition.label || '';
-
-    action = action || replaceAction;
-
-    const menuEntry = {}
-    menuEntry[definition.id] = {
-      label: translate(label),
-      className: definition.className,
-      action: action
-    };
-    return menuEntry;
   }
 
   createServiceTaskEntries(element, subscriptions) {
