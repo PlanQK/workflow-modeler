@@ -70,15 +70,15 @@ export function getModdleExtension() {
     return extensions;
 }
 
-export function getTransformations() {
-    const transformations = []
+export function getTransformationButtons() {
+    const transformationButtons = []
 
     for (let plugin of getActivePlugins()) {
-        transformations.push(plugin.transformExtension);
+        transformationButtons.push(plugin.transformExtensionButton);
     }
 
-    console.log('\n Got ' + transformations.length + ' Transformations');
-    return transformations;
+    console.log('\n Got ' + transformationButtons.length + ' Transformations');
+    return transformationButtons;
 }
 
 export function getPluginButtons() {

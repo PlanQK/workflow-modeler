@@ -9,60 +9,18 @@ import './editor/resources/styling/modeler.css';
 import './editor/resources/styling/editor-ui.css';
 import './common/camunda-components/styles/style.less';
 
-import React, {useRef} from 'react'
-import {createRoot} from 'react-dom/client'
-// import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
-
-// import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
-// import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
-// import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
+import React from 'react';
+import {createRoot} from 'react-dom/client';
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
-import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
 import {createNewDiagram} from "./common/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
-// import Notifications from "./editor/ui/notifications/NotificationHandler";
-import Notifications from "./editor/ui/notifications";
 import {createModeler} from "./editor/ModelerHandler";
-import {Toggle} from "./editor/ui/Toggle";
-import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
-import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
-import ConfigPlugin from "./editor/config/ConfigPlugin";
+import {getPluginButtons, getTransformationButtons} from "./editor/plugin/PluginHandler";
+import {setPluginConfig} from "./editor/plugin/PluginConfigHandler";
 
 export const notificationHandler = new NotificationHandler([]);
 
-import PlanQKExtensionModule from './extensions/planqk'
-import {getPluginButtons, getTransformations} from "./editor/plugin/PluginHandler";
-import TransformationButton from "./editor/ui/TransformationButton";
-import {setPluginConfig} from "./editor/plugin/PluginConfigHandler";
-let planqkModdleDescriptor = require('./extensions/planqk/resources/planqk-service-task-ext.json')
-
 class QuantumWorkflowModeler extends HTMLElement {
-    constructor(props) {
-        super();
-        // console.log("fdkasdjflkajlfkjadlöfkjaödlkfjlödakjfasjdfölkajsdlfjalfjlasdjflskkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-        // console.log(this.getAttribute("pluginConfigs"));
-        // this.pluginConfigs = JSON.parse(this.getAttribute("pluginConfigs"));
-
-        // https://medium.com/@mariusbongarts/the-complete-web-component-guide-attributes-and-properties-9b74d19bc043
-
-        // console.log(this.pluginConfigs);
-        // const {
-        //     pluginConfigs,
-        // } = props;
-        // console.log(pluginConfigs);
-    }
-
-    // static get observedAttributes() {
-    //     return ["pluginConfigs"];
-    // }
-    //
-    // attributeChangedCallback(name, oldValue, newValue) {
-    //     if (oldValue === newValue) {
-    //         return;
-    //     }
-    //
-    //     this.connectedCallback();
-    // }
 
     connectedCallback() {
         this.innerHTML = `
@@ -75,8 +33,6 @@ class QuantumWorkflowModeler extends HTMLElement {
               </div>
               <div id="notification-container"></div>
             </div>`;
-
-
     }
 
     startModeler() {
@@ -87,22 +43,14 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         const modeler = createModeler('#canvas', '#properties');
 
-        const eventBus = modeler.get('eventBus');
-        eventBus.on('bpmn.modeler.created', function (event) {
-            console.log('############### event ####################');
-            console.log(event)
-        })
-
-        // const notificationComponentRef = React.createRef();
         const handler = NotificationHandler.getInstance();
-        // const ref = useRef
         const notificationComponent = handler.createNotificationsComponent([]);
 
-        const root2 = createRoot(document.getElementById('notification-container'))
-        root2.render(<div>{notificationComponent}</div>);
+        const notificationRoot = createRoot(document.getElementById('notification-container'))
+        notificationRoot.render(<div>{notificationComponent}</div>);
 
         // create a transformation button for each transformation method of a active plugin
-        const transformationButtons = getTransformations().map(method => <TransformationButton transformWorkflow={method}/>);
+        const transformationButtons = getTransformationButtons();
 
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
