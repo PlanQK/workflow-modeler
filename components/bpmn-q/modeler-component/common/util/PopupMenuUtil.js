@@ -1,5 +1,3 @@
-import {assign} from "min-dash";
-
 /**
  * Creates a popup menu entry which opens an other menu for the given optionsType. Can be used to build the entries of
  * a popup menu hierarchically. The elements to display in the new menu can be defined by creating a respective if clause
@@ -57,10 +55,11 @@ export function createLessOptionsEntry(originalElement, title, id, entryName, po
 export function createMenuEntries(element, definitions, translate, replaceElement) {
 
     let menuEntries = {};
+    let id;
 
     for (let definition of definitions) {
-        const entry = createMenuEntry(element, definition, translate, replaceElement);
-        menuEntries = Object.assign(menuEntries, entry);
+        id = definition.id || definition.actionName;
+        menuEntries[id] = createMenuEntry(element, definition, translate, replaceElement);
     }
     return menuEntries;
 }
@@ -76,11 +75,9 @@ export function createMenuEntry(element, definition, translate, replaceElement, 
 
     action = action || replaceAction;
 
-    const menuEntry = {}
-    menuEntry[definition.id] = {
+    return {
         label: translate(label),
         className: definition.className,
         action: action
     };
-    return menuEntry;
 }

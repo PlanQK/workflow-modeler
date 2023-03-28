@@ -12,7 +12,7 @@
 import ReplaceMenuProvider from 'bpmn-js/lib/features/popup-menu/ReplaceMenuProvider';
 import * as quantmeReplaceOptions from './QuantMEReplaceOptions';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
-import {createLessOptionsEntry, createMoreOptionsEntry} from "../../../common/util/PopupMenuUtil";
+import {createLessOptionsEntry, createMenuEntries, createMoreOptionsEntry} from "../../../common/util/PopupMenuUtil";
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
@@ -22,6 +22,8 @@ export default class QuantMEReplaceMenuProvider extends ReplaceMenuProvider {
     super(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate);
 
     this.popupMenu = popupMenu;
+    this.translate = translate;
+    this.bpmnReplace = bpmnReplace;
   }
 
   /**
@@ -49,6 +51,8 @@ export default class QuantMEReplaceMenuProvider extends ReplaceMenuProvider {
 
   createQuantMETasks(element) {
     const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
 
     const lessOptionsEntry = createLessOptionsEntry(
         element,
@@ -60,14 +64,9 @@ export default class QuantMEReplaceMenuProvider extends ReplaceMenuProvider {
     );
 
     let entries = [];
-    // let entries = [lessOptionsEntry, {id: '46454645333sfaf', label: '55555555555', action: function () {
-    //     console.log('////////////////////////////////////////////////////////////')
-    //   }}];
     entries['replace-by-more-options'] = lessOptionsEntry;
-    // entries['46454645333sfaf'] = {id: '46454645333sfaf', label: '55555555555', action: function () {
-    //         console.log('////////////////////////////////////////////////////////////')
-    //       }}
-    // entries = entries.concat(super._createEntries(element, quantmeReplaceOptions.TASK))
+    const taskReplaceOptions = createMenuEntries(element, quantmeReplaceOptions.TASK, translate, replaceElement);
+    entries = Object.assign(entries, taskReplaceOptions);
 
     const moreOptions = createMoreOptionsEntry(
         'QuantME-Task',
