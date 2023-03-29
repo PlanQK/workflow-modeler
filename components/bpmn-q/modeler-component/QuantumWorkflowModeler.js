@@ -37,7 +37,6 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     startModeler() {
         const configs = this.pluginConfigsList;
-        console.log("/////////////////////////////////////////////////");
         console.log(configs);
         setPluginConfig(configs);
 

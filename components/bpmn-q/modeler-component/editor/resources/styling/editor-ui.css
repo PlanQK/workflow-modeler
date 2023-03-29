@@ -18,6 +18,20 @@
     background-color: #e8e8e8;
 }
 
+.toolbar-transformation-btn {
+    background-color: transparent;
+    border: none;
+    border-radius: 6px;
+}
+
+.toolbar-transformation-btn:hover {
+    background-color: #e8e8e8;
+}
+
+.toolbar-transformation-btn:active {
+    background-color: #e8e8e8;
+}
+
 .toolbar-splitter {
     margin: 5px;
     border: 1px solid #cccccc;
@@ -77,6 +91,20 @@
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
+}
+
+
+.toolbar-transformation-icon {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../icons/open-folder-outline-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin-left: 6px;
+    margin-top: 4px;
 }
 
 .workflow-deployment-btn:before {

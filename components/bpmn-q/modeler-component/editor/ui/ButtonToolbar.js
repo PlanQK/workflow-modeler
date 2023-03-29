@@ -2,10 +2,9 @@ import React, {Fragment} from 'react';
 import SaveButton from "./SaveButton";
 import OpenButton from "./OpenButton";
 import NewDiagramButton from "./NewDiagramButton";
-import TransformationButton from "./TransformationButton";
-import ExtensibleButton from "./ExtensibleButton";
 import DeploymentButton from "./DeploymentButton";
 import ConfigPlugin from "../config/ConfigPlugin";
+import ToolbarTransformationButton from "./ToolbarTransformationButton";
 
 export default function ButtonToolbar(props) {
 
@@ -25,7 +24,7 @@ export default function ButtonToolbar(props) {
                 <SaveButton modeler={modeler}/>
                 <OpenButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
-                {hasTransformations && <ExtensibleButton
+                {hasTransformations && <ToolbarTransformationButton
                     subButtons={transformButtons}
                     title='Transform Workflow'
                     styleClass="workflow-transformation-btn"/>

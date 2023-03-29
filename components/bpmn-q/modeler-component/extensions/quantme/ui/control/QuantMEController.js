@@ -27,7 +27,6 @@ import NotificationHandler from "../../../../editor/ui/notifications/Notificatio
 import {getQRMs, updateQRMs} from "../../qrm-manager";
 import {getXml, loadDiagram} from "../../../../common/util/IoUtilities";
 import config from "../../framework-config/config";
-import TransformationButton from "../../../../editor/ui/TransformationButton";
 
 export default class QuantMEController extends PureComponent {
 
