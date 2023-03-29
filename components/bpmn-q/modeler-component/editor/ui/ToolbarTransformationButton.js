@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import TransformationButton from "./TransformationButton";
 
 export default function ToolbarTransformationButton(props) {
 
@@ -8,32 +9,46 @@ export default function ToolbarTransformationButton(props) {
         styleClass,
     } = props;
 
+    const newSubButtons = [];
+    const initState = {};
+    let newButton;
+
+    // recreate transformation buttons to add the selectedCallback()
+    for (let button of subButtons) {
+        newButton = <TransformationButton transformWorkflow={button.props.transformWorkflow}
+                                          title={button.props.title}
+                                          name={button.props.name}
+                                          className={button.props.className}
+                                          selectedCallback={selectedCallback}/>;
+        newSubButtons.push(newButton);
+
+        initState[newButton.props.name] = true;
+    }
+
     const [isToggleOn, setToggleOn] = useState(false);
-    const [transformationStates, setTransformationStates] = useState({});
+
+    // saves whether or not a transformation should be executed
+    const [transformationStates, setTransformationStates] = useState(initState);
 
     function startTransformation() {
 
+        // start all active transformations
         for (let transformationButton of subButtons) {
-            console.log('Starting Transformation for ' + transformationButton.props.name);
-            transformationButton.props.transformWorkflow();
+
+            if (transformationStates[transformationButton.props.name]) {
+
+                console.log('Starting Transformation for ' + transformationButton.props.name);
+                transformationButton.props.transformWorkflow();
+            }
         }
     }
 
-    function selectedCallback() {
-
+    // callback to activate/ deactivate a transformation
+    function selectedCallback(isActive, transformationName) {
+        const newState = transformationStates;
+        newState[transformationName] = isActive;
+        setTransformationStates(newState);
     }
-
-    // const newSubButtons = [];
-    // const newState = {};
-    // let newButton;
-    //
-    // for (let button of subButtons) {
-    //     newButton = button;
-    //     newButton.props['selectedCallback'] = selectedCallback();
-    //     newState[newButton.props.name] = true;
-    // }
-
-    // setTransformationStates(newState);
 
     return (
         <div>
@@ -53,7 +68,7 @@ export default function ToolbarTransformationButton(props) {
 
             {isToggleOn &&
             <div className="extensible-buttons-list">
-                {React.Children.toArray(subButtons)}
+                {React.Children.toArray(newSubButtons)}
             </div>
             }
         </div>
