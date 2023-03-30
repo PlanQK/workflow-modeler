@@ -58,11 +58,10 @@ export default function ToolbarTransformationButton(props) {
                         <span className="indent">{title}</span>
                     </span>
                     <div className="toolbar-transformation-btn" onClick={() => setToggleOn(!isToggleOn)}>
-                        <span className="toolbar-transformation-icon">
+                        <span className="toolbar-transformation-edit-icon">
                             <span className="indent"/>
                         </span>
                     </div>
-
                 </div>
             </button>
 

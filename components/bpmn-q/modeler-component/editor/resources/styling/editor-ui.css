@@ -94,17 +94,18 @@
 }
 
 
-.toolbar-transformation-icon {
+.toolbar-transformation-edit-icon {
+    border-color: #cccccc;
     content: "";
     width: 15px;
     height: 15px;
     background-size: contain;
-    background-image: url("../icons/open-folder-outline-icon.svg");
+    background-image: url("../icons/wrench-tool-icon.svg");
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
-    margin-left: 6px;
-    margin-top: 4px;
+    margin-left: 3px;
+    margin-top: 2px;
 }
 
 .workflow-deployment-btn:before {
