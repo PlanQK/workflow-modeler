@@ -9,10 +9,8 @@ export default function QrmDataTab() {
     const [githubRepositoryPath, setGithubRepositoryPath] = useState(config.getQRMRepositoryPath());
 
     const modeler = getModeler();
-    // const self = this;
 
     const editorActions = modeler.get('editorActions');
-    const eventBus = modeler.get('eventBus');
 
     if (!editorActions._actions.hasOwnProperty('qrmRepoNameChanged')) {
         editorActions.register({

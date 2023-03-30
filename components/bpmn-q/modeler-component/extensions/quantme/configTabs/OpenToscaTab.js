@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
-import * as configManager from "../../../editor/config/EditorConfigManager";
 import * as config from "../framework-config/config-manager";
 
 export default function OpenToscaTab() {
@@ -9,7 +8,6 @@ export default function OpenToscaTab() {
     const [wineryEndpoint, setWineryEndpoint] = useState(config.getWineryEndpoint());
 
     const modeler = getModeler();
-    // const self = this;
 
     const editorActions = modeler.get('editorActions');
     const eventBus = modeler.get('eventBus');

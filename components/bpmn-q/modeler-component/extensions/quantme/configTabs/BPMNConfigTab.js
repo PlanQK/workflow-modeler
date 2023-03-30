@@ -1,28 +1,17 @@
 import React, { useState } from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
-import * as configManager from "../../../editor/config/EditorConfigManager";
 import * as config from "../framework-config/config-manager"
 
 export default function BPMNConfigTab() {
 
-    // const [camundaEndpoint, setCamundaEndpoint] = useState(configManager.getCamundaEndpoint());
     const [transformationFrameworkEndpoint, setTransformationFrameworkEndpoint] = useState(config.getTransformationFrameworkEndpoint());
     const [scriptSplitterEndpoint, setScriptSplitterEndpoint] = useState(config.getScriptSplitterEndpoint());
     const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(config.getScriptSplitterThreshold());
 
     const modeler = getModeler();
-    // const self = this;
 
     const editorActions = modeler.get('editorActions');
     const eventBus = modeler.get('eventBus');
-
-    // if (!editorActions._actions.hasOwnProperty('camundaEndpointChanged')) {
-    //     editorActions.register({
-    //         camundaEndpointChanged: function (camundaEndpoint) {
-    //             modeler.config.camundaEndpoint = camundaEndpoint;
-    //         }
-    //     });
-    // }
 
     if (!editorActions._actions.hasOwnProperty('transformationFrameworkEndpointChanged')) {
         editorActions.register({
@@ -50,11 +39,9 @@ export default function BPMNConfigTab() {
     }
 
     BPMNConfigTab.prototype.onClose = () => {
-        // modeler.config.camundaEndpoint = camundaEndpoint;
         modeler.config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
         modeler.config.scriptSplitterEndpoint = scriptSplitterEndpoint;
         modeler.config.scriptSplitterThreshold = scriptSplitterThreshold;
-        // configManager.setCamundaEndpoint(camundaEndpoint);
         config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
         config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
         config.setScriptSplitterThreshold(scriptSplitterThreshold);

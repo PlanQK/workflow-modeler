@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
-import * as configManager from "../../../editor/config/EditorConfigManager";
 import * as config from "../framework-config/config-manager";
 
 export default function NisqAnalyzerTab() {
@@ -8,10 +7,8 @@ export default function NisqAnalyzerTab() {
     const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(config.getNisqAnalyzerEndpoint());
 
     const modeler = getModeler();
-    // const self = this;
 
     const editorActions = modeler.get('editorActions');
-    const eventBus = modeler.get('eventBus');
 
     if (!editorActions._actions.hasOwnProperty('nisqAnalyzerEndpointChanged')) {
         editorActions.register({

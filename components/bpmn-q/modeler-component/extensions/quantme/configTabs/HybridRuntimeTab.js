@@ -11,7 +11,6 @@ export default function HybridRuntimeTab() {
     let hybridRuntimeProvenanceBoolean = (hybridRuntimeProvenance === 'true');
 
     const modeler = getModeler();
-    // const self = this;
 
     const editorActions = modeler.get('editorActions');
     const eventBus = modeler.get('eventBus');
