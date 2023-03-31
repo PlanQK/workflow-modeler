@@ -1,10 +1,15 @@
-import {getSVG} from "../../extensions/planqk/SVGMap";
-import {append as svgAppend, attr as svgAttr, create as svgCreate, innerSVG, select as svgSelect} from "tiny-svg";
+import {
+    append as svgAppend,
+    attr as svgAttr,
+    create as svgCreate,
+    innerSVG,
+    select as svgSelect
+} from "tiny-svg";
 
 export function drawPath(parentGfx, d, attrs) {
 
     const path = svgCreate('path');
-    svgAttr(path, { d: d });
+    svgAttr(path, {d: d});
     svgAttr(path, attrs);
 
     svgAppend(parentGfx, path);
@@ -12,31 +17,47 @@ export function drawPath(parentGfx, d, attrs) {
     return path;
 }
 
-export function drawTaskSVG(parentGfx, iconID) {
-    const importSVG = getSVG(iconID);
-    const innerSVGstr = importSVG.svg;
-    const transformDef = importSVG.transform;
+// copied from https://github.com/bpmn-io/bpmn-js/blob/master/lib/draw/BpmnRenderer.js
+function drawRect(parentNode, width, height, borderRadius, color) {
+    const rect = svgCreate('rect');
+
+    svgAttr(rect, {
+        width: width,
+        height: height,
+        rx: borderRadius,
+        ry: borderRadius,
+        stroke: color,
+        strokeWidth: 2,
+        fill: color
+    });
+
+    svgAppend(parentNode, rect);
+
+    return rect;
+}
+
+export function drawTaskSVG(parentGfx, importSVG) {
+    const innerSvgStr = importSVG.svg,
+        transformDef = importSVG.transform;
 
     const groupDef = svgCreate('g');
-    svgAttr(groupDef, { transform: transformDef });
-    innerSVG(groupDef, innerSVGstr);
+    svgAttr(groupDef, {transform: transformDef});
+    innerSVG(groupDef, innerSvgStr);
 
     // set task box opacity to 0 such that icon can be in the background
-    svgAttr(svgSelect(parentGfx, 'rect'), { 'fill-opacity': 0 });
+    svgAttr(svgSelect(parentGfx, 'rect'), {'fill-opacity': 0});
 
     // draw svg in the background
     parentGfx.prepend(groupDef);
 }
 
-export function drawDataStoreSVG(parentGfx, iconID) {
-    var importsvg = getSVG(iconID);
-    var innerSVGstring = importsvg.svg;
-    var transformDef = importsvg.transform;
+export function drawDataStoreSVG(parentGfx, importSVG) {
+    const innerSvgStr = importSVG.svg,
+        transformDef = importSVG.transform;
 
     const groupDef = svgCreate('g');
-    svgAttr(groupDef, { transform: transformDef });
-    innerSVG(groupDef, innerSVGstring);
+    svgAttr(groupDef, {transform: transformDef});
+    innerSVG(groupDef, innerSvgStr);
 
-    // draw svg in the background
     parentGfx.append(groupDef);
 }

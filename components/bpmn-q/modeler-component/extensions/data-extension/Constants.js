@@ -11,3 +11,8 @@ export const CONTENT = 'content';
 export const DETAILS = 'details';
 export const PARAMETERS = 'parameters';
 export const EXPRESSIONS = 'expressions';
+
+// Unique identifiers of the icon SVGs
+export const TASK_TYPE_TRANSFORMATION_TASK = 'TASK_TYPE_TRANSFORMATION_TASK';
+export const DATA_TYPE_DATA_MAP_OBJECT = 'DATA_TYPE_DATA_MAP_OBJECT';
+export const DATA_TYPE_DATA_STORE_MAP = 'DATA_TYPE_DATA_STORE_MAP';

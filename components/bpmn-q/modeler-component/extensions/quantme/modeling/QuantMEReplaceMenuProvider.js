@@ -14,7 +14,7 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn
-} from "../../../common/util/PopupMenuUtil";
+} from "../../../common/util/PopupMenuUtilities";
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
