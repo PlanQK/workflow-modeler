@@ -9,42 +9,78 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import ReplaceMenuProvider from 'bpmn-js/lib/features/popup-menu/ReplaceMenuProvider';
 import * as quantmeReplaceOptions from './QuantMEReplaceOptions';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import {
+  createMenuEntries,
+  createMoreOptionsEntryWithReturn
+} from "../../../common/util/PopupMenuUtil";
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
  */
-export default class QuantMEReplaceMenuProvider extends ReplaceMenuProvider {
+export default class QuantMEReplaceMenuProvider {
   constructor(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate) {
-    super(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate);
+
+    this.popupMenu = popupMenu;
+    this.translate = translate;
+    this.bpmnReplace = bpmnReplace;
+
+    popupMenu.registerProvider('bpmn-replace', this);
   }
 
-  /**
-   * Overwrites the default menu provider to add the QuantME task types as replacement options for elements of type bpmn:Task
-   *
-   * @param element the element for which the replacement entries are requested
-   * @returns {*} an array with menu entries of possible replacements
-   */
-  getEntries(element) {
-    var options = super.getEntries(element);
+  getPopupMenuHeaderEntries() {
+    return function (entries) {
+      return entries;
+    };
+  }
 
-    // add additional elements to replace tasks
-    if (is(element, 'bpmn:Task')) {
-      options = options.concat(super._createEntries(element, quantmeReplaceOptions.TASK));
-    }
+  getPopupMenuEntries(element) {
+    const self = this;
+    return function (entries) {
 
-    // add additional elements to replace subprocesses
-    if (is(element, 'bpmn:SubProcess')) {
-      options = options.concat(super._createEntries(element, quantmeReplaceOptions.SUBPROCESS));
-    }
-    return options;
+      // do not show entries for extension elements of other plugins
+      if (!(element.type.startsWith('bpmn') || element.type.startsWith('quantme'))) {
+        return entries;
+      }
+
+      // add additional elements to replace tasks
+      if (is(element, 'bpmn:Task')) {
+        const quantMETasks = self.createQuantMETasks(element);
+        return Object.assign(quantMETasks, entries);
+      }
+
+      // add additional elements to replace subprocesses
+      if (is(element, 'bpmn:SubProcess')) {
+        const subprocessEntries = createMenuEntries(element, quantmeReplaceOptions.SUBPROCESS, self.translate, self.bpmnReplace.replaceElement);
+        return Object.assign(subprocessEntries, entries);
+      }
+
+      return entries;
+    };
+  }
+
+  createQuantMETasks(element) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+
+    const options = createMenuEntries(element, quantmeReplaceOptions.TASK, translate, replaceElement);
+
+    const taskEntry = {}
+    taskEntry['replace-by-more-options'] = createMoreOptionsEntryWithReturn(
+        element,
+        'QuantME Tasks',
+        'QuantME Tasks',
+        popupMenu,
+        options,
+    );
+    return taskEntry;
   }
 }
 
 QuantMEReplaceMenuProvider.$inject = [
-    'bpmnFactory',
+  'bpmnFactory',
   'popupMenu',
   'modeling',
   'moddle',

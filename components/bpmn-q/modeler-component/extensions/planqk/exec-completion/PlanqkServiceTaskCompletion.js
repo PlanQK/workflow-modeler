@@ -4,12 +4,12 @@ import {
   getRootProcess,
   getSingleFlowElement,
   isFlowLikeElement,
-  setInputParameter
+  setInputParameter, setOutputParameter
 } from './CompletionUtilities';
 import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
 import {getXml} from "../../../common/util/IoUtilities";
-import {addExecutionListener} from "../../../common/util/ModellingUtilities";
+import {addExecutionListener, getStartEvent} from "../../../common/util/ModellingUtilities";
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
@@ -44,6 +44,7 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
     let replacementSuccess = false;
     console.log('Replacing task with id %s with PlanQK service interaction subprocess ', planqkServiceTask.task.id);
     const replacementSubprocess = require('../resources/workflows/planqk_service_call_subprocess.bpmn')
+    console.log(replacementSubprocess);
     replacementSuccess = await replaceByInteractionSubprocess(definitions, planqkServiceTask.task, planqkServiceTask.parent, replacementSubprocess, modeler);
 
     if (!replacementSuccess) {
@@ -144,7 +145,7 @@ async function replaceByInteractionSubprocess(definitions, task, parent, replace
   }
 
   // get the root process of the replacement fragment
-  let replacementProcess = getRootProcess(await getDefinitionsFromXml(replacement['default']));
+  let replacementProcess = getRootProcess(await getDefinitionsFromXml(replacement));
   let replacementIASubprocess = getSingleFlowElement(replacementProcess);
   if (replacementIASubprocess === null || replacementIASubprocess === undefined) {
     console.log('Unable to retrieve replacement subprocess: ', replacement);
@@ -190,6 +191,10 @@ async function replaceByDataStore(definitions, dataPool, parentProcess, modeler)
 
   // add execution listener to publish process variable on start
   addExecutionListener(parentProcess, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
+
+  const startEvent = getStartEvent(parentProcess.businessObject);
+  console.log(startEvent);
+  setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
 
   return result['success'];
 }

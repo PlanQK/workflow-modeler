@@ -1,3 +1,13 @@
+// import fetch from "node-fetch";
+
+const config = require('../../editor/config/EditorConfigManager');
+
+// import FormData from 'form-data';
+let FormData = require('form-data');
+import fetch from 'node-fetch';
+
+// const log = require('../../log')('app:deployment');
+
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
     '  <bpmn2:process id="Process_1" isExecutable="false">\n' +
@@ -75,4 +85,73 @@ export async function loadDiagram(xml, modeler) {
  */
 export function createNewDiagram(modeler) {
     loadDiagram(NEW_DIAGRAM_XML, modeler).then();
+}
+
+/**
+ * Deploy the given workflow to the connected Camunda engine
+ *
+ * @param workflowName the name of the workflow file to deploy
+ * @param workflowXml the workflow in xml format
+ * @param viewMap a list of views to deploy with the workflow, i.e., the name of the view and the corresponding xml
+ * @return {Promise<{status: string}>} a promise with the deployment status as well as the endpoint of the deployed workflow if successful
+ */
+export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap) {
+    console.log('Deploying workflow to Camunda Engine at endpoint: %s', config.getCamundaEndpoint());
+
+    // add required form data fields
+    const form = new FormData();
+    form.append('deployment-name', workflowName);
+    form.append('deployment-source', 'QuantME Modeler');
+    form.append('deploy-changed-only', 'false');
+
+    // add bpmn file ending if not present
+    let fileName = workflowName;
+    if (!fileName.endsWith('.bpmn')) {
+        fileName = fileName + '.bpmn';
+    }
+
+    // add diagram to the body
+    const bpmnFile = new File([workflowXml], fileName, {type: 'text/xml'});
+    form.append('data', bpmnFile);
+
+    // upload all provided views
+    for (const [key, value] of Object.entries(viewMap)) {
+        console.info('Adding view with name: ', key);
+
+        // add view xml to the body
+        form.append(key, value, {
+            filename: fileName.replace('.bpmn', key + '.xml'),
+            contentType: 'text/xml'
+        });
+    }
+
+    // make the request and wait for deployed endpoint
+    try {
+        const response = await fetch(config.getCamundaEndpoint() + '/deployment/create', {
+            method: 'POST',
+            body: form,
+        });
+
+        if (response.ok) {
+
+            // retrieve deployment results from response
+            const result = await response.json();
+            console.info('Deployment provides result: ', result);
+            console.info('Deployment successful with deployment id: %s', result['id']);
+
+            // abort if there is not exactly one deployed process definition
+            if (Object.values(result['deployedProcessDefinitions'] || {}).length !== 1) {
+                console.error('Invalid size of deployed process definitions list: ' + Object.values(result['deployedProcessDefinitions'] || {}).length);
+                return { status: 'failed' };
+            }
+
+            return { status: 'deployed', deployedProcessDefinition: Object.values(result['deployedProcessDefinitions'] || {})[0] };
+        } else {
+            console.error('Deployment of workflow returned invalid status code: %s', response.status);
+            return { status: 'failed' };
+        }
+    } catch (error) {
+        console.error('Error while executing post to deploy workflow: ' + error);
+        return { status: 'failed' };
+    }
 }

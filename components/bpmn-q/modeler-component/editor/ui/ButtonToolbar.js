@@ -2,18 +2,19 @@ import React, {Fragment} from 'react';
 import SaveButton from "./SaveButton";
 import OpenButton from "./OpenButton";
 import NewDiagramButton from "./NewDiagramButton";
-import TransformationButton from "../../extensions/planqk/ui/TransformationButton";
+import DeploymentButton from "./DeploymentButton";
+import ConfigPlugin from "../config/ConfigPlugin";
+import ToolbarTransformationButton from "./ToolbarTransformationButton";
 
 export default function ButtonToolbar(props) {
 
     const {
         modeler,
-        buttons
+        pluginButtons,
+        transformButtons,
     } = props;
 
-    const buttonList = buttons.map((ButtonComponent, index) => (
-        <ButtonComponent key={index}/>
-    ));
+    const hasTransformations = transformButtons.length > 0;
 
     return (
         <Fragment>
@@ -23,8 +24,15 @@ export default function ButtonToolbar(props) {
                 <SaveButton modeler={modeler}/>
                 <OpenButton modeler={modeler}/>
                 <hr className="toolbar-splitter"/>
-                {buttonList}
-                <TransformationButton modeler={modeler}/>
+                {hasTransformations && <ToolbarTransformationButton
+                    subButtons={transformButtons}
+                    title='Transform Workflow'
+                    styleClass="workflow-transformation-btn"/>
+                }
+                <DeploymentButton modeler={modeler}/>
+                <ConfigPlugin/>
+                <hr className="toolbar-splitter"/>
+                {React.Children.toArray(pluginButtons)}
             </div>
         </Fragment>
     );

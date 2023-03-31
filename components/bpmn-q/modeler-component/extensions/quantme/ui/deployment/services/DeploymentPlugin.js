@@ -26,9 +26,6 @@ import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import {getXml} from "../../../../../common/util/IoUtilities";
 
-// const deployment = require('../../../deployment');
-import deployWorkflow from '../../../deployment/workflow';
-
 const defaultState = {
   windowOpenDeploymentOverview: false,
   windowOpenDeploymentInput: false,
@@ -333,41 +330,41 @@ export default class DeploymentPlugin extends PureComponent {
     return csarsToDeploy;
   }
 
-  /**
-   * Deploy the current workflow to the Camunda engine
-   */
-  async deployWorkflow() {
-
-    // get XML of the current workflow
-    const rootElement = getRootProcess(this.modeler.getDefinitions());
-    const xml = (await this.modeler.saveXML({ format: true })).xml;
-
-    // check if there are views defined for the modeler and include them in the deployment
-    let viewsDict = {};
-    if (this.modeler.views !== undefined) {
-      console.log('Adding additional views during deployment: ', this.modeler.views);
-      viewsDict = this.modeler.views;
-    }
-
-    // start deployment of workflow and views
-    let result = await deployWorkflow(rootElement.id, xml, viewsDict);
-
-    if (result.status === 'failed') {
-      NotificationHandler.getInstance().displayNotification({
-        type: 'error',
-        title: 'Unable to deploy workflow',
-        content: 'Workflow deployment failed. Please check the configured Camunda engine endpoint!',
-        duration: 20000
-      });
-    } else {
-      NotificationHandler.getInstance().displayNotification({
-        type: 'info',
-        title: 'Workflow successfully deployed',
-        content: 'Workflow successfully deployed under deployment Id: ' + result.deployedProcessDefinition.deploymentId,
-        duration: 20000
-      });
-    }
-  }
+  // /**
+  //  * Deploy the current workflow to the Camunda engine
+  //  */
+  // async deployWorkflow() {
+  //
+  //   // get XML of the current workflow
+  //   const rootElement = getRootProcess(this.modeler.getDefinitions());
+  //   const xml = (await this.modeler.saveXML({ format: true })).xml;
+  //
+  //   // check if there are views defined for the modeler and include them in the deployment
+  //   let viewsDict = {};
+  //   if (this.modeler.views !== undefined) {
+  //     console.log('Adding additional views during deployment: ', this.modeler.views);
+  //     viewsDict = this.modeler.views;
+  //   }
+  //
+  //   // start deployment of workflow and views
+  //   let result = await deployWorkflow(rootElement.id, xml, viewsDict);
+  //
+  //   if (result.status === 'failed') {
+  //     NotificationHandler.getInstance().displayNotification({
+  //       type: 'error',
+  //       title: 'Unable to deploy workflow',
+  //       content: 'Workflow deployment failed. Please check the configured Camunda engine endpoint!',
+  //       duration: 20000
+  //     });
+  //   } else {
+  //     NotificationHandler.getInstance().displayNotification({
+  //       type: 'info',
+  //       title: 'Workflow successfully deployed',
+  //       content: 'Workflow successfully deployed under deployment Id: ' + result.deployedProcessDefinition.deploymentId,
+  //       duration: 20000
+  //     });
+  //   }
+  // }
 
   render() {
 
@@ -378,10 +375,10 @@ export default class DeploymentPlugin extends PureComponent {
           onClick={() => this.setState({ windowOpenDeploymentOverview: true })}>
           <span className="app-icon-service-deployment"><span className="indent">Service Deployment</span></span>
         </button>
-        <button type="button" className="toolbar-btn" title="Deploy the current workflow"
-          onClick={() => this.deployWorkflow()}>
-          <span className="workflow-deployment"><span className="indent">Workflow Deployment</span></span>
-        </button>
+        {/*<button type="button" className="toolbar-btn" title="Deploy the current workflow"*/}
+        {/*  onClick={() => this.deployWorkflow()}>*/}
+        {/*  <span className="workflow-deployment"><span className="indent">Workflow Deployment</span></span>*/}
+        {/*</button>*/}
       </div>
       {this.state.windowOpenDeploymentOverview && (
         <ServiceDeploymentOverviewModal

@@ -1,0 +1,54 @@
+.innerConfig {
+    min-width: 100px;
+    height: 35px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.innerConfig + .innerConfig {
+    margin-left: 10px;
+}
+
+.indent {
+    margin-left: 5px;
+}
+
+.btn-primary:focus {
+    border: solid 1px var(--blue-darken-48);
+    background-color: var(--blue-darken-55);
+}
+
+.spaceAbove {
+    padding-top: 1em;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+table {
+    table-layout: fixed;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}

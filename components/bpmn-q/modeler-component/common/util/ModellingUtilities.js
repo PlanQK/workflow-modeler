@@ -10,6 +10,16 @@ export function getProcess(element) {
     return parent;
 }
 
+export function getStartEvent(process) {
+    let startEvent;
+    process.flowElements.forEach(function(element) {
+        if (element.$type === 'bpmn:StartEvent') {
+            startEvent = element;
+        }
+    });
+    return startEvent;
+}
+
 export function addExecutionListener(element, moddle, processVariable) {
     const listener = {
         event: 'start',

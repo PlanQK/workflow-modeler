@@ -1,10 +1,22 @@
-//@import "./styles/style.less";
+//@import "../../../common/camunda-components/styles/style.less";
+@import '~bpmn-font/dist/css/bpmn-embedded.css';
 
 * {
     box-sizing: border-box;
     margin: 0;
     outline: none;
     padding: 0;
+}
+
+.quantme-logo:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/quant-me-logo.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
 }
 
 .qrm-reload:before {
@@ -57,34 +69,19 @@
     float: left;
 }
 
-.app-icon-service-deployment:before { content: '\e805'; }
+.app-icon-service-deployment:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/service-deployment-icon.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
 
 .indent {
     margin-left: 5px;
-}
-
-.btn-primary:focus {
-    border: solid 1px var(--blue-darken-48);
-    background-color: var(--blue-darken-55);
-}
-
-.innerConfig {
-    min-width: 100px;
-    height: 35px;
-    border-radius: 3px;
-    font-size: 13px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.innerConfig + .innerConfig {
-    margin-left: 10px;
 }
 
 ul {

@@ -9,34 +9,18 @@ import './editor/resources/styling/modeler.css';
 import './editor/resources/styling/editor-ui.css';
 import './common/camunda-components/styles/style.less';
 
-import React, {useRef} from 'react'
-import {createRoot} from 'react-dom/client'
-// import {elementTemplates} from "bpmn-js-properties-panel/lib/provider/camunda/element-templates";
-
-// import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
-// import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
-// import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
+import React from 'react';
+import {createRoot} from 'react-dom/client';
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
-import AdaptationPlugin from "./extensions/quantme/ui/adaptation/AdaptationPlugin";
 import {createNewDiagram} from "./common/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
-// import Notifications from "./editor/ui/notifications/NotificationHandler";
-import Notifications from "./editor/ui/notifications";
 import {createModeler} from "./editor/ModelerHandler";
-import {Toggle} from "./editor/ui/Toggle";
-import QuantMEController from "./extensions/quantme/ui/control/QuantMEController";
-import DeploymentPlugin from "./extensions/quantme/ui/deployment/services/DeploymentPlugin";
-import ConfigPlugin from "./extensions/quantme/ui/config/ConfigPlugin";
+import {getPluginButtons, getTransformationButtons} from "./editor/plugin/PluginHandler";
+import {setPluginConfig} from "./editor/plugin/PluginConfigHandler";
 
 export const notificationHandler = new NotificationHandler([]);
 
-import PlanQKExtensionModule from './extensions/planqk'
-let planqkModdleDescriptor = require('./extensions/planqk/resources/planqk-service-task-ext.json')
-
 class QuantumWorkflowModeler extends HTMLElement {
-    constructor() {
-        super();
-    }
 
     connectedCallback() {
         this.innerHTML = `
@@ -49,38 +33,27 @@ class QuantumWorkflowModeler extends HTMLElement {
               </div>
               <div id="notification-container"></div>
             </div>`;
+    }
+
+    startModeler() {
+        const configs = this.pluginConfigsList;
+        console.log(configs);
+        setPluginConfig(configs);
 
         const modeler = createModeler('#canvas', '#properties');
 
-        const eventBus = modeler.get('eventBus');
-        eventBus.on('bpmn.modeler.created', function (event) {
-            console.log('############### event ####################');
-            console.log(event)
-        })
-
-        // const notificationComponentRef = React.createRef();
         const handler = NotificationHandler.getInstance();
-        // const ref = useRef
-        const notificationComponent = handler.createNotificationsComponent([]);//<Notifications notifications={[]}/>;
+        const notificationComponent = handler.createNotificationsComponent([]);
 
-        const root2 = createRoot(document.getElementById('notification-container'))
-        root2.render(<div>{notificationComponent}</div>);
+        const notificationRoot = createRoot(document.getElementById('notification-container'))
+        notificationRoot.render(<div>{notificationComponent}</div>);
 
-        const buttons = [AdaptationPlugin, QuantMEController, DeploymentPlugin, ConfigPlugin, Toggle];//]
+        // create a transformation button for each transformation method of a active plugin
+        const transformationButtons = getTransformationButtons();
 
         // integrate react components into the html component
         const root = createRoot(document.getElementById('button-container'))
-        root.render(<ButtonToolbar modeler={modeler} buttons={buttons}/>);
-
-        // root.render(<Toolbar buttons={buttons} />);
-
-        // window.requestAnimationFrame(() => {
-        //     const notifications = notificationComponentRef.current.getNotifications();
-        //     console.log(notifications);
-        //     console.log('hjgfjsdflakjglkglkfjw')
-        // })
-        // notificationHandler.setNotifications(notificationComponent);
-        // notificationHandler.displayNotification({type: 'info', title: 'TestTtitle', content: 'Long sentence.'})
+        root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()} transformButtons={transformationButtons}/>);
 
         createNewDiagram(modeler)
 
@@ -89,6 +62,16 @@ class QuantumWorkflowModeler extends HTMLElement {
             return event.returnValue = '';
         };
         addEventListener("beforeunload", beforeUnloadListener, {capture: true});
+    }
+
+    get pluginConfigs() {
+        return this.pluginConfigsList || [];
+    }
+
+    set pluginConfigs(pluginConfigs) {
+        console.log(pluginConfigs);
+        this.pluginConfigsList = pluginConfigs;
+        this.startModeler();
     }
 }
 

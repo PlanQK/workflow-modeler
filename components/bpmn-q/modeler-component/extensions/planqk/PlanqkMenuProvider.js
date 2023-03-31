@@ -2,24 +2,27 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
 import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import './resources/css/planqk-icons.css'
-
-const serviceEndpointBaseUrl = '';//process.env.VUE_APP_WSO2_GATEWAY_BASE_URL;
+import {createMenuEntries} from "../../common/util/PopupMenuUtil";
+import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
 export default class PlanqkMenuProvider {
 
-  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap) {
+  constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap, contextPad, bpmnFactory) {
     popupMenu.registerProvider("bpmn-replace", this);
+    this.popupMenu = popupMenu;
     this.replaceElement = bpmnReplace.replaceElement;
     this.activeSubscriptions = activeSubscriptions;
     this.dataPools = dataPools;
     this.oauthInfoByAppMap = oauthInfoByAppMap;
     this.modeling = modeling;
     this.translate = translate;
+    this.contextPad = contextPad;
+    this.bpmnFactory = bpmnFactory;
+    this.bpmnReplace = bpmnReplace;
   }
 
-  getPopupMenuHeaderEntries(element) {
+  getPopupMenuHeaderEntries() {
     return function (entries) {
-      console.log(entries)
       return entries;
     };
   }
@@ -34,68 +37,43 @@ export default class PlanqkMenuProvider {
     const self = this;
     return function (entries) {
 
+      // do not show entries for extension elements of other plugins
+      if (!(element.type.startsWith('bpmn') || element.type.startsWith('planqk'))) {
+        return entries;
+      }
+
       if (is(element, consts.PLANQK_SERVICE_TASK)) {
         return self.createServiceTaskEntries(element, self.activeSubscriptions);
       }
 
       if (is(element, consts.PLANQK_DATA_POOL)) {
-        const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools)
+        const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools);
         return Object.assign(dataPoolEntries, entries);
       }
 
       if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
-        const dataStoreEntries = self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+        const dataStoreEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
         return Object.assign(dataStoreEntries, entries);
       }
 
       if (is(element, 'bpmn:DataObjectReference')) {
-        const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.DATA_STORE);
+        const planqkEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
         return Object.assign(entries, planqkEntries);
       }
 
       if (is(element, 'bpmn:Task')) {
-        const planqkEntries = self.createMenuEntries(element, planqkReplaceOptions.TASK);
+        const planqkEntries = createMenuEntries(element, planqkReplaceOptions.TASK, self.translate, self.replaceElement);
         entries = Object.assign(planqkEntries, entries);
-        console.log(entries);
         return entries;
+      }
+
+      if (element.type === 'bpmn:Task') {
+        const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools)
+        return Object.assign(dataPoolEntries, entries);
       }
 
       return entries;
     };
-  }
-
-  createMenuEntries(element, definitions) {
-
-    const self = this;
-    let menuEntries = {};
-
-    for (let definition of definitions) {
-      const entry = self.createMenuEntry(element, definition);
-      menuEntries = Object.assign(menuEntries, entry);
-    }
-    return menuEntries;
-  }
-
-  createMenuEntry(element, definition, action) {
-    const translate = this.translate;
-    const replaceElement = this.replaceElement;
-
-    const replaceAction = function () {
-      console.log(definition.target);
-      return replaceElement(element, definition.target);
-    };
-
-    const label = definition.label || '';
-
-    action = action || replaceAction;
-
-    const menuEntry = {}
-    menuEntry[definition.id] = {
-      label: translate(label),
-      className: definition.className,
-      action: action
-    };
-    return menuEntry;
   }
 
   createServiceTaskEntries(element, subscriptions) {
@@ -111,12 +89,13 @@ export default class PlanqkMenuProvider {
 
     const self = this.modeling;
     const oauthInfoByAppMap = this.oauthInfoByAppMap;
+    const serviceEndpointBaseUrl = getPluginConfig('planqk').serviceEndpointBaseUrl;
 
     return {
       label: subscription.api.name + '@' + subscription.application.name,
       className: 'bpmn-icon-service',
       action: function () {
-        const oAuthInfo = oauthInfoByAppMap.get(subscription.application.id);
+        const oAuthInfo = oauthInfoByAppMap[subscription.application.id];
         console.log(oAuthInfo.consumerKey);
         console.log(oAuthInfo.consumerSecret);
         self.updateProperties(element, {
@@ -143,6 +122,8 @@ export default class PlanqkMenuProvider {
     dataPoolEntries['replace-with-generic-data-pool'] = this.createNewDataPoolEntry(element, {
       label: 'PlanQK Data Pool', name: '', link: '', description: ''
     });
+
+    console.log(dataPools);
 
     for (let dataPool of dataPools) {
       dataPoolEntries['replace-with-' + dataPool.id + ' (2)'] = this.createNewDataPoolEntry(element, dataPool);
@@ -174,7 +155,6 @@ export default class PlanqkMenuProvider {
   }
 }
 
-// @ts-ignore
 PlanqkMenuProvider.$inject = [
   'popupMenu',
   'translate',
@@ -182,5 +162,7 @@ PlanqkMenuProvider.$inject = [
   'bpmnReplace',
   'activeSubscriptions',
   'dataPools',
-  'oauthInfoByAppMap'
+  'oauthInfoByAppMap',
+  'contextPad',
+  'bpmnFactory',
 ];

@@ -59,112 +59,116 @@ export default class QuantMEController extends PureComponent {
       this.modeler.config = config;
     }
 
-    // transform the workflow passed through the API to a native workflow
-    this.editorActions.register({
-      transformWorkflow: async function (params) {
-        console.log('Transforming workflow posted through API!');
-        let currentQRMs = getQRMs();
-        let result = await startReplacementProcess(params.xml, currentQRMs,
-            {
-              nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
-              transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,
-              camundaEndpoint: self.modeler.config.camundaEndpoint
-            });
+    if (!this.editorActions._actions.hasOwnProperty('transformWorkflow')) {
+      // transform the workflow passed through the API to a native workflow
+      this.editorActions.register({
+        transformWorkflow: async function (params) {
+          console.log('Transforming workflow posted through API!');
+          let currentQRMs = getQRMs();
+          let result = await startReplacementProcess(params.xml, currentQRMs,
+              {
+                nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
+                transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,
+                camundaEndpoint: self.modeler.config.camundaEndpoint
+              });
 
-        // return result to API
-        self.api.sendResult(params.returnPath, params.id, { status: result.status, xml: result.xml });
-      }
-    });
-
-    // transform and deploy the workflow for the dynamic hardware selection
-    this.editorActions.register({
-      transformAndDeployWorkflow: async function(params) {
-        console.log('Transforming and deploying workflow for hardware selection!');
-        let currentQRMs = getQRMs();
-
-        // configure the workflow fragment with the given parameters
-        console.log('Configuring workflow to transform using provider "%s", QPU "%s", and circuit language "%s"!',
-            params.provider, params.qpu, params.circuitLanguage);
-        let configurationResult = await configureBasedOnHardwareSelection(params.xml, params.provider, params.qpu, params.circuitLanguage);
-
-        // forward error to API if configuration fails
-        if (configurationResult.status === 'failed') {
-          console.log('Configuration of given workflow fragment and parameters failed!');
-          self.api.sendResult(params.returnPath, params.id, { status: configurationResult.status, xml: configurationResult.xml });
-          return;
+          // return result to API
+          self.api.sendResult(params.returnPath, params.id, { status: result.status, xml: result.xml });
         }
+      });
+    }
 
-        // transform to native BPMN
-        let result = await startReplacementProcess(configurationResult.xml, currentQRMs,
-            {
-              nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
-              transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,
-              camundaEndpoint: self.modeler.config.camundaEndpoint
-            });
-        if (result.status === 'failed') {
-          console.log('Transformation process failed with cause: ', result.cause);
-          self.api.sendResult(params.returnPath, params.id, { status: 'failed' });
-          return;
-        }
+    if (!this.editorActions._actions.hasOwnProperty('transformAndDeployWorkflow')) {
+      // transform and deploy the workflow for the dynamic hardware selection
+      this.editorActions.register({
+        transformAndDeployWorkflow: async function(params) {
+          console.log('Transforming and deploying workflow for hardware selection!');
+          let currentQRMs = getQRMs();
 
-        // get all ServiceTasks that require a service deployment
-        let modeler = await createModelerFromXml(result.xml);
-        let csarsToDeploy = getServiceTasksToDeploy(getRootProcess(modeler.getDefinitions()));
-        console.log('Found %i CSARs associated with ServiceTasks: ', csarsToDeploy.length, csarsToDeploy);
+          // configure the workflow fragment with the given parameters
+          console.log('Configuring workflow to transform using provider "%s", QPU "%s", and circuit language "%s"!',
+              params.provider, params.qpu, params.circuitLanguage);
+          let configurationResult = await configureBasedOnHardwareSelection(params.xml, params.provider, params.qpu, params.circuitLanguage);
 
-        // upload the CSARs to the OpenTOSCA Container
-        for (let i = 0; i < csarsToDeploy.length; i++) {
-          let csar = csarsToDeploy[i];
-          let uploadResult = await uploadCSARToContainer(config.opentoscaEndpoint, csar.csarName, csar.url, config.wineryEndpoint);
-          console.log('Uploaded CSAR \'%s\' to OpenTOSCA container with result: ', csar.csarName, uploadResult);
+          // forward error to API if configuration fails
+          if (configurationResult.status === 'failed') {
+            console.log('Configuration of given workflow fragment and parameters failed!');
+            self.api.sendResult(params.returnPath, params.id, { status: configurationResult.status, xml: configurationResult.xml });
+            return;
+          }
 
-          // abort if upload is not successful
-          if (uploadResult.success === false) {
+          // transform to native BPMN
+          let result = await startReplacementProcess(configurationResult.xml, currentQRMs,
+              {
+                nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
+                transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,
+                camundaEndpoint: self.modeler.config.camundaEndpoint
+              });
+          if (result.status === 'failed') {
+            console.log('Transformation process failed with cause: ', result.cause);
             self.api.sendResult(params.returnPath, params.id, { status: 'failed' });
             return;
           }
-          csar.buildPlanUrl = uploadResult.url;
-          csar.inputParameters = uploadResult.inputParameters;
 
-          // create a service instance of the CSAR
-          console.log('Successfully uploaded CSAR to OpenTOSCA Container. Creating service instance...');
-          let instanceCreationResponse = await createServiceInstance(csar, config.camundaEndpoint);
-          console.log('Creation of service instance of CSAR \'%s\' returned result: ', csar.csarName, instanceCreationResponse);
+          // get all ServiceTasks that require a service deployment
+          let modeler = await createModelerFromXml(result.xml);
+          let csarsToDeploy = getServiceTasksToDeploy(getRootProcess(modeler.getDefinitions()));
+          console.log('Found %i CSARs associated with ServiceTasks: ', csarsToDeploy.length, csarsToDeploy);
 
-          // bind the service instance using the specified binding pattern
-          let serviceTaskIds = csar.serviceTaskIds;
-          for (let j = 0; j < serviceTaskIds.length; j++) {
-            let bindingResponse = undefined;
-            if (csar.type === 'pull') {
-              bindingResponse = bindUsingPull(instanceCreationResponse.topicName, serviceTaskIds[j], modeler.get('elementRegistry'), modeler.get('modeling'));
-            } else if (csar.type === 'push') {
-              bindingResponse = bindUsingPush(csar, serviceTaskIds[j], modeler.get('elementRegistry'));
-            }
+          // upload the CSARs to the OpenTOSCA Container
+          for (let i = 0; i < csarsToDeploy.length; i++) {
+            let csar = csarsToDeploy[i];
+            let uploadResult = await uploadCSARToContainer(config.opentoscaEndpoint, csar.csarName, csar.url, config.wineryEndpoint);
+            console.log('Uploaded CSAR \'%s\' to OpenTOSCA container with result: ', csar.csarName, uploadResult);
 
-            if (bindingResponse === undefined || bindingResponse.success === false) {
-              console.error('Failed to bind service instance to ServiceTask with Id: ', serviceTaskIds[j]);
+            // abort if upload is not successful
+            if (uploadResult.success === false) {
               self.api.sendResult(params.returnPath, params.id, { status: 'failed' });
               return;
             }
+            csar.buildPlanUrl = uploadResult.url;
+            csar.inputParameters = uploadResult.inputParameters;
+
+            // create a service instance of the CSAR
+            console.log('Successfully uploaded CSAR to OpenTOSCA Container. Creating service instance...');
+            let instanceCreationResponse = await createServiceInstance(csar, config.camundaEndpoint);
+            console.log('Creation of service instance of CSAR \'%s\' returned result: ', csar.csarName, instanceCreationResponse);
+
+            // bind the service instance using the specified binding pattern
+            let serviceTaskIds = csar.serviceTaskIds;
+            for (let j = 0; j < serviceTaskIds.length; j++) {
+              let bindingResponse = undefined;
+              if (csar.type === 'pull') {
+                bindingResponse = bindUsingPull(instanceCreationResponse.topicName, serviceTaskIds[j], modeler.get('elementRegistry'), modeler.get('modeling'));
+              } else if (csar.type === 'push') {
+                bindingResponse = bindUsingPush(csar, serviceTaskIds[j], modeler.get('elementRegistry'));
+              }
+
+              if (bindingResponse === undefined || bindingResponse.success === false) {
+                console.error('Failed to bind service instance to ServiceTask with Id: ', serviceTaskIds[j]);
+                self.api.sendResult(params.returnPath, params.id, { status: 'failed' });
+                return;
+              }
+            }
           }
-        }
-        console.log('Successfully deployed and bound all required service instances!');
+          console.log('Successfully deployed and bound all required service instances!');
 
-        // deploy the transformed and bound workflow to the Camunda engine
-        const rootElement = getRootProcess(modeler.getDefinitions());
-        let boundWorkflowXml = await getXml(modeler);
-        let workflowDeploymentResult = await self.backend.send('deployment:deploy-workflow', rootElement.id, boundWorkflowXml, {});
-        if (workflowDeploymentResult === undefined || workflowDeploymentResult.status !== 'deployed') {
-          console.error('Failed to deploy workflow: ', workflowDeploymentResult);
-          self.api.sendResult(params.returnPath, params.id, { status: 'failed' });
-          return;
-        }
+          // deploy the transformed and bound workflow to the Camunda engine
+          const rootElement = getRootProcess(modeler.getDefinitions());
+          let boundWorkflowXml = await getXml(modeler);
+          let workflowDeploymentResult = await self.backend.send('deployment:deploy-workflow', rootElement.id, boundWorkflowXml, {});
+          if (workflowDeploymentResult === undefined || workflowDeploymentResult.status !== 'deployed') {
+            console.error('Failed to deploy workflow: ', workflowDeploymentResult);
+            self.api.sendResult(params.returnPath, params.id, { status: 'failed' });
+            return;
+          }
 
-        // return result to the API
-        console.log('Workflow deployment successfully. Returning to API...');
-        self.api.sendResult(params.returnPath, params.id, { status: workflowDeploymentResult.status, deployedProcessDefinition: workflowDeploymentResult.deployedProcessDefinition, xml: boundWorkflowXml });
-      }
-    });
+          // return result to the API
+          console.log('Workflow deployment successfully. Returning to API...');
+          self.api.sendResult(params.returnPath, params.id, { status: workflowDeploymentResult.status, deployedProcessDefinition: workflowDeploymentResult.deployedProcessDefinition, xml: boundWorkflowXml });
+        }
+      });
+    }
 
     // trigger initial QRM update
     updateQRMs().then(response => {
@@ -336,45 +340,11 @@ export default class QuantMEController extends PureComponent {
       });
     });
   }
-
-  async transformWorkflow() {
-    NotificationHandler.getInstance().displayNotification({
-      type: 'info',
-      title: 'Workflow Transformation Started!',
-      content: 'Successfully started transformation process for the current workflow!',
-      duration: 7000
-    });
-    let xml = await this.modeler.get('bpmnjs').saveXML();
-    let currentQRMs = getQRMs();
-    let result = await startReplacementProcess(xml.xml, currentQRMs,
-      {
-        nisqAnalyzerEndpoint: config.nisqAnalyzerEndpoint,
-        transformationFrameworkEndpoint: config.transformationFrameworkEndpoint,
-        camundaEndpoint: config.camundaEndpoint
-      });
-
-    if (result.status === 'transformed') {
-      await loadDiagram(result.xml, this.modeler);
-      // await this.modeler.get('bpmnjs').importXML(result.xml);
-    } else {
-      NotificationHandler.getInstance().displayNotification({
-        type: 'warning',
-        title: 'Unable to transform workflow',
-        content: result.cause.toString(),
-        duration: 10000
-      });
-    }
-  }
-
   render() {
     return <div style={{display: 'flex'}}>
       <button type="button" className="toolbar-btn" title="Update QRMs from repository"
         onClick={() => this.updateQRMs()}>
         <span className="qrm-reload"><span className="indent">Update QRMs</span></span>
-      </button>
-      <button type="button" className="toolbar-btn" title="Transform the current workflow"
-        onClick={() => this.transformWorkflow()}>
-        <span className="workflow-transformation"><span className="indent">Transformation</span></span>
       </button>
     </div>;
   }

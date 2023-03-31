@@ -10,7 +10,6 @@
  */
 
 const config = {
-  camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
   opentoscaEndpoint: 'http://192.168.178.20:1337/csars',
   wineryEndpoint: 'http://192.168.178.20:8093/winery',
   nisqAnalyzerEndpoint: 'http://192.168.178.20:8098/nisq-analyzer',

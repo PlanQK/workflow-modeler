@@ -182,14 +182,36 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
   let buildPlanResponse = await fetch(csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson);
   let buildPlanResponseJson = await buildPlanResponse.json();
 
+  // retry polling 10 times, creation of the build time takes some time
+  for (let retry = 0; retry < 10; retry++) {
+
+    // stop retries in case of correct response
+    if (buildPlanResponseJson._links) {
+      break;
+    }
+
+    await new Promise(r => setTimeout(r, 5000));
+
+    console.log('Retry fetching build plan');
+
+    buildPlanResponse = await fetch(csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson);
+    buildPlanResponseJson = await buildPlanResponse.json();
+  }
+
+  if (!buildPlanResponseJson._links) {
+    console.log('Unable to fetch build plans for ' + csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson);
+    result.success = false;
+    return result;
+  }
+
   let pollingUrl = buildPlanResponseJson._links.service_template_instance.href;
+
   let state = 'CREATING';
   console.log('Polling for finished service instance at URL: %s', pollingUrl);
   while (!(state === 'CREATED' || state === 'FAILED')) {
 
     // wait 5 seconds for next poll
     await new Promise(r => setTimeout(r, 5000));
-
     // poll for current state
     let pollingResponse = await fetch(pollingUrl);
     let pollingResponseJson = await pollingResponse.json();
