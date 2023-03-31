@@ -27,46 +27,6 @@ export default class ServiceTaskRenderer extends BpmnRenderer {
   constructor(config, eventBus, styles, pathMap, canvas, textRenderer) {
     super(config, eventBus, styles, pathMap, canvas, textRenderer, HIGH_PRIORITY);
 
-    function drawPath(parentGfx, d, attrs) {
-
-      const path = svgCreate('path');
-      svgAttr(path, { d: d });
-      svgAttr(path, attrs);
-
-      svgAppend(parentGfx, path);
-
-      return path;
-    }
-
-    function drawTaskSVG(parentGfx, iconID) {
-      var importsvg = getSVG(iconID);
-      var innerSVGstring = importsvg.svg;
-      var transformDef = importsvg.transform;
-
-      const groupDef = svgCreate('g');
-      svgAttr(groupDef, { transform: transformDef });
-      innerSVG(groupDef, innerSVGstring);
-
-      // set task box opacity to 0 such that icon can be in the background
-      svgAttr(svgSelect(parentGfx, 'rect'), { 'fill-opacity': 0 });
-
-      // draw svg in the background
-      parentGfx.prepend(groupDef);
-    }
-
-    function drawDataStoreSVG(parentGfx, iconID) {
-      var importsvg = getSVG(iconID);
-      var innerSVGstring = importsvg.svg;
-      var transformDef = importsvg.transform;
-
-      const groupDef = svgCreate('g');
-      svgAttr(groupDef, { transform: transformDef });
-      innerSVG(groupDef, innerSVGstring);
-
-      // draw svg in the background
-      parentGfx.append(groupDef);
-    }
-
     this.planqkHandlers = {
       [consts.PLANQK_SERVICE_TASK]: function(self, parentGfx, element) {
         const task = self.renderer('bpmn:Task')(parentGfx, element);

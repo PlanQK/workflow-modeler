@@ -22,9 +22,9 @@ export default class QuantMERenderer extends BpmnRenderer {
   constructor(config, eventBus, styles, pathMap, quantMEPathMap, canvas, textRenderer) {
     super(config, eventBus, styles, pathMap, canvas, textRenderer, 1001);
 
-    var computeStyle = styles.computeStyle;
+    const computeStyle = styles.computeStyle;
 
-    var defaultFillColor = config && config.defaultFillColor,
+    const defaultFillColor = config && config.defaultFillColor,
         defaultStrokeColor = config && config.defaultStrokeColor;
 
     function drawPath(parentGfx, d, attrs) {
