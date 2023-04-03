@@ -1,0 +1,35 @@
+.dataflow-transformation-task-icon:before {
+    content: "";
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/icons/change-exchange-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-data-store-map-icon:before {
+    content: "";
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/icons/structure-diagram-icon-or.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-data-map-object-icon:before {
+    content: "";
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/icons/structure-diagram-icon-or.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}

@@ -1,9 +1,11 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
+import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
 import WorkflowEngineTab from "../config/WorkflowEngineTab";
 
 const PLUGINS = [
+    DataFlowPlugin,
     PlanQKPlugin,
     QuantMEPlugin,
 ];

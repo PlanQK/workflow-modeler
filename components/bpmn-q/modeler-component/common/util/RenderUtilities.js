@@ -36,7 +36,7 @@ function drawRect(parentNode, width, height, borderRadius, color) {
     return rect;
 }
 
-export function drawTaskSVG(parentGfx, importSVG) {
+export function drawTaskSVG(parentGfx, importSVG, svgAttributes) {
     const innerSvgStr = importSVG.svg,
         transformDef = importSVG.transform;
 
@@ -47,17 +47,25 @@ export function drawTaskSVG(parentGfx, importSVG) {
     // set task box opacity to 0 such that icon can be in the background
     svgAttr(svgSelect(parentGfx, 'rect'), {'fill-opacity': 0});
 
+    if (svgAttributes) {
+        svgAttr(groupDef, svgAttributes);
+    }
+
     // draw svg in the background
     parentGfx.prepend(groupDef);
 }
 
-export function drawDataStoreSVG(parentGfx, importSVG) {
+export function drawDataStoreSVG(parentGfx, importSVG, svgAttributes) {
     const innerSvgStr = importSVG.svg,
         transformDef = importSVG.transform;
 
     const groupDef = svgCreate('g');
     svgAttr(groupDef, {transform: transformDef});
     innerSVG(groupDef, innerSvgStr);
+
+    if (svgAttributes) {
+        svgAttr(groupDef, svgAttributes);
+    }
 
     parentGfx.append(groupDef);
 }
