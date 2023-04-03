@@ -33,3 +33,18 @@
     float: left;
     margin: 0 6px 0 0;
 }
+
+.dataflow-transformation-task-palette-icon {
+    content: url("../resources/icons/change-exchange-icon.svg");
+    padding: 10px;
+}
+
+.dataflow-data-store-map-task-palette-icon {
+    content: url("../resources/icons/structure-diagram-icon-or.svg");
+    padding: 10px;
+}
+
+.dataflow-data-map-object-palette-icon {
+    content: url("../resources/icons/structure-diagram-icon-or.svg");
+    padding: 10px;
+}

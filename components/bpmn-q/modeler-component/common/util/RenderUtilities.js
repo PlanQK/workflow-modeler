@@ -4,7 +4,7 @@ import {
     create as svgCreate,
     innerSVG,
     select as svgSelect
-} from "tiny-svg";
+} from 'tiny-svg';
 
 export function drawPath(parentGfx, d, attrs) {
 
