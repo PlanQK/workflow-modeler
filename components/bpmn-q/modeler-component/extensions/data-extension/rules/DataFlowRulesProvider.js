@@ -18,6 +18,7 @@ export default class CustomRulesProvider extends BpmnRules {
      * Fired during creation of a new connection (while you selected the target of a connection)
      */
     this.addRule('connection.create', 200000, function (context) {
+      console.log('+++++ connection.create');
 
       const source = context.source,
         target = context.target;
@@ -29,6 +30,7 @@ export default class CustomRulesProvider extends BpmnRules {
      * Fired when a connection between two elements is drawn again, e.g. after dragging an element
      */
     this.addRule('connection.reconnect', 200000000000, function (context) {
+      console.log('+++++ connection.reconnect');
 
       const source = context.source,
         target = context.target;
@@ -41,7 +43,7 @@ export default class CustomRulesProvider extends BpmnRules {
     });
 
     this.addRule('elements.create', 200000000000, function (context) {
-      console.log('elements.create')
+      console.log('+++++ elements.create')
 
       var elements = context.elements,
         position = context.position,
@@ -68,7 +70,7 @@ export default class CustomRulesProvider extends BpmnRules {
     });
 
     this.addRule('shape.create', 200000000000,function (context) {
-      console.log('shape create');
+      console.log('+++++ shape create');
       return canCreate(
         context.shape,
         context.target,
@@ -76,9 +78,23 @@ export default class CustomRulesProvider extends BpmnRules {
         context.position
       );
     });
+
+    this.addRule('elements.move', function(context) {
+
+      console.log('+++++ elements.move');
+    //   var target = context.target,
+    //     shapes = context.shapes,
+    //     position = context.position;
+    //
+    //   return canAttach(shapes, target, null, position) ||
+    //     canReplace(shapes, target, position) ||
+    //     canMove(shapes, target, position) ||
+    //     canInsert(shapes, target, position);
+    });
   }
 
   canConnect(source, target, connection) {
+    console.log('##### can connect');
 
     if (is(source, consts.DATA_MAP_OBJECT) || is(target, consts.DATA_MAP_OBJECT)) {
       return this.canConnectDataExtension(source, target);
@@ -95,17 +111,18 @@ export default class CustomRulesProvider extends BpmnRules {
   }
 
   canConnectSequenceFlow(source, target) {
-    console.log('canConnectSequenceFlow');
+    console.log('##### canConnectSequenceFlow');
 
     if (is(source, consts.DATA_MAP_OBJECT) || is(target, consts.DATA_MAP_OBJECT)) {
-      this.canConnectDataExtension(source, target)
-      return;
+      // this.canConnectDataExtension(source, target)
+      return false;
     }
 
     return super.canConnectSequenceFlow(source, target);
   }
 
   canConnectDataExtension(source, target) {
+    console.log('##### can connect data extension');
 
     // add rule for connections via a DataTransformationAssociation
     if (isAny(source, [consts.DATA_MAP_OBJECT]) &&
@@ -143,7 +160,7 @@ export default class CustomRulesProvider extends BpmnRules {
   }
 
   canCreate(shape, target, source, position) {
-    console.log('can create');
+    console.log('##### can create');
 
     if (is(shape, 'data:DataObjectMapReference')) {
       console.log('is object map');
@@ -160,6 +177,16 @@ export default class CustomRulesProvider extends BpmnRules {
     }
 
     return super.canCreate(shape, target, source, position);
+  }
+
+  canConnectAssociation(source, target) {
+    let canConnectData = this.canConnectDataExtension(source, target);
+
+    if (canConnectData) {
+      return canConnectData;
+    }
+
+    return super.canConnectAssociation(source, target);
   }
 }
 CustomRulesProvider.$inject = [

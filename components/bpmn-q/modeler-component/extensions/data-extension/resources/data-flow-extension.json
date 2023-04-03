@@ -8,7 +8,7 @@
   "types": [
     {
       "name": "DataMapObject",
-      "superClass": [ "bpmn:DataObjectReference", "bpmn:Activity" ],
+      "superClass": [ "bpmn:DataObjectReference" ],
       "properties": [
         {
           "name": "content",
@@ -41,7 +41,7 @@
     },
     {
       "name": "TransformationAssociation",
-      "superClass": [ "bpmn:DataAssociation" ],
+      "superClass": [ "bpmn:Association" ],
       "properties": [
         {
           "name": "expressions",
@@ -52,12 +52,12 @@
     },
     {
       "name": "InputTransformationAssociation",
-      "superClass": [ "bpmn:DataInputAssociation", "TransformationAssociation" ],
+      "superClass": [ "TransformationAssociation" ],
       "properties": []
     },
     {
       "name": "OutputTransformationAssociation",
-      "superClass": [ "bpmn:DataInputAssociation", "TransformationAssociation" ],
+      "superClass": [ "TransformationAssociation" ],
       "properties": []
     },
     {
