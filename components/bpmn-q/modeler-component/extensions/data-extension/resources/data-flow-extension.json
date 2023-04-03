@@ -35,7 +35,7 @@
         {
           "name": "parameters",
           "isMany": true,
-          "type": "PropertiesParameter"
+          "type": "KeyValueEntry"
         }
       ]
     },

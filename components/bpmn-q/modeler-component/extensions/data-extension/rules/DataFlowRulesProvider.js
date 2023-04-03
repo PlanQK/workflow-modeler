@@ -45,13 +45,7 @@ export default class CustomRulesProvider extends BpmnRules {
     this.addRule('elements.create', 200000000000, function (context) {
       console.log('+++++ elements.create')
 
-      var elements = context.elements,
-        position = context.position,
-        target = context.target;
-
-      // if (isConnection(target) && !canInsert(elements, target, position)) {
-      //     return false;
-      // }
+      var elements = context.elements;
       let b = true;
 
 
@@ -59,17 +53,11 @@ export default class CustomRulesProvider extends BpmnRules {
         if (isConnection(element)) {
           b = b && canConnectDataExtension(element.source, element.target);
         }
-
-        // if (element.host) {
-        //     b = canAttach(element, element.host, null, position);
-        // }
-        //
-        // return canCreate(element, target, null, position);
       });
       return b;
     });
 
-    this.addRule('shape.create', 200000000000,function (context) {
+    this.addRule('shape.create', 200000000000, function (context) {
       console.log('+++++ shape create');
       return canCreate(
         context.shape,
@@ -77,19 +65,6 @@ export default class CustomRulesProvider extends BpmnRules {
         context.source,
         context.position
       );
-    });
-
-    this.addRule('elements.move', function(context) {
-
-      console.log('+++++ elements.move');
-    //   var target = context.target,
-    //     shapes = context.shapes,
-    //     position = context.position;
-    //
-    //   return canAttach(shapes, target, null, position) ||
-    //     canReplace(shapes, target, position) ||
-    //     canMove(shapes, target, position) ||
-    //     canInsert(shapes, target, position);
     });
   }
 

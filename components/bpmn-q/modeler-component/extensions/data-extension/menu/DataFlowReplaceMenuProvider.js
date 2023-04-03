@@ -90,10 +90,6 @@ export default class DataFlowReplaceMenuProvider {
       }
 
       if (is(element, consts.TRANSFORMATION_ASSOCIATION)) {
-        // options = [];
-        //
-        // console.log('source: ' + (element.source.type === 'data:DataTransformationAssociation'));
-        // console.log('target: ' + element.target.type);
         const source = element.source;
         const target = element.target;
         const modeling = self.modeling;

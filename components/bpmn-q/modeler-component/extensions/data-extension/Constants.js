@@ -5,6 +5,7 @@ export const TRANSFORMATION_TASK= 'dataflow:TransformationTask';
 export const TRANSFORMATION_ASSOCIATION = 'dataflow:TransformationAssociation';
 export const INPUT_TRANSFORMATION_ASSOCIATION = 'dataflow:InputTransformationAssociation';
 export const OUTPUT_TRANSFORMATION_ASSOCIATION = 'dataflow:OutputTransformationAssociation';
+export const KEY_VALUE_ENTRY = 'dataflow:KeyValueEntry';
 
 // Property names of the data flow extension elements
 export const CONTENT = 'content';
