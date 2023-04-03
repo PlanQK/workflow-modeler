@@ -12,6 +12,7 @@ export default class CustomRulesProvider extends BpmnRules {
 
     const canConnectDataExtension = this.canConnectDataExtension;
     const canConnect = this.canConnect.bind(this);
+    const canCreate = this.canCreate.bind(this);
 
     /**
      * Fired during creation of a new connection (while you selected the target of a connection)
@@ -37,6 +38,43 @@ export default class CustomRulesProvider extends BpmnRules {
       if (canConnectData || canConnectData === false) {
         return canConnectData;
       }
+    });
+
+    this.addRule('elements.create', 200000000000, function (context) {
+      console.log('elements.create')
+
+      var elements = context.elements,
+        position = context.position,
+        target = context.target;
+
+      // if (isConnection(target) && !canInsert(elements, target, position)) {
+      //     return false;
+      // }
+      let b = true;
+
+
+      forEach(elements, function (element) {
+        if (isConnection(element)) {
+          b = b && canConnectDataExtension(element.source, element.target);
+        }
+
+        // if (element.host) {
+        //     b = canAttach(element, element.host, null, position);
+        // }
+        //
+        // return canCreate(element, target, null, position);
+      });
+      return b;
+    });
+
+    this.addRule('shape.create', 200000000000,function (context) {
+      console.log('shape create');
+      return canCreate(
+        context.shape,
+        context.target,
+        context.source,
+        context.position
+      );
     });
   }
 
@@ -102,6 +140,26 @@ export default class CustomRulesProvider extends BpmnRules {
       isAny(target, [consts.DATA_MAP_OBJECT])) {
       return false;
     }
+  }
+
+  canCreate(shape, target, source, position) {
+    console.log('can create');
+
+    if (is(shape, 'data:DataObjectMapReference')) {
+      console.log('is object map');
+
+      if (is(target, 'bpmn:SequenceFlow')) {
+        console.log('is sequence flow');
+        return false;
+      }
+
+      if (is(target, 'bpmn:DataAssociation')) {
+        console.log('is data association');
+        return false;
+      }
+    }
+
+    return super.canCreate(shape, target, source, position);
   }
 }
 CustomRulesProvider.$inject = [
