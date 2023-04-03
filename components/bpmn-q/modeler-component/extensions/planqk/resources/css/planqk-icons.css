@@ -1,14 +1,10 @@
 .planqk-icon-palette-service-task {
-    content: url("../icons/planqk-service-task.png");
-    padding: 11px 10px 11px 10px;
-    /*margin: 5px;*/
-    /*width: 20px;*/
-    /*height: 20px;*/
-    /*display: block;*/
+    content: url("../icons/service-task-palette-icon.svg");
+    padding: 11px 8px 11px 10px;
 }
 
 .planqk-icon-palette-data-pool {
-    content: url("../icons/planqk-data-pool.jpg");
+    content: url("../icons/data-pool-palette-icon.svg");
     padding: 10px;
 }
 
