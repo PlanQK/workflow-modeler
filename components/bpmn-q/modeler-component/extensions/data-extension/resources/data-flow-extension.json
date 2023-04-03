@@ -52,12 +52,12 @@
     },
     {
       "name": "InputTransformationAssociation",
-      "superClass": [ "bpmn:DataInputAssociation", "DataTransformationAssociation" ],
+      "superClass": [ "bpmn:DataInputAssociation", "TransformationAssociation" ],
       "properties": []
     },
     {
       "name": "OutputTransformationAssociation",
-      "superClass": [ "bpmn:DataInputAssociation", "DataTransformationAssociation" ],
+      "superClass": [ "bpmn:DataInputAssociation", "TransformationAssociation" ],
       "properties": []
     },
     {

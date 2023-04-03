@@ -12,7 +12,7 @@ import * as consts from './utilities/Constants';
 import {getSVG} from "./SVGMap";
 import {drawDataStoreSVG, drawTaskSVG} from "../../common/util/RenderUtilities";
 
-const HIGH_PRIORITY = 1500,
+const HIGH_PRIORITY = 14001,
     TASK_BORDER_RADIUS = 2;
 
 export default class ServiceTaskRenderer extends BpmnRenderer {
@@ -42,8 +42,8 @@ export default class ServiceTaskRenderer extends BpmnRenderer {
 
     canRender(element) {
 
-        // ignore labels
-        return !element.labelTarget;
+        // only return true if handler for rendering is registered
+        return this.planqkHandlers[element.type];
     }
 
     drawShape(parentNode, element) {

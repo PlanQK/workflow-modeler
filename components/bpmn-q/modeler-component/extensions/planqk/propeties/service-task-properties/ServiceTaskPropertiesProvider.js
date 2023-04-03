@@ -1,7 +1,7 @@
 import planqkServiceProps from './SubscriptionProperties';
 import inputOutputProps from './InputOutputProperties';
 
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import {is} from 'bpmn-js/lib/util/ModelUtil';
 
 const LOW_PRIORITY = 500;
 
@@ -10,19 +10,19 @@ const LOW_PRIORITY = 500;
  * A provider with a `#getGroups(element)` method
  * that exposes groups for a diagram element.
  *
- * @param {PropertiesPanel} propertiesPanel
+ * @param propertiesPanel
  * @param {Function} translate
  */
-export default function ServiceTaskPropertiesProvider(propertiesPanel, translate, activeSubscriptions) {
+export default function ServiceTaskPropertiesProvider(propertiesPanel, translate) {
 
   /**
    * Return the groups provided for the given element.
    *
-   * @param {DiagramElement} element
+   * @param element
    *
-   * @return {(Object[]) => (Object[])} groups middleware
+   * @return groups middleware
    */
-  this.getGroups = function(element) {
+  this.getGroups = function (element) {
 
     /**
      * We return a middleware that modifies
@@ -32,10 +32,9 @@ export default function ServiceTaskPropertiesProvider(propertiesPanel, translate
      *
      * @return {Object[]} modified groups
      */
-    return function(groups) {
-      console.log(activeSubscriptions.length);
+    return function (groups) {
 
-      if(is(element, 'planqk:ServiceTask')) {
+      if (is(element, 'planqk:ServiceTask')) {
         groups.unshift(createInputOutputGroup(element, translate));
         groups.unshift(createSubscriptionGroup(element, translate));
       }
@@ -47,7 +46,7 @@ export default function ServiceTaskPropertiesProvider(propertiesPanel, translate
   propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
-ServiceTaskPropertiesProvider.$inject = [ 'propertiesPanel', 'translate', 'activeSubscriptions' ];
+ServiceTaskPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'activeSubscriptions'];
 
 function createSubscriptionGroup(element, translate) {
 
@@ -61,11 +60,9 @@ function createSubscriptionGroup(element, translate) {
 
 function createInputOutputGroup(element, translate) {
 
-   const group = {
-     id: 'inputOutputProperties',
-     label: translate('Input / Output'),
-     entries: inputOutputProps(element)
-   };
-
-   return group
+  return {
+    id: 'inputOutputProperties',
+    label: translate('Input / Output'),
+    entries: inputOutputProps(element)
+  }
 }
