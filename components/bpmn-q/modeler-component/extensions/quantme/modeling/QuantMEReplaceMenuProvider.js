@@ -10,7 +10,7 @@
  */
 
 import * as quantmeReplaceOptions from './QuantMEReplaceOptions';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn
@@ -69,11 +69,12 @@ export default class QuantMEReplaceMenuProvider {
 
     const taskEntry = {}
     taskEntry['replace-by-more-options'] = createMoreOptionsEntryWithReturn(
-        element,
-        'QuantME Tasks',
-        'QuantME Tasks',
-        popupMenu,
-        options,
+      element,
+      'QuantME Tasks',
+      'QuantME Tasks',
+      popupMenu,
+      options,
+      'quantme-tasks-icon'
     );
     return taskEntry;
   }

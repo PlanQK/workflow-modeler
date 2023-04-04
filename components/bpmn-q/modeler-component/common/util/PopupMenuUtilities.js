@@ -9,15 +9,19 @@
  * @param entryName: The label of the popup entry.
  * @param entries
  * @param popupMenu: The current popup menu of the bpmn-js modeler.
+ * @param customStyleClass: An optional css class to define an icon displayed in before the MoreOptionsEntry.
  * @returns {{ label: string, className: string, action: function}}: The popup menu entry which shows another popup menu
  * when clicked.
  */
-export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu, entries) {
+export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu, entries, customStyleClass) {
+
+    // add customStyleClass to the default classname if set
+    const classname = customStyleClass ? 'popup-menu-more-options ' + customStyleClass : 'popup-menu-more-options';
 
     // create a pop up menu entry which triggers a new popup menu for the optionsType
     return {
         label: entryName,
-        className: 'popup-menu-more-options',
+        className: classname,
         action: function () {
 
             popupMenu.openWithEntries({ type: optionsType }, "bpmn-replace", entries,
@@ -49,7 +53,7 @@ export function createLessOptionsEntry(originalElement, title, entryName, popupM
     }
 }
 
-export function createMoreOptionsEntryWithReturn(originalElement, title, entryName, popupMenu, options) {
+export function createMoreOptionsEntryWithReturn(originalElement, title, entryName, popupMenu, options, customStyleClass) {
 
     const lessOptionsEntry = createLessOptionsEntry(
         originalElement,
@@ -68,6 +72,7 @@ export function createMoreOptionsEntryWithReturn(originalElement, title, entryNa
         entryName,
         popupMenu,
         entries,
+        customStyleClass,
     );
 }
 
