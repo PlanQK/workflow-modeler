@@ -44,4 +44,7 @@ The Fill component will no longer work, because it allows plugging buttons direc
 Adding buttons to the toolbar of the Quantum Workflow Modeler is managed by the [ButtonToolbar](../../components/bpmn-q/modeler-component/editor/ui/ButtonToolbar.js).
 To style the buttons, the ```toolbar-btn``` CSS class from [editor-ui.css](../../components/bpmn-q/modeler-component/editor/resources/styling/editor-ui.css) 
 
-## 
+## Deprecated APIs
+
+##### Access of the DI
+no longer over .di, now use getDi() from ModelUtil, https://github.com/bpmn-io/bpmn-js/issues/1472  

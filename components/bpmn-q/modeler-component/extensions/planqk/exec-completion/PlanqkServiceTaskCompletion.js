@@ -83,7 +83,8 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
   }
 
   const transformedXml = await getXml(modeler);
-  await saveResultXmlFn(transformedXml);
+  // await saveResultXmlFn(transformedXml);
+  return {status: 'transformed', xml: transformedXml};
 }
 
 /**

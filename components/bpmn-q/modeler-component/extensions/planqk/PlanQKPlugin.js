@@ -15,13 +15,21 @@ export default {
     extensionModule: PlanQKExtensionModule,
     moddleDescription: planqkModdleDescriptor,
     transformExtensionButton: <TransformationButton name='PlanQK Transformation' transformWorkflow={
-        async () => {
-            const modeler = getModeler();
-            let xml = await getXml(modeler);
+        async (xml) => {
+            // const modeler = getModeler();
+            // let xml = await getXml(modeler);
 
-            await startReplacementProcess(xml, async function (xml) {
-                await saveXmlAsLocalFile(xml, "myProcess.bpmn");
-            });
+            // load current xml if not given as parameter
+            if (!xml) {
+                const modeler = getModeler();
+                xml = await getXml(modeler);
+            }
+
+            return await startReplacementProcess(xml);
+
+            // async function (xml) {
+            //     await saveXmlAsLocalFile(xml, "myProcess.bpmn");
+            // }
         }
     }/>,
 }
