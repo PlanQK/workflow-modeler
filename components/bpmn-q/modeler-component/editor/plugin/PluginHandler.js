@@ -43,7 +43,7 @@ export function getActivePlugins() {
                 activePlugins.push(plugin);
             }
         }
-        return activePlugins
+        return activePlugins;
     }
 }
 
@@ -61,7 +61,7 @@ export function getAdditionalModules() {
 }
 
 export function getModdleExtension() {
-    const extensions = {}
+    const extensions = {};
 
     for (let plugin of getActivePlugins()) {
         extensions[plugin.name] = plugin.moddleDescription;
@@ -73,7 +73,7 @@ export function getModdleExtension() {
 }
 
 export function getTransformationButtons() {
-    const transformationButtons = []
+    const transformationButtons = [];
 
     for (let plugin of getActivePlugins()) {
         transformationButtons.push(plugin.transformExtensionButton);
@@ -84,7 +84,7 @@ export function getTransformationButtons() {
 }
 
 export function getPluginButtons() {
-    const pluginButtons = []
+    const pluginButtons = [];
 
     for (let plugin of getActivePlugins()) {
         pluginButtons.push(plugin.buttons);
@@ -95,19 +95,6 @@ export function getPluginButtons() {
 
     return pluginButtons;
 }
-
-// export function getTransformationButtons() {
-//     const transformationButtons = []
-//
-//     for (let plugin of getActivePlugins()) {
-//         transformationButtons.push(plugin.transformationButtons);
-//     }
-//
-//     console.log('\n Got ' + transformationButtons.length + ' Transformation Buttons');
-//     console.log(transformationButtons);
-//
-//     return transformationButtons;
-// }
 
 export function getConfigTabs() {
     // add default workflow tab to configure the path to the workflow engine

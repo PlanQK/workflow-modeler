@@ -4,7 +4,7 @@ import {
   getRootProcess,
   getSingleFlowElement,
   isFlowLikeElement,
-  setInputParameter, setOutputParameter
+  setInputParameter,
 } from './CompletionUtilities';
 import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
@@ -14,10 +14,9 @@ import {addExecutionListener, getStartEvent} from "../../../common/util/Modellin
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
  * @param xml the xml model which contains the elements to replace
- * @param saveResultXmlFn the function to save the rsulting, camunda bpmn compliant xml model
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
-export async function startReplacementProcess(xml, saveResultXmlFn) {
+export async function startPlanqkReplacementProcess(xml) {
   let modeler = await createModelerFromXml(xml);
   let elementRegistry = modeler.get('elementRegistry');
 
@@ -43,7 +42,7 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
 
     let replacementSuccess = false;
     console.log('Replacing task with id %s with PlanQK service interaction subprocess ', planqkServiceTask.task.id);
-    const replacementSubprocess = require('../resources/workflows/planqk_service_call_subprocess.bpmn')
+    const replacementSubprocess = require('../resources/workflows/planqk_service_call_subprocess.bpmn');
     console.log(replacementSubprocess);
     replacementSuccess = await replaceByInteractionSubprocess(definitions, planqkServiceTask.task, planqkServiceTask.parent, replacementSubprocess, modeler);
 

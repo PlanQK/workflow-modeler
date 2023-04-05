@@ -30,7 +30,7 @@ export default function ToolbarTransformationButton(props) {
 
   const [isToggleOn, setToggleOn] = useState(false);
 
-  // saves whether or not a transformation should be executed
+  // saves whether a transformation should be executed
   const [transformationStates, setTransformationStates] = useState(initState);
 
   async function startTransformation() {
@@ -56,7 +56,7 @@ export default function ToolbarTransformationButton(props) {
             // await loadDiagram(result.xml, modeler);
           } else {
 
-            const cause = tmp.cause || 'Transformation failed because of an unexpected error.'
+            const cause = tmp.cause || 'Transformation failed because of an unexpected error.';
 
             NotificationHandler.getInstance().displayNotification({
               type: 'warning',

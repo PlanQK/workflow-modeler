@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on Tue Apr 04 2023 18:43:06 GMT+0200 (Mitteleuropäische Sommerzeit)
+const webpackConfig = require('./webpack.config.js');
 
 module.exports = function(config) {
   config.set({
@@ -10,7 +10,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
-    frameworks: ['mocha', 'browserify'],
+    frameworks: ['mocha'],
 
 
     // list of files / patterns to load in the browser
@@ -27,11 +27,24 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
     preprocessors: {
-      'test/**/*.js': [ 'browserify' ]
+      'test/**/*.spec.js': ['webpack']//[ 'browserify' ]
     },
 
 
-    plugins: ['karma-mocha', 'karma-browserify', 'karma-chrome-launcher'],
+    webpack: webpackConfig,
+    webpackMiddleware: {
+      noInfo: true
+    },
+    // browserify: {
+    //   // entries: ['modeler-component/QuantumWorkflowModeler.js'],
+    //   debug: true,
+    //   transform: [
+    //     [ 'browserify-css', 'babelify', { presets: [ '@babel/preset-env' ] } ]
+    //   ]
+    // },
+
+
+    plugins: ['karma-mocha', 'karma-browserify', 'karma-chrome-launcher', 'karma-webpack'],
 
 
     // test results reporter to use
@@ -69,5 +82,5 @@ module.exports = function(config) {
     // Concurrency level
     // how many browser instances should be started simultaneously
     concurrency: Infinity
-  })
-}
+  });
+};

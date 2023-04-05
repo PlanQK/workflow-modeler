@@ -10,7 +10,6 @@ export function setPluginConfig(pluginConfig) {
 export function getPluginConfig(pluginName) {
     const plugin = pluginConfigList.find(element => element.name === pluginName) || {};
     return plugin.config;
-    // return {};
 }
 
 export function getAllConfigs() {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import PlanQKExtensionModule from './';
 import {getXml, saveXmlAsLocalFile} from "../../common/util/IoUtilities";
-import {startReplacementProcess} from "./exec-completion/PlanqkServiceTaskCompletion";
+import {startPlanqkReplacementProcess} from "./exec-completion/PlanqkServiceTaskCompletion";
 import {getModeler} from "../../editor/ModelerHandler";
 import TransformationButton from "../../editor/ui/TransformationButton";
 
@@ -25,7 +25,7 @@ export default {
                 xml = await getXml(modeler);
             }
 
-            return await startReplacementProcess(xml);
+            return await startPlanqkReplacementProcess(xml);
 
             // async function (xml) {
             //     await saveXmlAsLocalFile(xml, "myProcess.bpmn");

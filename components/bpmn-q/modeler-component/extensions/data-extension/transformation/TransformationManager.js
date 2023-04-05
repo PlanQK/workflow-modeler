@@ -38,10 +38,9 @@ import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
  * @param xml the xml model which contains the elements to replace
- * @param saveResultXmlFn the function to save the rsulting, camunda bpmn compliant xml model
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
-export async function startDataFlowReplacementProcess(xml, saveResultXmlFn) {
+export async function startDataFlowReplacementProcess(xml) {
   return { status: 'transformed', xml: xml };
 }
 

@@ -12,7 +12,7 @@ import QrmDataTab from "./configTabs/QrmDataTab";
 import HybridRuntimeTab from "./configTabs/HybridRuntimeTab";
 import NotificationHandler from "../../editor/ui/notifications/NotificationHandler";
 import {getQRMs} from "./qrm-manager";
-import {startReplacementProcess} from "./replacement/QuantMETransformator";
+import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
 import {getXml, loadDiagram, saveXmlAsLocalFile} from "../../common/util/IoUtilities";
 import {getModeler} from "../../editor/ModelerHandler";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
@@ -74,7 +74,7 @@ export default {
             //
             // let xml = await modeler.get('bpmnjs').saveXML();
             let currentQRMs = getQRMs();
-            return await startReplacementProcess(xml, currentQRMs,
+            return await startQuantmeReplacementProcess(xml, currentQRMs,
                 {
                     nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
                     transformationFrameworkEndpoint: config.getTransformationFrameworkEndpoint(),

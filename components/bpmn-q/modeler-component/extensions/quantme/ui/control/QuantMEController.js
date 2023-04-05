@@ -13,7 +13,7 @@
 import React, { Fragment, PureComponent } from 'react';
 // import { Fill } from 'camunda-modeler-plugin-helpers/components';
 
-import { startReplacementProcess } from '../../replacement/QuantMETransformator';
+import { startQuantmeReplacementProcess } from '../../replacement/QuantMETransformator';
 import { configureBasedOnHardwareSelection } from '../../replacement/hardware-selection/QuantMEHardwareSelectionHandler';
 import { getServiceTasksToDeploy } from '../../deployment/DeploymentUtils';
 import {
@@ -65,7 +65,7 @@ export default class QuantMEController extends PureComponent {
         transformWorkflow: async function (params) {
           console.log('Transforming workflow posted through API!');
           let currentQRMs = getQRMs();
-          let result = await startReplacementProcess(params.xml, currentQRMs,
+          let result = await startQuantmeReplacementProcess(params.xml, currentQRMs,
               {
                 nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
                 transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,
@@ -98,7 +98,7 @@ export default class QuantMEController extends PureComponent {
           }
 
           // transform to native BPMN
-          let result = await startReplacementProcess(configurationResult.xml, currentQRMs,
+          let result = await startQuantmeReplacementProcess(configurationResult.xml, currentQRMs,
               {
                 nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
                 transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,

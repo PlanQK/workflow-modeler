@@ -16,7 +16,7 @@ import {
   performAjax,
   createModelerFromXml
 } from '../../../utilities/Utilities';
-import { startReplacementProcess } from '../../../replacement/QuantMETransformator';
+import { startQuantmeReplacementProcess } from '../../../replacement/QuantMETransformator';
 import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion
@@ -58,7 +58,7 @@ export async function getAWSRuntimeProgramDeploymentModel(candidate, endpoints, 
   let xml = await exportXmlWrapper();
 
   // transform QuantME tasks within candidate
-  let transformationResult = await startReplacementProcess(xml, qrms, endpoints);
+  let transformationResult = await startQuantmeReplacementProcess(xml, qrms, endpoints);
   if (transformationResult.status === 'failed') {
     console.log('Unable to transform QuantME tasks within the candidates!');
     return { error: 'Unable to transform QuantME tasks within the candidates. Please provide valid QRMs!' };

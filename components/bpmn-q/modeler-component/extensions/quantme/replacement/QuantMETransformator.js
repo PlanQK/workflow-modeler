@@ -32,7 +32,7 @@ import { replaceCuttingSubprocess } from './circuit-cutting/QuantMECuttingHandle
  * @param currentQRMs the set of currently in the framework available QRMs
  * @param endpointConfig endpoints of the services required for the dynamic hardware selection
  */
-export async function startReplacementProcess(xml, currentQRMs, endpointConfig) {
+export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointConfig) {
   let modeler = await createModelerFromXml(xml);
   let modeling = modeler.get('modeling');
   let elementRegistry = modeler.get('elementRegistry');
