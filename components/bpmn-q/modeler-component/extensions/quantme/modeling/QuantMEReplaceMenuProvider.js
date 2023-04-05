@@ -65,16 +65,56 @@ export default class QuantMEReplaceMenuProvider {
     const translate = this.translate;
     const replaceElement = this.bpmnReplace.replaceElement;
 
-    const options = createMenuEntries(element, quantmeReplaceOptions.TASK, translate, replaceElement);
+    let options = createMenuEntries(element, quantmeReplaceOptions.TASK, translate, replaceElement);
+    options = Object.assign(this.createDemoTasks(element), options);
 
-    const taskEntry = {}
-    taskEntry['replace-by-more-options'] = createMoreOptionsEntryWithReturn(
+    return {
+      ['replace-by-more-options']: createMoreOptionsEntryWithReturn(
+        element,
+        'QuantME Tasks',
+        'QuantME Tasks',
+        popupMenu,
+        options,
+        'quantme-tasks-icon'
+      )
+    };
+  }
+
+  createDemoTasks(element) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+
+    let demoOptions = createMenuEntries(element, quantmeReplaceOptions.DEMO, translate, replaceElement);
+    // demoOptions = Object.assign(this.createDummyEntry(element), demoOptions);
+
+    const taskEntry = {};
+    taskEntry['replace-by-demo-options'] = createMoreOptionsEntryWithReturn(
       element,
-      'QuantME Tasks',
-      'QuantME Tasks',
+      'Demo Tasks',
+      'Demo Tasks',
       popupMenu,
-      options,
-      'quantme-tasks-icon'
+      demoOptions,
+      'bpmn-icon-user'
+    );
+    return taskEntry;
+  }
+
+  createDummyEntry(element) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+
+    const dummyOptions = createMenuEntries(element, quantmeReplaceOptions.DUMMY, translate, replaceElement);
+
+    const taskEntry = {};
+    taskEntry['replace-by-dummy-options'] = createMoreOptionsEntryWithReturn(
+      element,
+      'Dummy Tasks',
+      'Dummy Tasks',
+      popupMenu,
+      dummyOptions,
+      'bpmn-icon-receive'
     );
     return taskEntry;
   }

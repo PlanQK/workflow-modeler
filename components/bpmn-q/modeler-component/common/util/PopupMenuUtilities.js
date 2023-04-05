@@ -22,6 +22,7 @@ export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu,
     return {
         label: entryName,
         className: classname,
+        moreOptions: entries,
         action: function () {
 
             popupMenu.openWithEntries({ type: optionsType }, "bpmn-replace", entries,
@@ -63,7 +64,7 @@ export function createMoreOptionsEntryWithReturn(originalElement, title, entryNa
     );
 
     let entries = {};
-    entries['replace-by-more-options'] = lessOptionsEntry;
+    entries['replace-by-less-options'] = lessOptionsEntry;
     entries = Object.assign(entries, options);
 
     return createMoreOptionsEntry(
