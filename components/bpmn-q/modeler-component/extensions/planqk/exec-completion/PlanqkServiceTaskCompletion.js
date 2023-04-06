@@ -9,7 +9,7 @@ import {
 import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
 import {getXml} from "../../../common/util/IoUtilities";
-import {addExecutionListener, getStartEvent} from "../../../common/util/ModellingUtilities";
+import {addExecutionListener, addFormField, getStartEvent} from "../../../common/util/ModellingUtilities";
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
@@ -185,16 +185,26 @@ async function replaceByDataStore(definitions, dataPool, parentProcess, modeler)
 
   const bpmnFactory = modeler.get('bpmnFactory');
   const moddle = modeler.get('moddle');
+  const modeling = modeler.get('modeling');
+  const elementRegistry = modeler.get('elementRegistry');
 
   const newDataStore = bpmnFactory.create('bpmn:DataStoreReference');
   let result = insertShape(definitions, parentProcess, newDataStore, {}, true, modeler, dataPool);
 
   // add execution listener to publish process variable on start
-  addExecutionListener(parentProcess, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
+  // addExecutionListener(parentProcess, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
 
   const startEvent = getStartEvent(parentProcess.businessObject);
   console.log(startEvent);
-  setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
+  // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
+  const formField =
+    {
+      'defaultValue': dataPool.dataPoolLink,
+      'id': dataPool.dataPoolName,
+      'label': 'Link to ' + dataPool.dataPoolName,
+      'type': 'string'
+    };
+  addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
 
   return result['success'];
 }
