@@ -12,26 +12,25 @@ export default function ToolbarTransformationButton(props) {
     styleClass,
   } = props;
 
-  const newSubButtons = [];
-  const initState = {};
-  let newButton;
+  // const newSubButtons = [];
+  // const initState = {};
+  // let newButton;
 
   // recreate transformation buttons to add the selectedCallback()
-  for (let button of subButtons) {
-    newButton = <TransformationButton transformWorkflow={button.props.transformWorkflow}
-                                      title={button.props.title}
-                                      name={button.props.name}
-                                      className={button.props.className}
-                                      selectedCallback={selectedCallback}/>;
-    newSubButtons.push(newButton);
-
-    initState[newButton.props.name] = true;
-  }
+  // for (let button of subButtons) {
+  //   newButton = <TransformationButton transformWorkflow={button.props.transformWorkflow}
+  //                                     title={button.props.title}
+  //                                     name={button.props.name}
+  //                                     className={button.props.className}
+  //                                     selectedCallback={selectedCallback}
+  //                                     isChecked={initState[button.props.name]}/>;
+  //   newSubButtons.push(newButton);
+  // }
 
   const [isToggleOn, setToggleOn] = useState(false);
 
   // saves whether a transformation should be executed
-  const [transformationStates, setTransformationStates] = useState(initState);
+  const [transformationStates, setTransformationStates] = useState({});
 
   async function startTransformation() {
 
@@ -105,9 +104,21 @@ export default function ToolbarTransformationButton(props) {
       </button>
 
       {isToggleOn &&
-      <div className="extensible-buttons-list">
-        {React.Children.toArray(newSubButtons)}
-      </div>
+        <div className="extensible-buttons-list">
+          {/*{React.Children.toArray(newSubButtons)}*/}
+          {
+            subButtons.map(function (entry, index) {
+              return (<TransformationButton
+                key={index}
+                transformWorkflow={entry.props.transformWorkflow}
+                title={entry.props.title}
+                name={entry.props.name}
+                className={entry.props.className}
+                selectedCallback={selectedCallback}
+                isChecked={transformationStates[entry.props.name] || false}/>);
+            })
+          }
+        </div>
       }
     </div>
   );
