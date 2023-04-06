@@ -17,7 +17,6 @@ import React, { Fragment, PureComponent } from 'react';
 import ServiceDeploymentOverviewModal from './ServiceDeploymentOverviewModal';
 import ServiceDeploymentInputModal from './ServiceDeploymentInputModal';
 import ServiceDeploymentBindingModal from './ServiceDeploymentBindingModal';
-import { getRootProcess } from '../../../utilities/Utilities';
 
 import { createServiceInstance, uploadCSARToContainer } from '../../../deployment/OpenTOSCAUtils';
 import { bindUsingPull, bindUsingPush } from '../../../deployment/BindingUtils';
@@ -25,6 +24,7 @@ import { getServiceTasksToDeploy } from '../../../deployment/DeploymentUtils';
 import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import {getXml} from "../../../../../common/util/IoUtilities";
+import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
 
 const defaultState = {
   windowOpenDeploymentOverview: false,

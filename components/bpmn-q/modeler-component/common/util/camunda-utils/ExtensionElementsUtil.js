@@ -36,6 +36,17 @@ export function getExtensionElementsList(businessObject, type = undefined) {
   return values;
 }
 
+export function getExtension(element, type) {
+  const extensionElements = getExtensionElementsList(element);
+  if (!extensionElements) {
+    return null;
+  }
+
+  return extensionElements.filter(function(e) {
+    return e.$instanceOf(type);
+  })[0];
+}
+
 /**
  * Add one or more extension elements. Create bpmn:ExtensionElements if it doesn't exist.
  *

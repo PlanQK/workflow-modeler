@@ -13,6 +13,7 @@ import {
 import {ServiceTaskDelegateProps} from "../service-tasks/ServiceTaskDelegateProps";
 import {ImplementationProps} from "./service-task/ImplementationProps";
 import {Group} from "@bpmn-io/properties-panel";
+import {getWineryEndpoint} from '../../framework-config/config-manager';
 
 const LOW_PRIORITY = 500;
 
@@ -66,7 +67,7 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
 
             // update ServiceTasks with the deployment extension
             if (element.type && element.type === 'bpmn:ServiceTask') {
-                groups[2] = ImplementationGroup(element, injector, wineryEndpoint);
+                groups[2] = ImplementationGroup(element, injector, getWineryEndpoint());
             }
             return groups;
         }

@@ -10,11 +10,9 @@
  */
 
 import lodash from 'lodash';
-import {
-  getRootProcess,
-  createModelerFromXml
-} from '../../utilities/Utilities';
 import generateImage from '../../../../common/util/camunda-utils/generateImage';
+import {getRootProcess} from '../../../../common/util/ModellingUtilities';
+import {createModelerFromXml} from '../../../../editor/ModelerHandler';
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime

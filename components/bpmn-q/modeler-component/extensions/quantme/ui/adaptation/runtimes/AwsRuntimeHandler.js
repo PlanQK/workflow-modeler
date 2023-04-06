@@ -12,9 +12,7 @@
 import { fetch } from 'whatwg-fetch';
 import {
   getQuantumCircuitExecutionTasks,
-  getRootProcess,
   performAjax,
-  createModelerFromXml
 } from '../../../utilities/Utilities';
 import { startQuantmeReplacementProcess } from '../../../replacement/QuantMETransformator';
 import {
@@ -26,6 +24,8 @@ import {
   getRequiredPrograms,
   getTaskOrder
 } from './RuntimeHandlerUtils';
+import {createModelerFromXml} from '../../../../../editor/ModelerHandler';
+import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
 
 /**
  * Generate a AWS Runtime program for the given candidate

@@ -9,14 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  getCamundaInputOutput,
-  getPropertiesToCopy,
-  getRootProcess,
-  getDefinitionsFromXml
-} from '../../utilities/Utilities';
-import { insertChildElements, insertShape } from '../QuantMETransformator';
-// import { getDefinitionsFromXml } from '../../Utilities';
+import {getPropertiesToCopy, insertChildElements, insertShape} from '../../../../common/util/TransformationUtilities';
+import {getCamundaInputOutput, getDefinitionsFromXml, getRootProcess} from '../../../../common/util/ModellingUtilities';
 
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection

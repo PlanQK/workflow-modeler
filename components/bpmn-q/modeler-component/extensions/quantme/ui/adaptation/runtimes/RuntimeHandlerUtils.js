@@ -92,7 +92,7 @@ export async function getRequiredPrograms(rootElement, wineryEndpoint) {
       // download the deployment model from the given URL
       console.log('Retrieving deployment model from URL: ', url);
       const response = await fetch(url);
-      console.log(response)
+      console.log(response);
       const blob = await response.blob();
 
       // unzip the retrieved CSAR

@@ -34,11 +34,11 @@ import BpmnModeler from "bpmn-js/lib/Modeler";
 // import customRules from "../rules";
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
-import {insertShape} from '../../quantme/replacement/QuantMETransformator';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
-import {getXml, loadDiagram, saveModelerAsLocalFile} from '../../../common/util/IoUtilities';
-import {createTempModeler, getModeler} from '../../../editor/ModelerHandler';
+import {getXml, loadDiagram} from '../../../common/util/IoUtilities';
+import {createTempModeler} from '../../../editor/ModelerHandler';
 import * as consts from '../Constants';
+import {insertShape} from '../../../common/util/TransformationUtilities';
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard

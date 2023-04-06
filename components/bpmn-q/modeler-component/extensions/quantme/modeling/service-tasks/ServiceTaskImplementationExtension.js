@@ -9,11 +9,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getExtension, removeEntry} from "../../utilities/Utilities";
 import {SelectEntry} from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import {useService} from "bpmn-js-properties-panel";
+import {getExtension, removeExtensionElements} from '../../../../common/util/camunda-utils/ExtensionElementsUtil';
 
 // const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
 //       cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
@@ -171,7 +171,7 @@ export function ImplementationDetails(element, bpmnFactory, options, translate) 
     if (hasServiceTaskLikeSupport) {
       const connectors = getExtension(bo, 'camunda:Connector');
       commands.push(map(connectors, function(connector) {
-        return removeEntry(bo, element, connector);
+        return removeExtensionElements(bo, element, connector, useService('commandStack'));
       }));
 
       if (newType === 'connector') {
@@ -206,7 +206,7 @@ export function ImplementationDetails(element, bpmnFactory, options, translate) 
 
   const getOptions = function (element) {
     return selectOptions;
-  }
+  };
 
   return <SelectEntry
       id={'implementation'}

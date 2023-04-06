@@ -16,17 +16,14 @@ import React, { Fragment, PureComponent } from 'react';
 import { startQuantmeReplacementProcess } from '../../replacement/QuantMETransformator';
 import { configureBasedOnHardwareSelection } from '../../replacement/hardware-selection/QuantMEHardwareSelectionHandler';
 import { getServiceTasksToDeploy } from '../../deployment/DeploymentUtils';
-import {
-  getRootProcess,
-  createModelerFromXml
-} from '../../utilities/Utilities';
 import { createServiceInstance, uploadCSARToContainer } from '../../deployment/OpenTOSCAUtils';
 import { bindUsingPull, bindUsingPush } from '../../deployment/BindingUtils';
-import {getModeler} from "../../../../editor/ModelerHandler";
+import {createModelerFromXml, getModeler} from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import {getQRMs, updateQRMs} from "../../qrm-manager";
-import {getXml, loadDiagram} from "../../../../common/util/IoUtilities";
+import {getXml} from "../../../../common/util/IoUtilities";
 import config from "../../framework-config/config";
+import {getRootProcess} from '../../../../common/util/ModellingUtilities';
 
 export default class QuantMEController extends PureComponent {
 

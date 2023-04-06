@@ -10,11 +10,9 @@
  */
 
 import { fetch } from 'whatwg-fetch';
-import { createModelerFromXml } from '../../../utilities/Utilities';
 import { startQuantmeReplacementProcess } from '../../../replacement/QuantMETransformator';
 import {
   getQuantumCircuitExecutionTasks,
-  getRootProcess,
   performAjax
 } from '../../../utilities/Utilities';
 import {
@@ -27,6 +25,8 @@ import {
   getTaskOrder
 } from './RuntimeHandlerUtils';
 import {getXml} from "../../../../../common/util/IoUtilities";
+import {createModelerFromXml} from '../../../../../editor/ModelerHandler';
+import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
 
 /**
  * Generate a Qiskit Runtime program for the given candidate

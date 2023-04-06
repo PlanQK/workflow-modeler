@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { isFlowLikeElement } from '../utilities/Utilities';
 import {getDi, is} from 'bpmn-js/lib/util/ModelUtil';
+import {isFlowLikeElement} from '../../../common/util/ModellingUtilities';
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = '10';
