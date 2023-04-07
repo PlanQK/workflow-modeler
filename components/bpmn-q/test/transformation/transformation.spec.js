@@ -2,9 +2,9 @@ const chai = require('chai');
 const chaiXml = require('chai-xml');
 chai.use(chaiXml);
 
-const {validPlanqkDiagram, validQuantMEDiagram, validDataFlowDiagram} = require('../../test-helpers/DiagramHelper');
+const {validPlanqkDiagram, validQuantMEDiagram, validDataFlowDiagram} = require('../helpers/DiagramHelper');
 const {startPlanqkReplacementProcess} = require('../../modeler-component/extensions/planqk/exec-completion/PlanqkServiceTaskCompletion');
-const {setConfig} = require('../../test-helpers/ModelerHelper');
+const {setConfig} = require('../helpers/ModelerHelper');
 const {updateQRMs, getQRMs} = require('../../modeler-component/extensions/quantme/qrm-manager');
 const {startQuantmeReplacementProcess} = require('../../modeler-component/extensions/quantme/replacement/QuantMETransformator');
 const config = require('../../modeler-component/extensions/quantme/framework-config/config-manager');
