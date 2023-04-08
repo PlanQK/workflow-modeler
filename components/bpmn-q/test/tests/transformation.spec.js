@@ -5,7 +5,7 @@ chai.use(chaiXml);
 const {validPlanqkDiagram, validQuantMEDiagram, validDataFlowDiagram} = require('../helpers/DiagramHelper');
 const {startPlanqkReplacementProcess} = require('../../modeler-component/extensions/planqk/exec-completion/PlanqkServiceTaskCompletion');
 const {setConfig} = require('../helpers/ModelerHelper');
-const {updateQRMs, getQRMs} = require('../../modeler-component/extensions/quantme/qrm-manager');
+const {updateQRMs, getQRMs, resetQRMs} = require('../../modeler-component/extensions/quantme/qrm-manager');
 const {startQuantmeReplacementProcess} = require('../../modeler-component/extensions/quantme/replacement/QuantMETransformator');
 const config = require('../../modeler-component/extensions/quantme/framework-config/config-manager');
 const camundaConfig = require('../../modeler-component/editor/config/EditorConfigManager');
@@ -46,6 +46,9 @@ describe('Testing plugin transformation', function () {
 
       // check that all extension elements are replaced
       chai.expect(result.xml).to.not.contain('<quantme:');
+
+      //clean up
+      resetQRMs();
     });
 
     it('should fail due to missing QRMs', async function () {

@@ -9,8 +9,6 @@ import TransformationButton from "../../editor/ui/TransformationButton";
 let planqkModdleDescriptor = require('./resources/planqk-service-task-ext.json')
 
 export default {
-    buttons: [],
-    configTabs: [],
     name: 'planqk',
     extensionModule: PlanQKExtensionModule,
     moddleDescription: planqkModdleDescriptor,

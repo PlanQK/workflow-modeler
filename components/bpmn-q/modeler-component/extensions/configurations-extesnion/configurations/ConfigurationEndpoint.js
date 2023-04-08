@@ -1,5 +1,5 @@
-import * as consts from '../../extensions/data-extension/Constants';
-import {nextId} from '../../extensions/data-extension/properties-panel/util';
+import * as consts from '../../data-extension/Constants';
+import {nextId} from '../../data-extension/properties-panel/util';
 
 export default class ConfigurationsEndpoint {
 
@@ -16,9 +16,10 @@ export default class ConfigurationsEndpoint {
     return [
       {
         name: 'XML to JSON Transformation',
-        id: 'fhjsdfjksghdjkfgsdfjkgkjserg1dfg12sd2g21s', // probably not needed?
+        id: 'fhjsdfjksghdjkfgsdfjkgkjserg1dfg12sd2g21s',
         description: "Transforms a XML file into a JSON file",
         appliesTo: "dataflow:TransformationTask",
+        groupLabel: 'Transformation Properties',
         attributes: [
           {
             name: 'xml-schema',
@@ -48,7 +49,7 @@ export default class ConfigurationsEndpoint {
           },
           {
             name: "Url",
-            label: "Redirect URL",
+            label: "URL",
             value: "facebook.de/login",
             type: "string", // string, boolean, selection
             editable: true,
@@ -67,12 +68,14 @@ export default class ConfigurationsEndpoint {
       this._configurations = this.fetchConfigurations();
     }
 
-    return this._configurations.filter(function(configuration) {
-
-      // return all configurations which apply to the given type
-      if (configuration.appliesTo === type) {
-        return configuration;
-      }
+    // return all configurations which apply to the given type
+    const test = this._configurations.filter(function(configuration) {
+      return configuration.appliesTo === type;
     });
+    return test;
+  }
+
+  getConfiguration(id) {
+    return this._configurations.find(config => config.id === id);
   }
 }

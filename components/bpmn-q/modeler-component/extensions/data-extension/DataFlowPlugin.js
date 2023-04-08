@@ -9,8 +9,6 @@ import {startDataFlowReplacementProcess} from './transformation/TransformationMa
 let dataflowModdleDescriptor = require('./resources/data-flow-extension.json')
 
 export default {
-    buttons: [],
-    configTabs: [],
     name: 'dataflow',
     extensionModule: DataFlowExtensionModule,
     moddleDescription: dataflowModdleDescriptor,

@@ -99,7 +99,3 @@ export async function instantiateModeler(diagram) {
 export function setConfig() {
   setPluginConfig(pluginConfigs);
 }
-
-export function createModelerWithDiagram() {
-
-}

@@ -2,6 +2,9 @@ import keyValueMap from './KeyValueMap';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {ListGroup} from '@bpmn-io/properties-panel';
 import * as consts from '../Constants';
+import * as configConsts from '../../configurations-extesnion/Constants';
+import ConfigurationsProperties from '../../configurations-extesnion/configurations/ConfigurationsProperties';
+import {getServiceTaskConfiguration} from '../configurations/TransformationTaskConfigurations';
 
 const LOW_PRIORITY = 500;
 
@@ -43,6 +46,12 @@ export default function DataFlowPropertiesProvider(propertiesPanel, translate, i
       }
 
       if (is(element, consts.TRANSFORMATION_TASK)) {
+
+        const selectedConfiguration = getServiceTaskConfiguration(element.businessObject[configConsts.SELECT_CONFIGURATIONS_ID]);
+        if (selectedConfiguration) {
+          groups.splice(1, 0, createServiceTaskConfigurationsGroup(element, injector, translate, selectedConfiguration));
+        }
+
         groups.push(createTransformationTaskGroup(element, injector, translate, consts.PARAMETERS));
       }
 
@@ -51,13 +60,22 @@ export default function DataFlowPropertiesProvider(propertiesPanel, translate, i
       }
 
       return groups;
-    }
+    };
   };
 
   propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
 DataFlowPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'injector'];
+
+function createServiceTaskConfigurationsGroup(element, injector, translate, configuration) {
+
+  return {
+    id: 'serviceTaskConfigurationsGroupProperties',
+    label: translate(configuration.groupLabel || 'Configurations Properties'),
+    entries: ConfigurationsProperties(element, injector, translate, configuration)
+  };
+}
 
 function createDataMapObjectGroup(element, injector, translate, attributeName) {
 

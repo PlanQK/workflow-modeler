@@ -1,0 +1,22 @@
+{
+  "name": "ConfigurationsExtension",
+  "uri": "https://github.com/configurations/",
+  "prefix": "configs",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "ConfigurableElement",
+      "properties": [
+        {
+          "name": "selectedConfigurationId",
+          "isAttr": true,
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}

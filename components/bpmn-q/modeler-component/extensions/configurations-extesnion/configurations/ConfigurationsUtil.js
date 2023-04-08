@@ -1,5 +1,5 @@
-import * as consts from '../../extensions/data-extension/Constants';
-import {useService} from 'bpmn-js-properties-panel';
+import * as dataConsts from '../../data-extension/Constants';
+import * as configConsts from '../Constants';
 
 export function createConfigurationsEntries(element, className, configurations, bpmnFactory, modeling, replaceElement, action) {
 
@@ -8,7 +8,7 @@ export function createConfigurationsEntries(element, className, configurations, 
 
     const updateAction = function () {
 
-      handleConfigurationsAction(element, config, bpmnFactory, modeling, replaceElement);
+      handleConfigurationsAction(element, config, bpmnFactory, modeling);
     };
 
     menuEntries[config.id] = {
@@ -21,7 +21,12 @@ export function createConfigurationsEntries(element, className, configurations, 
   return menuEntries;
 }
 
-export function handleConfigurationsAction(element, config, bpmnFactory, modeling, replaceElement, moddle, handleMultiValueAttribute = handleKeyValueAttribute) {
+export function handleConfigurationsAction(element, config, bpmnFactory, modeling, handleMultiValueAttribute = handleKeyValueAttribute) {
+
+  // save id of selected element in
+  modeling.updateProperties(element, {
+    [configConsts.SELECT_CONFIGURATIONS_ID]: config.id,
+  });
 
   // set name of the element to configuration name
   modeling.updateProperties(element, {
@@ -45,25 +50,19 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
       });
     }
   });
-  console.log(multiValueBindings);
-  handleMultiValueAttribute(element, multiValueBindings.parameters, bpmnFactory, modeling);
-
 
   // set multivalued attributes all at once to override old values
   const bindings = Object.entries(multiValueBindings);
   bindings.forEach(function ([name, attributes]) {
-    console.log(name);
-    console.log(attributes);
-    handleMultiValueAttribute(element, attributes, bpmnFactory, modeling);
+    handleMultiValueAttribute(element, attributes, name, bpmnFactory, modeling);
   });
 }
 
 
-function handleKeyValueAttribute(element, attributes, bpmnFactory, modeling) {
+function handleKeyValueAttribute(element, attributes, bindTo, bpmnFactory, modeling) {
 
-  const bindTo = attributes[0].bindTo;
   const newEntries = attributes.map(function (attribute) {
-    return bpmnFactory.create(consts.KEY_VALUE_ENTRY, {name: attribute.name, value: attribute.value || ''});
+    return bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: attribute.value || ''});
   });
   // const currentValues = element.businessObject.get(attribute.bindTo);
   modeling.updateProperties(element, {
