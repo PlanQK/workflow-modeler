@@ -2,15 +2,20 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as replaceOptions from './DataFlowReplaceOptions';
 import {createMenuEntries, createMenuEntry} from "../../../common/util/PopupMenuUtilities";
 import * as consts from '../Constants';
+import {createConfigurationsEntries} from '../../../editor/configurations/ConfigurationsUtil';
+import {getServiceTaskConfigurations} from '../configurations/TransformationTaskConfigurations';
 
 export default class DataFlowReplaceMenuProvider {
 
-  constructor(popupMenu, translate, bpmnReplace, modeling) {
+  constructor(popupMenu, translate, bpmnReplace, modeling, bpmnFactory, moddle, elementRegistry) {
     popupMenu.registerProvider("bpmn-replace", this);
 
     this.replaceElement = bpmnReplace.replaceElement;
     this.translate = translate;
     this.modeling = modeling;
+    this.bpmnFactory = bpmnFactory;
+    this.moddle = moddle;
+    this.elementRegistry = elementRegistry;
   }
 
   getPopupMenuHeaderEntries() {
@@ -32,6 +37,17 @@ export default class DataFlowReplaceMenuProvider {
       // do not show entries for extension elements of other plugins
       if (!(element.type.startsWith('bpmn') || element.type.startsWith('dataflow'))) {
         return entries;
+      }
+
+      if (is(element, consts.TRANSFORMATION_TASK)) {
+        // const bo = self.moddle.create(consts.TRANSFORMATION_TASK);
+        // self.modeling.updateProperties(element, { businessObject: bo });
+        // const newElement = self.elementRegistry.get(element.id);
+        const configEntries = createConfigurationsEntries(element, 'dataflow-transformation-task-icon', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.replaceElement);
+
+        if (Object.entries(configEntries).length > 0) {
+          return configEntries;
+        }
       }
 
       if (is(element, 'bpmn:Task')) {
@@ -128,4 +144,7 @@ DataFlowReplaceMenuProvider.$inject = [
   'translate',
   'bpmnReplace',
   'modeling',
+  'bpmnFactory',
+  'moddle',
+  'elementRegistry',
 ];
