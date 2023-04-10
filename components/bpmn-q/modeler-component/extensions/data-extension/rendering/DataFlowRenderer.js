@@ -62,7 +62,7 @@ export default class DataFlowRenderer extends BpmnRenderer {
 
         return flow;
       }
-    }
+    };
   }
 
   renderer(type) {

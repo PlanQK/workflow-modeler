@@ -8,6 +8,11 @@ export function createConfigurationsEntries(element, className, configurations, 
 
     const updateAction = function () {
 
+      // replace element with configuration type if types mismatch
+      if (element.type !== config.appliesTo) {
+        replaceElement(element, config.appliesTo);
+      }
+
       handleConfigurationsAction(element, config, bpmnFactory, modeling);
     };
 
@@ -43,7 +48,7 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
         multiValueBindings[attribute.bindTo] = [];
       }
       multiValueBindings[attribute.bindTo].push(attribute);
-      // handleMultiValueAttribute(element, attribute, bpmnFactory, modeling);
+
     } else {
       modeling.updateProperties(element, {
         [attribute.bindTo]: attribute.value,
@@ -64,7 +69,7 @@ function handleKeyValueAttribute(element, attributes, bindTo, bpmnFactory, model
   const newEntries = attributes.map(function (attribute) {
     return bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: attribute.value || ''});
   });
-  // const currentValues = element.businessObject.get(attribute.bindTo);
+
   modeling.updateProperties(element, {
     [bindTo]: newEntries,
   });

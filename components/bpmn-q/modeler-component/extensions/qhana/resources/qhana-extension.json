@@ -1,0 +1,33 @@
+{
+  "name": "QHAnaExtension",
+  "uri": "https://github.com/qhana",
+  "prefix": "qhana",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "QHAnaServiceTask",
+      "superClass": [ "bpmn:Task", "configs:ConfigurableElement" ],
+      "properties": [
+        {
+          "name": "qhanaIdentifier",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "qhanaName",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "qhanaDescription",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}

@@ -2,12 +2,14 @@ import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
 import ConfigurationsPlugin from '../../extensions/configurations-extension/ConfigurationsPlugin';
+import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
 import WorkflowEngineTab from "../config/WorkflowEngineTab";
 
 const PLUGINS = [
   ConfigurationsPlugin,
   DataFlowPlugin,
+  QHAnaPlugin,
   PlanQKPlugin,
   QuantMEPlugin,
 ];

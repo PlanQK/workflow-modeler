@@ -1,4 +1,5 @@
 import {isFlowLikeElement} from './ModellingUtilities';
+import * as consts from '../../extensions/planqk/utilities/Constants';
 
 /**
  * Insert the given element and all child elements into the diagram
@@ -206,4 +207,33 @@ export function getPropertiesToCopy(element) {
   }
 
   return properties;
+}
+
+/**
+ * Finds and returns all elements of the given type in the process
+ *
+ * @param process The process the searched elements are in
+ * @param elementRegistry The element register of all elements of the process
+ * @param elementType The searched element type
+ * @returns {*[]} All elements of the process with the elementType
+ */
+export function getAllElementsInProcess(process, elementRegistry, elementType) {
+
+  // retrieve parent object for later replacement
+  const processBo = elementRegistry.get(process.id);
+
+  const elements = [];
+  const flowElements = process.flowElements;
+  for (let i = 0; i < flowElements.length; i++) {
+    let flowElement = flowElements[i];
+    if (flowElement.$type && flowElement.$type === elementType) {
+      elements.push({ task: flowElement, parent: processBo });
+    }
+
+    // recursively retrieve service tasks if subprocess is found
+    if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
+      Array.prototype.push.apply(elements, getAllElementsInProcess(flowElement, elementRegistry, elementType));
+    }
+  }
+  return elements;
 }
