@@ -2,8 +2,8 @@ import keyValueMap from './KeyValueMap';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {ListGroup} from '@bpmn-io/properties-panel';
 import * as consts from '../Constants';
-import * as configConsts from '../../configurations-extesnion/Constants';
-import ConfigurationsProperties from '../../configurations-extesnion/configurations/ConfigurationsProperties';
+import * as configConsts from '../../configurations-extension/Constants';
+import ConfigurationsProperties from '../../configurations-extension/configurations/ConfigurationsProperties';
 import {getServiceTaskConfiguration} from '../configurations/TransformationTaskConfigurations';
 
 const LOW_PRIORITY = 500;

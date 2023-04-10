@@ -1,7 +1,7 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
-import ConfigurationsPlugin from '../../extensions/configurations-extesnion/ConfigurationsPlugin';
+import ConfigurationsPlugin from '../../extensions/configurations-extension/ConfigurationsPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
 import WorkflowEngineTab from "../config/WorkflowEngineTab";
 

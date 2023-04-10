@@ -2,7 +2,7 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as replaceOptions from './DataFlowReplaceOptions';
 import {createMenuEntries, createMenuEntry} from "../../../common/util/PopupMenuUtilities";
 import * as consts from '../Constants';
-import {createConfigurationsEntries} from '../../configurations-extesnion/configurations/ConfigurationsUtil';
+import {createConfigurationsEntries} from '../../configurations-extension/configurations/ConfigurationsUtil';
 import {getServiceTaskConfigurations} from '../configurations/TransformationTaskConfigurations';
 
 export default class DataFlowReplaceMenuProvider {

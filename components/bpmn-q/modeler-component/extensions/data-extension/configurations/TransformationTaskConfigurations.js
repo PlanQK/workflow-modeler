@@ -1,4 +1,4 @@
-import ConfigurationsEndpoint from '../../configurations-extesnion/configurations/ConfigurationEndpoint';
+import ConfigurationsEndpoint from '../../configurations-extension/configurations/ConfigurationEndpoint';
 import * as consts from '../Constants';
 
 const endpoint = new ConfigurationsEndpoint('http://localhost:8000/service-task');
