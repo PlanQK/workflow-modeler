@@ -23,5 +23,6 @@ module.exports = {
         "semi": [2, "always"],
         "react/prop-types": "off",
         "no-prototype-builtins": "off",
+        "react/jsx-key": "off",
     }
 };

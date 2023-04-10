@@ -1,15 +1,23 @@
 import React from 'react';
 
 import DataFlowExtensionModule from './';
-import TransformationButton from "../../editor/ui/TransformationButton";
+import TransformationButton from '../../editor/ui/TransformationButton';
 import {getModeler} from '../../editor/ModelerHandler';
-import {getXml, saveXmlAsLocalFile} from '../../common/util/IoUtilities';
+import {getXml} from '../../common/util/IoUtilities';
 import {startDataFlowReplacementProcess} from './transformation/TransformationManager';
+import TransformationTaskConfigurationsTab from './configurations/TransformationTaskConfigurationsTab';
 
-let dataflowModdleDescriptor = require('./resources/data-flow-extension.json')
+let dataflowModdleDescriptor = require('./resources/data-flow-extension.json');
 
 export default {
     name: 'dataflow',
+    configTabs: [
+        {
+            tabId: 'DataEndpointsTab',
+            tabTitle: 'Data Endpoints',
+            configTab: TransformationTaskConfigurationsTab,
+        },
+    ],
     extensionModule: DataFlowExtensionModule,
     moddleDescription: dataflowModdleDescriptor,
     transformExtensionButton: <TransformationButton name='DataFlow Transformation' transformWorkflow={
@@ -22,8 +30,6 @@ export default {
             }
 
             return await startDataFlowReplacementProcess(xml);
-
-            // await saveXmlAsLocalFile(result.xml, 'myProcess.bpmn');
         }
     }/>,
-}
+};
