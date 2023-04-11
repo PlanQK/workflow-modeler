@@ -161,6 +161,22 @@ export function getCamundaInputOutput(bo, bpmnFactory) {
     return inputOutput;
 }
 
+export function addCamundaInputParameter(businessObject, name, value, bpmnFactory) {
+    const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
+    inputOutputExtensions.inputParameters.push(bpmnFactory.create('camunda:InputParameter', {
+        name: name,
+        value: value,
+    }));
+}
+
+export function addCamundaOutputParameter(businessObject, name, value, bpmnFactory) {
+    const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
+    inputOutputExtensions.outputParameters.push(bpmnFactory.create('camunda:OutputParameter', {
+        name: name,
+        value: value,
+    }));
+}
+
 export function setInputParameter(task, name, value) {
     let parameter = getInputParameter(task, name, 'camunda:InputOutput');
     if (parameter) {

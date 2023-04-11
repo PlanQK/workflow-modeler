@@ -227,7 +227,7 @@ export function getAllElementsInProcess(process, elementRegistry, elementType) {
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
     if (flowElement.$type && flowElement.$type === elementType) {
-      elements.push({ task: flowElement, parent: processBo });
+      elements.push({ element: flowElement, parent: processBo });
     }
 
     // recursively retrieve service tasks if subprocess is found
