@@ -1,9 +1,8 @@
 import {getXml} from '../../../common/util/IoUtilities';
 import {createModelerFromXml} from '../../../editor/ModelerHandler';
-import {getRootProcess} from '../../../common/util/ModellingUtilities';
+import {getRootProcess, setInputParameter} from '../../../common/util/ModellingUtilities';
 import {getAllElementsInProcess, insertShape} from '../../../common/util/TransformationUtilities';
 import * as consts from '../QHAnaConstants';
-import {setInputParameter} from '../../planqk/exec-completion/CompletionUtilities';
 
 export async function startQHAnaReplacementProcess(xml) {
   let modeler = await createModelerFromXml(xml);

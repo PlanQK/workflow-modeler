@@ -1,22 +1,20 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
-import {createConfigurationsEntries} from '../../configurations-extension/configurations/ConfigurationsUtil';
+import {
+  createConfigurationsEntries,
+  handleInputOutputAttribute
+} from '../../configurations-extension/configurations/ConfigurationsUtil';
 import * as consts from '../QHAnaConstants';
 import {getServiceTaskConfigurations} from '../configurations/QHAnaConfigurations';
-import {createMenuEntries, createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';
-import * as quantmeReplaceOptions from '../../quantme/modeling/QuantMEReplaceOptions';
-import QuantMEReplaceMenuProvider from '../../quantme/modeling/QuantMEReplaceMenuProvider';
+import {createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';
 
 export default class QHAnaReplaceMenuProvider {
 
-  constructor(popupMenu, translate, bpmnReplace, modeling, bpmnFactory, moddle, elementRegistry) {
+  constructor(popupMenu, bpmnReplace, modeling, bpmnFactory) {
     popupMenu.registerProvider("bpmn-replace", this);
 
     this.replaceElement = bpmnReplace.replaceElement;
-    this.translate = translate;
     this.modeling = modeling;
     this.bpmnFactory = bpmnFactory;
-    this.moddle = moddle;
-    this.elementRegistry = elementRegistry;
     this.popupMenu = popupMenu;
   }
 
@@ -36,7 +34,7 @@ export default class QHAnaReplaceMenuProvider {
       }
 
       if (is(element, consts.QHANA_SERVICE_TASK)) {
-        const configEntries = createConfigurationsEntries(element, 'qhana-service-task', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling);
+        const configEntries = createConfigurationsEntries(element, 'qhana-service-task', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.replaceElement, handleInputOutputAttribute);
 
         if (Object.entries(configEntries).length > 0) {
           return configEntries;
@@ -56,11 +54,20 @@ export default class QHAnaReplaceMenuProvider {
     const bpmnFactory = this.bpmnFactory;
     const modeling = this.modeling;
     const popupMenu = this.popupMenu;
+    const replaceElement = this.replaceElement;
 
-    let options = createConfigurationsEntries(element, 'qhana-service-task', getServiceTaskConfigurations(), bpmnFactory, modeling);
+    let options = createConfigurationsEntries(
+      element,
+      'qhana-service-task',
+      getServiceTaskConfigurations(),
+      bpmnFactory,
+      modeling,
+      replaceElement,
+      handleInputOutputAttribute
+    );
 
     return {
-      ['replace-by-more-options']: createMoreOptionsEntryWithReturn(
+      ['replace-by-qhana-options']: createMoreOptionsEntryWithReturn(
         element,
         'QHAna Service Tasks',
         'QHAna Service Tasks',
@@ -75,10 +82,7 @@ export default class QHAnaReplaceMenuProvider {
 
 QHAnaReplaceMenuProvider.$inject = [
   'popupMenu',
-  'translate',
   'bpmnReplace',
   'modeling',
   'bpmnFactory',
-  'moddle',
-  'elementRegistry',
 ];

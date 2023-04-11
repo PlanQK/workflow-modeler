@@ -2,6 +2,7 @@ import {createModelerFromXml} from '../../editor/ModelerHandler';
 import {getInputOutput} from './camunda-utils/InputOutputUtil';
 import {addExtensionElements, getExtension} from './camunda-utils/ExtensionElementsUtil';
 import {useService} from 'bpmn-js-properties-panel';
+import {getExtensionElement} from '../../extensions/planqk/exec-completion/CompletionUtilities';
 
 export function getProcess(element) {
 
@@ -154,6 +155,47 @@ export function getCamundaInputOutput(bo, bpmnFactory) {
 
             // if there are multiple input/output definitions, take the first one as the modeler only uses this one
             return inputOutput;
+        }
+    }
+
+    return inputOutput;
+}
+
+export function setInputParameter(task, name, value) {
+    let parameter = getInputParameter(task, name, 'camunda:InputOutput');
+    if (parameter) {
+        parameter.value = value;
+    }
+}
+
+export function setOutputParameter(task, name, value) {
+    let parameter = getOutputParameter(task, name, 'camunda:InputOutput');
+    if (parameter) {
+        parameter.value = value;
+    }
+}
+
+
+export function getInputParameter(task, name, type) {
+    const extensionElement = getExtensionElement(task, type);
+
+    if (extensionElement && extensionElement.inputParameters) {
+        for (const parameter of extensionElement.inputParameters) {
+            if (parameter.name === name) {
+                return parameter;
+            }
+        }
+    }
+}
+
+export function getOutputParameter(task, name, type) {
+    const extensionElement = getExtensionElement(task, type);
+
+    if (extensionElement && extensionElement.outputParameters) {
+        for (const parameter of extensionElement.outputParameters) {
+            if (parameter.name === name) {
+                return parameter;
+            }
         }
     }
 }

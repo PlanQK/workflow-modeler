@@ -36,7 +36,7 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
           allServices.forEach(function (service) {
             serviceId = service.resourceKey.pluginId;
 
-            fetch(configManager.getListPluginsURL() + serviceId + '/')
+            fetch(configManager.getGetPluginsURL() + serviceId + '/')
               .then(response => response.json())
               .then(data => {
                 const serviceData = data.data;
@@ -65,7 +65,7 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                       value: serviceData.title,
                       editable: 'true',
                       bindTo: 'qhanaName',
-                      bindToIsMany: true,
+                      // bindToIsMany: true,
                     },
                     {
                       name: 'description',
@@ -74,7 +74,7 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                       value: serviceData.description,
                       editable: 'true',
                       bindTo: 'qhanaDescription',
-                      bindToIsMany: true,
+                      // bindToIsMany: true,
                     },
                   ]
                 };
@@ -84,8 +84,8 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                   configuration.attributes.push({
                     name: 'input_' + index,
                     label: input.parameter || 'input_' + index,
-                    type: 'string',
-                    value: '',
+                    type: 'camunda:InputOutput',
+                    value: 'input',
                     editable: 'true',
                     bindTo: 'inputs',
                     bindToIsMany: true,
@@ -96,8 +96,8 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                   configuration.attributes.push({
                     name: 'output_' + index,
                     label: input.parameter || 'output_' + index,
-                    type: 'string',
-                    value: '',
+                    type: 'camunda:InputOutput',
+                    value: 'output',
                     editable: 'true',
                     bindTo: 'outputs',
                     bindToIsMany: true,

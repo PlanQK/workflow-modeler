@@ -43,7 +43,7 @@ export default class DataFlowReplaceMenuProvider {
         // const bo = self.moddle.create(consts.TRANSFORMATION_TASK);
         // self.modeling.updateProperties(element, { businessObject: bo });
         // const newElement = self.elementRegistry.get(element.id);
-        const configEntries = createConfigurationsEntries(element, 'dataflow-transformation-task-icon', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling);
+        const configEntries = createConfigurationsEntries(element, 'dataflow-transformation-task-icon', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.replaceElement);
 
         if (Object.entries(configEntries).length > 0) {
           return configEntries;

@@ -1,7 +1,17 @@
 import * as dataConsts from '../../data-extension/Constants';
 import * as configConsts from '../Constants';
+import {
+  addEntry,
+  getCamundaInputOutput,
+  setInputParameter,
+  setOutputParameter
+} from '../../../common/util/ModellingUtilities';
+import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
 
-export function createConfigurationsEntries(element, className, configurations, bpmnFactory, modeling, replaceElement, action) {
+export function createConfigurationsEntries(element, className, configurations, bpmnFactory, modeling, replaceElement, handleMultiValueAttribute, action) {
+
+  const handleMultiValues = handleMultiValueAttribute || handleKeyValueAttribute;
+
 
   const menuEntries = {};
   configurations.forEach(function (config) {
@@ -9,11 +19,13 @@ export function createConfigurationsEntries(element, className, configurations, 
     const updateAction = function () {
 
       // replace element with configuration type if types mismatch
+      let newElement;
       if (element.type !== config.appliesTo) {
-        replaceElement(element, config.appliesTo);
+        newElement = replaceElement(element, {type: config.appliesTo});
       }
 
-      handleConfigurationsAction(element, config, bpmnFactory, modeling);
+      handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, handleMultiValues);
+
     };
 
     menuEntries[config.id] = {
@@ -26,7 +38,7 @@ export function createConfigurationsEntries(element, className, configurations, 
   return menuEntries;
 }
 
-export function handleConfigurationsAction(element, config, bpmnFactory, modeling, handleMultiValueAttribute = handleKeyValueAttribute) {
+export function handleConfigurationsAction(element, config, bpmnFactory, modeling, handleMultiValueAttribute) {
 
   // save id of selected element in
   modeling.updateProperties(element, {
@@ -64,7 +76,7 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
 }
 
 
-function handleKeyValueAttribute(element, attributes, bindTo, bpmnFactory, modeling) {
+export function handleKeyValueAttribute(element, attributes, bindTo, bpmnFactory, modeling) {
 
   const newEntries = attributes.map(function (attribute) {
     return bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: attribute.value || ''});
@@ -72,5 +84,33 @@ function handleKeyValueAttribute(element, attributes, bindTo, bpmnFactory, model
 
   modeling.updateProperties(element, {
     [bindTo]: newEntries,
+  });
+}
+
+export function handleInputOutputAttribute(element, attributes, bindTo, bpmnFactory, modeling) {
+
+  const businessObject = getBusinessObject(element);
+  let inputOutputExtension;
+
+  attributes.forEach(function (attribute) {
+    inputOutputExtension = getCamundaInputOutput(businessObject, bpmnFactory);
+
+    if (attribute.bindTo === 'inputs') {
+
+      inputOutputExtension.inputParameters.push(
+        bpmnFactory.create('camunda:InputParameter', {
+          name: attribute.name,
+          value: attribute.value,
+        })
+      );
+    } else {
+
+      inputOutputExtension.outputParameters.push(
+        bpmnFactory.create('camunda:OutputParameter', {
+          name: attribute.name,
+          value: attribute.value,
+        })
+      );
+    }
   });
 }

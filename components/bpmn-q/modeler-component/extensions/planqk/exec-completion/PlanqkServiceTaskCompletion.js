@@ -4,12 +4,16 @@ import {
   getRootProcess,
   getSingleFlowElement,
   isFlowLikeElement,
-  setInputParameter,
 } from './CompletionUtilities';
 import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
 import {getXml} from "../../../common/util/IoUtilities";
-import {addExecutionListener, addFormField, getStartEvent} from "../../../common/util/ModellingUtilities";
+import {
+  addExecutionListener,
+  addFormField,
+  getStartEvent,
+  setInputParameter
+} from "../../../common/util/ModellingUtilities";
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
