@@ -1,5 +1,6 @@
 import {isFlowLikeElement} from './ModellingUtilities';
 import * as consts from '../../extensions/planqk/utilities/Constants';
+import {is} from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * Insert the given element and all child elements into the diagram
@@ -227,6 +228,27 @@ export function getAllElementsInProcess(process, elementRegistry, elementType) {
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
     if (flowElement.$type && flowElement.$type === elementType) {
+      elements.push({ element: flowElement, parent: processBo });
+    }
+
+    // recursively retrieve service tasks if subprocess is found
+    if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
+      Array.prototype.push.apply(elements, getAllElementsInProcess(flowElement, elementRegistry, elementType));
+    }
+  }
+  return elements;
+}
+
+export function getAllElementsInProcessWithInheritance(process, elementRegistry, elementType) {
+
+  // retrieve parent object for later replacement
+  const processBo = elementRegistry.get(process.id);
+
+  const elements = [];
+  const flowElements = process.flowElements;
+  for (let i = 0; i < flowElements.length; i++) {
+    let flowElement = flowElements[i];
+    if (is(flowElement, elementType)) {
       elements.push({ element: flowElement, parent: processBo });
     }
 
