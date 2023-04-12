@@ -8,6 +8,12 @@ import {getCamundaInputOutput} from '../../../common/util/ModellingUtilities';
 export default function ConfigurationsProperties(element, injector, translate, configuration) {
 
   return configuration.attributes.map(function (attribute) {
+
+    // do not display hidden attributes
+    if (attribute.hide) {
+      return {};
+    }
+
     switch (attribute.type) {
       case 'string':
         if (attribute.bindToIsMany) {

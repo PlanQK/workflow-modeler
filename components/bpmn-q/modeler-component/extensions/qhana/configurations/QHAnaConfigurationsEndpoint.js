@@ -87,6 +87,7 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                     type: 'camunda:InputOutput',
                     value: 'input',
                     editable: 'true',
+                    hide: true,
                     bindTo: 'inputs',
                     bindToIsMany: true,
                   });
@@ -99,6 +100,7 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                     type: 'camunda:InputOutput',
                     value: 'output',
                     editable: 'true',
+                    hide: 'true',
                     bindTo: 'outputs',
                     bindToIsMany: true,
                   });
