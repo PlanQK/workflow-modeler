@@ -90,7 +90,7 @@ export default class QuantMEReplaceMenuProvider {
     const replaceElement = this.bpmnReplace.replaceElement;
 
     let options = createMenuEntries(element, quantmeReplaceOptions.TASK, translate, replaceElement);
-    options = Object.assign(this.createDemoTasks(element), options);
+    // options = Object.assign(this.createDemoTasks(element), options);
 
     return {
       ['replace-by-more-options']: createMoreOptionsEntryWithReturn(
