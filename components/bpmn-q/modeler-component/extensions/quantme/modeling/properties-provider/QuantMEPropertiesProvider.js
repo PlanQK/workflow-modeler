@@ -1,5 +1,6 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from "../../Constants";
+import * as dataConsts from "../../../data-extension/Constants";
 
 import {
     DataPreparationTaskProperties,
@@ -14,6 +15,10 @@ import {ServiceTaskDelegateProps} from "../service-tasks/ServiceTaskDelegateProp
 import {ImplementationProps} from "./service-task/ImplementationProps";
 import {Group} from "@bpmn-io/properties-panel";
 import {getWineryEndpoint} from '../../framework-config/config-manager';
+import {getServiceTaskConfiguration} from '../../../qhana/configurations/QHAnaConfigurations';
+import * as configConsts from '../../../configurations-extension/Constants';
+import {getQuantMEDataConfiguration} from '../../configurations/DataObjectConfigurations';
+import ConfigurationsProperties from '../../../configurations-extension/configurations/ConfigurationsProperties';
 
 const LOW_PRIORITY = 500;
 
@@ -40,7 +45,7 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
     /**
      * Return the groups provided for the given element.
      *
-     * @param {DiagramElement} element
+     * @param element
      *
      * @return {(Object[]) => (Object[])} groups middleware
      */
@@ -69,8 +74,16 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
             if (element.type && element.type === 'bpmn:ServiceTask') {
                 groups[2] = ImplementationGroup(element, injector, getWineryEndpoint());
             }
+
+            if (is(element, dataConsts.DATA_MAP_OBJECT)) {
+
+                const selectedConfiguration = getQuantMEDataConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
+                if (selectedConfiguration) {
+                    groups.splice(1, 0, createQuantMEDataGroup(element, injector, translate, selectedConfiguration));
+                }
+            }
             return groups;
-        }
+        };
     };
 
     propertiesPanel.registerProvider(LOW_PRIORITY, this);
@@ -153,4 +166,13 @@ function QuantMEProps(element, translate) {
             console.log('Unsupported QuantME element of type: ', element.type);
 
     }
+}
+
+function createQuantMEDataGroup(element, injector, translate, configuration) {
+
+    return {
+        id: 'QuantMEDataGroupProperties',
+        label: translate(configuration.groupLabel || 'Data Properties'),
+        entries: ConfigurationsProperties(element, injector, translate, configuration)
+    };
 }

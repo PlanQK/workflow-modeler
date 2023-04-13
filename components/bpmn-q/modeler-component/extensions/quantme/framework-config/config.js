@@ -10,6 +10,7 @@
  */
 
 const config = {
+  quantmeDataConfigurationsEndpoint: 'http://localhost:8100/data-objects',
   opentoscaEndpoint: 'http://192.168.178.20:1337/csars',
   wineryEndpoint: 'http://192.168.178.20:8093/winery',
   nisqAnalyzerEndpoint: 'http://192.168.178.20:8098/nisq-analyzer',

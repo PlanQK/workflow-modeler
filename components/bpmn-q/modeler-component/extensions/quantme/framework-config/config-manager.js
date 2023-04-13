@@ -14,6 +14,25 @@ import config from "./config";
 /**
  * Get the NISQ Analyzer endpoint
  */
+export function getQuantMEDataConfigurationsEndpoint() {
+  if (config.quantmeDataConfigurationsEndpoint === undefined) {
+    return '';
+  }
+  return config.quantmeDataConfigurationsEndpoint;
+}
+
+/**
+ * Set the NISQ Analyzer endpoint
+ */
+export function setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint) {
+  if (dataConfigurationsEndpoint !== null && dataConfigurationsEndpoint !== undefined) {
+    config.quantmeDataConfigurationsEndpoint = dataConfigurationsEndpoint;
+  }
+}
+
+/**
+ * Get the NISQ Analyzer endpoint
+ */
 export function getNisqAnalyzerEndpoint() {
   if (config.nisqAnalyzerEndpoint === undefined) {
     return '';

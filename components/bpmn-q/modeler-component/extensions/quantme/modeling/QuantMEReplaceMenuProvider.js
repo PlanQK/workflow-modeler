@@ -15,6 +15,14 @@ import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn
 } from "../../../common/util/PopupMenuUtilities";
+import * as consts from '../../data-extension/Constants';
+import {
+  createConfigurationsEntries,
+  handleInputOutputAttribute
+} from '../../configurations-extension/configurations/ConfigurationsUtil';
+import * as replaceOptions from '../../data-extension/menu/DataFlowReplaceOptions';
+import {getQuantMEDataConfigurations} from '../configurations/DataObjectConfigurations';
+import {getServiceTaskConfigurations} from '../../qhana/configurations/QHAnaConfigurations';
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
@@ -25,6 +33,10 @@ export default class QuantMEReplaceMenuProvider {
     this.popupMenu = popupMenu;
     this.translate = translate;
     this.bpmnReplace = bpmnReplace;
+    this.replaceElement = bpmnReplace.replaceElement;
+    this.bpmnFactory = bpmnFactory;
+    this.modeling = modeling;
+
 
     popupMenu.registerProvider('bpmn-replace', this);
   }
@@ -42,6 +54,18 @@ export default class QuantMEReplaceMenuProvider {
       // do not show entries for extension elements of other plugins
       if (!(element.type.startsWith('bpmn') || element.type.startsWith('quantme'))) {
         return entries;
+      }
+
+      if (is(element, 'bpmn:DataObjectReference')) {
+        // const bo = self.moddle.create(consts.TRANSFORMATION_TASK);
+        // self.modeling.updateProperties(element, { businessObject: bo });
+        // const newElement = self.elementRegistry.get(element.id);
+        const dataEntries = self.createQuantMEDataEntry(element);
+        return Object.assign(dataEntries, entries);
+        // if (Object.entries(dataEntries).length > 0) {
+        //
+        // }
+
       }
 
       // add additional elements to replace tasks
@@ -76,6 +100,33 @@ export default class QuantMEReplaceMenuProvider {
         popupMenu,
         options,
         'quantme-tasks-icon'
+      )
+    };
+  }
+
+  createQuantMEDataEntry(element) {
+    const bpmnFactory = this.bpmnFactory;
+    const modeling = this.modeling;
+    const popupMenu = this.popupMenu;
+    const replaceElement = this.replaceElement;
+
+    let options = createConfigurationsEntries(
+      element,
+      'dataflow-data-map-object-icon',
+      getQuantMEDataConfigurations(),
+      bpmnFactory,
+      modeling,
+      replaceElement
+    );
+
+    return {
+      ['replace-by-quantme-data-options']: createMoreOptionsEntryWithReturn(
+        element,
+        'QHAna Data Objects',
+        'QHAna Data Objects',
+        popupMenu,
+        options,
+        'bpmn-icon-task-quantum-computation'
       )
     };
   }

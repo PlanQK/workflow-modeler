@@ -18,15 +18,22 @@ import {getModeler} from "../../editor/ModelerHandler";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
+import UpdateQHAnaConfigurationsButton from '../qhana/ui/UpdateQHAnaConfigurationsButton';
+import DataObjectConfigurationsTab from './configurations/DataObjectConfigurationsTab';
 
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json')
 
 export default {
-    buttons: [<ExtensibleButton subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <DeploymentPlugin/>]}
+    buttons: [<ExtensibleButton subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <UpdateQHAnaConfigurationsButton/>, <DeploymentPlugin/>]}
                                 title="QuantME"
                                 styleClass="quantme-logo"/>
     ],
     configTabs: [
+        {
+            tabId: 'DataConfigurationEndpointTab',
+            tabTitle: 'QuantME Data',
+            configTab: DataObjectConfigurationsTab,
+        },
         {
             tabId: 'OpenTOSCAEndpointTab',
             tabTitle: 'OpenTOSCA',
