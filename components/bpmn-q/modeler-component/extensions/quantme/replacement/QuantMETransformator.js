@@ -16,7 +16,7 @@ import * as Constants from '../Constants';
 import { replaceHardwareSelectionSubprocess } from './hardware-selection/QuantMEHardwareSelectionHandler';
 import { replaceCuttingSubprocess } from './circuit-cutting/QuantMECuttingHandler';
 import {insertShape} from '../../../common/util/TransformationUtilities';
-import {createModelerFromXml} from '../../../editor/ModelerHandler';
+import {createModelerFromXml, createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import {
   getCamundaInputOutput,
   getDefinitionsFromXml,
@@ -33,7 +33,7 @@ import {getXml} from '../../../common/util/IoUtilities';
  * @param endpointConfig endpoints of the services required for the dynamic hardware selection
  */
 export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointConfig) {
-  let modeler = await createModelerFromXml(xml);
+  let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get('modeling');
   let elementRegistry = modeler.get('elementRegistry');
 

@@ -1,5 +1,5 @@
 import {getXml} from '../../../common/util/IoUtilities';
-import {createModelerFromXml} from '../../../editor/ModelerHandler';
+import {createModelerFromXml, createTempModeler, createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import {
   addCamundaInputParameter,
   getCamundaInputOutput,
@@ -10,7 +10,7 @@ import {getAllElementsInProcess, insertShape} from '../../../common/util/Transfo
 import * as consts from '../QHAnaConstants';
 
 export async function startQHAnaReplacementProcess(xml) {
-  let modeler = await createModelerFromXml(xml);
+  let modeler = await createTempModelerFromXml(xml);
   let elementRegistry = modeler.get('elementRegistry');
 
   // get root element of the current diagram

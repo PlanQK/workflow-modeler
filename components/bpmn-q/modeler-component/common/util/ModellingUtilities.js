@@ -169,6 +169,52 @@ export function addCamundaInputParameter(businessObject, name, value, bpmnFactor
     }));
 }
 
+export function addCamundaInputMapParameter(businessObject, name, keyValueMap, bpmnFactory, moddle) {
+    const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
+
+    const map = createCamundaMap(keyValueMap, moddle);
+
+    const input = moddle.create('camunda:InputParameter', {
+        name: name,
+        definition: map,
+    });
+
+    map.$parent = input;
+    inputOutputExtensions.inputParameters.push(input);
+}
+
+export function addCamundaOutputMapParameter(businessObject, name, keyValueMap, bpmnFactory, moddle) {
+    const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
+
+    const map = createCamundaMap(keyValueMap, moddle);
+
+    const output = moddle.create('camunda:OutputParameter', {
+        name: name,
+        definition: map,
+    });
+
+    map.$parent = output;
+    inputOutputExtensions.outputParameters.push(output);
+}
+
+export function createCamundaMap(keyValueMap, moddle) {
+    const mapEntries = keyValueMap.map(function ({name, value}) {
+        return moddle.create('camunda:Entry', {
+            key: name,
+            value: value,
+        });
+    });
+
+    const map = moddle.create('camunda:Map', {
+        entries: mapEntries,
+    });
+
+    for (let entry of mapEntries) {
+        entry.$parent = map;
+    }
+
+    return map;
+}
 export function addCamundaOutputParameter(businessObject, name, value, bpmnFactory) {
     const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
     inputOutputExtensions.outputParameters.push(bpmnFactory.create('camunda:OutputParameter', {

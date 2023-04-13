@@ -14,6 +14,7 @@ import {
   getStartEvent,
   setInputParameter
 } from "../../../common/util/ModellingUtilities";
+import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
@@ -21,7 +22,7 @@ import {
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
 export async function startPlanqkReplacementProcess(xml) {
-  let modeler = await createModelerFromXml(xml);
+  let modeler = await createTempModelerFromXml(xml);
   let elementRegistry = modeler.get('elementRegistry');
 
   // get root element of the current diagram

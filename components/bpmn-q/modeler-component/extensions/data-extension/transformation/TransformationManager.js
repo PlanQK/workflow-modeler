@@ -36,7 +36,7 @@ let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.jso
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {getXml, loadDiagram} from '../../../common/util/IoUtilities';
-import {createModelerFromXml, createTempModeler} from '../../../editor/ModelerHandler';
+import {createModelerFromXml, createTempModeler, createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import * as consts from '../Constants';
 import {
   getAllElementsInProcess,
@@ -44,10 +44,11 @@ import {
   insertShape
 } from '../../../common/util/TransformationUtilities';
 import {
-  addCamundaInputParameter,
-  addCamundaOutputParameter,
+  addCamundaInputMapParameter,
+  addCamundaInputParameter, addCamundaOutputMapParameter,
+  addCamundaOutputParameter, addFormField,
   getCamundaInputOutput,
-  getRootProcess
+  getRootProcess, getStartEvent
 } from '../../../common/util/ModellingUtilities';
 import {nextId} from '../properties-panel/util';
 
@@ -57,7 +58,7 @@ import {nextId} from '../properties-panel/util';
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
 export async function startDataFlowReplacementProcess(xml) {
-  let modeler = await createModelerFromXml(xml);
+  let modeler = await createTempModelerFromXml(xml);
   let elementRegistry = modeler.get('elementRegistry');
   let modeling = modeler.get('modeling');
 
@@ -107,6 +108,7 @@ export async function startDataFlowReplacementProcess(xml) {
   //   return { status: 'transformed', xml: xml };
   // }
   const bpmnFactory = modeler.get('bpmnFactory');
+  const moddle = modeler.get('moddle');
 
   // for each transformation association
   const transformationAssociations = elementRegistry.filter(function (element) {
@@ -139,7 +141,10 @@ export async function startDataFlowReplacementProcess(xml) {
     // if target && source === DataMapObject: add expressions to content of target data map object
     if ((transformationAssociation.source.type === consts.DATA_MAP_OBJECT) && (transformationAssociation.target.type === consts.DATA_MAP_OBJECT)) {
       targetDataMapObject = transformationAssociation.target;
-      targetContent = targetDataMapObject.businessObject[consts.CONTENT] = [];
+      targetContent = targetDataMapObject.businessObject.get(consts.CONTENT) || [];
+
+      // mark target data map objects as created through a transformation association
+      targetDataMapObject.businessObject.createdByTransformation = true;
 
       const  expressions = transformationAssociation.businessObject.get(consts.EXPRESSIONS);
       for (let expression of expressions) {
@@ -167,7 +172,7 @@ export async function startDataFlowReplacementProcess(xml) {
 
       activity = dataAssociation.target;
       // businessObject.get(consts.CONTENT)
-      addCamundaInputParameter(activity.businessObject, businessObject.name, 'content of ' + businessObject.name, bpmnFactory);
+      addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
     }
 
     // if target === DataMapObject: content als output in source
@@ -177,7 +182,7 @@ export async function startDataFlowReplacementProcess(xml) {
 
       activity = dataAssociation.source;
 
-      addCamundaOutputParameter(activity.businessObject, businessObject.name, 'content of ' + businessObject.name, bpmnFactory);
+      addCamundaOutputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
     }
   }
 
@@ -226,8 +231,9 @@ export async function startDataFlowReplacementProcess(xml) {
     }
   }
 
-  // replaceDataMapObjects(rootProcess, definitions, modeler);
-  // replaceDataStoreMaps(rootProcess, definitions, modeler);
+  transformDataMapObjects(rootProcess, definitions, modeler);
+  transformDataStoreMaps(rootProcess, definitions, modeler);
+  transformTransformationTask(rootProcess, definitions, modeler);
 
   const transformedXML = await getXml(modeler);
   return { status: 'transformed', xml: transformedXML };
@@ -350,12 +356,13 @@ export async function startDataFlowReplacementProcess(xml) {
 //   return dataObjectMaps;
 // }
 
-function replaceDataMapObjects(rootProcess, definitions, modeler) {
+function transformDataMapObjects(rootProcess, definitions, modeler) {
 
   let bpmnReplace = modeler.get('bpmnReplace');
   let bpmnFactory = modeler.get('bpmnFactory');
   let modeling = modeler.get('modeling');
   let elementRegistry = modeler.get('elementRegistry');
+  let moddle = modeler.get('moddle');
 
   const dataObjectMaps = getAllElementsInProcess(rootProcess, elementRegistry, consts.DATA_MAP_OBJECT);
   console.log('Found ' + dataObjectMaps.length + ' DataObjectMapReferences to replace.');
@@ -372,12 +379,29 @@ function replaceDataMapObjects(rootProcess, definitions, modeler) {
     // oldElement.di = oldDI;
     // const oldId = dataObject.id;
 
+    // publish data map object as global process variable if it was created by a transformation association
+    if (dataMapObject.createdByTransformation) {
+      const startEvent = getStartEvent(dataElement.parent.businessObject);
+      console.log(startEvent);
+      // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
+      for (let c of dataMapObject.get(consts.CONTENT)) {
+        let formField =
+          {
+            'defaultValue': c.value,
+            'id': c.name + '_' + dataMapObject.name,
+            'label': c.name + ' of ' + dataMapObject.name,
+            'type': 'string'
+          };
+        addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
+      }
+    }
+
     const dataObject = bpmnFactory.create('bpmn:DataObjectReference');
     const result = insertShape(definitions, dataObject.parent, dataObject, {}, true, modeler, dataMapObject);
     // const newElement = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), { type: 'bpmn:DataObjectReference' });
 
     if (result.success) {
-      result.element.businessObject.documentation = 'This was a DataMapObject';
+      // result.element.businessObject.get('documentation') = 'This was a DataMapObject';
     }
 
     replacementSuccess = replacementSuccess && result.success;
@@ -390,11 +414,12 @@ function replaceDataMapObjects(rootProcess, definitions, modeler) {
   }
 }
 
-function replaceDataStoreMaps(rootProcess, definitions, modeler) {
+function transformDataStoreMaps(rootProcess, definitions, modeler) {
   let bpmnReplace = modeler.get('bpmnReplace');
   let bpmnFactory = modeler.get('bpmnFactory');
   let modeling = modeler.get('modeling');
   let elementRegistry = modeler.get('elementRegistry');
+  let moddle = modeler.get('moddle');
 
   const dataStoreElements = getAllElementsInProcess(rootProcess, elementRegistry, consts.DATA_STORE_MAP);
   console.log('Found ' + dataStoreElements.length + ' DataObjectMapReferences to replace.');
@@ -411,13 +436,67 @@ function replaceDataStoreMaps(rootProcess, definitions, modeler) {
     // oldElement.di = oldDI;
     // const oldId = dataObject.id;
 
-    const dataStore = bpmnFactory.create('bpmn:DataObjectReference');
+    const startEvent = getStartEvent(dataElement.parent.businessObject);
+    console.log(startEvent);
+    // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
+    for (let detail of dataStoreMap.get(consts.DETAILS)) {
+      let formField =
+        {
+          'defaultValue': detail.value,
+          'id': detail.name + '_' + dataStoreMap.name,
+          'label': detail.name + ' of ' + dataStoreMap.name,
+          'type': 'string'
+        };
+      addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
+    }
+
+    const dataStore = bpmnFactory.create('bpmn:DataStoreReference');
     const result = insertShape(definitions, dataStore.parent, dataStore, {}, true, modeler, dataStoreMap);
     // const newElement = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), { type: 'bpmn:DataObjectReference' });
 
     if (result.success) {
-      result.element.businessObject.documentation = 'This was a DataMapObject';
+      // result.element.businessObject.documentation = 'This was a DataMapObject';
     }
+
+    replacementSuccess = replacementSuccess && result.success;
+    // // delete data objects which are now unconnected
+    // if (unconnectedDataObjects.has(dataObject.element.id)) {
+    //     modeling.removeElements([dataObject]);
+    // }else {
+    //
+    // }
+  }
+}
+
+function transformTransformationTask(rootProcess, definitions, modeler) {
+  let bpmnReplace = modeler.get('bpmnReplace');
+  let bpmnFactory = modeler.get('bpmnFactory');
+  let modeling = modeler.get('modeling');
+  let elementRegistry = modeler.get('elementRegistry');
+  let moddle = modeler.get('moddle');
+
+  const transformationTasks = getAllElementsInProcess(rootProcess, elementRegistry, consts.TRANSFORMATION_TASK);
+  console.log('Found ' + transformationTasks.length + ' DataObjectMapReferences to replace.');
+  // if (!dataObjectMaps || !dataObjectMaps.length) {
+  //   return { status: 'transformed', xml: xml };
+  // }
+  let replacementSuccess = true;
+  for (let taskElement of transformationTasks) {
+
+    const transformationTask = taskElement.element;
+    // const oldDI = getDi(oldElement);
+    // oldElement.di = oldDI;
+    // const oldId = dataObject.id;
+
+    const serviceTask = bpmnFactory.create('bpmn:ServiceTask');
+    const result = insertShape(definitions, serviceTask.parent, serviceTask, {}, true, modeler, transformationTask);
+    // const newElement = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), { type: 'bpmn:DataObjectReference' });
+
+    if (result.success) {
+      // result.element.businessObject.documentation = 'This was a DataMapObject';
+    }
+
+    addCamundaInputMapParameter(result.element.businessObject, consts.PARAMETERS, transformationTask.get(consts.PARAMETERS), bpmnFactory, moddle);
 
     replacementSuccess = replacementSuccess && result.success;
     // // delete data objects which are now unconnected

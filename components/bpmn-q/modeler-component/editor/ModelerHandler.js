@@ -58,6 +58,20 @@ export function createTempModeler() {
     });
 }
 
+export async function createTempModelerFromXml(xml) {
+    // create new modeler with the custom QuantME extensions
+    const bpmnModeler = createTempModeler();
+
+    // import the xml containing the definitions
+    try {
+        await bpmnModeler.importXML(xml);
+        return bpmnModeler;
+    } catch (err) {
+        console.error(err);
+    }
+    return undefined;
+}
+
 /**
  * Create a new modeler object and import the given XML BPMN diagram
  *
