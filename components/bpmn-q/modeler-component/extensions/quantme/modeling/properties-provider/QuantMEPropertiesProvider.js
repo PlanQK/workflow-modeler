@@ -16,9 +16,9 @@ import {ImplementationProps} from "./service-task/ImplementationProps";
 import {Group} from "@bpmn-io/properties-panel";
 import {getWineryEndpoint} from '../../framework-config/config-manager';
 import {getServiceTaskConfiguration} from '../../../qhana/configurations/QHAnaConfigurations';
-import * as configConsts from '../../../configurations-extension/Constants';
+import * as configConsts from '../../../../editor/configurations/Constants';
 import {getQuantMEDataConfiguration} from '../../configurations/DataObjectConfigurations';
-import ConfigurationsProperties from '../../../configurations-extension/configurations/ConfigurationsProperties';
+import ConfigurationsProperties from '../../../../editor/configurations/ConfigurationsProperties';
 
 const LOW_PRIORITY = 500;
 

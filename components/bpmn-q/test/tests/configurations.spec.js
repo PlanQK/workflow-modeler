@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
-import ConfigurationsEndpoint from '../../modeler-component/extensions/configurations-extension/configurations/ConfigurationEndpoint';
+import ConfigurationsEndpoint from '../../modeler-component/editor/configurations/ConfigurationEndpoint';
 import {VALID_DUMMY_CONFIGURATIONS} from '../helpers/ConfigurationsHelper';
 describe('Test configurations', function () {
 
@@ -13,8 +13,10 @@ describe('Test configurations', function () {
       configurationsEndpoint = new ConfigurationsEndpoint('http://dummy-endpoint.com/configurations');
 
       fetchStub = sinon.stub(configurationsEndpoint, 'fetchConfigurations').callsFake(() => {
-        return VALID_DUMMY_CONFIGURATIONS;
+        configurationsEndpoint._configurations = VALID_DUMMY_CONFIGURATIONS;
       });
+
+      configurationsEndpoint.fetchConfigurations();
     });
 
     describe('Test getConfigurations()', function () {

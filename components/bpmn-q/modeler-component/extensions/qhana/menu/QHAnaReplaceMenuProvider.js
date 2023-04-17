@@ -2,7 +2,7 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {
   createConfigurationsEntries,
   handleInputOutputAttribute
-} from '../../configurations-extension/configurations/ConfigurationsUtil';
+} from '../../../editor/configurations/ConfigurationsUtil';
 import * as consts from '../QHAnaConstants';
 import {getServiceTaskConfigurations} from '../configurations/QHAnaConfigurations';
 import {createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';

@@ -1,4 +1,4 @@
-import ConfigurationsEndpoint from '../../configurations-extension/configurations/ConfigurationEndpoint';
+import ConfigurationsEndpoint from '../../../editor/configurations/ConfigurationEndpoint';
 import * as dataConsts from '../../data-extension/Constants';
 import * as configManager from '../framework-config/config-manager';
 

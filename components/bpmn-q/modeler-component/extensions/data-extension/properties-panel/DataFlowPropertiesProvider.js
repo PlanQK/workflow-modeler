@@ -2,8 +2,8 @@ import keyValueMap from './KeyValueMap';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {ListGroup} from '@bpmn-io/properties-panel';
 import * as consts from '../Constants';
-import * as configConsts from '../../configurations-extension/Constants';
-import ConfigurationsProperties from '../../configurations-extension/configurations/ConfigurationsProperties';
+import * as configConsts from '../../../editor/configurations/Constants';
+import ConfigurationsProperties from '../../../editor/configurations/ConfigurationsProperties';
 import {getServiceTaskConfiguration} from '../configurations/TransformationTaskConfigurations';
 
 const LOW_PRIORITY = 500;
@@ -47,7 +47,7 @@ export default function DataFlowPropertiesProvider(propertiesPanel, translate, i
 
       if (is(element, consts.TRANSFORMATION_TASK)) {
 
-        const selectedConfiguration = getServiceTaskConfiguration(element.businessObject[configConsts.SELECT_CONFIGURATIONS_ID]);
+        const selectedConfiguration = getServiceTaskConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
         if (selectedConfiguration) {
           groups.splice(1, 0, createServiceTaskConfigurationsGroup(element, injector, translate, selectedConfiguration));
         }

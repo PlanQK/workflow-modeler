@@ -1,4 +1,4 @@
-import ConfigurationsEndpoint from '../../configurations-extension/configurations/ConfigurationEndpoint';
+import ConfigurationsEndpoint from '../../../editor/configurations/ConfigurationEndpoint';
 import * as configManager from '../config/QHAnaConfigManager';
 
 export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint {

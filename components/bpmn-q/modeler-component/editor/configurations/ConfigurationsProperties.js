@@ -1,9 +1,9 @@
 import {isTextFieldEntryEdited, TextFieldEntry} from "@bpmn-io/properties-panel";
 import {useService} from 'bpmn-js-properties-panel';
 import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
-import * as consts from '../../data-extension/Constants';
-import {nextId} from '../../../common/util/camunda-utils/ElementUtil';
-import {getCamundaInputOutput} from '../../../common/util/ModellingUtilities';
+import * as consts from '../../extensions/data-extension/Constants';
+import {nextId} from '../../common/util/camunda-utils/ElementUtil';
+import {getCamundaInputOutput} from '../../common/util/ModellingUtilities';
 
 export default function ConfigurationsProperties(element, injector, translate, configuration) {
 

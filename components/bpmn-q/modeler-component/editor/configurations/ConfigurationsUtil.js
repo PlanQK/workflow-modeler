@@ -1,11 +1,11 @@
-import * as dataConsts from '../../data-extension/Constants';
-import * as configConsts from '../Constants';
+import * as dataConsts from '../../extensions/data-extension/Constants';
+import * as configConsts from './Constants';
 import {
   addEntry,
   getCamundaInputOutput,
   setInputParameter,
   setOutputParameter
-} from '../../../common/util/ModellingUtilities';
+} from '../../common/util/ModellingUtilities';
 import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
 
 export function createConfigurationsEntries(element, className, configurations, bpmnFactory, modeling, replaceElement, handleMultiValueAttribute, action) {

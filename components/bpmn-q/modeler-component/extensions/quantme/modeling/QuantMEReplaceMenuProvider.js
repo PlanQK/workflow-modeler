@@ -19,7 +19,7 @@ import * as consts from '../../data-extension/Constants';
 import {
   createConfigurationsEntries,
   handleInputOutputAttribute
-} from '../../configurations-extension/configurations/ConfigurationsUtil';
+} from '../../../editor/configurations/ConfigurationsUtil';
 import * as replaceOptions from '../../data-extension/menu/DataFlowReplaceOptions';
 import {getQuantMEDataConfigurations} from '../configurations/DataObjectConfigurations';
 import {getServiceTaskConfigurations} from '../../qhana/configurations/QHAnaConfigurations';

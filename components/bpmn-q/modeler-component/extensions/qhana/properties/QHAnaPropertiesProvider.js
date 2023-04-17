@@ -1,7 +1,7 @@
-import ConfigurationsProperties from '../../configurations-extension/configurations/ConfigurationsProperties';
+import ConfigurationsProperties from '../../../editor/configurations/ConfigurationsProperties';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from '../QHAnaConstants';
-import * as configConsts from '../../configurations-extension/Constants';
+import * as configConsts from '../../../editor/configurations/Constants';
 import {getServiceTaskConfiguration, getServiceTaskConfigurations} from '../configurations/QHAnaConfigurations';
 
 const LOW_PRIORITY = 500;
@@ -14,7 +14,7 @@ export default function QHAnaPropertiesProvider(propertiesPanel, translate, inje
 
       if (is(element, consts.QHANA_SERVICE_TASK)) {
 
-        const selectedConfiguration = getServiceTaskConfiguration(element.businessObject[configConsts.SELECT_CONFIGURATIONS_ID]);
+        const selectedConfiguration = getServiceTaskConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
         if (selectedConfiguration) {
           groups.splice(1, 0, createQHAnaServiceTaskGroup(element, injector, translate, selectedConfiguration));
         }

@@ -8,7 +8,7 @@
   "types": [
     {
       "name": "QHAnaServiceTask",
-      "superClass": [ "bpmn:Task", "configs:ConfigurableElement" ],
+      "superClass": [ "bpmn:Task" ],
       "properties": [
         {
           "name": "qhanaIdentifier",

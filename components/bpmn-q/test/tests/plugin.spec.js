@@ -48,7 +48,7 @@ describe('Test plugins', function () {
         expect(extensions['planqk']).to.not.be.undefined;
         expect(transfButtons.length).to.equal(3);
         expect(buttons.length).to.equal(1);
-        expect(tabs.length).to.equal(6);
+        expect(tabs.length).to.equal(8);
       });
     });
   });

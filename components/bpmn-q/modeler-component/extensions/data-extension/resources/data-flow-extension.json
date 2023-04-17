@@ -30,7 +30,7 @@
     },
     {
       "name": "TransformationTask",
-      "superClass": [ "bpmn:Task", "configs:ConfigurableElement" ],
+      "superClass": [ "bpmn:Task" ],
       "properties": [
         {
           "name": "parameters",
