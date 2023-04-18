@@ -1,7 +1,6 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {
   createConfigurationsEntries,
-  handleInputOutputAttribute
 } from '../../../editor/configurations/ConfigurationsUtil';
 import * as consts from '../QHAnaConstants';
 import {getServiceTaskConfigurations} from '../configurations/QHAnaConfigurations';
@@ -9,13 +8,14 @@ import {createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUt
 
 export default class QHAnaReplaceMenuProvider {
 
-  constructor(popupMenu, bpmnReplace, modeling, bpmnFactory) {
+  constructor(popupMenu, bpmnReplace, modeling, bpmnFactory, commandStack) {
     popupMenu.registerProvider("bpmn-replace", this);
 
     this.replaceElement = bpmnReplace.replaceElement;
     this.modeling = modeling;
     this.bpmnFactory = bpmnFactory;
     this.popupMenu = popupMenu;
+    this.commandStack = commandStack;
   }
 
   getPopupMenuHeaderEntries() {
@@ -34,7 +34,7 @@ export default class QHAnaReplaceMenuProvider {
       }
 
       if (is(element, consts.QHANA_SERVICE_TASK)) {
-        const configEntries = createConfigurationsEntries(element, 'qhana-service-task', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.replaceElement, handleInputOutputAttribute);
+        const configEntries = createConfigurationsEntries(element, 'qhana-service-task', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
 
         if (Object.entries(configEntries).length > 0) {
           return configEntries;
@@ -55,6 +55,7 @@ export default class QHAnaReplaceMenuProvider {
     const modeling = this.modeling;
     const popupMenu = this.popupMenu;
     const replaceElement = this.replaceElement;
+    const commandStack = this.commandStack;
 
     let options = createConfigurationsEntries(
       element,
@@ -62,8 +63,8 @@ export default class QHAnaReplaceMenuProvider {
       getServiceTaskConfigurations(),
       bpmnFactory,
       modeling,
-      replaceElement,
-      handleInputOutputAttribute
+      commandStack,
+      replaceElement
     );
 
     return {
@@ -85,4 +86,5 @@ QHAnaReplaceMenuProvider.$inject = [
   'bpmnReplace',
   'modeling',
   'bpmnFactory',
+  'commandStack',
 ];

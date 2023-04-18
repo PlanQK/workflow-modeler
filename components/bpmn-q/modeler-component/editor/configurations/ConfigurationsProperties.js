@@ -1,12 +1,28 @@
-import {isTextFieldEntryEdited, TextFieldEntry} from "@bpmn-io/properties-panel";
+import {isTextFieldEntryEdited, TextFieldEntry, CheckboxEntry, isCheckboxEntryEdited} from "@bpmn-io/properties-panel";
 import {useService} from 'bpmn-js-properties-panel';
-import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
-import * as consts from '../../extensions/data-extension/Constants';
 import {nextId} from '../../common/util/camunda-utils/ElementUtil';
-import {getCamundaInputOutput} from '../../common/util/ModellingUtilities';
+import {
+  addAttributeValueToCamundaIO, addAttributeValueToKeyValueMap, getAttributeValue,
+  getAttributeValueFromCamundaIO,
+  getAttributeValueFromKeyValueMap, setAttributeValue
+} from './ConfigurationsUtil';
 
+/**
+ * Creates entries for the properties panel based on the attributes of the given configuration.
+ *
+ * @param element The current selected bpmn-js element.
+ * @param injector Injector to get the necessary bpmn-js services from.
+ * @param translate Translation service function.
+ * @param configuration The configuration for which the properties should be generated.
+ * @returns {*} The created properties panel entries.
+ */
 export default function ConfigurationsProperties(element, injector, translate, configuration) {
 
+  const bpmnFactory = injector.get('bpmnFactory');
+  const modeling = injector.get('modeling');
+  const commandStack = injector.get('commandStack');
+
+  // generate entries based on the attributes of the configuration and their definitions
   return configuration.attributes.map(function (attribute) {
 
     // do not display hidden attributes
@@ -14,245 +30,112 @@ export default function ConfigurationsProperties(element, injector, translate, c
       return {};
     }
 
+    let component;
+    let isEdited;
     switch (attribute.type) {
-      case 'string':
-        if (attribute.bindToIsMany) {
-          return {
-            id: nextId(attribute.name),
-            element,
-            attribute,
-            injector,
-            component: MultiValue,
-            isEdited: isTextFieldEntryEdited
-          };
-
-        } else {
-          return {
-            id: nextId(attribute.name),
-            element,
-            attribute,
-            injector,
-            component: SingleValue,
-            isEdited: isTextFieldEntryEdited
-          };
-
-        }
-      case 'camunda:InputOutput':
-        if (attribute.bindTo === 'inputs') {
-
-          return {
-            id: nextId(attribute.name),
-            element,
-            attribute,
-            injector,
-            camundaType: 'camunda:InputParameter',
-            component: InputOutputValue,
-            isEdited: isTextFieldEntryEdited
-          };
-        } else {
-          return {
-            id: nextId(attribute.name),
-            element,
-            attribute,
-            injector,
-            camundaType: 'camunda:OutputParameter',
-            component: InputOutputValue,
-            isEdited: isTextFieldEntryEdited
-          };
-        }
-      case 'boolean':
-        return {};
-
-      case 'selection':
-        return {};
+      case 'Boolean':
+        component = BooleanEntry;
+        isEdited = isCheckboxEntryEdited;
+        break;
+      default: // String
+        component = TextEntry;
+        isEdited = isTextFieldEntryEdited;
+        break;
     }
+
+    // set setter and getter depending on the type of the bindTo attribute
+    let setValue;
+    let getValue;
+    switch (attribute.bindTo.type) {
+      case 'camunda:InputParameter':
+      case 'camunda:OutputParameter':
+        setValue = addAttributeValueToCamundaIO(element, bpmnFactory, attribute.bindTo.type, attribute, modeling);
+        getValue = getAttributeValueFromCamundaIO(element, bpmnFactory, attribute.bindTo.type);
+        break;
+      case 'KeyValueMap':
+        setValue = addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack);
+        getValue = getAttributeValueFromKeyValueMap(element);
+        break;
+      default:
+        setValue = setAttributeValue(element, attribute, modeling);
+        getValue = getAttributeValue(element);
+        break;
+    }
+
+    return {
+      id: nextId(attribute.name),
+      attribute,
+      setValue: setValue,
+      getValue: getValue,
+      component: component,
+      isEdited: isEdited,
+      disabled: true,
+    };
   });
 }
 
-function InputOutputValue(props) {
+/**
+ * TextFieldEntry for a configurations attribute of type String.
+ *
+ * @param props
+ * @returns {preact.VNode<any>}
+ */
+function TextEntry(props) {
   const {
     idPrefix,
-    element,
     attribute,
-    camundaType,
+    setValue,
+    getValue,
   } = props;
 
   const translate = useService('translate');
   const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-  const modeling = useService('modeling');
-
-  const setValue = (value) => {
-
-    const businessObject = getBusinessObject(element);
-    const inputOutput = getCamundaInputOutput(businessObject, bpmnFactory);
-
-    // create new io parameter with new value
-    const newParameter = bpmnFactory.create(camundaType, {
-      name: attribute.name,
-      value: value,
-    });
-
-    // Update existing or create a new io parameter
-    const parameters = camundaType === 'camunda:InputParameter' ? inputOutput.inputParameters : inputOutput.outputParameters;
-    let existingIoParameter = parameters.find((entry) => entry.name === attribute.name);
-    if (existingIoParameter) {
-
-      // update existing value of io parameter
-      existingIoParameter.value = newParameter.value;
-    } else {
-
-      // create a new io parameter
-      existingIoParameter = bpmnFactory.create(camundaType, {
-        name: attribute.name,
-        value: attribute.value,
-      });
-      parameters.push(existingIoParameter);
-    }
-
-    // update model to propagate the new value
-    modeling.updateProperties(element, {
-      [camundaType]: existingIoParameter
-    });
-  };
-
-  const getValue = (attribute) => {
-
-    const businessObject = getBusinessObject(element);
-    const inputOutput = getCamundaInputOutput(businessObject, bpmnFactory);
-
-    const parameters = camundaType === 'camunda:InputParameter' ? inputOutput.inputParameters : inputOutput.outputParameters;
-    let existingInputParameter = parameters.find((entry) => entry.name === attribute.name);
-
-    // return value of existing io parameter or the default value of the configurations attribute
-    if (existingInputParameter) {
-      return existingInputParameter.value;
-    } else {
-      return attribute.value;
-    }
-  };
 
   return TextFieldEntry({
     element: attribute,
     id: idPrefix + '-value',
     label: translate(attribute.label),
+    disabled: attribute.disable,
     getValue,
     setValue,
     debounce
   });
 }
 
-function MultiValue(props) {
+/**
+ * CheckboxEntry for a configurations attribute of type Boolean.
+ *
+ * @param props
+ * @returns {preact.VNode<any>}
+ */
+function BooleanEntry(props) {
   const {
     idPrefix,
-    element,
     attribute,
+    setValue,
+    getValue,
   } = props;
 
   console.log(attribute.label);
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
 
-  const setValue = (value) => {
-
-    const bo = element.businessObject;
-
-    const businessObject = getBusinessObject(element);
-    // const attributeContent = businessObject.get(attributeName);
-    const attributeContent = bo.get(attribute.bindTo) || [];
-
-    const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
-    if (existingAttr) {
-      commandStack.execute('element.updateModdleProperties', {
-        element,
-        moddleElement: existingAttr,
-        properties: {value: value},
-      });
-    } else {
-      const param = bpmnFactory.create(consts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
-
-      commandStack.execute('element.updateModdleProperties', {
-        element,
-        moddleElement: businessObject,
-        properties: {[attribute.bindTo]: attributeContent.concat(param)},
-      });
+  const getBoolValue = (attribute) => {
+    const boolStr = getValue(attribute);
+    try {
+      return JSON.parse(boolStr);
+    } catch (error) {
+      console.log(`Failed to parse ${boolStr} to boolean.`);
     }
+
   };
 
-  const getValue = (attribute) => {
-    const businessObject = getBusinessObject(element);
-    // const attributeContent = businessObject.get(attributeName);
-    const attributeContent = businessObject.get(attribute.bindTo) || [];
-
-    const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
-    if (existingAttr) {
-      return existingAttr.value;
-    } else {
-      return attribute.value;
-    }
-  };
-
-  return TextFieldEntry({
+  return CheckboxEntry({
     element: attribute,
     id: idPrefix + '-value',
     label: translate(attribute.label),
-    getValue,
+    disabled: attribute.disable,
+    getValue: getBoolValue,
     setValue,
-    debounce
-  });
-}
-
-function SingleValue(props) {
-  const {
-    idPrefix,
-    element,
-    attribute,
-  } = props;
-
-  console.log(attribute.label);
-
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const setValue = (newValue) => {
-
-    return modeling.updateProperties(element, {
-      [attribute.bindTo]: newValue
-    });
-    // const bo = element.businessObject;
-    //
-    // commandStack.execute('element.updateModdleProperties', {
-    //   element,
-    //   moddleElement: bo,
-    //   properties: {
-    //     [attribute.bindTo]: newValue
-    //   }
-    // });
-  };
-
-  const getValue = (attribute) => {
-    const businessObject = getBusinessObject(element);
-    // const attributeContent = businessObject.get(attributeName);
-    const realValue = businessObject.get(attribute.bindTo) || '';
-
-    if (realValue && realValue !== '') {
-      return realValue;
-    } else {
-      return attribute.value;
-    }
-  };
-
-  return TextFieldEntry({
-    element: attribute,
-    id: idPrefix + '-value',
-    label: translate(attribute.label),
-    getValue,
-    setValue,
-    debounce
   });
 }

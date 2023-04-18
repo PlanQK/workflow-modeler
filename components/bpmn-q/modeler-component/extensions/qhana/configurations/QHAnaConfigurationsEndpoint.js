@@ -56,7 +56,9 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                       type: 'string',
                       value: serviceData.identifier,
                       editable: 'true',
-                      bindTo: 'qhanaIdentifier',
+                      bindTo: {
+                        name: 'qhanaIdentifier',
+                      },
                     },
                     {
                       name: 'name',
@@ -64,8 +66,9 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                       type: 'string',
                       value: serviceData.title,
                       editable: 'true',
-                      bindTo: 'qhanaName',
-                      // bindToIsMany: true,
+                      bindTo: {
+                        name: 'qhanaName',
+                      },
                     },
                     {
                       name: 'description',
@@ -73,8 +76,9 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                       type: 'string',
                       value: serviceData.description,
                       editable: 'true',
-                      bindTo: 'qhanaDescription',
-                      // bindToIsMany: true,
+                      bindTo: {
+                        name: 'qhanaDescription',
+                      },
                     },
                   ]
                 };
@@ -84,12 +88,12 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                   configuration.attributes.push({
                     name: 'input_' + index,
                     label: input.parameter || 'input_' + index,
-                    type: 'camunda:InputOutput',
-                    value: 'input',
-                    editable: 'true',
+                    type: 'String',
                     hide: true,
-                    bindTo: 'inputs',
-                    bindToIsMany: true,
+                    bindTo: {
+                      name: 'inputParameters',
+                      type: 'camunda:InputParameter',
+                    },
                   });
                 });
 
@@ -97,12 +101,14 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                   configuration.attributes.push({
                     name: 'output_' + index,
                     label: input.parameter || 'output_' + index,
-                    type: 'camunda:InputOutput',
+                    type: 'String',
                     value: 'output',
                     editable: 'true',
                     hide: 'true',
-                    bindTo: 'outputs',
-                    bindToIsMany: true,
+                    bindTo: {
+                      name: 'outputParameters',
+                      type: 'camunda:OutputParameter',
+                    },
                   });
                 });
 

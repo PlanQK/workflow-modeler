@@ -41,16 +41,20 @@ const quantmeDataObjects = [
         label: 'Quantum Circuit',
         type: 'string',
         value: '',
-        bindTo: 'content',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'content',
+          type: 'KeyValueMap',
+        },
       },
       {
         name: 'programming-language',
         label: 'Programming Language',
         type: 'string',
         value: '',
-        bindTo: 'content',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'content',
+          type: 'KeyValueMap',
+        },
       }
     ]
   },
@@ -65,8 +69,10 @@ const quantmeDataObjects = [
         name: 'Execution-Result',
         label: 'Execution Result',
         type: 'string',
-        bindTo: 'content',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'content',
+          type: 'KeyValueMap',
+        },
       },
     ]
   },

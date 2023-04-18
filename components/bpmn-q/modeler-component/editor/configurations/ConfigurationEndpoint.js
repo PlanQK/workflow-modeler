@@ -1,3 +1,6 @@
+/**
+ * Class to fetch and store Configurations from an external repository. The used repository can be configured in the constructor.
+ */
 export default class ConfigurationsEndpoint {
 
   // array containing the fetched configurations
@@ -10,6 +13,9 @@ export default class ConfigurationsEndpoint {
     this.fetchConfigurations();
   }
 
+  /**
+   * Fetch the configured endpoint and store the result in this._configurations
+   */
   fetchConfigurations() {
 
     fetch(this._endpointUrl)
@@ -22,67 +28,15 @@ export default class ConfigurationsEndpoint {
       .catch(error => {
         console.error('Error fetching configurations from ' + this._endpointUrl + ': \n' + error);
       });
-
-    // const data = response.json();
-    //
-    // console.log('Received ' + data.length + ' configurations: ');
-    // console.log(data);
-    // return data;
-    // // // fetch new configurations from repository
-    // return [
-    //   {
-    //     name: 'XML to JSON Transformation',
-    //     id: 'fhjsdfjksghdjkfgsdfjkgkjserg1dfg12sd2g21s',
-    //     description: "Transforms a XML file into a JSON file",
-    //     appliesTo: "dataflow:TransformationTask",
-    //     groupLabel: 'Transformation Properties',
-    //     attributes: [
-    //       {
-    //         name: 'xml-schema',
-    //         label: 'XML Schema',
-    //         type: 'string',
-    //         value: '',
-    //         editable: 'false',
-    //         bindTo: 'parameters',
-    //         bindToIsMany: true,
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     name: "Facebook Login",
-    //     id: "FBLogin",
-    //     description: "Login in einen Facebook Account",
-    //     appliesTo: "dataflow:TransformationTask",
-    //     attributes: [
-    //       {
-    //         name: "RedirectUrl",
-    //         label: "Redirect URL",
-    //         // value: "",
-    //         type: "string", // string, boolean, selection
-    //         editable: true,
-    //         bindTo: "parameters",
-    //         bindToIsMany: true,
-    //       },
-    //       {
-    //         name: "Url",
-    //         label: "URL",
-    //         value: "facebook.de/login",
-    //         type: "string", // string, boolean, selection
-    //         editable: true,
-    //         bindTo: "parameters",
-    //         bindToIsMany: true,
-    //       }
-    //     ]
-    //   }
-    // ];
   }
 
+  /**
+   * Returns all stored configurations which apply to the given type.
+   *
+   * @param type The type the wanted configurations are applied to.
+   * @returns {*[]} All configurations of this._configurations which apply to the given type.
+   */
   getConfigurations(type) {
-
-    // fetch configurations if no configurations are available
-    // if (this._configurations.length === 0) {
-    //   this._configurations = this.fetchConfigurations();
-    // }
 
     // return all configurations which apply to the given type
     return this._configurations.filter(function (configuration) {
@@ -90,6 +44,12 @@ export default class ConfigurationsEndpoint {
     });
   }
 
+  /**
+   * Returns the configurations which has the given id.
+   *
+   * @param id The id of the searched configuration.
+   * @returns {*} The configuration with the given id.
+   */
   getConfiguration(id) {
     return this._configurations.find(config => config.id === id);
   }

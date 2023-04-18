@@ -28,7 +28,7 @@ import {getServiceTaskConfigurations} from '../../qhana/configurations/QHAnaConf
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
  */
 export default class QuantMEReplaceMenuProvider {
-  constructor(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate) {
+  constructor(bpmnFactory, popupMenu, modeling, moddle, bpmnReplace, rules, translate, commandStack) {
 
     this.popupMenu = popupMenu;
     this.translate = translate;
@@ -36,6 +36,7 @@ export default class QuantMEReplaceMenuProvider {
     this.replaceElement = bpmnReplace.replaceElement;
     this.bpmnFactory = bpmnFactory;
     this.modeling = modeling;
+    this.commandStack = commandStack;
 
 
     popupMenu.registerProvider('bpmn-replace', this);
@@ -109,6 +110,7 @@ export default class QuantMEReplaceMenuProvider {
     const modeling = this.modeling;
     const popupMenu = this.popupMenu;
     const replaceElement = this.replaceElement;
+    const commandStack = this.commandStack;
 
     let options = createConfigurationsEntries(
       element,
@@ -116,6 +118,7 @@ export default class QuantMEReplaceMenuProvider {
       getQuantMEDataConfigurations(),
       bpmnFactory,
       modeling,
+      commandStack,
       replaceElement
     );
 
@@ -178,5 +181,6 @@ QuantMEReplaceMenuProvider.$inject = [
   'moddle',
   'bpmnReplace',
   'rules',
-  'translate'
+  'translate',
+  'commandStack',
 ];

@@ -7,7 +7,7 @@ import {getServiceTaskConfigurations} from '../configurations/TransformationTask
 
 export default class DataFlowReplaceMenuProvider {
 
-  constructor(popupMenu, translate, bpmnReplace, modeling, bpmnFactory, moddle, elementRegistry) {
+  constructor(popupMenu, translate, bpmnReplace, modeling, bpmnFactory, moddle, elementRegistry, commandStack) {
     popupMenu.registerProvider("bpmn-replace", this);
 
     this.replaceElement = bpmnReplace.replaceElement;
@@ -16,6 +16,7 @@ export default class DataFlowReplaceMenuProvider {
     this.bpmnFactory = bpmnFactory;
     this.moddle = moddle;
     this.elementRegistry = elementRegistry;
+    this.commandStack = commandStack;
   }
 
   getPopupMenuHeaderEntries() {
@@ -43,7 +44,7 @@ export default class DataFlowReplaceMenuProvider {
         // const bo = self.moddle.create(consts.TRANSFORMATION_TASK);
         // self.modeling.updateProperties(element, { businessObject: bo });
         // const newElement = self.elementRegistry.get(element.id);
-        const configEntries = createConfigurationsEntries(element, 'dataflow-transformation-task-icon', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.replaceElement);
+        const configEntries = createConfigurationsEntries(element, 'dataflow-transformation-task-icon', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
 
         if (Object.entries(configEntries).length > 0) {
           return configEntries;
@@ -147,4 +148,5 @@ DataFlowReplaceMenuProvider.$inject = [
   'bpmnFactory',
   'moddle',
   'elementRegistry',
+  'commandStack',
 ];

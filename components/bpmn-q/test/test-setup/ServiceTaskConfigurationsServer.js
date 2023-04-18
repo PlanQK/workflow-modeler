@@ -41,12 +41,134 @@ const serviceTaskConfigurations = [
         label: 'XML Schema',
         type: 'string',
         value: '',
-        editable: 'false',
+        editable: false,
         bindTo: 'parameters',
         bindToIsMany: true,
       }
     ]
   },
+  {
+    name: 'Test Transformation',
+    id: 'test',
+    description: "Transforms a XML file into a JSON file",
+    appliesTo: "dataflow:TransformationTask",
+    groupLabel: 'Transformation Properties',
+    attributes: [
+      {
+        name: 'map-to-parameters',
+        label: 'Map To Parameters',
+        type: 'String',
+        value: 'hello',
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
+      },
+      {
+        name: 'boolean',
+        label: 'Boolean',
+        type: 'Boolean',
+        value: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
+      },
+      {
+        name: 'map-to-inputs',
+        label: 'Map To Inputs',
+        type: 'String',
+        value: 'i',
+        bindTo: {
+          name: 'inputParameters',
+          type: 'camunda:InputParameter',
+        },
+      },
+      {
+        name: 'map-to-outputs',
+        label: 'Map To Outputs',
+        type: 'String',
+        value: 'o',
+        bindTo: {
+          name: 'outputParameters',
+          type: 'camunda:OutputParameter',
+        },
+      },
+      {
+        name: 'map-to-single',
+        label: 'Map To Single Attribute',
+        type: 'String',
+        value: 'sa',
+        bindTo: {
+          name: 'newParam',
+          type: 'SingleValue',
+        },
+      },
+    ]
+  },
+  {
+    name: 'CSV to JSON Transformation',
+    id: '346543184344321358421346879421318',
+    description: "Transforms a XML file into a JSON file",
+    appliesTo: "dataflow:TransformationTask",
+    groupLabel: 'Transformation Properties',
+    attributes: [
+      {
+        name: 'on-hardware',
+        label: 'On Hardware',
+        type: 'boolean',
+        value: false,
+        bindTo: 'camunda:InputParameters',
+        bindToIsMany: true,
+      },
+      {
+        name: 'off-hardware',
+        label: 'Off Hardware',
+        type: 'boolean',
+        value: false,
+        bindTo: 'camunda:InputParameters',
+        bindToIsMany: true,
+      },
+      {
+        name: 'speedup',
+        label: 'Speed Up',
+        type: 'boolean',
+        bindTo: 'camunda:InputParameters',
+        bindToIsMany: true,
+      }
+    ]
+  },
+  // {
+  //   name: '.md to JSON Transformation',
+  //   id: '65873681363',
+  //   description: "Transforms a XML file into a JSON file",
+  //   appliesTo: "dataflow:TransformationTask",
+  //   groupLabel: 'Transformation Properties',
+  //   attributes: [
+  //     {
+  //       name: 'separator',
+  //       label: 'Separator',
+  //       type: 'selection',
+  //       value: '',
+  //       bindTo: 'camunda:InputParameters',
+  //     },
+  //     {
+  //       name: 'line-break',
+  //       label: 'Line Break',
+  //       type: 'selection',
+  //       options: '{n, m, l}',
+  //       value: '{n, m, l}',
+  //       bindTo: 'camunda:InputParameters',
+  //     },
+  //     {
+  //       name: 'separator',
+  //       label: 'Separator',
+  //       type: 'selection',
+  //       value: '',
+  //       bindTo: 'camunda:InputParameters',
+  //     }
+  //   ]
+  // },
   {
     name: 'Json to Xml Transformation',
     id: 'hadsfgaj',
@@ -59,7 +181,7 @@ const serviceTaskConfigurations = [
         label: 'XML Schema',
         type: 'string',
         value: '',
-        editable: 'false',
+        editable: false,
         bindTo: 'parameters',
         bindToIsMany: true,
       }
