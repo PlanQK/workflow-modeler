@@ -10,11 +10,9 @@
  */
 
 import { fetch } from 'whatwg-fetch';
-import { createModelerFromXml } from '../../../utilities/Utilities';
-import { startReplacementProcess } from '../../../replacement/QuantMETransformator';
+import { startQuantmeReplacementProcess } from '../../../replacement/QuantMETransformator';
 import {
   getQuantumCircuitExecutionTasks,
-  getRootProcess,
   performAjax
 } from '../../../utilities/Utilities';
 import {
@@ -27,6 +25,8 @@ import {
   getTaskOrder
 } from './RuntimeHandlerUtils';
 import {getXml} from "../../../../../common/util/IoUtilities";
+import {createModelerFromXml} from '../../../../../editor/ModelerHandler';
+import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
 
 /**
  * Generate a Qiskit Runtime program for the given candidate
@@ -59,7 +59,7 @@ export async function getQiskitRuntimeProgramDeploymentModel(candidate, modelerC
   let xml = await getXml(candidate.modeler);
 
   // transform QuantME tasks within candidate
-  let transformationResult = await startReplacementProcess(xml, qrms, modelerConfig);
+  let transformationResult = await startQuantmeReplacementProcess(xml, qrms, modelerConfig);
   if (transformationResult.status === 'failed') {
     console.log('Unable to transform QuantME tasks within the candidates!');
     return { error: 'Unable to transform QuantME tasks within the candidates. Please provide valid QRMs!' };

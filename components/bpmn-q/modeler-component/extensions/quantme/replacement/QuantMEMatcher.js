@@ -9,8 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as consts from '../Constants';
-import { getDefinitionsFromXml, getRootProcess, getSingleFlowElement, isQuantMETask } from '../utilities/Utilities';
+import {getDefinitionsFromXml, getRootProcess, getSingleFlowElement} from '../../../common/util/ModellingUtilities';
 
 /**
  * Check if the given task matches the detector, i.e., has the same QuantME type and matching attributes
@@ -46,6 +45,9 @@ export function taskMatchesDetector(detectorElement, task) {
     return false;
   }
 }
+
+import * as consts from '../Constants';
+import { isQuantMETask } from '../utilities/Utilities';
 
 /**
  * Compare the properties of QuantumComputationTasks

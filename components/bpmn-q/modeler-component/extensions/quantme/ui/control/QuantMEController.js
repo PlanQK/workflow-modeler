@@ -13,20 +13,17 @@
 import React, { Fragment, PureComponent } from 'react';
 // import { Fill } from 'camunda-modeler-plugin-helpers/components';
 
-import { startReplacementProcess } from '../../replacement/QuantMETransformator';
+import { startQuantmeReplacementProcess } from '../../replacement/QuantMETransformator';
 import { configureBasedOnHardwareSelection } from '../../replacement/hardware-selection/QuantMEHardwareSelectionHandler';
 import { getServiceTasksToDeploy } from '../../deployment/DeploymentUtils';
-import {
-  getRootProcess,
-  createModelerFromXml
-} from '../../utilities/Utilities';
 import { createServiceInstance, uploadCSARToContainer } from '../../deployment/OpenTOSCAUtils';
 import { bindUsingPull, bindUsingPush } from '../../deployment/BindingUtils';
-import {getModeler} from "../../../../editor/ModelerHandler";
+import {createModelerFromXml, getModeler} from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import {getQRMs, updateQRMs} from "../../qrm-manager";
-import {getXml, loadDiagram} from "../../../../common/util/IoUtilities";
+import {getXml} from "../../../../common/util/IoUtilities";
 import config from "../../framework-config/config";
+import {getRootProcess} from '../../../../common/util/ModellingUtilities';
 
 export default class QuantMEController extends PureComponent {
 
@@ -65,7 +62,7 @@ export default class QuantMEController extends PureComponent {
         transformWorkflow: async function (params) {
           console.log('Transforming workflow posted through API!');
           let currentQRMs = getQRMs();
-          let result = await startReplacementProcess(params.xml, currentQRMs,
+          let result = await startQuantmeReplacementProcess(params.xml, currentQRMs,
               {
                 nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
                 transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,
@@ -98,7 +95,7 @@ export default class QuantMEController extends PureComponent {
           }
 
           // transform to native BPMN
-          let result = await startReplacementProcess(configurationResult.xml, currentQRMs,
+          let result = await startQuantmeReplacementProcess(configurationResult.xml, currentQRMs,
               {
                 nisqAnalyzerEndpoint: self.modeler.config.nisqAnalyzerEndpoint,
                 transformationFrameworkEndpoint: self.modeler.config.transformationFrameworkEndpoint,

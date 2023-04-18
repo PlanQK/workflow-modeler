@@ -29,6 +29,25 @@ export function createModeler(containerId, propertiesParentId) {
     return getModeler();
 }
 
+/**
+ * Create a new modeler object with the QuantME moodle but without exentsion modules
+ *
+ * @return the created modeler
+ */
+export function createPlainModeler() {
+    return new BpmnModeler({
+        additionalModules: [
+            CamundaExtensionModule,
+        ],
+        keyboard: {
+            bindTo: document
+        },
+        moddleExtensions: {
+            camunda: camundaModdleDescriptor,
+        },
+    });
+}
+
 export function createTempModeler() {
     return new BpmnModeler({
         additionalModules: getModules(),
@@ -37,6 +56,41 @@ export function createTempModeler() {
         },
         moddleExtensions: getExtensions(),
     });
+}
+
+export async function createTempModelerFromXml(xml) {
+    // create new modeler with the custom QuantME extensions
+    const bpmnModeler = createTempModeler();
+
+    // import the xml containing the definitions
+    try {
+        await bpmnModeler.importXML(xml);
+        return bpmnModeler;
+    } catch (err) {
+        console.error(err);
+    }
+    return undefined;
+}
+
+/**
+ * Create a new modeler object and import the given XML BPMN diagram
+ *
+ * @param xml the xml representing the BPMN diagram
+ * @return the modeler containing the BPMN diagram
+ */
+export async function createModelerFromXml(xml) {
+
+    // create new modeler with the custom QuantME extensions
+    const bpmnModeler = createModeler();
+
+    // import the xml containing the definitions
+    try {
+        await bpmnModeler.importXML(xml);
+        return bpmnModeler;
+    } catch (err) {
+        console.error(err);
+    }
+    return undefined;
 }
 
 export function getModeler() {

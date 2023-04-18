@@ -12,11 +12,9 @@
 import { fetch } from 'whatwg-fetch';
 import {
   getQuantumCircuitExecutionTasks,
-  getRootProcess,
   performAjax,
-  createModelerFromXml
 } from '../../../utilities/Utilities';
-import { startReplacementProcess } from '../../../replacement/QuantMETransformator';
+import { startQuantmeReplacementProcess } from '../../../replacement/QuantMETransformator';
 import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion
@@ -26,6 +24,8 @@ import {
   getRequiredPrograms,
   getTaskOrder
 } from './RuntimeHandlerUtils';
+import {createModelerFromXml} from '../../../../../editor/ModelerHandler';
+import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
 
 /**
  * Generate a AWS Runtime program for the given candidate
@@ -58,7 +58,7 @@ export async function getAWSRuntimeProgramDeploymentModel(candidate, endpoints, 
   let xml = await exportXmlWrapper();
 
   // transform QuantME tasks within candidate
-  let transformationResult = await startReplacementProcess(xml, qrms, endpoints);
+  let transformationResult = await startQuantmeReplacementProcess(xml, qrms, endpoints);
   if (transformationResult.status === 'failed') {
     console.log('Unable to transform QuantME tasks within the candidates!');
     return { error: 'Unable to transform QuantME tasks within the candidates. Please provide valid QRMs!' };

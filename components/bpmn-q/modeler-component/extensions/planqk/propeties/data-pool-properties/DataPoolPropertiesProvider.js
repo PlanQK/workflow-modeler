@@ -1,7 +1,7 @@
 import planqkDataPoolProps from './DataPoolProperties';
 import * as consts from '../../utilities/Constants';
 
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import {is} from 'bpmn-js/lib/util/ModelUtil';
 
 const LOW_PRIORITY = 500;
 
@@ -10,20 +10,19 @@ const LOW_PRIORITY = 500;
  * A provider with a `#getGroups(element)` method
  * that exposes groups for a diagram element.
  *
- * @param {PropertiesPanel} propertiesPanel
+ * @param propertiesPanel
  * @param {Function} translate
- * @param dataPools List of available PlanQK Data Pools
  */
-export default function DataPoolPropertiesProvider(propertiesPanel, translate, dataPools) {
+export default function DataPoolPropertiesProvider(propertiesPanel, translate) {
 
   /**
    * Return the groups provided for the given element.
    *
-   * @param {DiagramElement} element
+   * @param element
    *
-   * @return {(Object[]) => (Object[])} groups middleware
+   * @return groups middleware
    */
-  this.getGroups = function(element) {
+  this.getGroups = function (element) {
 
     /**
      * We return a middleware that modifies
@@ -33,10 +32,9 @@ export default function DataPoolPropertiesProvider(propertiesPanel, translate, d
      *
      * @return {Object[]} modified groups
      */
-    return function(groups) {
-      console.log(dataPools.length);
+    return function (groups) {
 
-      if(is(element, consts.PLANQK_DATA_POOL)) {
+      if (is(element, consts.PLANQK_DATA_POOL)) {
         groups.unshift(createDataPoolDetailsGroup(element, translate));
       }
 
@@ -47,7 +45,7 @@ export default function DataPoolPropertiesProvider(propertiesPanel, translate, d
   propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
-DataPoolPropertiesProvider.$inject = [ 'propertiesPanel', 'translate', 'dataPools' ];
+DataPoolPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'dataPools'];
 
 function createDataPoolDetailsGroup(element, translate) {
 
@@ -56,5 +54,4 @@ function createDataPoolDetailsGroup(element, translate) {
     label: translate('Data Pool Properties'),
     entries: planqkDataPoolProps(element)
   };
-
 }

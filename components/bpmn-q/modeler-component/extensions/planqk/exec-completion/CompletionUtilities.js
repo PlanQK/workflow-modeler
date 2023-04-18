@@ -69,44 +69,44 @@ export function getRootProcess(definitions) {
   }
 }
 
-export function setInputParameter(task, name, value) {
-  let parameter = getInputParameter(task, name, 'camunda:InputOutput');
-  if (parameter) {
-    parameter.value = value;
-  }
-}
-
-export function setOutputParameter(task, name, value) {
-  let parameter = getOutputParameter(task, name, 'camunda:InputOutput');
-  if (parameter) {
-    parameter.value = value;
-  }
-}
-
-
-export function getInputParameter(task, name, type) {
-  const extensionElement = getExtensionElement(task, type);
-
-  if (extensionElement && extensionElement.inputParameters) {
-    for (const parameter of extensionElement.inputParameters) {
-      if (parameter.name === name) {
-        return parameter;
-      }
-    }
-  }
-}
-
-export function getOutputParameter(task, name, type) {
-  const extensionElement = getExtensionElement(task, type);
-
-  if (extensionElement && extensionElement.outputParameters) {
-    for (const parameter of extensionElement.outputParameters) {
-      if (parameter.name === name) {
-        return parameter;
-      }
-    }
-  }
-}
+// export function setInputParameter(task, name, value) {
+//   let parameter = getInputParameter(task, name, 'camunda:InputOutput');
+//   if (parameter) {
+//     parameter.value = value;
+//   }
+// }
+//
+// export function setOutputParameter(task, name, value) {
+//   let parameter = getOutputParameter(task, name, 'camunda:InputOutput');
+//   if (parameter) {
+//     parameter.value = value;
+//   }
+// }
+//
+//
+// export function getInputParameter(task, name, type) {
+//   const extensionElement = getExtensionElement(task, type);
+//
+//   if (extensionElement && extensionElement.inputParameters) {
+//     for (const parameter of extensionElement.inputParameters) {
+//       if (parameter.name === name) {
+//         return parameter;
+//       }
+//     }
+//   }
+// }
+//
+// export function getOutputParameter(task, name, type) {
+//   const extensionElement = getExtensionElement(task, type);
+//
+//   if (extensionElement && extensionElement.outputParameters) {
+//     for (const parameter of extensionElement.outputParameters) {
+//       if (parameter.name === name) {
+//         return parameter;
+//       }
+//     }
+//   }
+// }
 
 export function getExtensionElement(element, type) {
   if (!element.extensionElements) {

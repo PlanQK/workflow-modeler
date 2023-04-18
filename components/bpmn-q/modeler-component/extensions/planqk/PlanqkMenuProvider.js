@@ -2,7 +2,7 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
 import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import './resources/css/planqk-icons.css'
-import {createMenuEntries} from "../../common/util/PopupMenuUtil";
+import {createMenuEntries} from "../../common/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
 export default class PlanqkMenuProvider {

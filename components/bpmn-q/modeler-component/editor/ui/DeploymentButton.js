@@ -1,8 +1,8 @@
-import React, {useRef} from "react"
-import {getRootProcess} from "../../extensions/quantme/utilities/Utilities";
-import NotificationHandler from "./notifications/NotificationHandler";
-import {deployWorkflowToCamunda} from "../../common/util/IoUtilities";
-import {getCamundaEndpoint} from "../config/EditorConfigManager";
+import React from 'react';
+import NotificationHandler from './notifications/NotificationHandler';
+import {deployWorkflowToCamunda} from '../../common/util/IoUtilities';
+import {getCamundaEndpoint} from '../config/EditorConfigManager';
+import {getRootProcess} from '../../common/util/ModellingUtilities';
 
 export default function DeploymentButton(props) {
 

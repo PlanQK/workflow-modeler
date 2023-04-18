@@ -1,0 +1,74 @@
+.dataflow-transformation-task-icon:before {
+    content: "";
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/icons/change-exchange-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-data-store-map-icon:before {
+    content: "";
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/icons/data-store-map-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-data-map-object-icon:before {
+    content: "";
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/icons/data-map-object-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-transformation-task-palette-icon {
+    content: url("../resources/icons/transformation-task.svg");
+    padding: 11px 8px 11px 10px;
+}
+
+.dataflow-data-store-map-task-palette-icon {
+    content: url("../resources/icons/data-store-map-icon.svg");
+    padding: 10px;
+}
+
+.dataflow-data-map-object-palette-icon {
+    content: url("../resources/icons/data-map-object-icon.svg");
+    padding: 10px 13px 10px 14px;
+}
+
+.dataflow-transformation-association-icon:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-image: url("../resources/icons/transformation-association-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-data-association-icon:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-image: url("../resources/icons/data-association.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}

@@ -50,7 +50,7 @@ export function Deployment({element, translate, wineryEndpoint}) {
           }
         }
       },
-      async: false
+      async: true
     });
     if (arrValues.length === 0) {
       arrValues.push({ label: 'No CSARs available', value:'' });

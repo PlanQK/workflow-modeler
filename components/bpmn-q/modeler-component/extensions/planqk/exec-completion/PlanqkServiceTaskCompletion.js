@@ -4,21 +4,25 @@ import {
   getRootProcess,
   getSingleFlowElement,
   isFlowLikeElement,
-  setInputParameter, setOutputParameter
 } from './CompletionUtilities';
 import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
 import {getXml} from "../../../common/util/IoUtilities";
-import {addExecutionListener, getStartEvent} from "../../../common/util/ModellingUtilities";
+import {
+  addExecutionListener,
+  addFormField,
+  getStartEvent,
+  setInputParameter
+} from "../../../common/util/ModellingUtilities";
+import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
 
 /**
  * Replace custome extensions with camunda bpmn elements so that it complies with the standard
  * @param xml the xml model which contains the elements to replace
- * @param saveResultXmlFn the function to save the rsulting, camunda bpmn compliant xml model
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
-export async function startReplacementProcess(xml, saveResultXmlFn) {
-  let modeler = await createModelerFromXml(xml);
+export async function startPlanqkReplacementProcess(xml) {
+  let modeler = await createTempModelerFromXml(xml);
   let elementRegistry = modeler.get('elementRegistry');
 
   // get root element of the current diagram
@@ -43,7 +47,7 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
 
     let replacementSuccess = false;
     console.log('Replacing task with id %s with PlanQK service interaction subprocess ', planqkServiceTask.task.id);
-    const replacementSubprocess = require('../resources/workflows/planqk_service_call_subprocess.bpmn')
+    const replacementSubprocess = require('../resources/workflows/planqk_service_call_subprocess.bpmn');
     console.log(replacementSubprocess);
     replacementSuccess = await replaceByInteractionSubprocess(definitions, planqkServiceTask.task, planqkServiceTask.parent, replacementSubprocess, modeler);
 
@@ -83,7 +87,8 @@ export async function startReplacementProcess(xml, saveResultXmlFn) {
   }
 
   const transformedXml = await getXml(modeler);
-  await saveResultXmlFn(transformedXml);
+  // await saveResultXmlFn(transformedXml);
+  return {status: 'transformed', xml: transformedXml};
 }
 
 /**
@@ -185,16 +190,26 @@ async function replaceByDataStore(definitions, dataPool, parentProcess, modeler)
 
   const bpmnFactory = modeler.get('bpmnFactory');
   const moddle = modeler.get('moddle');
+  const modeling = modeler.get('modeling');
+  const elementRegistry = modeler.get('elementRegistry');
 
   const newDataStore = bpmnFactory.create('bpmn:DataStoreReference');
   let result = insertShape(definitions, parentProcess, newDataStore, {}, true, modeler, dataPool);
 
   // add execution listener to publish process variable on start
-  addExecutionListener(parentProcess, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
+  // addExecutionListener(parentProcess, moddle, {name: dataPool.dataPoolName, value: dataPool.dataPoolLink});
 
   const startEvent = getStartEvent(parentProcess.businessObject);
   console.log(startEvent);
-  setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
+  // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
+  const formField =
+    {
+      'defaultValue': dataPool.dataPoolLink,
+      'id': dataPool.dataPoolName,
+      'label': 'Link to ' + dataPool.dataPoolName,
+      'type': 'string'
+    };
+  addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
 
   return result['success'];
 }

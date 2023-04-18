@@ -11,15 +11,15 @@
 
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import Modal from "../../common/camunda-components/modal/Modal";
-import './config-modal.css'
+import Modal from '../../common/camunda-components/modal/Modal';
+import './config-modal.css';
 
 // polyfill upcoming structural components
-const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
-const Body = Modal.Body || (({ children }) => <div>{children}</div>);
-const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
+const Title = Modal.Title || (({children}) => <h2>{children}</h2>);
+const Body = Modal.Body || (({children}) => <div>{children}</div>);
+const Footer = Modal.Footer || (({children}) => <div>{children}</div>);
 
-export default function ConfigModal({ onClose, configTabs }) {
+export default function ConfigModal({onClose, configTabs}) {
 
   // return the new values to the config plugin
   const onSubmit = () => {
@@ -29,7 +29,7 @@ export default function ConfigModal({ onClose, configTabs }) {
     for (let tab of configTabs) {
       tab.configTab.prototype.onClose();
     }
-  }
+  };
 
   // refs to enable changing the state through the plugin
   let elementsRootRef = React.createRef();
@@ -52,13 +52,17 @@ export default function ConfigModal({ onClose, configTabs }) {
 
     <Body>
       <form id="configForm" onSubmit={onSubmit}>
+        <div style={{display: 'flex'}}>
+          <div id="configButtons" className="tabButtonsContainer">
+            {React.Children.toArray(configTabs.map((tab, index) => <button type="button"
+                                                                           className="innerConfig btn-primary"
+                                                                           onClick={() => openTab(tab.tabId, index)}>{tab.tabTitle}</button>))}
+          </div>
 
-        <div id="configButtons">
-          {React.Children.toArray(configTabs.map((tab, index) => <button type="button" className="innerConfig btn-primary" onClick={() => openTab(tab.tabId, index)}>{tab.tabTitle}</button>))}
-        </div>
-
-        <div id="configElements" ref={elementsRootRef}>
-          {React.Children.toArray(configTabs.map((tab, index) => <div className="spaceAbove" hidden={!(index === 0)} id={tab.tabId}>{tab.configTab()}</div>))}
+          <div id="configElements" ref={elementsRootRef}>
+            {React.Children.toArray(configTabs.map((tab, index) => <div className="spaceAbove" hidden={!(index === 0)}
+                                                                        id={tab.tabId}>{tab.configTab()}</div>))}
+          </div>
         </div>
       </form>
     </Body>

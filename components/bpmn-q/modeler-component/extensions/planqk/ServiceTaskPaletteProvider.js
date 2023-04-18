@@ -17,7 +17,7 @@ export default class ServiceTaskPaletteProvider {
   }
 
   createPlanqkServiceTaskEntry() {
-    const { bpmnFactory, create, elementFactory, translate } = this;
+    const {bpmnFactory, create, elementFactory, translate} = this;
     return {
       // add separator line to delimit the new group
       'planqk-separator': {
@@ -25,12 +25,11 @@ export default class ServiceTaskPaletteProvider {
         separator: true
       },
       'create.planqk-service-task': {
-        group: "planqk",
-        className: "planqk-icon-palette-service-task",
+        group: 'planqk',
+        className: 'planqk-icon-palette-service-task',
         title: translate('Creates a task that calls a PlanQK service you subscribed to'),
-        // imageURL: './resources/icons/planqk-service-task.jpg',
         action: {
-          click: function(event) {
+          click: function (event) {
             const businessObject = bpmnFactory.create(consts.PLANQK_SERVICE_TASK);
             let shape = elementFactory.createShape({
               type: consts.PLANQK_SERVICE_TASK,
@@ -41,11 +40,11 @@ export default class ServiceTaskPaletteProvider {
         }
       },
       'create.planqk-data-pool': {
-        group: "planqk",
-        className: "planqk-icon-palette-data-pool",
+        group: 'planqk',
+        className: 'planqk-icon-palette-data-pool',
         title: translate('Creates a PlanQK Data Pool to fetch data from'),
         action: {
-          click: function(event) {
+          click: function (event) {
             const businessObject = bpmnFactory.create(consts.PLANQK_DATA_POOL);
             let shape = elementFactory.createShape({
               type: consts.PLANQK_DATA_POOL,
@@ -59,11 +58,10 @@ export default class ServiceTaskPaletteProvider {
   }
 }
 
-// @ts-ignore
 ServiceTaskPaletteProvider.$inject = [
-  "bpmnFactory",
-  "create",
-  "elementFactory",
-  "palette",
-  "translate"
+  'bpmnFactory',
+  'create',
+  'elementFactory',
+  'palette',
+  'translate'
 ];

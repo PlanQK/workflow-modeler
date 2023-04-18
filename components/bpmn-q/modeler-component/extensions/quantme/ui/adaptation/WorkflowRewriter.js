@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { createModelerFromXml } from '../../utilities/Utilities';
 import {getXml} from "../../../../common/util/IoUtilities";
+import {createModelerFromXml} from '../../../../editor/ModelerHandler';
 
 /**
  * Rewrite the workflow available within the given modeler using the given optimization candidate

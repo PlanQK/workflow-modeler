@@ -1,5 +1,7 @@
 .innerConfig {
     min-width: 100px;
+    max-width: 100px;
+    min-height: 35px;
     height: 35px;
     border-radius: 3px;
     font-size: 13px;
@@ -9,12 +11,12 @@
     line-height: normal;
     letter-spacing: normal;
     text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .innerConfig + .innerConfig {
-    margin-left: 10px;
+    margin-top: 5px;
 }
 
 .indent {
@@ -51,4 +53,15 @@ td, th {
 
 tr:nth-child(even) {
     background-color: #dddddd;
+}
+
+.tabButtonsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: auto;
+    min-width: 115px;
+    max-height: 263px;
+    margin-right: 5px;
+    padding-right: 10px;
 }

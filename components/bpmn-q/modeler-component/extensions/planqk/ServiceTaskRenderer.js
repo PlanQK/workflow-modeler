@@ -1,146 +1,77 @@
 import {
-  append as svgAppend,
-  attr as svgAttr,
-  create as svgCreate, innerSVG,
-  select as svgSelect
-} from 'tiny-svg';
-
-import {
-  getFillColor,
-  getRoundRectPath, getStrokeColor
+    getRoundRectPath
 } from 'bpmn-js/lib/draw/BpmnRenderUtil';
 
 import {
-  is,
+    is,
 } from 'bpmn-js/lib/util/ModelUtil';
 
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 
 import * as consts from './utilities/Constants';
 import {getSVG} from "./SVGMap";
+import {drawDataStoreSVG, drawTaskSVG} from "../../common/util/RenderUtilities";
 
-const HIGH_PRIORITY = 1500,
+const HIGH_PRIORITY = 14001,
     TASK_BORDER_RADIUS = 2;
 
-
 export default class ServiceTaskRenderer extends BpmnRenderer {
-  constructor(config, eventBus, styles, pathMap, canvas, textRenderer) {
-    super(config, eventBus, styles, pathMap, canvas, textRenderer, HIGH_PRIORITY);
+    constructor(config, eventBus, styles, pathMap, canvas, textRenderer) {
+        super(config, eventBus, styles, pathMap, canvas, textRenderer, HIGH_PRIORITY);
 
-    function drawPath(parentGfx, d, attrs) {
+        // define render functions for planqk extension elements
+        this.planqkHandlers = {
+            [consts.PLANQK_SERVICE_TASK]: function (self, parentGfx, element) {
+                const task = self.renderer('bpmn:Task')(parentGfx, element);
+                drawTaskSVG(parentGfx, getSVG('TASK_TYPE_PLANQK_SERVICE_TASK'));
 
-      const path = svgCreate('path');
-      svgAttr(path, { d: d });
-      svgAttr(path, attrs);
+                return task;
+            },
+            [consts.PLANQK_DATA_POOL]: function (self, parentGfx, element) {
+                const store = self.renderer('bpmn:DataStoreReference')(parentGfx, element);
+                drawDataStoreSVG(parentGfx, getSVG('DATA_TYPE_DATA_POOL'));
 
-      svgAppend(parentGfx, path);
-
-      return path;
+                return store;
+            },
+        }
     }
 
-    function drawTaskSVG(parentGfx, iconID) {
-      var importsvg = getSVG(iconID);
-      var innerSVGstring = importsvg.svg;
-      var transformDef = importsvg.transform;
-
-      const groupDef = svgCreate('g');
-      svgAttr(groupDef, { transform: transformDef });
-      innerSVG(groupDef, innerSVGstring);
-
-      // set task box opacity to 0 such that icon can be in the background
-      svgAttr(svgSelect(parentGfx, 'rect'), { 'fill-opacity': 0 });
-
-      // draw svg in the background
-      parentGfx.prepend(groupDef);
+    renderer(type) {
+        return this.handlers[type];
     }
 
-    function drawDataStoreSVG(parentGfx, iconID) {
-      var importsvg = getSVG(iconID);
-      var innerSVGstring = importsvg.svg;
-      var transformDef = importsvg.transform;
+    canRender(element) {
 
-      const groupDef = svgCreate('g');
-      svgAttr(groupDef, { transform: transformDef });
-      innerSVG(groupDef, innerSVGstring);
-
-      // draw svg in the background
-      parentGfx.append(groupDef);
+        // only return true if handler for rendering is registered
+        return this.planqkHandlers[element.type];
     }
 
-    this.planqkHandlers = {
-      [consts.PLANQK_SERVICE_TASK]: function(self, parentGfx, element) {
-        const task = self.renderer('bpmn:Task')(parentGfx, element);
-        drawTaskSVG(parentGfx, 'TASK_TYPE_PLANQK_SERVICE_TASK');
+    drawShape(parentNode, element) {
 
-        return task;
-      },
-      [consts.PLANQK_DATA_POOL]: function(self, parentGfx, element) {
-        const store = self.renderer('bpmn:DataStoreReference')(parentGfx, element);
-        drawDataStoreSVG(parentGfx, 'DATA_TYPE_DATA_POOL');
+        if (element.type in this.planqkHandlers) {
+            const h = this.planqkHandlers[element.type];
 
-        return store;
-      },
+            return h(this, parentNode, element);
+        }
     }
 
-  }
+    getShapePath(shape) {
+        if (is(shape, consts.PLANQK_SERVICE_TASK)) {
+            return getRoundRectPath(shape, TASK_BORDER_RADIUS);
+        }
 
-  renderer(type) {
-    return this.handlers[type];
-  }
-
-
-  canRender(element) {
-
-    // ignore labels
-    return !element.labelTarget;
-  }
-
-  drawShape(parentNode, element) {
-
-    if (element.type in this.planqkHandlers) {
-      var h = this.planqkHandlers[element.type];
-
-      /* jshint -W040 */
-      return h(this, parentNode, element);
+        return super.getShapePath(shape);
     }
-  }
-
-  getShapePath(shape) {
-    if (is(shape, 'planqk:ServiceTask')) {
-      return getRoundRectPath(shape, TASK_BORDER_RADIUS);
-    }
-
-    return super.getShapePath(shape);
-  }
-
-
 }
 
 ServiceTaskRenderer.$inject = [
     'config',
-  'eventBus',
-  'styles',
-  'pathMap',
-  'canvas',
-  'textRenderer' ];
+    'eventBus',
+    'styles',
+    'pathMap',
+    'canvas',
+    'textRenderer'
+];
 
-// helpers //////////
 
-// copied from https://github.com/bpmn-io/bpmn-js/blob/master/lib/draw/BpmnRenderer.js
-function drawRect(parentNode, width, height, borderRadius, color) {
-  const rect = svgCreate('rect');
 
-  svgAttr(rect, {
-    width: width,
-    height: height,
-    rx: borderRadius,
-    ry: borderRadius,
-    stroke: color,
-    strokeWidth: 2,
-    fill: color
-  });
-
-  svgAppend(parentNode, rect);
-
-  return rect;
-}

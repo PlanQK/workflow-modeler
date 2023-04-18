@@ -1,0 +1,81 @@
+{
+  "name": "DataFlowExtension",
+  "uri": "https://github.com/data/transformation",
+  "prefix": "dataflow",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "DataMapObject",
+      "superClass": [ "bpmn:DataObjectReference" ],
+      "properties": [
+        {
+          "name": "content",
+          "isMany": true,
+          "type": "KeyValueEntry"
+        }
+      ]
+    },
+    {
+      "name": "DataStoreMap",
+      "superClass": [ "bpmn:DataStoreReference" ],
+      "properties": [
+        {
+          "name": "details",
+          "isMany": true,
+          "type": "KeyValueEntry"
+        }
+      ]
+    },
+    {
+      "name": "TransformationTask",
+      "superClass": [ "bpmn:Task" ],
+      "properties": [
+        {
+          "name": "parameters",
+          "isMany": true,
+          "type": "KeyValueEntry"
+        }
+      ]
+    },
+    {
+      "name": "TransformationAssociation",
+      "superClass": [ "bpmn:Association" ],
+      "properties": [
+        {
+          "name": "expressions",
+          "isMany": true,
+          "type": "KeyValueEntry"
+        }
+      ]
+    },
+    {
+      "name": "InputTransformationAssociation",
+      "superClass": [ "TransformationAssociation" ],
+      "properties": []
+    },
+    {
+      "name": "OutputTransformationAssociation",
+      "superClass": [ "TransformationAssociation" ],
+      "properties": []
+    },
+    {
+      "name": "KeyValueEntry",
+      "properties": [
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "value",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}

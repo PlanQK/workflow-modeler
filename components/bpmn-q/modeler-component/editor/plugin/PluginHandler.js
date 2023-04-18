@@ -1,126 +1,114 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
+import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
+import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
 import WorkflowEngineTab from "../config/WorkflowEngineTab";
 
 const PLUGINS = [
-    PlanQKPlugin,
-    QuantMEPlugin,
+  DataFlowPlugin,
+  QHAnaPlugin,
+  PlanQKPlugin,
+  QuantMEPlugin,
 ];
 
-// let pluginConfigList = [];
 let activePlugins = [];
 
-// export function setPluginConfig(pluginConfig) {
-//     pluginConfigList = pluginConfig || [];
-//     console.log('New plugin config set: ');
-//     console.log(pluginConfig);
-// }
-//
-// export function getPluginConfig(pluginName) {
-//     const plugin = pluginConfigList.find(element => element.name === pluginName) || {};
-//     return plugin.config;
-//     // return {};
-// }
-
 export function getActivePlugins() {
-    if (activePlugins.length > 0) {
+  if (activePlugins.length > 0) {
 
-        return activePlugins;
+    return activePlugins;
 
-    } else {
+  } else {
 
-        activePlugins = [];
+    activePlugins = [];
 
-        let plugin;
-        for (let pluginConfig of getAllConfigs()) {
+    let plugin;
+    for (let pluginConfig of getAllConfigs()) {
 
-            plugin = PLUGINS.find(plugin => plugin.name === pluginConfig.name);
+      plugin = PLUGINS.find(plugin => plugin.name === pluginConfig.name);
 
-            if (plugin) {
-                activePlugins.push(plugin);
-            }
-        }
-        return activePlugins
+      if (plugin) {
+        activePlugins.push(plugin);
+      }
     }
+    return activePlugins;
+  }
 }
 
 export function getAdditionalModules() {
 
-    const modules = [];
+  const modules = [];
 
-    for (let plugin of getActivePlugins()) {
-        modules.push(plugin.extensionModule);
+  for (let plugin of getActivePlugins()) {
+    if (plugin.extensionModule) {
+      modules.push(plugin.extensionModule);
     }
+  }
 
-    console.log('\n Get Additional Modules');
-    console.log(modules);
-    return modules;
+  console.log('\n Get Additional Modules');
+  console.log(modules);
+  return modules;
 }
 
 export function getModdleExtension() {
-    const extensions = {}
+  const extensions = {};
 
-    for (let plugin of getActivePlugins()) {
-        extensions[plugin.name] = plugin.moddleDescription;
+  for (let plugin of getActivePlugins()) {
+    if (plugin.moddleDescription) {
+      extensions[plugin.name] = plugin.moddleDescription;
     }
+  }
 
-    console.log('\n Get Moddle Extensions: ');
-    console.log(extensions);
-    return extensions;
+  console.log('\n Get Moddle Extensions: ');
+  console.log(extensions);
+  return extensions;
 }
 
 export function getTransformationButtons() {
-    const transformationButtons = []
+  const transformationButtons = [];
 
-    for (let plugin of getActivePlugins()) {
-        transformationButtons.push(plugin.transformExtensionButton);
+  for (let plugin of getActivePlugins()) {
+    if (plugin.transformExtensionButton) {
+      transformationButtons.push(plugin.transformExtensionButton);
     }
+  }
 
-    console.log('\n Got ' + transformationButtons.length + ' Transformations');
-    return transformationButtons;
+  console.log('\n Got ' + transformationButtons.length + ' Transformations');
+  return transformationButtons;
 }
 
 export function getPluginButtons() {
-    const pluginButtons = []
+  const pluginButtons = [];
 
-    for (let plugin of getActivePlugins()) {
-        pluginButtons.push(plugin.buttons);
+  for (let plugin of getActivePlugins()) {
+    if (plugin.buttons) {
+      pluginButtons.push(plugin.buttons);
     }
+  }
 
-    console.log('\n Got ' + pluginButtons.length + ' Plugin Buttons');
-    console.log(pluginButtons);
+  console.log('\n Got ' + pluginButtons.length + ' Plugin Buttons');
+  console.log(pluginButtons);
 
-    return pluginButtons;
+  return pluginButtons;
 }
 
-// export function getTransformationButtons() {
-//     const transformationButtons = []
-//
-//     for (let plugin of getActivePlugins()) {
-//         transformationButtons.push(plugin.transformationButtons);
-//     }
-//
-//     console.log('\n Got ' + transformationButtons.length + ' Transformation Buttons');
-//     console.log(transformationButtons);
-//
-//     return transformationButtons;
-// }
-
 export function getConfigTabs() {
-    // add default workflow tab to configure the path to the workflow engine
-    let configTabs = [{
-            tabId: 'EngineTab',
-            tabTitle: 'Engine',
-            configTab: WorkflowEngineTab,
-        }];
+  // add default workflow tab to configure the path to the workflow engine
+  let configTabs = [{
+    tabId: 'EngineTab',
+    tabTitle: 'Engine',
+    configTab: WorkflowEngineTab,
+  }];
 
-    for (let plugin of getActivePlugins()) {
-        configTabs = configTabs.concat(plugin.configTabs);
+  for (let plugin of getActivePlugins()) {
+    if (plugin.configTabs) {
+      configTabs = configTabs.concat(plugin.configTabs);
     }
+  }
 
-    console.log('\n Got ' + configTabs.length + ' Config Tabs');
-    console.log(configTabs);
+  console.log('\n Got ' + configTabs.length + ' Config Tabs');
+  console.log(configTabs);
 
-    return configTabs;
+  return configTabs;
 }

@@ -9,8 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { exportXmlFromModeler, getCamundaInputOutput, getPropertiesToCopy, getRootProcess } from '../../utilities/Utilities';
-import { getQuantMETasks, insertShape } from '../QuantMETransformator';
+import { getQuantMETasks } from '../QuantMETransformator';
 import {
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT, POLL_FOR_TRANSFORMATION_SCRIPT,
@@ -20,7 +19,10 @@ import {
 } from './HardwareSelectionScripts';
 import * as consts from '../../Constants';
 import { addExtensionElements } from '../../../../common/util/camunda-utils/ExtensionElementsUtil';
-import { createModeler, createModelerFromXml } from '../../utilities/Utilities';
+import {createModelerFromXml, createPlainModeler} from '../../../../editor/ModelerHandler';
+import {getPropertiesToCopy, insertShape} from '../../../../common/util/TransformationUtilities';
+import {getCamundaInputOutput, getRootProcess} from '../../../../common/util/ModellingUtilities';
+import {getXml} from '../../../../common/util/IoUtilities';
 
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
@@ -236,7 +238,7 @@ export async function configureBasedOnHardwareSelection(xml, provider, qpu, circ
     }
   }
 
-  return { status: 'success', xml: await exportXmlFromModeler(modeler) };
+  return { status: 'success', xml: await getXml(modeler) };
 }
 
 /**
@@ -275,7 +277,7 @@ async function getHardwareSelectionFragment(subprocess) {
   console.log('Extracting workflow fragment from subprocess: ', subprocess);
 
   // create new modeler to extract the XML of the workflow fragment
-  let modeler = createModeler();
+  let modeler = createPlainModeler();
   let elementRegistry = modeler.get('elementRegistry');
   let bpmnReplace = modeler.get('bpmnReplace');
   let modeling = modeler.get('modeling');
@@ -305,6 +307,6 @@ async function getHardwareSelectionFragment(subprocess) {
   modeling.connect(insertedSubprocess, endEvent, { type: 'bpmn:SequenceFlow' });
 
   // export xml and remove line breaks
-  let xml = await exportXmlFromModeler(modeler);
+  let xml = await getXml(modeler);
   return xml.replace(/(\r\n|\n|\r)/gm, '');
 }

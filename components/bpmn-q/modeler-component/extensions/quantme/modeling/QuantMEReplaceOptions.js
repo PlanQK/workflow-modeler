@@ -11,6 +11,52 @@
 
 import * as consts from '../Constants';
 
+export const DEMO = [
+  {
+    label: 'Demo Task 1',
+    actionName: 'replace-with-demo-1',
+    className: 'bpmn-icon-service',
+    target: {
+      type: 'bpmn:ServiceTask'
+    }
+  },
+  {
+    label: 'Demo Task 2',
+    actionName: 'replace-with-demo-2',
+    className: 'bpmn-icon-service',
+    target: {
+      type: 'bpmn:ServiceTask'
+    }
+  },
+  {
+    label: 'Demo Task 3',
+    actionName: 'replace-with-demo-3',
+    className: 'bpmn-icon-service',
+    target: {
+      type: 'bpmn:ServiceTask'
+    }
+  },
+];
+
+export const DUMMY = [
+  {
+    label: 'Dummy Task 1',
+    actionName: 'replace-with-dummy-1',
+    className: 'bpmn-icon-send',
+    target: {
+      type: 'bpmn:ServiceTask'
+    }
+  },
+  {
+    label: 'Dummy Task 2',
+    actionName: 'replace-with-dummy-2',
+    className: 'bpmn-icon-send',
+    target: {
+      type: 'bpmn:ServiceTask'
+    }
+  },
+];
+
 export var TASK = [
   {
     label: 'Quantum Hardware Selection Subprocess',
