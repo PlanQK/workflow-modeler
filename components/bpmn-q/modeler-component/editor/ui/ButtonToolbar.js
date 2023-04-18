@@ -8,32 +8,32 @@ import ToolbarTransformationButton from "./ToolbarTransformationButton";
 
 export default function ButtonToolbar(props) {
 
-    const {
-        modeler,
-        pluginButtons,
-        transformButtons,
-    } = props;
+  const {
+    modeler,
+    pluginButtons,
+    transformButtons,
+  } = props;
 
-    const hasTransformations = transformButtons.length > 0;
+  const hasTransformations = transformButtons.length > 0;
 
-    return (
-        <Fragment>
-            <div className="toolbar">
-                <hr className="toolbar-splitter"/>
-                <NewDiagramButton modeler={modeler}/>
-                <SaveButton modeler={modeler}/>
-                <OpenButton/>
-                <hr className="toolbar-splitter"/>
-                {hasTransformations && <ToolbarTransformationButton
-                    subButtons={transformButtons}
-                    title='Transform Workflow'
-                    styleClass="workflow-transformation-btn"/>
-                }
-                <DeploymentButton modeler={modeler}/>
-                <ConfigPlugin/>
-                <hr className="toolbar-splitter"/>
-                {React.Children.toArray(pluginButtons)}
-            </div>
-        </Fragment>
-    );
+  return (
+    <Fragment>
+      <div className="toolbar">
+        <hr className="toolbar-splitter"/>
+        <NewDiagramButton modeler={modeler}/>
+        <SaveButton modeler={modeler}/>
+        <OpenButton/>
+        <hr className="toolbar-splitter"/>
+        {hasTransformations && <ToolbarTransformationButton
+          subButtons={transformButtons}
+          title='Transform Workflow'
+          styleClass="workflow-transformation-btn"/>
+        }
+        <DeploymentButton modeler={modeler}/>
+        <ConfigPlugin/>
+        <hr className="toolbar-splitter"/>
+        {React.Children.toArray(pluginButtons)}
+      </div>
+    </Fragment>
+  );
 }

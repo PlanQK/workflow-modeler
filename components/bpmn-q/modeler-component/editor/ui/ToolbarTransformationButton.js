@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import TransformationButton from "./TransformationButton";
-import {getXml, saveXmlAsLocalFile} from '../../common/util/IoUtilities';
+import {getXml} from '../../common/util/IoUtilities';
 import NotificationHandler from './notifications/NotificationHandler';
 import {getModeler} from '../ModelerHandler';
-import * as editorConfig from '../config/EditorConfigManager';
 
 export default function ToolbarTransformationButton(props) {
 
@@ -22,7 +21,6 @@ export default function ToolbarTransformationButton(props) {
 
     const modeler = getModeler();
     let xml = await getXml(modeler);
-    // let result;
     let tmp;
 
     try {
@@ -52,10 +50,11 @@ export default function ToolbarTransformationButton(props) {
       }
       if (xml) {
 
-        // get file name with file ending
-        const fileName = editorConfig.getFileName().split('.')[0];
-
-        await saveXmlAsLocalFile(xml, `${fileName}_transformed.bpmn`);
+        // open transformed workflow in a modeler in a new browser tab
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('workflow', xml);
+        const newUrl = window.location.pathname + '?' + urlParams.toString();
+        window.open(newUrl);
       }
 
     } catch (error) {

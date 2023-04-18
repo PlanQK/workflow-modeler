@@ -3,7 +3,6 @@ import {loadDiagram} from '../../common/util/IoUtilities';
 import {getModeler} from '../ModelerHandler';
 import * as editorConfig from '../config/EditorConfigManager';
 
-
 export default function OpenButton() {
 
   const inputRef = useRef(null);
@@ -23,6 +22,7 @@ export default function OpenButton() {
       reader.onload = (e) => {
 
         const xml = e.target.result;
+
         loadDiagram(xml, getModeler()).then(() => {
           // save file name in editor configs
           editorConfig.setFileName(file.name);
