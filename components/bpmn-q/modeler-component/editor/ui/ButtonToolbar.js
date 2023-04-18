@@ -22,7 +22,7 @@ export default function ButtonToolbar(props) {
                 <hr className="toolbar-splitter"/>
                 <NewDiagramButton modeler={modeler}/>
                 <SaveButton modeler={modeler}/>
-                <OpenButton modeler={modeler}/>
+                <OpenButton/>
                 <hr className="toolbar-splitter"/>
                 {hasTransformations && <ToolbarTransformationButton
                     subButtons={transformButtons}

@@ -1,6 +1,6 @@
-
 const config = {
   camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
+  fileName: 'quantum-workflow-model.bpmn',
 };
 
 /**
@@ -25,5 +25,30 @@ export function setCamundaEndpoint(camundaEndpoint) {
 
     // remove trailing slashes
     config.camundaEndpoint = camundaEndpoint.replace(/\/$/, '');
+  }
+}
+
+/**
+ * Get the name of the file which contains the currently loaded workflow model.
+ *
+ * @return {string} the file name
+ */
+export function getFileName() {
+  if (config.fileName === undefined) {
+    return 'quantum-workflow-model.bpmn';
+  }
+  return config.fileName;
+}
+
+/**
+ * Set the name of the file which contains the currently loaded workflow model.
+ *
+ * @param fileName the new file name
+ */
+export function setFileName(fileName) {
+  if (fileName !== null && fileName !== undefined && /^[a-zA-Z0-9-_]+\.bpmn$/.test(fileName)) {
+
+    // remove trailing slashes
+    config.fileName = fileName;
   }
 }

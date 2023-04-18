@@ -3,6 +3,7 @@ import TransformationButton from "./TransformationButton";
 import {getXml, saveXmlAsLocalFile} from '../../common/util/IoUtilities';
 import NotificationHandler from './notifications/NotificationHandler';
 import {getModeler} from '../ModelerHandler';
+import * as editorConfig from '../config/EditorConfigManager';
 
 export default function ToolbarTransformationButton(props) {
 
@@ -11,21 +12,6 @@ export default function ToolbarTransformationButton(props) {
     title,
     styleClass,
   } = props;
-
-  // const newSubButtons = [];
-  // const initState = {};
-  // let newButton;
-
-  // recreate transformation buttons to add the selectedCallback()
-  // for (let button of subButtons) {
-  //   newButton = <TransformationButton transformWorkflow={button.props.transformWorkflow}
-  //                                     title={button.props.title}
-  //                                     name={button.props.name}
-  //                                     className={button.props.className}
-  //                                     selectedCallback={selectedCallback}
-  //                                     isChecked={initState[button.props.name]}/>;
-  //   newSubButtons.push(newButton);
-  // }
 
   const [isToggleOn, setToggleOn] = useState(false);
 
@@ -50,9 +36,7 @@ export default function ToolbarTransformationButton(props) {
 
           if (tmp && tmp.status === 'transformed') {
             xml = tmp.xml;
-            // result = tmp;
-            // await saveXmlAsLocalFile(result.xml, 'myProcess_transformed.bpmn');
-            // await loadDiagram(result.xml, modeler);
+
           } else {
 
             const cause = tmp.cause || 'Transformation failed because of an unexpected error.';
@@ -67,7 +51,11 @@ export default function ToolbarTransformationButton(props) {
         }
       }
       if (xml) {
-        await saveXmlAsLocalFile(xml, 'myProcess_transformed.bpmn');
+
+        // get file name with file ending
+        const fileName = editorConfig.getFileName().split('.')[0];
+
+        await saveXmlAsLocalFile(xml, `${fileName}_transformed.bpmn`);
       }
 
     } catch (error) {
