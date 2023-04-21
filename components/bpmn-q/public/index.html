@@ -75,6 +75,12 @@
   const modelerComponent = document.querySelector('quantum-workflow');
   modelerComponent.pluginConfigs = [
     {
+      name: 'editor',
+      config: {
+        camundaEndpoint: 'http://192.168.178.20:test/engine-rest',
+      }
+    },
+    {
       name: 'configs',
     },
     {

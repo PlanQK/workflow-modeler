@@ -1,6 +1,6 @@
 const config = {
-  qhanaListPluginsURL: 'http://localhost:5000/api/plugins/?item-count=100',
-  qhanqGetPluginURL: 'http://localhost:5000/api/plugins/',
+  qhanaListPluginsURL: 'http://localhost:5006/api/plugins/?item-count=100',
+  qhanqGetPluginURL: 'http://localhost:5006/api/plugins/',
 };
 
 export function getListPluginsURL() {

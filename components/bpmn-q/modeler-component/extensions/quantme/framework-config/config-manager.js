@@ -12,7 +12,7 @@
 import config from "./config";
 
 /**
- * Get the NISQ Analyzer endpoint
+ * Get the endpoint for Data Object Configurations
  */
 export function getQuantMEDataConfigurationsEndpoint() {
   if (config.quantmeDataConfigurationsEndpoint === undefined) {
@@ -22,7 +22,7 @@ export function getQuantMEDataConfigurationsEndpoint() {
 }
 
 /**
- * Set the NISQ Analyzer endpoint
+ * Set the endpoint for Data Object Configurations
  */
 export function setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint) {
   if (dataConfigurationsEndpoint !== null && dataConfigurationsEndpoint !== undefined) {

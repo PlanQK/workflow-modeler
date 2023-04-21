@@ -46,7 +46,7 @@ import {
 import {
   addCamundaInputMapParameter,
   addCamundaInputParameter, addCamundaOutputMapParameter,
-  addCamundaOutputParameter, addFormField,
+  addCamundaOutputParameter, addExecutionListener, addFormField, createCamundaMap,
   getCamundaInputOutput,
   getRootProcess, getStartEvent
 } from '../../../common/util/ModellingUtilities';
@@ -150,6 +150,23 @@ export async function startDataFlowReplacementProcess(xml) {
       for (let expression of expressions) {
         targetContent.push(bpmnFactory.create(consts.KEY_VALUE_ENTRY, {name: expression.name, value: expression.value}));
       }
+
+      const sourceDataMapObject = transformationAssociation.source;
+      sourceDataMapObject.businessObject.createsbyTransformation = true;
+      // const sourceDataMapObjectBo = transformationAssociation.source.businessObject;
+      // const startEvent = getStartEvent(sourceDataMapObject.parent.businessObject);
+      // console.log(startEvent);
+      // // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
+      // for (let c of sourceDataMapObjectBo.get(consts.CONTENT)) {
+      //   let formField =
+      //     {
+      //       'defaultValue': c.value,
+      //       'id': c.name + '_' + sourceDataMapObjectBo.name,
+      //       'label': c.name + ' of ' + sourceDataMapObjectBo.name,
+      //       'type': 'string'
+      //     };
+      //   addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
+      // }
     }
   }
 
@@ -234,6 +251,10 @@ export async function startDataFlowReplacementProcess(xml) {
   transformDataMapObjects(rootProcess, definitions, modeler);
   transformDataStoreMaps(rootProcess, definitions, modeler);
   transformTransformationTask(rootProcess, definitions, modeler);
+
+  // console.log(`Current Process: #############################`);
+  // console.log(dataElement.parent);
+  // console.log(dataElement.parent.variables);
 
   const transformedXML = await getXml(modeler);
   return { status: 'transformed', xml: transformedXML };
@@ -380,20 +401,83 @@ function transformDataMapObjects(rootProcess, definitions, modeler) {
     // const oldId = dataObject.id;
 
     // publish data map object as global process variable if it was created by a transformation association
-    if (dataMapObject.createdByTransformation) {
+    // Does not work, because it may contain expressions which reference variables which will be defined later in process
+    // Maybe it can be fixed by also adding the source object in global context
+    if (dataMapObject.createdByTransformation || dataMapObject.createsbyTransformation) {
+
+      addCamundaInputMapParameter(dataElement.parent.businessObject, dataMapObject.name, dataMapObject.get(consts.CONTENT), bpmnFactory, moddle);
       const startEvent = getStartEvent(dataElement.parent.businessObject);
       console.log(startEvent);
+      console.log('5555555555555555555555555555555555555555555555555555555555555555555555555555555555');
       // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
-      for (let c of dataMapObject.get(consts.CONTENT)) {
-        let formField =
-          {
-            'defaultValue': c.value,
-            'id': c.name + '_' + dataMapObject.name,
-            'label': c.name + ' of ' + dataMapObject.name,
-            'type': 'string'
-          };
-        addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
-      }
+      // let stringValue = '{';
+      // for (let c of dataMapObject.get(consts.CONTENT)) {
+      //   let formField =
+      //     {
+      //       'defaultValue': c.value,
+      //       'id': c.name + '_' + dataMapObject.name,
+      //       'label': c.name + ' of ' + dataMapObject.name,
+      //       'type': 'string'
+      //     };
+      //   // stringValue = stringValue.concat(`${c.name}: "${c.value}",`);
+      //
+      //
+      // }
+      addFormField(startEvent.id, dataMapObject.name, dataMapObject.get(consts.CONTENT), elementRegistry, moddle, modeling);
+      // addFormFieldWithProperties()
+      //
+      // // remove trailing comma
+      // stringValue = stringValue.slice(0, -1);
+      //
+      // stringValue = stringValue.concat('}');
+      // // const stringValue = JSON.stringify(dataMapObject.get(consts.CONTENT));
+      //
+      // console.log(`Created string value for dmo ${dataMapObject.name}: ${stringValue}`);
+      //
+      // console.log(`Current Process: #############################`);
+      // console.log(dataElement.parent);
+      // console.log(dataElement.parent.variables);
+      //
+      // // addCamundaInputMapParameter()
+      // // const processVariable = createCamundaMap(dataMapObject.get(consts.CONTENT), moddle);
+      // // // const processVariable = bpmnFactory.create('bpmn:Variable', {
+      // // //   name: 'myVar',
+      // // //   type: 'String'
+      // // // });
+      // //
+      // // modeling.updateProperties(dataElement.parent, {
+      // //   variables: processVariable
+      // // });
+      //
+      // // var processVariables = bpmnFactory.create('bpmn:ProcessVariables', {
+      // //   id: 'ProcessVariables_1',
+      // //   variables: [
+      // //     bpmnFactory.create('bpmn:Variable', {
+      // //       name: 'myVar',
+      // //       type: 'String'
+      // //     })
+      // //   ]
+      // // });
+      //
+      // addCamundaInputMapParameter(dataElement.parent.businessObject, dataMapObject.name, dataMapObject.get(consts.CONTENT), bpmnFactory, moddle);
+      //
+      // console.log(`Current Process: #############################`);
+      // console.log(dataElement.parent);
+      // console.log(dataElement.parent.variables);
+      //
+      // addExecutionListener(dataElement.parent, moddle, {name: dataMapObject.name, value: stringValue});
+
+      // for (let c of dataMapObject.get(consts.CONTENT)) {
+      //   let formField =
+      //     {
+      //       'defaultValue': c.value,
+      //       'id': c.name + '_' + dataMapObject.name,
+      //       'label': c.name + ' of ' + dataMapObject.name,
+      //       'type': 'string'
+      //     };
+      //   addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
+      // }
+
     }
 
     const dataObject = bpmnFactory.create('bpmn:DataObjectReference');

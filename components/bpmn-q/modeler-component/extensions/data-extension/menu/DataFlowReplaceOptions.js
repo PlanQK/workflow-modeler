@@ -3,7 +3,7 @@ import * as consts from '../Constants';
 export const TASK = [
     {
         id: 'dataflow-transformation-task',
-        label: 'Data transformation Task',
+        label: 'Data Transformation Task',
         className: 'dataflow-transformation-task-icon',
         target: {
             type: consts.TRANSFORMATION_TASK

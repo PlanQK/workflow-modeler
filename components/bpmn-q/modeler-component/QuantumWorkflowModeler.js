@@ -17,6 +17,7 @@ import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import {createModeler, getModeler} from "./editor/ModelerHandler";
 import {getPluginButtons, getTransformationButtons} from "./editor/plugin/PluginHandler";
 import {setPluginConfig} from "./editor/plugin/PluginConfigHandler";
+import * as editorConfig from './editor/config/EditorConfigManager';
 
 export const notificationHandler = new NotificationHandler([]);
 
@@ -36,8 +37,29 @@ class QuantumWorkflowModeler extends HTMLElement {
               <div id="notification-container"></div>
             </div>`;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    this.workflowModel = urlParams.get('workflow');
+    // const urlParams = new URLSearchParams(window.location.search);
+    // this.workflowModel = urlParams.get('workflow');
+    // this.startModeler();
+
+    const self = this;
+    window.addEventListener("message", function(event) {
+      console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+      console.log(event.origin);
+      console.log(window.location.href);
+      if (event.origin === window.location.href.replace(/\/$/, '')
+        && event.data && event.data.workflow && typeof event.data.workflow === 'string' && event.data.workflow.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
+        const xmlString = event.data.workflow;
+        // Do something with the XML string
+        self.workflowModel = xmlString;
+        editorConfig.setFileName(event.data.name);
+        console.log('################################################################################');
+        console.log('################################################################################');
+        console.log(event.data.name);
+        console.log(xmlString);
+        // self.startModeler();
+        loadDiagram(xmlString, getModeler());
+      }
+    });
   }
 
   startModeler() {

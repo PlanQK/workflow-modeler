@@ -1,6 +1,7 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
@@ -100,6 +101,7 @@ module.exports = {
             { from: 'public/image/**/*', to: 'image', flatten: true }
             // { from: '**/*.{png, jpg, svg}', context: 'public/resources/'}
         ]),
+        // new webpack.EnvironmentPlugin({ NODE_ENV: 'production' }),
         // new CleanWebpackPlugin()
     ],
     mode: 'development',

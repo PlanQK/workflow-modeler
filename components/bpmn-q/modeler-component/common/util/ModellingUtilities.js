@@ -3,6 +3,7 @@ import {getInputOutput} from './camunda-utils/InputOutputUtil';
 import {addExtensionElements, getExtension} from './camunda-utils/ExtensionElementsUtil';
 import {useService} from 'bpmn-js-properties-panel';
 import {getExtensionElement} from '../../extensions/planqk/exec-completion/CompletionUtilities';
+import * as consts from '../../extensions/data-extension/Constants';
 
 export function getProcess(element) {
 
@@ -28,7 +29,7 @@ export function getStartEvent(process) {
 export function addExecutionListener(element, moddle, processVariable) {
     const listener = {
         event: 'start',
-        expression: '${execution.setVariable("' + processVariable.name + '", "' + processVariable.value + '")}',
+        expression: '${execution.setVariable("' + processVariable.name + '", ' + processVariable.value + ')}',
     };
 
     const bo = element.businessObject || element;
@@ -46,7 +47,7 @@ export function addExecutionListener(element, moddle, processVariable) {
     bo.extensionElements = extensionElements;
 }
 
-export function addFormField(elementID, formFieldData, elementRegistry, moddle, modeling) {
+export function addFormField(elementID, name, keyValueMap, elementRegistry, moddle, modeling) {
     var element = elementRegistry.get(elementID);
 
     var extensionElements =	element.businessObject.get('extensionElements');
@@ -59,15 +60,31 @@ export function addFormField(elementID, formFieldData, elementRegistry, moddle, 
         extensionElements.values = [];
     }
 
-    let form = extensionElements.values.filter(function(elem) {
-        return elem.$type === 'camunda:FormData';}
+    let form = extensionElements.values.filter(function(extensionElement) {
+        return extensionElement.$type === 'camunda:FormData';}
     )[0];
+
+    console.log(`Found form data ${form}.`);
 
     if (!form) {
         form = moddle.create('camunda:FormData');
     }
 
+    const props = createCamundaProperties(keyValueMap, moddle);
+    let formFieldData =
+      {
+          defaultValue: '',
+          id: name,
+          label: name,
+          type: 'string',
+          properties: props,
+      };
+    // stringValue = stringValue.concat(`${c.name}: "${c.value}",`);
+
     var formField = moddle.create('camunda:FormField', formFieldData);
+
+    props.$parent = formField;
+
     var existingFieldsWithID = form.get('fields').filter(function(elem) {
         return elem.id === formField.id;
     });
@@ -77,7 +94,7 @@ export function addFormField(elementID, formFieldData, elementRegistry, moddle, 
     }
     form.get('fields').push(formField);
 
-    extensionElements.values.push(form);
+    extensionElements.values = [form];
     modeling.updateProperties(element, {extensionElements: extensionElements});
 }
 
@@ -207,6 +224,25 @@ export function createCamundaMap(keyValueMap, moddle) {
 
     const map = moddle.create('camunda:Map', {
         entries: mapEntries,
+    });
+
+    for (let entry of mapEntries) {
+        entry.$parent = map;
+    }
+
+    return map;
+}
+
+export function createCamundaProperties(keyValueMap, moddle) {
+    const mapEntries = keyValueMap.map(function ({name, value}) {
+        return moddle.create('camunda:Property', {
+            id: name,
+            value: value,
+        });
+    });
+
+    const map = moddle.create('camunda:Properties', {
+        values: mapEntries,
     });
 
     for (let entry of mapEntries) {

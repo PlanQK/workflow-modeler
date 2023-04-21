@@ -42,8 +42,10 @@ const serviceTaskConfigurations = [
         type: 'string',
         value: '',
         editable: false,
-        bindTo: 'parameters',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap'
+        },
       }
     ]
   },
@@ -99,9 +101,61 @@ const serviceTaskConfigurations = [
         label: 'Map To Single Attribute',
         type: 'String',
         value: 'sa',
+        disable: true,
         bindTo: {
           name: 'newParam',
           type: 'SingleValue',
+        },
+      },
+    ]
+  },
+  {
+    name: 'Example Transformation',
+    id: 'example',
+    description: "Transforms a XML file into a JSON file",
+    appliesTo: "dataflow:TransformationTask",
+    groupLabel: 'Transformation Properties',
+    attributes: [
+      {
+        name: 'map-to-parameters',
+        label: 'String-Attribut',
+        type: 'String',
+        value: 'Wert des Attributs',
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
+      },
+      {
+        name: 'boolean',
+        label: 'Boolean-Attribut',
+        type: 'Boolean',
+        value: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
+      },
+      {
+        name: 'dis-map-to-parameters',
+        label: 'deaktiviertes String-Attribut',
+        type: 'String',
+        value: 'Wert des Attributs',
+        disable: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
+      },
+      {
+        name: 'dis-boolean',
+        label: 'deaktiviertes Boolean-Attribut',
+        type: 'Boolean',
+        value: true,
+        disable: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
         },
       },
     ]
@@ -118,23 +172,29 @@ const serviceTaskConfigurations = [
         label: 'On Hardware',
         type: 'boolean',
         value: false,
-        bindTo: 'camunda:InputParameters',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'inputParameters',
+          type: 'camunda:InputParameter',
+        },
       },
       {
         name: 'off-hardware',
         label: 'Off Hardware',
         type: 'boolean',
         value: false,
-        bindTo: 'camunda:InputParameters',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'inputParameters',
+          type: 'camunda:InputParameter',
+        },
       },
       {
         name: 'speedup',
         label: 'Speed Up',
         type: 'boolean',
-        bindTo: 'camunda:InputParameters',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'inputParameters',
+          type: 'camunda:InputParameter',
+        },
       }
     ]
   },
@@ -182,8 +242,10 @@ const serviceTaskConfigurations = [
         type: 'string',
         value: '',
         editable: false,
-        bindTo: 'parameters',
-        bindToIsMany: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
       }
     ]
   },
@@ -199,8 +261,10 @@ const serviceTaskConfigurations = [
         // value: "",
         type: "string", // string, boolean, selection
         editable: true,
-        bindTo: "parameters",
-        bindToIsMany: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
       },
       {
         name: "Url",
@@ -208,8 +272,10 @@ const serviceTaskConfigurations = [
         value: "facebook.de/login",
         type: "string", // string, boolean, selection
         editable: true,
-        bindTo: "parameters",
-        bindToIsMany: true,
+        bindTo: {
+          name: 'parameters',
+          type: 'KeyValueMap',
+        },
       }
     ]
   }

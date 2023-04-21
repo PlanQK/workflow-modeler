@@ -1,7 +1,11 @@
-const config = {
+import {getPluginConfig} from '../plugin/PluginConfigHandler';
+
+const defaultConfig = {
   camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
   fileName: 'quantum-workflow-model.bpmn',
 };
+
+const config = {};
 
 /**
  * Get the endpoint of the configured Camunda engine to deploy to
@@ -10,7 +14,7 @@ const config = {
  */
 export function getCamundaEndpoint() {
   if (config.camundaEndpoint === undefined) {
-    return '';
+    setCamundaEndpoint(getPluginConfig('editor').camundaEndpoint || defaultConfig.camundaEndpoint);
   }
   return config.camundaEndpoint;
 }
@@ -35,7 +39,7 @@ export function setCamundaEndpoint(camundaEndpoint) {
  */
 export function getFileName() {
   if (config.fileName === undefined) {
-    return 'quantum-workflow-model.bpmn';
+    setFileName(getPluginConfig('editor').fileName || defaultConfig.fileName);
   }
   return config.fileName;
 }
