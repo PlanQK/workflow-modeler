@@ -1,6 +1,6 @@
-// import * as planqkReplaceOptions from './PlanQKReplaceOptions';
+import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
-import * as consts from './utilities/Constants';
+// import * as consts from './utilities/Constants';
 import {createMenuEntries} from "../../common/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
@@ -41,19 +41,19 @@ export default class PlanqkMenuProvider {
         return entries;
       }
 
-      if (is(element, consts.PLANQK_SERVICE_TASK)) {
-        return self.createServiceTaskEntries(element, self.activeSubscriptions);
-      }
-
-      if (is(element, consts.PLANQK_DATA_POOL)) {
-        const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools);
-        return Object.assign(dataPoolEntries, entries);
-      }
-
-      if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
-        // const dataStoreEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
-        // return Object.assign(dataStoreEntries, entries);
-      }
+      // if (is(element, consts.PLANQK_SERVICE_TASK)) {
+      //   return self.createServiceTaskEntries(element, self.activeSubscriptions);
+      // }
+      //
+      // if (is(element, consts.PLANQK_DATA_POOL)) {
+      //   const dataPoolEntries = self.createDataPoolEntries(element, self.dataPools);
+      //   return Object.assign(dataPoolEntries, entries);
+      // }
+      //
+      // if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
+      //   // const dataStoreEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
+      //   // return Object.assign(dataStoreEntries, entries);
+      // }
 
       if (is(element, 'bpmn:DataObjectReference')) {
         // const planqkEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);

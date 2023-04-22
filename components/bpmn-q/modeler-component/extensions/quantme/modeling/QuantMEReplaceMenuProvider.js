@@ -10,7 +10,6 @@
  */
 
 import * as quantmeReplaceOptions from './QuantMEReplaceOptions';
-import * as planqkReplaceOptions from '../../planqk/PlanqkReplaceOptions';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {
   createMenuEntries,
