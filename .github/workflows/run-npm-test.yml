@@ -5,7 +5,7 @@ on:
     types: [ opened, synchronize ]
   push:
     branches:
-      - 'github-action-for-tests'
+      - 'master'
 
 jobs:
   run-test:
