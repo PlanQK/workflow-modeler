@@ -13,13 +13,11 @@ const {startDataFlowReplacementProcess} = require('../../modeler-component/exten
 
 
 describe('Testing plugin transformation', function () {
-  before(function () {
-    setConfig();
-  });
 
   describe('Transformation of PlanQK extensions', function () {
 
     it('should create a valid transformed workflow', async function () {
+      setConfig();
       const result = await startPlanqkReplacementProcess(validPlanqkDiagram);
 
       chai.expect(result.status).to.equal('transformed');
@@ -32,6 +30,7 @@ describe('Testing plugin transformation', function () {
   describe('Transformation of QuantME extensions', function () {
 
     it('should create a valid transformed workflow', async function () {
+      setConfig();
       this.timeout(60000);
 
       const qrms = await updateQRMs();
@@ -52,6 +51,7 @@ describe('Testing plugin transformation', function () {
     });
 
     it('should fail due to missing QRMs', async function () {
+      setConfig();
       this.timeout(60000);
 
       const result = await startQuantmeReplacementProcess(validQuantMEDiagram, getQRMs(), {
@@ -69,6 +69,7 @@ describe('Testing plugin transformation', function () {
   describe('Transformation of Data Flow extensions', function () {
 
     it('should create a valid transformed workflow', async function () {
+      setConfig();
 
       const result = await startDataFlowReplacementProcess(validDataFlowDiagram);
 

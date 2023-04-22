@@ -47,9 +47,19 @@ export function addExecutionListener(element, moddle, processVariable) {
     bo.extensionElements = extensionElements;
 }
 
-export function addFormField(elementID, name, keyValueMap, elementRegistry, moddle, modeling) {
-    var element = elementRegistry.get(elementID);
+export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry, moddle, modeling) {
 
+    const props = createCamundaProperties(keyValueMap, moddle);
+    let formFieldData =
+      {
+          defaultValue: '',
+          id: name,
+          label: name,
+          type: 'string',
+          properties: props,
+      };
+
+    var element = elementRegistry.get(elementID);
     var extensionElements =	element.businessObject.get('extensionElements');
 
     if (!extensionElements) {
@@ -70,20 +80,46 @@ export function addFormField(elementID, name, keyValueMap, elementRegistry, modd
         form = moddle.create('camunda:FormData');
     }
 
-    const props = createCamundaProperties(keyValueMap, moddle);
-    let formFieldData =
-      {
-          defaultValue: '',
-          id: name,
-          label: name,
-          type: 'string',
-          properties: props,
-      };
-    // stringValue = stringValue.concat(`${c.name}: "${c.value}",`);
-
     var formField = moddle.create('camunda:FormField', formFieldData);
 
     props.$parent = formField;
+
+    var existingFieldsWithID = form.get('fields').filter(function(elem) {
+        return elem.id === formField.id;
+    });
+
+    for (let i = 0; i < existingFieldsWithID.length; i++) {
+        form.get('fields').splice(form.get('fields').indexOf(existingFieldsWithID[i]));
+    }
+    form.get('fields').push(formField);
+
+    extensionElements.values = [form];
+    modeling.updateProperties(element, {extensionElements: extensionElements});
+}
+
+export function addFormField(elementID, formFieldData, elementRegistry, moddle, modeling) {
+    var element = elementRegistry.get(elementID);
+    var extensionElements =	element.businessObject.get('extensionElements');
+
+    if (!extensionElements) {
+        extensionElements = moddle.create('bpmn:ExtensionElements');
+    }
+
+    if (!extensionElements.values) {
+        extensionElements.values = [];
+    }
+
+    let form = extensionElements.values.filter(function(extensionElement) {
+        return extensionElement.$type === 'camunda:FormData';}
+    )[0];
+
+    console.log(`Found form data ${form}.`);
+
+    if (!form) {
+        form = moddle.create('camunda:FormData');
+    }
+
+    var formField = moddle.create('camunda:FormField', formFieldData);
 
     var existingFieldsWithID = form.get('fields').filter(function(elem) {
         return elem.id === formField.id;

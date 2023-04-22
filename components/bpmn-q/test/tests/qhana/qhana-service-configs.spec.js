@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import {
   createConfigurationForServiceData,
   instance as qhanaConfigurationsEndpoint
-} from '../../../modeler-component/extensions/qhana/configurations/QHAnaConfigurationsEndpoint';
+} from '../../../modeler-component/extensions/qhana/configurations/QHAnaConfigurations';
 
 const QHANA_SERVICE_DATA = [
   {

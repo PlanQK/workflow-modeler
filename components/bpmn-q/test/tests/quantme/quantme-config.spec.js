@@ -6,6 +6,14 @@ describe('Test QuantME ConfigManager', function () {
 
   describe('Test QuantME endpoint', function () {
 
+    before('Reset QuantME configuration', function () {
+      quantmeConfig.resetConfig();
+    });
+
+    afterEach('Reset QuantME configuration', function () {
+      quantmeConfig.resetConfig();
+    });
+
     it('Should configure QuantME endpoints', function () {
       setPluginConfig([
         {

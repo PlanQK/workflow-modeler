@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './resources/css/planqk-icons.css';
 import PlanQKExtensionModule from './';
 import {getXml, saveXmlAsLocalFile} from "../../common/util/IoUtilities";
 import {startPlanqkReplacementProcess} from "./exec-completion/PlanqkServiceTaskCompletion";
