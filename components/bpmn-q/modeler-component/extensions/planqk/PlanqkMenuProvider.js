@@ -1,6 +1,6 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
-import * as planqkReplaceOptions from './PlanQKReplaceOptions';
+// import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import {createMenuEntries} from "../../common/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
@@ -51,19 +51,19 @@ export default class PlanqkMenuProvider {
       }
 
       if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
-        const dataStoreEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
-        return Object.assign(dataStoreEntries, entries);
+        // const dataStoreEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
+        // return Object.assign(dataStoreEntries, entries);
       }
 
       if (is(element, 'bpmn:DataObjectReference')) {
-        const planqkEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
-        return Object.assign(entries, planqkEntries);
+        // const planqkEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
+        // return Object.assign(entries, planqkEntries);
       }
 
       if (is(element, 'bpmn:Task')) {
-        const planqkEntries = createMenuEntries(element, planqkReplaceOptions.TASK, self.translate, self.replaceElement);
-        entries = Object.assign(planqkEntries, entries);
-        return entries;
+        // const planqkEntries = createMenuEntries(element, planqkReplaceOptions.TASK, self.translate, self.replaceElement);
+        // entries = Object.assign(planqkEntries, entries);
+        // return entries;
       }
 
       if (element.type === 'bpmn:Task') {
