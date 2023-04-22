@@ -19,5 +19,5 @@ jobs:
         run: |
           npm ci
           npm run build
-          npm run test
+          npm test
         working-directory: ./components/bpmn-q
