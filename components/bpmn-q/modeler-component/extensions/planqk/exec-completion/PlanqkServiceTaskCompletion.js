@@ -1,5 +1,4 @@
 import {
-  createModelerFromXml,
   getDefinitionsFromXml,
   getRootProcess,
   getSingleFlowElement,
@@ -9,8 +8,7 @@ import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
 import {getXml} from "../../../common/util/IoUtilities";
 import {
-  addExecutionListener,
-  addFormField,
+  addFormFieldDataForMap,
   getStartEvent,
   setInputParameter
 } from "../../../common/util/ModellingUtilities";
@@ -204,12 +202,13 @@ async function replaceByDataStore(definitions, dataPool, parentProcess, modeler)
   // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
   const formField =
     {
-      'defaultValue': dataPool.dataPoolLink,
-      'id': dataPool.dataPoolName,
-      'label': 'Link to ' + dataPool.dataPoolName,
-      'type': 'string'
+      defaultValue: dataPool.dataPoolLink,
+      id: dataPool.dataPoolName,
+      label: 'Link to ' + dataPool.dataPoolName,
+      type: 'string'
     };
-  addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
+  // addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
+  addFormFieldDataForMap(startEvent.id, formField, dataPool.get('details'), elementRegistry, moddle, modeling);
 
   return result['success'];
 }
