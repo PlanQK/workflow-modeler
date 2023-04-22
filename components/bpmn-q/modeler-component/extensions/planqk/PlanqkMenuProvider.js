@@ -1,4 +1,4 @@
-import * as planqkReplaceOptions from './PlanQKReplaceOptions';
+// import * as planqkReplaceOptions from './PlanQKReplaceOptions';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
 import {createMenuEntries} from "../../common/util/PopupMenuUtilities";
