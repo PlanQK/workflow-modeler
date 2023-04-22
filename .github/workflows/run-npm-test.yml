@@ -1,0 +1,22 @@
+name: Run all test of the Quantum Workflow Modeler
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+  push:
+    branches:
+      - 'github-action-for-tests'
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: run tests
+        run: |
+          npm ci
+          npm run test
+        working-directory: ./components/bpmn-q
