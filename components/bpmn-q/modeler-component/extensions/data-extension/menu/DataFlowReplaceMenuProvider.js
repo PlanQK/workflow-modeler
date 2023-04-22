@@ -19,8 +19,12 @@ export default class DataFlowReplaceMenuProvider {
     this.commandStack = commandStack;
   }
 
-  getPopupMenuHeaderEntries() {
+  getPopupMenuHeaderEntries(element) {
     return function (entries) {
+
+      if (is(element, consts.DATA_MAP_OBJECT)) {
+        return {};
+      }
       return entries;
     };
   }
