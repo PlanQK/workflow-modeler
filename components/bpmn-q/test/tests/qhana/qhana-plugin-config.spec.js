@@ -17,7 +17,7 @@ describe('Test QHAna plugin config', function () {
         }]
       );
 
-      expect(qhanaConfig.getListPluginsURL()).to.equal('http://test:5006/api/plugins/?item-count=100');
+      expect(qhanaConfig.getListPluginsURL()).to.equal('fail');
       expect(qhanaConfig.getGetPluginsURL()).to.equal('http://test:5006/api/plugins/');
     });
   });
