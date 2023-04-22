@@ -46,7 +46,7 @@ import {
 import {
   addCamundaInputMapParameter,
   addCamundaInputParameter, addCamundaOutputMapParameter,
-  addCamundaOutputParameter, addExecutionListener, addFormField, createCamundaMap,
+  addCamundaOutputParameter, addExecutionListener, addFormField, addFormFieldForMap, createCamundaMap,
   getCamundaInputOutput,
   getRootProcess, getStartEvent
 } from '../../../common/util/ModellingUtilities';
@@ -423,7 +423,7 @@ function transformDataMapObjects(rootProcess, definitions, modeler) {
       //
       //
       // }
-      addFormField(startEvent.id, dataMapObject.name, dataMapObject.get(consts.CONTENT), elementRegistry, moddle, modeling);
+      addFormFieldForMap(startEvent.id, dataMapObject.name, dataMapObject.get(consts.CONTENT), elementRegistry, moddle, modeling);
       // addFormFieldWithProperties()
       //
       // // remove trailing comma
@@ -522,17 +522,20 @@ function transformDataStoreMaps(rootProcess, definitions, modeler) {
 
     const startEvent = getStartEvent(dataElement.parent.businessObject);
     console.log(startEvent);
+
+    addFormFieldForMap(startEvent.id, dataStoreMap.name, dataStoreMap.get(consts.DETAILS), elementRegistry, moddle, modeling);
+
     // setInputParameter(parentProcess.businessObject, dataPool.dataPoolName, dataPool.dataPoolLink);
-    for (let detail of dataStoreMap.get(consts.DETAILS)) {
-      let formField =
-        {
-          'defaultValue': detail.value,
-          'id': detail.name + '_' + dataStoreMap.name,
-          'label': detail.name + ' of ' + dataStoreMap.name,
-          'type': 'string'
-        };
-      addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
-    }
+    // for (let detail of dataStoreMap.get(consts.DETAILS)) {
+    //   let formField =
+    //     {
+    //       'defaultValue': detail.value,
+    //       'id': detail.name + '_' + dataStoreMap.name,
+    //       'label': detail.name + ' of ' + dataStoreMap.name,
+    //       'type': 'string'
+    //     };
+    //   addFormField(startEvent.id, formField, elementRegistry, moddle, modeling);
+    // }
 
     const dataStore = bpmnFactory.create('bpmn:DataStoreReference');
     const result = insertShape(definitions, dataStore.parent, dataStore, {}, true, modeler, dataStoreMap);

@@ -11,7 +11,7 @@
 
 import defaultConfig from "./config";
 import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
-const config = {};
+let config = {};
 
 /**
  * Get the endpoint for Data Object Configurations
@@ -336,4 +336,12 @@ export function setAWSRuntimeHandlerEndpoint(endpoint) {
     config.awsRuntimeHandlerEndpoint = endpoint;
     // app.emit('menu:action', 'awsRuntimeHandlerEndpointChanged', endpoint);
   }
+}
+
+/**
+ * Reset all saved endpoints and configuration values back to default or the value of the respective plugin config
+ * by setting this.comfig to an empty js object.
+ */
+export function resetConfig() {
+  config = {};
 }
