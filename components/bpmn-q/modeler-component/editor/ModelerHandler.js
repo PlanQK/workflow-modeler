@@ -26,7 +26,7 @@ export function createModeler(containerId, propertiesParentId) {
         },
         moddleExtensions: getExtensions(),
     });
-    return getModeler();
+    return modeler;
 }
 
 /**

@@ -73,7 +73,7 @@
   };
 
   const modelerComponent = document.querySelector('quantum-workflow');
-  modelerComponent.pluginConfigs = [
+  const pluginConfigs = [
     {
       name: 'editor',
       config: {
@@ -120,6 +120,7 @@
       }
     }
   ]
+  modelerComponent.pluginConfigs = pluginConfigs;
 </script>
 
 </body>
