@@ -30,6 +30,7 @@
 
 .spaceAbove {
     padding-top: 1em;
+    margin-left: 10px;
 }
 
 ul {
@@ -60,8 +61,7 @@ tr:nth-child(even) {
     flex-direction: column;
     align-items: flex-start;
     overflow: auto;
-    min-width: 115px;
+    min-width: 112px;
     max-height: 263px;
-    margin-right: 5px;
-    padding-right: 10px;
+    direction: rtl;
 }
