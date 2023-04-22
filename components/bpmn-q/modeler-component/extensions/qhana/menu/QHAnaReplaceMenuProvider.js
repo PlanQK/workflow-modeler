@@ -3,7 +3,7 @@ import {
   createConfigurationsEntries,
 } from '../../../editor/configurations/ConfigurationsUtil';
 import * as consts from '../QHAnaConstants';
-import {getServiceTaskConfigurations} from '../configurations/QHAnaConfigurations';
+import {instance as qhanaServiceConfigs}  from '../configurations/QHAnaConfigurations';
 import {createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';
 
 export default class QHAnaReplaceMenuProvider {
@@ -34,7 +34,7 @@ export default class QHAnaReplaceMenuProvider {
       }
 
       if (is(element, consts.QHANA_SERVICE_TASK)) {
-        const configEntries = createConfigurationsEntries(element, 'qhana-service-task', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
+        const configEntries = createConfigurationsEntries(element, 'qhana-service-task', qhanaServiceConfigs().getQHAnaServiceConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
 
         if (Object.entries(configEntries).length > 0) {
           return configEntries;
@@ -60,7 +60,7 @@ export default class QHAnaReplaceMenuProvider {
     let options = createConfigurationsEntries(
       element,
       'qhana-service-task',
-      getServiceTaskConfigurations(),
+      qhanaServiceConfigs().getQHAnaServiceConfigurations(),
       bpmnFactory,
       modeling,
       commandStack,

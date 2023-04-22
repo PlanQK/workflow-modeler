@@ -15,14 +15,10 @@ import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn
 } from "../../../common/util/PopupMenuUtilities";
-import * as consts from '../../data-extension/Constants';
 import {
   createConfigurationsEntries,
-  handleInputOutputAttribute
 } from '../../../editor/configurations/ConfigurationsUtil';
-import * as replaceOptions from '../../data-extension/menu/DataFlowReplaceOptions';
-import {getQuantMEDataConfigurations} from '../configurations/DataObjectConfigurations';
-import {getServiceTaskConfigurations} from '../../qhana/configurations/QHAnaConfigurations';
+import {instance as dataObjectConfigs}  from '../configurations/DataObjectConfigurations';
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
@@ -115,7 +111,7 @@ export default class QuantMEReplaceMenuProvider {
     let options = createConfigurationsEntries(
       element,
       'dataflow-data-map-object-icon',
-      getQuantMEDataConfigurations(),
+      dataObjectConfigs().getQuantMEDataConfigurations(),
       bpmnFactory,
       modeling,
       commandStack,
@@ -132,45 +128,6 @@ export default class QuantMEReplaceMenuProvider {
         'bpmn-icon-task-quantum-computation'
       )
     };
-  }
-
-  createDemoTasks(element) {
-    const popupMenu = this.popupMenu;
-    const translate = this.translate;
-    const replaceElement = this.bpmnReplace.replaceElement;
-
-    let demoOptions = createMenuEntries(element, quantmeReplaceOptions.DEMO, translate, replaceElement);
-    // demoOptions = Object.assign(this.createDummyEntry(element), demoOptions);
-
-    const taskEntry = {};
-    taskEntry['replace-by-demo-options'] = createMoreOptionsEntryWithReturn(
-      element,
-      'Demo Tasks',
-      'Demo Tasks',
-      popupMenu,
-      demoOptions,
-      'bpmn-icon-user'
-    );
-    return taskEntry;
-  }
-
-  createDummyEntry(element) {
-    const popupMenu = this.popupMenu;
-    const translate = this.translate;
-    const replaceElement = this.bpmnReplace.replaceElement;
-
-    const dummyOptions = createMenuEntries(element, quantmeReplaceOptions.DUMMY, translate, replaceElement);
-
-    const taskEntry = {};
-    taskEntry['replace-by-dummy-options'] = createMoreOptionsEntryWithReturn(
-      element,
-      'Dummy Tasks',
-      'Dummy Tasks',
-      popupMenu,
-      dummyOptions,
-      'bpmn-icon-receive'
-    );
-    return taskEntry;
   }
 }
 

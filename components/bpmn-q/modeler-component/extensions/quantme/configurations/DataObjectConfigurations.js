@@ -2,16 +2,31 @@ import ConfigurationsEndpoint from '../../../editor/configurations/Configuration
 import * as dataConsts from '../../data-extension/Constants';
 import * as configManager from '../framework-config/config-manager';
 
-const endpoint = new ConfigurationsEndpoint(configManager.getQuantMEDataConfigurationsEndpoint());
+class DataObjectConfigurations extends ConfigurationsEndpoint{
 
-export function getQuantMEDataConfigurations() {
-  return endpoint.getConfigurations(dataConsts.DATA_MAP_OBJECT);
+  constructor() {
+    super(configManager.getQuantMEDataConfigurationsEndpoint());
+  }
+
+  getQuantMEDataConfigurations() {
+    return this.getConfigurations(dataConsts.DATA_MAP_OBJECT);
+  }
+
+  getQuantMEDataConfiguration(id) {
+    return this.getConfiguration(id);
+  }
+
+  updateQuantMEDataConfigurations() {
+    this.fetchConfigurations();
+  }
 }
 
-export function getQuantMEDataConfiguration(id) {
-  return endpoint.getConfiguration(id);
-}
 
-export function updateQuantMEDataConfigurations() {
-  endpoint.fetchConfigurations();
+let configEndpointInstance;
+
+export function instance() {
+  if (!configEndpointInstance) {
+    configEndpointInstance = new DataObjectConfigurations();
+  }
+  return configEndpointInstance;
 }

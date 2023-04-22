@@ -8,7 +8,7 @@ export default function HybridRuntimeTab() {
     const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(config.getHybridRuntimeProvenance());
     const [awsRuntimeHandlerEndpoint, setAWSRuntimeHandlerEndpoint] = useState(config.getAWSRuntimeHandlerEndpoint());
 
-    let hybridRuntimeProvenanceBoolean = (hybridRuntimeProvenance === 'true');
+    let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance;
 
     const modeler = getModeler();
 
@@ -49,9 +49,9 @@ export default function HybridRuntimeTab() {
         config.setQiskitRuntimeHandlerEndpoint(qiskitRuntimeHandlerEndpoint);
         config.setAWSRuntimeHandlerEndpoint(awsRuntimeHandlerEndpoint);
         config.setHybridRuntimeProvenance(hybridRuntimeProvenance);
-    }
+    };
 
-    return <>
+    return (<>
         <h3>Hybrid Runtime Handler Endpoints</h3>
         <table>
             <tbody>
@@ -89,12 +89,12 @@ export default function HybridRuntimeTab() {
                         checked={hybridRuntimeProvenanceBoolean}
                         onChange={() => {
                             hybridRuntimeProvenanceBoolean = !hybridRuntimeProvenanceBoolean;
-                            setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean.toString());}}/>
+                            setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);}}/>
                 </td>
             </tr>
             </tbody>
         </table>
-    </>
+    </>);
 }
 
 HybridRuntimeTab.prototype.config = () => {
@@ -103,4 +103,4 @@ HybridRuntimeTab.prototype.config = () => {
     modeler.config.qiskitRuntimeHandlerEndpoint = config.getQiskitRuntimeHandlerEndpoint();
     modeler.config.hybridRuntimeProvenance = config.getHybridRuntimeProvenance();
     modeler.config.awsRuntimeHandlerEndpoint = config.getAWSRuntimeHandlerEndpoint();
-}
+};

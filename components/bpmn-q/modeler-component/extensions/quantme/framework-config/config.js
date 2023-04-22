@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const config = {
+const defaultConfig = {
   quantmeDataConfigurationsEndpoint: 'http://localhost:8100/data-objects',
   opentoscaEndpoint: 'http://192.168.178.20:1337/csars',
   wineryEndpoint: 'http://192.168.178.20:8093/winery',
@@ -24,4 +24,4 @@ const config = {
   githubRepositoryPath: '2022-closer/qrms',
   hybridRuntimeProvenance: false
 };
-export default config;
+export default defaultConfig;

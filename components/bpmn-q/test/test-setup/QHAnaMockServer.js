@@ -8,22 +8,20 @@ const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-type');
 
-  // Endpoint: http://localhost:5000/api/plugins/
+  // Endpoint: http://localhost:5006/api/plugins/
   if (req.url.startsWith('/api/plugins/?item-count=')) {
 
     console.log('List Plugins ' + req.url);
 
-    // const itemCount = parseInt(req.url.split('=')[1]);
-    // const responsePlugins = itemCount ? pluginList.slice(0, itemCount) : pluginList;
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(pluginList));
 
-    // Endpoint: http://localhost:5000/api/plugins/{id}/
+    // Endpoint: http://localhost:5006/api/plugins/{id}/
   } else if (req.url.startsWith('/api/plugins/')) {
 
-    const id = req.url.split('/')[3]; //parseInt(req.url.split('/')[3]);
+    const id = req.url.split('/')[3];
     console.log('Looking for Plugin with id ' + id);
-    // const pluginsArray = JSON.parse(plugins);
+
     const plugin = plugins.find(p => {
       console.log(p.data.self.resourceKey.pluginId);
       return p.data.self.resourceKey.pluginId === id;
@@ -42,8 +40,8 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(5000, () => {
-  console.log('Server listening on port 5000');
+server.listen(5006, () => {
+  console.log('Server listening on port 5006');
 });
 
 // List of sample plugins

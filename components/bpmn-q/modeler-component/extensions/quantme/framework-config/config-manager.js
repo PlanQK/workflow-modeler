@@ -9,14 +9,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import config from "./config";
+import defaultConfig from "./config";
+import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
+const config = {};
 
 /**
  * Get the endpoint for Data Object Configurations
  */
 export function getQuantMEDataConfigurationsEndpoint() {
   if (config.quantmeDataConfigurationsEndpoint === undefined) {
-    return '';
+    setQuantMEDataConfigurationsEndpoint(
+      getPluginConfig('quantme').quantmeDataConfigurationsEndpoint
+      || defaultConfig.quantmeDataConfigurationsEndpoint);
   }
   return config.quantmeDataConfigurationsEndpoint;
 }
@@ -35,7 +39,9 @@ export function setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint)
  */
 export function getNisqAnalyzerEndpoint() {
   if (config.nisqAnalyzerEndpoint === undefined) {
-    return '';
+    setNisqAnalyzerEndpoint(
+      getPluginConfig('quantme').nisqAnalyzerEndpoint
+      || defaultConfig.nisqAnalyzerEndpoint);
   }
   return config.nisqAnalyzerEndpoint;
 }
@@ -55,7 +61,9 @@ export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
  */
 export function getTransformationFrameworkEndpoint() {
   if (config.transformationFrameworkEndpoint === undefined) {
-    return '';
+    setTransformationFrameworkEndpoint(
+      getPluginConfig('quantme').transformationFrameworkEndpoint
+      || defaultConfig.transformationFrameworkEndpoint);
   }
   return config.transformationFrameworkEndpoint;
 }
@@ -77,7 +85,9 @@ export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoi
  */
 export function getOpenTOSCAEndpoint() {
   if (config.opentoscaEndpoint === undefined) {
-    return '';
+    setOpenTOSCAEndpoint(
+      getPluginConfig('quantme').opentoscaEndpoint
+      || defaultConfig.opentoscaEndpoint);
   }
   return config.opentoscaEndpoint;
 }
@@ -101,7 +111,9 @@ export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
  */
 export function getWineryEndpoint() {
   if (config.wineryEndpoint === undefined) {
-    return '';
+    setWineryEndpoint(
+      getPluginConfig('quantme').wineryEndpoint
+      || defaultConfig.wineryEndpoint);
   }
   return config.wineryEndpoint;
 }
@@ -125,7 +137,9 @@ export function setWineryEndpoint(wineryEndpoint) {
  */
 export function getQRMRepositoryPath() {
   if (config.githubRepositoryPath === undefined) {
-    return '';
+    setQRMRepositoryPath(
+      getPluginConfig('quantme').githubRepositoryPath
+      || defaultConfig.githubRepositoryPath);
   }
   return config.githubRepositoryPath;
 }
@@ -149,7 +163,9 @@ export function setQRMRepositoryPath(repositoryPath) {
  */
 export function getQRMRepositoryName() {
   if (config.githubRepositoryName === undefined) {
-    return '';
+    setQRMRepositoryName(
+      getPluginConfig('quantme').githubRepositoryName
+      || defaultConfig.githubRepositoryName);
   }
   return config.githubRepositoryName;
 }
@@ -173,7 +189,9 @@ export function setQRMRepositoryName(repositoryName) {
  */
 export function getQRMRepositoryUserName() {
   if (config.githubUsername === undefined) {
-    return '';
+    setQRMUserName(
+      getPluginConfig('quantme').githubUsername
+      || defaultConfig.githubUsername);
   }
   return config.githubUsername;
 }
@@ -197,7 +215,9 @@ export function setQRMUserName(userName) {
  */
 export function getQiskitRuntimeHandlerEndpoint() {
   if (config.qiskitRuntimeHandlerEndpoint === undefined) {
-    return '';
+    setQiskitRuntimeHandlerEndpoint(
+      getPluginConfig('quantme').qiskitRuntimeHandlerEndpoint
+      || defaultConfig.qiskitRuntimeHandlerEndpoint);
   }
   return config.qiskitRuntimeHandlerEndpoint;
 }
@@ -221,7 +241,9 @@ export function setQiskitRuntimeHandlerEndpoint(endpoint) {
  */
 export function getScriptSplitterEndpoint() {
   if (config.scriptSplitterEndpoint === undefined) {
-    return '';
+    setScriptSplitterEndpoint(
+      getPluginConfig('quantme').scriptSplitterEndpoint
+      || defaultConfig.scriptSplitterEndpoint);
   }
   return config.scriptSplitterEndpoint;
 }
@@ -245,7 +267,9 @@ export function setScriptSplitterEndpoint(endpoint) {
  */
 export function getScriptSplitterThreshold() {
   if (config.scriptSplitterThreshold === undefined) {
-    return 0;
+    setScriptSplitterThreshold(
+      getPluginConfig('quantme').scriptSplitterThreshold
+      || defaultConfig.scriptSplitterThreshold);
   }
   return config.scriptSplitterThreshold;
 }
@@ -269,7 +293,9 @@ export function setScriptSplitterThreshold(threshold) {
  */
 export function getHybridRuntimeProvenance() {
   if (config.hybridRuntimeProvenance === undefined) {
-    return false;
+    setHybridRuntimeProvenance(
+      getPluginConfig('quantme').hybridRuntimeProvenance
+      || defaultConfig.hybridRuntimeProvenance);
   }
   return config.hybridRuntimeProvenance;
 }
@@ -293,7 +319,9 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
  */
 export function getAWSRuntimeHandlerEndpoint() {
   if (config.awsRuntimeHandlerEndpoint === undefined) {
-    return '';
+    setAWSRuntimeHandlerEndpoint(
+      getPluginConfig('quantme').awsRuntimeHandlerEndpoint
+      || defaultConfig.awsRuntimeHandlerEndpoint);
   }
   return config.awsRuntimeHandlerEndpoint;
 }
