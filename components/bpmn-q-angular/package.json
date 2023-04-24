@@ -10,7 +10,7 @@
   },
   "private": true,
   "dependencies": {
-    "@planqk/quantum-workflow-modeler": "^0.0.2",
+    "@planqk/quantum-workflow-modeler": "^0.1.2",
     "@angular/animations": "^15.0.0",
     "@angular/common": "^15.0.0",
     "@angular/compiler": "^15.0.0",

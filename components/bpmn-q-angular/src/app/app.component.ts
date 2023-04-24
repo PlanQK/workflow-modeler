@@ -1,11 +1,12 @@
 import {Component, ElementRef, OnInit, ViewEncapsulation} from '@angular/core';
-// import '@planqk/quantum-workflow-modeler/public/app.js';
-import '../../../bpmn-q/public/';
+import '@planqk/quantum-workflow-modeler/public';
+// import '../../../bpmn-q/public/';
+// import '../../../bpmn-q/public/modeler-styles.css';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css', '../../../bpmn-q/public/modeler-styles.css'],
+  styleUrls: ['./app.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit {
