@@ -1,4 +1,6 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// const prefixCss = require('prefix-css-loader');
+// const PostCSSPrefix = require('postcss-prefix-webpack');
 const path = require('path');
 
 module.exports = {
@@ -37,7 +39,54 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          // 'style-loader',
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          // {
+          //   loader: 'prefix-css-loader',
+          //   options: {
+          //     selector: '.quantum-workflow-modeler',
+          //     // exclude: null,
+          //     // minify: false
+          //   }
+          // }
+          // {
+          //   loader: 'postcss-loader',
+          //   options: {
+          //     // plugins: [
+          //     //   'autoprefixer',
+          //     // ]
+          //     postcssOptions: {
+          //       plugins: {
+          //         "postcss-prefix-selector": {
+          //           prefix: '.qwm',
+          //           transform(prefix, selector, prefixedSelector, filePath, rule) {
+          //             if (selector.match(/^(html|body)/)) {
+          //               return selector.replace(/^([^\s]*)/, `$1 ${prefix}`);
+          //             }
+          //
+          //             if (filePath.match(/node_modules/)) {
+          //               return selector; // Do not prefix styles imported from node_modules
+          //             }
+          //
+          //             const annotation = rule.prev();
+          //             if (annotation?.type === 'comment' && annotation.text.trim() === 'no-prefix') {
+          //               return selector; // Do not prefix style rules that are preceded by: /* no-prefix */
+          //             }
+          //
+          //             return prefixedSelector;
+          //           },
+          //         },
+          //         autoprefixer: {
+          //           overrideBrowserslist: ['last 4 versions']
+          //         }
+          //       }
+          //     }
+          //   }
+          // },
+        ],
       },
       {
         test: /\.jsx?$/,
@@ -62,8 +111,8 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'modeler-styles.css'
-    })
+    }),
   ],
   mode: 'development',
-  devtool: 'source-map'
+  devtool: 'source-map',
 };

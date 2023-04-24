@@ -9,9 +9,9 @@ import QFlowModeler from './components/QFlowModeler.vue';
         <div style="display: flex; flex-direction: column; height: 100%; width: 85%; flex: 1">
             <h1 style="margin: 10px">Vue BPMN Modeler</h1>
             <div id="vue-button-container" style="display: flex; flex-shrink: 0; height: 60px; background-color: lightgrey">
-                <button class="my-button">Dummy</button>
-                <button class="my-button">Save</button>
-                <button class="my-button">Load</button>
+                <button class="toolbar-btn">Dummy</button>
+                <button class="toolbar-btn">Save</button>
+                <button class="toolbar-btn">Load</button>
             </div>
             <QFlowModeler/>
             <div style="height: 80px; background-color: lightgrey"></div>
@@ -20,7 +20,7 @@ import QFlowModeler from './components/QFlowModeler.vue';
 </template>
 
 <style scoped>
-    .my-button {
+    .toolbar-btn {
         font-size: 18px;
         width: 150px;
         margin: 10px;
