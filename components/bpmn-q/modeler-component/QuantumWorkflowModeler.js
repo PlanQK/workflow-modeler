@@ -4,9 +4,10 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
-import './extensions/quantme/styling/quantme.less';
 import './editor/resources/styling/modeler.css';
 import './editor/resources/styling/editor-ui.css';
+import './editor/ui/notifications/Notifications.css';
+import './editor/ui/notifications/Notifiation.css';
 import './common/camunda-components/styles/style.less';
 
 import React from 'react';

@@ -8,26 +8,21 @@
  * except in compliance with the MIT License.
  */
 
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 
-import classnames from 'classnames';
-
-// import css from './Notification.less';
-import './NotifiationCSS.css'
-
-export const NOTIFICATION_TYPES = [ 'info', 'success', 'error', 'warning' ];
+export const NOTIFICATION_TYPES = ['info', 'success', 'error', 'warning'];
 
 export default class Notification extends PureComponent {
   static getDerivedStateFromError() {
-    return { error: true };
+    return {error: true};
   }
 
   state = {
     error: false
-  }
+  };
 
   componentDidMount() {
-    const { duration } = this.props;
+    const {duration} = this.props;
 
     if (duration) {
       this.setupTimeout(duration);
@@ -37,7 +32,7 @@ export default class Notification extends PureComponent {
   componentDidUpdate(previousProps) {
     const currentDuration = this.props.duration;
 
-    const { duration: previousDuration } = previousProps;
+    const {duration: previousDuration} = previousProps;
 
     if (currentDuration !== previousDuration) {
       this.resetTimeout();
@@ -69,15 +64,14 @@ export default class Notification extends PureComponent {
       close,
       content,
       title,
-      type
     } = this.props;
 
     return this.state.error ? null : <div className="Notification">
-      <span className="close" onClick={ close } />
+      <span className="close" onClick={close}/>
       <h2>
-        { title }
+        {title}
       </h2>
-      { content && <div className="content">{ content }</div> }
+      {content && <div className="content">{content}</div>}
     </div>;
   }
 }

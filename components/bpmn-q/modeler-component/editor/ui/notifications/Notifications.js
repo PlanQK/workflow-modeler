@@ -8,13 +8,9 @@
  * except in compliance with the MIT License.
  */
 
-import React, { PureComponent } from 'react';
-import { createPortal } from 'react-dom';
-
+import React, {PureComponent} from 'react';
+import {createPortal} from 'react-dom';
 import Notification from './Notification';
-
-// import css from './Notifications.less';
-import './NotificationsCSS.css'
 import {NOTIFICATION_TYPES} from "./NotificationHandler";
 
 export default class Notifications extends PureComponent {
@@ -36,7 +32,7 @@ export default class Notifications extends PureComponent {
     document.body.removeChild(this.container);
   }
 
-  displayNotification({ type = 'info', title, content, duration = 4000 }) {
+  displayNotification({type = 'info', title, content, duration = 4000}) {
     const notifications = this.state.notifications;
 
     if (!NOTIFICATION_TYPES.includes(type)) {
@@ -65,9 +61,9 @@ export default class Notifications extends PureComponent {
 
     this.setState({
       notifications: [
-      ...notifications,
-      notification
-    ]
+        ...notifications,
+        notification
+      ]
     });
 
     return {
@@ -77,22 +73,22 @@ export default class Notifications extends PureComponent {
   }
 
   closeNotifications() {
-    this.setState({ notifications: []});
+    this.setState({notifications: []});
   }
 
   _updateNotification(id, options) {
     const notifications = this.state.notifications.map(notification => {
-      const { id: currentId } = notification;
+      const {id: currentId} = notification;
 
-      return currentId !== id ? notification : { ...notification, ...options };
+      return currentId !== id ? notification : {...notification, ...options};
     });
 
-    this.setState({ notifications: notifications})
+    this.setState({notifications: notifications})
   }
 
   _closeNotification(id) {
-    const notifications = this.state.notifications.filter(({ id: currentId }) => currentId !== id);
-    this.setState({ notifications: notifications})
+    const notifications = this.state.notifications.filter(({id: currentId}) => currentId !== id);
+    this.setState({notifications: notifications})
   }
 
   render() {
@@ -100,11 +96,11 @@ export default class Notifications extends PureComponent {
       notifications
     } = this.state;
     notifications = notifications || [];
-    const notificationComponents = notifications.map(({ id, ...props }) => {
-      return <Notification key={ id } { ...props } />;
+    const notificationComponents = notifications.map(({id, ...props}) => {
+      return <Notification key={id} {...props} />;
     }).reverse();
 
     // className={ css.Notifications }
-    return createPortal(<div className="Notifications">{ notificationComponents }</div>, this.container);
+    return createPortal(<div className="Notifications">{notificationComponents}</div>, this.container);
   }
 }

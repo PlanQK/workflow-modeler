@@ -16,7 +16,14 @@ module.exports = {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'image/[name][hash][ext]'
+          filename: 'images/[name][hash][ext]'
+        }
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][hash][ext]'
         }
       },
       {
@@ -53,7 +60,9 @@ module.exports = {
     extensions: ['.jsx', '.js']
   },
   plugins: [
-    new MiniCssExtractPlugin()
+    new MiniCssExtractPlugin({
+      filename: 'modeler-styles.css'
+    })
   ],
   mode: 'development',
   devtool: 'source-map'

@@ -5,8 +5,9 @@
 </template>
 <script setup>
 // import '@planqk/quantum-workflow-modeler/public'
+// import '@planqk/quantum-workflow-modeler/public/modeler-styles.css'
 import "../../../bpmn-q/public/";
-import "../../../bpmn-q/public/bundle.css";
+import "../../../bpmn-q/public/modeler-styles.css";
 </script>
 <script>
 export default {
@@ -95,12 +96,15 @@ export default {
           dataPools: [dp1, dp2, dp3],
         },
       },
-      // {
-      //     name: 'quantme',
-      //     config: {
-      //         test: 'test',
-      //     }
-      // }
+      {
+        name: "quantme",
+        config: {
+          test: "test",
+        },
+      },
+      {
+        name: "qhana",
+      },
     ];
   },
 };

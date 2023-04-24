@@ -8,7 +8,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import '../styling/quantme.css';
 import QuantMERenderer from './QuantMERenderer';
 import QuantMEReplaceMenuProvider from './QuantMEReplaceMenuProvider';
 import QuantMEFactory from './QuantMEFactory';

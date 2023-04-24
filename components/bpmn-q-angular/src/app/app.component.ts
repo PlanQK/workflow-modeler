@@ -5,7 +5,7 @@ import '../../../bpmn-q/public/';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css', '../../../bpmn-q/public/bundle.css'],
+  styleUrls: ['./app.component.css', '../../../bpmn-q/public/modeler-styles.css'],
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit {
