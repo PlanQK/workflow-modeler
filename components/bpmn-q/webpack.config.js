@@ -1,109 +1,69 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const webpack = require('webpack');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
 
 module.exports = {
-    entry: {
-        bundle: [ './modeler-component/QuantumWorkflowModeler.js' ]
-    },
-    output: {
-        path: path.resolve(__dirname, 'public'),
-        filename: 'index.js',
-        publicPath: '/',
-        library: 'quantumWorkflowModeler',
-        libraryTarget: 'umd',
-        umdNamedDefine: true,
-        // globalObject: 'this'
-    //     globalObject: 'this',
-    //     library: {
-    //         name: 'quantumWorkflowModeler',
-    //         type: 'umd',
-    //     },
-    },
+  entry: {
+    bundle: ['./modeler-component/QuantumWorkflowModeler.js']
+  },
+  output: {
+    filename: 'index.js',
+    path: path.resolve(__dirname, 'public'),
+  },
 
-    module: {
-        rules: [
-            // {
-            //     test: /\.js$/,
-            //     exclude: /node_modules/,
-            //     use: {
-            //         loader: 'babel-loader',
-            //         options: {
-            //             presets: ['@babel/preset-env']
-            //         }
-            //     }
-            // },
-            {
-                test: /\.bpmn$/,
-                type: "asset/source",
-            },
-            // {
-            //     test: /\.svg$/,
-            //     use: ['svg-url-loader'],
-            // },
-            {
-
-                test: /\.(png|jpg|jpeg|gif|svg)$/i,
-                type: 'asset/resource',
-                generator: {
-                    filename: 'image/[name][hash][ext]'
-                }
-            },
-            {
-                test: /\.css$/i,
-                use: ["style-loader", "css-loader", 'postcss-loader'],
-            },
-            {
-                test: /\.less$/i,
-                use: [
-                    // compiles Less to CSS
-                    "style-loader",
-                    "css-loader",
-                    "less-loader",
-                ],
-            },
-            {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        cacheDirectory: true,
-                        cacheCompression: false,
-                    }
-                }
-            }
-        ]
-    },
-    resolve: {
-        extensions: ['.jsx', '.js']
-    },
-    // optimization: {
-    //     minimize: true,
-    //     minimizer: [
-    //         new TerserPlugin({
-    //             extractComments: false,
-    //             terserOptions: {
-    //                 format: {
-    //                     comments: false
-    //                 }
-    //             }
-    //         })
-    //     ]
-    // },
-    plugins: [
-        new CopyWebpackPlugin([
-            { from: 'assets/**', to: 'vendor/bpmn-js', context: 'node_modules/bpmn-js/dist/' },
-            { from: '**/*.{html,css}', context: 'app/' },
-            { from: 'public/**/*.css' },
-            { from: 'public/image/**/*', to: 'image', flatten: true }
-            // { from: '**/*.{png, jpg, svg}', context: 'public/resources/'}
-        ]),
-        // new webpack.EnvironmentPlugin({ NODE_ENV: 'production' }),
-        // new CleanWebpackPlugin()
+  module: {
+    rules: [
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][hash][ext]'
+        }
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][hash][ext]'
+        }
+      },
+      {
+        test: /\.less$/i,
+        use: [
+          // compiles Less to CSS
+          "style-loader",
+          "css-loader",
+          "less-loader",
+        ],
+      },
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            cacheDirectory: true,
+            cacheCompression: false,
+          }
+        }
+      },
+      {
+        test: /\.bpmn$/,
+        type: "asset/source",
+      },
     ],
-    mode: 'development',
-    devtool: 'source-map'
+  },
+  resolve: {
+    extensions: ['.jsx', '.js']
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'modeler-styles.css'
+    })
+  ],
+  mode: 'development',
+  devtool: 'source-map'
 };

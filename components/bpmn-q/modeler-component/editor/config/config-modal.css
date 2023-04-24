@@ -61,7 +61,7 @@ tr:nth-child(even) {
     flex-direction: column;
     align-items: flex-start;
     overflow: auto;
-    min-width: 112px;
+    min-width: 120px;
     max-height: 263px;
     direction: rtl;
 }

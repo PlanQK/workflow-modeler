@@ -89,6 +89,7 @@
     "less": "^4.1.3",
     "less-loader": "^11.1.0",
     "lodash": "^4.17.21",
+    "mini-css-extract-plugin": "^2.7.5",
     "mocha": "^10.2.0",
     "postcss-loader": "^7.0.2",
     "raw-loader": "^4.0.2",

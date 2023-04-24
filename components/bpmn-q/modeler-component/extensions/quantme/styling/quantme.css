@@ -1,5 +1,4 @@
-//@import "../../../common/camunda-components/styles/style.less";
-@import '~bpmn-font/dist/css/bpmn-embedded.css';
+@import url('~bpmn-font/dist/css/bpmn-embedded.css');
 
 * {
     box-sizing: border-box;

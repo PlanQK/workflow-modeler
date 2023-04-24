@@ -7,7 +7,7 @@
  * Camunda licenses this file to you under the MIT; you may not use this file
  * except in compliance with the MIT License.
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, ReactComponent } from 'react';
 import ReactDOM from 'react-dom';
 
 import classNames from 'classnames';
@@ -16,8 +16,8 @@ import FocusTrap from './FocusTrap';
 import EscapeTrap from './EscapeTrap';
 import KeyboardInteractionTrap from './KeyboardInteractionTrap';
 
-import CloseIcon from '../resources/icons/Close.svg';
-
+// const CloseIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">   <path fill-rule="evenodd" d="M12.6666667,11.3333333 L20,11.3333333 L20,12.6666667 L12.6666667,12.6666667 L12.6666667,20 L11.3333333,20 L11.3333333,12.6666667 L4,12.6666667 L4,11.3333333 L11.3333333,11.3333333 L11.3333333,4 L12.6666667,4 L12.6666667,11.3333333 Z" transform="rotate(45 13.414 8.586)"/> </svg>';
+// import { ReactComponent as CloseIcon} from '../resources/icons/Close.svg';
 
 export default class Modal extends PureComponent {
 
@@ -107,7 +107,11 @@ function Close(props) {
 
   return (
     <button className="close" onClick={ onClick } aria-label="Close">
-      <img src={CloseIcon} aria-hidden="true" />
+      {/*<CloseIcon/>*/}
+      {/*<img src={CloseIcon} aria-hidden="true" />*/}
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M12.6666667,11.3333333 L20,11.3333333 L20,12.6666667 L12.6666667,12.6666667 L12.6666667,20 L11.3333333,20 L11.3333333,12.6666667 L4,12.6666667 L4,11.3333333 L11.3333333,11.3333333 L11.3333333,4 L12.6666667,4 L12.6666667,11.3333333 Z" transform="rotate(45 13.414 8.586)"/>
+      </svg>
     </button>
   );
 }
