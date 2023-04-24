@@ -78,7 +78,7 @@ export default class DataFlowRenderer extends BpmnRenderer {
 
   drawShape(parentNode, element) {
 
-    console.log("Draw Shape of type " + element.type)
+    console.log("Draw Shape of type " + element.type);
 
     // handle QuantME elements
     if (element.type in this.dataFlowHandler) {
@@ -91,7 +91,7 @@ export default class DataFlowRenderer extends BpmnRenderer {
 
   drawConnection(parentGfx, element) {
 
-    console.log("Draw Connection of type " + element.type)
+    console.log("Draw Connection of type " + element.type);
 
     if (element.type in this.dataFlowHandler) {
       let h = this.dataFlowHandler[element.type];

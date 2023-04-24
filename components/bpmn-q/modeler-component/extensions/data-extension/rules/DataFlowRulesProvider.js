@@ -3,7 +3,7 @@ import {
   is,
   isAny
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
-import * as consts from '../Constants'
+import * as consts from '../Constants';
 
 export default class CustomRulesProvider extends BpmnRules {
 
@@ -23,7 +23,7 @@ export default class CustomRulesProvider extends BpmnRules {
       const source = context.source,
         target = context.target;
 
-      return canConnect(source, target)
+      return canConnect(source, target);
     });
 
     /**
@@ -42,20 +42,20 @@ export default class CustomRulesProvider extends BpmnRules {
       }
     });
 
-    this.addRule('elements.create', 200000000000, function (context) {
-      console.log('+++++ elements.create')
-
-      var elements = context.elements;
-      let b = true;
-
-
-      forEach(elements, function (element) {
-        if (isConnection(element)) {
-          b = b && canConnectDataExtension(element.source, element.target);
-        }
-      });
-      return b;
-    });
+    // this.addRule('elements.create', 200000000000, function (context) {
+    //   console.log('+++++ elements.create');
+    //
+    //   var elements = context.elements;
+    //   let b = true;
+    //
+    //
+    //   elements.forEach(function (element) {
+    //     if (isConnection(element)) {
+    //       b = b && canConnectDataExtension(element.source, element.target);
+    //     }
+    //   });
+    //   return b;
+    // });
 
     this.addRule('shape.create', 200000000000, function (context) {
       console.log('+++++ shape create');
@@ -99,24 +99,29 @@ export default class CustomRulesProvider extends BpmnRules {
   canConnectDataExtension(source, target) {
     console.log('##### can connect data extension');
 
+    // block outgoing connections from loop, parallel und multi instance markers to data map objects
+    if (source.businessObject.loopCharacteristics && is(target, consts.DATA_MAP_OBJECT)) {
+      return false;
+    }
+
     // add rule for connections via a DataTransformationAssociation
     if (isAny(source, [consts.DATA_MAP_OBJECT]) &&
       isAny(target, [consts.DATA_MAP_OBJECT])) {
       console.log('Create connection between DataMapObjects with ' + consts.OUTPUT_TRANSFORMATION_ASSOCIATION);
-      return {type: consts.OUTPUT_TRANSFORMATION_ASSOCIATION}
+      return {type: consts.OUTPUT_TRANSFORMATION_ASSOCIATION};
     }
 
     // the normal rules for a DataObject
     if (isAny(source, [consts.DATA_MAP_OBJECT]) && isAny(target, ['bpmn:Activity', 'bpmn:ThrowEvent'])) {
-      console.log('Map to act')
-      return {type: 'bpmn:DataInputAssociation'}
+      console.log('Map to act');
+      return {type: 'bpmn:DataInputAssociation'};
     }
     if (isAny(target, [consts.DATA_MAP_OBJECT]) && isAny(source, ['bpmn:ThrowEvent'])) {
       console.log('Map to act');
       return false;
     }
     if (isAny(target, [consts.DATA_MAP_OBJECT]) && isAny(source, ['bpmn:Activity', 'bpmn:CatchEvent'])) {
-      return {type: 'bpmn:DataOutputAssociation'}
+      return {type: 'bpmn:DataOutputAssociation'};
     }
     if (isAny(source, [consts.DATA_MAP_OBJECT]) && isAny(target, ['bpmn:CatchEvent'])) {
       return false;

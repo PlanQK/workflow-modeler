@@ -121,8 +121,8 @@ export default class QuantMEReplaceMenuProvider {
     return {
       ['replace-by-quantme-data-options']: createMoreOptionsEntryWithReturn(
         element,
-        'QHAna Data Objects',
-        'QHAna Data Objects',
+        'QuantME Data Objects',
+        'QuantME Data Objects',
         popupMenu,
         options,
         'bpmn-icon-task-quantum-computation'

@@ -15,8 +15,16 @@ export default function ToolbarTransformationButton(props) {
 
   const [isToggleOn, setToggleOn] = useState(false);
 
-  // saves whether a transformation should be executed
-  const [transformationStates, setTransformationStates] = useState({});
+  // initially activate all transformations
+  const initialTransformationStates = {};
+  subButtons.forEach(function (button) {
+    initialTransformationStates[button.props.name] = true;
+  });
+
+  /*
+  Saves whether a transformation should be executed, if the state of a transformation is true, this transformation will be executed
+   */
+  const [transformationStates, setTransformationStates] = useState(initialTransformationStates);
 
   async function startTransformation() {
 
@@ -85,7 +93,7 @@ export default function ToolbarTransformationButton(props) {
       NotificationHandler.getInstance().displayNotification({
         type: 'warning',
         title: 'Error during transformation',
-        content: 'An unexpected error occured during transformation. Please check the formatting of your workflow.',
+        content: 'An unexpected error occurred during transformation. Please check the formatting of your workflow.',
         duration: 10000
       });
       console.log(error);
@@ -116,7 +124,6 @@ export default function ToolbarTransformationButton(props) {
 
       {isToggleOn &&
         <div className="extensible-buttons-list">
-          {/*{React.Children.toArray(newSubButtons)}*/}
           {
             subButtons.map(function (entry, index) {
               return (<TransformationButton
@@ -126,7 +133,7 @@ export default function ToolbarTransformationButton(props) {
                 name={entry.props.name}
                 className={entry.props.className}
                 selectedCallback={selectedCallback}
-                isChecked={transformationStates[entry.props.name] || false}/>);
+                isChecked={transformationStates[entry.props.name]}/>);
             })
           }
         </div>

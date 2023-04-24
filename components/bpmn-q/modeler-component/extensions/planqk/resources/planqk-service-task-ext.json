@@ -67,7 +67,7 @@
     },
     {
       "name": "DataPool",
-      "superClass": [ "bpmn:DataStoreReference" ],
+      "superClass": [ "dataflow:DataStoreMap" ],
       "properties": [
         {
           "name": "dataPoolName",

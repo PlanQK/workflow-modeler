@@ -26,16 +26,7 @@ class QuantumWorkflowModeler extends HTMLElement {
   workflowModel;
 
   connectedCallback() {
-    this.innerHTML = `
-            <div style="display: flex; flex-direction: column; height: 100%">
-              <div id="button-container" style="flex-shrink: 0;"></div>
-              <hr class="toolbar-splitter" />
-              <div id="main-div" style="display: flex; flex: 1">
-                <div id="canvas" style="width: 100%"></div>
-                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
-              </div>
-              <div id="notification-container"></div>
-            </div>`;
+    this.setInnerHtml();
 
     // const urlParams = new URLSearchParams(window.location.search);
     // this.workflowModel = urlParams.get('workflow');
@@ -43,23 +34,20 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     const self = this;
     window.addEventListener("message", function(event) {
-      console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-      console.log(event.origin);
-      console.log(window.location.href);
+
       if (event.origin === window.location.href.replace(/\/$/, '')
         && event.data && event.data.workflow && typeof event.data.workflow === 'string' && event.data.workflow.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
         const xmlString = event.data.workflow;
         // Do something with the XML string
         self.workflowModel = xmlString;
         editorConfig.setFileName(event.data.name);
-        console.log('################################################################################');
-        console.log('################################################################################');
-        console.log(event.data.name);
-        console.log(xmlString);
+
         // self.startModeler();
         loadDiagram(xmlString, getModeler());
       }
     });
+
+    this.startModeler();
   }
 
   startModeler() {
@@ -72,14 +60,14 @@ class QuantumWorkflowModeler extends HTMLElement {
     const handler = NotificationHandler.getInstance();
     const notificationComponent = handler.createNotificationsComponent([]);
 
-    const notificationRoot = createRoot(document.getElementById('notification-container'))
+    const notificationRoot = createRoot(document.getElementById('notification-container'));
     notificationRoot.render(<div>{notificationComponent}</div>);
 
     // create a transformation button for each transformation method of a active plugin
     const transformationButtons = getTransformationButtons();
 
     // integrate react components into the html component
-    const root = createRoot(document.getElementById('button-container'))
+    const root = createRoot(document.getElementById('button-container'));
     root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
                                transformButtons={transformationButtons}/>);
 
@@ -96,6 +84,19 @@ class QuantumWorkflowModeler extends HTMLElement {
     addEventListener("beforeunload", beforeUnloadListener, {capture: true});
   }
 
+  setInnerHtml() {
+    this.innerHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%">
+              <div id="button-container" style="flex-shrink: 0;"></div>
+              <hr class="toolbar-splitter" />
+              <div id="main-div" style="display: flex; flex: 1">
+                <div id="canvas" style="width: 100%"></div>
+                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
+              </div>
+              <div id="notification-container"></div>
+            </div>`;
+  }
+
   get pluginConfigs() {
     return this.pluginConfigsList || [];
   }
@@ -103,6 +104,9 @@ class QuantumWorkflowModeler extends HTMLElement {
   set pluginConfigs(pluginConfigs) {
     console.log(pluginConfigs);
     this.pluginConfigsList = pluginConfigs;
+
+    this.setInnerHtml();
+
     this.startModeler();
   }
 }
