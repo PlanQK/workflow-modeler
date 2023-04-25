@@ -154,6 +154,16 @@ const QHANA_SERVICE_CONFIGURATION = {
       },
     },
     {
+      name: 'version',
+      label: 'Version',
+      type: 'string',
+      value: 'v0.1.0',
+      editable: 'true',
+      bindTo: {
+        name: 'qhanaVersion',
+      },
+    },
+    {
       name: 'name',
       label: 'Title',
       type: 'string',

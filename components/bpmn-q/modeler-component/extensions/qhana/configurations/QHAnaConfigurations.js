@@ -91,6 +91,16 @@ export function createConfigurationForServiceData(serviceData) {
         },
       },
       {
+        name: 'version',
+        label: 'Version',
+        type: 'string',
+        value: serviceData.version,
+        editable: 'true',
+        bindTo: {
+          name: 'qhanaVersion',
+        },
+      },
+      {
         name: 'name',
         label: 'Title',
         type: 'string',

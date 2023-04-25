@@ -75,6 +75,7 @@ async function replaceByServiceTask(definitions, qhanaServiceTask, parentProcess
   if (result.success && result.element) {
     const newElement = result.element;
     addCamundaInputParameter(newElement, "qhanaIdentifier", qhanaServiceTask.qhanaIdentifier, bpmnFactory);
+    addCamundaInputParameter(newElement, "qhanaVersion", qhanaServiceTask.qhanaVersion, bpmnFactory);
     addCamundaInputParameter(newElement, "qhanaName", qhanaServiceTask.qhanaName, bpmnFactory);
     addCamundaInputParameter(newElement, "qhanaDescription", qhanaServiceTask.qhanaDescription, bpmnFactory);
   }
