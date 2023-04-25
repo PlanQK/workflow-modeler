@@ -33,6 +33,12 @@ export default class QHAnaRenderer extends BpmnRenderer {
 
   canRender(element) {
 
+    if (element.type === 'bpmn:ServiceTask') {
+      console.log('////================================================================================');
+      console.log(element);
+      console.log('////================================================================================');
+    }
+
     // only return true if handler for rendering is registered
     return this.qhanaHandler[element.type];
   }
