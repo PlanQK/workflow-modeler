@@ -5,6 +5,7 @@ import NewDiagramButton from "./NewDiagramButton";
 import DeploymentButton from "./DeploymentButton";
 import ConfigPlugin from "../config/ConfigPlugin";
 import ToolbarTransformationButton from "./ToolbarTransformationButton";
+// import '../resources/styling/editor-ui.css';
 
 export default function ButtonToolbar(props) {
 
