@@ -293,9 +293,9 @@ export function addCamundaInputParameter(businessObject, name, value, bpmnFactor
 export function addCamundaInputMapParameter(businessObject, name, keyValueMap, bpmnFactory, moddle) {
     const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
 
-    const map = createCamundaMap(keyValueMap, moddle);
+    const map = createCamundaMap(keyValueMap, bpmnFactory);
 
-    const input = moddle.create('camunda:InputParameter', {
+    const input = bpmnFactory.create('camunda:InputParameter', {
         name: name,
         definition: map,
     });
@@ -307,9 +307,9 @@ export function addCamundaInputMapParameter(businessObject, name, keyValueMap, b
 export function addCamundaOutputMapParameter(businessObject, name, keyValueMap, bpmnFactory, moddle) {
     const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
 
-    const map = createCamundaMap(keyValueMap, moddle);
+    const map = createCamundaMap(keyValueMap, bpmnFactory);
 
-    const output = moddle.create('camunda:OutputParameter', {
+    const output = bpmnFactory.create('camunda:OutputParameter', {
         name: name,
         definition: map,
     });
@@ -318,15 +318,15 @@ export function addCamundaOutputMapParameter(businessObject, name, keyValueMap, 
     inputOutputExtensions.outputParameters.push(output);
 }
 
-export function createCamundaMap(keyValueMap, moddle) {
+export function createCamundaMap(keyValueMap, bpmnFactory) {
     const mapEntries = keyValueMap.map(function ({name, value}) {
-        return moddle.create('camunda:Entry', {
+        return bpmnFactory.create('camunda:Entry', {
             key: name,
             value: value,
         });
     });
 
-    const map = moddle.create('camunda:Map', {
+    const map = bpmnFactory.create('camunda:Map', {
         entries: mapEntries,
     });
 

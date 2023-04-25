@@ -1,7 +1,11 @@
 import * as configConsts from './Constants';
 import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from '../../extensions/data-extension/Constants';
-import {getCamundaInputOutput} from '../../common/util/ModellingUtilities';
+import {
+  addCamundaInputMapParameter,
+  addCamundaOutputMapParameter,
+  getCamundaInputOutput
+} from '../../common/util/ModellingUtilities';
 
 /**
  * Create popup menu entries for a given array of configurations. Per default each entry applies its configuration to the
@@ -14,6 +18,7 @@ import {getCamundaInputOutput} from '../../common/util/ModellingUtilities';
  * @param modeling modeling dependency of the modeler instance.
  * @param commandStack commandStack dependency of the modeler instance.
  * @param replaceElement replaceElement function to replace an element of the opened diagram.
+ * @param moddle moddle dependency of the modeler instance.
  * @param action Optional action which will be triggered when an entry is selected.
  * @returns {{}} The list of popup menu entries.
  */
@@ -84,6 +89,12 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
       case 'camunda:InputParameter':
       case 'camunda:OutputParameter':
         addAttributeValueToCamundaIO(element, bpmnFactory, attribute.bindTo.type, attribute, modeling)(attribute.value);
+        break;
+      case 'camunda:InputMapParameter':
+        addCamundaInputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
+        break;
+      case 'camunda:OutputMapParameter':
+        addCamundaOutputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
         break;
       case 'KeyValueMap':
         addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack)(attribute.value);
@@ -209,6 +220,13 @@ export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType
     } else {
       return attribute.value;
     }
+  };
+}
+
+export function addAttributeValueToCamundaIoAsMap(element, bpmnFactory, attribute, moddle) {
+  return (value) => {
+
+    addCamundaInputMapParameter(element.businessObject, attribute.name, value, bpmnFactory, moddle);
   };
 }
 
