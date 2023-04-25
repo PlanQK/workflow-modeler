@@ -5,6 +5,15 @@ import {useService} from 'bpmn-js-properties-panel';
 import {getExtensionElement} from '../../extensions/planqk/exec-completion/CompletionUtilities';
 import * as consts from '../../extensions/data-extension/Constants';
 
+/**
+ * TODO: check functionality, may be redundant to
+ *
+ * const definitions = modeler.getDefinitions();
+ *   const rootProcess = getRootProcess(definitions);
+ *
+ * @param element
+ * @returns {*}
+ */
 export function getProcess(element) {
 
     // search for first process in parent hierarchy
@@ -232,7 +241,7 @@ export function getCamundaInputOutput(bo, bpmnFactory) {
     // retrieve InputOutput element if already defined
     let inputOutput = getInputOutput(bo);
 
-    // create new InputOutput element if non existing
+    // create new InputOutput element if non existent
     if (!inputOutput || inputOutput.length === 0) {
 
         const extensionEntry = addEntry(bo, bo, bpmnFactory.create('camunda:InputOutput'), bpmnFactory);
@@ -259,6 +268,15 @@ export function getCamundaInputOutput(bo, bpmnFactory) {
             // if there are multiple input/output definitions, take the first one as the modeler only uses this one
             return inputOutput;
         }
+    }
+
+    // init input/output parameters if undefined
+    if (!inputOutput.inputParameters) {
+        inputOutput.inputParameters = [];
+    }
+
+    if (!inputOutput.outputParameters) {
+        inputOutput.outputParameters = [];
     }
 
     return inputOutput;

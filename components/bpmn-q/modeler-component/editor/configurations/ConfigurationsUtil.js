@@ -20,24 +20,36 @@ import {getCamundaInputOutput} from '../../common/util/ModellingUtilities';
 export function createConfigurationsEntries(element, className, configurations, bpmnFactory, modeling, commandStack, replaceElement, action = undefined) {
 
   const menuEntries = {};
+  let updateAction;
+
+  console.log('Create entries for configurations:');
+  console.log(configurations);
+
   configurations.map(function (config) {
 
-    const updateAction = function () {
+    // define action for the entry
+    if (action) {
+      updateAction = function (event) {
+        action(event, config);
+      };
+    } else {
+      updateAction = function () {
 
-      // replace element with configuration type if types mismatch
-      let newElement;
-      if (element.type !== config.appliesTo) {
-        newElement = replaceElement(element, {type: config.appliesTo});
-      }
+        // replace element with configuration type if types mismatch
+        let newElement;
+        if (element.type !== config.appliesTo) {
+          newElement = replaceElement(element, {type: config.appliesTo});
+        }
 
-      handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, commandStack);
-    };
+        handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, commandStack);
+      };
+    }
 
     // create popup menu entry
     menuEntries[config.id] = {
       label: config.name,
       className: className,
-      action: action || updateAction,
+      action: updateAction,
     };
   });
 
