@@ -37,17 +37,7 @@
       "superClass": [ "bpmn:Task" ],
       "properties": [
         {
-          "name": "qhanaIdentifier",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "qhanaName",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "qhanaDescription",
+          "name": "qhanaNextStep",
           "isAttr": true,
           "type": "String"
         }

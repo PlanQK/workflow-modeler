@@ -4,11 +4,12 @@ import {
 } from '../../../editor/configurations/ConfigurationsUtil';
 import * as consts from '../QHAnaConstants';
 import {instance as qhanaServiceConfigs}  from '../configurations/QHAnaConfigurations';
-import {createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';
+import {createMenuEntries, createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';
+import * as qhanaReplaceOptions from './QHAnaReplaceOptions';
 
 export default class QHAnaReplaceMenuProvider {
 
-  constructor(popupMenu, bpmnReplace, modeling, bpmnFactory, commandStack) {
+  constructor(popupMenu, bpmnReplace, modeling, bpmnFactory, commandStack, translate) {
     popupMenu.registerProvider("bpmn-replace", this);
 
     this.replaceElement = bpmnReplace.replaceElement;
@@ -16,6 +17,7 @@ export default class QHAnaReplaceMenuProvider {
     this.bpmnFactory = bpmnFactory;
     this.popupMenu = popupMenu;
     this.commandStack = commandStack;
+    this.translate = translate;
   }
 
   getPopupMenuHeaderEntries() {
@@ -51,6 +53,26 @@ export default class QHAnaReplaceMenuProvider {
   }
 
   createQHAnaEntry(element) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.replaceElement;
+
+    const qhanaTasksEntries = createMenuEntries(element, qhanaReplaceOptions.TASK, translate, replaceElement);
+    const qhanaServiceTaskEntry = this.createQHAnaServiceTaskEntry(element);
+    const qhanaEntries = Object.assign(qhanaTasksEntries, qhanaServiceTaskEntry);
+    return {
+      ['replace-by-qhana-tasks']: createMoreOptionsEntryWithReturn(
+        element,
+        'QHAna Tasks',
+        'QHAna Tasks',
+        popupMenu,
+        qhanaEntries,
+        'qhana-service-task'
+      )
+    };
+  }
+
+  createQHAnaServiceTaskEntry(element) {
     const bpmnFactory = this.bpmnFactory;
     const modeling = this.modeling;
     const popupMenu = this.popupMenu;
@@ -77,7 +99,6 @@ export default class QHAnaReplaceMenuProvider {
         'qhana-service-task'
       )
     };
-
   }
 }
 
@@ -87,4 +108,5 @@ QHAnaReplaceMenuProvider.$inject = [
   'modeling',
   'bpmnFactory',
   'commandStack',
+  'translate'
 ];

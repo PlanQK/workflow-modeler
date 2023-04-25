@@ -16,6 +16,13 @@ export default class QHAnaRenderer extends BpmnRenderer {
 
         return task;
       },
+      [consts.QHANA_SERVICE_STEP_TASK]: function (self, parentGfx, element) {
+        const task = self.renderer('bpmn:Task')(parentGfx, element);
+
+        drawTaskSVG(parentGfx, getSVG(consts.TASK_TYPE_QHANA_SERVICE_STEP_TASK));
+
+        return task;
+      },
     };
   }
 
