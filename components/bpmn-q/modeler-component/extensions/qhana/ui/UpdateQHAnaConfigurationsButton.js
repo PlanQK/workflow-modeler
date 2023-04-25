@@ -1,8 +1,6 @@
 import React from 'react';
 import {instance as qhanaServiceConfigs} from '../configurations/QHAnaConfigurations';
 
-
-
 export default function UpdateQHAnaConfigurationsButton() {
 
     return <div style={{display: 'flex'}}>
