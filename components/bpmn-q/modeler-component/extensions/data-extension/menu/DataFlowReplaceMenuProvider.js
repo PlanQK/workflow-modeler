@@ -4,6 +4,7 @@ import {createMenuEntries, createMenuEntry} from "../../../common/util/PopupMenu
 import * as consts from '../Constants';
 import {createConfigurationsEntries} from '../../../editor/configurations/ConfigurationsUtil';
 import {getServiceTaskConfigurations} from '../configurations/TransformationTaskConfigurations';
+import {replaceConnection} from '../../../common/util/ModellingUtilities';
 
 export default class DataFlowReplaceMenuProvider {
 
@@ -100,9 +101,8 @@ export default class DataFlowReplaceMenuProvider {
             if (is(element, 'bpmn:DataInputAssociation')) {
               associationType = consts.INPUT_TRANSFORMATION_ASSOCIATION;
             }
-            modeling.removeConnection(element);
-            modeling.connect(source, target, {type: associationType, waypoints: element.waypoints});
-          }
+            replaceConnection(element, associationType, modeling);
+          };
 
           entries[entryId] = createMenuEntry(element, definition, self.translate, self.replaceElement, action)
 
@@ -130,8 +130,7 @@ export default class DataFlowReplaceMenuProvider {
             if (is(element, consts.INPUT_TRANSFORMATION_ASSOCIATION)) {
               associationType = 'bpmn:DataInputAssociation';
             }
-            modeling.removeConnection(element);
-            modeling.connect(source, target, {type: associationType, waypoints: element.waypoints});
+            replaceConnection(element, associationType, modeling);
           }
           const entry = {}
           entry[entryId] = createMenuEntry(element, definition, self.translate, self.replaceElement, action);

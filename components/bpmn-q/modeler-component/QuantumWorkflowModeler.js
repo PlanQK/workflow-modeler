@@ -17,7 +17,7 @@ import {createNewDiagram, loadDiagram} from "./common/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import {createModeler, getModeler} from "./editor/ModelerHandler";
 import {getPluginButtons, getTransformationButtons} from "./editor/plugin/PluginHandler";
-import {setPluginConfig} from "./editor/plugin/PluginConfigHandler";
+import {getPluginConfig, setPluginConfig} from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
 
 export const notificationHandler = new NotificationHandler([]);
@@ -72,6 +72,7 @@ class QuantumWorkflowModeler extends HTMLElement {
     root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
                                transformButtons={transformationButtons}/>);
 
+    this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
     if (this.workflowModel) {
       loadDiagram(this.workflowModel, getModeler());
     } else {

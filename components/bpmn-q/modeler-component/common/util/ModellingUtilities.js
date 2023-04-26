@@ -25,14 +25,18 @@ export function getProcess(element) {
     return parent;
 }
 
-export function getStartEvent(process) {
+export function getStartEvent(processBo) {
     let startEvent;
-    process.flowElements.forEach(function(element) {
+    processBo.flowElements.forEach(function(element) {
         if (element.$type === 'bpmn:StartEvent') {
             startEvent = element;
         }
     });
     return startEvent;
+}
+
+export function getStartEvents(processBo) {
+    return processBo.flowElements.filter((element) => element.$type === 'bpmn:StartEvent');
 }
 
 export function addExecutionListener(element, moddle, processVariable) {
@@ -112,7 +116,7 @@ export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry
     let formFieldData =
       {
           defaultValue: '',
-          id: name,
+          id: name.replace(/\s+/g, '_'),
           label: name,
           type: 'string',
           properties: props,
@@ -513,6 +517,14 @@ export function appendElement(type, element, event, bpmnFactory, elementFactory,
     }
 
     return shape;
+}
+
+export function replaceConnection(connectionElement, replacementType, modeling) {
+    const sourceElement = connectionElement.source;
+    const targetElement = connectionElement.target;
+
+    modeling.removeConnection(connectionElement);
+    modeling.connect(sourceElement, targetElement, {type: replacementType, waypoints: connectionElement.waypoints});
 }
 
 // export function addElementsTolist(element, businessObject, listPropertyName, objectsToAdd) {

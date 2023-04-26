@@ -259,3 +259,19 @@ export function getAllElementsInProcessWithInheritance(process, elementRegistry,
   }
   return elements;
 }
+
+export function getAllElementsForProcess(process, elementRegistry, elementType) {
+
+  // retrieve parent object for later replacement
+  const processBo = elementRegistry.get(process.id);
+
+  const elements = [];
+  const flowElements = process.flowElements;
+  for (let i = 0; i < flowElements.length; i++) {
+    let flowElement = flowElements[i];
+    if (is(flowElement, elementType)) {
+      elements.push({ element: flowElement, parent: processBo });
+    }
+  }
+  return elements;
+}

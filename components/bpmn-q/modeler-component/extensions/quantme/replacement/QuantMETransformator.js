@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { layout } from '../layouter/Layouter';
+import { layout } from '../../../editor/layouter/Layouter';
 import { matchesQRM } from './QuantMEMatcher';
 import { addQuantMEInputParameters } from './InputOutputHandler';
 import * as Constants from '../Constants';

@@ -10,7 +10,7 @@
  */
 
 import {getDi, is} from 'bpmn-js/lib/util/ModelUtil';
-import {isFlowLikeElement} from '../../../common/util/ModellingUtilities';
+import {isFlowLikeElement} from '../../common/util/ModellingUtilities';
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = '10';
@@ -72,7 +72,16 @@ function layoutProcess(modeling, elementRegistry, process) {
           continue;
         }
 
-        nodes.push(elementRegistry.get(flowElements[i].id));
+        let flowElement = elementRegistry.get(flowElements[i].id);
+        if (flowElement) {
+
+          if (is(flowElement, 'bpmn:DataObjectReference')) {
+            continue;
+          }
+          nodes.push(flowElement);
+        } else {
+          console.log(`Flow element with id ${flowElements[i].id} is undefined.`);
+        }
       }
     }
   }
