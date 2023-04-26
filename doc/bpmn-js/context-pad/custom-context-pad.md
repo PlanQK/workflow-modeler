@@ -1,3 +1,7 @@
+# Context Pad Provider
+Used to define the entries of the context pad. Allows the definition of custom entries or a custom set by adding or removing actions.
+
+```javascript
 import {
   assign,
   forEach,
@@ -125,3 +129,5 @@ DataFlowContextPadProvider.$inject = [
   'rules',
   'translate'
 ];
+
+```

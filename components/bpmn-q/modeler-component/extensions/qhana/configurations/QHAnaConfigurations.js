@@ -91,6 +91,16 @@ export function createConfigurationForServiceData(serviceData) {
         },
       },
       {
+        name: 'version',
+        label: 'Version',
+        type: 'string',
+        value: serviceData.version,
+        editable: 'true',
+        bindTo: {
+          name: 'qhanaVersion',
+        },
+      },
+      {
         name: 'name',
         label: 'Title',
         type: 'string',
@@ -116,28 +126,49 @@ export function createConfigurationForServiceData(serviceData) {
   // add inputs and outputs
   serviceData.entryPoint.dataInput.forEach(function (input, index) {
     configuration.attributes.push({
-      name: 'input_' + index,
-      label: input.parameter || 'input_' + index,
+      name: 'qinput.input_' + index,
+      label: 'qinput.' + (input.parameter || 'input_' + index),
       type: 'String',
+      value: [
+        {name: 'value', value: ''},
+        {name: 'dataType', value: input.dataType},
+        {name: 'required', value: '"' + input.required + '"'},
+        {name: 'parameter', value: input.parameter},
+        {name: 'contentType', value: JSON.stringify(input.contentType)},
+      ],
       hide: true,
       bindTo: {
         name: 'inputParameters',
-        type: 'camunda:InputParameter',
+        type: 'camunda:InputMapParameter',
       },
     });
   });
 
-  serviceData.entryPoint.dataOutput.forEach(function (input, index) {
+  serviceData.entryPoint.dataOutput.forEach(function (output, index) {
+
+    const value = [
+      {value: ''},
+      {dataType: output.dataType},
+      {required: '"' + output.required + '"'},
+      {contentType: JSON.stringify(output.contentType)},
+    ];
+
+    // [
+    //   {name: 'value', value: ''},
+    //   {name: 'dataType', value: output.dataType},
+    //   {name: 'required', value: '"' + output.required + '"'},
+    //   {name: 'contentType', value: JSON.stringify(output.contentType)},
+    // ];
+
     configuration.attributes.push({
-      name: 'output_' + index,
-      label: input.parameter || 'output_' + index,
+      name: 'qoutput.output_' + index,
+      label: 'qoutput.output_' + index,
       type: 'String',
-      value: 'output',
-      editable: 'true',
-      hide: 'true',
+      value: JSON.stringify(value),
+      hide: true,
       bindTo: {
         name: 'outputParameters',
-        type: 'camunda:OutputParameter',
+        type: 'camunda:OutputMapParameter',
       },
     });
   });

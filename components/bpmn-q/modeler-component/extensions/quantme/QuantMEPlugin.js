@@ -18,13 +18,13 @@ import {getModeler} from "../../editor/ModelerHandler";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
-import UpdateQHAnaConfigurationsButton from '../qhana/ui/UpdateQHAnaConfigurationsButton';
 import DataObjectConfigurationsTab from './configurations/DataObjectConfigurationsTab';
+import UpdateDataObjectConfigurationsButton from './configurations/UpdateDataObjectConfigurationsButton';
 
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json')
 
 export default {
-    buttons: [<ExtensibleButton subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <UpdateQHAnaConfigurationsButton/>, <DeploymentPlugin/>]}
+    buttons: [<ExtensibleButton subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <UpdateDataObjectConfigurationsButton/>, <DeploymentPlugin/>]}
                                 title="QuantME"
                                 styleClass="quantme-logo"/>
     ],

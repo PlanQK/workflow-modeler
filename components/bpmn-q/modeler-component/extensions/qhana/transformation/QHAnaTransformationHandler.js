@@ -1,10 +1,8 @@
 import {getXml} from '../../../common/util/IoUtilities';
-import {createModelerFromXml, createTempModeler, createTempModelerFromXml} from '../../../editor/ModelerHandler';
+import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import {
   addCamundaInputParameter,
-  getCamundaInputOutput,
   getRootProcess,
-  setInputParameter
 } from '../../../common/util/ModellingUtilities';
 import {getAllElementsInProcess, insertShape} from '../../../common/util/TransformationUtilities';
 import * as consts from '../QHAnaConstants';
@@ -34,8 +32,11 @@ export async function startQHAnaReplacementProcess(xml) {
   const qhanaServiceTasks = getAllElementsInProcess(rootProcess, elementRegistry, consts.QHANA_SERVICE_TASK);
   console.log('Process contains ' + qhanaServiceTasks.length + ' QHAna service tasks to replace...');
 
-  // skip transformation if no QHAna service tasks exist in the process
-  if (!qhanaServiceTasks || !qhanaServiceTasks.length) {
+  const qhanaServiceStepTasks = getAllElementsInProcess(rootProcess, elementRegistry, consts.QHANA_SERVICE_STEP_TASK);
+  console.log('Process contains ' + qhanaServiceStepTasks.length + ' QHAna service step tasks to replace...');
+
+  // skip transformation if no QHAna service tasks and no QHAna service step tasks exist in the process
+  if ((!qhanaServiceTasks || !qhanaServiceTasks.length) && (!qhanaServiceStepTasks || !qhanaServiceStepTasks.length)) {
     return { status: 'transformed', xml: xml };
   }
 
@@ -44,13 +45,29 @@ export async function startQHAnaReplacementProcess(xml) {
 
     let replacementSuccess = false;
     console.log('Replacing QHAna service task with id %s ', qhanaServiceTask.element.id);
-    replacementSuccess = await replaceByServiceTask(definitions, qhanaServiceTask.element, qhanaServiceTask.parent, modeler);
+    replacementSuccess = await replaceQHAnaServiceTaskByServiceTask(definitions, qhanaServiceTask.element, qhanaServiceTask.parent, modeler);
 
     if (!replacementSuccess) {
-      console.log('Replacement of data pool with id ' + qhanaServiceTask.element.id + ' failed. Aborting process!');
+      console.log('Replacement of QHAna service task with id ' + qhanaServiceTask.element.id + ' failed. Aborting process!');
       return {
         status: 'failed',
-        cause: 'Replacement of data pool with id ' + qhanaServiceTask.element.id + ' failed. Aborting process!'
+        cause: 'Replacement of QHAna service task with id ' + qhanaServiceTask.element.id + ' failed. Aborting process!'
+      };
+    }
+  }
+
+  // replace each qhana:QHAnaServiceStepTask with an ServiceTask with external implementation
+  for (let qhanaServiceTask of qhanaServiceStepTasks) {
+
+    let replacementSuccess = false;
+    console.log('Replacing QHAna service step task with id %s ', qhanaServiceTask.element.id);
+    replacementSuccess = await replaceQHAnaServiceStepTaskByServiceTask(definitions, qhanaServiceTask.element, qhanaServiceTask.parent, modeler);
+
+    if (!replacementSuccess) {
+      console.log('Replacement of QHAna service step task with id ' + qhanaServiceTask.element.id + ' failed. Aborting process!');
+      return {
+        status: 'failed',
+        cause: 'Replacement of QHAna service step task with id ' + qhanaServiceTask.element.id + ' failed. Aborting process!'
       };
     }
   }
@@ -64,20 +81,43 @@ export async function startQHAnaReplacementProcess(xml) {
 /**
  * Replace the given QHAna service task by a BPMN service task
  */
-async function replaceByServiceTask(definitions, qhanaServiceTask, parentProcess, modeler) {
+async function replaceQHAnaServiceTaskByServiceTask(definitions, qhanaServiceTask, parentProcess, modeler) {
 
   const bpmnFactory = modeler.get('bpmnFactory');
 
-  const newServiceTask = bpmnFactory.create('bpmn:ServiceTask');
+  // create a BPMN service task with implementation external
+  const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', {type: 'external'});
   let result = insertShape(definitions, parentProcess, newServiceTask, {}, true, modeler, qhanaServiceTask);
 
   // set the properties of the QHAna Service Task as inputs of the new Service Task
   if (result.success && result.element) {
     const newElement = result.element;
-    addCamundaInputParameter(newElement, "qhanaIdentifier", qhanaServiceTask.qhanaIdentifier, bpmnFactory);
-    addCamundaInputParameter(newElement, "qhanaName", qhanaServiceTask.qhanaName, bpmnFactory);
-    addCamundaInputParameter(newElement, "qhanaDescription", qhanaServiceTask.qhanaDescription, bpmnFactory);
+    addCamundaInputParameter(newElement.businessObject, "qhanaIdentifier", qhanaServiceTask.qhanaIdentifier, bpmnFactory);
+    addCamundaInputParameter(newElement.businessObject, "qhanaVersion", qhanaServiceTask.qhanaVersion, bpmnFactory);
+    addCamundaInputParameter(newElement.businessObject, "qhanaName", qhanaServiceTask.qhanaName, bpmnFactory);
+    addCamundaInputParameter(newElement.businessObject, "qhanaDescription", qhanaServiceTask.qhanaDescription, bpmnFactory);
   }
 
+  return result['success'];
+}
+
+/**
+ * Replace the given QHAna service step task by a BPMN service task
+ */
+async function replaceQHAnaServiceStepTaskByServiceTask(definitions, qhanaServiceTask, parentProcess, modeler) {
+
+  const bpmnFactory = modeler.get('bpmnFactory');
+
+  // create a BPMN service task with implementation external and the topic defined in the next step attribute
+  const topic = 'plugin-step.' + qhanaServiceTask.get('qhanaNextStep');
+  const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', {type: 'external', topic: topic});
+
+  let result = insertShape(definitions, parentProcess, newServiceTask, {}, true, modeler, qhanaServiceTask);
+
+  // set the properties of the QHAna Service Step Task as inputs of the new Service Task
+  if (result.success && result.element) {
+    const newElement = result.element;
+    addCamundaInputParameter(newElement.businessObject, "qhanaNextStep", qhanaServiceTask.qhanaNextStep, bpmnFactory);
+  }
   return result['success'];
 }
