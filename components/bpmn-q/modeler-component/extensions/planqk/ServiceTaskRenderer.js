@@ -10,7 +10,7 @@ import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 
 import * as consts from './utilities/Constants';
 import {getSVG} from "./SVGMap";
-import {drawDataStoreSVG, drawTaskSVG} from "../../common/util/RenderUtilities";
+import {drawDataElementSVG, drawTaskSVG} from "../../common/util/RenderUtilities";
 
 const HIGH_PRIORITY = 14001,
     TASK_BORDER_RADIUS = 2;
@@ -29,11 +29,11 @@ export default class ServiceTaskRenderer extends BpmnRenderer {
             },
             [consts.PLANQK_DATA_POOL]: function (self, parentGfx, element) {
                 const store = self.renderer('bpmn:DataStoreReference')(parentGfx, element);
-                drawDataStoreSVG(parentGfx, getSVG('DATA_TYPE_DATA_POOL'));
+                drawDataElementSVG(parentGfx, getSVG('DATA_TYPE_DATA_POOL'));
 
                 return store;
             },
-        }
+        };
     }
 
     renderer(type) {

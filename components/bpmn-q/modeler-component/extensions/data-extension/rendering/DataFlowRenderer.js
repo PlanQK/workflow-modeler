@@ -1,8 +1,9 @@
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 import * as consts from '../Constants';
 import {attr as svgAttr} from 'tiny-svg';
-import {drawDataStoreSVG, drawTaskSVG} from "../../../common/util/RenderUtilities";
+import {drawDataElementSVG, drawTaskSVG} from "../../../common/util/RenderUtilities";
 import {getSVG} from "./DataFlowSVGMap";
+import {extractConfigSVG} from '../../../editor/configurations/ConfigurationsUtil';
 
 export default class DataFlowRenderer extends BpmnRenderer {
 
@@ -14,21 +15,24 @@ export default class DataFlowRenderer extends BpmnRenderer {
       [consts.DATA_MAP_OBJECT]: function (self, parentGfx, element) {
         const task = self.renderer('bpmn:DataObject')(parentGfx, element);
 
-        drawDataStoreSVG(parentGfx, getSVG(consts.DATA_TYPE_DATA_MAP_OBJECT));
+        let svg = extractConfigSVG(element) || getSVG(consts.DATA_TYPE_DATA_MAP_OBJECT);
+        drawDataElementSVG(parentGfx, svg);
 
         return task;
       },
       [consts.DATA_STORE_MAP]: function (self, parentGfx, element) {
         const task = self.renderer('bpmn:DataStoreReference')(parentGfx, element);
 
-        drawDataStoreSVG(parentGfx, getSVG(consts.DATA_TYPE_DATA_STORE_MAP));
+        let svg = extractConfigSVG(element) || getSVG(consts.DATA_TYPE_DATA_STORE_MAP);
+        drawDataElementSVG(parentGfx, svg);
 
         return task;
       },
       [consts.TRANSFORMATION_TASK]: function (self, parentGfx, element) {
         const task = self.renderer('bpmn:Task')(parentGfx, element);
 
-        drawTaskSVG(parentGfx, getSVG(consts.TASK_TYPE_TRANSFORMATION_TASK));
+        let svg = extractConfigSVG(element) || getSVG(consts.TASK_TYPE_TRANSFORMATION_TASK);
+        drawTaskSVG(parentGfx, svg);
 
         return task;
       },

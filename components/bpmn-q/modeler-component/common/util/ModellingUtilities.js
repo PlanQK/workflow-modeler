@@ -498,6 +498,23 @@ export function createElement(elementType, properties, parent, factory) {
     return element;
 }
 
+export function appendElement(type, element, event, bpmnFactory, elementFactory, create, autoPlace) {
+
+    const businessObject = bpmnFactory.create(type);
+    const shape = elementFactory.createShape({
+        type: type,
+        businessObject: businessObject
+    });
+
+    if (autoPlace) {
+        autoPlace.append(element, shape);
+    } else {
+        create.start(event, shape);
+    }
+
+    return shape;
+}
+
 // export function addElementsTolist(element, businessObject, listPropertyName, objectsToAdd) {
 //     return {
 //         cmd: 'properties-panel.update-businessobject-list',

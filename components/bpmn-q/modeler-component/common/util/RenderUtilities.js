@@ -55,7 +55,7 @@ export function drawTaskSVG(parentGfx, importSVG, svgAttributes) {
     parentGfx.prepend(groupDef);
 }
 
-export function drawDataStoreSVG(parentGfx, importSVG, svgAttributes) {
+export function drawDataElementSVG(parentGfx, importSVG, svgAttributes) {
     const innerSvgStr = importSVG.svg,
         transformDef = importSVG.transform;
 
