@@ -126,10 +126,16 @@ export default class QHAnaReplaceMenuProvider {
 
       // split config attributes in output and non output attributes
       const outputAttributes = config.attributes.filter(attribute => attribute.bindTo.type === 'camunda:OutputMapParameter') || [];
-      config.attributes = config.attributes.filter(attribute => attribute.bindTo.type !== 'camunda:OutputMapParameter');
+      const nonOutputAttributes = config.attributes.filter(attribute => attribute.bindTo.type !== 'camunda:OutputMapParameter');
+
+      const newConfig = {
+        name: config.name,
+        id: config.id,
+        attributes: nonOutputAttributes,
+      };
 
       // set properties of the QHAna service task based on the configuration
-      handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, commandStack);
+      handleConfigurationsAction(newElement || element, newConfig, bpmnFactory, modeling, commandStack);
 
       // create a data map object and set ist content to the outputs if output attributes are defined
       if (outputAttributes.length > 0) {

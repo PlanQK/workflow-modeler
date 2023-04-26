@@ -37,7 +37,7 @@ function NextStep(props) {
   };
 
   const getValue = function () {
-    element.businessObject.get(consts.NEXT_STEP);
+    return element.businessObject.get(consts.NEXT_STEP);
   };
 
   return TextFieldEntry({
