@@ -77,6 +77,10 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
     [configConsts.SELECT_CONFIGURATIONS_ID]: config.id,
   });
 
+  modeling.updateProperties(element, {
+    configsIcon: JSON.stringify(config.icon),
+  });
+
   // set name of the element to configuration name
   modeling.updateProperties(element, {
     name: config.name,
@@ -223,11 +227,16 @@ export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType
   };
 }
 
-export function addAttributeValueToCamundaIoAsMap(element, bpmnFactory, attribute, moddle) {
-  return (value) => {
+export function extractSVG(svgStr) {
 
-    addCamundaInputMapParameter(element.businessObject, attribute.name, value, bpmnFactory, moddle);
-  };
+  if (svgStr) {
+    try {
+      return JSON.parse(svgStr);
+    } catch (err) {
+      return undefined;
+    }
+  }
+  return undefined;
 }
 
 

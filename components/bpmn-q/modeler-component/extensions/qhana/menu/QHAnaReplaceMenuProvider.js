@@ -1,5 +1,4 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
-import {assign} from 'min-dash';
 import {
   createConfigurationsEntries,
   handleConfigurationsAction,
@@ -9,12 +8,7 @@ import {instance as qhanaServiceConfigs} from '../configurations/QHAnaConfigurat
 import {createMenuEntries, createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';
 import * as qhanaReplaceOptions from './QHAnaReplaceOptions';
 import * as dataConsts from '../../data-extension/Constants';
-import {SELECT_CONFIGURATIONS_ID} from '../../../editor/configurations/Constants';
-import * as configsConsts from '../../../editor/configurations/Constants';
-import {getProcess, getRootProcess} from '../../../common/util/ModellingUtilities';
-import {getModeler} from '../../../editor/ModelerHandler';
-import {QHANA_SERVICE_STEP_TASK} from '../QHAnaConstants';
-import * as qhanaConsts from '../QHAnaConstants';
+import {appendElement} from '../../../common/util/ModellingUtilities';
 
 export default class QHAnaReplaceMenuProvider {
 
@@ -84,23 +78,6 @@ export default class QHAnaReplaceMenuProvider {
     };
   }
 
-  appendElement(type, element, event, bpmnFactory, elementFactory, create, autoPlace) {
-
-    const businessObject = bpmnFactory.create(type);
-    const shape = elementFactory.createShape({
-      type: type,
-      businessObject: businessObject
-    });
-
-    if (autoPlace) {
-      autoPlace.append(element, shape);
-    } else {
-      create.start(event, shape);
-    }
-
-    return shape;
-  }
-
   createQHAnaServiceTaskEntry(element) {
     const bpmnFactory = this.bpmnFactory;
     const modeling = this.modeling;
@@ -110,7 +87,6 @@ export default class QHAnaReplaceMenuProvider {
     const elementFactory = this.elementFactory;
     const create = this.create;
     const autoPlace = this.autoPlace;
-    const appendElement = this.appendElement;
 
     /*
      create a QHAna service task with its properties set as defined in the configuration and create a data map object
