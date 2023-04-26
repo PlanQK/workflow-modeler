@@ -3,7 +3,7 @@ import * as consts from '../Constants';
 import {attr as svgAttr} from 'tiny-svg';
 import {drawDataElementSVG, drawTaskSVG} from "../../../common/util/RenderUtilities";
 import {getSVG} from "./DataFlowSVGMap";
-import {extractSVG} from '../../../editor/configurations/ConfigurationsUtil';
+import {extractConfigSVG} from '../../../editor/configurations/ConfigurationsUtil';
 
 export default class DataFlowRenderer extends BpmnRenderer {
 
@@ -15,7 +15,7 @@ export default class DataFlowRenderer extends BpmnRenderer {
       [consts.DATA_MAP_OBJECT]: function (self, parentGfx, element) {
         const task = self.renderer('bpmn:DataObject')(parentGfx, element);
 
-        let svg = extractSVG(element.businessObject.get('configsIcon')) || getSVG(consts.DATA_TYPE_DATA_MAP_OBJECT);
+        let svg = extractConfigSVG(element) || getSVG(consts.DATA_TYPE_DATA_MAP_OBJECT);
         drawDataElementSVG(parentGfx, svg);
 
         return task;

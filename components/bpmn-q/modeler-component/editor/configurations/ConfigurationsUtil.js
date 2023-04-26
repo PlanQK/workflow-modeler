@@ -1,11 +1,12 @@
 import * as configConsts from './Constants';
 import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
-import * as consts from '../../extensions/data-extension/Constants';
+import * as dataConsts from '../../extensions/data-extension/Constants';
 import {
   addCamundaInputMapParameter,
   addCamundaOutputMapParameter,
   getCamundaInputOutput
 } from '../../common/util/ModellingUtilities';
+import * as configsConsts from './Constants';
 
 /**
  * Create popup menu entries for a given array of configurations. Per default each entry applies its configuration to the
@@ -18,7 +19,6 @@ import {
  * @param modeling modeling dependency of the modeler instance.
  * @param commandStack commandStack dependency of the modeler instance.
  * @param replaceElement replaceElement function to replace an element of the opened diagram.
- * @param moddle moddle dependency of the modeler instance.
  * @param action Optional action which will be triggered when an entry is selected.
  * @returns {{}} The list of popup menu entries.
  */
@@ -78,7 +78,7 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
   });
 
   modeling.updateProperties(element, {
-    configsIcon: JSON.stringify(config.icon),
+    [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
   });
 
   // set name of the element to configuration name
@@ -147,7 +147,7 @@ export function addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, 
         properties: {value: value},
       });
     } else {
-      const param = bpmnFactory.create(consts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
+      const param = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
 
       commandStack.execute('element.updateModdleProperties', {
         element,
@@ -227,8 +227,8 @@ export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType
   };
 }
 
-export function extractSVG(svgStr) {
-
+export function extractConfigSVG(element) {
+  const svgStr = element.businessObject.get(configsConsts.CONFIGURATIONS_ICON);
   if (svgStr) {
     try {
       return JSON.parse(svgStr);
