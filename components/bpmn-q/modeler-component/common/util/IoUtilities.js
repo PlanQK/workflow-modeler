@@ -1,7 +1,10 @@
+import {transformedWorkflowHandlers} from '../../editor/EditorConstants';
+
 const editorConfig = require('../../editor/config/EditorConfigManager');
 
 let FormData = require('form-data');
 import fetch from 'node-fetch';
+import * as editorConsts from '../../editor/EditorConstants';
 
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
@@ -152,4 +155,32 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
     console.error('Error while executing post to deploy workflow: ' + error);
     return {status: 'failed'};
   }
+}
+
+export async function handleTransformedWorkflow(workflowXml) {
+  const fileName = editorConfig.getFileName().split('.')[0] + '_transformed.bpmn';
+
+  const handlerId = editorConfig.getTransformedWorkflowHandler();
+
+  switch (handlerId) {
+    case transformedWorkflowHandlers.NEW_TAB:
+      openInNewTab(workflowXml, fileName);
+      break;
+    case transformedWorkflowHandlers.SAVE_AS_FILE:
+      await saveXmlAsLocalFile(workflowXml, fileName);
+      break;
+    default:
+      console.log(`Invalid transformed workflow handler ID ${handlerId}`);
+  }
+}
+
+export function openInNewTab(workflowXml, fileName) {
+
+  const newWindow = window.open(window.location.href, "_blank");
+
+  newWindow.onload = function() {
+
+    // Pass the XML string to the new window using postMessage
+    newWindow.postMessage({ workflow: workflowXml, name: fileName}, window.location.href);
+  };
 }

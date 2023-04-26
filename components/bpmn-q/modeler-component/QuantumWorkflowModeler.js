@@ -29,24 +29,20 @@ class QuantumWorkflowModeler extends HTMLElement {
   connectedCallback() {
     this.setInnerHtml();
 
-    // const urlParams = new URLSearchParams(window.location.search);
-    // this.workflowModel = urlParams.get('workflow');
-    // this.startModeler();
-
     const self = this;
     window.addEventListener("message", function(event) {
 
       if (event.origin === window.location.href.replace(/\/$/, '')
         && event.data && event.data.workflow && typeof event.data.workflow === 'string' && event.data.workflow.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
+
         const xmlString = event.data.workflow;
-        // Do something with the XML string
         self.workflowModel = xmlString;
         editorConfig.setFileName(event.data.name);
 
-        // self.startModeler();
         loadDiagram(xmlString, getModeler());
       }
     });
+
 
     this.startModeler();
   }
