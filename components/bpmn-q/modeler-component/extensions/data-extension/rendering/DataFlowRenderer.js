@@ -23,14 +23,16 @@ export default class DataFlowRenderer extends BpmnRenderer {
       [consts.DATA_STORE_MAP]: function (self, parentGfx, element) {
         const task = self.renderer('bpmn:DataStoreReference')(parentGfx, element);
 
-        drawDataElementSVG(parentGfx, getSVG(consts.DATA_TYPE_DATA_STORE_MAP));
+        let svg = extractConfigSVG(element) || getSVG(consts.DATA_TYPE_DATA_STORE_MAP);
+        drawDataElementSVG(parentGfx, svg);
 
         return task;
       },
       [consts.TRANSFORMATION_TASK]: function (self, parentGfx, element) {
         const task = self.renderer('bpmn:Task')(parentGfx, element);
 
-        drawTaskSVG(parentGfx, getSVG(consts.TASK_TYPE_TRANSFORMATION_TASK));
+        let svg = extractConfigSVG(element) || getSVG(consts.TASK_TYPE_TRANSFORMATION_TASK);
+        drawTaskSVG(parentGfx, svg);
 
         return task;
       },
