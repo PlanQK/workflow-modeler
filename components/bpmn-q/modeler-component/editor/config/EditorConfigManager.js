@@ -66,7 +66,8 @@ export function setFileName(fileName) {
  */
 export function getTransformedWorkflowHandler() {
   if (config.transformedWorkflowHandler === undefined) {
-    setTransformedWorkflowHandler(getPluginConfig('editor').transformedWorkflowHandler || defaultConfig.transformedWorkflowHandler);
+    const workflowHandler = transformedWorkflowHandlers[getPluginConfig('editor').transformedWorkflowHandler];
+    setTransformedWorkflowHandler(workflowHandler || defaultConfig.transformedWorkflowHandler);
   }
   return config.transformedWorkflowHandler;
 }

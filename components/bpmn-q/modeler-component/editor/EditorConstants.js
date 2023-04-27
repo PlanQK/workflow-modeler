@@ -1,4 +1,4 @@
 export const transformedWorkflowHandlers = {
-  NEW_TAB: '0',
-  SAVE_AS_FILE: '1',
+  NEW_TAB: 'Open in new Tab',
+  SAVE_AS_FILE: 'Save as File',
 };

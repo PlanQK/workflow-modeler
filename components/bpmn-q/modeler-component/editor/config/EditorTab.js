@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {getModeler} from "../ModelerHandler";
 import * as configManager from "./EditorConfigManager";
+import {transformedWorkflowHandlers} from '../EditorConstants';
 
-export default function WorkflowEngineTab() {
+export default function EditorTab() {
 
     const [camundaEndpoint, setCamundaEndpoint] = useState(configManager.getCamundaEndpoint());
+    const [workflowHandler, setWorkflowHandler] = useState(configManager.getTransformedWorkflowHandler());
 
     const modeler = getModeler();
-    // const self = this;
 
     const editorActions = modeler.get('editorActions');
 
@@ -19,10 +20,11 @@ export default function WorkflowEngineTab() {
         });
     }
 
-    WorkflowEngineTab.prototype.onClose = () => {
+    EditorTab.prototype.onClose = () => {
         modeler.config.camundaEndpoint = camundaEndpoint;
         configManager.setCamundaEndpoint(camundaEndpoint);
-    }
+        configManager.setTransformedWorkflowHandler(workflowHandler);
+    };
 
     return (<>
         <h3>Workflow Engine configuration:</h3>
@@ -40,11 +42,32 @@ export default function WorkflowEngineTab() {
             </tr>
             </tbody>
         </table>
-        </>)
+        <h3>Handle for transformed workflows:</h3>
+        <table>
+            <tbody>
+            <tr className="spaceUnder">
+                <td align="right">Transformed Workflow Handler</td>
+                <td align="left">
+                    <select
+                      name="workflowHandler"
+                      value={workflowHandler}
+                      onChange={event => setWorkflowHandler(event.target.value)}>
+                        {Object.entries(transformedWorkflowHandlers).map(([key, value]) => (
+                          <option key={value} value={value}>
+                              {value}
+                          </option>
+                        ))}
+                    </select>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        </>);
 }
 
-WorkflowEngineTab.prototype.config = () => {
+EditorTab.prototype.config = () => {
     const modeler = getModeler();
 
     modeler.config.camundaEndpoint = configManager.getCamundaEndpoint();
-}
+};

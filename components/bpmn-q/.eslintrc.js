@@ -24,5 +24,6 @@ module.exports = {
         "react/prop-types": "off",
         "no-prototype-builtins": "off",
         "react/jsx-key": "off",
+        "no-unused-vars": "off",
     }
 };
