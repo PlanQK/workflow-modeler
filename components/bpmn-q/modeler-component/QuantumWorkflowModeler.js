@@ -159,10 +159,10 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     // this.appendStyle(allStyles);
     this.appendStyle(lessStyle);
-    // this.appendStyle(bpmnEmbeddedStyle);
-    // this.appendStyle(bpmnCodesStyle);
+    this.appendStyle(bpmnEmbeddedStyle);
+    this.appendStyle(bpmnCodesStyle);
     this.appendStyle(diagramJsStyle);
-    // this.appendStyle(bpmnStyle);
+    this.appendStyle(bpmnStyle);
     this.appendStyle(elementTemplatesStyle);
     this.appendStyle(propertiesPanelStyle);
     this.appendStyle(modelerStyle);
