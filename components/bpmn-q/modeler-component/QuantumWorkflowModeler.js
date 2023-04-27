@@ -19,6 +19,8 @@ import {createModeler, getModeler} from "./editor/ModelerHandler";
 import {getPluginButtons, getTransformationButtons} from "./editor/plugin/PluginHandler";
 import {getPluginConfig, setPluginConfig} from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
+import {addWorkflowEventListener, initEditorEventHandler} from './editor/events/EditorEventHandler';
+import {workflowEventTypes} from './editor/EditorConstants';
 
 export const notificationHandler = new NotificationHandler([]);
 
@@ -30,7 +32,7 @@ class QuantumWorkflowModeler extends HTMLElement {
     this.setInnerHtml();
 
     const self = this;
-    window.addEventListener("message", function(event) {
+    window.addEventListener("message", function (event) {
 
       if (event.origin === window.location.href.replace(/\/$/, '')
         && event.data && event.data.workflow && typeof event.data.workflow === 'string' && event.data.workflow.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
@@ -48,6 +50,8 @@ class QuantumWorkflowModeler extends HTMLElement {
   }
 
   startModeler() {
+    initEditorEventHandler(this);
+
     const configs = this.pluginConfigsList;
     console.log(configs);
     setPluginConfig(configs);
@@ -70,7 +74,7 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
     if (this.workflowModel) {
-      loadDiagram(this.workflowModel, getModeler());
+      loadDiagram(this.workflowModel, getModeler()).then();
     } else {
       createNewDiagram(modeler);
     }

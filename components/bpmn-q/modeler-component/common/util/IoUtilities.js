@@ -1,4 +1,5 @@
-import {transformedWorkflowHandlers} from '../../editor/EditorConstants';
+import {transformedWorkflowHandlers, workflowEventTypes} from '../../editor/EditorConstants';
+import {dispatchWorkflowEvent} from '../../editor/events/EditorEventHandler';
 
 const editorConfig = require('../../editor/config/EditorConfigManager');
 
@@ -34,6 +35,8 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
   link.download = fileName;
   link.href = URL.createObjectURL(bpmnFile);
   link.click();
+
+  dispatchWorkflowEvent(workflowEventTypes.SAVED, xml, editorConfig.getFileName());
 }
 
 /**
@@ -64,12 +67,17 @@ export async function getXml(modeler) {
  *
  * @param xml The bpmn diagram to open encoded in xml.
  * @param modeler The bpmn modeler to open the diagram in.
+ * @param dispatchEvent Flag defining if a event should be dispatch for the current load, default is true
  * @returns {Promise<undefined|*>} Undefined, if an error occurred during import.
  */
-export async function loadDiagram(xml, modeler) {
+export async function loadDiagram(xml, modeler, dispatchEvent = true) {
 
   try {
-    return await modeler.importXML(xml);
+    await modeler.importXML(xml);
+
+    if (dispatchEvent) {
+      dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, editorConfig.getFileName());
+    }
   } catch (err) {
     console.error(err);
   }
@@ -143,6 +151,9 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
         return {status: 'failed'};
       }
 
+
+      dispatchWorkflowEvent(workflowEventTypes.DEPLOYED, workflowXml, workflowName);
+
       return {
         status: 'deployed',
         deployedProcessDefinition: Object.values(result['deployedProcessDefinitions'] || {})[0]
@@ -172,6 +183,8 @@ export async function handleTransformedWorkflow(workflowXml) {
     default:
       console.log(`Invalid transformed workflow handler ID ${handlerId}`);
   }
+
+  dispatchWorkflowEvent(workflowEventTypes.TRANSFORMED, workflowXml, fileName);
 }
 
 export function openInNewTab(workflowXml, fileName) {

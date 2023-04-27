@@ -2,6 +2,8 @@ import React, {useRef} from 'react';
 import {loadDiagram} from '../../common/util/IoUtilities';
 import {getModeler} from '../ModelerHandler';
 import * as editorConfig from '../config/EditorConfigManager';
+import {dispatchWorkflowEvent} from '../events/EditorEventHandler';
+import {workflowEventTypes} from '../EditorConstants';
 
 export default function OpenButton() {
 
@@ -23,9 +25,11 @@ export default function OpenButton() {
 
         const xml = e.target.result;
 
-        loadDiagram(xml, getModeler()).then(() => {
+        loadDiagram(xml, getModeler(), false).then(() => {
           // save file name in editor configs
           editorConfig.setFileName(file.name);
+
+          dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, file.name);
         });
       };
       reader.readAsText(file);
