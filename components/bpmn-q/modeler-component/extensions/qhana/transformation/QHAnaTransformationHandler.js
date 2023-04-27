@@ -6,6 +6,7 @@ import {
 } from '../../../common/util/ModellingUtilities';
 import {getAllElementsInProcess, insertShape} from '../../../common/util/TransformationUtilities';
 import * as consts from '../QHAnaConstants';
+import * as qhanaConsts from '../QHAnaConstants';
 
 export async function startQHAnaReplacementProcess(xml) {
   let modeler = await createTempModelerFromXml(xml);
@@ -86,7 +87,9 @@ async function replaceQHAnaServiceTaskByServiceTask(definitions, qhanaServiceTas
   const bpmnFactory = modeler.get('bpmnFactory');
 
   // create a BPMN service task with implementation external
-  const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', {type: 'external'});
+  const topic = 'qhana-plugin.' + qhanaServiceTask.get(qhanaConsts.IDENTIFIER);
+  const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', {type: 'external', topic: topic});
+
   let result = insertShape(definitions, parentProcess, newServiceTask, {}, true, modeler, qhanaServiceTask);
 
   // set the properties of the QHAna Service Task as inputs of the new Service Task
@@ -109,7 +112,7 @@ async function replaceQHAnaServiceStepTaskByServiceTask(definitions, qhanaServic
   const bpmnFactory = modeler.get('bpmnFactory');
 
   // create a BPMN service task with implementation external and the topic defined in the next step attribute
-  const topic = 'plugin-step.' + qhanaServiceTask.get('qhanaNextStep');
+  const topic = 'plugin-step.' + consts.NEXT_STEP;
   const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', {type: 'external', topic: topic});
 
   let result = insertShape(definitions, parentProcess, newServiceTask, {}, true, modeler, qhanaServiceTask);
