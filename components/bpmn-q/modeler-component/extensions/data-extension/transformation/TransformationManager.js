@@ -186,23 +186,47 @@ export async function startDataFlowReplacementProcess(xml) {
 
     // if source === DataMapObject: content als input in target activity
     if (dataAssociation.source.type === consts.DATA_MAP_OBJECT) {
-      dataMapObject = dataAssociation.source;
-      businessObject = dataMapObject.businessObject;
+       // else {
+        dataMapObject = dataAssociation.source;
+        businessObject = dataMapObject.businessObject;
 
-      activity = dataAssociation.target;
-      // businessObject.get(consts.CONTENT)
-      addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
+        activity = dataAssociation.target;
+        // businessObject.get(consts.CONTENT)
+        addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
+      // }
+
     }
 
     // if target === DataMapObject: content als output in source
     if (dataAssociation.target.type === consts.DATA_MAP_OBJECT) {
+      if (dataAssociation.source.type === 'bpmn:StartEvent') {
+        dataMapObject = dataAssociation.target;
+        businessObject = dataMapObject.businessObject;
+
+        activity = dataAssociation.source;
+        // businessObject.get(consts.CONTENT)
+        // addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
+
+        for (let c of businessObject.get(consts.CONTENT)) {
+          let formField =
+            {
+              'defaultValue': c.value,
+              'id': c.name + '_' + dataMapObject.name,
+              'label': c.name + ' of ' + dataMapObject.name,
+              'type': 'string'
+            };
+          // formField.fadhf.adsfasfM;
+          addFormField(activity.id, formField, elementRegistry, moddle, modeling);
+        }
+
+      } else {
       dataMapObject = dataAssociation.target;
       businessObject = dataMapObject.businessObject;
 
       activity = dataAssociation.source;
 
       addCamundaOutputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
-    }
+    }}
   }
 
   const associations = elementRegistry.filter(function (element) {
