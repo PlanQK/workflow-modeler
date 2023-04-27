@@ -24,7 +24,7 @@ import {workflowEventTypes} from './editor/EditorConstants';
 
 export const notificationHandler = new NotificationHandler([]);
 
-class QuantumWorkflowModeler extends HTMLElement {
+export class QuantumWorkflowModeler extends HTMLElement {
 
   workflowModel;
 

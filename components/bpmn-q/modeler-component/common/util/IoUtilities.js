@@ -171,6 +171,10 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
 export async function handleTransformedWorkflow(workflowXml) {
   const fileName = editorConfig.getFileName().split('.')[0] + '_transformed.bpmn';
 
+  const eventCancled = dispatchWorkflowEvent(workflowEventTypes.TRANSFORMED, workflowXml, fileName);
+
+  // TODO stop when prevent
+
   const handlerId = editorConfig.getTransformedWorkflowHandler();
 
   switch (handlerId) {
@@ -184,7 +188,7 @@ export async function handleTransformedWorkflow(workflowXml) {
       console.log(`Invalid transformed workflow handler ID ${handlerId}`);
   }
 
-  dispatchWorkflowEvent(workflowEventTypes.TRANSFORMED, workflowXml, fileName);
+
 }
 
 export function openInNewTab(workflowXml, fileName) {
