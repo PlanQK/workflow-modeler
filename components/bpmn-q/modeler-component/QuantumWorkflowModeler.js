@@ -5,7 +5,8 @@
 // import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 // import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
 // import './editor/resources/styling/modeler.css';
-// import './editor/resources/styling/editor-ui.css';
+// import editorStyle from './editor/resources/styling/modeler.css' ;
+import allStyles from '../public/modeler-styles.css' ;
 // import './editor/ui/notifications/Notifications.css';
 // import './editor/ui/notifications/Notification';
 // import './common/camunda-components/styles/style.less';
@@ -110,9 +111,22 @@ class QuantumWorkflowModeler extends HTMLElement {
     if (!this.shadowRoot) {
       this.shadowRoot = this.attachShadow({ mode: "open" });
     }
-    this.shadowRoot.innerHTML = '';
+    this.shadowRoot.innerHTML = `
+<!--              <style>-->
+<!--                @import url('./editor/resources/styling/modeler.css'); -->
+<!--              </style>-->
+`;
 
     const div = document.createElement('div');
+
+    let styleTag = document.createElement('style');
+    styleTag.innerHTML = allStyles;
+    this.shadowRoot.appendChild(styleTag);
+
+    // styleTag = document.createElement('style');
+    // styleTag.innerHTML = editorStyle;
+    // this.shadowRoot.appendChild(styleTag);
+
     div.setAttribute("style", "display: flex; flex-direction: column; height: 100%");
     div.innerHTML = `
 <!--              <link rel="stylesheet" href="bpmn-js/dist/assets/diagram-js.css">-->
@@ -126,8 +140,11 @@ class QuantumWorkflowModeler extends HTMLElement {
 <!--              <link rel="stylesheet" href="./editor/ui/notifications/Notifications.css">-->
 <!--              <link rel="stylesheet" href="./editor/ui/notifications/Notifiation.css">-->
 <!--              <link rel="stylesheet" href="./common/camunda-components/styles/style.less">-->
-              <link rel="stylesheet" href="./editor/resources/styling/modeler.css">
+<!--              <link rel="stylesheet" href="./editor/resources/styling/modeler.css">-->
 <!--              <link rel="stylesheet" href="./editor/resources/styling/editor-ui.css">-->
+<!--              <style>-->
+<!--                @import url('./editor/resources/styling/modeler.css'); -->
+<!--              </style>-->
               <div id="button-container" style="flex-shrink: 0;"></div>
               <hr class="toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1">
@@ -137,11 +154,16 @@ class QuantumWorkflowModeler extends HTMLElement {
               <div id="notification-container"></div>
               
 `;
-
-
-    const linkElem = document.createElement("link");
-    linkElem.setAttribute("rel", "stylesheet");
-    linkElem.setAttribute("href", "./editor/resources/styling/modeler.css");
+    // var css = new CSSStyleSheet();
+    // // css.replaceSync( "@import url(./editor/resources/styling/modeler.css)" );
+    //
+    // css.replaceSync( editorStyle );
+    // this.shadowRoot.adoptedStyleSheets = [css];
+    //
+    //
+    // const linkElem = document.createElement("link");
+    // linkElem.setAttribute("rel", "stylesheet");
+    // linkElem.setAttribute("href", "./editor/resources/styling/modeler.css");
 
 // Attach the created element to the shadow DOM
 //     this.shadowRoot.appendChild(linkElem);

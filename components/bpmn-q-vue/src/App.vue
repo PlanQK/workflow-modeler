@@ -8,7 +8,7 @@ import QFlowModeler from './components/QFlowModeler.vue';
         <hr/>
         <div style="display: flex; flex-direction: column; height: 100%; width: 85%; flex: 1">
             <h1 style="margin: 10px">Vue BPMN Modeler</h1>
-            <div id="vue-button-container" style="display: flex; flex-shrink: 0; height: 60px; background-color: lightgrey">
+            <div id="button-container" style="display: flex; flex-shrink: 0; height: 60px; background-color: lightgrey">
                 <button class="toolbar-btn">Dummy</button>
                 <button class="toolbar-btn">Save</button>
                 <button class="toolbar-btn">Load</button>
