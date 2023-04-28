@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 78vh; min-height: 85%">
     <quantum-workflow ref="modelerComponent"></quantum-workflow>
   </div>
 </template>
@@ -107,6 +107,9 @@ export default {
       {
         name: "qhana",
       },
+        {
+            name: "dataflow",
+        }
     ];
   },
 };

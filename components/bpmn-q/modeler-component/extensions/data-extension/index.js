@@ -1,4 +1,3 @@
-import './resources/data-flow-styles.css';
 import DataFlowRenderer from './rendering/DataFlowRenderer';
 import DataFlowReplaceMenuProvider from './menu/DataFlowReplaceMenuProvider';
 import DataFlowPaletteProvider from './palette/DataFlowPaletteProvider';

@@ -6,6 +6,7 @@ import {getModeler} from '../../editor/ModelerHandler';
 import {getXml} from '../../common/util/IoUtilities';
 import {startDataFlowReplacementProcess} from './transformation/TransformationManager';
 import TransformationTaskConfigurationsTab from './configurations/TransformationTaskConfigurationsTab';
+import dataStyles from './resources/data-flow-styles.css';
 
 let dataflowModdleDescriptor = require('./resources/data-flow-extension.json');
 
@@ -20,6 +21,7 @@ export default {
     ],
     extensionModule: DataFlowExtensionModule,
     moddleDescription: dataflowModdleDescriptor,
+    styling: [dataStyles],
     transformExtensionButton: <TransformationButton name='DataFlow Transformation' transformWorkflow={
         async (xml) => {
 

@@ -51,6 +51,21 @@ export function getAdditionalModules() {
   return modules;
 }
 
+export function getStyles() {
+
+  let styles = [];
+
+  for (let plugin of getActivePlugins()) {
+    if (plugin.styling) {
+      styles = styles.concat(plugin.styling);
+    }
+  }
+
+  console.log('\n Get Plugin Styling');
+  console.log(styles);
+  return styles;
+}
+
 export function getModdleExtension() {
   const extensions = {};
 
