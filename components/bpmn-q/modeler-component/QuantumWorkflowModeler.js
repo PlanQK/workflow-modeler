@@ -4,12 +4,27 @@
 // import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
 // import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 // import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
+// import './editor/resources/styling/editor-ui.css' ;
 // import './editor/resources/styling/modeler.css';
-// import editorStyle from './editor/resources/styling/modeler.css' ;
-import allStyles from '../public/modeler-styles.css' ;
 // import './editor/ui/notifications/Notifications.css';
 // import './editor/ui/notifications/Notification';
 // import './common/camunda-components/styles/style.less';
+
+import diagramJsStyle from 'bpmn-js/dist/assets/diagram-js.css';
+import bpmnEmbeddedStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
+import bpmnCodesStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
+import bpmnStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
+// import bpmnStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
+import elementTemplatesStyle from 'bpmn-js-properties-panel/dist/assets/element-templates.css';
+import propertiesPanelStyle from 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
+import modelerStyle from './editor/resources/styling/modeler.css' ;
+import editorUiStyle from './editor/resources/styling/editor-ui.css';
+import notificationsStyle from './editor/ui/notifications/Notifications.css';
+import notificationStyle from './editor/ui/notifications/Notification';
+import configModal from './editor/config/config-modal.css';
+import lessStyle from './common/camunda-components/styles/style.less';
+
+// import allStyles from '../public/modeler-styles.css' ;
 
 import React from 'react';
 import {createRoot} from 'react-dom/client';
@@ -30,6 +45,29 @@ class QuantumWorkflowModeler extends HTMLElement {
 
   constructor() {
     super();
+
+    const fontEmbedded = document.createElement("link");
+    fontEmbedded.setAttribute("rel", "stylesheet");
+    fontEmbedded.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css');
+    fontEmbedded.setAttribute("type", "text/html");
+
+    const fontCodes = document.createElement("link");
+    fontCodes.setAttribute("rel", "stylesheet");
+    fontCodes.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css');
+    fontCodes.setAttribute("type", "text/html");
+
+
+    const fontBpmn = document.createElement("link");
+    fontBpmn.setAttribute("rel", "stylesheet");
+    fontBpmn.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css');
+    fontBpmn.setAttribute("type", "text/html");
+
+    // import bpmnEmbeddedStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
+    // import bpmnCodesStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
+    // import bpmnStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
+    document.head.appendChild(fontEmbedded);
+    document.head.appendChild(fontCodes);
+    document.head.appendChild(fontBpmn);
 
     this.setShadowDOM();
   }
@@ -119,9 +157,19 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     const div = document.createElement('div');
 
-    let styleTag = document.createElement('style');
-    styleTag.innerHTML = allStyles;
-    this.shadowRoot.appendChild(styleTag);
+    // this.appendStyle(allStyles);
+    this.appendStyle(lessStyle);
+    // this.appendStyle(bpmnEmbeddedStyle);
+    // this.appendStyle(bpmnCodesStyle);
+    this.appendStyle(diagramJsStyle);
+    // this.appendStyle(bpmnStyle);
+    this.appendStyle(elementTemplatesStyle);
+    this.appendStyle(propertiesPanelStyle);
+    this.appendStyle(modelerStyle);
+    this.appendStyle(editorUiStyle);
+    this.appendStyle(notificationsStyle);
+    this.appendStyle(notificationStyle);
+    this.appendStyle(configModal);
 
     // styleTag = document.createElement('style');
     // styleTag.innerHTML = editorStyle;
@@ -168,6 +216,12 @@ class QuantumWorkflowModeler extends HTMLElement {
 // Attach the created element to the shadow DOM
 //     this.shadowRoot.appendChild(linkElem);
     this.shadowRoot.appendChild(div);
+  }
+
+  appendStyle(style) {
+    let styleTag = document.createElement('style');
+    styleTag.innerHTML = style;
+    this.shadowRoot.appendChild(styleTag);
   }
 
   get pluginConfigs() {

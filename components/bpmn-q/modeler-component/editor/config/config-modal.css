@@ -23,6 +23,16 @@
     margin-left: 5px;
 }
 
+.btn-config:before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/icons/config-icon.png") no-repeat center center;
+    float: left;
+}
+
 .btn-primary:focus {
     border: solid 1px var(--blue-darken-48);
     background-color: var(--blue-darken-55);
