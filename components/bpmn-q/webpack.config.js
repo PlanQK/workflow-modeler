@@ -24,10 +24,10 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource',
-        generator: {
-          filename: 'fonts/[name][hash][ext]'
-        }
+        type: 'asset/inline',
+        // generator: {
+        //   filename: 'fonts/[name][hash][ext]'
+        // }
       },
       {
         test: /\.(less|css)$/i,

@@ -10,6 +10,8 @@
 // import './editor/ui/notifications/Notification';
 // import './common/camunda-components/styles/style.less';
 
+import bpmnFonts from './editor/resources/styling/bpmn-fonts.css';
+
 import diagramJsStyle from 'bpmn-js/dist/assets/diagram-js.css';
 import bpmnEmbeddedStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import bpmnCodesStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
@@ -53,28 +55,32 @@ class QuantumWorkflowModeler extends HTMLElement {
         // fontEmbedded.setAttribute("href", './editor/resources/styling/bpmn-fonts.css');
         // fontEmbedded.setAttribute("type", "text/html");
 
-        const fontEmbedded = document.createElement("link");
-        fontEmbedded.setAttribute("rel", "stylesheet");
-        fontEmbedded.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css');
-        fontEmbedded.setAttribute("type", "text/html");
+        let styleTag = document.createElement('style');
+        styleTag.innerHTML = bpmnFonts;
+        document.head.appendChild(styleTag);
 
-        const fontCodes = document.createElement("link");
-        fontCodes.setAttribute("rel", "stylesheet");
-        fontCodes.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css');
-        fontCodes.setAttribute("type", "text/html");
-
-
-        const fontBpmn = document.createElement("link");
-        fontBpmn.setAttribute("rel", "stylesheet");
-        fontBpmn.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css');
-        fontBpmn.setAttribute("type", "text/html");
+        // const fontEmbedded = document.createElement("link");
+        // fontEmbedded.setAttribute("rel", "stylesheet");
+        // fontEmbedded.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css');
+        // fontEmbedded.setAttribute("type", "text/html");
+        //
+        // const fontCodes = document.createElement("link");
+        // fontCodes.setAttribute("rel", "stylesheet");
+        // fontCodes.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css');
+        // fontCodes.setAttribute("type", "text/html");
+        //
+        //
+        // const fontBpmn = document.createElement("link");
+        // fontBpmn.setAttribute("rel", "stylesheet");
+        // fontBpmn.setAttribute("href", 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css');
+        // fontBpmn.setAttribute("type", "text/html");
 
         // import bpmnEmbeddedStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
         // import bpmnCodesStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
         // import bpmnStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
-        document.head.appendChild(fontEmbedded);
-        document.head.appendChild(fontCodes);
-        document.head.appendChild(fontBpmn);
+        // document.head.appendChild(fontEmbedded);
+        // document.head.appendChild(fontCodes);
+        // document.head.appendChild(fontBpmn);
 
         this.setShadowDOM();
     }
@@ -117,6 +123,9 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         const bpmnContainer = this.shadowRoot.querySelector('#canvas');
         const propertiesPanelContainer = this.shadowRoot.querySelector('#properties');
+
+        bpmnContainer.innerHTML = '';
+        propertiesPanelContainer.innerHTML = '';
 
         const modeler = createModeler(bpmnContainer, propertiesPanelContainer);
 
