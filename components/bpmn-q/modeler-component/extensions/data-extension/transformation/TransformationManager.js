@@ -207,12 +207,14 @@ export async function startDataFlowReplacementProcess(xml) {
         // businessObject.get(consts.CONTENT)
         // addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
 
+        const name = businessObject.get('name');
+
         for (let c of businessObject.get(consts.CONTENT)) {
           let formField =
             {
               'defaultValue': c.value,
-              'id': c.name + '_' + dataMapObject.name,
-              'label': c.name + ' of ' + dataMapObject.name,
+              'id': name + '.' + c.name,
+              'label': name + '.' + c.name,
               'type': 'string'
             };
           // formField.fadhf.adsfasfM;
@@ -750,11 +752,11 @@ function createGlobalProcessVariables(globalProcessVariables, rootProcess, defin
       // });
 
 
-      const outgoingFlowElements = startEventBo.outgoing;
-      const incoming = startEventBo.incoming;
+      const outgoingFlowElements = startEventBo.outgoing || [];
+      // const incoming = startEventBo.incoming;
 
-      console.log(outgoingFlowElements);
-      console.log(incoming);
+      // console.log(outgoingFlowElements);
+      // console.log(incoming);
 
       // modeling.appendShape(startEventBo, newTaskElement, startEventElement.position, event.parent);
 
