@@ -56,3 +56,23 @@ export function setFileName(fileName) {
     config.fileName = fileName;
   }
 }
+
+/**
+ * Get the current shadow root
+ *
+ * @return {string} the currently specified endpoint of the Camunda engine
+ */
+export function getShadowRoot() {
+  return config.shadowRoot;
+}
+
+/**
+ * Set the current shadow root
+ *
+ * @param shadowRoot the shadow root the modeler is built in
+ */
+export function setShadowRoot(shadowRoot) {
+  if (shadowRoot) {
+    config.shadowRoot = shadowRoot;
+  }
+}

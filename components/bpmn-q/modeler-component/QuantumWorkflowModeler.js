@@ -21,9 +21,10 @@ import propertiesPanelStyle from 'bpmn-js-properties-panel/dist/assets/propertie
 import modelerStyle from './editor/resources/styling/modeler.css' ;
 import editorUiStyle from './editor/resources/styling/editor-ui.css';
 import notificationsStyle from './editor/ui/notifications/Notifications.css';
-import notificationStyle from './editor/ui/notifications/Notification';
+import notificationStyle from './editor/ui/notifications/Notification.css';
 import configModal from './editor/config/config-modal.css';
-import lessStyle from './common/camunda-components/styles/style.less';
+import lessStyle from './common/camunda-components/css-styles/style.css';
+import colors from './common/camunda-components/css-styles/_colors.css';
 
 // import allStyles from '../public/modeler-styles.css' ;
 
@@ -43,8 +44,6 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     workflowModel;
     shadowRoot;
-    notificationContainer;
-    toolbarRoot;
 
     constructor() {
         super();
@@ -55,9 +54,14 @@ class QuantumWorkflowModeler extends HTMLElement {
         // fontEmbedded.setAttribute("href", './editor/resources/styling/bpmn-fonts.css');
         // fontEmbedded.setAttribute("type", "text/html");
 
-        let styleTag = document.createElement('style');
-        styleTag.innerHTML = bpmnFonts;
-        document.head.appendChild(styleTag);
+        // add css sheet which publishes the bpmn font to the head of the document
+        let fontStyleTag = document.createElement('style');
+        fontStyleTag.innerHTML = bpmnFonts;
+        document.head.appendChild(fontStyleTag);
+
+        let colorStyleTag = document.createElement('style');
+        colorStyleTag.innerHTML = colors;
+        document.head.appendChild(colorStyleTag);
 
         // const fontEmbedded = document.createElement("link");
         // fontEmbedded.setAttribute("rel", "stylesheet");
@@ -129,10 +133,12 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         const modeler = createModeler(bpmnContainer, propertiesPanelContainer);
 
-        const handler = NotificationHandler.getInstance();
-        const notificationComponent = handler.createNotificationsComponent([]);
+        const notificationsContainer = this.shadowRoot.querySelector('#qwm-notification-container');
 
-        const notificationRoot = createRoot(this.shadowRoot.querySelector('#notification-container'));
+        const handler = NotificationHandler.getInstance();
+        const notificationComponent = handler.createNotificationsComponent([], notificationsContainer);
+
+        const notificationRoot = createRoot(notificationsContainer);
         notificationRoot.render(<div>{notificationComponent}</div>);
 
         // create a transformation button for each transformation method of a active plugin
@@ -160,6 +166,7 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         if (!this.shadowRoot) {
             this.shadowRoot = this.attachShadow({mode: "open"});
+            editorConfig.setShadowRoot(this.shadowRoot);
         }
         this.shadowRoot.innerHTML = `
 <!--              <style>-->
@@ -171,6 +178,7 @@ class QuantumWorkflowModeler extends HTMLElement {
 
         // add styles as style tags to the shadow dom
         // this.appendStyle(allStyles);
+        this.append(colors);
         this.appendStyle(lessStyle);
         this.appendStyle(bpmnEmbeddedStyle);
         this.appendStyle(bpmnCodesStyle);
@@ -217,7 +225,7 @@ class QuantumWorkflowModeler extends HTMLElement {
                 <div id="canvas" style="width: 100%"></div>
                 <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
               </div>
-              <div id="notification-container"></div>
+              <div id="qwm-notification-container"></div>
               
 `;
         // var css = new CSSStyleSheet();

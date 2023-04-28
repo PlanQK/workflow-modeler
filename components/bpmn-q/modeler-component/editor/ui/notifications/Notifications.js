@@ -17,20 +17,20 @@ export default class Notifications extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.container = document.createElement('div');
+    this.container = props.container;
     this.state = {
       notifications: props.notifications || []
     }
     this.currentNotificationId = -1;
   }
 
-  componentDidMount() {
-    document.body.appendChild(this.container);
-  }
-
-  componentWillUnmount() {
-    document.body.removeChild(this.container);
-  }
+  // componentDidMount() {
+  //   document.body.appendChild(this.container);
+  // }
+  //
+  // componentWillUnmount() {
+  //   document.body.removeChild(this.container);
+  // }
 
   displayNotification({type = 'info', title, content, duration = 4000}) {
     const notifications = this.state.notifications;
