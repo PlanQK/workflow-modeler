@@ -16,12 +16,28 @@
           "type": "String"
         },
         {
+          "name": "qhanaVersion",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "qhanaName",
           "isAttr": true,
           "type": "String"
         },
         {
           "name": "qhanaDescription",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "QHAnaServiceStepTask",
+      "superClass": [ "bpmn:Task" ],
+      "properties": [
+        {
+          "name": "qhanaNextStep",
           "isAttr": true,
           "type": "String"
         }

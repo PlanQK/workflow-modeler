@@ -18,8 +18,8 @@ import {getModeler} from "../../editor/ModelerHandler";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
-import UpdateQHAnaConfigurationsButton from '../qhana/ui/UpdateQHAnaConfigurationsButton';
 import DataObjectConfigurationsTab from './configurations/DataObjectConfigurationsTab';
+import UpdateDataObjectConfigurationsButton from './configurations/UpdateDataObjectConfigurationsButton';
 
 import quantMEStyles from './styling/quantme.css';
 

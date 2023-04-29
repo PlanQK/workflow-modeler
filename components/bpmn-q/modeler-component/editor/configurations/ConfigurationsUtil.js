@@ -1,7 +1,12 @@
 import * as configConsts from './Constants';
 import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
-import * as consts from '../../extensions/data-extension/Constants';
-import {getCamundaInputOutput} from '../../common/util/ModellingUtilities';
+import * as dataConsts from '../../extensions/data-extension/Constants';
+import {
+  addCamundaInputMapParameter,
+  addCamundaOutputMapParameter,
+  getCamundaInputOutput
+} from '../../common/util/ModellingUtilities';
+import * as configsConsts from './Constants';
 
 /**
  * Create popup menu entries for a given array of configurations. Per default each entry applies its configuration to the
@@ -20,24 +25,36 @@ import {getCamundaInputOutput} from '../../common/util/ModellingUtilities';
 export function createConfigurationsEntries(element, className, configurations, bpmnFactory, modeling, commandStack, replaceElement, action = undefined) {
 
   const menuEntries = {};
+  let updateAction;
+
+  console.log('Create entries for configurations:');
+  console.log(configurations);
+
   configurations.map(function (config) {
 
-    const updateAction = function () {
+    // define action for the entry
+    if (action) {
+      updateAction = function (event) {
+        action(event, config);
+      };
+    } else {
+      updateAction = function () {
 
-      // replace element with configuration type if types mismatch
-      let newElement;
-      if (element.type !== config.appliesTo) {
-        newElement = replaceElement(element, {type: config.appliesTo});
-      }
+        // replace element with configuration type if types mismatch
+        let newElement;
+        if (element.type !== config.appliesTo) {
+          newElement = replaceElement(element, {type: config.appliesTo});
+        }
 
-      handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, commandStack);
-    };
+        handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, commandStack);
+      };
+    }
 
     // create popup menu entry
     menuEntries[config.id] = {
       label: config.name,
       className: className,
-      action: action || updateAction,
+      action: updateAction,
     };
   });
 
@@ -60,6 +77,10 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
     [configConsts.SELECT_CONFIGURATIONS_ID]: config.id,
   });
 
+  modeling.updateProperties(element, {
+    [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
+  });
+
   // set name of the element to configuration name
   modeling.updateProperties(element, {
     name: config.name,
@@ -72,6 +93,12 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
       case 'camunda:InputParameter':
       case 'camunda:OutputParameter':
         addAttributeValueToCamundaIO(element, bpmnFactory, attribute.bindTo.type, attribute, modeling)(attribute.value);
+        break;
+      case 'camunda:InputMapParameter':
+        addCamundaInputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
+        break;
+      case 'camunda:OutputMapParameter':
+        addCamundaOutputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
         break;
       case 'KeyValueMap':
         addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack)(attribute.value);
@@ -120,7 +147,7 @@ export function addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, 
         properties: {value: value},
       });
     } else {
-      const param = bpmnFactory.create(consts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
+      const param = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
 
       commandStack.execute('element.updateModdleProperties', {
         element,
@@ -198,6 +225,18 @@ export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType
       return attribute.value;
     }
   };
+}
+
+export function extractConfigSVG(element) {
+  const svgStr = element.businessObject.get(configsConsts.CONFIGURATIONS_ICON);
+  if (svgStr) {
+    try {
+      return JSON.parse(svgStr);
+    } catch (err) {
+      return undefined;
+    }
+  }
+  return undefined;
 }
 
 
