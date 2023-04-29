@@ -54,8 +54,7 @@ describe('Test plugins', function () {
         expect(transfButtons.length).to.equal(3);
         expect(buttons.length).to.equal(1);
         expect(tabs.length).to.equal(8);
-        expect(styles.length).to.equal(1);
-
+        expect(styles.length).to.equal(3);
       });
     });
   });
