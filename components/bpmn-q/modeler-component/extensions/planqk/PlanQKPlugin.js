@@ -1,5 +1,5 @@
 import React from 'react';
-import './resources/css/planqk-icons.css';
+import planqkStyles from './resources/css/planqk-icons.css';
 import PlanQKExtensionModule from './';
 import {getXml, saveXmlAsLocalFile} from "../../common/util/IoUtilities";
 import {startPlanqkReplacementProcess} from "./exec-completion/PlanqkServiceTaskCompletion";
@@ -12,6 +12,7 @@ export default {
     name: 'planqk',
     extensionModule: PlanQKExtensionModule,
     moddleDescription: planqkModdleDescriptor,
+    styling: [planqkStyles],
     transformExtensionButton: <TransformationButton name='PlanQK Transformation' transformWorkflow={
         async (xml) => {
             // const modeler = getModeler();

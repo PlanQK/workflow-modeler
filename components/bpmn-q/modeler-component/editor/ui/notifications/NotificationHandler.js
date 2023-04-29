@@ -31,13 +31,14 @@ export default class NotificationHandler {
      * Creates a new Notifications React Component with a fixed ref to access the methods of the component.
      *
      * @param notifications The initial set of components to display wright after creation.
+     * @param notificationsContainer
      * @returns the created Notifications React Component
      */
-    createNotificationsComponent(notifications) {
+    createNotificationsComponent(notifications, notificationsContainer) {
         if (notifications) {
             this.notifications = notifications;
         }
-        return <Notifications ref={this.notificationRef} notifications={this.notifications}/>
+        return <Notifications ref={this.notificationRef} notifications={this.notifications} container={notificationsContainer}/>;
     }
 
     /**

@@ -8,6 +8,7 @@ import QHAnaConfigurationsTab from './configurations/QHAnaConfigurationsTab';
 import {startQHAnaReplacementProcess} from './transformation/QHAnaTransformationHandler';
 import {getModeler} from '../../editor/ModelerHandler';
 import {getXml} from '../../common/util/IoUtilities';
+import qhanaStyles from './resources/qhana-icons.css';
 
 let qhanaModdleDescriptor = require('./resources/qhana-extension.json');
 
@@ -26,6 +27,7 @@ export default {
   ],
   extensionModule: QHAnaExtensionModule,
   moddleDescription: qhanaModdleDescriptor,
+  styling: [qhanaStyles],
   transformExtensionButton: <TransformationButton name='QHAna Transformation' transformWorkflow={
     async (xml) => {
 

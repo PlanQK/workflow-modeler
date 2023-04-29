@@ -13,7 +13,7 @@ import HybridRuntimeTab from "./configTabs/HybridRuntimeTab";
 import NotificationHandler from "../../editor/ui/notifications/NotificationHandler";
 import {getQRMs} from "./qrm-manager";
 import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
-import {getXml, loadDiagram, saveXmlAsLocalFile} from "../../common/util/IoUtilities";
+import {getXml} from "../../common/util/IoUtilities";
 import {getModeler} from "../../editor/ModelerHandler";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
@@ -21,12 +21,16 @@ import TransformationButton from "../../editor/ui/TransformationButton";
 import DataObjectConfigurationsTab from './configurations/DataObjectConfigurationsTab';
 import UpdateDataObjectConfigurationsButton from './configurations/UpdateDataObjectConfigurationsButton';
 
-let quantMEModdleExtension = require('./resources/quantum4bpmn.json')
+import quantMEStyles from './styling/quantme.css';
+
+let quantMEModdleExtension = require('./resources/quantum4bpmn.json');
 
 export default {
-    buttons: [<ExtensibleButton subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <UpdateDataObjectConfigurationsButton/>, <DeploymentPlugin/>]}
-                                title="QuantME"
-                                styleClass="quantme-logo"/>
+    buttons: [<ExtensibleButton
+        subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <UpdateDataObjectConfigurationsButton/>,
+            <DeploymentPlugin/>]}
+        title="QuantME"
+        styleClass="quantme-logo"/>
     ],
     configTabs: [
         {
@@ -58,10 +62,12 @@ export default {
             tabId: 'HybridRuntimesTab',
             tabTitle: 'Hybrid Runtimes',
             configTab: HybridRuntimeTab,
-        }],
+        }
+    ],
     name: 'quantme',
     extensionModule: QuantMEExtensionModule,
     moddleDescription: quantMEModdleExtension,
+    styling: [quantMEStyles],
     transformExtensionButton: <TransformationButton name='QuantME Transformation' transformWorkflow={
         async (xml) => {
 
@@ -86,7 +92,8 @@ export default {
                     nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
                     transformationFrameworkEndpoint: config.getTransformationFrameworkEndpoint(),
                     camundaEndpoint: camundaConfig.getCamundaEndpoint()
-                });
+                }
+            );
         }
     }/>,
-}
+};
