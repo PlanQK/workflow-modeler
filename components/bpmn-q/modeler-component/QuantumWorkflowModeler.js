@@ -21,7 +21,6 @@ import notificationStyle from './editor/ui/notifications/Notification.css';
 import configModal from './editor/config/config-modal.css';
 import lessStyle from './common/camunda-components/css-styles/style.css';
 
-import colors from './common/camunda-components/css-styles/_colors.css';
 import bpmnFonts from './editor/resources/styling/bpmn-fonts.css';
 
 class QuantumWorkflowModeler extends HTMLElement {
@@ -36,11 +35,6 @@ class QuantumWorkflowModeler extends HTMLElement {
         let fontStyleTag = document.createElement('style');
         fontStyleTag.innerHTML = bpmnFonts;
         document.head.appendChild(fontStyleTag);
-
-        // add css color sheet to the head of the document
-        let colorStyleTag = document.createElement('style');
-        colorStyleTag.innerHTML = colors;
-        document.head.appendChild(colorStyleTag);
     }
 
     connectedCallback() {
