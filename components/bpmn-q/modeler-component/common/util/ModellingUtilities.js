@@ -4,6 +4,7 @@ import {addExtensionElements, getExtension} from './camunda-utils/ExtensionEleme
 import {useService} from 'bpmn-js-properties-panel';
 import {getExtensionElement} from '../../extensions/planqk/exec-completion/CompletionUtilities';
 import * as consts from '../../extensions/data-extension/Constants';
+import {is} from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * TODO: check functionality, may be redundant to
@@ -525,6 +526,27 @@ export function replaceConnection(connectionElement, replacementType, modeling) 
 
     modeling.removeConnection(connectionElement);
     modeling.connect(sourceElement, targetElement, {type: replacementType, waypoints: connectionElement.waypoints});
+}
+
+/**
+ * Returns if the given element has at least one connection to an element of the given type.
+ *
+ * @param element The given element to check its connections.
+ * @param connectedElementType The given type of the searched connected element.
+ * @returns {boolean} True if the given element is connected with an element of the given type, false else.
+ */
+export function isConnectedWith(element, connectedElementType) {
+
+    const outgoingConnections = element.outgoing || [];
+    const incomingConnections = element.incoming || [];
+
+    // check if a source or target of a connection is of the given type
+    for(let connectedElement of outgoingConnections.concat(incomingConnections)) {
+        if (is(connectedElement.source, connectedElementType) || is(connectedElement.target, connectedElementType)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // export function addElementsTolist(element, businessObject, listPropertyName, objectsToAdd) {
