@@ -236,6 +236,51 @@ export function getSingleFlowElement(process) {
 }
 
 /**
+ * Returns true if a connection through the sequence flow of the current workflow between element1 and element2 is
+ * possible, else false.
+ *
+ * @param element1 The start element of the connection search.
+ * @param element2 The end element of the connection search.
+ * @param visited Set of already visited elements, init with new Set().
+ * @param elementRegistry The element registry containing the elements of the current workflow
+ * @returns {boolean} True, if element1 is connected via sequence flows with element2, false else.
+ */
+export function findSequenceFlowConnection(element1, element2, visited, elementRegistry) {
+    
+    // exit condition of the recursion, element2 is reached
+    if (element1 === element2) {
+        return true;
+    }
+    
+    // store element1 as visited
+    visited.add(element1);
+    
+    // search recursively for element2 in all outgoing connections
+    const connections = element1.outgoing;
+    
+    for (let i = 0; i < connections.length; i++) {
+        
+        const connection = connections[i];
+        
+        // only search in elements connected via sequence flow
+        if (connection.type === 'bpmn:SequenceFlow') {
+            
+            const nextElement = connection.target;
+            
+            // recursive call with new element
+            if (!visited.has(nextElement)) {
+                
+                // return true if recursive call finds element2
+                if (findSequenceFlowConnection(nextElement, element2, visited, elementRegistry)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Get the 'camunda:InputOutput' extension element from the given business object
  *
  * @param bo the business object to retrieve the input/output extension for
