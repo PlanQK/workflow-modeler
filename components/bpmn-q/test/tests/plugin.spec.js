@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import {
   getActivePlugins,
   getAdditionalModules, getConfigTabs, getModdleExtension,
-  getPluginButtons, getTransformationButtons
+  getPluginButtons, getStyles, getTransformationButtons
 } from '../../modeler-component/editor/plugin/PluginHandler';
 import {
   getAllConfigs,
@@ -46,6 +46,7 @@ describe('Test plugins', function () {
         const transfButtons = getTransformationButtons();
         const buttons = getPluginButtons();
         const tabs = getConfigTabs();
+        const styles = getStyles();
 
         expect(modules.length).to.equal(3);
         expect(extensions['dataflow']).to.not.be.undefined;
@@ -54,6 +55,7 @@ describe('Test plugins', function () {
         expect(transfButtons.length).to.equal(3);
         expect(buttons.length).to.equal(1);
         expect(tabs.length).to.equal(8);
+        expect(styles.length).to.equal(3);
       });
     });
   });

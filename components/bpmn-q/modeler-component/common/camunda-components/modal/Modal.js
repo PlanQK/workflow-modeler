@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import FocusTrap from './FocusTrap';
 import EscapeTrap from './EscapeTrap';
 import KeyboardInteractionTrap from './KeyboardInteractionTrap';
+import * as editorConfig from '../../../editor/config/EditorConfigManager';
 
 // const CloseIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">   <path fill-rule="evenodd" d="M12.6666667,11.3333333 L20,11.3333333 L20,12.6666667 L12.6666667,12.6666667 L12.6666667,20 L11.3333333,20 L11.3333333,12.6666667 L4,12.6666667 L4,11.3333333 L11.3333333,11.3333333 L11.3333333,4 L12.6666667,4 L12.6666667,11.3333333 Z" transform="rotate(45 13.414 8.586)"/> </svg>';
 // import { ReactComponent as CloseIcon} from '../resources/icons/Close.svg';
@@ -39,7 +40,7 @@ export default class Modal extends PureComponent {
     if (this.props.onClose) {
       return this.props.onClose();
     }
-  }
+  };
 
   componentDidMount() {
     this.focusTrap.mount();
@@ -70,7 +71,7 @@ export default class Modal extends PureComponent {
           </div>
         </div>
       </KeyboardInteractionTrap>,
-      document.body
+      editorConfig.getShadowRoot()
     );
   }
 }
