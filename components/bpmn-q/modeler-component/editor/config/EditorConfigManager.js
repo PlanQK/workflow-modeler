@@ -7,7 +7,7 @@ const defaultConfig = {
   transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
 };
 
-const config = {};
+let config = {};
 
 /**
  * Get the endpoint of the configured Camunda engine to deploy to
@@ -85,4 +85,8 @@ export function setTransformedWorkflowHandler(transformedWorkflowHandler) {
     // remove trailing slashes
     config.transformedWorkflowHandler = transformedWorkflowHandler;
   }
+}
+
+export function reset() {
+  config = {};
 }

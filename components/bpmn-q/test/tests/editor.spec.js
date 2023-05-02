@@ -44,6 +44,10 @@ describe('Test editor functions', function () {
 
     describe('Test file name', function () {
 
+      beforeEach('reset editor config', function () {
+        editorConfig.reset();
+      });
+
       afterEach('reset fileName', function () {
         editorConfig.setFileName('quantum-workflow-model.bpmn');
       });

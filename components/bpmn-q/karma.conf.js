@@ -1,6 +1,14 @@
 // Karma configuration
 const webpackConfig = require('./webpack.config.js');
 
+const customLaunchers = {
+  CustomBrowser: {
+    base: 'ChromeHeadless',
+    flags: ['--disable-translate', '--disable-extensions', '--disable-background-networking', '--safebrowsing-disable-auto-update', '--disable-sync', '--metrics-recording-only', '--disable-default-apps', '--no-first-run', '--disable-setuid-sandbox', '--disable-web-security'],
+    debug: true,
+    sequential: true, // add this option to run tests sequentially
+  },
+};
 
 module.exports = function(config) {
   config.set({
@@ -73,8 +81,9 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-    browsers: ['ChromeHeadless'],
-
+    // browsers: ['ChromeHeadless'],
+    customLaunchers: customLaunchers,
+    browsers: ['CustomBrowser'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -82,6 +91,6 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser instances should be started simultaneously
-    concurrency: Infinity
+    concurrency: 1
   });
 };
