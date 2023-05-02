@@ -8,6 +8,7 @@ export default class ExtensibleButton extends Component {
             subButtons,
             title,
             styleClass,
+            description,
         } = props;
 
         this.state = {
@@ -15,6 +16,7 @@ export default class ExtensibleButton extends Component {
             subButtons: subButtons,
             title: title,
             styleClass: styleClass || '',
+            description: description,
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -29,7 +31,7 @@ export default class ExtensibleButton extends Component {
     render() {
         return (
             <div>
-                <button className={this.state.isToggleOn ? 'extensible-btn' : 'toolbar-btn'} onClick={this.handleClick}>
+                <button className={this.state.isToggleOn ? 'extensible-btn' : 'toolbar-btn'} title={this.state.description} onClick={this.handleClick}>
                     <span className={this.state.styleClass}>
                         <span className="indent">{this.state.title}</span>
                     </span>

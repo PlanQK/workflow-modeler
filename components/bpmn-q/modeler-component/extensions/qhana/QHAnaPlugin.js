@@ -16,7 +16,8 @@ export default {
   name: 'qhana',
   buttons: [<ExtensibleButton subButtons={[<UpdateQHAnaConfigurationsButton/>]}
                               title="QHAna"
-                              styleClass="qhana-service-task"/>
+                              styleClass="qhana-service-task"
+                              description="Show buttons of the QHAna plugin" />
   ],
   configTabs: [
     {

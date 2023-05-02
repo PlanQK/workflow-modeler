@@ -38,7 +38,7 @@ export default function OpenButton() {
 
   return (
     <>
-      <input ref={inputRef} className="toolbar-btn" style={{display: 'none'}} type="file" accept=".bpmn"
+      <input ref={inputRef} className="toolbar-btn" title="Open new workflow diagram" style={{display: 'none'}} type="file" accept=".bpmn"
              onChange={(event) => handleChange(event)}/>
       <button className="toolbar-btn" onClick={() => handleClick()}>
                 <span className="icon-open-file">

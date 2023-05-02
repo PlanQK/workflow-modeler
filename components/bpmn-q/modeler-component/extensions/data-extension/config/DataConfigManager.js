@@ -1,6 +1,10 @@
-const config = {
+import {getPluginConfig} from "../../../editor/plugin/PluginConfigHandler";
+
+const defaultConfig = {
   configurationsEndpoint: 'http://localhost:8000/service-task',
 };
+
+const config = {};
 
 /**
  * Get the url to the Configurations endpoint to fetch transformation task Configurations from
@@ -8,7 +12,10 @@ const config = {
  * @return {string} the currently specified endpoint url of the Configurations endpoint
  */
 export function getConfigurationsEndpoint() {
-  return config.configurationsEndpoint || '';
+  if (!config.configurationsEndpoint) {
+    setConfigurationsEndpoint(getPluginConfig('dataflow').configurationsEndpoint || defaultConfig.configurationsEndpoint);
+  }
+  return config.configurationsEndpoint;
 }
 
 /**

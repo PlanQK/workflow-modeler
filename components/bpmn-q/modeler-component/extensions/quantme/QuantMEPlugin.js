@@ -30,7 +30,8 @@ export default {
         subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <UpdateDataObjectConfigurationsButton/>,
             <DeploymentPlugin/>]}
         title="QuantME"
-        styleClass="quantme-logo"/>
+        styleClass="quantme-logo"
+        description="Show buttons of the QuantME plugin" />
     ],
     configTabs: [
         {
