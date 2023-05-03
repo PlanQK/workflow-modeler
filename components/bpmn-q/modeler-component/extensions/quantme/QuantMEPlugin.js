@@ -73,12 +73,7 @@ export default {
                 xml = await getXml(modeler);
             }
 
-            NotificationHandler.getInstance().displayNotification({
-                type: 'info',
-                title: 'Workflow Transformation Started!',
-                content: 'Successfully started transformation process for the current workflow!',
-                duration: 7000
-            });
+
             // const modeler = getModeler();
             //
             // let xml = await modeler.get('bpmnjs').saveXML();

@@ -31,6 +31,15 @@ export default function ToolbarTransformationButton(props) {
         let xml = await getXml(modeler);
         let tmp;
 
+        if (Object.entries(transformationStates).some((state) => state[1])) {
+            NotificationHandler.getInstance().displayNotification({
+                type: 'info',
+                title: 'Workflow Transformation Started!',
+                content: 'Successfully started transformation process for the current workflow!',
+                duration: 7000
+            });
+        }
+
         try {
             // start all active transformations
             for (let transformationButton of subButtons) {
@@ -49,7 +58,7 @@ export default function ToolbarTransformationButton(props) {
 
                         NotificationHandler.getInstance().displayNotification({
                             type: 'warning',
-                            title: 'Unable to transform workflow',
+                            title: `Unable to transform ${transformationButton.props.name} elements in the workflow`,
                             content: cause,
                             duration: 10000
                         });
