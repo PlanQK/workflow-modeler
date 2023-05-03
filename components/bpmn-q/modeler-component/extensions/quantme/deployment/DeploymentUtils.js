@@ -10,7 +10,7 @@
  */
 
 import { getBindingType } from './BindingUtils';
-import {getFlowElementsRecursively} from '../../../common/util/ModellingUtilities';
+import {getFlowElementsRecursively} from '../../../editor/util/ModellingUtilities';
 
 /**
  * Get the ServiceTasks of the current workflow that have an attached deployment model to deploy the corresponding service starting from the given root element

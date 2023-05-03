@@ -5,10 +5,10 @@ import {
 } from '../../../editor/configurations/ConfigurationsUtil';
 import * as consts from '../QHAnaConstants';
 import {instance as qhanaServiceConfigs} from '../configurations/QHAnaConfigurations';
-import {createMenuEntries, createMoreOptionsEntryWithReturn} from '../../../common/util/PopupMenuUtilities';
+import {createMenuEntries, createMoreOptionsEntryWithReturn} from '../../../editor/util/PopupMenuUtilities';
 import * as qhanaReplaceOptions from './QHAnaReplaceOptions';
 import * as dataConsts from '../../data-extension/Constants';
-import {appendElement} from '../../../common/util/ModellingUtilities';
+import {appendElement} from '../../../editor/util/ModellingUtilities';
 
 export default class QHAnaReplaceMenuProvider {
 

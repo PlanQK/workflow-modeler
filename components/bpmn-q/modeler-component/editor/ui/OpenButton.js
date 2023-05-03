@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import {loadDiagram} from '../../common/util/IoUtilities';
+import {loadDiagram} from '../util/IoUtilities';
 import {getModeler} from '../ModelerHandler';
 import * as editorConfig from '../config/EditorConfigManager';
 import {dispatchWorkflowEvent} from '../events/EditorEventHandler';

@@ -5,7 +5,7 @@ import {
   addCamundaInputMapParameter,
   addCamundaOutputMapParameter,
   getCamundaInputOutput
-} from '../../common/util/ModellingUtilities';
+} from '../util/ModellingUtilities';
 import * as configsConsts from './Constants';
 
 /**

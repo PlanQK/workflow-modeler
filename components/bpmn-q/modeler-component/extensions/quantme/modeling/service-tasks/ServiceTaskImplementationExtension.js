@@ -13,7 +13,7 @@ import {SelectEntry} from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import {useService} from "bpmn-js-properties-panel";
-import {getExtension, removeExtensionElements} from '../../../../common/util/camunda-utils/ExtensionElementsUtil';
+import {getExtension, removeExtensionElements} from '../../../../editor/util/camunda-utils/ExtensionElementsUtil';
 
 // const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
 //       cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),

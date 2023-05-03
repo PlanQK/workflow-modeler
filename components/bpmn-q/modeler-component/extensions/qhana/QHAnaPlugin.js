@@ -7,7 +7,7 @@ import UpdateQHAnaConfigurationsButton from './ui/UpdateQHAnaConfigurationsButto
 import QHAnaConfigurationsTab from './configurations/QHAnaConfigurationsTab';
 import {startQHAnaReplacementProcess} from './transformation/QHAnaTransformationHandler';
 import {getModeler} from '../../editor/ModelerHandler';
-import {getXml} from '../../common/util/IoUtilities';
+import {getXml} from '../../editor/util/IoUtilities';
 import qhanaStyles from './resources/qhana-icons.css';
 
 let qhanaModdleDescriptor = require('./resources/qhana-extension.json');

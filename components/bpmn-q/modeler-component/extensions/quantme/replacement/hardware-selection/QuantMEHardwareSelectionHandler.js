@@ -18,11 +18,11 @@ import {
   SELECT_ON_QUEUE_SIZE_SCRIPT
 } from './HardwareSelectionScripts';
 import * as consts from '../../Constants';
-import { addExtensionElements } from '../../../../common/util/camunda-utils/ExtensionElementsUtil';
+import { addExtensionElements } from '../../../../editor/util/camunda-utils/ExtensionElementsUtil';
 import {createModelerFromXml, createPlainModeler} from '../../../../editor/ModelerHandler';
-import {getPropertiesToCopy, insertShape} from '../../../../common/util/TransformationUtilities';
-import {getCamundaInputOutput, getRootProcess} from '../../../../common/util/ModellingUtilities';
-import {getXml} from '../../../../common/util/IoUtilities';
+import {getPropertiesToCopy, insertShape} from '../../../../editor/util/TransformationUtilities';
+import {getCamundaInputOutput, getRootProcess} from '../../../../editor/util/ModellingUtilities';
+import {getXml} from '../../../../editor/util/IoUtilities';
 
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection

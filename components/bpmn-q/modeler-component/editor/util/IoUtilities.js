@@ -1,11 +1,11 @@
-import {transformedWorkflowHandlers, workflowEventTypes} from '../../editor/EditorConstants';
-import {dispatchWorkflowEvent} from '../../editor/events/EditorEventHandler';
+import {transformedWorkflowHandlers, workflowEventTypes} from '../EditorConstants';
+import {dispatchWorkflowEvent} from '../events/EditorEventHandler';
 
-const editorConfig = require('../../editor/config/EditorConfigManager');
+const editorConfig = require('../config/EditorConfigManager');
 
 let FormData = require('form-data');
 import fetch from 'node-fetch';
-import * as editorConsts from '../../editor/EditorConstants';
+import * as editorConsts from '../EditorConstants';
 
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +

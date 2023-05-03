@@ -23,8 +23,8 @@ import { bindUsingPull, bindUsingPush } from '../../../deployment/BindingUtils';
 import { getServiceTasksToDeploy } from '../../../deployment/DeploymentUtils';
 import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
-import {getXml} from "../../../../../common/util/IoUtilities";
-import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
+import {getXml} from "../../../../../editor/util/IoUtilities";
+import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
 
 const defaultState = {
   windowOpenDeploymentOverview: false,

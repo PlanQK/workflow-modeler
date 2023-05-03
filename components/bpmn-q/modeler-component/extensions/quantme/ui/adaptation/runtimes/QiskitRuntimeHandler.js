@@ -24,9 +24,9 @@ import {
   getRequiredPrograms,
   getTaskOrder
 } from './RuntimeHandlerUtils';
-import {getXml} from "../../../../../common/util/IoUtilities";
+import {getXml} from "../../../../../editor/util/IoUtilities";
 import {createModelerFromXml} from '../../../../../editor/ModelerHandler';
-import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
+import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
 
 /**
  * Generate a Qiskit Runtime program for the given candidate

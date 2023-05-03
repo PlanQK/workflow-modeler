@@ -1,6 +1,6 @@
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
-import {loadDiagram} from "../../../common/util/IoUtilities";
+import {loadDiagram} from "../../../editor/util/IoUtilities";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 import PlanQKExtensionModule from "../index";
 import {

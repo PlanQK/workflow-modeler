@@ -1,10 +1,10 @@
-import {getXml} from '../../../common/util/IoUtilities';
+import {getXml} from '../../../editor/util/IoUtilities';
 import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import {
   addCamundaInputParameter,
   getRootProcess,
-} from '../../../common/util/ModellingUtilities';
-import {getAllElementsInProcess, insertShape} from '../../../common/util/TransformationUtilities';
+} from '../../../editor/util/ModellingUtilities';
+import {getAllElementsInProcess, insertShape} from '../../../editor/util/TransformationUtilities';
 import * as consts from '../QHAnaConstants';
 import * as qhanaConsts from '../QHAnaConstants';
 

@@ -1,7 +1,7 @@
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 import * as consts from '../Constants';
 import {attr as svgAttr} from 'tiny-svg';
-import {drawDataElementSVG, drawTaskSVG} from "../../../common/util/RenderUtilities";
+import {drawDataElementSVG, drawTaskSVG} from "../../../editor/util/RenderUtilities";
 import {getSVG} from "./DataFlowSVGMap";
 import {extractConfigSVG} from '../../../editor/configurations/ConfigurationsUtil';
 

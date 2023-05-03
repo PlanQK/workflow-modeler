@@ -4,11 +4,11 @@ import {
   createMenuEntries,
   createMenuEntry,
   createMoreOptionsEntryWithReturn
-} from "../../../common/util/PopupMenuUtilities";
+} from "../../../editor/util/PopupMenuUtilities";
 import * as consts from '../Constants';
 import {createConfigurationsEntries} from '../../../editor/configurations/ConfigurationsUtil';
 import {getServiceTaskConfigurations} from '../configurations/TransformationTaskConfigurations';
-import {replaceConnection} from '../../../common/util/ModellingUtilities';
+import {replaceConnection} from '../../../editor/util/ModellingUtilities';
 // import * as quantmeReplaceOptions from "../../quantme/modeling/QuantMEReplaceOptions";
 
 export default class DataFlowReplaceMenuProvider {

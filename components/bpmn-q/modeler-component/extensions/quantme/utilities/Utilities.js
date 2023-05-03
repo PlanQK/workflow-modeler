@@ -17,10 +17,10 @@ import quantMEModdleExtension from '../resources/quantum4bpmn.json';
 import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
 import quantMEModule from '../modeling';
 import {createTempModeler} from "../../../editor/ModelerHandler";
-import {addExtensionElements, getExtensionElementsList} from "../../../common/util/camunda-utils/ExtensionElementsUtil";
-import {getInputOutput} from "../../../common/util/camunda-utils/InputOutputUtil";
+import {addExtensionElements, getExtensionElementsList} from "../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import {getInputOutput} from "../../../editor/util/camunda-utils/InputOutputUtil";
 import {useService} from "bpmn-js-properties-panel";
-import {getXml} from "../../../common/util/IoUtilities";
+import {getXml} from "../../../editor/util/IoUtilities";
 
 // let cmdHelper = require('')
 

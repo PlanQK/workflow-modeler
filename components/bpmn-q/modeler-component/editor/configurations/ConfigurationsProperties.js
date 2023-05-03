@@ -1,6 +1,6 @@
 import {isTextFieldEntryEdited, TextFieldEntry, CheckboxEntry, isCheckboxEntryEdited} from "@bpmn-io/properties-panel";
 import {useService} from 'bpmn-js-properties-panel';
-import {nextId} from '../../common/util/camunda-utils/ElementUtil';
+import {nextId} from '../util/camunda-utils/ElementUtil';
 import {
   addAttributeValueToCamundaIO, addAttributeValueToKeyValueMap, getAttributeValue,
   getAttributeValueFromCamundaIO,

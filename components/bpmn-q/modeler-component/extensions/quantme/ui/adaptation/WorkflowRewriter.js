@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getXml} from "../../../../common/util/IoUtilities";
+import {getXml} from "../../../../editor/util/IoUtilities";
 import {createModelerFromXml} from '../../../../editor/ModelerHandler';
 
 /**

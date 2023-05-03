@@ -10,7 +10,7 @@ import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 
 import * as consts from './utilities/Constants';
 import {getSVG} from "./SVGMap";
-import {drawDataElementSVG, drawTaskSVG} from "../../common/util/RenderUtilities";
+import {drawDataElementSVG, drawTaskSVG} from "../../editor/util/RenderUtilities";
 
 const HIGH_PRIORITY = 14001,
     TASK_BORDER_RADIUS = 2;

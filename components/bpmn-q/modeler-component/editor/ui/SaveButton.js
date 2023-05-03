@@ -1,5 +1,5 @@
 import React from "react";
-import {saveModelerAsLocalFile} from "../../common/util/IoUtilities";
+import {saveModelerAsLocalFile} from "../util/IoUtilities";
 
 export default function SaveButton(props) {
 

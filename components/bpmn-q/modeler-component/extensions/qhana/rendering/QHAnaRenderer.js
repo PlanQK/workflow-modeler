@@ -1,6 +1,6 @@
 import BpmnRenderer from 'bpmn-js/lib/draw/BpmnRenderer';
 import * as consts from '../QHAnaConstants';
-import {drawTaskSVG} from '../../../common/util/RenderUtilities';
+import {drawTaskSVG} from '../../../editor/util/RenderUtilities';
 import {getSVG} from './QHAnaSVGMap';
 export default class QHAnaRenderer extends BpmnRenderer {
 

@@ -3,7 +3,7 @@ import {createModeler, createTempModeler} from '../../modeler-component/editor/M
 import {
   getExtension,
   getExtensionElementsList
-} from '../../modeler-component/common/util/camunda-utils/ExtensionElementsUtil';
+} from '../../modeler-component/editor/util/camunda-utils/ExtensionElementsUtil';
 
 describe('Test ModelingUtilities', function () {
 

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import TransformationButton from "./TransformationButton";
-import {getXml, handleTransformedWorkflow} from '../../common/util/IoUtilities';
+import {getXml, handleTransformedWorkflow} from '../util/IoUtilities';
 import NotificationHandler from './notifications/NotificationHandler';
 import {getModeler} from '../ModelerHandler';
 

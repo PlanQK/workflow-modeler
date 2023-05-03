@@ -3,7 +3,7 @@ import React from 'react';
 import DataFlowExtensionModule from './';
 import TransformationButton from '../../editor/ui/TransformationButton';
 import {getModeler} from '../../editor/ModelerHandler';
-import {getXml} from '../../common/util/IoUtilities';
+import {getXml} from '../../editor/util/IoUtilities';
 import {startDataFlowReplacementProcess} from './transformation/TransformationManager';
 import TransformationTaskConfigurationsTab from './configurations/TransformationTaskConfigurationsTab';
 import dataStyles from './resources/data-flow-styles.css';

@@ -1,19 +1,19 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
-import {getXml, loadDiagram} from '../../../common/util/IoUtilities';
+import {getXml, loadDiagram} from '../../../editor/util/IoUtilities';
 import {createLightweightModeler, createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import * as consts from '../Constants';
 import {
     getAllElementsForProcess,
     getAllElementsInProcess,
     insertShape
-} from '../../../common/util/TransformationUtilities';
+} from '../../../editor/util/TransformationUtilities';
 import {
     addCamundaInputMapParameter,
     addCamundaInputParameter,
     addCamundaOutputMapParameter,
     addFormField, findSequenceFlowConnection, getDocumentation,
     getRootProcess, setDocumentation,
-} from '../../../common/util/ModellingUtilities';
+} from '../../../editor/util/ModellingUtilities';
 import {createLink} from "browserify-css/browser";
 
 /**

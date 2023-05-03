@@ -25,7 +25,7 @@ import {
   getTaskOrder
 } from './RuntimeHandlerUtils';
 import {createModelerFromXml} from '../../../../../editor/ModelerHandler';
-import {getRootProcess} from '../../../../../common/util/ModellingUtilities';
+import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
 
 /**
  * Generate a AWS Runtime program for the given candidate

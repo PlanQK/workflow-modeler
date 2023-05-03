@@ -1,5 +1,5 @@
 import {createTempModeler} from '../../modeler-component/editor/ModelerHandler';
-import {loadDiagram} from '../../modeler-component/common/util/IoUtilities';
+import {loadDiagram} from '../../modeler-component/editor/util/IoUtilities';
 import {setPluginConfig} from '../../modeler-component/editor/plugin/PluginConfigHandler';
 
 const app1 = {

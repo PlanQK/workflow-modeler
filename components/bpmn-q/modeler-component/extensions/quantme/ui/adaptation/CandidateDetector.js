@@ -10,8 +10,8 @@
  */
 
 import lodash from 'lodash';
-import generateImage from '../../../../common/util/camunda-utils/generateImage';
-import {getRootProcess} from '../../../../common/util/ModellingUtilities';
+import generateImage from '../../../../editor/util/camunda-utils/generateImage';
+import {getRootProcess} from '../../../../editor/util/ModellingUtilities';
 import {createModelerFromXml} from '../../../../editor/ModelerHandler';
 
 /**

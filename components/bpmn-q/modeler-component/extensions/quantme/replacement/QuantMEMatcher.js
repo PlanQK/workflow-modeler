@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getDefinitionsFromXml, getRootProcess, getSingleFlowElement} from '../../../common/util/ModellingUtilities';
+import {getDefinitionsFromXml, getRootProcess, getSingleFlowElement} from '../../../editor/util/ModellingUtilities';
 
 /**
  * Check if the given task matches the detector, i.e., has the same QuantME type and matching attributes

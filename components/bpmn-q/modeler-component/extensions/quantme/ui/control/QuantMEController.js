@@ -21,9 +21,9 @@ import { bindUsingPull, bindUsingPush } from '../../deployment/BindingUtils';
 import {createModelerFromXml, getModeler} from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import {getQRMs, updateQRMs} from "../../qrm-manager";
-import {getXml} from "../../../../common/util/IoUtilities";
+import {getXml} from "../../../../editor/util/IoUtilities";
 import config from "../../framework-config/config";
-import {getRootProcess} from '../../../../common/util/ModellingUtilities';
+import {getRootProcess} from '../../../../editor/util/ModellingUtilities';
 
 export default class QuantMEController extends PureComponent {
 

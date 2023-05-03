@@ -1,8 +1,8 @@
 import React from 'react';
 import NotificationHandler from './notifications/NotificationHandler';
-import {deployWorkflowToCamunda} from '../../common/util/IoUtilities';
+import {deployWorkflowToCamunda} from '../util/IoUtilities';
 import {getCamundaEndpoint} from '../config/EditorConfigManager';
-import {getRootProcess} from '../../common/util/ModellingUtilities';
+import {getRootProcess} from '../util/ModellingUtilities';
 
 export default function DeploymentButton(props) {
 

@@ -1,6 +1,6 @@
 import {getAllConfigs, setPluginConfig} from '../../../modeler-component/editor/plugin/PluginConfigHandler';
 import {createTempModeler} from '../../../modeler-component/editor/ModelerHandler';
-import {loadDiagram} from '../../../modeler-component/common/util/IoUtilities';
+import {loadDiagram} from '../../../modeler-component/editor/util/IoUtilities';
 import {
     COMPLETE_EXAMPLE_WORKFLOW,
     INPUT_TRANSFORMATION_ASSOCIATION,
@@ -19,8 +19,8 @@ import {expect} from 'chai';
 import {
     getDocumentation,
     getRootProcess
-} from '../../../modeler-component/common/util/ModellingUtilities';
-import {getAllElementsForProcess} from '../../../modeler-component/common/util/TransformationUtilities';
+} from '../../../modeler-component/editor/util/ModellingUtilities';
+import {getAllElementsForProcess} from '../../../modeler-component/editor/util/TransformationUtilities';
 import {testTaskIo} from '../../test-setup/IOHelper';
 import('../transformation.spec');
 

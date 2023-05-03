@@ -4,7 +4,7 @@ import {
     isAny
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import * as consts from '../Constants';
-import {isConnectedWith} from '../../../common/util/ModellingUtilities';
+import {isConnectedWith} from '../../../editor/util/ModellingUtilities';
 
 export default class CustomRulesProvider extends BpmnRules {
 

@@ -10,7 +10,7 @@
  */
 
 import { QUANTME_ATTRIBUTES } from '../Constants';
-import {getPropertiesToCopy} from '../../../common/util/TransformationUtilities';
+import {getPropertiesToCopy} from '../../../editor/util/TransformationUtilities';
 
 /**
  * Add attributes of a replaced QuantME task to the replacing workflow fragment to enable its configuration based of the attribute values.

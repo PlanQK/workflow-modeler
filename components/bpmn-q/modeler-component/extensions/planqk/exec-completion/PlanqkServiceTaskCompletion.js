@@ -6,12 +6,12 @@ import {
 } from './CompletionUtilities';
 import * as consts from "../utilities/Constants";
 import {getDi} from 'bpmn-js/lib/draw/BpmnRenderUtil';
-import {getXml} from "../../../common/util/IoUtilities";
+import {getXml} from "../../../editor/util/IoUtilities";
 import {
   addFormFieldDataForMap,
   getStartEvent,
   setInputParameter
-} from "../../../common/util/ModellingUtilities";
+} from "../../../editor/util/ModellingUtilities";
 import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
 
 /**

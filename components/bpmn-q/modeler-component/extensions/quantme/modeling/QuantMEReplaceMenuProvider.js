@@ -14,7 +14,7 @@ import {is, isAny} from 'bpmn-js/lib/util/ModelUtil';
 import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn
-} from "../../../common/util/PopupMenuUtilities";
+} from "../../../editor/util/PopupMenuUtilities";
 import {
   createConfigurationsEntries,
 } from '../../../editor/configurations/ConfigurationsUtil';

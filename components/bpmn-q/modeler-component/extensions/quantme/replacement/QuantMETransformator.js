@@ -15,15 +15,15 @@ import { addQuantMEInputParameters } from './InputOutputHandler';
 import * as Constants from '../Constants';
 import { replaceHardwareSelectionSubprocess } from './hardware-selection/QuantMEHardwareSelectionHandler';
 import { replaceCuttingSubprocess } from './circuit-cutting/QuantMECuttingHandler';
-import {insertShape} from '../../../common/util/TransformationUtilities';
+import {insertShape} from '../../../editor/util/TransformationUtilities';
 import {createModelerFromXml, createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import {
   getCamundaInputOutput,
   getDefinitionsFromXml,
   getRootProcess,
   getSingleFlowElement
-} from '../../../common/util/ModellingUtilities';
-import {getXml} from '../../../common/util/IoUtilities';
+} from '../../../editor/util/ModellingUtilities';
+import {getXml} from '../../../editor/util/IoUtilities';
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model

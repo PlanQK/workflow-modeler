@@ -13,7 +13,7 @@ import HybridRuntimeTab from "./configTabs/HybridRuntimeTab";
 import NotificationHandler from "../../editor/ui/notifications/NotificationHandler";
 import {getQRMs} from "./qrm-manager";
 import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
-import {getXml} from "../../common/util/IoUtilities";
+import {getXml} from "../../editor/util/IoUtilities";
 import {getModeler} from "../../editor/ModelerHandler";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";

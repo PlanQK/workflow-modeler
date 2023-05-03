@@ -1,7 +1,7 @@
 import React from 'react';
 import planqkStyles from './resources/css/planqk-icons.css';
 import PlanQKExtensionModule from './';
-import {getXml, saveXmlAsLocalFile} from "../../common/util/IoUtilities";
+import {getXml, saveXmlAsLocalFile} from "../../editor/util/IoUtilities";
 import {startPlanqkReplacementProcess} from "./exec-completion/PlanqkServiceTaskCompletion";
 import {getModeler} from "../../editor/ModelerHandler";
 import TransformationButton from "../../editor/ui/TransformationButton";

@@ -1,4 +1,4 @@
-import {createModelerFromXml} from '../../editor/ModelerHandler';
+import {createModelerFromXml} from '../ModelerHandler';
 import {getInputOutput} from './camunda-utils/InputOutputUtil';
 import {addExtensionElements, getExtension} from './camunda-utils/ExtensionElementsUtil';
 import {useService} from 'bpmn-js-properties-panel';

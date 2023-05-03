@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
-import {createNewDiagram, loadDiagram} from "./common/util/IoUtilities";
+import {createNewDiagram, loadDiagram} from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import {createModeler, getModeler} from "./editor/ModelerHandler";
 import {getPluginButtons, getStyles, getTransformationButtons} from "./editor/plugin/PluginHandler";

@@ -1,7 +1,7 @@
 import * as planqkReplaceOptions from './PlanqkReplaceOptions';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
-import {createMenuEntries, createMoreOptionsEntryWithReturn} from "../../common/util/PopupMenuUtilities";
+import {createMenuEntries, createMoreOptionsEntryWithReturn} from "../../editor/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 import {createConfigurationsEntries} from "../../editor/configurations/ConfigurationsUtil";
 import {getServiceTaskConfigurations} from "../data-extension/configurations/TransformationTaskConfigurations";
