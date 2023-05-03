@@ -22,6 +22,7 @@ import {
 } from '../../../modeler-component/editor/util/ModellingUtilities';
 import {getAllElementsForProcess} from '../../../modeler-component/editor/util/TransformationUtilities';
 import {testTaskIo} from '../../test-setup/IOHelper';
+
 import('../transformation.spec');
 
 describe('Test the TransformationManager of the data flow extension.', function () {
@@ -111,7 +112,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
             }, bpmnFactory);
         });
 
-        it('Should add form fields to start event', async function() {
+        it('Should add form fields to start event', async function () {
             setPluginConfig([{name: 'dataflow'}]);
 
             const result = await startDataFlowReplacementProcess(PROCESS_INPUT_WORKFLOW);
@@ -376,10 +377,10 @@ describe('Test the TransformationManager of the data flow extension.', function 
     describe('Test transformation of TransformationAssociations', function () {
 
         afterEach(function () {
-           setPluginConfig([]);
+            setPluginConfig([]);
         });
 
-        it('Should transform split and merged DataMapObjects', async function() {
+        it('Should transform split and merged DataMapObjects', async function () {
             setPluginConfig([{name: 'dataflow'}]);
 
             const result = await startDataFlowReplacementProcess(SPLIT_MERGE_WORKFLOW);

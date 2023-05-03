@@ -107,9 +107,9 @@ export default {
       {
         name: "qhana",
       },
-        {
-            name: "dataflow",
-        }
+      {
+        name: "dataflow",
+      },
     ];
   },
 };

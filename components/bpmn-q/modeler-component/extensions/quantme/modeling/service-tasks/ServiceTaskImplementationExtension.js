@@ -26,194 +26,194 @@ const map = require('lodash/map');
 const DEFAULT_DELEGATE_PROPS = ['class', 'expression', 'delegateExpression'];
 
 const DELEGATE_PROPS = {
-  'camunda:class': undefined,
-  'camunda:expression': undefined,
-  'camunda:delegateExpression': undefined,
-  'camunda:resultVariable': undefined
+    'camunda:class': undefined,
+    'camunda:expression': undefined,
+    'camunda:delegateExpression': undefined,
+    'camunda:resultVariable': undefined
 };
 
 const DMN_CAPABLE_PROPS = {
-  'camunda:decisionRef': undefined,
-  'camunda:decisionRefBinding': 'latest',
-  'camunda:decisionRefVersion': undefined,
-  'camunda:mapDecisionResult': 'resultList',
-  'camunda:decisionRefTenantId': undefined
+    'camunda:decisionRef': undefined,
+    'camunda:decisionRefBinding': 'latest',
+    'camunda:decisionRefVersion': undefined,
+    'camunda:mapDecisionResult': 'resultList',
+    'camunda:decisionRefTenantId': undefined
 };
 
 const EXTERNAL_CAPABLE_PROPS = {
-  'camunda:type': undefined,
-  'camunda:topic': undefined
+    'camunda:type': undefined,
+    'camunda:topic': undefined
 };
 
 export function ImplementationDetails(element, bpmnFactory, options, translate) {
 
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
+    const debounce = useService('debounceInput');
+    const modeling = useService('modeling');
 
-  const DEFAULT_OPTIONS = [
-    { value: 'class', name: translate('Java Class') },
-    { value: 'expression', name: translate('Expression') },
-    { value: 'delegateExpression', name: translate('Delegate Expression') }
-  ];
+    const DEFAULT_OPTIONS = [
+        {value: 'class', name: translate('Java Class')},
+        {value: 'expression', name: translate('Expression')},
+        {value: 'delegateExpression', name: translate('Delegate Expression')}
+    ];
 
-  const DEPLOYMENT_OPTIONS = [
-    { value: 'deploymentModel', name: translate('Deployment Model') }
-  ];
+    const DEPLOYMENT_OPTIONS = [
+        {value: 'deploymentModel', name: translate('Deployment Model')}
+    ];
 
-  const DMN_OPTION = [
-    { value: 'dmn', name: translate('DMN') }
-  ];
+    const DMN_OPTION = [
+        {value: 'dmn', name: translate('DMN')}
+    ];
 
-  const EXTERNAL_OPTION = [
-    { value: 'external', name: translate('External') }
-  ];
+    const EXTERNAL_OPTION = [
+        {value: 'external', name: translate('External')}
+    ];
 
-  const CONNECTOR_OPTION = [
-    { value: 'connector', name: translate('Connector') }
-  ];
+    const CONNECTOR_OPTION = [
+        {value: 'connector', name: translate('Connector')}
+    ];
 
-  const SCRIPT_OPTION = [
-    { value: 'script', name: translate('Script') }
-  ];
+    const SCRIPT_OPTION = [
+        {value: 'script', name: translate('Script')}
+    ];
 
-  const getType = options.getImplementationType,
+    const getType = options.getImplementationType,
         getBusinessObject = options.getBusinessObject;
 
-  const hasDmnSupport = options.hasDmnSupport,
+    const hasDmnSupport = options.hasDmnSupport,
         hasExternalSupport = options.hasExternalSupport,
         hasServiceTaskLikeSupport = options.hasServiceTaskLikeSupport,
         hasScriptSupport = options.hasScriptSupport,
         hasDeploymentSupport = options.hasDeploymentSupport;
 
-  const entries = [];
+    const entries = [];
 
-  let selectOptions = DEFAULT_OPTIONS.concat([]);
-
-  if (hasDmnSupport) {
-    selectOptions = selectOptions.concat(DMN_OPTION);
-  }
-
-  if (hasExternalSupport) {
-    selectOptions = selectOptions.concat(EXTERNAL_OPTION);
-  }
-
-  if (hasServiceTaskLikeSupport) {
-    selectOptions = selectOptions.concat(CONNECTOR_OPTION);
-  }
-
-  if (hasScriptSupport) {
-    selectOptions = selectOptions.concat(SCRIPT_OPTION);
-  }
-
-  if (hasDeploymentSupport) {
-    selectOptions = selectOptions.concat(DEPLOYMENT_OPTIONS);
-  }
-
-  selectOptions.push({ value: '' });
-
-  const get = function() {
-    return {
-      implType: getType(element) || ''
-    };
-  };
-
-  const set = function(values) {
-    const bo = getBusinessObject(element);
-    const oldType = getType(element);
-    const newType = values.implType;
-
-    let props = assign({}, DELEGATE_PROPS);
-
-    if (DEFAULT_DELEGATE_PROPS.indexOf(newType) !== -1) {
-
-      let newValue = '';
-      if (DEFAULT_DELEGATE_PROPS.indexOf(oldType) !== -1) {
-        newValue = bo.get('camunda:' + oldType);
-      }
-      props['camunda:' + newType] = newValue;
-    }
+    let selectOptions = DEFAULT_OPTIONS.concat([]);
 
     if (hasDmnSupport) {
-      props = assign(props, DMN_CAPABLE_PROPS);
-      if (newType === 'dmn') {
-        props['camunda:decisionRef'] = '';
-      }
+        selectOptions = selectOptions.concat(DMN_OPTION);
     }
 
     if (hasExternalSupport) {
-      props = assign(props, EXTERNAL_CAPABLE_PROPS);
-      if (newType === 'external') {
-        props['camunda:type'] = 'external';
-        props['camunda:topic'] = '';
-      }
+        selectOptions = selectOptions.concat(EXTERNAL_OPTION);
+    }
+
+    if (hasServiceTaskLikeSupport) {
+        selectOptions = selectOptions.concat(CONNECTOR_OPTION);
     }
 
     if (hasScriptSupport) {
-      props['camunda:script'] = undefined;
-
-      if (newType === 'script') {
-        props['camunda:script'] = elementHelper.createElement('camunda:Script', {}, bo, bpmnFactory);
-      }
+        selectOptions = selectOptions.concat(SCRIPT_OPTION);
     }
 
     if (hasDeploymentSupport) {
-      props['quantme:deploymentModelUrl'] = undefined;
-
-      if (newType === 'deploymentModel') {
-        props['quantme:deploymentModelUrl'] = '';
-      }
+        selectOptions = selectOptions.concat(DEPLOYMENT_OPTIONS);
     }
 
-    const commands = [];
-    modeling.updateProperties(element, props);
-    // commands.push(cmdHelper.updateBusinessObject(element, bo, ));
+    selectOptions.push({value: ''});
 
-    if (hasServiceTaskLikeSupport) {
-      const connectors = getExtension(bo, 'camunda:Connector');
-      commands.push(map(connectors, function(connector) {
-        return removeExtensionElements(bo, element, connector, useService('commandStack'));
-      }));
+    const get = function () {
+        return {
+            implType: getType(element) || ''
+        };
+    };
 
-      if (newType === 'connector') {
-        let extensionElements = bo.get('extensionElements');
-        if (!extensionElements) {
-          extensionElements = elementHelper.createElement('bpmn:ExtensionElements', { values: [] }, bo, bpmnFactory);
-          commands.push(cmdHelper.updateBusinessObject(element, bo, { extensionElements: extensionElements }));
+    const set = function (values) {
+        const bo = getBusinessObject(element);
+        const oldType = getType(element);
+        const newType = values.implType;
+
+        let props = assign({}, DELEGATE_PROPS);
+
+        if (DEFAULT_DELEGATE_PROPS.indexOf(newType) !== -1) {
+
+            let newValue = '';
+            if (DEFAULT_DELEGATE_PROPS.indexOf(oldType) !== -1) {
+                newValue = bo.get('camunda:' + oldType);
+            }
+            props['camunda:' + newType] = newValue;
         }
-        const connector = elementHelper.createElement('camunda:Connector', {}, extensionElements, bpmnFactory);
-        commands.push(cmdHelper.addAndRemoveElementsFromList(
-            element,
-            extensionElements,
-            'values',
-            'extensionElements',
-            [connector],
-            []
-        ));
-      }
-    }
 
-    return commands;
-  };
+        if (hasDmnSupport) {
+            props = assign(props, DMN_CAPABLE_PROPS);
+            if (newType === 'dmn') {
+                props['camunda:decisionRef'] = '';
+            }
+        }
 
-  // entries.push(entryFactory.selectBox({
-  //   id: 'implementation',
-  //   label: translate('Implementation'),
-  //   selectOptions: selectOptions,
-  //   modelProperty: 'implType',
-  //
-  //
-  // }));
+        if (hasExternalSupport) {
+            props = assign(props, EXTERNAL_CAPABLE_PROPS);
+            if (newType === 'external') {
+                props['camunda:type'] = 'external';
+                props['camunda:topic'] = '';
+            }
+        }
 
-  const getOptions = function (element) {
-    return selectOptions;
-  };
+        if (hasScriptSupport) {
+            props['camunda:script'] = undefined;
 
-  return <SelectEntry
-      id={'implementation'}
-      label={translate('Implementation')}
-      getValue={get}
-      setValue={set}
-      getOptions={getOptions}
-      debounce={debounce}
-  />;
+            if (newType === 'script') {
+                props['camunda:script'] = elementHelper.createElement('camunda:Script', {}, bo, bpmnFactory);
+            }
+        }
+
+        if (hasDeploymentSupport) {
+            props['quantme:deploymentModelUrl'] = undefined;
+
+            if (newType === 'deploymentModel') {
+                props['quantme:deploymentModelUrl'] = '';
+            }
+        }
+
+        const commands = [];
+        modeling.updateProperties(element, props);
+        // commands.push(cmdHelper.updateBusinessObject(element, bo, ));
+
+        if (hasServiceTaskLikeSupport) {
+            const connectors = getExtension(bo, 'camunda:Connector');
+            commands.push(map(connectors, function (connector) {
+                return removeExtensionElements(bo, element, connector, useService('commandStack'));
+            }));
+
+            if (newType === 'connector') {
+                let extensionElements = bo.get('extensionElements');
+                if (!extensionElements) {
+                    extensionElements = elementHelper.createElement('bpmn:ExtensionElements', {values: []}, bo, bpmnFactory);
+                    commands.push(cmdHelper.updateBusinessObject(element, bo, {extensionElements: extensionElements}));
+                }
+                const connector = elementHelper.createElement('camunda:Connector', {}, extensionElements, bpmnFactory);
+                commands.push(cmdHelper.addAndRemoveElementsFromList(
+                    element,
+                    extensionElements,
+                    'values',
+                    'extensionElements',
+                    [connector],
+                    []
+                ));
+            }
+        }
+
+        return commands;
+    };
+
+    // entries.push(entryFactory.selectBox({
+    //   id: 'implementation',
+    //   label: translate('Implementation'),
+    //   selectOptions: selectOptions,
+    //   modelProperty: 'implType',
+    //
+    //
+    // }));
+
+    const getOptions = function (element) {
+        return selectOptions;
+    };
+
+    return <SelectEntry
+        id={'implementation'}
+        label={translate('Implementation')}
+        getValue={get}
+        setValue={set}
+        getOptions={getOptions}
+        debounce={debounce}
+    />;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
 
@@ -17,7 +17,7 @@ export default function HybridRuntimeTab() {
 
     if (!editorActions._actions.hasOwnProperty('qiskitRuntimeHandlerEndpointChanged')) {
         editorActions.register({
-            qiskitRuntimeHandlerEndpointChanged: function(qiskitRuntimeHandlerEndpoint) {
+            qiskitRuntimeHandlerEndpointChanged: function (qiskitRuntimeHandlerEndpoint) {
                 self.modeler.config.qiskitRuntimeHandlerEndpoint = qiskitRuntimeHandlerEndpoint;
                 eventBus.fire('config.updated', self.modeler.config);
             }
@@ -26,7 +26,7 @@ export default function HybridRuntimeTab() {
 
     if (!editorActions._actions.hasOwnProperty('awsRuntimeHandlerEndpointChanged')) {
         editorActions.register({
-            awsRuntimeHandlerEndpointChanged: function(awsRuntimeHandlerEndpoint) {
+            awsRuntimeHandlerEndpointChanged: function (awsRuntimeHandlerEndpoint) {
                 self.modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
                 eventBus.fire('config.updated', self.modeler.config);
             }
@@ -35,7 +35,7 @@ export default function HybridRuntimeTab() {
 
     if (!editorActions._actions.hasOwnProperty('hybridRuntimeProvenanceChanged')) {
         editorActions.register({
-            hybridRuntimeProvenanceChanged: function(hybridRuntimeProvenance) {
+            hybridRuntimeProvenanceChanged: function (hybridRuntimeProvenance) {
                 self.modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
                 eventBus.fire('config.updated', self.modeler.config);
             }
@@ -89,7 +89,8 @@ export default function HybridRuntimeTab() {
                         checked={hybridRuntimeProvenanceBoolean}
                         onChange={() => {
                             hybridRuntimeProvenanceBoolean = !hybridRuntimeProvenanceBoolean;
-                            setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);}}/>
+                            setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);
+                        }}/>
                 </td>
             </tr>
             </tbody>

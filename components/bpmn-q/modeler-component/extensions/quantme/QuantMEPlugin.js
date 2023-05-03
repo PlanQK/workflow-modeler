@@ -31,7 +31,7 @@ export default {
             <DeploymentPlugin/>]}
         title="QuantME"
         styleClass="quantme-logo"
-        description="Show buttons of the QuantME plugin" />
+        description="Show buttons of the QuantME plugin"/>
     ],
     configTabs: [
         {

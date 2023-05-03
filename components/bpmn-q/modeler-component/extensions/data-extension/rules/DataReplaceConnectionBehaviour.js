@@ -1,12 +1,12 @@
 import {
-  forEach,
-  find,
-  matchPattern
+    forEach,
+    find,
+    matchPattern
 } from 'min-dash';
 
 import {
-  is,
-  isAny
+    is,
+    isAny
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 
 import inherits from 'inherits-browser';
@@ -16,172 +16,172 @@ import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
 export default function DataReplaceConnectionBehavior(eventBus, modeling, bpmnRules, injector, dataFlowRules) {
 
-  CommandInterceptor.call(this, eventBus);
+    CommandInterceptor.call(this, eventBus);
 
-  var dragging = injector.get('dragging', false);
+    var dragging = injector.get('dragging', false);
 
-  function fixConnection(connection) {
-    var source = connection.source,
-      target = connection.target,
-      parent = connection.parent;
+    function fixConnection(connection) {
+        var source = connection.source,
+            target = connection.target,
+            parent = connection.parent;
 
-    // do not do anything if connection
-    // is already deleted (may happen due to other
-    // behaviors plugged-in before)
-    if (!parent) {
-      return;
+        // do not do anything if connection
+        // is already deleted (may happen due to other
+        // behaviors plugged-in before)
+        if (!parent) {
+            return;
+        }
+
+        var replacementType,
+            remove;
+
+        /**
+         * Check if incoming or outgoing connections
+         * can stay or could be substituted with an
+         * appropriate replacement.
+         *
+         * This holds true for SequenceFlow <> MessageFlow.
+         */
+
+        if (is(connection, 'bpmn:SequenceFlow')) {
+            if (!dataFlowRules.canConnectSequenceFlow(source, target)) {
+                remove = true;
+            }
+
+            if (bpmnRules.canConnectMessageFlow(source, target)) {
+                replacementType = 'bpmn:MessageFlow';
+            }
+        }
+
+        // transform message flows into sequence flows, if possible
+
+        if (is(connection, 'bpmn:MessageFlow')) {
+
+            if (!bpmnRules.canConnectMessageFlow(source, target)) {
+                remove = true;
+            }
+
+            if (dataFlowRules.canConnectSequenceFlow(source, target)) {
+                replacementType = 'bpmn:SequenceFlow';
+            }
+        }
+
+        if (is(connection, 'bpmn:Association') && !dataFlowRules.canConnectAssociation(source, target)) {
+            remove = true;
+        }
+
+
+        // remove invalid connection,
+        // unless it has been removed already
+        if (remove) {
+            modeling.removeConnection(connection);
+        }
+
+        // replace SequenceFlow <> MessageFlow
+
+        if (replacementType) {
+            modeling.connect(source, target, {
+                type: replacementType,
+                waypoints: connection.waypoints.slice()
+            });
+        }
     }
 
-    var replacementType,
-      remove;
+    function replaceReconnectedConnection(event) {
 
-    /**
-     * Check if incoming or outgoing connections
-     * can stay or could be substituted with an
-     * appropriate replacement.
-     *
-     * This holds true for SequenceFlow <> MessageFlow.
-     */
+        var context = event.context,
+            connection = context.connection,
+            source = context.newSource || connection.source,
+            target = context.newTarget || connection.target,
+            allowed,
+            replacement;
 
-    if (is(connection, 'bpmn:SequenceFlow')) {
-      if (!dataFlowRules.canConnectSequenceFlow(source, target)) {
-        remove = true;
-      }
+        allowed = dataFlowRules.canConnect(source, target);
 
-      if (bpmnRules.canConnectMessageFlow(source, target)) {
-        replacementType = 'bpmn:MessageFlow';
-      }
+        if (!allowed || allowed.type === connection.type) {
+            return;
+        }
+
+        replacement = modeling.connect(source, target, {
+            type: allowed.type,
+            waypoints: connection.waypoints.slice()
+        });
+
+        // remove old connection
+        modeling.removeConnection(connection);
+
+        // replace connection in context to reconnect end/start
+        context.connection = replacement;
+
+        if (dragging) {
+            cleanDraggingSelection(connection, replacement);
+        }
     }
 
-    // transform message flows into sequence flows, if possible
+    // monkey-patch selection saved in dragging in order to re-select it when operation is finished
+    function cleanDraggingSelection(oldConnection, newConnection) {
+        var context = dragging.context(),
+            previousSelection = context && context.payload.previousSelection,
+            index;
 
-    if (is(connection, 'bpmn:MessageFlow')) {
+        // do nothing if not dragging or no selection was present
+        if (!previousSelection || !previousSelection.length) {
+            return;
+        }
 
-      if (!bpmnRules.canConnectMessageFlow(source, target)) {
-        remove = true;
-      }
+        index = previousSelection.indexOf(oldConnection);
 
-      if (dataFlowRules.canConnectSequenceFlow(source, target)) {
-        replacementType = 'bpmn:SequenceFlow';
-      }
+        if (index === -1) {
+            return;
+        }
+
+        previousSelection.splice(index, 1, newConnection);
     }
 
-    if (is(connection, 'bpmn:Association') && !dataFlowRules.canConnectAssociation(source, target)) {
-      remove = true;
-    }
+    // lifecycle hooks
 
+    this.postExecuted('elements.move', function (context) {
 
-    // remove invalid connection,
-    // unless it has been removed already
-    if (remove) {
-      modeling.removeConnection(connection);
-    }
+        var closure = context.closure,
+            allConnections = closure.allConnections;
 
-    // replace SequenceFlow <> MessageFlow
+        forEach(allConnections, fixConnection);
+    }, true);
 
-    if (replacementType) {
-      modeling.connect(source, target, {
-        type: replacementType,
-        waypoints: connection.waypoints.slice()
-      });
-    }
-  }
+    this.preExecute('connection.reconnect', replaceReconnectedConnection);
 
-  function replaceReconnectedConnection(event) {
+    this.postExecuted('element.updateProperties', function (event) {
+        var context = event.context,
+            properties = context.properties,
+            element = context.element,
+            businessObject = element.businessObject,
+            connection;
 
-    var context = event.context,
-      connection = context.connection,
-      source = context.newSource || connection.source,
-      target = context.newTarget || connection.target,
-      allowed,
-      replacement;
+        // remove condition on change to default
+        if (properties.default) {
+            connection = find(
+                element.outgoing,
+                matchPattern({id: element.businessObject.default.id})
+            );
 
-    allowed = dataFlowRules.canConnect(source, target);
+            if (connection) {
+                modeling.updateProperties(connection, {conditionExpression: undefined});
+            }
+        }
 
-    if (!allowed || allowed.type === connection.type) {
-      return;
-    }
-
-    replacement = modeling.connect(source, target, {
-      type: allowed.type,
-      waypoints: connection.waypoints.slice()
+        // remove default from source on change to conditional
+        if (properties.conditionExpression && businessObject.sourceRef.default === businessObject) {
+            modeling.updateProperties(element.source, {default: undefined});
+        }
     });
-
-    // remove old connection
-    modeling.removeConnection(connection);
-
-    // replace connection in context to reconnect end/start
-    context.connection = replacement;
-
-    if (dragging) {
-      cleanDraggingSelection(connection, replacement);
-    }
-  }
-
-  // monkey-patch selection saved in dragging in order to re-select it when operation is finished
-  function cleanDraggingSelection(oldConnection, newConnection) {
-    var context = dragging.context(),
-      previousSelection = context && context.payload.previousSelection,
-      index;
-
-    // do nothing if not dragging or no selection was present
-    if (!previousSelection || !previousSelection.length) {
-      return;
-    }
-
-    index = previousSelection.indexOf(oldConnection);
-
-    if (index === -1) {
-      return;
-    }
-
-    previousSelection.splice(index, 1, newConnection);
-  }
-
-  // lifecycle hooks
-
-  this.postExecuted('elements.move', function(context) {
-
-    var closure = context.closure,
-      allConnections = closure.allConnections;
-
-    forEach(allConnections, fixConnection);
-  }, true);
-
-  this.preExecute('connection.reconnect', replaceReconnectedConnection);
-
-  this.postExecuted('element.updateProperties', function(event) {
-    var context = event.context,
-      properties = context.properties,
-      element = context.element,
-      businessObject = element.businessObject,
-      connection;
-
-    // remove condition on change to default
-    if (properties.default) {
-      connection = find(
-        element.outgoing,
-        matchPattern({ id: element.businessObject.default.id })
-      );
-
-      if (connection) {
-        modeling.updateProperties(connection, { conditionExpression: undefined });
-      }
-    }
-
-    // remove default from source on change to conditional
-    if (properties.conditionExpression && businessObject.sourceRef.default === businessObject) {
-      modeling.updateProperties(element.source, { default: undefined });
-    }
-  });
 }
 
 inherits(DataReplaceConnectionBehavior, CommandInterceptor);
 
 DataReplaceConnectionBehavior.$inject = [
-  'eventBus',
-  'modeling',
-  'bpmnRules',
-  'injector',
-  'dataFlowRules',
+    'eventBus',
+    'modeling',
+    'bpmnRules',
+    'injector',
+    'dataFlowRules',
 ];

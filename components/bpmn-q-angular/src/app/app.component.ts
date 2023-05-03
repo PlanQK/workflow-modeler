@@ -12,7 +12,8 @@ import '@planqk/quantum-workflow-modeler/public';
 export class AppComponent implements OnInit {
   title = 'bpmn-q-angular';
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef) {
+  }
 
   ngOnInit(): void {
     const modelerComponent = this.elementRef.nativeElement.querySelector('quantum-workflow');

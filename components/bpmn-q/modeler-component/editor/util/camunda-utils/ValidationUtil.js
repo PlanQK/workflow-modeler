@@ -22,36 +22,36 @@ const ID_REGEX = /^[a-z_][\w-.]*$/i;
  * @return {String} error message
  */
 export function isIdValid(element, idValue, translate) {
-  const assigned = element.$model.ids.assigned(idValue);
-  const idAlreadyExists = assigned && assigned !== element;
+    const assigned = element.$model.ids.assigned(idValue);
+    const idAlreadyExists = assigned && assigned !== element;
 
-  if (!idValue) {
-    return translate('ID must not be empty.');
-  }
+    if (!idValue) {
+        return translate('ID must not be empty.');
+    }
 
-  if (idAlreadyExists) {
-    return translate('ID must be unique.');
-  }
+    if (idAlreadyExists) {
+        return translate('ID must be unique.');
+    }
 
-  return validateId(idValue, translate);
+    return validateId(idValue, translate);
 }
 
 export function validateId(idValue, translate) {
 
-  if (containsSpace(idValue)) {
-    return translate('ID must not contain spaces.');
-  }
-
-  if (!ID_REGEX.test(idValue)) {
-
-    if (QNAME_REGEX.test(idValue)) {
-      return translate('ID must not contain prefix.');
+    if (containsSpace(idValue)) {
+        return translate('ID must not contain spaces.');
     }
 
-    return translate('ID must be a valid QName.');
-  }
+    if (!ID_REGEX.test(idValue)) {
+
+        if (QNAME_REGEX.test(idValue)) {
+            return translate('ID must not contain prefix.');
+        }
+
+        return translate('ID must be a valid QName.');
+    }
 }
 
 export function containsSpace(value) {
-  return SPACE_REGEX.test(value);
+    return SPACE_REGEX.test(value);
 }

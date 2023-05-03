@@ -9,46 +9,46 @@ const LOW_PRIORITY = 500;
 
 export default function QHAnaPropertiesProvider(propertiesPanel, translate, injector) {
 
-  this.getGroups = function (element) {
+    this.getGroups = function (element) {
 
-    return function (groups) {
+        return function (groups) {
 
-      if (is(element, consts.QHANA_SERVICE_TASK)) {
+            if (is(element, consts.QHANA_SERVICE_TASK)) {
 
-        const selectedConfiguration = qhanaServiceConfigs().getQHAnaServiceConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
+                const selectedConfiguration = qhanaServiceConfigs().getQHAnaServiceConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
 
-        if (selectedConfiguration) {
-          groups.splice(1, 0, createQHAnaServiceTaskGroup(element, injector, translate, selectedConfiguration));
-        }
-      }
+                if (selectedConfiguration) {
+                    groups.splice(1, 0, createQHAnaServiceTaskGroup(element, injector, translate, selectedConfiguration));
+                }
+            }
 
-      if (is(element, consts.QHANA_SERVICE_STEP_TASK)) {
-        groups.splice(1, 0, createQHAnaServiceStepTaskGroup(element, injector, translate));
-      }
+            if (is(element, consts.QHANA_SERVICE_STEP_TASK)) {
+                groups.splice(1, 0, createQHAnaServiceStepTaskGroup(element, injector, translate));
+            }
 
-      return groups;
+            return groups;
+        };
     };
-  };
 
-  propertiesPanel.registerProvider(LOW_PRIORITY, this);
+    propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
 QHAnaPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'injector'];
 
 function createQHAnaServiceTaskGroup(element, injector, translate, configuration) {
 
-  return {
-    id: 'QHAnaServiceTaskGroupProperties',
-    label: translate(configuration.groupLabel || 'Configurations Properties'),
-    entries: ConfigurationsProperties(element, injector, translate, configuration)
-  };
+    return {
+        id: 'QHAnaServiceTaskGroupProperties',
+        label: translate(configuration.groupLabel || 'Configurations Properties'),
+        entries: ConfigurationsProperties(element, injector, translate, configuration)
+    };
 }
 
 function createQHAnaServiceStepTaskGroup(element, injector, translate) {
 
-  return {
-    id: 'QHAnaServiceStepTaskGroupProperties',
-    label: translate('Service Step Properties'),
-    entries: qhanaServiceStepProperties(element, injector, translate)
-  };
+    return {
+        id: 'QHAnaServiceStepTaskGroupProperties',
+        label: translate('Service Step Properties'),
+        entries: qhanaServiceStepProperties(element, injector, translate)
+    };
 }

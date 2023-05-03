@@ -10,24 +10,24 @@
 
 export default function EscapeTrap(onEscape) {
 
-  function handleKeyDown(event) {
-    if (isEscape(event)) {
-      onEscape(event);
+    function handleKeyDown(event) {
+        if (isEscape(event)) {
+            onEscape(event);
+        }
     }
-  }
 
-  function mount() {
-    document.addEventListener('keydown', handleKeyDown);
-  }
+    function mount() {
+        document.addEventListener('keydown', handleKeyDown);
+    }
 
-  function unmount() {
-    document.removeEventListener('keydown', handleKeyDown);
-  }
+    function unmount() {
+        document.removeEventListener('keydown', handleKeyDown);
+    }
 
-  return {
-    mount,
-    unmount
-  };
+    return {
+        mount,
+        unmount
+    };
 
 }
 
@@ -35,5 +35,5 @@ export default function EscapeTrap(onEscape) {
 // helpers ///////////////
 
 function isEscape(event) {
-  return event.key === 'Escape';
+    return event.key === 'Escape';
 }

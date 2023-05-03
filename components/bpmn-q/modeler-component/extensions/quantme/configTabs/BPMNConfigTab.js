@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager"
 

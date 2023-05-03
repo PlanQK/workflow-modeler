@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../ModelerHandler";
 import * as configManager from "./EditorConfigManager";
 import {transformedWorkflowHandlers} from '../EditorConstants';
@@ -49,13 +49,13 @@ export default function EditorTab() {
                 <td align="right">Transformed Workflow Handler</td>
                 <td align="left">
                     <select
-                      name="workflowHandler"
-                      value={workflowHandler}
-                      onChange={event => setWorkflowHandler(event.target.value)}>
+                        name="workflowHandler"
+                        value={workflowHandler}
+                        onChange={event => setWorkflowHandler(event.target.value)}>
                         {Object.entries(transformedWorkflowHandlers).map(([key, value]) => (
-                          <option key={value} value={value}>
-                              {value}
-                          </option>
+                            <option key={value} value={value}>
+                                {value}
+                            </option>
                         ))}
                     </select>
 
@@ -63,7 +63,7 @@ export default function EditorTab() {
             </tr>
             </tbody>
         </table>
-        </>);
+    </>);
 }
 
 EditorTab.prototype.config = () => {

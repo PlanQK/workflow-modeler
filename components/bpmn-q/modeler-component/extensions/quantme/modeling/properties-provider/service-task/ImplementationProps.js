@@ -44,7 +44,7 @@ export function ImplementationProps(props) {
 
     // (1) display implementation type select
     const entries = [
-        ...ImplementationTypeProps({element })
+        ...ImplementationTypeProps({element})
     ];
 
     // (2) display implementation properties based on type

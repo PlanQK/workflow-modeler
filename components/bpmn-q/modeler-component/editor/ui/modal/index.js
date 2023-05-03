@@ -8,4 +8,4 @@
  * except in compliance with the MIT License.
  */
 
-export { default as Modal } from './Modal';
+export {default as Modal} from './Modal';

@@ -450,14 +450,14 @@ export function CalibrationMethodEntry({element}) {
     };
 
     const selectOptions = [
-        { value: 'fullMatrix', label: 'Full Matrix' },
-        { value: 'tpnm', label: 'TPNM'},
-        { value: 'ctmp', label: 'CTMP' },
-        { value: 'ddot', label: 'DDOT' },
-        { value: 'conditionallyRigorous', label: 'Conditionally Rigorous' },
-        { value: 'fuzzyCMeans', label: 'Fuzzy C-Means' },
-        { value: 'cumulantCM', label: 'Cumulant CM' },
-        { value: 'sclableTMatrix', label: 'Sclable T-Matrix' }
+        {value: 'fullMatrix', label: 'Full Matrix'},
+        {value: 'tpnm', label: 'TPNM'},
+        {value: 'ctmp', label: 'CTMP'},
+        {value: 'ddot', label: 'DDOT'},
+        {value: 'conditionallyRigorous', label: 'Conditionally Rigorous'},
+        {value: 'fuzzyCMeans', label: 'Fuzzy C-Means'},
+        {value: 'cumulantCM', label: 'Cumulant CM'},
+        {value: 'sclableTMatrix', label: 'Sclable T-Matrix'}
     ];
 
     const getOptions = function (element) {
@@ -510,20 +510,20 @@ export function MitigationMethodEntry({element}) {
     };
 
     const selectOptions = [
-        { value: 'matrixInversion', label: 'Matrix Inversion' },
-        { value: 'pertubativeREM', label: 'Pertubative REM' },
-        { value: 'mthree', label: 'Mthree' },
-        { value: 'geneticBasedREM', label: 'Genetic-Based REM' },
-        { value: 'activeREM', label: 'Active REM' },
-        { value: 'modelFreeREM', label: 'Model-Free REM' },
-        { value: 'hybridREM', label: 'Hybrid REM' },
-        { value: 'crosstalkREM', label: 'Crosstalk-Focused REM' },
-        { value: 'sim', label: 'SIM' },
-        { value: 'aim', label: 'AIM' },
-        { value: 'bfa', label: 'BFA' },
-        { value: 'truncatedNeumannSeries', label: 'Truncated Neumann Series' },
-        { value: 'lsu', label: 'LSU' },
-        { value: 'dnnREM', label: 'DNN-Based REM' }
+        {value: 'matrixInversion', label: 'Matrix Inversion'},
+        {value: 'pertubativeREM', label: 'Pertubative REM'},
+        {value: 'mthree', label: 'Mthree'},
+        {value: 'geneticBasedREM', label: 'Genetic-Based REM'},
+        {value: 'activeREM', label: 'Active REM'},
+        {value: 'modelFreeREM', label: 'Model-Free REM'},
+        {value: 'hybridREM', label: 'Hybrid REM'},
+        {value: 'crosstalkREM', label: 'Crosstalk-Focused REM'},
+        {value: 'sim', label: 'SIM'},
+        {value: 'aim', label: 'AIM'},
+        {value: 'bfa', label: 'BFA'},
+        {value: 'truncatedNeumannSeries', label: 'Truncated Neumann Series'},
+        {value: 'lsu', label: 'LSU'},
+        {value: 'dnnREM', label: 'DNN-Based REM'}
     ];
 
     const getOptions = function (element) {

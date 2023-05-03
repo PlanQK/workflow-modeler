@@ -6,125 +6,125 @@ import {getAllConfigs} from "./PluginConfigHandler";
 import EditorTab from "../config/EditorTab";
 
 const PLUGINS = [
-  DataFlowPlugin,
-  QHAnaPlugin,
-  PlanQKPlugin,
-  QuantMEPlugin,
+    DataFlowPlugin,
+    QHAnaPlugin,
+    PlanQKPlugin,
+    QuantMEPlugin,
 ];
 
 let activePlugins = [];
 
 export function getActivePlugins() {
-  if (activePlugins.length > 0) {
+    if (activePlugins.length > 0) {
 
-    return activePlugins;
+        return activePlugins;
 
-  } else {
+    } else {
 
-    activePlugins = [];
+        activePlugins = [];
 
-    let plugin;
-    for (let pluginConfig of getAllConfigs()) {
+        let plugin;
+        for (let pluginConfig of getAllConfigs()) {
 
-      plugin = PLUGINS.find(plugin => plugin.name === pluginConfig.name);
+            plugin = PLUGINS.find(plugin => plugin.name === pluginConfig.name);
 
-      if (plugin) {
-        activePlugins.push(plugin);
-      }
+            if (plugin) {
+                activePlugins.push(plugin);
+            }
+        }
+        return activePlugins;
     }
-    return activePlugins;
-  }
 }
 
 export function getAdditionalModules() {
 
-  const modules = [];
+    const modules = [];
 
-  for (let plugin of getActivePlugins()) {
-    if (plugin.extensionModule) {
-      modules.push(plugin.extensionModule);
+    for (let plugin of getActivePlugins()) {
+        if (plugin.extensionModule) {
+            modules.push(plugin.extensionModule);
+        }
     }
-  }
 
-  console.log('\n Get Additional Modules');
-  console.log(modules);
-  return modules;
+    console.log('\n Get Additional Modules');
+    console.log(modules);
+    return modules;
 }
 
 export function getStyles() {
 
-  let styles = [];
+    let styles = [];
 
-  for (let plugin of getActivePlugins()) {
-    if (plugin.styling) {
-      styles = styles.concat(plugin.styling);
+    for (let plugin of getActivePlugins()) {
+        if (plugin.styling) {
+            styles = styles.concat(plugin.styling);
+        }
     }
-  }
 
-  console.log('\n Get Plugin Styling');
-  console.log(styles);
-  return styles;
+    console.log('\n Get Plugin Styling');
+    console.log(styles);
+    return styles;
 }
 
 export function getModdleExtension() {
-  const extensions = {};
+    const extensions = {};
 
-  for (let plugin of getActivePlugins()) {
-    if (plugin.moddleDescription) {
-      extensions[plugin.name] = plugin.moddleDescription;
+    for (let plugin of getActivePlugins()) {
+        if (plugin.moddleDescription) {
+            extensions[plugin.name] = plugin.moddleDescription;
+        }
     }
-  }
 
-  console.log('\n Get Moddle Extensions: ');
-  console.log(extensions);
-  return extensions;
+    console.log('\n Get Moddle Extensions: ');
+    console.log(extensions);
+    return extensions;
 }
 
 export function getTransformationButtons() {
-  const transformationButtons = [];
+    const transformationButtons = [];
 
-  for (let plugin of getActivePlugins()) {
-    if (plugin.transformExtensionButton) {
-      transformationButtons.push(plugin.transformExtensionButton);
+    for (let plugin of getActivePlugins()) {
+        if (plugin.transformExtensionButton) {
+            transformationButtons.push(plugin.transformExtensionButton);
+        }
     }
-  }
 
-  console.log('\n Got ' + transformationButtons.length + ' Transformations');
-  return transformationButtons;
+    console.log('\n Got ' + transformationButtons.length + ' Transformations');
+    return transformationButtons;
 }
 
 export function getPluginButtons() {
-  const pluginButtons = [];
+    const pluginButtons = [];
 
-  for (let plugin of getActivePlugins()) {
-    if (plugin.buttons) {
-      pluginButtons.push(plugin.buttons);
+    for (let plugin of getActivePlugins()) {
+        if (plugin.buttons) {
+            pluginButtons.push(plugin.buttons);
+        }
     }
-  }
 
-  console.log('\n Got ' + pluginButtons.length + ' Plugin Buttons');
-  console.log(pluginButtons);
+    console.log('\n Got ' + pluginButtons.length + ' Plugin Buttons');
+    console.log(pluginButtons);
 
-  return pluginButtons;
+    return pluginButtons;
 }
 
 export function getConfigTabs() {
 
-  // add default editor tab to configure editor configs
-  let configTabs = [{
-    tabId: 'EditorTab',
-    tabTitle: 'Editor',
-    configTab: EditorTab,
-  }];
+    // add default editor tab to configure editor configs
+    let configTabs = [{
+        tabId: 'EditorTab',
+        tabTitle: 'Editor',
+        configTab: EditorTab,
+    }];
 
-  for (let plugin of getActivePlugins()) {
-    if (plugin.configTabs) {
-      configTabs = configTabs.concat(plugin.configTabs);
+    for (let plugin of getActivePlugins()) {
+        if (plugin.configTabs) {
+            configTabs = configTabs.concat(plugin.configTabs);
+        }
     }
-  }
 
-  console.log('\n Got ' + configTabs.length + ' Config Tabs');
-  console.log(configTabs);
+    console.log('\n Got ' + configTabs.length + ' Config Tabs');
+    console.log(configTabs);
 
-  return configTabs;
+    return configTabs;
 }

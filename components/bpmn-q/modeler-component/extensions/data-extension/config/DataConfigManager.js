@@ -1,7 +1,7 @@
 import {getPluginConfig} from "../../../editor/plugin/PluginConfigHandler";
 
 const defaultConfig = {
-  configurationsEndpoint: 'http://localhost:8000/service-task',
+    configurationsEndpoint: 'http://localhost:8000/service-task',
 };
 
 const config = {};
@@ -12,10 +12,10 @@ const config = {};
  * @return {string} the currently specified endpoint url of the Configurations endpoint
  */
 export function getConfigurationsEndpoint() {
-  if (!config.configurationsEndpoint) {
-    setConfigurationsEndpoint(getPluginConfig('dataflow').configurationsEndpoint || defaultConfig.configurationsEndpoint);
-  }
-  return config.configurationsEndpoint;
+    if (!config.configurationsEndpoint) {
+        setConfigurationsEndpoint(getPluginConfig('dataflow').configurationsEndpoint || defaultConfig.configurationsEndpoint);
+    }
+    return config.configurationsEndpoint;
 }
 
 /**
@@ -24,9 +24,9 @@ export function getConfigurationsEndpoint() {
  * @param configurationsEndpoint the endpoint url of the transformation task Configurations endpoint
  */
 export function setConfigurationsEndpoint(configurationsEndpoint) {
-  if (configurationsEndpoint !== null && configurationsEndpoint !== undefined) {
+    if (configurationsEndpoint !== null && configurationsEndpoint !== undefined) {
 
-    // remove trailing slashes
-    config.configurationsEndpoint = configurationsEndpoint.replace(/\/$/, '');
-  }
+        // remove trailing slashes
+        config.configurationsEndpoint = configurationsEndpoint.replace(/\/$/, '');
+    }
 }

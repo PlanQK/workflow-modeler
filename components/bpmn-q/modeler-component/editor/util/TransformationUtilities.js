@@ -15,100 +15,100 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
  * @return {{success: boolean, idMap: *, element: *}}
  */
 export function insertShape(definitions, parent, newElement, idMap, replace, modeler, oldElement) {
-  console.log('Inserting shape for element: ', newElement);
-  let bpmnReplace = modeler.get('bpmnReplace');
-  let bpmnFactory = modeler.get('bpmnFactory');
-  let modeling = modeler.get('modeling');
-  let elementRegistry = modeler.get('elementRegistry');
+    console.log('Inserting shape for element: ', newElement);
+    let bpmnReplace = modeler.get('bpmnReplace');
+    let bpmnFactory = modeler.get('bpmnFactory');
+    let modeling = modeler.get('modeling');
+    let elementRegistry = modeler.get('elementRegistry');
 
-  // create new id map if not provided
-  if (idMap === undefined) {
-    idMap = {};
-  }
+    // create new id map if not provided
+    if (idMap === undefined) {
+        idMap = {};
+    }
 
-  let element;
-  if (!isFlowLikeElement(newElement.$type)) {
-    if (replace) {
+    let element;
+    if (!isFlowLikeElement(newElement.$type)) {
+        if (replace) {
 
-      // replace old element to retain attached sequence flow, associations, data objects, ...
-      element = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), { type: newElement.$type });
+            // replace old element to retain attached sequence flow, associations, data objects, ...
+            element = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), {type: newElement.$type});
+        } else {
+
+            // create new shape for this element
+            element = modeling.createShape({type: newElement.$type}, {x: 50, y: 50}, parent, {});
+        }
     } else {
 
-      // create new shape for this element
-      element = modeling.createShape({ type: newElement.$type }, { x: 50, y: 50 }, parent, {});
-    }
-  } else {
-
-    // create connection between two previously created elements
-    let sourceElement = elementRegistry.get(idMap[newElement.sourceRef.id]);
-    let targetElement = elementRegistry.get(idMap[newElement.targetRef.id]);
-    element = modeling.connect(sourceElement, targetElement, { type: newElement.$type });
-  }
-
-  // store id to create sequence flows
-  idMap[newElement['id']] = element.id;
-
-  // if the element is a subprocess, check if it is expanded in the replacement fragment and expand the new element
-  if (newElement.$type === 'bpmn:SubProcess') {
-
-    // get the shape element related to the subprocess
-    let shape = newElement.di;
-    if (shape && shape.isExpanded) {
-
-      // expand the new element
-      elementRegistry.get(element.id).businessObject.di.isExpanded = true;
+        // create connection between two previously created elements
+        let sourceElement = elementRegistry.get(idMap[newElement.sourceRef.id]);
+        let targetElement = elementRegistry.get(idMap[newElement.targetRef.id]);
+        element = modeling.connect(sourceElement, targetElement, {type: newElement.$type});
     }
 
-    // preserve messages defined in ReceiveTasks
-  } else if (newElement.$type === 'bpmn:ReceiveTask') {
+    // store id to create sequence flows
+    idMap[newElement['id']] = element.id;
 
-    // get message from the replacement and check if a corresponding message was already created
-    let oldMessage = newElement.messageRef;
-    if (idMap[oldMessage.id] === undefined) {
+    // if the element is a subprocess, check if it is expanded in the replacement fragment and expand the new element
+    if (newElement.$type === 'bpmn:SubProcess') {
 
-      // add a new message element to the definitions document and link it to the receive task
-      let message = bpmnFactory.create('bpmn:Message');
-      message.name = oldMessage.name;
-      definitions.rootElements.push(message);
-      modeling.updateProperties(element, { 'messageRef': message });
+        // get the shape element related to the subprocess
+        let shape = newElement.di;
+        if (shape && shape.isExpanded) {
 
-      // store id if other receive tasks reference the same message
-      idMap[oldMessage.id] = message.id;
-    } else {
+            // expand the new element
+            elementRegistry.get(element.id).businessObject.di.isExpanded = true;
+        }
 
-      // reuse already created message and add it to receive task
-      modeling.updateProperties(element, { 'messageRef': idMap[oldMessage.id] });
+        // preserve messages defined in ReceiveTasks
+    } else if (newElement.$type === 'bpmn:ReceiveTask') {
+
+        // get message from the replacement and check if a corresponding message was already created
+        let oldMessage = newElement.messageRef;
+        if (idMap[oldMessage.id] === undefined) {
+
+            // add a new message element to the definitions document and link it to the receive task
+            let message = bpmnFactory.create('bpmn:Message');
+            message.name = oldMessage.name;
+            definitions.rootElements.push(message);
+            modeling.updateProperties(element, {'messageRef': message});
+
+            // store id if other receive tasks reference the same message
+            idMap[oldMessage.id] = message.id;
+        } else {
+
+            // reuse already created message and add it to receive task
+            modeling.updateProperties(element, {'messageRef': idMap[oldMessage.id]});
+        }
     }
-  }
 
-  // add element to which a boundary event is attached
-  if (newElement.$type === 'bpmn:BoundaryEvent') {
-    let hostElement = elementRegistry.get(idMap[newElement.attachedToRef.id]);
-    modeling.updateProperties(element, { 'attachedToRef': hostElement.businessObject });
-    element.host = hostElement;
-  }
-
-  // update the properties of the new element
-  modeling.updateProperties(element, getPropertiesToCopy(newElement));
-
-  // recursively handle children of the current element
-  let resultTuple = insertChildElements(definitions, element, newElement, idMap, modeler);
-
-  // add artifacts with their shapes to the diagram
-  let success = resultTuple['success'];
-  idMap = resultTuple['idMap'];
-  let artifacts = newElement.artifacts;
-  if (artifacts) {
-    console.log('Element contains %i artifacts. Adding corresponding shapes...', artifacts.length);
-    for (let i = 0; i < artifacts.length; i++) {
-      let result = insertShape(definitions, element, artifacts[i], idMap, false, modeler);
-      success = success && result['success'];
-      idMap = result['idMap'];
+    // add element to which a boundary event is attached
+    if (newElement.$type === 'bpmn:BoundaryEvent') {
+        let hostElement = elementRegistry.get(idMap[newElement.attachedToRef.id]);
+        modeling.updateProperties(element, {'attachedToRef': hostElement.businessObject});
+        element.host = hostElement;
     }
-  }
 
-  // return success flag and idMap with id mappings of this element and all children
-  return { success: success, idMap: idMap, element: element };
+    // update the properties of the new element
+    modeling.updateProperties(element, getPropertiesToCopy(newElement));
+
+    // recursively handle children of the current element
+    let resultTuple = insertChildElements(definitions, element, newElement, idMap, modeler);
+
+    // add artifacts with their shapes to the diagram
+    let success = resultTuple['success'];
+    idMap = resultTuple['idMap'];
+    let artifacts = newElement.artifacts;
+    if (artifacts) {
+        console.log('Element contains %i artifacts. Adding corresponding shapes...', artifacts.length);
+        for (let i = 0; i < artifacts.length; i++) {
+            let result = insertShape(definitions, element, artifacts[i], idMap, false, modeler);
+            success = success && result['success'];
+            idMap = result['idMap'];
+        }
+    }
+
+    // return success flag and idMap with id mappings of this element and all children
+    return {success: success, idMap: idMap, element: element};
 }
 
 /**
@@ -123,45 +123,45 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
  */
 export function insertChildElements(definitions, parent, newElement, idMap, modeler) {
 
-  let success = true;
-  let flowElements = newElement.flowElements;
-  let boundaryEvents = [];
-  let sequenceflows = [];
-  if (flowElements) {
-    console.log('Element contains %i children. Adding corresponding shapes...', flowElements.length);
-    for (let i = 0; i < flowElements.length; i++) {
+    let success = true;
+    let flowElements = newElement.flowElements;
+    let boundaryEvents = [];
+    let sequenceflows = [];
+    if (flowElements) {
+        console.log('Element contains %i children. Adding corresponding shapes...', flowElements.length);
+        for (let i = 0; i < flowElements.length; i++) {
 
-      // skip elements with references and add them after all other elements to set correct references
-      if (flowElements[i].$type === 'bpmn:SequenceFlow') {
-        sequenceflows.push(flowElements[i]);
-        continue;
-      }
-      if (flowElements[i].$type === 'bpmn:BoundaryEvent') {
-        boundaryEvents.push(flowElements[i]);
-        continue;
-      }
+            // skip elements with references and add them after all other elements to set correct references
+            if (flowElements[i].$type === 'bpmn:SequenceFlow') {
+                sequenceflows.push(flowElements[i]);
+                continue;
+            }
+            if (flowElements[i].$type === 'bpmn:BoundaryEvent') {
+                boundaryEvents.push(flowElements[i]);
+                continue;
+            }
 
-      let result = insertShape(definitions, parent, flowElements[i], idMap, false, modeler);
-      success = success && result['success'];
-      idMap = result['idMap'];
+            let result = insertShape(definitions, parent, flowElements[i], idMap, false, modeler);
+            success = success && result['success'];
+            idMap = result['idMap'];
+        }
+
+        // handle boundary events with new ids of added elements
+        for (let i = 0; i < boundaryEvents.length; i++) {
+            let result = insertShape(definitions, parent, boundaryEvents[i], idMap, false, modeler);
+            success = success && result['success'];
+            idMap = result['idMap'];
+        }
+
+        // handle boundary events with new ids of added elements
+        for (let i = 0; i < sequenceflows.length; i++) {
+            let result = insertShape(definitions, parent, sequenceflows[i], idMap, false, modeler);
+            success = success && result['success'];
+            idMap = result['idMap'];
+        }
     }
 
-    // handle boundary events with new ids of added elements
-    for (let i = 0; i < boundaryEvents.length; i++) {
-      let result = insertShape(definitions, parent, boundaryEvents[i], idMap, false, modeler);
-      success = success && result['success'];
-      idMap = result['idMap'];
-    }
-
-    // handle boundary events with new ids of added elements
-    for (let i = 0; i < sequenceflows.length; i++) {
-      let result = insertShape(definitions, parent, sequenceflows[i], idMap, false, modeler);
-      success = success && result['success'];
-      idMap = result['idMap'];
-    }
-  }
-
-  return { success: success, idMap: idMap, element: parent };
+    return {success: success, idMap: idMap, element: parent};
 }
 
 /**
@@ -171,43 +171,43 @@ export function insertChildElements(definitions, parent, newElement, idMap, mode
  * @return the properties to copy
  */
 export function getPropertiesToCopy(element) {
-  let properties = {};
-  for (let key in element) {
+    let properties = {};
+    for (let key in element) {
 
-    // ignore properties from parent element
-    if (!element.hasOwnProperty(key)) {
-      continue;
+        // ignore properties from parent element
+        if (!element.hasOwnProperty(key)) {
+            continue;
+        }
+
+        // ignore properties such as type
+        if (key.startsWith('$')) {
+            continue;
+        }
+
+        // ignore id as it is automatically generated with the shape
+        if (key === 'id') {
+            continue;
+        }
+
+        // ignore flow elements, as the children are added afterwards
+        if (key === 'flowElements') {
+            continue;
+        }
+
+        // ignore artifacts, as they are added afterwards with their shapes
+        if (key === 'artifacts') {
+            continue;
+        }
+
+        // ignore messages, as they are added before
+        if (key === 'messageRef') {
+            continue;
+        }
+
+        properties[key] = element[key];
     }
 
-    // ignore properties such as type
-    if (key.startsWith('$')) {
-      continue;
-    }
-
-    // ignore id as it is automatically generated with the shape
-    if (key === 'id') {
-      continue;
-    }
-
-    // ignore flow elements, as the children are added afterwards
-    if (key === 'flowElements') {
-      continue;
-    }
-
-    // ignore artifacts, as they are added afterwards with their shapes
-    if (key === 'artifacts') {
-      continue;
-    }
-
-    // ignore messages, as they are added before
-    if (key === 'messageRef') {
-      continue;
-    }
-
-    properties[key] = element[key];
-  }
-
-  return properties;
+    return properties;
 }
 
 /**
@@ -220,58 +220,58 @@ export function getPropertiesToCopy(element) {
  */
 export function getAllElementsInProcess(processBo, elementRegistry, elementType) {
 
-  // retrieve parent object for later replacement
-  const processElement = elementRegistry.get(processBo.id);
+    // retrieve parent object for later replacement
+    const processElement = elementRegistry.get(processBo.id);
 
-  const elements = [];
-  const flowElementBos = processBo.flowElements;
-  for (let i = 0; i < flowElementBos.length; i++) {
-    let flowElementBo = flowElementBos[i];
-    if (flowElementBo.$type && flowElementBo.$type === elementType) {
-      elements.push({ element: flowElementBo, parent: processElement });
-    }
+    const elements = [];
+    const flowElementBos = processBo.flowElements;
+    for (let i = 0; i < flowElementBos.length; i++) {
+        let flowElementBo = flowElementBos[i];
+        if (flowElementBo.$type && flowElementBo.$type === elementType) {
+            elements.push({element: flowElementBo, parent: processElement});
+        }
 
-    // recursively retrieve service tasks if subprocess is found
-    if (flowElementBo.$type && flowElementBo.$type === 'bpmn:SubProcess') {
-      Array.prototype.push.apply(elements, getAllElementsInProcess(flowElementBo, elementRegistry, elementType));
+        // recursively retrieve service tasks if subprocess is found
+        if (flowElementBo.$type && flowElementBo.$type === 'bpmn:SubProcess') {
+            Array.prototype.push.apply(elements, getAllElementsInProcess(flowElementBo, elementRegistry, elementType));
+        }
     }
-  }
-  return elements;
+    return elements;
 }
 
 export function getAllElementsInProcessWithInheritance(processBo, elementRegistry, elementType) {
 
-  // retrieve parent object for later replacement
-  const processElement = elementRegistry.get(processBo.id);
+    // retrieve parent object for later replacement
+    const processElement = elementRegistry.get(processBo.id);
 
-  const elements = [];
-  const flowElements = processBo.flowElements;
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    if (is(flowElement, elementType)) {
-      elements.push({ element: flowElement, parent: processElement });
-    }
+    const elements = [];
+    const flowElements = processBo.flowElements;
+    for (let i = 0; i < flowElements.length; i++) {
+        let flowElement = flowElements[i];
+        if (is(flowElement, elementType)) {
+            elements.push({element: flowElement, parent: processElement});
+        }
 
-    // recursively retrieve service tasks if subprocess is found
-    if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
-      Array.prototype.push.apply(elements, getAllElementsInProcess(flowElement, elementRegistry, elementType));
+        // recursively retrieve service tasks if subprocess is found
+        if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
+            Array.prototype.push.apply(elements, getAllElementsInProcess(flowElement, elementRegistry, elementType));
+        }
     }
-  }
-  return elements;
+    return elements;
 }
 
 export function getAllElementsForProcess(processBo, elementRegistry, elementType) {
 
-  // retrieve parent object for later replacement
-  const processElement = elementRegistry.get(processBo.id);
+    // retrieve parent object for later replacement
+    const processElement = elementRegistry.get(processBo.id);
 
-  const elements = [];
-  const flowElements = processBo.flowElements;
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    if (is(flowElement, elementType)) {
-      elements.push({ element: flowElement, parent: processElement });
+    const elements = [];
+    const flowElements = processBo.flowElements;
+    for (let i = 0; i < flowElements.length; i++) {
+        let flowElement = flowElements[i];
+        if (is(flowElement, elementType)) {
+            elements.push({element: flowElement, parent: processElement});
+        }
     }
-  }
-  return elements;
+    return elements;
 }

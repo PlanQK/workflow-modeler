@@ -17,7 +17,7 @@ export default {
     buttons: [<ExtensibleButton subButtons={[<UpdateTransformationTaskConfigurationsButton/>]}
                                 title="DataFlow"
                                 styleClass="dataflow-plugin-icon"
-                                description="Show buttons of the QHAna plugin" />
+                                description="Show buttons of the QHAna plugin"/>
     ],
     configTabs: [
         {

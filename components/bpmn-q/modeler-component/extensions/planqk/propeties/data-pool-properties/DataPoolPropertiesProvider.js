@@ -15,43 +15,43 @@ const LOW_PRIORITY = 500;
  */
 export default function DataPoolPropertiesProvider(propertiesPanel, translate) {
 
-  /**
-   * Return the groups provided for the given element.
-   *
-   * @param element
-   *
-   * @return groups middleware
-   */
-  this.getGroups = function (element) {
-
     /**
-     * We return a middleware that modifies
-     * the existing groups.
+     * Return the groups provided for the given element.
      *
-     * @param {Object[]} groups
+     * @param element
      *
-     * @return {Object[]} modified groups
+     * @return groups middleware
      */
-    return function (groups) {
+    this.getGroups = function (element) {
 
-      if (is(element, consts.PLANQK_DATA_POOL)) {
-        groups.unshift(createDataPoolDetailsGroup(element, translate));
-      }
+        /**
+         * We return a middleware that modifies
+         * the existing groups.
+         *
+         * @param {Object[]} groups
+         *
+         * @return {Object[]} modified groups
+         */
+        return function (groups) {
 
-      return groups;
-    }
-  };
+            if (is(element, consts.PLANQK_DATA_POOL)) {
+                groups.unshift(createDataPoolDetailsGroup(element, translate));
+            }
 
-  propertiesPanel.registerProvider(LOW_PRIORITY, this);
+            return groups;
+        }
+    };
+
+    propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
 DataPoolPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'dataPools'];
 
 function createDataPoolDetailsGroup(element, translate) {
 
-  return {
-    id: 'dataPoolProperties',
-    label: translate('Data Pool Properties'),
-    entries: planqkDataPoolProps(element)
-  };
+    return {
+        id: 'dataPoolProperties',
+        label: translate('Data Pool Properties'),
+        entries: planqkDataPoolProps(element)
+    };
 }

@@ -13,7 +13,7 @@ export default function Toolbar(props) {
     ));
 
     return (
-        <div className="toolbar" style={{ display: 'flex' }}>
+        <div className="toolbar" style={{display: 'flex'}}>
             {buttonList}
         </div>
     );

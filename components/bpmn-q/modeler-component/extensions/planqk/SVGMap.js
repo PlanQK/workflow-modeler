@@ -12,15 +12,15 @@ const PLAN_QK_LOGO = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http:
 
 export function getSVG(svgId) {
 
-  // to insert svgs easily just open them in your browser, copy the outer html and insert it using ctrl + alt + shift + v in intellij to avoid formatting,escaping etc.
-  // matrix( Scalingfactor, 0, 0, Scalingfactor, shift X, shift y)
-  // IMPORTANT: ensure that definition Ids for new SVGs are UNIQUE
-  // viewbox is not required
-  const planQKSVGMap = {
-    'TASK_TYPE_PLANQK_SERVICE_TASK': {transform: 'matrix(0.2, 0, 0, 0.2, 5, 5)', svg: PLAN_QK_LOGO},
-    'DATA_TYPE_DATA_POOL': {transform: 'matrix(0.18, 0, 0, 0.18, 12, 27)', svg: PLAN_QK_LOGO},
-  };
+    // to insert svgs easily just open them in your browser, copy the outer html and insert it using ctrl + alt + shift + v in intellij to avoid formatting,escaping etc.
+    // matrix( Scalingfactor, 0, 0, Scalingfactor, shift X, shift y)
+    // IMPORTANT: ensure that definition Ids for new SVGs are UNIQUE
+    // viewbox is not required
+    const planQKSVGMap = {
+        'TASK_TYPE_PLANQK_SERVICE_TASK': {transform: 'matrix(0.2, 0, 0, 0.2, 5, 5)', svg: PLAN_QK_LOGO},
+        'DATA_TYPE_DATA_POOL': {transform: 'matrix(0.18, 0, 0, 0.18, 12, 27)', svg: PLAN_QK_LOGO},
+    };
 
-  return planQKSVGMap[svgId];
+    return planQKSVGMap[svgId];
 }
 

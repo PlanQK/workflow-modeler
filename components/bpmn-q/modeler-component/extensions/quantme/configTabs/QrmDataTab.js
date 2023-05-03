@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
 
@@ -14,7 +14,7 @@ export default function QrmDataTab() {
 
     if (!editorActions._actions.hasOwnProperty('qrmRepoNameChanged')) {
         editorActions.register({
-            qrmRepoNameChanged: function(qrmRepoName) {
+            qrmRepoNameChanged: function (qrmRepoName) {
                 self.modeler.config.githubRepositoryName = qrmRepoName;
             }
         });
@@ -22,7 +22,7 @@ export default function QrmDataTab() {
 
     if (!editorActions._actions.hasOwnProperty('qrmUserNameChanged')) {
         editorActions.register({
-            qrmUserNameChanged: function(qrmUserName) {
+            qrmUserNameChanged: function (qrmUserName) {
                 self.modeler.config.githubUsername = qrmUserName;
             }
         });
@@ -30,7 +30,7 @@ export default function QrmDataTab() {
 
     if (!editorActions._actions.hasOwnProperty('qrmRepoPathChanged')) {
         editorActions.register({
-            qrmRepoPathChanged: function(qrmRepoPath) {
+            qrmRepoPathChanged: function (qrmRepoPath) {
                 self.modeler.config.githubRepositoryPath = qrmRepoPath;
             }
         });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
 
@@ -14,7 +14,7 @@ export default function OpenToscaTab() {
 
     if (!editorActions._actions.hasOwnProperty('opentoscaEndpointChanged')) {
         editorActions.register({
-            opentoscaEndpointChanged: function(opentoscaEndpoint) {
+            opentoscaEndpointChanged: function (opentoscaEndpoint) {
                 self.modeler.config.opentoscaEndpoint = opentoscaEndpoint;
             }
         });

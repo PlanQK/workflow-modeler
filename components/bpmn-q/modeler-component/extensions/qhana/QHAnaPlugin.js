@@ -13,32 +13,32 @@ import qhanaStyles from './resources/qhana-icons.css';
 let qhanaModdleDescriptor = require('./resources/qhana-extension.json');
 
 export default {
-  name: 'qhana',
-  buttons: [<ExtensibleButton subButtons={[<UpdateQHAnaConfigurationsButton/>]}
-                              title="QHAna"
-                              styleClass="qhana-service-task"
-                              description="Show buttons of the QHAna plugin" />
-  ],
-  configTabs: [
-    {
-      tabId: 'QHAnaEndpointsTab',
-      tabTitle: 'QHAna Endpoints',
-      configTab: QHAnaConfigurationsTab,
-    },
-  ],
-  extensionModule: QHAnaExtensionModule,
-  moddleDescription: qhanaModdleDescriptor,
-  styling: [qhanaStyles],
-  transformExtensionButton: <TransformationButton name='QHAna Transformation' transformWorkflow={
-    async (xml) => {
+    name: 'qhana',
+    buttons: [<ExtensibleButton subButtons={[<UpdateQHAnaConfigurationsButton/>]}
+                                title="QHAna"
+                                styleClass="qhana-service-task"
+                                description="Show buttons of the QHAna plugin"/>
+    ],
+    configTabs: [
+        {
+            tabId: 'QHAnaEndpointsTab',
+            tabTitle: 'QHAna Endpoints',
+            configTab: QHAnaConfigurationsTab,
+        },
+    ],
+    extensionModule: QHAnaExtensionModule,
+    moddleDescription: qhanaModdleDescriptor,
+    styling: [qhanaStyles],
+    transformExtensionButton: <TransformationButton name='QHAna Transformation' transformWorkflow={
+        async (xml) => {
 
-      // load current xml if not given as parameter
-      if (!xml) {
-        const modeler = getModeler();
-        xml = await getXml(modeler);
-      }
+            // load current xml if not given as parameter
+            if (!xml) {
+                const modeler = getModeler();
+                xml = await getXml(modeler);
+            }
 
-      return await startQHAnaReplacementProcess(xml);
-    }
-  }/>,
+            return await startQHAnaReplacementProcess(xml);
+        }
+    }/>,
 };

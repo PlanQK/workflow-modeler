@@ -14,93 +14,93 @@ import Notification from './Notification';
 import {NOTIFICATION_TYPES} from "./NotificationHandler";
 
 export default class Notifications extends PureComponent {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.container = props.container;
-    this.state = {
-      notifications: props.notifications || []
-    }
-    this.currentNotificationId = -1;
-  }
-
-  // componentDidMount() {
-  //   document.body.appendChild(this.container);
-  // }
-  //
-  // componentWillUnmount() {
-  //   document.body.removeChild(this.container);
-  // }
-
-  displayNotification({type = 'info', title, content, duration = 4000}) {
-    const notifications = this.state.notifications;
-
-    if (!NOTIFICATION_TYPES.includes(type)) {
-      throw new Error('Unknown notification type');
+        this.container = props.container;
+        this.state = {
+            notifications: props.notifications || []
+        }
+        this.currentNotificationId = -1;
     }
 
-    const id = this.currentNotificationId++;
+    // componentDidMount() {
+    //   document.body.appendChild(this.container);
+    // }
+    //
+    // componentWillUnmount() {
+    //   document.body.removeChild(this.container);
+    // }
 
-    const close = () => {
-      console.log('close');
-      this._closeNotification(id);
-    };
+    displayNotification({type = 'info', title, content, duration = 4000}) {
+        const notifications = this.state.notifications;
 
-    const update = newProps => {
-      this._updateNotification(id, newProps);
-    };
+        if (!NOTIFICATION_TYPES.includes(type)) {
+            throw new Error('Unknown notification type');
+        }
 
-    const notification = {
-      content,
-      duration,
-      id,
-      close,
-      title,
-      type
-    };
+        const id = this.currentNotificationId++;
 
-    this.setState({
-      notifications: [
-        ...notifications,
-        notification
-      ]
-    });
+        const close = () => {
+            console.log('close');
+            this._closeNotification(id);
+        };
 
-    return {
-      close,
-      update
-    };
-  }
+        const update = newProps => {
+            this._updateNotification(id, newProps);
+        };
 
-  closeNotifications() {
-    this.setState({notifications: []});
-  }
+        const notification = {
+            content,
+            duration,
+            id,
+            close,
+            title,
+            type
+        };
 
-  _updateNotification(id, options) {
-    const notifications = this.state.notifications.map(notification => {
-      const {id: currentId} = notification;
+        this.setState({
+            notifications: [
+                ...notifications,
+                notification
+            ]
+        });
 
-      return currentId !== id ? notification : {...notification, ...options};
-    });
+        return {
+            close,
+            update
+        };
+    }
 
-    this.setState({notifications: notifications})
-  }
+    closeNotifications() {
+        this.setState({notifications: []});
+    }
 
-  _closeNotification(id) {
-    const notifications = this.state.notifications.filter(({id: currentId}) => currentId !== id);
-    this.setState({notifications: notifications})
-  }
+    _updateNotification(id, options) {
+        const notifications = this.state.notifications.map(notification => {
+            const {id: currentId} = notification;
 
-  render() {
-    let {
-      notifications
-    } = this.state;
-    notifications = notifications || [];
-    const notificationComponents = notifications.map(({id, ...props}) => {
-      return <Notification key={id} {...props} />;
-    }).reverse();
+            return currentId !== id ? notification : {...notification, ...options};
+        });
 
-    // className={ css.Notifications }
-    return createPortal(<div className="Notifications">{notificationComponents}</div>, this.container);
-  }
+        this.setState({notifications: notifications})
+    }
+
+    _closeNotification(id) {
+        const notifications = this.state.notifications.filter(({id: currentId}) => currentId !== id);
+        this.setState({notifications: notifications})
+    }
+
+    render() {
+        let {
+            notifications
+        } = this.state;
+        notifications = notifications || [];
+        const notificationComponents = notifications.map(({id, ...props}) => {
+            return <Notification key={id} {...props} />;
+        }).reverse();
+
+        // className={ css.Notifications }
+        return createPortal(<div className="Notifications">{notificationComponents}</div>, this.container);
+    }
 }

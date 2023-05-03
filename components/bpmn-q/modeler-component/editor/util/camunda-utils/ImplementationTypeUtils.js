@@ -5,12 +5,12 @@
  * terms of the MIT License.
  */
 import {
-  getBusinessObject,
-  is
+    getBusinessObject,
+    is
 } from 'bpmn-js/lib/util/ModelUtil';
 
 import {
-  isAny
+    isAny
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import {getMessageEventDefinition} from "./EventDefinitionUtil";
 import {getExtensionElementsList} from "./ExtensionElementsUtil";
@@ -23,7 +23,7 @@ import {getExtensionElementsList} from "./ExtensionElementsUtil";
  * @return {boolean} a boolean value
  */
 export function isServiceTaskLike(element) {
-  return is(element, 'camunda:ServiceTaskLike');
+    return is(element, 'camunda:ServiceTaskLike');
 }
 
 /**
@@ -34,7 +34,7 @@ export function isServiceTaskLike(element) {
  * @return {boolean} a boolean value
  */
 export function isDmnCapable(element) {
-  return is(element, 'camunda:DmnCapable');
+    return is(element, 'camunda:DmnCapable');
 }
 
 /**
@@ -45,7 +45,7 @@ export function isDmnCapable(element) {
  * @return {boolean} a boolean value
  */
 export function isExternalCapable(element) {
-  return is(element, 'camunda:ExternalCapable');
+    return is(element, 'camunda:ExternalCapable');
 }
 
 /**
@@ -56,7 +56,7 @@ export function isExternalCapable(element) {
  * @return {boolean} true
  */
 export function isDeploymentCapable(element) {
-  return true;
+    return true;
 }
 
 /**
@@ -70,19 +70,19 @@ export function isDeploymentCapable(element) {
  */
 export function getServiceTaskLikeBusinessObject(element) {
 
-  if (is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:EndEvent')) {
+    if (is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:EndEvent')) {
 
-    // change business object to 'messageEventDefinition' when
-    // the element is a message intermediate throw event or message end event
-    // because the camunda extensions (e.g. camunda:class) are in the message
-    // event definition tag and not in the intermediate throw event or end event tag
-    const messageEventDefinition = getMessageEventDefinition(element);
-    if (messageEventDefinition) {
-      element = messageEventDefinition;
+        // change business object to 'messageEventDefinition' when
+        // the element is a message intermediate throw event or message end event
+        // because the camunda extensions (e.g. camunda:class) are in the message
+        // event definition tag and not in the intermediate throw event or end event tag
+        const messageEventDefinition = getMessageEventDefinition(element);
+        if (messageEventDefinition) {
+            element = messageEventDefinition;
+        }
     }
-  }
 
-  return isServiceTaskLike(element) && getBusinessObject(element);
+    return isServiceTaskLike(element) && getBusinessObject(element);
 }
 
 // /**
@@ -156,11 +156,11 @@ export function getServiceTaskLikeBusinessObject(element) {
 // }
 
 export function isListener(element) {
-  return this.isTaskListener(element) || this.isExecutionListener(element);
+    return this.isTaskListener(element) || this.isExecutionListener(element);
 }
 
 export function getListenerBusinessObject(businessObject) {
-  if (isAny(businessObject, [ 'camunda:ExecutionListener','camunda:TaskListener' ])) {
-    return businessObject;
-  }
+    if (isAny(businessObject, ['camunda:ExecutionListener', 'camunda:TaskListener'])) {
+        return businessObject;
+    }
 }

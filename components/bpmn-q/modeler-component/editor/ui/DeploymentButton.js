@@ -20,7 +20,7 @@ export default function DeploymentButton(props) {
 
         // get XML of the current workflow
         const rootElement = getRootProcess(modeler.getDefinitions());
-        const xml = (await modeler.saveXML({ format: true })).xml;
+        const xml = (await modeler.saveXML({format: true})).xml;
 
         // check if there are views defined for the modeler and include them in the deployment
         let viewsDict = {};

@@ -19,72 +19,78 @@ const QUANTME_NAMESPACE_PUSH = 'http://quantil.org/quantme/push';
 
 export function deployment(element, bpmnFactory, options, translate, wineryEndpoint) {
 
-  const getImplementationType = options.getImplementationType,
+    const getImplementationType = options.getImplementationType,
         getBusinessObject = options.getBusinessObject;
 
-  const deploymentEntry = entryFactory.selectBox({
-    id: 'deployment',
-    label: translate('CSAR Name'),
-    dataValueLabel: 'deploymentModelUrlLabel',
-    modelProperty: 'deploymentModelUrl',
+    const deploymentEntry = entryFactory.selectBox({
+        id: 'deployment',
+        label: translate('CSAR Name'),
+        dataValueLabel: 'deploymentModelUrlLabel',
+        modelProperty: 'deploymentModelUrl',
 
-    selectOptions: function(element, node) {
-      const arrValues = [];
-      jquery.ajax({
-        url: wineryEndpoint + '/servicetemplates/?grouped',
-        method :'GET',
-        success: function(result) {
-          let checks = 0;
-          for (let i = 0; i < result.length; i++) {
-            if (result[i].text === QUANTME_NAMESPACE_PULL) {
-              result[i].children.forEach(element => arrValues.push({ name: element.text, value: concatenateCsarEndpoint('{{ wineryEndpoint }}', result[i].id, element.text) }));
-              checks++;
+        selectOptions: function (element, node) {
+            const arrValues = [];
+            jquery.ajax({
+                url: wineryEndpoint + '/servicetemplates/?grouped',
+                method: 'GET',
+                success: function (result) {
+                    let checks = 0;
+                    for (let i = 0; i < result.length; i++) {
+                        if (result[i].text === QUANTME_NAMESPACE_PULL) {
+                            result[i].children.forEach(element => arrValues.push({
+                                name: element.text,
+                                value: concatenateCsarEndpoint('{{ wineryEndpoint }}', result[i].id, element.text)
+                            }));
+                            checks++;
+                        }
+                        if (result[i].text === QUANTME_NAMESPACE_PUSH) {
+                            result[i].children.forEach(element => arrValues.push({
+                                name: element.text,
+                                value: concatenateCsarEndpoint('{{ wineryEndpoint }}', result[i].id, element.text)
+                            }));
+                            checks++;
+                        }
+                        if (checks === 2) {
+                            break;
+                        }
+                    }
+                },
+                async: false
+            });
+            if (arrValues.length === 0) {
+                arrValues.push({name: 'No CSARs available', value: ''});
             }
-            if (result[i].text === QUANTME_NAMESPACE_PUSH) {
-              result[i].children.forEach(element => arrValues.push({ name: element.text, value: concatenateCsarEndpoint('{{ wineryEndpoint }}', result[i].id, element.text) }));
-              checks++;
-            }
-            if (checks === 2) {
-              break;
-            }
-          }
+            return arrValues;
         },
-        async: false
-      });
-      if (arrValues.length === 0) {
-        arrValues.push({ name: 'No CSARs available', value:'' });
-      }
-      return arrValues;
-    },
-    setControlValue: true,
+        setControlValue: true,
 
-    get: function(element, node) {
-      let bo = getBusinessObject(element);
-      let deploymentModelUrl = bo && bo.get('quantme:deploymentModelUrl');
-      return {
-        deploymentModelUrl: deploymentModelUrl,
-        deploymentModelUrlLabel: translate('CSAR Name')
-      };
-    },
+        get: function (element, node) {
+            let bo = getBusinessObject(element);
+            let deploymentModelUrl = bo && bo.get('quantme:deploymentModelUrl');
+            return {
+                deploymentModelUrl: deploymentModelUrl,
+                deploymentModelUrlLabel: translate('CSAR Name')
+            };
+        },
 
-    set: function(element, values, node) {
-      let bo = getBusinessObject(element);
-      let prop = { deploymentModelUrl: values.deploymentModelUrl || '' };
-      return cmdHelper.updateBusinessObject(element, bo, prop);
-    },
+        set: function (element, values, node) {
+            let bo = getBusinessObject(element);
+            let prop = {deploymentModelUrl: values.deploymentModelUrl || ''};
+            return cmdHelper.updateBusinessObject(element, bo, prop);
+        },
 
-    validate: function(element, values, node) {
-      return getImplementationType(element) === 'deploymentModel' && !values.deploymentModelUrl ? { deploymentModelUrl: translate('Must provide a CSAR') } : {};
-    },
+        validate: function (element, values, node) {
+            return getImplementationType(element) === 'deploymentModel' && !values.deploymentModelUrl ? {deploymentModelUrl: translate('Must provide a CSAR')} : {};
+        },
 
-    hidden: function(element, node) {
-      return !(getImplementationType(element) === 'deploymentModel');
-    }
-  });
+        hidden: function (element, node) {
+            return !(getImplementationType(element) === 'deploymentModel');
+        }
+    });
 
-  return [deploymentEntry];
+    return [deploymentEntry];
 }
 
 function concatenateCsarEndpoint(wineryEndpoint, namespace, csarName) {
-  return wineryEndpoint + '/servicetemplates/' + encodeURIComponent(namespace) + '/' + csarName + '/?csar';
+    return wineryEndpoint + '/servicetemplates/' + encodeURIComponent(namespace) + '/' + csarName + '/?csar';
 }

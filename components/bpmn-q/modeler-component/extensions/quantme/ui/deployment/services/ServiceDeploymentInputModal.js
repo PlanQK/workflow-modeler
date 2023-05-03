@@ -15,116 +15,116 @@ import React from 'react';
 // polyfill upcoming structural components
 import Modal from "../../../../../editor/ui/modal/Modal";
 
-const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
-const Body = Modal.Body || (({ children }) => <div>{children}</div>);
-const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
+const Title = Modal.Title || (({children}) => <h2>{children}</h2>);
+const Body = Modal.Body || (({children}) => <div>{children}</div>);
+const Footer = Modal.Footer || (({children}) => <div>{children}</div>);
 
-export default function ServiceDeploymentInputModal({ onClose, initValues }) {
+export default function ServiceDeploymentInputModal({onClose, initValues}) {
 
-  // refs to enable changing the state through the plugin
-  let progressBarRef = React.createRef();
-  let progressBarDivRef = React.createRef();
-  let footerRef = React.createRef();
+    // refs to enable changing the state through the plugin
+    let progressBarRef = React.createRef();
+    let progressBarDivRef = React.createRef();
+    let footerRef = React.createRef();
 
-  // propagte updates on dynamically created input fields to corresponding parameter fields
-  const handleInputChange = (event, csarIndex, paramIndex) => {
-    initValues[csarIndex].inputParameters[paramIndex].value = event.target.value;
-  };
+    // propagte updates on dynamically created input fields to corresponding parameter fields
+    const handleInputChange = (event, csarIndex, paramIndex) => {
+        initValues[csarIndex].inputParameters[paramIndex].value = event.target.value;
+    };
 
-  // determine input parameters that have to be passed by the user
-  let csarInputParts = [];
-  let inputRequired = false;
-  for (let i = 0; i < initValues.length; i++) {
-    let csar = initValues[i];
-    let inputParams = csar.inputParameters;
+    // determine input parameters that have to be passed by the user
+    let csarInputParts = [];
+    let inputRequired = false;
+    for (let i = 0; i < initValues.length; i++) {
+        let csar = initValues[i];
+        let inputParams = csar.inputParameters;
 
-    let paramsToRetrieve = [];
-    for (let j = 0; j < inputParams.length; j++) {
-      let inputParam = inputParams[j];
+        let paramsToRetrieve = [];
+        for (let j = 0; j < inputParams.length; j++) {
+            let inputParam = inputParams[j];
 
 
-      // skip parameters that are automatically set by the OpenTOSCA Container
-      if (inputParam.name === 'instanceDataAPIUrl' || inputParam.name === 'CorrelationID' || inputParam.name === 'csarEntrypoint') {
-        paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
-        continue;
-      }
+            // skip parameters that are automatically set by the OpenTOSCA Container
+            if (inputParam.name === 'instanceDataAPIUrl' || inputParam.name === 'CorrelationID' || inputParam.name === 'csarEntrypoint') {
+                paramsToRetrieve.push({hidden: true, inputParam: inputParam});
+                continue;
+            }
 
-      // skip parameters that are automatically set during service binding
-      if (inputParam.name === 'camundaTopic' || inputParam.name === 'camundaEndpoint') {
-        paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
-        continue;
-      }
+            // skip parameters that are automatically set during service binding
+            if (inputParam.name === 'camundaTopic' || inputParam.name === 'camundaEndpoint') {
+                paramsToRetrieve.push({hidden: true, inputParam: inputParam});
+                continue;
+            }
 
-      paramsToRetrieve.push({ hidden: false, inputParam: inputParam });
+            paramsToRetrieve.push({hidden: false, inputParam: inputParam});
+        }
+
+        if (paramsToRetrieve.filter((param) => param.hidden === false).length > 0) {
+            inputRequired = true;
+
+            // add entries for the parameters
+            const listItems = paramsToRetrieve.map((param, j) =>
+                <tr key={csar.csarName + '-' + param.inputParam.name} hidden={param.hidden}>
+                    <td>{param.inputParam.name}</td>
+                    <td>
+                        <input
+                            type="string"
+                            value={initValues[i][j]}
+                            onChange={event => handleInputChange(event, i, j)}/>
+                    </td>
+                </tr>
+            );
+
+            // assemble the table
+            csarInputParts.push(
+                <div key={csar.csarName}>
+                    <h3 className="spaceUnderSmall">{csar.csarName}:</h3>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <th>Parameter Name</th>
+                            <th>Value</th>
+                        </tr>
+                        {listItems}
+                        </tbody>
+                    </table>
+                </div>);
+        }
     }
 
-    if (paramsToRetrieve.filter((param) => param.hidden === false).length > 0) {
-      inputRequired = true;
+    const onNext = () => onClose({
+        next: true,
+        csarList: initValues,
+        refs: {progressBarRef: progressBarRef, progressBarDivRef: progressBarDivRef, footerRef: footerRef}
+    });
 
-      // add entries for the parameters
-      const listItems = paramsToRetrieve.map((param, j) =>
-        <tr key={csar.csarName + '-' + param.inputParam.name} hidden={param.hidden}>
-          <td>{param.inputParam.name}</td>
-          <td>
-            <input
-              type="string"
-              value={initValues[i][j]}
-              onChange={event => handleInputChange(event, i, j)}/>
-          </td>
-        </tr>
-      );
+    return <Modal onClose={onClose}>
 
-      // assemble the table
-      csarInputParts.push(
-        <div key={csar.csarName}>
-          <h3 className="spaceUnderSmall">{csar.csarName}:</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>Parameter Name</th>
-                <th>Value</th>
-              </tr>
-              {listItems}
-            </tbody>
-          </table>
-        </div>);
-    }
-  }
+        <Title>
+            Service Deployment (2/3)
+        </Title>
 
-  const onNext = () => onClose({
-    next: true,
-    csarList: initValues,
-    refs: { progressBarRef: progressBarRef, progressBarDivRef: progressBarDivRef, footerRef: footerRef }
-  });
+        <Body>
+            <h3 className="spaceUnder">CSARs successfully uploaded to the OpenTOSCA Container.</h3>
 
-  return <Modal onClose={onClose}>
+            <h3 className="spaceUnder" hidden={!inputRequired}>The following CSARs require input parameters:</h3>
 
-    <Title>
-      Service Deployment (2/3)
-    </Title>
+            <h3 className="spaceUnder" hidden={inputRequired}>No input parameters required.</h3>
 
-    <Body>
-      <h3 className="spaceUnder">CSARs successfully uploaded to the OpenTOSCA Container.</h3>
+            {csarInputParts}
 
-      <h3 className="spaceUnder" hidden={!inputRequired}>The following CSARs require input parameters:</h3>
+            <div hidden={true} ref={progressBarDivRef}>
+                <div className="spaceUnder spaceAbove">Deployment progress:</div>
+                <div id="progress">
+                    <div id="bar" ref={progressBarRef}/>
+                </div>
+            </div>
+        </Body>
 
-      <h3 className="spaceUnder" hidden={inputRequired}>No input parameters required.</h3>
-
-      {csarInputParts}
-
-      <div hidden={true} ref={progressBarDivRef}>
-        <div className="spaceUnder spaceAbove">Deployment progress:</div>
-        <div id="progress">
-          <div id="bar" ref={progressBarRef}/>
-        </div>
-      </div>
-    </Body>
-
-    <Footer>
-      <div id="deploymentButtons" ref={footerRef}>
-        <button type="button" className="btn btn-primary" onClick={() => onNext()}>Deploy Services</button>
-        <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Cancel</button>
-      </div>
-    </Footer>
-  </Modal>;
+        <Footer>
+            <div id="deploymentButtons" ref={footerRef}>
+                <button type="button" className="btn btn-primary" onClick={() => onNext()}>Deploy Services</button>
+                <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Cancel</button>
+            </div>
+        </Footer>
+    </Modal>;
 }

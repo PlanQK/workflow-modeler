@@ -10,18 +10,18 @@
  */
 
 const defaultConfig = {
-  quantmeDataConfigurationsEndpoint: 'http://localhost:8100/data-objects',
-  opentoscaEndpoint: 'http://192.168.178.20:1337/csars',
-  wineryEndpoint: 'http://192.168.178.20:8093/winery',
-  nisqAnalyzerEndpoint: 'http://192.168.178.20:8098/nisq-analyzer',
-  transformationFrameworkEndpoint: 'http://192.168.178.20:8888',
-  qiskitRuntimeHandlerEndpoint: 'http://192.168.178.20:8889',
-  awsRuntimeHandlerEndpoint: 'http://192.168.178.20:8890',
-  scriptSplitterEndpoint: 'http://192.168.178.20:8891',
-  scriptSplitterThreshold: 5,
-  githubRepositoryName: 'QuantME-UseCases',
-  githubUsername: 'UST-QuAntiL',
-  githubRepositoryPath: '2022-closer/qrms',
-  hybridRuntimeProvenance: false
+    quantmeDataConfigurationsEndpoint: 'http://localhost:8100/data-objects',
+    opentoscaEndpoint: 'http://192.168.178.20:1337/csars',
+    wineryEndpoint: 'http://192.168.178.20:8093/winery',
+    nisqAnalyzerEndpoint: 'http://192.168.178.20:8098/nisq-analyzer',
+    transformationFrameworkEndpoint: 'http://192.168.178.20:8888',
+    qiskitRuntimeHandlerEndpoint: 'http://192.168.178.20:8889',
+    awsRuntimeHandlerEndpoint: 'http://192.168.178.20:8890',
+    scriptSplitterEndpoint: 'http://192.168.178.20:8891',
+    scriptSplitterThreshold: 5,
+    githubRepositoryName: 'QuantME-UseCases',
+    githubUsername: 'UST-QuAntiL',
+    githubRepositoryPath: '2022-closer/qrms',
+    hybridRuntimeProvenance: false
 };
 export default defaultConfig;

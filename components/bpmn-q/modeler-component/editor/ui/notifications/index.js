@@ -8,7 +8,7 @@
  * except in compliance with the MIT License.
  */
 
-import { default as Notifications } from './Notifications';
+import {default as Notifications} from './Notifications';
 
 export default Notifications;
-export { NOTIFICATION_TYPES } from './Notification';
+export {NOTIFICATION_TYPES} from './Notification';

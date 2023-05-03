@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
 
@@ -12,7 +12,7 @@ export default function NisqAnalyzerTab() {
 
     if (!editorActions._actions.hasOwnProperty('nisqAnalyzerEndpointChanged')) {
         editorActions.register({
-            nisqAnalyzerEndpointChanged: function(nisqAnalyzerEndpoint) {
+            nisqAnalyzerEndpointChanged: function (nisqAnalyzerEndpoint) {
                 self.modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
             }
         });

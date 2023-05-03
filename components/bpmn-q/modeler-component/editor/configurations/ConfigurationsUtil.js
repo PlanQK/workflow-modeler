@@ -2,9 +2,9 @@ import * as configConsts from './Constants';
 import {getBusinessObject} from 'bpmn-js/lib/util/ModelUtil';
 import * as dataConsts from '../../extensions/data-extension/Constants';
 import {
-  addCamundaInputMapParameter,
-  addCamundaOutputMapParameter,
-  getCamundaInputOutput
+    addCamundaInputMapParameter,
+    addCamundaOutputMapParameter,
+    getCamundaInputOutput
 } from '../util/ModellingUtilities';
 import * as configsConsts from './Constants';
 
@@ -24,41 +24,41 @@ import * as configsConsts from './Constants';
  */
 export function createConfigurationsEntries(element, className, configurations, bpmnFactory, modeling, commandStack, replaceElement, action = undefined) {
 
-  const menuEntries = {};
-  let updateAction;
+    const menuEntries = {};
+    let updateAction;
 
-  console.log('Create entries for configurations:');
-  console.log(configurations);
+    console.log('Create entries for configurations:');
+    console.log(configurations);
 
-  configurations.map(function (config) {
+    configurations.map(function (config) {
 
-    // define action for the entry
-    if (action) {
-      updateAction = function (event) {
-        action(event, config);
-      };
-    } else {
-      updateAction = function () {
+        // define action for the entry
+        if (action) {
+            updateAction = function (event) {
+                action(event, config);
+            };
+        } else {
+            updateAction = function () {
 
-        // replace element with configuration type if types mismatch
-        let newElement;
-        if (element.type !== config.appliesTo) {
-          newElement = replaceElement(element, {type: config.appliesTo});
+                // replace element with configuration type if types mismatch
+                let newElement;
+                if (element.type !== config.appliesTo) {
+                    newElement = replaceElement(element, {type: config.appliesTo});
+                }
+
+                handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, commandStack);
+            };
         }
 
-        handleConfigurationsAction(newElement || element, config, bpmnFactory, modeling, commandStack);
-      };
-    }
+        // create popup menu entry
+        menuEntries[config.id] = {
+            label: config.name,
+            className: className,
+            action: updateAction,
+        };
+    });
 
-    // create popup menu entry
-    menuEntries[config.id] = {
-      label: config.name,
-      className: className,
-      action: updateAction,
-    };
-  });
-
-  return menuEntries;
+    return menuEntries;
 }
 
 /**
@@ -72,171 +72,171 @@ export function createConfigurationsEntries(element, className, configurations, 
  */
 export function handleConfigurationsAction(element, config, bpmnFactory, modeling, commandStack) {
 
-  // save id of selected element in
-  modeling.updateProperties(element, {
-    [configConsts.SELECT_CONFIGURATIONS_ID]: config.id,
-  });
+    // save id of selected element in
+    modeling.updateProperties(element, {
+        [configConsts.SELECT_CONFIGURATIONS_ID]: config.id,
+    });
 
-  modeling.updateProperties(element, {
-    [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
-  });
+    modeling.updateProperties(element, {
+        [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
+    });
 
-  // set name of the element to configuration name
-  modeling.updateProperties(element, {
-    name: config.name,
-  });
+    // set name of the element to configuration name
+    modeling.updateProperties(element, {
+        name: config.name,
+    });
 
-  config.attributes.forEach(function (attribute) {
+    config.attributes.forEach(function (attribute) {
 
-    // set properties based on the type of the bindTo value
-    switch (attribute.bindTo.type) {
-      case 'camunda:InputParameter':
-      case 'camunda:OutputParameter':
-        addAttributeValueToCamundaIO(element, bpmnFactory, attribute.bindTo.type, attribute, modeling)(attribute.value);
-        break;
-      case 'camunda:InputMapParameter':
-        addCamundaInputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
-        break;
-      case 'camunda:OutputMapParameter':
-        addCamundaOutputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
-        break;
-      case 'KeyValueMap':
-        addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack)(attribute.value);
-        break;
-      default:
-        setAttributeValue(element, attribute, modeling)(attribute.value);
-        break;
-    }
-  });
+        // set properties based on the type of the bindTo value
+        switch (attribute.bindTo.type) {
+            case 'camunda:InputParameter':
+            case 'camunda:OutputParameter':
+                addAttributeValueToCamundaIO(element, bpmnFactory, attribute.bindTo.type, attribute, modeling)(attribute.value);
+                break;
+            case 'camunda:InputMapParameter':
+                addCamundaInputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
+                break;
+            case 'camunda:OutputMapParameter':
+                addCamundaOutputMapParameter(element.businessObject, attribute.name, attribute.value, bpmnFactory);
+                break;
+            case 'KeyValueMap':
+                addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack)(attribute.value);
+                break;
+            default:
+                setAttributeValue(element, attribute, modeling)(attribute.value);
+                break;
+        }
+    });
 }
 
 export function setAttributeValue(element, attribute, modeling) {
-  return (newValue) => {
-    return modeling.updateProperties(element, {
-      [attribute.bindTo.name]: newValue
-    });
-  };
+    return (newValue) => {
+        return modeling.updateProperties(element, {
+            [attribute.bindTo.name]: newValue
+        });
+    };
 }
 
 export function getAttributeValue(element) {
-  return (attribute) => {
-    const businessObject = getBusinessObject(element);
-    const realValue = businessObject.get(attribute.bindTo.name) || '';
+    return (attribute) => {
+        const businessObject = getBusinessObject(element);
+        const realValue = businessObject.get(attribute.bindTo.name) || '';
 
-    if (realValue && realValue !== '') {
-      return realValue;
-    } else {
-      return attribute.value;
-    }
-  };
+        if (realValue && realValue !== '') {
+            return realValue;
+        } else {
+            return attribute.value;
+        }
+    };
 }
 
 export function addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack) {
-  return (value) => {
+    return (value) => {
 
-    const bo = element.businessObject;
+        const bo = element.businessObject;
 
-    const businessObject = getBusinessObject(element);
-    const attributeContent = bo.get(attribute.bindTo.name) || [];
+        const businessObject = getBusinessObject(element);
+        const attributeContent = bo.get(attribute.bindTo.name) || [];
 
-    const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
-    if (existingAttr) {
-      commandStack.execute('element.updateModdleProperties', {
-        element,
-        moddleElement: existingAttr,
-        properties: {value: value},
-      });
-    } else {
-      const param = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
+        const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
+        if (existingAttr) {
+            commandStack.execute('element.updateModdleProperties', {
+                element,
+                moddleElement: existingAttr,
+                properties: {value: value},
+            });
+        } else {
+            const param = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
 
-      commandStack.execute('element.updateModdleProperties', {
-        element,
-        moddleElement: businessObject,
-        properties: {[attribute.bindTo.name]: attributeContent.concat(param)},
-      });
-    }
-  };
+            commandStack.execute('element.updateModdleProperties', {
+                element,
+                moddleElement: businessObject,
+                properties: {[attribute.bindTo.name]: attributeContent.concat(param)},
+            });
+        }
+    };
 }
 
 export function getAttributeValueFromKeyValueMap(element) {
-  return (attribute) => {
-    const businessObject = getBusinessObject(element);
-    const attributeContent = businessObject.get(attribute.bindTo.name) || [];
+    return (attribute) => {
+        const businessObject = getBusinessObject(element);
+        const attributeContent = businessObject.get(attribute.bindTo.name) || [];
 
-    const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
-    if (existingAttr) {
-      return existingAttr.value;
-    } else {
-      return attribute.value;
-    }
-  };
+        const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
+        if (existingAttr) {
+            return existingAttr.value;
+        } else {
+            return attribute.value;
+        }
+    };
 }
 
 export function addAttributeValueToCamundaIO(element, bpmnFactory, camundaType, attribute, modeling) {
-  return (value) => {
+    return (value) => {
 
-    const businessObject = getBusinessObject(element);
-    const inputOutput = getCamundaInputOutput(businessObject, bpmnFactory);
+        const businessObject = getBusinessObject(element);
+        const inputOutput = getCamundaInputOutput(businessObject, bpmnFactory);
 
-    // create new io parameter with new value
-    const newParameter = bpmnFactory.create(camundaType, {
-      name: attribute.name,
-      value: value,
-    });
+        // create new io parameter with new value
+        const newParameter = bpmnFactory.create(camundaType, {
+            name: attribute.name,
+            value: value,
+        });
 
-    // Update existing or create a new io parameter
-    const parameters = camundaType === 'camunda:InputParameter' ? inputOutput.inputParameters : inputOutput.outputParameters;
-    let existingIoParameter = parameters.find((entry) => entry.name === attribute.name);
-    if (existingIoParameter) {
+        // Update existing or create a new io parameter
+        const parameters = camundaType === 'camunda:InputParameter' ? inputOutput.inputParameters : inputOutput.outputParameters;
+        let existingIoParameter = parameters.find((entry) => entry.name === attribute.name);
+        if (existingIoParameter) {
 
-      // update existing value of io parameter
-      existingIoParameter.value = newParameter.value;
-    } else {
+            // update existing value of io parameter
+            existingIoParameter.value = newParameter.value;
+        } else {
 
-      // create a new io parameter
-      existingIoParameter = bpmnFactory.create(camundaType, {
-        name: attribute.name,
-        value: attribute.value,
-      });
-      parameters.push(existingIoParameter);
-    }
+            // create a new io parameter
+            existingIoParameter = bpmnFactory.create(camundaType, {
+                name: attribute.name,
+                value: attribute.value,
+            });
+            parameters.push(existingIoParameter);
+        }
 
-    // update model to propagate the new value
-    modeling.updateProperties(element, {
-      [camundaType]: existingIoParameter
-    });
-  };
+        // update model to propagate the new value
+        modeling.updateProperties(element, {
+            [camundaType]: existingIoParameter
+        });
+    };
 }
 
 export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType) {
 
-  return (attribute) => {
+    return (attribute) => {
 
-    const businessObject = getBusinessObject(element);
-    const inputOutput = getCamundaInputOutput(businessObject, bpmnFactory);
+        const businessObject = getBusinessObject(element);
+        const inputOutput = getCamundaInputOutput(businessObject, bpmnFactory);
 
-    const parameters = camundaType === 'camunda:InputParameter' ? inputOutput.inputParameters : inputOutput.outputParameters;
-    let existingInputParameter = parameters.find((entry) => entry.name === attribute.name);
+        const parameters = camundaType === 'camunda:InputParameter' ? inputOutput.inputParameters : inputOutput.outputParameters;
+        let existingInputParameter = parameters.find((entry) => entry.name === attribute.name);
 
-    // return value of existing io parameter or the default value of the configurations attribute
-    if (existingInputParameter) {
-      return existingInputParameter.value;
-    } else {
-      return attribute.value;
-    }
-  };
+        // return value of existing io parameter or the default value of the configurations attribute
+        if (existingInputParameter) {
+            return existingInputParameter.value;
+        } else {
+            return attribute.value;
+        }
+    };
 }
 
 export function extractConfigSVG(element) {
-  const svgStr = element.businessObject.get(configsConsts.CONFIGURATIONS_ICON);
-  if (svgStr) {
-    try {
-      return JSON.parse(svgStr);
-    } catch (err) {
-      return undefined;
+    const svgStr = element.businessObject.get(configsConsts.CONFIGURATIONS_ICON);
+    if (svgStr) {
+        try {
+            return JSON.parse(svgStr);
+        } catch (err) {
+            return undefined;
+        }
     }
-  }
-  return undefined;
+    return undefined;
 }
 
 

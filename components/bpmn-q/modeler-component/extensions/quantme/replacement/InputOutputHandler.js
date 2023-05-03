@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { QUANTME_ATTRIBUTES } from '../Constants';
+import {QUANTME_ATTRIBUTES} from '../Constants';
 import {getPropertiesToCopy} from '../../../editor/util/TransformationUtilities';
 
 /**
@@ -20,23 +20,23 @@ import {getPropertiesToCopy} from '../../../editor/util/TransformationUtilities'
  * @param bpmnFactory the BPMN factory to create new elements for the diagram
  */
 export function addQuantMEInputParameters(task, inputOutputExtension, bpmnFactory) {
-  console.log('Adding QuantME attributes to replacing workflow fragment: ', task);
+    console.log('Adding QuantME attributes to replacing workflow fragment: ', task);
 
-  let propertiesToCopy = getPropertiesToCopy(task);
-  for (let name in propertiesToCopy) {
+    let propertiesToCopy = getPropertiesToCopy(task);
+    for (let name in propertiesToCopy) {
 
-    // skip non QuantME attributes
-    if (!QUANTME_ATTRIBUTES.includes(name)) {
-      continue;
+        // skip non QuantME attributes
+        if (!QUANTME_ATTRIBUTES.includes(name)) {
+            continue;
+        }
+
+        // create the input parameter with the QuantME attribute name and the value of the replaced task
+        inputOutputExtension.inputParameters.push(
+            bpmnFactory.create('camunda:InputParameter', {
+                name: name,
+                value: propertiesToCopy[name]
+            })
+        );
     }
-
-    // create the input parameter with the QuantME attribute name and the value of the replaced task
-    inputOutputExtension.inputParameters.push(
-      bpmnFactory.create('camunda:InputParameter', {
-        name: name,
-        value: propertiesToCopy[name]
-      })
-    );
-  }
-  return inputOutputExtension;
+    return inputOutputExtension;
 }

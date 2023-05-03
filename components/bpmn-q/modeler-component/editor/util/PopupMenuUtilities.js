@@ -25,11 +25,11 @@ export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu,
         moreOptions: entries,
         action: function () {
 
-            popupMenu.openWithEntries({ type: optionsType }, "bpmn-replace", entries,
-                    {
-                  title: title,
-                  width: 300,
-                  search: true,
+            popupMenu.openWithEntries({type: optionsType}, "bpmn-replace", entries,
+                {
+                    title: title,
+                    width: 300,
+                    search: true,
                 }
             );
         }

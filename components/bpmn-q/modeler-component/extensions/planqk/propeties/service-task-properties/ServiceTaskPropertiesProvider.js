@@ -15,54 +15,54 @@ const LOW_PRIORITY = 500;
  */
 export default function ServiceTaskPropertiesProvider(propertiesPanel, translate) {
 
-  /**
-   * Return the groups provided for the given element.
-   *
-   * @param element
-   *
-   * @return groups middleware
-   */
-  this.getGroups = function (element) {
-
     /**
-     * We return a middleware that modifies
-     * the existing groups.
+     * Return the groups provided for the given element.
      *
-     * @param {Object[]} groups
+     * @param element
      *
-     * @return {Object[]} modified groups
+     * @return groups middleware
      */
-    return function (groups) {
+    this.getGroups = function (element) {
 
-      if (is(element, 'planqk:ServiceTask')) {
-        groups.unshift(createInputOutputGroup(element, translate));
-        groups.unshift(createSubscriptionGroup(element, translate));
-      }
+        /**
+         * We return a middleware that modifies
+         * the existing groups.
+         *
+         * @param {Object[]} groups
+         *
+         * @return {Object[]} modified groups
+         */
+        return function (groups) {
 
-      return groups;
-    }
-  };
+            if (is(element, 'planqk:ServiceTask')) {
+                groups.unshift(createInputOutputGroup(element, translate));
+                groups.unshift(createSubscriptionGroup(element, translate));
+            }
 
-  propertiesPanel.registerProvider(LOW_PRIORITY, this);
+            return groups;
+        }
+    };
+
+    propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
 ServiceTaskPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'activeSubscriptions'];
 
 function createSubscriptionGroup(element, translate) {
 
-  return {
-    id: 'subscriptionProperties',
-    label: translate('Subscription'),
-    entries: planqkServiceProps(element)
-  };
+    return {
+        id: 'subscriptionProperties',
+        label: translate('Subscription'),
+        entries: planqkServiceProps(element)
+    };
 
 }
 
 function createInputOutputGroup(element, translate) {
 
-  return {
-    id: 'inputOutputProperties',
-    label: translate('Input / Output'),
-    entries: inputOutputProps(element)
-  }
+    return {
+        id: 'inputOutputProperties',
+        label: translate('Input / Output'),
+        entries: inputOutputProps(element)
+    }
 }

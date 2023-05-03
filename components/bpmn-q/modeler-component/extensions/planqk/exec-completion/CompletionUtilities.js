@@ -4,9 +4,9 @@ import {loadDiagram} from "../../../editor/util/IoUtilities";
 import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 import PlanQKExtensionModule from "../index";
 import {
-  BpmnPropertiesPanelModule,
-  BpmnPropertiesProviderModule,
-  CamundaPlatformPropertiesProviderModule
+    BpmnPropertiesPanelModule,
+    BpmnPropertiesProviderModule,
+    CamundaPlatformPropertiesProviderModule
 } from "bpmn-js-properties-panel";
 import NotificationHandler from "../../../editor/ui/notifications/NotificationHandler";
 import {createTempModeler} from "../../../editor/ModelerHandler";
@@ -21,8 +21,8 @@ let planqkModdleDescriptor = require('../resources/planqk-service-task-ext.json'
  * @return the definitions from the xml definitions
  */
 export async function getDefinitionsFromXml(xml) {
-  let bpmnModeler = await createModelerFromXml(xml);
-  return bpmnModeler.getDefinitions();
+    let bpmnModeler = await createModelerFromXml(xml);
+    return bpmnModeler.getDefinitions();
 }
 
 /**
@@ -33,17 +33,17 @@ export async function getDefinitionsFromXml(xml) {
  */
 export async function createModelerFromXml(xml) {
 
-  const bpmnModeler = createModeler();
+    const bpmnModeler = createModeler();
 
-  // import the xml containing the definitions
-  try {
-    await bpmnModeler.importXML(xml);
+    // import the xml containing the definitions
+    try {
+        await bpmnModeler.importXML(xml);
 
-    return bpmnModeler;
-  } catch (error) {
-    console.log(error);
-  }
-  return undefined;
+        return bpmnModeler;
+    } catch (error) {
+        console.log(error);
+    }
+    return undefined;
 
 }
 
@@ -54,19 +54,19 @@ export async function createModelerFromXml(xml) {
  */
 export function createModeler() {
 
-  // create new modeler
-  return createTempModeler();
+    // create new modeler
+    return createTempModeler();
 }
 
 /**
  * Get the root process element of the diagram
  */
 export function getRootProcess(definitions) {
-  for (let i = 0; i < definitions.rootElements.length; i++) {
-    if (definitions.rootElements[i].$type === 'bpmn:Process') {
-      return definitions.rootElements[i];
+    for (let i = 0; i < definitions.rootElements.length; i++) {
+        if (definitions.rootElements[i].$type === 'bpmn:Process') {
+            return definitions.rootElements[i];
+        }
     }
-  }
 }
 
 // export function setInputParameter(task, name, value) {
@@ -109,13 +109,13 @@ export function getRootProcess(definitions) {
 // }
 
 export function getExtensionElement(element, type) {
-  if (!element.extensionElements) {
-    return null;
-  }
+    if (!element.extensionElements) {
+        return null;
+    }
 
-  return element.extensionElements.values.filter(function(e) {
-    return e.$instanceOf(type);
-  })[0];
+    return element.extensionElements.values.filter(function (e) {
+        return e.$instanceOf(type);
+    })[0];
 }
 
 /**
@@ -126,7 +126,7 @@ export function getExtensionElement(element, type) {
  * @return true if the given element is a flow like element, false otherwise
  */
 export function isFlowLikeElement(type) {
-  return type === 'bpmn:SequenceFlow' || type === 'bpmn:Association';
+    return type === 'bpmn:SequenceFlow' || type === 'bpmn:Association';
 }
 
 /**
@@ -136,10 +136,10 @@ export function isFlowLikeElement(type) {
  * @return the flow element if only one is defined, or undefined if none or multiple flow elements exist in the process
  */
 export function getSingleFlowElement(process) {
-  let flowElements = process.flowElements;
-  if (flowElements.length !== 1) {
-    console.log('Process contains %i flow elements but must contain exactly one!', flowElements.length);
-    return undefined;
-  }
-  return flowElements[0];
+    let flowElements = process.flowElements;
+    if (flowElements.length !== 1) {
+        console.log('Process contains %i flow elements but must contain exactly one!', flowElements.length);
+        return undefined;
+    }
+    return flowElements[0];
 }

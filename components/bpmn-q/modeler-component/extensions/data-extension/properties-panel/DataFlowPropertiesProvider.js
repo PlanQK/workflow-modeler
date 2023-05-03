@@ -18,101 +18,101 @@ const LOW_PRIORITY = 500;
  */
 export default function DataFlowPropertiesProvider(propertiesPanel, translate, injector) {
 
-  /**
-   * Return the groups provided for the given element.
-   *
-   * @param element
-   *
-   * @return groups middleware
-   */
-  this.getGroups = function (element) {
-
     /**
-     * We return a middleware that modifies
-     * the existing groups.
+     * Return the groups provided for the given element.
      *
-     * @param {Object[]} groups
+     * @param element
      *
-     * @return {Object[]} modified groups
+     * @return groups middleware
      */
-    return function (groups) {
+    this.getGroups = function (element) {
 
-      if (is(element, consts.DATA_MAP_OBJECT)) {
-        groups.push(createDataMapObjectGroup(element, injector, translate, consts.CONTENT));
-      }
+        /**
+         * We return a middleware that modifies
+         * the existing groups.
+         *
+         * @param {Object[]} groups
+         *
+         * @return {Object[]} modified groups
+         */
+        return function (groups) {
 
-      if (is(element, consts.DATA_STORE_MAP)) {
-        groups.push(createDataStoreMapGroup(element, injector, translate, consts.DETAILS));
-      }
+            if (is(element, consts.DATA_MAP_OBJECT)) {
+                groups.push(createDataMapObjectGroup(element, injector, translate, consts.CONTENT));
+            }
 
-      if (is(element, consts.TRANSFORMATION_TASK)) {
+            if (is(element, consts.DATA_STORE_MAP)) {
+                groups.push(createDataStoreMapGroup(element, injector, translate, consts.DETAILS));
+            }
 
-        const selectedConfiguration = getServiceTaskConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
-        if (selectedConfiguration) {
-          groups.splice(1, 0, createServiceTaskConfigurationsGroup(element, injector, translate, selectedConfiguration));
-        }
+            if (is(element, consts.TRANSFORMATION_TASK)) {
 
-        groups.push(createTransformationTaskGroup(element, injector, translate, consts.PARAMETERS));
-      }
+                const selectedConfiguration = getServiceTaskConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
+                if (selectedConfiguration) {
+                    groups.splice(1, 0, createServiceTaskConfigurationsGroup(element, injector, translate, selectedConfiguration));
+                }
 
-      if (is(element, consts.TRANSFORMATION_ASSOCIATION)) {
-        groups.push(createTransformationAssociationGroup(element, injector, translate, consts.EXPRESSIONS));
-      }
+                groups.push(createTransformationTaskGroup(element, injector, translate, consts.PARAMETERS));
+            }
 
-      return groups;
+            if (is(element, consts.TRANSFORMATION_ASSOCIATION)) {
+                groups.push(createTransformationAssociationGroup(element, injector, translate, consts.EXPRESSIONS));
+            }
+
+            return groups;
+        };
     };
-  };
 
-  propertiesPanel.registerProvider(LOW_PRIORITY, this);
+    propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
 DataFlowPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'injector'];
 
 function createServiceTaskConfigurationsGroup(element, injector, translate, configuration) {
 
-  return {
-    id: 'serviceTaskConfigurationsGroupProperties',
-    label: translate(configuration.groupLabel || 'Configurations Properties'),
-    entries: ConfigurationsProperties(element, injector, translate, configuration)
-  };
+    return {
+        id: 'serviceTaskConfigurationsGroupProperties',
+        label: translate(configuration.groupLabel || 'Configurations Properties'),
+        entries: ConfigurationsProperties(element, injector, translate, configuration)
+    };
 }
 
 function createDataMapObjectGroup(element, injector, translate, attributeName) {
 
-  return {
-    id: 'dataMapObjectProperties',
-    label: translate('Content'),
-    component: ListGroup,
-    ...keyValueMap({ element, injector, attributeName})
-  };
+    return {
+        id: 'dataMapObjectProperties',
+        label: translate('Content'),
+        component: ListGroup,
+        ...keyValueMap({element, injector, attributeName})
+    };
 }
 
 function createDataStoreMapGroup(element, injector, translate, attributeName) {
 
-  return {
-    id: 'dataStoreMapProperties',
-    label: translate('Details'),
-    component: ListGroup,
-    ...keyValueMap({ element, injector, attributeName})
-  };
+    return {
+        id: 'dataStoreMapProperties',
+        label: translate('Details'),
+        component: ListGroup,
+        ...keyValueMap({element, injector, attributeName})
+    };
 }
 
 function createTransformationTaskGroup(element, injector, translate, attributeName) {
 
-  return {
-    id: 'transformationTaskProperties',
-    label: translate('Parameters'),
-    component: ListGroup,
-    ...keyValueMap({ element, injector, attributeName})
-  };
+    return {
+        id: 'transformationTaskProperties',
+        label: translate('Parameters'),
+        component: ListGroup,
+        ...keyValueMap({element, injector, attributeName})
+    };
 }
 
 function createTransformationAssociationGroup(element, injector, translate, attributeName) {
 
-  return {
-    id: 'transformationAssociationProperties',
-    label: translate('Expressions'),
-    component: ListGroup,
-    ...keyValueMap({ element, injector, attributeName})
-  };
+    return {
+        id: 'transformationAssociationProperties',
+        label: translate('Expressions'),
+        component: ListGroup,
+        ...keyValueMap({element, injector, attributeName})
+    };
 }

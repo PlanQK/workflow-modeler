@@ -19,32 +19,32 @@ const gitHandler = require('./git-handler');
  *
  * @returns {Promise<[QRM]>} an array with the current QRMs
  */
-export const getCurrentQRMs = async function() {
+export const getCurrentQRMs = async function () {
 
-  // get all folders of the defined QRM repository which could contain a QRM
-  let folders = [];
-  try {
-    let repoPath = config.getQRMRepositoryPath().replace(/^\/|\/$/g, '');
-    folders = await gitHandler.getFoldersInRepository(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), repoPath);
-  } catch (error) {
-    throw 'Unable to load QRMs from Github repository with username \''
-    + config.getQRMRepositoryUserName() + '\', repository name \'' + config.getQRMRepositoryName() + '\', and path \''
-    + config.getQRMRepositoryPath() + '\'. ' + error + '. Please adapt the configuration for a suited repository!';
-  }
-
-  // filter invalid folders and retrieve QRMs
-  console.log('Found %i folders with QRM candidates!', folders.length);
-  let QRMs = [];
-  for (let i = 0; i < folders.length; i++) {
-    let qrm = await getQRM(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), folders[i]);
-    if (qrm != null) {
-      QRMs.push(qrm);
-    } else {
-      console.log('Folder %s does not contain a valid QRM!', folders[i]);
+    // get all folders of the defined QRM repository which could contain a QRM
+    let folders = [];
+    try {
+        let repoPath = config.getQRMRepositoryPath().replace(/^\/|\/$/g, '');
+        folders = await gitHandler.getFoldersInRepository(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), repoPath);
+    } catch (error) {
+        throw 'Unable to load QRMs from Github repository with username \''
+        + config.getQRMRepositoryUserName() + '\', repository name \'' + config.getQRMRepositoryName() + '\', and path \''
+        + config.getQRMRepositoryPath() + '\'. ' + error + '. Please adapt the configuration for a suited repository!';
     }
-  }
 
-  return QRMs;
+    // filter invalid folders and retrieve QRMs
+    console.log('Found %i folders with QRM candidates!', folders.length);
+    let QRMs = [];
+    for (let i = 0; i < folders.length; i++) {
+        let qrm = await getQRM(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), folders[i]);
+        if (qrm != null) {
+            QRMs.push(qrm);
+        } else {
+            console.log('Folder %s does not contain a valid QRM!', folders[i]);
+        }
+    }
+
+    return QRMs;
 };
 
 /**
@@ -57,37 +57,37 @@ export const getCurrentQRMs = async function() {
  */
 async function getQRM(userName, repoName, qrmUrl) {
 
-  // get all files within the QRM folder
-  let files = await gitHandler.getFilesInFolder(qrmUrl);
+    // get all files within the QRM folder
+    let files = await gitHandler.getFilesInFolder(qrmUrl);
 
-  // search for detector and replacement fragment and extract URL
-  let detectorUrl = null;
-  let replacementUrl = null;
-  for (let i = 0; i < files.length; i++) {
-    if (files[i].name === 'detector.bpmn') {
-      detectorUrl = files[i].download_url;
+    // search for detector and replacement fragment and extract URL
+    let detectorUrl = null;
+    let replacementUrl = null;
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].name === 'detector.bpmn') {
+            detectorUrl = files[i].download_url;
+        }
+
+        if (files[i].name === 'replacement.bpmn') {
+            replacementUrl = files[i].download_url;
+        }
     }
 
-    if (files[i].name === 'replacement.bpmn') {
-      replacementUrl = files[i].download_url;
+    // check if both files are available
+    if (detectorUrl == null) {
+        console.log('QRM on URL %s does not contain a detector.bpmn file which is required!', qrmUrl);
+        return null;
     }
-  }
 
-  // check if both files are available
-  if (detectorUrl == null) {
-    console.log('QRM on URL %s does not contain a detector.bpmn file which is required!', qrmUrl);
-    return null;
-  }
+    if (replacementUrl == null) {
+        console.log('QRM on URL %s does not contain a replacement.bpmn file which is required!', qrmUrl);
+        return null;
+    }
 
-  if (replacementUrl == null) {
-    console.log('QRM on URL %s does not contain a replacement.bpmn file which is required!', qrmUrl);
-    return null;
-  }
-
-  // download the content of the detector and replacement fragment and return
-  return {
-    'qrmUrl': qrmUrl,
-    'detector': await gitHandler.getFileContent(detectorUrl),
-    'replacement': await gitHandler.getFileContent(replacementUrl)
-  };
+    // download the content of the detector and replacement fragment and return
+    return {
+        'qrmUrl': qrmUrl,
+        'detector': await gitHandler.getFileContent(detectorUrl),
+        'replacement': await gitHandler.getFileContent(replacementUrl)
+    };
 }
