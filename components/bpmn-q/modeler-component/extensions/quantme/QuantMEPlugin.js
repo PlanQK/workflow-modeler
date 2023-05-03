@@ -22,17 +22,12 @@ import DataObjectConfigurationsTab from './configurations/DataObjectConfiguratio
 import UpdateDataObjectConfigurationsButton from './configurations/UpdateDataObjectConfigurationsButton';
 
 import quantMEStyles from './styling/quantme.css';
+import QuantMEPluginButton from "./ui/QuantMEPluginButton";
 
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json');
 
 export default {
-    buttons: [<ExtensibleButton
-        subButtons={[<AdaptationPlugin/>, <QuantMEController/>, <UpdateDataObjectConfigurationsButton/>,
-            <DeploymentPlugin/>]}
-        title="QuantME"
-        styleClass="quantme-logo"
-        description="Show buttons of the QuantME plugin"/>
-    ],
+    buttons: [<QuantMEPluginButton/>],
     configTabs: [
         {
             tabId: 'DataConfigurationEndpointTab',

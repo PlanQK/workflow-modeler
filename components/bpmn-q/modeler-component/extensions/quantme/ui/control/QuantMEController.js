@@ -174,18 +174,6 @@ export default class QuantMEController extends PureComponent {
             });
         }
 
-        // trigger initial QRM update
-        updateQRMs().then(response => {
-            console.log('Update of QRMs completed: ', response);
-        }).catch(e => {
-            NotificationHandler.getInstance().displayNotification({
-                type: 'warning',
-                title: 'Unable to load QRMs',
-                content: e.toString(),
-                duration: 20000
-            });
-        });
-
         // initialize component with created modeler
         // this.props.subscribe('bpmn.modeler.created', (event) => {
         //
