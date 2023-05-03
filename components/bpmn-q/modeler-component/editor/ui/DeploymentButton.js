@@ -51,9 +51,9 @@ export default function DeploymentButton(props) {
 
     return (
         <>
-            <button type="button" className="toolbar-btn" title="Deploy the current workflow"
+            <button type="button" className="toolbar-btn" title="Deploy the current workflow to a workflow engine"
                     onClick={() => deploy()}>
-                <span className="workflow-deployment-btn"><span className="indent">Workflow Deployment</span></span>
+                <span className="workflow-deployment-btn"><span className="indent">Deploy Workflow</span></span>
             </button>
         </>
     );

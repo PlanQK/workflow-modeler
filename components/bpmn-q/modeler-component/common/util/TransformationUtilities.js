@@ -213,22 +213,43 @@ export function getPropertiesToCopy(element) {
 /**
  * Finds and returns all elements of the given type in the process
  *
- * @param process The process the searched elements are in
+ * @param processBo The process the searched elements are in
  * @param elementRegistry The element register of all elements of the process
  * @param elementType The searched element type
  * @returns {*[]} All elements of the process with the elementType
  */
-export function getAllElementsInProcess(process, elementRegistry, elementType) {
+export function getAllElementsInProcess(processBo, elementRegistry, elementType) {
 
   // retrieve parent object for later replacement
-  const processBo = elementRegistry.get(process.id);
+  const processElement = elementRegistry.get(processBo.id);
 
   const elements = [];
-  const flowElements = process.flowElements;
+  const flowElementBos = processBo.flowElements;
+  for (let i = 0; i < flowElementBos.length; i++) {
+    let flowElementBo = flowElementBos[i];
+    if (flowElementBo.$type && flowElementBo.$type === elementType) {
+      elements.push({ element: flowElementBo, parent: processElement });
+    }
+
+    // recursively retrieve service tasks if subprocess is found
+    if (flowElementBo.$type && flowElementBo.$type === 'bpmn:SubProcess') {
+      Array.prototype.push.apply(elements, getAllElementsInProcess(flowElementBo, elementRegistry, elementType));
+    }
+  }
+  return elements;
+}
+
+export function getAllElementsInProcessWithInheritance(processBo, elementRegistry, elementType) {
+
+  // retrieve parent object for later replacement
+  const processElement = elementRegistry.get(processBo.id);
+
+  const elements = [];
+  const flowElements = processBo.flowElements;
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
-    if (flowElement.$type && flowElement.$type === elementType) {
-      elements.push({ element: flowElement, parent: processBo });
+    if (is(flowElement, elementType)) {
+      elements.push({ element: flowElement, parent: processElement });
     }
 
     // recursively retrieve service tasks if subprocess is found
@@ -239,22 +260,17 @@ export function getAllElementsInProcess(process, elementRegistry, elementType) {
   return elements;
 }
 
-export function getAllElementsInProcessWithInheritance(process, elementRegistry, elementType) {
+export function getAllElementsForProcess(processBo, elementRegistry, elementType) {
 
   // retrieve parent object for later replacement
-  const processBo = elementRegistry.get(process.id);
+  const processElement = elementRegistry.get(processBo.id);
 
   const elements = [];
-  const flowElements = process.flowElements;
+  const flowElements = processBo.flowElements;
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
     if (is(flowElement, elementType)) {
-      elements.push({ element: flowElement, parent: processBo });
-    }
-
-    // recursively retrieve service tasks if subprocess is found
-    if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
-      Array.prototype.push.apply(elements, getAllElementsInProcess(flowElement, elementRegistry, elementType));
+      elements.push({ element: flowElement, parent: processElement });
     }
   }
   return elements;

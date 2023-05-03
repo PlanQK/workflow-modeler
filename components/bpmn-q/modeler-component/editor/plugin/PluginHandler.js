@@ -3,7 +3,7 @@ import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
 import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
-import WorkflowEngineTab from "../config/WorkflowEngineTab";
+import EditorTab from "../config/EditorTab";
 
 const PLUGINS = [
   DataFlowPlugin,
@@ -109,11 +109,12 @@ export function getPluginButtons() {
 }
 
 export function getConfigTabs() {
-  // add default workflow tab to configure the path to the workflow engine
+
+  // add default editor tab to configure editor configs
   let configTabs = [{
-    tabId: 'EngineTab',
-    tabTitle: 'Engine',
-    configTab: WorkflowEngineTab,
+    tabId: 'EditorTab',
+    tabTitle: 'Editor',
+    configTab: EditorTab,
   }];
 
   for (let plugin of getActivePlugins()) {

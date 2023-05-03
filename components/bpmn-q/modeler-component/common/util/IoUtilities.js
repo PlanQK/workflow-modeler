@@ -1,7 +1,11 @@
+import {transformedWorkflowHandlers, workflowEventTypes} from '../../editor/EditorConstants';
+import {dispatchWorkflowEvent} from '../../editor/events/EditorEventHandler';
+
 const editorConfig = require('../../editor/config/EditorConfigManager');
 
 let FormData = require('form-data');
 import fetch from 'node-fetch';
+import * as editorConsts from '../../editor/EditorConstants';
 
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
@@ -31,6 +35,8 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
   link.download = fileName;
   link.href = URL.createObjectURL(bpmnFile);
   link.click();
+
+  dispatchWorkflowEvent(workflowEventTypes.SAVED, xml, editorConfig.getFileName());
 }
 
 /**
@@ -61,12 +67,17 @@ export async function getXml(modeler) {
  *
  * @param xml The bpmn diagram to open encoded in xml.
  * @param modeler The bpmn modeler to open the diagram in.
+ * @param dispatchEvent Flag defining if a event should be dispatch for the current load, default is true
  * @returns {Promise<undefined|*>} Undefined, if an error occurred during import.
  */
-export async function loadDiagram(xml, modeler) {
+export async function loadDiagram(xml, modeler, dispatchEvent = true) {
 
   try {
-    return await modeler.importXML(xml);
+    await modeler.importXML(xml);
+
+    if (dispatchEvent) {
+      dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, editorConfig.getFileName());
+    }
   } catch (err) {
     console.error(err);
   }
@@ -140,6 +151,9 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
         return {status: 'failed'};
       }
 
+
+      dispatchWorkflowEvent(workflowEventTypes.DEPLOYED, workflowXml, workflowName);
+
       return {
         status: 'deployed',
         deployedProcessDefinition: Object.values(result['deployedProcessDefinitions'] || {})[0]
@@ -152,4 +166,38 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
     console.error('Error while executing post to deploy workflow: ' + error);
     return {status: 'failed'};
   }
+}
+
+export async function handleTransformedWorkflow(workflowXml) {
+  const fileName = editorConfig.getFileName().split('.')[0] + '_transformed.bpmn';
+
+  const eventCancled = dispatchWorkflowEvent(workflowEventTypes.TRANSFORMED, workflowXml, fileName);
+
+  // TODO stop when prevent
+
+  const handlerId = editorConfig.getTransformedWorkflowHandler();
+
+  switch (handlerId) {
+    case transformedWorkflowHandlers.NEW_TAB:
+      openInNewTab(workflowXml, fileName);
+      break;
+    case transformedWorkflowHandlers.SAVE_AS_FILE:
+      await saveXmlAsLocalFile(workflowXml, fileName);
+      break;
+    default:
+      console.log(`Invalid transformed workflow handler ID ${handlerId}`);
+  }
+
+
+}
+
+export function openInNewTab(workflowXml, fileName) {
+
+  const newWindow = window.open(window.location.href, "_blank");
+
+  newWindow.onload = function() {
+
+    // Pass the XML string to the new window using postMessage
+    newWindow.postMessage({ workflow: workflowXml, name: fileName}, window.location.href);
+  };
 }

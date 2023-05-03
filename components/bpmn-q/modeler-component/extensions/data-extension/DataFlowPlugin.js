@@ -7,11 +7,18 @@ import {getXml} from '../../common/util/IoUtilities';
 import {startDataFlowReplacementProcess} from './transformation/TransformationManager';
 import TransformationTaskConfigurationsTab from './configurations/TransformationTaskConfigurationsTab';
 import dataStyles from './resources/data-flow-styles.css';
+import ExtensibleButton from "../../editor/ui/ExtensibleButton";
+import UpdateTransformationTaskConfigurationsButton from "./ui/UpdateTransformationConfigurations";
 
 let dataflowModdleDescriptor = require('./resources/data-flow-extension.json');
 
 export default {
     name: 'dataflow',
+    buttons: [<ExtensibleButton subButtons={[<UpdateTransformationTaskConfigurationsButton/>]}
+                                title="DataFlow"
+                                styleClass="dataflow-plugin-icon"
+                                description="Show buttons of the QHAna plugin" />
+    ],
     configTabs: [
         {
             tabId: 'DataEndpointsTab',

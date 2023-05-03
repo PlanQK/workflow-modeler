@@ -203,7 +203,7 @@ async function replaceByDataStore(definitions, dataPool, parentProcess, modeler)
   const formField =
     {
       defaultValue: dataPool.dataPoolLink,
-      id: dataPool.dataPoolName,
+      id: dataPool.dataPoolName.replace(/\s+/g, '_'),
       label: 'Link to ' + dataPool.dataPoolName,
       type: 'string'
     };

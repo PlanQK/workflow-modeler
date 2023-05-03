@@ -147,10 +147,12 @@ export function createConfigurationForServiceData(serviceData) {
   serviceData.entryPoint.dataOutput.forEach(function (output, index) {
 
     const value = [
-      {value: ''},
-      {dataType: output.dataType},
-      {required: '"' + output.required + '"'},
-      {contentType: JSON.stringify(output.contentType)},
+      {
+        value: '',
+        dataType: output.dataType,
+        required: '"' + output.required + '"',
+        contentType: JSON.stringify(output.contentType)
+      },
     ];
 
     // [

@@ -4,6 +4,7 @@ import {addExtensionElements, getExtension} from './camunda-utils/ExtensionEleme
 import {useService} from 'bpmn-js-properties-panel';
 import {getExtensionElement} from '../../extensions/planqk/exec-completion/CompletionUtilities';
 import * as consts from '../../extensions/data-extension/Constants';
+import {is} from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * TODO: check functionality, may be redundant to
@@ -21,18 +22,22 @@ export function getProcess(element) {
     while (parent && !parent.type.includes('Process')) {
         parent = parent.parent;
     }
-    console.log('Found process ' + parent.businessObject.id +' for element ' + element.businessObject.id);
+    console.log('Found process ' + parent.businessObject.id + ' for element ' + element.businessObject.id);
     return parent;
 }
 
-export function getStartEvent(process) {
+export function getStartEvent(processBo) {
     let startEvent;
-    process.flowElements.forEach(function(element) {
+    processBo.flowElements.forEach(function (element) {
         if (element.$type === 'bpmn:StartEvent') {
             startEvent = element;
         }
     });
     return startEvent;
+}
+
+export function getStartEvents(processBo) {
+    return processBo.flowElements.filter((element) => element.$type === 'bpmn:StartEvent');
 }
 
 export function addExecutionListener(element, moddle, processVariable) {
@@ -70,7 +75,7 @@ export function addFormFieldDataForMap(elementID, formFieldData, keyValueMap, el
     //   };
 
     var element = elementRegistry.get(elementID);
-    var extensionElements =	element.businessObject.get('extensionElements');
+    var extensionElements = element.businessObject.get('extensionElements');
 
     if (!extensionElements) {
         extensionElements = moddle.create('bpmn:ExtensionElements');
@@ -80,8 +85,9 @@ export function addFormFieldDataForMap(elementID, formFieldData, keyValueMap, el
         extensionElements.values = [];
     }
 
-    let form = extensionElements.values.filter(function(extensionElement) {
-        return extensionElement.$type === 'camunda:FormData';}
+    let form = extensionElements.values.filter(function (extensionElement) {
+            return extensionElement.$type === 'camunda:FormData';
+        }
     )[0];
 
     console.log(`Found form data ${form}.`);
@@ -94,7 +100,7 @@ export function addFormFieldDataForMap(elementID, formFieldData, keyValueMap, el
 
     props.$parent = formField;
 
-    var existingFieldsWithID = form.get('fields').filter(function(elem) {
+    var existingFieldsWithID = form.get('fields').filter(function (elem) {
         return elem.id === formField.id;
     });
 
@@ -106,20 +112,21 @@ export function addFormFieldDataForMap(elementID, formFieldData, keyValueMap, el
     extensionElements.values = [form];
     modeling.updateProperties(element, {extensionElements: extensionElements});
 }
+
 export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry, moddle, modeling) {
 
     const props = createCamundaProperties(keyValueMap, moddle);
     let formFieldData =
-      {
-          defaultValue: '',
-          id: name,
-          label: name,
-          type: 'string',
-          properties: props,
-      };
+        {
+            defaultValue: '',
+            id: name.replace(/\s+/g, '_'),
+            label: name,
+            type: 'string',
+            properties: props,
+        };
 
     var element = elementRegistry.get(elementID);
-    var extensionElements =	element.businessObject.get('extensionElements');
+    var extensionElements = element.businessObject.get('extensionElements');
 
     if (!extensionElements) {
         extensionElements = moddle.create('bpmn:ExtensionElements');
@@ -129,8 +136,9 @@ export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry
         extensionElements.values = [];
     }
 
-    let form = extensionElements.values.filter(function(extensionElement) {
-        return extensionElement.$type === 'camunda:FormData';}
+    let form = extensionElements.values.filter(function (extensionElement) {
+            return extensionElement.$type === 'camunda:FormData';
+        }
     )[0];
 
     console.log(`Found form data ${form}.`);
@@ -143,7 +151,7 @@ export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry
 
     props.$parent = formField;
 
-    var existingFieldsWithID = form.get('fields').filter(function(elem) {
+    var existingFieldsWithID = form.get('fields').filter(function (elem) {
         return elem.id === formField.id;
     });
 
@@ -158,7 +166,7 @@ export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry
 
 export function addFormField(elementID, formFieldData, elementRegistry, moddle, modeling) {
     var element = elementRegistry.get(elementID);
-    var extensionElements =	element.businessObject.get('extensionElements');
+    var extensionElements = element.businessObject.get('extensionElements');
 
     if (!extensionElements) {
         extensionElements = moddle.create('bpmn:ExtensionElements');
@@ -168,8 +176,9 @@ export function addFormField(elementID, formFieldData, elementRegistry, moddle, 
         extensionElements.values = [];
     }
 
-    let form = extensionElements.values.filter(function(extensionElement) {
-        return extensionElement.$type === 'camunda:FormData';}
+    let form = extensionElements.values.filter(function (extensionElement) {
+            return extensionElement.$type === 'camunda:FormData';
+        }
     )[0];
 
     console.log(`Found form data ${form}.`);
@@ -180,7 +189,7 @@ export function addFormField(elementID, formFieldData, elementRegistry, moddle, 
 
     var formField = moddle.create('camunda:FormField', formFieldData);
 
-    var existingFieldsWithID = form.get('fields').filter(function(elem) {
+    var existingFieldsWithID = form.get('fields').filter(function (elem) {
         return elem.id === formField.id;
     });
 
@@ -228,6 +237,51 @@ export function getSingleFlowElement(process) {
         return undefined;
     }
     return flowElements[0];
+}
+
+/**
+ * Returns true if a connection through the sequence flow of the current workflow between element1 and element2 is
+ * possible, else false.
+ *
+ * @param element1 The start element of the connection search.
+ * @param element2 The end element of the connection search.
+ * @param visited Set of already visited elements, init with new Set().
+ * @param elementRegistry The element registry containing the elements of the current workflow
+ * @returns {boolean} True, if element1 is connected via sequence flows with element2, false else.
+ */
+export function findSequenceFlowConnection(element1, element2, visited, elementRegistry) {
+
+    // exit condition of the recursion, element2 is reached
+    if (element1 === element2) {
+        return true;
+    }
+
+    // store element1 as visited
+    visited.add(element1);
+
+    // search recursively for element2 in all outgoing connections
+    const connections = element1.outgoing;
+
+    for (let i = 0; i < connections.length; i++) {
+
+        const connection = connections[i];
+
+        // only search in elements connected via sequence flow
+        if (connection.type === 'bpmn:SequenceFlow') {
+
+            const nextElement = connection.target;
+
+            // recursive call with new element
+            if (!visited.has(nextElement)) {
+
+                // return true if recursive call finds element2
+                if (findSequenceFlowConnection(nextElement, element2, visited, elementRegistry)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 /**
@@ -355,6 +409,7 @@ export function createCamundaProperties(keyValueMap, moddle) {
 
     return map;
 }
+
 export function addCamundaOutputParameter(businessObject, name, value, bpmnFactory) {
     const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
     inputOutputExtensions.outputParameters.push(bpmnFactory.create('camunda:OutputParameter', {
@@ -435,6 +490,24 @@ export function getFlowElementsRecursively(startElement) {
     return flowElements;
 }
 
+export function getDocumentation(businessObject) {
+    const documentationArray = businessObject.documentation || [];
+    return documentationArray.map(function (documentation) {
+        return documentation.text;
+    }).join('\n');
+}
+
+export function setDocumentation(element, newDocumentation, bpmnFactory, modeling) {
+    // modeling.updateProperties(element, {
+    //     documentation: [bpmnFactory.create('bpmn:Documentation', {
+    //         text: newDocumentation,
+    //     })]
+    // });
+    element.businessObject.documentation = [bpmnFactory.create('bpmn:Documentation', {
+        text: newDocumentation,
+    })];
+}
+
 // export function getExtension(element, type) {
 //     const extensionElements = getExtensionElementsList(element);
 //     if (!extensionElements) {
@@ -454,7 +527,7 @@ export function addEntry(businessObject, element, entry, bpmnFactory) {
     // if there is no extensionElements list, create one
     if (!extensionElements) {
 
-        extensionElements = createElement('bpmn:ExtensionElements', { values: [entry] }, businessObject, bpmnFactory);
+        extensionElements = createElement('bpmn:ExtensionElements', {values: [entry]}, businessObject, bpmnFactory);
 
         commands.push({
             cmd: 'element.updateModdleProperties',
@@ -467,7 +540,7 @@ export function addEntry(businessObject, element, entry, bpmnFactory) {
             }
         });
 
-        return { extensionElements : extensionElements };
+        return {extensionElements: extensionElements};
     }
     entry.$parent = extensionElements;
 
@@ -478,7 +551,7 @@ export function addEntry(businessObject, element, entry, bpmnFactory) {
             element,
             moddleElement: extensionElements,
             properties: {
-                values: [ ...extensionElements.get('values'), entry ]
+                values: [...extensionElements.get('values'), entry]
             }
         }
     });
@@ -513,6 +586,35 @@ export function appendElement(type, element, event, bpmnFactory, elementFactory,
     }
 
     return shape;
+}
+
+export function replaceConnection(connectionElement, replacementType, modeling) {
+    const sourceElement = connectionElement.source;
+    const targetElement = connectionElement.target;
+
+    modeling.removeConnection(connectionElement);
+    modeling.connect(sourceElement, targetElement, {type: replacementType, waypoints: connectionElement.waypoints});
+}
+
+/**
+ * Returns if the given element has at least one connection to an element of the given type.
+ *
+ * @param element The given element to check its connections.
+ * @param connectedElementType The given type of the searched connected element.
+ * @returns {boolean} True if the given element is connected with an element of the given type, false else.
+ */
+export function isConnectedWith(element, connectedElementType) {
+
+    const outgoingConnections = element.outgoing || [];
+    const incomingConnections = element.incoming || [];
+
+    // check if a source or target of a connection is of the given type
+    for (let connectedElement of outgoingConnections.concat(incomingConnections)) {
+        if (is(connectedElement.source, connectedElementType) || is(connectedElement.target, connectedElementType)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // export function addElementsTolist(element, businessObject, listPropertyName, objectsToAdd) {

@@ -25,13 +25,14 @@ export default function ButtonToolbar(props) {
         <SaveButton modeler={modeler}/>
         <OpenButton/>
         <hr className="toolbar-splitter"/>
+        <ConfigPlugin/>
+        <hr className="toolbar-splitter"/>
         {hasTransformations && <ToolbarTransformationButton
           subButtons={transformButtons}
           title='Transform Workflow'
           styleClass="workflow-transformation-btn"/>
         }
         <DeploymentButton modeler={modeler}/>
-        <ConfigPlugin/>
         <hr className="toolbar-splitter"/>
         {React.Children.toArray(pluginButtons)}
       </div>

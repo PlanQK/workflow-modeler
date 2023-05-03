@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import TransformationButton from "./TransformationButton";
-import {getXml} from '../../common/util/IoUtilities';
+import {getXml, handleTransformedWorkflow} from '../../common/util/IoUtilities';
 import NotificationHandler from './notifications/NotificationHandler';
 import {getModeler} from '../ModelerHandler';
-import * as editorConfig from '../config/EditorConfigManager';
 
 export default function ToolbarTransformationButton(props) {
 
@@ -58,35 +57,7 @@ export default function ToolbarTransformationButton(props) {
         }
       }
       if (xml) {
-
-        // open transformed workflow in a modeler in a new browser tab
-        // const urlParams = new URLSearchParams(window.location.search);
-        // urlParams.set('workflow', xml);
-        // const newUrl = window.location.pathname + '?' + urlParams.toString();
-        // window.open(newUrl);
-
-        // Store the XML string and model name in localStorage
-        localStorage.setItem("xmlString", xml);
-        localStorage.setItem("workflowName", editorConfig.getFileName().split('.')[0] + '_transformed.bpmn');
-
-        // Define the URL of your single page application
-        const appUrl = window.location.href;
-
-        // Create a new URL for the new browser window
-        // const newUrl = appUrl + "?xml=";
-
-        // Open the new URL in a new browser window
-        const newWindow = window.open(appUrl, "_blank");
-
-        // Listen for the new window to finish loading
-        newWindow.onload = function() {
-          // Retrieve the XML string from localStorage
-          const xmlString = localStorage.getItem("xmlString");
-          const workflowName = localStorage.getItem('workflowName');
-
-          // Pass the XML string to the new window using postMessage
-          newWindow.postMessage({ workflow: xmlString, name: workflowName}, appUrl);
-        };
+        await handleTransformedWorkflow(xml);
       }
 
     } catch (error) {
@@ -109,7 +80,7 @@ export default function ToolbarTransformationButton(props) {
 
   return (
     <div>
-      <button className={isToggleOn ? 'extensible-btn' : 'toolbar-btn'}>
+      <button className={isToggleOn ? 'extensible-btn' : 'toolbar-btn'} title="Transform current workflow into native BPMN">
         <div style={{display: 'flex',}}>
                     <span className={styleClass} onClick={() => startTransformation()}>
                         <span className="indent">{title}</span>

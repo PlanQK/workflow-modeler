@@ -2,6 +2,8 @@ import React, {useRef} from 'react';
 import {loadDiagram} from '../../common/util/IoUtilities';
 import {getModeler} from '../ModelerHandler';
 import * as editorConfig from '../config/EditorConfigManager';
+import {dispatchWorkflowEvent} from '../events/EditorEventHandler';
+import {workflowEventTypes} from '../EditorConstants';
 
 export default function OpenButton() {
 
@@ -23,9 +25,11 @@ export default function OpenButton() {
 
         const xml = e.target.result;
 
-        loadDiagram(xml, getModeler()).then(() => {
+        loadDiagram(xml, getModeler(), false).then(() => {
           // save file name in editor configs
           editorConfig.setFileName(file.name);
+
+          dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, file.name);
         });
       };
       reader.readAsText(file);
@@ -34,7 +38,7 @@ export default function OpenButton() {
 
   return (
     <>
-      <input ref={inputRef} className="toolbar-btn" style={{display: 'none'}} type="file" accept=".bpmn"
+      <input ref={inputRef} className="toolbar-btn" title="Open new workflow diagram" style={{display: 'none'}} type="file" accept=".bpmn"
              onChange={(event) => handleChange(event)}/>
       <button className="toolbar-btn" onClick={() => handleClick()}>
                 <span className="icon-open-file">

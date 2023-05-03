@@ -1,8 +1,11 @@
 import * as planqkReplaceOptions from './PlanqkReplaceOptions';
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
-import {createMenuEntries} from "../../common/util/PopupMenuUtilities";
+import {createMenuEntries, createMoreOptionsEntryWithReturn} from "../../common/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
+import {createConfigurationsEntries} from "../../editor/configurations/ConfigurationsUtil";
+import {getServiceTaskConfigurations} from "../data-extension/configurations/TransformationTaskConfigurations";
+import * as replaceOptions from "../data-extension/menu/DataFlowReplaceOptions";
 
 /**
  * Replace menu provider of the PlanQK plugin. Adds custom replacement entries to model PlanQk service tasks and PlanQK data pools.
@@ -65,12 +68,38 @@ export default class PlanqkMenuProvider {
 
       // add entry to replace a task by a PlanQK service task
       if (is(element, 'bpmn:Task')) {
-        const planqkEntries = createMenuEntries(element, planqkReplaceOptions.TASK, self.translate, self.replaceElement);
+        const planqkEntries = self.createTaskEntries(element);
         entries = Object.assign(planqkEntries, entries);
         return entries;
       }
 
       return entries;
+    };
+  }
+
+  createTaskEntries(element) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.replaceElement;
+    const activeSubscriptions = this.activeSubscriptions;
+    const self = this;
+    // const createPlanQKServiceTaskEntries = this.createPlanQKServiceTaskEntries;
+    // const bpmnFactory = this.bpmnFactory;
+    // const modeling = this.modeling;
+    // const commandStack = this.commandStack;
+
+    let options = self.createPlanQKServiceTaskEntries(element, activeSubscriptions);
+    options = Object.assign(createMenuEntries(element, planqkReplaceOptions.TASK, translate, replaceElement), options);
+
+    return {
+      ['replace-by-more-planqk-task-options']: createMoreOptionsEntryWithReturn(
+          element,
+          'PlanQK Service Tasks',
+          'PlanQK Service Tasks',
+          popupMenu,
+          options,
+          'planqk-icon-service-task'
+      )
     };
   }
 

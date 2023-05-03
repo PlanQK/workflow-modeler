@@ -217,7 +217,7 @@ export const QHANA_SERVICE_CONFIGURATION = {
       label: 'qoutput.output_0',
       name: 'qoutput.output_0',
       type: 'String',
-      value: '[{"value":""},{"dataType":"entity-distances/*"},{"required":"\\"true\\""},{"contentType":"[\\"application/zip\\"]"}]',
+      value: "[{\"value\":\"\",\"dataType\":\"entity-distances/*\",\"required\":\"\\\"true\\\"\",\"contentType\":\"[\\\"application/zip\\\"]\"}]"
     }
   ]
 };

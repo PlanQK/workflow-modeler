@@ -1,11 +1,13 @@
 import {getPluginConfig} from '../plugin/PluginConfigHandler';
+import {transformedWorkflowHandlers} from '../EditorConstants';
 
 const defaultConfig = {
   camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
   fileName: 'quantum-workflow-model.bpmn',
+  transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
 };
 
-const config = {};
+let config = {};
 
 /**
  * Get the endpoint of the configured Camunda engine to deploy to
@@ -75,4 +77,37 @@ export function setShadowRoot(shadowRoot) {
   if (shadowRoot) {
     config.shadowRoot = shadowRoot;
   }
+}
+
+
+/**
+ * Get the id of the handler to handle transformed workflows
+ *
+ * @return {string} the currently specified handler id
+ */
+export function getTransformedWorkflowHandler() {
+  if (config.transformedWorkflowHandler === undefined) {
+    const workflowHandler = transformedWorkflowHandlers[getPluginConfig('editor').transformedWorkflowHandler];
+    setTransformedWorkflowHandler(workflowHandler || defaultConfig.transformedWorkflowHandler);
+  }
+  return config.transformedWorkflowHandler;
+}
+
+/**
+ * Set the id of the handler to handle transformed workflows
+ *
+ * @param transformedWorkflowHandler the id of the transformed workflow handler
+ */
+export function setTransformedWorkflowHandler(transformedWorkflowHandler) {
+  if (transformedWorkflowHandler !== null && transformedWorkflowHandler !== undefined
+    // check that the new value is a valid handler id
+    && Object.values(transformedWorkflowHandlers).includes(transformedWorkflowHandler)) {
+
+    // remove trailing slashes
+    config.transformedWorkflowHandler = transformedWorkflowHandler;
+  }
+}
+
+export function reset() {
+  config = {};
 }

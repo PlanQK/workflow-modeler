@@ -5,8 +5,10 @@ import {createNewDiagram, loadDiagram} from "./common/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import {createModeler, getModeler} from "./editor/ModelerHandler";
 import {getPluginButtons, getStyles, getTransformationButtons} from "./editor/plugin/PluginHandler";
-import {setPluginConfig} from "./editor/plugin/PluginConfigHandler";
+import {getPluginConfig, setPluginConfig} from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
+import {addWorkflowEventListener, initEditorEventHandler} from './editor/events/EditorEventHandler';
+import {workflowEventTypes} from './editor/EditorConstants';
 
 import diagramJsStyle from 'bpmn-js/dist/assets/diagram-js.css';
 import bpmnEmbeddedStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
@@ -23,7 +25,7 @@ import lessStyle from './common/camunda-components/css-styles/style.css';
 
 import bpmnFonts from './editor/resources/styling/bpmn-fonts.css';
 
-class QuantumWorkflowModeler extends HTMLElement {
+export class QuantumWorkflowModeler extends HTMLElement {
 
     workflowModel;
     shadowRoot;
@@ -45,13 +47,12 @@ class QuantumWorkflowModeler extends HTMLElement {
 
             if (event.origin === window.location.href.replace(/\/$/, '')
                 && event.data && event.data.workflow && typeof event.data.workflow === 'string' && event.data.workflow.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
+
                 const xmlString = event.data.workflow;
-                // Do something with the XML string
                 self.workflowModel = xmlString;
                 editorConfig.setFileName(event.data.name);
 
-                // self.startModeler();
-                loadDiagram(xmlString, getModeler());
+                loadDiagram(xmlString, getModeler()).then();
             }
         });
 
@@ -63,6 +64,8 @@ class QuantumWorkflowModeler extends HTMLElement {
 
     startModeler() {
         console.log('Start Modeler');
+
+        initEditorEventHandler(this);
 
         const bpmnContainer = this.shadowRoot.querySelector('#canvas');
         const propertiesPanelContainer = this.shadowRoot.querySelector('#properties');
@@ -91,8 +94,9 @@ class QuantumWorkflowModeler extends HTMLElement {
                                    transformButtons={transformationButtons}/>);
         console.log('Rendered Toolbar React Component');
 
+        this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
         if (this.workflowModel) {
-            loadDiagram(this.workflowModel, getModeler());
+            loadDiagram(this.workflowModel, getModeler()).then();
         } else {
             createNewDiagram(modeler);
         }

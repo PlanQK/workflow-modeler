@@ -72,3 +72,27 @@
     float: left;
     margin: 0 6px 0 0;
 }
+
+.dataflow-plugin-icon:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("./icons/structure-diagram-icon-or.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-update-transformation-task-configs:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("./icons/update-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
