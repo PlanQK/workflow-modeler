@@ -18,6 +18,25 @@ export default class ServiceTaskPaletteProvider {
 
   createPlanqkServiceTaskEntry() {
     const {bpmnFactory, create, elementFactory, translate} = this;
+
+    function createPlanQKServiceTask(event) {
+      const businessObject = bpmnFactory.create(consts.PLANQK_SERVICE_TASK);
+      let shape = elementFactory.createShape({
+        type: consts.PLANQK_SERVICE_TASK,
+        businessObject: businessObject
+      });
+      create.start(event, shape);
+    }
+
+    function createDataPool(event) {
+      const businessObject = bpmnFactory.create(consts.PLANQK_DATA_POOL);
+      let shape = elementFactory.createShape({
+        type: consts.PLANQK_DATA_POOL,
+        businessObject: businessObject
+      });
+      create.start(event, shape);
+    }
+
     return {
       // add separator line to delimit the new group
       'planqk-separator': {
@@ -29,14 +48,8 @@ export default class ServiceTaskPaletteProvider {
         className: 'planqk-icon-palette-service-task',
         title: translate('Creates a task that calls a PlanQK service you subscribed to'),
         action: {
-          click: function (event) {
-            const businessObject = bpmnFactory.create(consts.PLANQK_SERVICE_TASK);
-            let shape = elementFactory.createShape({
-              type: consts.PLANQK_SERVICE_TASK,
-              businessObject: businessObject
-            });
-            create.start(event, shape);
-          }
+          click: createPlanQKServiceTask,
+          dragstart: createPlanQKServiceTask,
         }
       },
       'create.planqk-data-pool': {
@@ -44,14 +57,8 @@ export default class ServiceTaskPaletteProvider {
         className: 'planqk-icon-palette-data-pool',
         title: translate('Creates a PlanQK Data Pool to fetch data from'),
         action: {
-          click: function (event) {
-            const businessObject = bpmnFactory.create(consts.PLANQK_DATA_POOL);
-            let shape = elementFactory.createShape({
-              type: consts.PLANQK_DATA_POOL,
-              businessObject: businessObject
-            });
-            create.start(event, shape);
-          }
+          click: createDataPool,
+          dragstart: createDataPool,
         }
       },
     };
