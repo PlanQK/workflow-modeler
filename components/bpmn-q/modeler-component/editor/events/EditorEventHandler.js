@@ -11,9 +11,10 @@ export function dispatchWorkflowEvent(type, workflowXml, workflowName) {
     detail: {
       workflowName: workflowName,
       workflow: workflowXml
-    }
+    },
+    cancelable: true
   });
-  modelerComponent.dispatchEvent(newEvent);
+  return modelerComponent.dispatchEvent(newEvent);
 }
 
 export function addWorkflowEventListener(type, callBckFunction) {

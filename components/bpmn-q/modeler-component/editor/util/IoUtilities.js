@@ -171,24 +171,24 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
 export async function handleTransformedWorkflow(workflowXml) {
   const fileName = editorConfig.getFileName().split('.')[0] + '_transformed.bpmn';
 
-  const eventCancled = dispatchWorkflowEvent(workflowEventTypes.TRANSFORMED, workflowXml, fileName);
+  const eventNotCaught = dispatchWorkflowEvent(workflowEventTypes.TRANSFORMED, workflowXml, fileName);
 
-  // TODO stop when prevent
+  console.log(`Transformed Workflow Event caught? - ${eventNotCaught}`);
 
-  const handlerId = editorConfig.getTransformedWorkflowHandler();
+  if (eventNotCaught) {
+    const handlerId = editorConfig.getTransformedWorkflowHandler();
 
-  switch (handlerId) {
-    case transformedWorkflowHandlers.NEW_TAB:
-      openInNewTab(workflowXml, fileName);
-      break;
-    case transformedWorkflowHandlers.SAVE_AS_FILE:
-      await saveXmlAsLocalFile(workflowXml, fileName);
-      break;
-    default:
-      console.log(`Invalid transformed workflow handler ID ${handlerId}`);
+    switch (handlerId) {
+      case transformedWorkflowHandlers.NEW_TAB:
+        openInNewTab(workflowXml, fileName);
+        break;
+      case transformedWorkflowHandlers.SAVE_AS_FILE:
+        await saveXmlAsLocalFile(workflowXml, fileName);
+        break;
+      default:
+        console.log(`Invalid transformed workflow handler ID ${handlerId}`);
+    }
   }
-
-
 }
 
 export function openInNewTab(workflowXml, fileName) {
