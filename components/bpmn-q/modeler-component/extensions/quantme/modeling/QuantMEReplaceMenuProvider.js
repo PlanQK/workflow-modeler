@@ -10,7 +10,7 @@
  */
 
 import * as quantmeReplaceOptions from './QuantMEReplaceOptions';
-import {is} from 'bpmn-js/lib/util/ModelUtil';
+import {is, isAny} from 'bpmn-js/lib/util/ModelUtil';
 import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn
@@ -19,6 +19,7 @@ import {
   createConfigurationsEntries,
 } from '../../../editor/configurations/ConfigurationsUtil';
 import {instance as dataObjectConfigs}  from '../configurations/DataObjectConfigurations';
+import * as dataConsts from "../../data-extension/Constants";
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
@@ -49,20 +50,13 @@ export default class QuantMEReplaceMenuProvider {
     return function (entries) {
 
       // do not show entries for extension elements of other plugins
-      if (!(element.type.startsWith('bpmn') || element.type.startsWith('quantme'))) {
+      if (!(element.type.startsWith('bpmn') || element.type.startsWith('quantme') || element.type.startsWith('dataflow'))) {
         return entries;
       }
 
-      if (is(element, 'bpmn:DataObjectReference')) {
-        // const bo = self.moddle.create(consts.TRANSFORMATION_TASK);
-        // self.modeling.updateProperties(element, { businessObject: bo });
-        // const newElement = self.elementRegistry.get(element.id);
+      if (isAny(element, ['bpmn:DataObjectReference', dataConsts.DATA_MAP_OBJECT])) {
         const dataEntries = self.createQuantMEDataEntry(element);
         return Object.assign(dataEntries, entries);
-        // if (Object.entries(dataEntries).length > 0) {
-        //
-        // }
-
       }
 
       // add additional elements to replace tasks

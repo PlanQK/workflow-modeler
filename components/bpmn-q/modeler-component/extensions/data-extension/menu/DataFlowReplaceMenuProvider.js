@@ -1,10 +1,15 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as replaceOptions from './DataFlowReplaceOptions';
-import {createMenuEntries, createMenuEntry} from "../../../common/util/PopupMenuUtilities";
+import {
+  createMenuEntries,
+  createMenuEntry,
+  createMoreOptionsEntryWithReturn
+} from "../../../common/util/PopupMenuUtilities";
 import * as consts from '../Constants';
 import {createConfigurationsEntries} from '../../../editor/configurations/ConfigurationsUtil';
 import {getServiceTaskConfigurations} from '../configurations/TransformationTaskConfigurations';
 import {replaceConnection} from '../../../common/util/ModellingUtilities';
+// import * as quantmeReplaceOptions from "../../quantme/modeling/QuantMEReplaceOptions";
 
 export default class DataFlowReplaceMenuProvider {
 
@@ -18,6 +23,7 @@ export default class DataFlowReplaceMenuProvider {
     this.moddle = moddle;
     this.elementRegistry = elementRegistry;
     this.commandStack = commandStack;
+    this.popupMenu = popupMenu;
   }
 
   getPopupMenuHeaderEntries(element) {
@@ -49,7 +55,8 @@ export default class DataFlowReplaceMenuProvider {
         // const bo = self.moddle.create(consts.TRANSFORMATION_TASK);
         // self.modeling.updateProperties(element, { businessObject: bo });
         // const newElement = self.elementRegistry.get(element.id);
-        const configEntries = createConfigurationsEntries(element, 'dataflow-transformation-task-icon', getServiceTaskConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
+        // const configEntries = self.createTransformationTasksEntries(element);
+        const configEntries = createMenuEntries(element, replaceOptions.TASK, self.translate, self.replaceElement);
 
         if (Object.entries(configEntries).length > 0) {
           return configEntries;
@@ -57,7 +64,8 @@ export default class DataFlowReplaceMenuProvider {
       }
 
       if (is(element, 'bpmn:Task')) {
-        const taskEntries = createMenuEntries(element, replaceOptions.TASK, self.translate, self.replaceElement);
+        // const taskEntries = createMenuEntries(element, replaceOptions.TASK, self.translate, self.replaceElement);
+        const taskEntries = self.createTransformationTasksEntries(element);
         return Object.assign(taskEntries, entries);
       }
 
@@ -95,7 +103,7 @@ export default class DataFlowReplaceMenuProvider {
           };
 
           const action = function() {
-            console.log('################################# action ##################################')
+            console.log('################################# action ##################################');
             let associationType = consts.OUTPUT_TRANSFORMATION_ASSOCIATION;
 
             if (is(element, 'bpmn:DataInputAssociation')) {
@@ -104,7 +112,7 @@ export default class DataFlowReplaceMenuProvider {
             replaceConnection(element, associationType, modeling);
           };
 
-          entries[entryId] = createMenuEntry(element, definition, self.translate, self.replaceElement, action)
+          entries[entryId] = createMenuEntry(element, definition, self.translate, self.replaceElement, action);
 
           return entries;
         }
@@ -124,21 +132,45 @@ export default class DataFlowReplaceMenuProvider {
           };
 
           const action = function() {
-            console.log('################################# action ##################################')
+            console.log('################################# action ##################################');
             let associationType = 'bpmn:DataOutputAssociation';
 
             if (is(element, consts.INPUT_TRANSFORMATION_ASSOCIATION)) {
               associationType = 'bpmn:DataInputAssociation';
             }
             replaceConnection(element, associationType, modeling);
-          }
-          const entry = {}
+          };
+
+          const entry = {};
           entry[entryId] = createMenuEntry(element, definition, self.translate, self.replaceElement, action);
           return Object.assign(entry, entries);
         }
       }
 
       return entries;
+    };
+  }
+
+  createTransformationTasksEntries(element) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.replaceElement;
+    const bpmnFactory = this.bpmnFactory;
+    const modeling = this.modeling;
+    const commandStack = this.commandStack;
+
+    let options = createConfigurationsEntries(element, 'dataflow-transformation-task-icon', getServiceTaskConfigurations(), bpmnFactory, modeling, commandStack, replaceElement);
+    options = Object.assign(createMenuEntries(element, replaceOptions.TASK, translate, replaceElement), options);
+
+    return {
+      ['replace-by-more-transf-task-options']: createMoreOptionsEntryWithReturn(
+          element,
+          'Transformation Tasks',
+          'Transformation Tasks',
+          popupMenu,
+          options,
+          'dataflow-transformation-task-icon'
+      )
     };
   }
 }
