@@ -28,87 +28,97 @@ describe('Test the TransformationManager of the data flow extension.', function 
 
     describe('Test startDataFlowReplacementProcess()', function () {
 
+        let completeExampleWorkflowResult;
+        let completeExampleModeler;
+
+        before(async function () {
+            completeExampleWorkflowResult = await startDataFlowReplacementProcess(COMPLETE_EXAMPLE_WORKFLOW);
+            completeExampleModeler = createTempModeler();
+            await loadDiagram(completeExampleWorkflowResult.xml, completeExampleModeler);
+        });
+
         afterEach(function () {
             setPluginConfig([]);
         });
 
-        // it('Should transform all data flow elements', async function () {
-        //
-        //     setPluginConfig([{name: 'dataflow'}]);
-        //
-        //     const result = await startDataFlowReplacementProcess(COMPLETE_EXAMPLE_WORKFLOW);
-        //
-        //     expect(result.status).to.equal('transformed');
-        //
-        //     // load transformed workflow in modeler to check elements
-        //     const modeler = createTempModeler();
-        //     await loadDiagram(result.xml, modeler);
-        //
-        //     let elementRegistry = modeler.get('elementRegistry');
-        //     let modeling = modeler.get('modeling');
-        //     let bpmnFactory = modeler.get('bpmnFactory');
-        //
-        //     // get root element of the current diagram
-        //     const definitions = modeler.getDefinitions();
-        //     const rootProcess = getRootProcess(definitions);
-        //
-        //     const startEventBo = getAllElementsForProcess(rootProcess, elementRegistry, 'bpmn:StartEvent')[0].element;
-        //     const startEventElement = elementRegistry.get(startEventBo.id);
-        //
-        //     const globalTaskElement = startEventElement.outgoing[0].target;
-        //
-        //     expect(globalTaskElement.type).to.equal('bpmn:Task');
-        //     expect(globalTaskElement.businessObject.name).to.equal('Create Process Variables [Generated]');
-        //
-        //     testTaskIo(globalTaskElement, {}, {
-        //         JSON1: {
-        //             json_value: '{ "name": "The JSON File"}',
-        //             author: 'Steve Jobs',
-        //             creation_date: '12.04.2023',
-        //         },
-        //         JSON2: {
-        //             json: '${JSON1.json_value}',
-        //         },
-        //         ['XSD Repository']: {
-        //             url: 'http://localhost:8080/',
-        //             access_token: 'adf1asd4fasd4f3asd54f3a4sds566s6dfa3dd',
-        //         }
-        //     }, bpmnFactory);
-        //
-        //     const serviceTaskElement = globalTaskElement.outgoing[0].target;
-        //
-        //     expect(serviceTaskElement.type).to.equal('bpmn:ServiceTask');
-        //     expect(serviceTaskElement.businessObject.name).to.equal('Json to Xml Transformation');
-        //
-        //     testTaskIo(serviceTaskElement, {
-        //         test_input: 'no',
-        //         jsonAuthor: '${JSON1.author}',
-        //         parameters: {
-        //             ['xml-schema']: 'https://localhost:8080/',
-        //             seed: '4846138737',
-        //             allLowerCase: 'true'
-        //         }
-        //     }, {
-        //         test_output: 'yes',
-        //         XML1: {
-        //             xml_value: '<root>entry</root>',
-        //         }
-        //     }, bpmnFactory);
-        //
-        //     const task2Element = serviceTaskElement.outgoing[0].target;
-        //
-        //     expect(task2Element.type).to.equal('bpmn:Task');
-        //     expect(task2Element.businessObject.name).to.equal('Task 2');
-        //
-        //     testTaskIo(task2Element, {
-        //         task_input: '1',
-        //         JSON2: {
-        //             json: '${JSON1.json_value}',
-        //         }
-        //     }, {
-        //         task_output: '2',
-        //     }, bpmnFactory);
-        // });
+        it('Should transform all data flow elements', function () {
+
+            setPluginConfig([{name: 'dataflow'}]);
+
+            const result = completeExampleWorkflowResult;//await startDataFlowReplacementProcess(COMPLETE_EXAMPLE_WORKFLOW);
+
+            expect(result.status).to.equal('transformed');
+
+            // load transformed workflow in modeler to check elements
+            const modeler = completeExampleModeler;
+            // const modeler = createTempModeler();
+            // await loadDiagram(result.xml, modeler);
+
+            let elementRegistry = modeler.get('elementRegistry');
+            let modeling = modeler.get('modeling');
+            let bpmnFactory = modeler.get('bpmnFactory');
+
+            // get root element of the current diagram
+            const definitions = modeler.getDefinitions();
+            const rootProcess = getRootProcess(definitions);
+
+            const startEventBo = getAllElementsForProcess(rootProcess, elementRegistry, 'bpmn:StartEvent')[0].element;
+            const startEventElement = elementRegistry.get(startEventBo.id);
+
+            const globalTaskElement = startEventElement.outgoing[0].target;
+
+            expect(globalTaskElement.type).to.equal('bpmn:Task');
+            expect(globalTaskElement.businessObject.name).to.equal('Create Process Variables [Generated]');
+
+            testTaskIo(globalTaskElement, {}, {
+                JSON1: {
+                    json_value: '{ "name": "The JSON File"}',
+                    author: 'Steve Jobs',
+                    creation_date: '12.04.2023',
+                },
+                JSON2: {
+                    json: '${JSON1.json_value}',
+                },
+                ['XSD Repository']: {
+                    url: 'http://localhost:8080/',
+                    access_token: 'adf1asd4fasd4f3asd54f3a4sds566s6dfa3dd',
+                }
+            }, bpmnFactory);
+
+            const serviceTaskElement = globalTaskElement.outgoing[0].target;
+
+            expect(serviceTaskElement.type).to.equal('bpmn:ServiceTask');
+            expect(serviceTaskElement.businessObject.name).to.equal('Json to Xml Transformation');
+
+            testTaskIo(serviceTaskElement, {
+                test_input: 'no',
+                jsonAuthor: '${JSON1.author}',
+                parameters: {
+                    ['xml-schema']: 'https://localhost:8080/',
+                    seed: '4846138737',
+                    allLowerCase: 'true'
+                }
+            }, {
+                test_output: 'yes',
+                XML1: {
+                    xml_value: '<root>entry</root>',
+                }
+            }, bpmnFactory);
+
+            const task2Element = serviceTaskElement.outgoing[0].target;
+
+            expect(task2Element.type).to.equal('bpmn:Task');
+            expect(task2Element.businessObject.name).to.equal('Task 2');
+
+            testTaskIo(task2Element, {
+                task_input: '1',
+                JSON2: {
+                    json: '${JSON1.json_value}',
+                }
+            }, {
+                task_output: '2',
+            }, bpmnFactory);
+        });
 
         // it('Should add form fields to start event', async function() {
         //     setPluginConfig([{name: 'dataflow'}]);

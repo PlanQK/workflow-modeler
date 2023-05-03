@@ -53,7 +53,7 @@ describe('Test plugins', function () {
         expect(extensions['quantme']).to.not.be.undefined;
         expect(extensions['planqk']).to.not.be.undefined;
         expect(transfButtons.length).to.equal(3);
-        expect(buttons.length).to.equal(1);
+        expect(buttons.length).to.equal(2);
         expect(tabs.length).to.equal(8);
         expect(styles.length).to.equal(3);
       });
