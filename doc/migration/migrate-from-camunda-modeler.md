@@ -37,7 +37,7 @@ The code for displaying modals is already copied from the QuantME repository and
 ```javascript
 import Modal from '../../../../common/camunda-components/modal/Modal';
 ```
-The code is located in the [modal directory](../../components/bpmn-q/modeler-component/common/camunda-components/modal).
+The code is located in the [modal directory](../../components/bpmn-q/modeler-component/editor/ui/modal).
 
 ###### Fill
 The Fill component will no longer work, because it allows plugging buttons directly into a predefined toolbar of the Camunda Modeler.

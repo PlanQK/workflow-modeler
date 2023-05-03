@@ -21,7 +21,7 @@ import editorUiStyle from './editor/resources/styling/editor-ui.css';
 import notificationsStyle from './editor/ui/notifications/Notifications.css';
 import notificationStyle from './editor/ui/notifications/Notification.css';
 import configModal from './editor/config/config-modal.css';
-import lessStyle from './common/camunda-components/css-styles/style.css';
+import lessStyle from './editor/resources/styling/camunda-styles/style.css';
 
 import bpmnFonts from './editor/resources/styling/bpmn-fonts.css';
 

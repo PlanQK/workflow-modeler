@@ -11,7 +11,7 @@
 
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import Modal from "../../../../common/camunda-components/modal/Modal";
+import Modal from "../../../../editor/ui/modal/Modal";
 // import { Modal } from 'camunda-modeler-plugin-helpers/components';
 
 // polyfill upcoming structural components
