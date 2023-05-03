@@ -18,7 +18,7 @@ describe('Test plugins', function () {
     describe('Test getActivePlugins()', function () {
 
       it('Should find no active plugin', function () {
-        setPluginConfig(undefined);
+        setPluginConfig([]);
         createTempModeler();
 
         expect(getActivePlugins().length).to.equal(0);

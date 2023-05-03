@@ -112,50 +112,50 @@ describe('Testing plugin transformation', function () {
 
   describe('Transformation of QuantME extensions', function () {
 
-    // it('should create a valid transformed workflow', async function () {
-    //   // setConfig();
-    //   setPluginConfig([{
-    //     name: 'dataflow',
-    //     config: {
-    //
-    //     }
-    //   },
-    //     {
-    //       name: 'planqk',
-    //       config: {
-    //         serviceEndpointBaseUrl: 'http://dummy.com',
-    //         subscriptions: [sub1, sub2, sub3],
-    //         oauthInfoByAppMap: {
-    //           app1: {consumerKey: 'app1ConsumerKey', consumerSecret: 'app1ConsumerSecret'},
-    //           app2: {consumerKey: 'app2ConsumerKey', consumerSecret: 'app2ConsumerSecret'},
-    //         },
-    //         dataPools: [dp1, dp2, dp3],
-    //       }
-    //     },
-    //     {
-    //       name: 'quantme',
-    //       config: {
-    //         test: 'test',
-    //       }
-    //     }]);
-    //   this.timeout(60000);
-    //
-    //   const qrms = await updateQRMs();
-    //
-    //   const result = await startQuantmeReplacementProcess(validQuantMEDiagram, qrms, {
-    //     nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
-    //     transformationFrameworkEndpoint: config.getTransformationFrameworkEndpoint(),
-    //     camundaEndpoint: camundaConfig.getCamundaEndpoint()
-    //   });
-    //
-    //   chai.expect(result.status).to.equal('transformed');
-    //
-    //   // check that all extension elements are replaced
-    //   chai.expect(result.xml).to.not.contain('<quantme:');
-    //
-    //   //clean up
-    //   resetQRMs();
-    // });
+    it('should create a valid transformed workflow', async function () {
+      // setConfig();
+      setPluginConfig([{
+        name: 'dataflow',
+        config: {
+
+        }
+      },
+        {
+          name: 'planqk',
+          config: {
+            serviceEndpointBaseUrl: 'http://dummy.com',
+            subscriptions: [sub1, sub2, sub3],
+            oauthInfoByAppMap: {
+              app1: {consumerKey: 'app1ConsumerKey', consumerSecret: 'app1ConsumerSecret'},
+              app2: {consumerKey: 'app2ConsumerKey', consumerSecret: 'app2ConsumerSecret'},
+            },
+            dataPools: [dp1, dp2, dp3],
+          }
+        },
+        {
+          name: 'quantme',
+          config: {
+            test: 'test',
+          }
+        }]);
+      this.timeout(60000);
+
+      const qrms = await updateQRMs();
+
+      const result = await startQuantmeReplacementProcess(validQuantMEDiagram, qrms, {
+        nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
+        transformationFrameworkEndpoint: config.getTransformationFrameworkEndpoint(),
+        camundaEndpoint: camundaConfig.getCamundaEndpoint()
+      });
+
+      chai.expect(result.status).to.equal('transformed');
+
+      // check that all extension elements are replaced
+      chai.expect(result.xml).to.not.contain('<quantme:');
+
+      //clean up
+      resetQRMs();
+    });
 
     it('should fail due to missing QRMs', async function () {
       resetQRMs();

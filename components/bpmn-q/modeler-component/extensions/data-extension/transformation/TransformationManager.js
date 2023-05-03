@@ -1,6 +1,6 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
-import {getXml} from '../../../common/util/IoUtilities';
-import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
+import {getXml, loadDiagram} from '../../../common/util/IoUtilities';
+import {createLightweightModeler, createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import * as consts from '../Constants';
 import {
     getAllElementsForProcess,
@@ -14,6 +14,7 @@ import {
     addFormField, findSequenceFlowConnection, getDocumentation,
     getRootProcess, setDocumentation,
 } from '../../../common/util/ModellingUtilities';
+import {createLink} from "browserify-css/browser";
 
 /**
  * Replace data flow extensions with camunda bpmn elements so that it complies with the standard
@@ -22,7 +23,8 @@ import {
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
 export async function startDataFlowReplacementProcess(xml) {
-    let modeler = await createTempModelerFromXml(xml);
+    let modeler = await createLightweightModeler();
+    await loadDiagram(xml, modeler);
     let elementRegistry = modeler.get('elementRegistry');
     let modeling = modeler.get('modeling');
 

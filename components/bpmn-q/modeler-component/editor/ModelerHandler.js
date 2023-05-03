@@ -58,6 +58,12 @@ export function createTempModeler() {
     });
 }
 
+export function createLightweightModeler() {
+    return new BpmnModeler({
+        moddleExtensions: getExtensions(),
+    });
+}
+
 export async function createTempModelerFromXml(xml) {
     // create new modeler with the custom QuantME extensions
     const bpmnModeler = createTempModeler();
