@@ -25,22 +25,18 @@ export default class ConfigPlugin extends PureComponent {
     constructor(props) {
         super(props);
 
-        // modelers for all tabs to enable switching between them
-        this.modelers = {};
-
         this.state = defaultState;
 
         this.handleConfigClosed = this.handleConfigClosed.bind(this);
-
-        // get config to update details in the backend
-        this.backendConfig = '';//props._getGlobal('config');
     }
 
     componentDidMount() {
 
+        // get current modeler instance
         this.modeler = getModeler();
         const self = this;
 
+        // set up config of the modeler
         if (!this.modeler.config) {
             this.modeler.config = {};
 
@@ -48,20 +44,9 @@ export default class ConfigPlugin extends PureComponent {
                 tab.configTab.prototype.config();
             }
         }
-
-        // // change to modeler corresponding to the active tab
-        // this.props.subscribe('app.activeTabChanged', ({ activeTab }) => {
-        //   if (this.modeler) {
-        //
-        //     // copy config from old active modeler to new active modeler
-        //     const config = this.modeler.config;
-        //     this.modeler = this.modelers[activeTab.id];
-        //     this.modeler.config = config;
-        //     this.modeler.get('eventBus').fire('config.updated', config);
-        //   }
-        // });
     }
 
+    // callback function to close the config modal
     handleConfigClosed() {
         this.setState({configOpen: false});
     }
@@ -79,7 +64,6 @@ export default class ConfigPlugin extends PureComponent {
             {this.state.configOpen && (
                 <ConfigModal
                     onClose={this.handleConfigClosed}
-                    // initValues={this.modeler.config}
                     configTabs={getConfigTabs()}
                 />
             )}

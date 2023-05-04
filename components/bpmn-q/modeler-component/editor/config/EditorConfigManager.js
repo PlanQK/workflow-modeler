@@ -1,6 +1,7 @@
 import {getPluginConfig} from '../plugin/PluginConfigHandler';
 import {transformedWorkflowHandlers} from '../EditorConstants';
 
+// default configurations of the editor
 const defaultConfig = {
     camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
     fileName: 'quantum-workflow-model.bpmn',
@@ -108,6 +109,9 @@ export function setTransformedWorkflowHandler(transformedWorkflowHandler) {
     }
 }
 
+/**
+ * Resets the current editor configs
+ */
 export function reset() {
     config = {};
 }

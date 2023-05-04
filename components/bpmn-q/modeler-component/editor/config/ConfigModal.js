@@ -12,21 +12,32 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import Modal from '../ui/modal/Modal';
-// import './config-modal.css';
 
 // polyfill upcoming structural components
 const Title = Modal.Title || (({children}) => <h2>{children}</h2>);
 const Body = Modal.Body || (({children}) => <div>{children}</div>);
 const Footer = Modal.Footer || (({children}) => <div>{children}</div>);
 
+/**
+ * Configuration modal of the editor which displays a set of given configTabs. used to display customized tabs of the
+ * plugins to allow them the configurations of their plugin configurations during runtime.
+ *
+ * @param onClose Function called when the modal is closed.
+ * @param configTabs Given tabs to be displayed in the modal.
+ * @returns {JSX.Element} The modal as React component
+ * @constructor
+ */
 export default function ConfigModal({onClose, configTabs}) {
 
     // return the new values to the config plugin
     const onSubmit = () => {
 
+        // call close callback
         onClose();
 
         for (let tab of configTabs) {
+
+            // call close callback for each tab to allow custom cleanups
             tab.configTab.prototype.onClose();
         }
     };
