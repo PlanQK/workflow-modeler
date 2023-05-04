@@ -63,7 +63,7 @@ implementation of the [Properties Provider of the QuantME plugin](../../componen
 The buttons and the config dialog of the QuantME transformation framework are adapted to the extensions of the UI the Quantum
 Workflow Modeler allows. Therefore, all tabs of the config dialog are separated in React components, one component per tab,
 and added via the Plugin Object to the modeler. The buttons of the QuantME framework were grouped into one Extensible Button
-and also added via the Plugin Object to the UI of the modeler. Refer [this guide]( 
+and also added via the Plugin Object to the UI of the modeler. Refer [this guide](../quantum-workflow-modeler/editor/ui-extension/extend-ui-via-plugin-object.md) 
 for further information on how to extend the UI of the Quantum Workflow Modeler.
 
 ## Deprecated APIs
