@@ -194,4 +194,4 @@ export class QuantumWorkflowModeler extends HTMLElement {
     }
 }
 
-window.customElements.define('quantum-workflow', QuantumWorkflowModeler);
+window.customElements.define('quantum-workflow-modeler', QuantumWorkflowModeler);
