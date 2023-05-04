@@ -162,6 +162,17 @@ export class QuantumWorkflowModeler extends HTMLElement {
         this.shadowRoot.appendChild(styleTag);
     }
 
+    async loadWorkflowDiagram(xmlDiagram) {
+        const modeler = getModeler();
+
+        if (modeler) {
+            return await loadDiagram(xmlDiagram, getModeler());
+        } else {
+            console.log('Loading of Workflow via external interface not possible until modeler is loaded.');
+        }
+
+    }
+
     get pluginConfigs() {
         return this.pluginConfigsList || [];
     }
