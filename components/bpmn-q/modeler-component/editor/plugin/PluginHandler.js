@@ -5,6 +5,7 @@ import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
 import EditorTab from "../config/EditorTab";
 
+// list of plugins integrated in the modeler
 const PLUGINS = [
     DataFlowPlugin,
     QHAnaPlugin,
@@ -12,18 +13,28 @@ const PLUGINS = [
     QuantMEPlugin,
 ];
 
+// list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
 let activePlugins = [];
 
+/**
+ * Returns these plugins of PLUGINS which have an entry in the current plugin configuration of the modeler.
+ *
+ * @returns {*[]} Array of active plugins.
+ */
 export function getActivePlugins() {
-    if (activePlugins.length > 0) {
 
+    // return saved active plugins array
+    if (activePlugins.length > 0) {
         return activePlugins;
 
+    // determine active plugins
     } else {
 
         activePlugins = [];
 
         let plugin;
+
+        // add all plugins of PLUGINS to active plugins which have a config entry for them
         for (let pluginConfig of getAllConfigs()) {
 
             plugin = PLUGINS.find(plugin => plugin.name === pluginConfig.name);
@@ -36,6 +47,10 @@ export function getActivePlugins() {
     }
 }
 
+/**
+ *
+ * @returns {*[]}
+ */
 export function getAdditionalModules() {
 
     const modules = [];

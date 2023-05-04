@@ -9,23 +9,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* eslint-disable no-unused-vars*/
 import React, {PureComponent, Fragment} from 'react';
 
 import ConfigModal from './ConfigModal';
 import {getModeler} from "../ModelerHandler";
 import {getConfigTabs} from "../plugin/PluginHandler";
 
-const defaultState = {
-    configOpen: false
-};
-
 export default class ConfigPlugin extends PureComponent {
 
     constructor(props) {
         super(props);
 
-        this.state = defaultState;
+        this.state = {
+            configOpen: false,
+        };
 
         this.handleConfigClosed = this.handleConfigClosed.bind(this);
     }
@@ -34,7 +31,6 @@ export default class ConfigPlugin extends PureComponent {
 
         // get current modeler instance
         this.modeler = getModeler();
-        const self = this;
 
         // set up config of the modeler
         if (!this.modeler.config) {

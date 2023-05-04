@@ -72,14 +72,17 @@ export function createConfigurationsEntries(element, className, configurations, 
  */
 export function handleConfigurationsAction(element, config, bpmnFactory, modeling, commandStack) {
 
-    // save id of selected element in
+    // save id of selected configuration in the element
     modeling.updateProperties(element, {
         [configConsts.SELECT_CONFIGURATIONS_ID]: config.id,
     });
 
-    modeling.updateProperties(element, {
-        [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
-    });
+    // save icon property if defined of the selected configuration in the element to allow customized rendering
+    if (config.icon) {
+        modeling.updateProperties(element, {
+            [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
+        });
+    }
 
     // set name of the element to configuration name
     modeling.updateProperties(element, {
