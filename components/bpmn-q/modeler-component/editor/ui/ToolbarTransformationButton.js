@@ -91,11 +91,15 @@ export default function ToolbarTransformationButton(props) {
         <div>
             <button className={isToggleOn ? 'extensible-btn' : 'toolbar-btn'}
                     title="Transform current workflow into native BPMN">
-                <div style={{display: 'flex',}}>
+                <div style={{display: 'flex'}}>
+                    <div style={{display: 'flex',}}>
                     <span className={styleClass} onClick={() => startTransformation()}>
                         <span className="indent">{title}</span>
                     </span>
-                    <div className="toolbar-transformation-btn" onClick={() => setToggleOn(!isToggleOn)}>
+
+                    </div>
+                    <hr className="toolbar-splitter"/>
+                    <div className="toolbar-transformation-btn" style={{display: 'flex'}} onClick={() => setToggleOn(!isToggleOn)}>
                         <span className="toolbar-transformation-edit-icon">
                             <span className="indent"/>
                         </span>

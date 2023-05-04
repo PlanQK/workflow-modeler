@@ -97,8 +97,8 @@
 .toolbar-transformation-edit-icon {
     border-color: #cccccc;
     content: "";
-    width: 15px;
-    height: 15px;
+    width: 17px;
+    height: 17px;
     background-size: contain;
     background-image: url("../icons/wrench-icon-outline.svg");
     background-repeat: no-repeat;
