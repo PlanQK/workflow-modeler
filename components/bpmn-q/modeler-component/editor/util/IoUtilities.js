@@ -6,7 +6,6 @@ const editorConfig = require('../config/EditorConfigManager');
 let FormData = require('form-data');
 import fetch from 'node-fetch';
 import * as editorConsts from '../EditorConstants';
-import NotificationHandler from "../ui/notifications/NotificationHandler";
 
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
@@ -76,30 +75,16 @@ export async function loadDiagram(xml, modeler, dispatchEvent = true) {
     try {
         const result = await modeler.importXML(xml);
 
-        if (result.warnings.some(warning => warning.error)) {
-            NotificationHandler.getInstance().displayNotification({
-                type: 'warning',
-                title: 'Loaded Diagram contains Problems',
-                content: `The diagram could not be properly loaded. Maybe it contains modelling elements which are not supported be the currently active plugins.`,
-                duration: 20000
-            });
-        }
-
-
         if (dispatchEvent) {
             dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, editorConfig.getFileName());
         }
+
+        return result;
     } catch (err) {
         console.error(err);
 
-        NotificationHandler.getInstance().displayNotification({
-            type: 'warning',
-            title: 'Unable to load Diagram',
-            content: `During the loading of the diagram some errors occurred: ${err}`,
-            duration: 20000
-        });
+        return {error: err};
     }
-    return undefined;
 }
 
 /**
