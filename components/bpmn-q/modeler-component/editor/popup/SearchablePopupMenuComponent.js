@@ -18,7 +18,9 @@ import classNames from 'clsx';
 import {isDefined} from 'min-dash';
 
 /**
- * A component that renders the popup menus.
+ * A component that renders the popup menus with a search bar that allows to search MoreOptionsEntries.
+ *
+ * Based on the PopupMenuComponent of diagram-js (https://github.com/bpmn-io/diagram-js/blob/develop/lib/features/popup-menu/PopupMenuComponent.js)
  *
  * @param {function} onClose
  * @param {function} position
@@ -130,7 +132,7 @@ export default function SearchablePopupMenuComponent(props) {
         inputRef.current && inputRef.current.focus();
     }, []);
 
-    // handle keyboard seleciton
+    // handle keyboard selection
     const keyboardSelect = useCallback(direction => {
         const idx = entries.indexOf(selectedEntry);
 

@@ -2,6 +2,9 @@ import PopupMenu from "diagram-js/lib/features/popup-menu/PopupMenu";
 import {html, render} from 'diagram-js/lib/ui';
 import SearchablePopupMenuComponent from './SearchablePopupMenuComponent';
 
+/**
+ * PopupMenu with a search bar that searches though all entries loaded in the menu including entries of MoreOptionEntries
+ */
 export default class CustomPopupMenu extends PopupMenu {
 
     constructor(config, eventBus, canvas) {
