@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewEncapsulation} from '@angular/core';
 // import '@planqk/quantum-workflow-modeler/public';
-import '../../../bpmn-q/public/index.js';
+import '../../../bpmn-q/public/';
 // import '../../../bpmn-q/public/modeler-styles.css';
 
 @Component({
