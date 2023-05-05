@@ -21,9 +21,9 @@ export function createModeler(containerId, propertiesParentId) {
             parent: propertiesParentId
         },
         additionalModules: getModules(),
-        keyboard: {
-            bindTo: document
-        },
+        // keyboard: {
+        //     bindTo: document
+        // },
         moddleExtensions: getExtensions(),
     });
     return modeler;
