@@ -12,11 +12,18 @@ The modeler is implemented as an HTML web component and can be integrated in oth
 Read [this documentation](doc/integration-guide/integration-guide.md) to learn how you can 
 integrate the modeler in your application and which configuration options and interfaces you can use. 
 
+The implementation of the modeler is located in the [bpmn-q folder](components/bpmn-q). Example Projects to integrate the 
+modeler in different UI frameworks can be found [here for a Vue.js app](components/bpmn-q-vue) 
+and [here for an Angular app](components/bpmn-q-angular). 
+
 The Quantum Workflow Modeler is a HTML web component. Its inner structure is defined in an shadow DOM to avoid CSS conflicts.
 The UI components of the modeler are defined with React-js and written in JavaScript. To package the project, webpack is used.
 The tests of the project use mocha with chai for karma.
 
 Refer to the [documentation](doc/README.md) for further information.
+
+## Node Version
+The project was created with npm 8.19.2 and node 18.12.1.
 
 ## How to use this Library
 
