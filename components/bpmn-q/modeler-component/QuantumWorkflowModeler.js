@@ -9,6 +9,9 @@ import {getPluginConfig, setPluginConfig} from "./editor/plugin/PluginConfigHand
 import * as editorConfig from './editor/config/EditorConfigManager';
 import {addWorkflowEventListener, initEditorEventHandler} from './editor/events/EditorEventHandler';
 import {workflowEventTypes} from './editor/EditorConstants';
+// import inherits from 'inherits';
+// import BpmnPropertiesPanel from 'bpmn-js-properties-panel/dist/';
+// import PropertiesPanel from 'bpmn-js-properties-panel/dist/';
 
 import diagramJsStyle from 'bpmn-js/dist/assets/diagram-js.css';
 import bpmnEmbeddedStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
@@ -70,6 +73,9 @@ export class QuantumWorkflowModeler extends HTMLElement {
         const bpmnContainer = this.shadowRoot.querySelector('#canvas');
         const propertiesPanelContainer = this.shadowRoot.querySelector('#properties');
 
+        // Object.defineProperty(propertiesPanelContainer, "ownerDocument", { value: this.shadowRoot });
+        // this.shadowRoot.createElement = (...args) => document.createElement(...args);
+
         bpmnContainer.innerHTML = '';
         propertiesPanelContainer.innerHTML = '';
 
@@ -106,9 +112,14 @@ export class QuantumWorkflowModeler extends HTMLElement {
             return event.returnValue = '';
         };
         addEventListener("beforeunload", beforeUnloadListener, {capture: true});
+
+        // retargetEvents(this.shadowRoot);
     }
 
     setShadowDOM() {
+
+        const shadowDiv = document.createElement('div');
+
 
         if (!this.shadowRoot) {
             this.shadowRoot = this.attachShadow({mode: "open"});
@@ -145,15 +156,33 @@ export class QuantumWorkflowModeler extends HTMLElement {
               <hr class="toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1;">
                 <div id="canvas" style="width: 100%"></div>
-                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
+                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;">
+<!--                    <custom-properties-panel></custom-properties-panel>-->
+                </div>
               </div>
               <div id="qwm-notification-container"></div>`;
 
+        const newDiv = document.createElement('div');
+        newDiv.innerHTML = `
+              <div id="button-container" style="background-color: 'red';"></div>`
+        div.appendChild(newDiv);
         console.log('Finished div');
 
         // Attach the created element to the shadow DOM
         this.shadowRoot.appendChild(div);
-        console.log('append div');
+
+        // Object.defineProperty(div, "ownerDocument", { value: this.shadowRoot });
+        // this.shadowRoot.createElement = (...args) => document.createElement(...args);
+        //
+        // console.log('append div');
+        //
+        // const divContainer = document.createElement('div');
+        // divContainer.append(shadowDiv);
+        //
+        // const propertiesDiv = document.createElement('div');
+        // divContainer.append(propertiesDiv);
+        //
+        // this.innerHTML = divContainer;
     }
 
     appendStyle(style) {
@@ -195,3 +224,78 @@ export class QuantumWorkflowModeler extends HTMLElement {
 }
 
 window.customElements.define('quantum-workflow-modeler', QuantumWorkflowModeler);
+
+// function retargetEvents(el) {
+//     let events = ["onClick", "onContextMenu", "onDoubleClick", "onDrag", "onDragEnd",
+//         "onDragEnter", "onDragExit", "onDragLeave", "onDragOver", "onDragStart", "onDrop",
+//         "onMouseDown", "onMouseEnter", "onMouseLeave","onMouseMove", "onMouseOut",
+//         "onMouseOver", "onMouseUp"];
+//
+//     function dispatchEvent(event, eventType, itemProps) {
+//         if (itemProps[eventType]) {
+//             itemProps[eventType](event);
+//         } else if (itemProps.children && itemProps.children.forEach) {
+//             itemProps.children.forEach(child => {
+//                 child.props && dispatchEvent(event, eventType, child.props);
+//             });
+//         }
+//     }
+//
+//     // Compatible with v0.14 & 15
+//     function findReactInternal(item) {
+//         let instance;
+//         for (let key in item) {
+//             if (item.hasOwnProperty(key) && ~key.indexOf('_reactInternal')) {
+//                 instance = item[key];
+//                 break;
+//             }
+//         }
+//         return instance;
+//     }
+//
+//     events.forEach(eventType => {
+//         let transformedEventType = eventType.replace(/^on/, '').toLowerCase();
+//
+//         el.addEventListener(transformedEventType, event => {
+//             for (let i in event.path) {
+//                 let item = event.path[i];
+//
+//                 let internalComponent = findReactInternal(item);
+//                 if (internalComponent
+//                     && internalComponent._currentElement
+//                     && internalComponent._currentElement.props
+//                 ) {
+//                     dispatchEvent(event, eventType, internalComponent._currentElement.props);
+//                 }
+//
+//                 if (item === el) break;
+//             }
+//
+//         });
+//     });
+// }
+
+// function CustomPropertiesPanel(eventBus) {
+//     PropertiesPanel.call(this, eventBus);
+//
+//     // Use bpmn-js-properties-panel's BPMN provider
+//     this.registerProvider(BpmnPropertiesPanel);
+// }
+//
+// inherits(CustomPropertiesPanel, PropertiesPanel);
+//
+// // Define the custom element's tag name and style
+// CustomPropertiesPanel.prototype.tagName = 'custom-properties-panel';
+// CustomPropertiesPanel.prototype.css = '.custom-properties-panel { border: 1px solid #ccc; }';
+//
+// // Define the custom element's shadow DOM content
+// CustomPropertiesPanel.prototype.render = function() {
+//     var div = document.createElement('div');
+//     div.classList.add('custom-properties-panel');
+//     this._container.appendChild(div);
+// };
+//
+// // Register the custom element
+// document.registerElement('custom-properties-panel', {
+//     prototype: CustomPropertiesPanel.prototype
+// });
