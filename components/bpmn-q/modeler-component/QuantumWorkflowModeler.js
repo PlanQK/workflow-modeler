@@ -109,9 +109,6 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
     setShadowDOM() {
 
-        // const shadowDiv = document.createElement('div');
-
-
         if (!this.shadowRoot) {
             this.shadowRoot = this.attachShadow({mode: "open"});
             editorConfig.setShadowRoot(this.shadowRoot);

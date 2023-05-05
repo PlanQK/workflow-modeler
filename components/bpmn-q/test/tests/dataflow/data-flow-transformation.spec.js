@@ -21,7 +21,7 @@ import {
     getRootProcess
 } from '../../../modeler-component/editor/util/ModellingUtilities';
 import {getAllElementsForProcess} from '../../../modeler-component/editor/util/TransformationUtilities';
-import {testTaskIo} from '../../helpers/IOHelper';
+import {testTaskIo} from '../../helpers/PropertiesHelper';
 
 import('../transformation.spec');
 
