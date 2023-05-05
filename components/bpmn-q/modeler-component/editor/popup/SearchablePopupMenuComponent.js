@@ -16,6 +16,7 @@ import {
 import PopupMenuList from 'diagram-js/lib/features/popup-menu/PopupMenuList';
 import classNames from 'clsx';
 import {isDefined} from 'min-dash';
+import {getMoreOptions} from "../util/PopupMenuUtilities";
 
 /**
  * A component that renders the popup menus with a search bar that allows to search MoreOptionsEntries.
@@ -332,15 +333,4 @@ function getHeaderClasses(entry, selected) {
         entry.disabled ? 'disabled' : '',
         selected ? 'selected' : ''
     );
-}
-
-function getMoreOptions(entry) {
-    if (entry.moreOptions) {
-        return Object.entries(entry.moreOptions).slice(1).flatMap(function ([key, value]) {
-            value.id = key;
-            return getMoreOptions(value);
-        });
-    } else {
-        return entry;
-    }
 }

@@ -106,3 +106,16 @@ export function createMenuEntry(element, definition, translate, replaceElement, 
         action: action
     };
 }
+
+export function getMoreOptions(entry) {
+    if (entry.moreOptions) {
+
+        // skip first entry because this is the entry for returning to the original menu
+        return Object.entries(entry.moreOptions).slice(1).flatMap(function ([key, value]) {
+            value.id = key;
+            return getMoreOptions(value);
+        });
+    } else {
+        return entry;
+    }
+}

@@ -109,7 +109,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
     setShadowDOM() {
 
-        const shadowDiv = document.createElement('div');
+        // const shadowDiv = document.createElement('div');
 
 
         if (!this.shadowRoot) {
