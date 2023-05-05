@@ -4,11 +4,11 @@
   </div>
 </template>
 <script setup>
-// import "@planqk/quantum-workflow-modeler/public";
+import "@planqk/quantum-workflow-modeler/public";
 // import "@planqk/quantum-workflow-modeler/public/modeler-styles.css";
 
 // direct import for fast testing of new features
-import "../../../bpmn-q/public/";
+// import "../../../bpmn-q/public/";
 // import "../../../bpmn-q/public/modeler-styles.css";
 </script>
 <script>
