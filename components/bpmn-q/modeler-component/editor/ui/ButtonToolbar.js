@@ -4,7 +4,7 @@ import OpenButton from "./OpenButton";
 import NewDiagramButton from "./NewDiagramButton";
 import DeploymentButton from "./DeploymentButton";
 import ConfigPlugin from "../config/ConfigPlugin";
-import ToolbarTransformationButton from "./ToolbarTransformationButton";
+import TransformationToolbarButton from "./TransformationToolbarButton";
 // import '../resources/styling/editor-ui.css';
 
 export default function ButtonToolbar(props) {
@@ -27,7 +27,7 @@ export default function ButtonToolbar(props) {
                 <hr className="toolbar-splitter"/>
                 <ConfigPlugin/>
                 <hr className="toolbar-splitter"/>
-                {hasTransformations && <ToolbarTransformationButton
+                {hasTransformations && <TransformationToolbarButton
                     subButtons={transformButtons}
                     title='Transform Workflow'
                     styleClass="workflow-transformation-btn"/>

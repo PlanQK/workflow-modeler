@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import TransformationButton from "./TransformationButton";
 import {getXml, handleTransformedWorkflow} from '../util/IoUtilities';
 import NotificationHandler from './notifications/NotificationHandler';
 import {getModeler} from '../ModelerHandler';
 
-export default function ToolbarTransformationButton(props) {
+export default function TransformationToolbarButton(props) {
 
     const {
         subButtons,
@@ -13,6 +13,7 @@ export default function ToolbarTransformationButton(props) {
     } = props;
 
     const [isToggleOn, setToggleOn] = useState(false);
+    const wrapperRef = useRef(null);
 
     // initially activate all transformations
     const initialTransformationStates = {};
@@ -80,6 +81,19 @@ export default function ToolbarTransformationButton(props) {
         }
     }
 
+    const handleOutsideClick = event => {
+        if (wrapperRef.current && !wrapperRef.current.contains(event.composedPath()[0])) {
+            setToggleOn(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, []);
+
     // callback to activate/ deactivate a transformation
     function selectedCallback(isActive, transformationName) {
         const newState = transformationStates;
@@ -88,7 +102,7 @@ export default function ToolbarTransformationButton(props) {
     }
 
     return (
-        <div>
+        <div ref={wrapperRef}>
             <button className={isToggleOn ? 'extensible-btn' : 'toolbar-btn'}
                     title="Transform current workflow into native BPMN">
                 <div style={{display: 'flex'}}>
