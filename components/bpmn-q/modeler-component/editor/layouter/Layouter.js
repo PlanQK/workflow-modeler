@@ -75,9 +75,9 @@ function layoutProcess(modeling, elementRegistry, process) {
                 let flowElement = elementRegistry.get(flowElements[i].id);
                 if (flowElement) {
 
-                    if (is(flowElement, 'bpmn:DataObjectReference')) {
-                        continue;
-                    }
+                    // if (is(flowElement, 'bpmn:DataObjectReference')) {
+                    //     continue;
+                    // }
                     nodes.push(flowElement);
                 } else {
                     console.log(`Flow element with id ${flowElements[i].id} is undefined.`);

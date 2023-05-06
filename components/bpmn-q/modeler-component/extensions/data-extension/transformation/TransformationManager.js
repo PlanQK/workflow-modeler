@@ -14,6 +14,7 @@ import {
     addFormField, findSequenceFlowConnection, getDocumentation,
     getRootProcess, setDocumentation,
 } from '../../../editor/util/ModellingUtilities';
+import {layout} from "../../../editor/layouter/Layouter";
 
 /**
  * Replace data flow extensions with camunda bpmn elements so that it complies with the standard
@@ -191,6 +192,8 @@ export async function startDataFlowReplacementProcess(xml) {
             };
         }
     }
+
+    layout(modeling, elementRegistry, rootProcess);
 
     const transformedXML = await getXml(modeler);
     return {status: 'transformed', xml: transformedXML};
