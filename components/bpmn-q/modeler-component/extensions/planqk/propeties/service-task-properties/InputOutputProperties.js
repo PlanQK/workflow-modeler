@@ -1,6 +1,13 @@
 import {isTextFieldEntryEdited, TextAreaEntry} from '@bpmn-io/properties-panel';
 import {useService} from 'bpmn-js-properties-panel';
 
+/**
+ * Properties group for input and output data of PlanQK service tasks.
+ *
+ * @param element The PlanQK service task element
+ * @return {[{component: (function(*): preact.VNode<any>), isEdited: ((function(*): *)|*), id: string, element},{component: (function(*): preact.VNode<any>), isEdited: ((function(*): *)|*), id: string, element},{component: (function(*): preact.VNode<any>), isEdited: ((function(*): *)|*), id: string, element}]}
+ * @constructor
+ */
 export default function (element) {
 
     return [
@@ -26,6 +33,13 @@ export default function (element) {
     ];
 }
 
+/**
+ * TextAreaEntry for the input data attribute of the PlanQK service task.
+ *
+ * @param props
+ * @return {preact.VNode<any>}
+ * @constructor
+ */
 function InputData(props) {
     const {element} = props;
 
@@ -34,11 +48,11 @@ function InputData(props) {
 
     const getValue = () => {
         return element.businessObject.data || '{}';
-    }
+    };
 
     const setValue = (data) => {
         return element.businessObject.data = data;
-    }
+    };
 
     return TextAreaEntry({
         element,
@@ -53,6 +67,13 @@ function InputData(props) {
     });
 }
 
+/**
+ * TextAreaEntry for the input parameters attribute of the PlanQK service task.
+ *
+ * @param props
+ * @return {preact.VNode<any>}
+ * @constructor
+ */
 function InputParams(props) {
     const {element} = props;
 
@@ -61,11 +82,11 @@ function InputParams(props) {
 
     const getValue = () => {
         return element.businessObject.params || '{}';
-    }
+    };
 
     const setValue = (params) => {
         return element.businessObject.params = params;
-    }
+    };
 
     return TextAreaEntry({
         element,
@@ -80,6 +101,13 @@ function InputParams(props) {
     });
 }
 
+/**
+ * TextAreaEntry for the result attribute of the PlanQK service task.
+ *
+ * @param props
+ * @return {preact.VNode<any>}
+ * @constructor
+ */
 function ResultData(props) {
     const {element} = props;
 
@@ -88,11 +116,11 @@ function ResultData(props) {
 
     const getValue = () => {
         return element.businessObject.result || '${}';
-    }
+    };
 
     const setValue = (result) => {
         return element.businessObject.result = result;
-    }
+    };
 
     return TextAreaEntry({
         element,

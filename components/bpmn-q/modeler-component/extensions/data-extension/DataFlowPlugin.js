@@ -13,7 +13,7 @@ import UpdateTransformationTaskConfigurationsButton from "./ui/UpdateTransformat
 let dataflowModdleDescriptor = require('./resources/data-flow-extension.json');
 
 /**
- * Plugin Object of the DataFlow extension.
+ * Plugin Object of the DataFlow extension. Used to register the plugin in the plugin handler of the modeler.
  */
 export default {
     name: 'dataflow',

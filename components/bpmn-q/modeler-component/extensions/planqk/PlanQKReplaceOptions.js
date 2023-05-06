@@ -1,5 +1,6 @@
 import * as consts from './utilities/Constants';
 
+// replace options for a BPMN task
 export const TASK = [
     {
         id: 'planqk-service-task',
@@ -11,6 +12,7 @@ export const TASK = [
     },
 ];
 
+// replace options for a BPMN data store
 export const DATA_STORE = [
     {
         id: 'planqk-data-pool',

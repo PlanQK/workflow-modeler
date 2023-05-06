@@ -26,6 +26,9 @@ import QuantMEPluginButton from "./ui/QuantMEPluginButton";
 
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json');
 
+/**
+ * Plugin Object of the QuantME extension. Used to register the plugin in the plugin handler of the modeler.
+ */
 export default {
     buttons: [<QuantMEPluginButton/>],
     configTabs: [

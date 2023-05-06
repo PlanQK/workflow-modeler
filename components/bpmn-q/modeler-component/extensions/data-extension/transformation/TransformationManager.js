@@ -181,7 +181,7 @@ export async function startDataFlowReplacementProcess(xml) {
     }
 
     if (Object.entries(globalProcessVariables).length > 0) {
-        transformationSuccess = createGlobalProcessVariables(globalProcessVariables, rootProcess, definitions, modeler);
+        transformationSuccess = createProcessContextVariablesTask(globalProcessVariables, rootProcess, definitions, modeler);
         if (!transformationSuccess) {
             const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';
             console.log(failureMessage);
@@ -205,7 +205,7 @@ export async function startDataFlowReplacementProcess(xml) {
  *
  * @param rootProcess Root process of the workflow
  * @param definitions Definitions of the workflow
- * @param processContextVariables Array of process variables which should be published in process context
+ * @param processContextVariables Object containing process variables which should be published in process context
  * @param modeler The modeler containing the workflow to transform
  * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
  *                      False else with details in failedData.
@@ -271,13 +271,12 @@ function transformDataMapObjects(rootProcess, definitions, processContextVariabl
  *
  * @param rootProcess Root process of the workflow
  * @param definitions Definitions of the workflow
- * @param processContextVariables Array of process variables which should be published in process context
+ * @param processContextVariables Object containing process variables which should be published in process context
  * @param modeler The modeler containing the workflow to transform
  * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
  *                      False else with details in failedData.
  */
 function transformDataStoreMaps(rootProcess, definitions, processContextVariables, modeler) {
-    let bpmnFactory = modeler.get('bpmnFactory');
     let elementRegistry = modeler.get('elementRegistry');
 
     // get all data store maps of the current process including the data store maps in subprocesses
@@ -286,33 +285,55 @@ function transformDataStoreMaps(rootProcess, definitions, processContextVariable
 
     // replace all data store maps and transform their details attributes
     for (let dataElement of dataStoreElements) {
+        const result = transformDataStoreMap(dataElement.element, dataElement.parent, definitions, processContextVariables, modeler);
 
-        const dataStoreMap = dataElement.element;
-
-        const processElement = dataElement.parent;
-        if (!processContextVariables[processElement.id]) {
-            processContextVariables[processElement.id] = [];
+        if (!result.success) {
+            // break transformation and propagate failure
+            return {success: false, failedData: dataElement.element};
         }
+    }
+    return {success: true};
+}
 
-        // publish details of the data store map as process variable in process context
-        processContextVariables[processElement.id].push({
-            name: dataStoreMap.name,
-            map: dataStoreMap.get(consts.DETAILS)
-        });
+/**
+ * Transform the given DataStoreMap to a data store. Add the details attribute of the DataStoreMap to processContextVariables
+ * to publish it as a process variable in process context.
+ *
+ * @param dataStoreMap The given DataStoreMap
+ * @param parentElement The parent of the given DataStoreMap
+ * @param definitions Definitions of the workflow
+ * @param processContextVariables Object containing process variables which should be published in process context
+ * @param modeler The modeler containing the workflow to transform
+ * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
+ *                      False else with details in failedData.
+ */
+export function transformDataStoreMap(dataStoreMap, parentElement, definitions, processContextVariables, modeler) {
 
-        // replace data store map by data store
-        const dataStore = bpmnFactory.create('bpmn:DataStoreReference');
-        const result = insertShape(definitions, dataStore.parent, dataStore, {}, true, modeler, dataStoreMap);
+    const bpmnFactory = modeler.get('bpmnFactory');
 
-        if (result.success) {
+    const processElement = parentElement;
+    if (!processContextVariables[processElement.id]) {
+        processContextVariables[processElement.id] = [];
+    }
 
-            // set documentation property of the data store to document the data store map it replaces
-            const currentDoc = getDocumentation(dataStoreMap) || '';
-            const dataDoc = createDataStoreMapDocs(dataStoreMap);
-            setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
-        } else {
-            return {success: false, failedData: dataStoreMap};
-        }
+    // publish details of the data store map as process variable in process context
+    processContextVariables[processElement.id].push({
+        name: dataStoreMap.name,
+        map: dataStoreMap.get(consts.DETAILS)
+    });
+
+    // replace data store map by data store
+    const dataStore = bpmnFactory.create('bpmn:DataStoreReference');
+    const result = insertShape(definitions, dataStore.parent, dataStore, {}, true, modeler, dataStoreMap);
+
+    if (result.success) {
+
+        // set documentation property of the data store to document the data store map it replaces
+        const currentDoc = getDocumentation(dataStoreMap) || '';
+        const dataDoc = createDataStoreMapDocs(dataStoreMap);
+        setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
+    } else {
+        return {success: false, failedData: dataStoreMap};
     }
     return {success: true};
 }
@@ -324,7 +345,7 @@ function transformDataStoreMaps(rootProcess, definitions, processContextVariable
  *
  * @param rootProcess Root process of the workflow
  * @param definitions Definitions of the workflow
- * @param processContextVariables Array of process variables which should be published in process context
+ * @param processContextVariables Object containing process variables which should be published in process context
  * @param modeler The modeler containing the workflow to transform
  * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
  *                      False else with details in failedData.
@@ -366,7 +387,7 @@ function transformTransformationTask(rootProcess, definitions, processContextVar
  * @param modeler The modeler containing the workflow to transform
  * @return {{success: boolean}} True if the ProcessVariablesTask could be successfully created, False else.
  */
-function createGlobalProcessVariables(processContextVariables, rootProcess, definitions, modeler) {
+export function createProcessContextVariablesTask(processContextVariables, rootProcess, definitions, modeler) {
     const elementRegistry = modeler.get('elementRegistry');
     const bpmnFactory = modeler.get('bpmnFactory');
     const modeling = modeler.get('modeling');
@@ -386,46 +407,75 @@ function createGlobalProcessVariables(processContextVariables, rootProcess, defi
             const startEventBo = event.element;
             const startEventElement = elementRegistry.get(startEventBo.id);
 
-            const newTaskBo = bpmnFactory.create('bpmn:Task');
-            newTaskBo.name = 'Create Process Variables [Generated]';
+            const newTaskBo = getProcessContextVariablesTask(startEventElement, event.parent, bpmnFactory, modeling, elementRegistry);
 
             // add camunda map to outputs for each entry
             for (let processVariable of processContextVariables[processId]) {
                 addCamundaOutputMapParameter(newTaskBo, processVariable.name, processVariable.map, bpmnFactory);
             }
-
-            const outgoingFlowElements = startEventBo.outgoing || [];
-
-            // height difference between the position of the center of a start event and a task
-            const Y_OFFSET_TASK = 19;
-
-            // create new task
-            const newTaskElement = modeling.createShape({
-                type: 'bpmn:Task',
-                businessObject: newTaskBo,
-            }, {x: startEventElement.x, y: startEventElement.y + Y_OFFSET_TASK}, event.parent, {});
-
-            modeling.updateProperties(newTaskElement, newTaskBo);
-
-            // move start event to the left to create space for the new task
-            modeling.moveElements([startEventElement], {x: -120, y: 0});
-
-            // connect new Task with activities which were connected with the start event
-            modeling.connect(startEventElement, newTaskElement, {type: 'bpmn:SequenceFlow'});
-            for (let outgoingConnectionBo of outgoingFlowElements) {
-                const outgoingConnectionElement = elementRegistry.get(outgoingConnectionBo.id);
-                const target = outgoingConnectionElement.target;
-
-                modeling.removeConnection(outgoingConnectionElement);
-                modeling.connect(newTaskElement, target, {
-                    type: outgoingConnectionElement.type,
-                    waypoints: outgoingConnectionElement.waypoints
-                });
-            }
         }
     }
 
     return {success: true};
+}
+
+/**
+ * Returns the ProcessContextVariables task for the given start event. If such a task already exists it is returned, else
+ * this task is created.
+ *
+ * @param startEventElement The element of the given start event
+ * @param parent The parent element of the start event
+ * @param bpmnFactory The bpmnFactory to create the new task if necessary.
+ * @param modeling the modeling module of the bpmn-js modeler.
+ * @param elementRegistry The elementRegistry containing the current elements of the workflow.
+ * @return {bpmn:Task} The ProcessContextVariables task for the start event
+ */
+function getProcessContextVariablesTask(startEventElement, parent, bpmnFactory, modeling, elementRegistry) {
+
+    const startEventBo = startEventElement.businessObject;
+
+    let processVariablesTaskBo;
+
+    // check if ProcessContextVariables task already exists
+    if (startEventElement.outgoing[0]
+        && startEventElement.outgoing[0].target
+        && startEventElement.outgoing[0].target.businessObject.name === 'Create Process Variables [Generated]') {
+        processVariablesTaskBo = startEventElement.outgoing[0].target.businessObject;
+
+    } else {
+        processVariablesTaskBo = bpmnFactory.create('bpmn:Task');
+        processVariablesTaskBo.name = 'Create Process Variables [Generated]';
+
+        const outgoingFlowElements = startEventBo.outgoing || [];
+
+        // height difference between the position of the center of a start event and a task
+        const Y_OFFSET_TASK = 19;
+
+        // create new task
+        const newTaskElement = modeling.createShape({
+            type: 'bpmn:Task',
+            businessObject: processVariablesTaskBo,
+        }, {x: startEventElement.x, y: startEventElement.y + Y_OFFSET_TASK}, parent, {});
+
+        modeling.updateProperties(newTaskElement, processVariablesTaskBo);
+
+        // move start event to the left to create space for the new task
+        modeling.moveElements([startEventElement], {x: -120, y: 0});
+
+        // connect new Task with activities which were connected with the start event
+        modeling.connect(startEventElement, newTaskElement, {type: 'bpmn:SequenceFlow'});
+        for (let outgoingConnectionBo of outgoingFlowElements) {
+            const outgoingConnectionElement = elementRegistry.get(outgoingConnectionBo.id);
+            const target = outgoingConnectionElement.target;
+
+            modeling.removeConnection(outgoingConnectionElement);
+            modeling.connect(newTaskElement, target, {
+                type: outgoingConnectionElement.type,
+                waypoints: outgoingConnectionElement.waypoints
+            });
+        }
+    }
+    return processVariablesTaskBo;
 }
 
 /**

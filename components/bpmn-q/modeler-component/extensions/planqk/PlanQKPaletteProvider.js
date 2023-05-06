@@ -1,6 +1,6 @@
 import * as consts from './utilities/Constants';
 
-export default class ServiceTaskPaletteProvider {
+export default class PlanQKPaletteProvider {
 
     constructor(bpmnFactory, create, elementFactory, palette, translate) {
 
@@ -65,7 +65,7 @@ export default class ServiceTaskPaletteProvider {
     }
 }
 
-ServiceTaskPaletteProvider.$inject = [
+PlanQKPaletteProvider.$inject = [
     'bpmnFactory',
     'create',
     'elementFactory',

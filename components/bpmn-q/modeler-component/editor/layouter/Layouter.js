@@ -56,7 +56,8 @@ function layoutProcess(modeling, elementRegistry, process) {
                 // layout elements in subprocess
                 if (flowElements[i].$type === 'bpmn:SubProcess') {
                     console.log('Flow element is subprocess. Layouting contained elements...');
-                    let oldBounds = getDi(flowElements[i]).bounds;
+                    const flowElement = elementRegistry.get(flowElements[i].id);
+                    let oldBounds = getDi(flowElement).bounds;
                     modeling.resizeShape(elementRegistry.get(flowElements[i].id), {
                         x: oldBounds.x,
                         y: oldBounds.y,
@@ -125,8 +126,8 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
             // retrieve the required elements from the registry
             let boundaryEventShape = elementRegistry.get(boundaryEvent.id);
             let attachedToElementShape = elementRegistry.get(boundaryEventShape.businessObject.attachedToRef.id);
-            let boundaryEventBounds = getDi(boundaryEventShape.businessObject).bounds;
-            let attachedToBounds = getDi(attachedToElementShape.businessObject).bounds;
+            let boundaryEventBounds = getDi(boundaryEventShape).bounds;
+            let attachedToBounds = getDi(attachedToElementShape).bounds;
 
             // get all boundary events that were already attached to this element to move the current one beneath the last one
             let attachedToElementBoundaries = [];

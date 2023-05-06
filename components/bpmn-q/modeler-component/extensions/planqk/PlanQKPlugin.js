@@ -8,6 +8,9 @@ import TransformationButton from "../../editor/ui/TransformationButton";
 
 let planqkModdleDescriptor = require('./resources/planqk-service-task-ext.json')
 
+/**
+ * Plugin Object of the PlanQK extension. Used to register the plugin in the plugin handler of the modeler.
+ */
 export default {
     name: 'planqk',
     extensionModule: PlanQKExtensionModule,

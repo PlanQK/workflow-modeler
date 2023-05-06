@@ -3,14 +3,12 @@ import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from './utilities/Constants';
 import {createMenuEntries, createMoreOptionsEntryWithReturn} from "../../editor/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
-import {createConfigurationsEntries} from "../../editor/configurations/ConfigurationsUtil";
-import {getTransformationTaskConfigurations} from "../data-extension/transf-task-configs/TransformationTaskConfigurations";
-import * as replaceOptions from "../data-extension/menu/DataFlowReplaceOptions";
+import * as planqkConsts from './utilities/Constants';
 
 /**
  * Replace menu provider of the PlanQK plugin. Adds custom replacement entries to model PlanQk service tasks and PlanQK data pools.
  */
-export default class PlanqkMenuProvider {
+export default class PlanQKMenuProvider {
 
     constructor(popupMenu, translate, modeling, bpmnReplace, activeSubscriptions, dataPools, oauthInfoByAppMap, contextPad, bpmnFactory) {
 
@@ -77,16 +75,18 @@ export default class PlanqkMenuProvider {
         };
     }
 
+    /**
+     * Creates a MoreOptionsEntry for the popup menu which displays the active subscriptions for PlanQK service tasks.
+     *
+     * @param element The element the menu entries are requested for.
+     * @return {{'replace-by-more-planqk-task-options': {label: string, className: string, action: Function}}}
+     */
     createTaskEntries(element) {
         const popupMenu = this.popupMenu;
         const translate = this.translate;
         const replaceElement = this.replaceElement;
         const activeSubscriptions = this.activeSubscriptions;
         const self = this;
-        // const createPlanQKServiceTaskEntries = this.createPlanQKServiceTaskEntries;
-        // const bpmnFactory = this.bpmnFactory;
-        // const modeling = this.modeling;
-        // const commandStack = this.commandStack;
 
         let options = self.createPlanQKServiceTaskEntries(element, activeSubscriptions);
         options = Object.assign(createMenuEntries(element, planqkReplaceOptions.TASK, translate, replaceElement), options);
@@ -131,6 +131,7 @@ export default class PlanqkMenuProvider {
     createServiceTaskEntryNew(element, subscription) {
 
         const self = this.modeling;
+        const replaceElement = this.replaceElement;
         const oauthInfoByAppMap = this.oauthInfoByAppMap;
         const serviceEndpointBaseUrl = getPluginConfig('planqk').serviceEndpointBaseUrl;
 
@@ -143,10 +144,19 @@ export default class PlanqkMenuProvider {
             className: 'bpmn-icon-service',
             action: function () {
 
+
+
+                // replace selected element if it is not already a PlanQK service task
+                let newElement;
+                if (element.type !== planqkConsts.PLANQK_SERVICE_TASK) {
+                    newElement = replaceElement(element, {type: planqkConsts.PLANQK_SERVICE_TASK});
+                }
+                let serviceElement = newElement || element;
+
                 const oAuthInfo = oauthInfoByAppMap[subscription.application.id];
 
                 // set the properties of the currently selected element to the respective values of the subscription
-                self.updateProperties(element, {
+                self.updateProperties(serviceElement, {
                     name: subscription.api.name,
                     subscriptionId: subscription.id,
                     applicationName: subscription.application.name,
@@ -188,7 +198,7 @@ export default class PlanqkMenuProvider {
     }
 
     /**
-     * Creates a replacement menu entry for the given data pool which sets teh property of the currently selected element
+     * Creates a replacement menu entry for the given data pool which sets the property of the currently selected element
      * to the respective value of the data pool
      *
      * @param element the element the replacement entries are requested for
@@ -225,7 +235,7 @@ export default class PlanqkMenuProvider {
     }
 }
 
-PlanqkMenuProvider.$inject = [
+PlanQKMenuProvider.$inject = [
     'popupMenu',
     'translate',
     'modeling',

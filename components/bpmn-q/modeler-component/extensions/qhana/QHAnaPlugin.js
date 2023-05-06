@@ -12,6 +12,9 @@ import qhanaStyles from './resources/qhana-icons.css';
 
 let qhanaModdleDescriptor = require('./resources/qhana-extension.json');
 
+/**
+ * Plugin Object of the QHAna extension. Used to register the plugin in the plugin handler of the modeler.
+ */
 export default {
     name: 'qhana',
     buttons: [<ExtensibleButton subButtons={[<UpdateQHAnaConfigurationsButton/>]}

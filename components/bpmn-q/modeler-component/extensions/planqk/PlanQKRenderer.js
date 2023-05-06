@@ -15,7 +15,7 @@ import {drawDataElementSVG, drawTaskSVG} from "../../editor/util/RenderUtilities
 const HIGH_PRIORITY = 14001,
     TASK_BORDER_RADIUS = 2;
 
-export default class ServiceTaskRenderer extends BpmnRenderer {
+export default class PlanQKRenderer extends BpmnRenderer {
     constructor(config, eventBus, styles, pathMap, canvas, textRenderer) {
         super(config, eventBus, styles, pathMap, canvas, textRenderer, HIGH_PRIORITY);
 
@@ -64,7 +64,7 @@ export default class ServiceTaskRenderer extends BpmnRenderer {
     }
 }
 
-ServiceTaskRenderer.$inject = [
+PlanQKRenderer.$inject = [
     'config',
     'eventBus',
     'styles',
