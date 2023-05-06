@@ -1,73 +1,108 @@
 import {
     getBusinessObject
 } from 'bpmn-js/lib/util/ModelUtil';
-import {
-    nextId
-} from './util';
 import KeyValueEntry from './KeyValueEntry';
 import {without} from 'min-dash';
-import * as consts from '../Constants'
+import * as consts from '../Constants';
+import {nextId} from '../../../editor/util/camunda-utils/ElementUtil';
 
-
+/**
+ *  Entry of the properties panel which displays a key value map. Entries can be added or removed over the UI of the
+ *  properties panel. The content displayed by this entry is laoded from the property with the given attribute name of
+ *  the given element.
+ *
+ * @param element The given element
+ * @param injector The injector module to load necessary dependencies
+ * @param translate The translate function of the bpmn-js modeler
+ * @returns {{add: ((function(*): void)|*), items: {entries: [{component: function(*): preact.VNode<any>, parameter: *, idPrefix: *, id: string},{component: function(*): preact.VNode<any>, parameter: *, idPrefix: *, id: string}], autoFocusEntry: string, id: string, label, remove: function(*): void}[]}}
+ * @constructor
+ */
 export default function KeyValueMap({element, injector, attributeName}) {
 
     const bpmnFactory = injector.get('bpmnFactory'),
         commandStack = injector.get('commandStack');
 
-    const parameters = element.businessObject.get(attributeName) || [];
+    // load key value map property
+    const keyValueMap = element.businessObject.get(attributeName) || [];
 
-    const items = parameters.map((parameter, index) => {
-        console.log('index: ' + index + ' ' + parameter.get('name'));
+    // create a KeyValueEntry for each entry of keyValueMap
+    const keyValueEntires = keyValueMap.map((keyValueEntry, index) => {
+
         const id = element.id + '-parameter-' + index;
 
         return {
             id,
-            label: parameter.get('name') || '',
+            label: keyValueEntry.get('name') || '',
             entries: KeyValueEntry({
                 idPrefix: id,
                 element,
-                parameter
+                parameter: keyValueEntry
             }),
             autoFocusEntry: id + '-name',
-            remove: removeFactory({commandStack, element, parameter, attributeName})
+            remove: removeFactory({commandStack, element, parameter: keyValueEntry, attributeName})
         };
     });
 
     return {
-        items,
+        items: keyValueEntires,
         add: addFactory({element, bpmnFactory, commandStack, attributeName})
     };
 }
 
-function removeFactory({commandStack, element, parameter, attributeName}) {
+/**
+ * Factory to remove the KeyValueEntry defined by the given keyValueEntry saved in the key value map of the property with the
+ * given attributeName of the given element.
+ *
+ * @param commandStack The commandStack of the bpmn-js modeler.
+ * @param element The given element
+ * @param keyValueEntry The given keyValueEntry
+ * @param attributeName The attributeName defining the property with the key value map in it.
+ * @returns {(function(*): void)|*}
+ */
+function removeFactory({commandStack, element, keyValueEntry, attributeName}) {
     return function (event) {
         event.stopPropagation();
 
-        let parameters = element.businessObject.get(attributeName) || [];
+        // get key value map
+        let keyValueMap = element.businessObject.get(attributeName) || [];
 
-        parameters = without(parameters, parameter);
+        // remove the given key value entry
+        keyValueMap = without(keyValueMap, keyValueEntry);
 
+        // save updated key value map in the element
         commandStack.execute('element.updateModdleProperties', {
             element,
             moddleElement: element.businessObject,
-            properties: {[attributeName]: parameters},
+            properties: {[attributeName]: keyValueMap},
         });
     };
 }
 
+/**
+ * Factory to create a new key value entry to the key value map saved in the property with the given attributeName of the
+ * given element.
+ *
+ * @param element The given element
+ * @param bpmnFactory The bpmnFactory to create the new key value entry.
+ * @param commandStack Th commandStack of the bpmn-js modeler.
+ * @param attributeName The name of the property the key value map is saved in.
+ * @returns {(function(*): void)|*}
+ */
 function addFactory({element, bpmnFactory, commandStack, attributeName}) {
     return function (event) {
         event.stopPropagation();
 
         const businessObject = getBusinessObject(element);
-        const attributeContent = businessObject.get(attributeName);
+        const keyValueMap = businessObject.get(attributeName);
 
+        // create a new key value entry
         const param = bpmnFactory.create(consts.KEY_VALUE_ENTRY, {name: nextId('Entry_'), value: ''});
 
+        // update key value map
         commandStack.execute('element.updateModdleProperties', {
             element,
             moddleElement: businessObject,
-            properties: {[attributeName]: attributeContent.concat(param)},
+            properties: {[attributeName]: keyValueMap.concat(param)},
         });
     };
 }

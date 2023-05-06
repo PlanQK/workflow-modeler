@@ -2,24 +2,18 @@ import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as dataConfigManager from "../config/DataConfigManager";
 
+/**
+ * React component representing a tab for the configuration modal of the editor.
+ *
+ * @return {JSX.Element} The config tab
+ * @constructor
+ */
 export default function TransformationTaskConfigurationsTab() {
 
     const [configurationsEndpoint, setConfigurationsEndpoint] = useState(dataConfigManager.getConfigurationsEndpoint());
 
-    const modeler = getModeler();
-
-    const editorActions = modeler.get('editorActions');
-
-    if (!editorActions._actions.hasOwnProperty('transformationTaskConfigurationsEndpointChanged')) {
-        editorActions.register({
-            transformationTaskConfigurationsEndpointChanged: function (configurationsEndpoint) {
-                modeler.config.transformationTaskConfigurationsEndpointChanged = configurationsEndpoint;
-            }
-        });
-    }
-
+    // save changed endpoint url if the modal is closed
     TransformationTaskConfigurationsTab.prototype.onClose = () => {
-        modeler.config.transformationTaskConfigurationsEndpointChanged = configurationsEndpoint;
         dataConfigManager.setConfigurationsEndpoint(configurationsEndpoint);
     };
 

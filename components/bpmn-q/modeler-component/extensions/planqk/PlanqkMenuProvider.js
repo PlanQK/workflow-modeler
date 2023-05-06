@@ -4,7 +4,7 @@ import * as consts from './utilities/Constants';
 import {createMenuEntries, createMoreOptionsEntryWithReturn} from "../../editor/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 import {createConfigurationsEntries} from "../../editor/configurations/ConfigurationsUtil";
-import {getServiceTaskConfigurations} from "../data-extension/configurations/TransformationTaskConfigurations";
+import {getTransformationTaskConfigurations} from "../data-extension/transf-task-configs/TransformationTaskConfigurations";
 import * as replaceOptions from "../data-extension/menu/DataFlowReplaceOptions";
 
 /**

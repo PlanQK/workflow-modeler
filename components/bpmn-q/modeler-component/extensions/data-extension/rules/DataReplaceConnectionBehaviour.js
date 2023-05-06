@@ -6,14 +6,16 @@ import {
 
 import {
     is,
-    isAny
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 
 import inherits from 'inherits-browser';
 
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
-
+/**
+ * Custom ReplaceConnectionBehaviour for the DataFlow extension elements. Extends the ReplaceConnectionBehaviour to use
+ * the custom DataFlow rules.
+ */
 export default function DataReplaceConnectionBehavior(eventBus, modeling, bpmnRules, injector, dataFlowRules) {
 
     CommandInterceptor.call(this, eventBus);
@@ -35,14 +37,13 @@ export default function DataReplaceConnectionBehavior(eventBus, modeling, bpmnRu
         var replacementType,
             remove;
 
-        /**
+        /*
          * Check if incoming or outgoing connections
          * can stay or could be substituted with an
          * appropriate replacement.
          *
          * This holds true for SequenceFlow <> MessageFlow.
          */
-
         if (is(connection, 'bpmn:SequenceFlow')) {
             if (!dataFlowRules.canConnectSequenceFlow(source, target)) {
                 remove = true;
@@ -54,7 +55,6 @@ export default function DataReplaceConnectionBehavior(eventBus, modeling, bpmnRu
         }
 
         // transform message flows into sequence flows, if possible
-
         if (is(connection, 'bpmn:MessageFlow')) {
 
             if (!bpmnRules.canConnectMessageFlow(source, target)) {

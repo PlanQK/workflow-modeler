@@ -6,6 +6,9 @@ import {
 import * as consts from '../Constants';
 import {isConnectedWith} from '../../../editor/util/ModellingUtilities';
 
+/**
+ * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
+ */
 export default class CustomRulesProvider extends BpmnRules {
 
     constructor(eventBus) {
@@ -19,7 +22,6 @@ export default class CustomRulesProvider extends BpmnRules {
          * Fired during creation of a new connection (while you selected the target of a connection)
          */
         this.addRule('connection.create', 200000, function (context) {
-            console.log('+++++ connection.create');
 
             const source = context.source,
                 target = context.target;
@@ -31,7 +33,6 @@ export default class CustomRulesProvider extends BpmnRules {
          * Fired when a connection between two elements is drawn again, e.g. after dragging an element
          */
         this.addRule('connection.reconnect', 200000000000, function (context) {
-            console.log('+++++ connection.reconnect');
 
             const source = context.source,
                 target = context.target;
@@ -43,23 +44,11 @@ export default class CustomRulesProvider extends BpmnRules {
             }
         });
 
-        // this.addRule('elements.create', 200000000000, function (context) {
-        //   console.log('+++++ elements.create');
-        //
-        //   var elements = context.elements;
-        //   let b = true;
-        //
-        //
-        //   elements.forEach(function (element) {
-        //     if (isConnection(element)) {
-        //       b = b && canConnectDataExtension(element.source, element.target);
-        //     }
-        //   });
-        //   return b;
-        // });
-
+        /**
+         * Fired when a new shape for an element is created
+         */
         this.addRule('shape.create', 200000000000, function (context) {
-            console.log('+++++ shape create');
+
             return canCreate(
                 context.shape,
                 context.target,
@@ -69,34 +58,59 @@ export default class CustomRulesProvider extends BpmnRules {
         });
     }
 
+    /**
+     * Returns the type of the connection if the given source and target elements can be connected by the given
+     * connection element, False else.
+     *
+     * @param source The given source element
+     * @param target The given target element
+     * @param connection The given connection element
+     */
     canConnect(source, target, connection) {
         console.log('##### can connect');
 
+        // test connection via transformation association if source or target are DataMapObjects
         if (is(source, consts.DATA_MAP_OBJECT) || is(target, consts.DATA_MAP_OBJECT)) {
             return this.canConnectDataExtension(source, target);
         }
 
         if (!is(connection, 'bpmn:DataAssociation')) {
 
+            // test connection via sequence flow
             if (this.canConnectSequenceFlow(source, target)) {
                 return {type: 'bpmn:SequenceFlow'};
             }
         }
 
+        // test connection via super.canConnect
         return super.canConnect(source, target, connection);
     }
 
+    /**
+     * Returns True if the given source and target element can be connected via a sequence flow, False else
+     *
+     * @param source The given source element
+     * @param target The given target element
+     */
     canConnectSequenceFlow(source, target) {
         console.log('##### canConnectSequenceFlow');
 
+        // do not allow sequence flow connections with DataMapObjects
         if (is(source, consts.DATA_MAP_OBJECT) || is(target, consts.DATA_MAP_OBJECT)) {
-            // this.canConnectDataExtension(source, target)
             return false;
         }
 
         return super.canConnectSequenceFlow(source, target);
     }
 
+    /**
+     * Returns the type of the connection if a connection between the given source and target element is possible with a
+     * transformation association, False else.
+     *
+     * @param source The given source element
+     * @param target The given target element
+     * @returns {{type: string}|boolean}
+     */
     canConnectDataExtension(source, target) {
         console.log('##### can connect data extension');
 
@@ -146,19 +160,22 @@ export default class CustomRulesProvider extends BpmnRules {
         }
     }
 
+    /**
+     * Returns True if the given shape can be created in the connection between the source and target element, False else.
+     *
+     * @param shape The given shape
+     * @param target The given target element
+     * @param source The given source element
+     * @param position The position where the shape should be created
+     * @returns {boolean|*|boolean}
+     */
     canCreate(shape, target, source, position) {
         console.log('##### can create');
 
+        // do not allow insertion of DataMapObjects
         if (is(shape, 'data:DataObjectMapReference')) {
-            console.log('is object map');
 
-            if (is(target, 'bpmn:SequenceFlow')) {
-                console.log('is sequence flow');
-                return false;
-            }
-
-            if (is(target, 'bpmn:DataAssociation')) {
-                console.log('is data association');
+            if (isAny(target, ['bpmn:SequenceFlow', 'bpmn:DataAssociation'])) {
                 return false;
             }
         }
@@ -166,6 +183,13 @@ export default class CustomRulesProvider extends BpmnRules {
         return super.canCreate(shape, target, source, position);
     }
 
+    /**
+     * Returns the type of the connection if the given source and target element can be connected via a association connection, False else.
+     *
+     * @param source The given source element
+     * @param target The given target element
+     * @returns {{type: string}|boolean|*|boolean}
+     */
     canConnectAssociation(source, target) {
         let canConnectData = this.canConnectDataExtension(source, target);
 

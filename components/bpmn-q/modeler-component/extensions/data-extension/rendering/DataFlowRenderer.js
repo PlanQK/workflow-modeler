@@ -5,6 +5,9 @@ import {drawDataElementSVG, drawTaskSVG} from "../../../editor/util/RenderUtilit
 import {getSVG} from "./DataFlowSVGMap";
 import {extractConfigSVG} from '../../../editor/configurations/ConfigurationsUtil';
 
+/**
+ * Custom renderer for the DataFlow elements. Extends the BpmnRenderer of bpmn-js.
+ */
 export default class DataFlowRenderer extends BpmnRenderer {
 
     constructor(config, eventBus, styles, pathMap, canvas, textRenderer) {
@@ -80,11 +83,18 @@ export default class DataFlowRenderer extends BpmnRenderer {
         return this.dataFlowHandler[element.type];
     }
 
+    /**
+     * Draw new shape for the given element based on its type.
+     *
+     * @param parentNode Parent of the given element
+     * @param element The given element
+     * @returns {*}
+     */
     drawShape(parentNode, element) {
 
         console.log("Draw Shape of type " + element.type);
 
-        // handle QuantME elements
+        // handle DataFlow elements
         if (element.type in this.dataFlowHandler) {
             const h = this.dataFlowHandler[element.type];
 
@@ -93,16 +103,23 @@ export default class DataFlowRenderer extends BpmnRenderer {
         }
     }
 
-    drawConnection(parentGfx, element) {
+    /**
+     * Draw new connection for the given connection element.
+     *
+     * @param parentGfx Parent of the given element
+     * @param connectionElement The given connection element
+     * @returns {*}
+     */
+    drawConnection(parentGfx, connectionElement) {
 
-        console.log("Draw Connection of type " + element.type);
+        console.log("Draw Connection of type " + connectionElement.type);
 
-        if (element.type in this.dataFlowHandler) {
-            let h = this.dataFlowHandler[element.type];
-            return h(this, parentGfx, element);
+        if (connectionElement.type in this.dataFlowHandler) {
+            let h = this.dataFlowHandler[connectionElement.type];
+            return h(this, parentGfx, connectionElement);
         }
 
-        return super.drawConnection(parentGfx, element);
+        return super.drawConnection(parentGfx, connectionElement);
     }
 }
 

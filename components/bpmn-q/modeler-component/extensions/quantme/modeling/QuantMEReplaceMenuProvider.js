@@ -49,8 +49,9 @@ export default class QuantMEReplaceMenuProvider {
         const self = this;
         return function (entries) {
 
-            // do not show entries for extension elements of other plugins
-            if (!(element.type.startsWith('bpmn') || element.type.startsWith('quantme') || element.type.startsWith('dataflow'))) {
+            // do not show entries for extension elements of other plugins, except for DataMapObjects to list the loaded
+            // configurations for DtaMapObjects
+            if (!(element.type.startsWith('bpmn') || element.type.startsWith('quantme') || is(element, dataConsts.DATA_MAP_OBJECT))) {
                 return entries;
             }
 

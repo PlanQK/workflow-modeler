@@ -1,9 +1,11 @@
 import {getPluginConfig} from "../../../editor/plugin/PluginConfigHandler";
 
+// default config entries used if no value is specified in the initial plugin config
 const defaultConfig = {
     configurationsEndpoint: 'http://localhost:8000/service-task',
 };
 
+// current config
 const config = {};
 
 /**

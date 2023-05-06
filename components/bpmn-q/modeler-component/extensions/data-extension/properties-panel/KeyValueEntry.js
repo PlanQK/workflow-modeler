@@ -3,6 +3,9 @@ import {TextFieldEntry} from '@bpmn-io/properties-panel';
 
 import {useService} from 'bpmn-js-properties-panel';
 
+/**
+ * Preact component for an entry for the properties panel which displays a Name and a Value Entry.
+ */
 export default function KeyValueEntry(props) {
 
     const {
@@ -12,8 +15,8 @@ export default function KeyValueEntry(props) {
 
     return [
         {
-            id: idPrefix + '-name',
-            component: Name,
+            id: idPrefix + '-key',
+            component: Key,
             idPrefix,
             parameter
         },
@@ -23,33 +26,13 @@ export default function KeyValueEntry(props) {
             idPrefix,
             parameter
         },
-        // {
-        //   id: idPrefix + '-extensions',
-        //   component: Test,
-        //   idPrefix,
-        //   parameter
-        // }
     ];
 }
 
-function Test(props) {
-    const {
-        idPrefix,
-        element,
-        parameter
-    } = props;
-
-    return <div className="toolbar">
-        <Name idPrefix={idPrefix}
-              element={element}
-              parameter={parameter}/>
-        <Value idPrefix={idPrefix}
-               element={element}
-               parameter={parameter}/>
-    </div>;
-}
-
-function Name(props) {
+/**
+ * Preact component consisting of a TextFieldEntry for the name property of the given parameter.
+ */
+function Key(props) {
     const {
         idPrefix,
         element,
@@ -60,8 +43,8 @@ function Name(props) {
     const translate = useService('translate');
     const debounce = useService('debounceInput');
 
+    // set name property of parameter to the new value
     const setValue = (value) => {
-        // return parameter.name = value;
         commandStack.execute('element.updateModdleProperties', {
             element,
             moddleElement: parameter,
@@ -85,6 +68,9 @@ function Name(props) {
     });
 }
 
+/**
+ * Preact component consisting of a TextFieldEntry for the key property of the given parameter.
+ */
 function Value(props) {
     const {
         idPrefix,
@@ -96,6 +82,7 @@ function Value(props) {
     const translate = useService('translate');
     const debounce = useService('debounceInput');
 
+    // set value property of parameter to the new value
     const setValue = (value) => {
         // return parameter.value = value;
         commandStack.execute('element.updateModdleProperties', {
