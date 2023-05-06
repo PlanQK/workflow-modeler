@@ -52,7 +52,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         const self = this;
         window.addEventListener("message", function (event) {
 
-            // check if the message contains a correctly formated workflow
+            // check if the message contains a correctly formatted workflow
             if (event.origin === window.location.href.replace(/\/$/, '')
                 && event.data && event.data.workflow && typeof event.data.workflow === 'string' && event.data.workflow.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
 
@@ -68,7 +68,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         // wait until shadow dom is loaded
         requestAnimationFrame(() => {
 
-            // start the bpmn-js modeler and render the react components
+            // start the bpmn-js modeler and render the React components
             this.startModeler();
         });
     }
@@ -143,11 +143,11 @@ export class QuantumWorkflowModeler extends HTMLElement {
         bpmnContainer.innerHTML = '';
         propertiesPanelContainer.innerHTML = '';
 
-        // create a new bpmn-js modeler instance with all additional modeules and extensions defined by the plugins
+        // create a new bpmn-js modeler instance with all additional modules and extensions defined by the plugins
         const modeler = createModeler(bpmnContainer, propertiesPanelContainer);
         console.log('Created Modeler');
 
-        // setup the notification handler and render it into the DOM
+        // set up the notification handler and render it into the DOM
         const notificationsContainer = this.shadowRoot.querySelector('#qwm-notification-container');
         const handler = NotificationHandler.getInstance();
         const notificationComponent = handler.createNotificationsComponent([], notificationsContainer);
