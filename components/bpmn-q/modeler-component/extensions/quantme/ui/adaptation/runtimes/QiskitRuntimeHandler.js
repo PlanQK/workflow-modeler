@@ -47,15 +47,6 @@ export async function getQiskitRuntimeProgramDeploymentModel(candidate, modelerC
         }
     }
 
-    // extract workflow XML
-    // function exportXmlWrapper() {
-    //   return new Promise((resolve) => {
-    //     getXml(candidate.modeler).catch((err, successResponse) => {
-    //       resolve(successResponse);
-    //     });
-    //   });
-    // }
-
     let xml = await getXml(candidate.modeler);
 
     // transform QuantME tasks within candidate

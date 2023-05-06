@@ -39,22 +39,17 @@ export default class QuantMEReplaceMenuProvider {
         popupMenu.registerProvider('bpmn-replace', this);
     }
 
-    getPopupMenuHeaderEntries() {
-        return function (entries) {
-            return entries;
-        };
-    }
-
     getPopupMenuEntries(element) {
         const self = this;
         return function (entries) {
 
             // do not show entries for extension elements of other plugins, except for DataMapObjects to list the loaded
-            // configurations for DtaMapObjects
+            // configurations for DataMapObjects
             if (!(element.type.startsWith('bpmn') || element.type.startsWith('quantme') || is(element, dataConsts.DATA_MAP_OBJECT))) {
                 return entries;
             }
 
+            // add menu entries for the loaded configuration which can be applied to DataMapObjects
             if (isAny(element, ['bpmn:DataObjectReference', dataConsts.DATA_MAP_OBJECT])) {
                 const dataEntries = self.createQuantMEDataEntry(element);
                 return Object.assign(dataEntries, entries);
@@ -76,13 +71,19 @@ export default class QuantMEReplaceMenuProvider {
         };
     }
 
+    /**
+     * Create a MoreOptionsEntry which contains menu entries to replace the current element with all QuantME task types.
+     *
+     * @param element The given element
+     * @return {{'replace-by-more-options': {label: string, className: string, action: Function}}}
+     */
     createQuantMETasks(element) {
         const popupMenu = this.popupMenu;
         const translate = this.translate;
         const replaceElement = this.bpmnReplace.replaceElement;
 
+        // create menu entries for the QuantME task types
         let options = createMenuEntries(element, quantmeReplaceOptions.TASK, translate, replaceElement);
-        // options = Object.assign(this.createDemoTasks(element), options);
 
         return {
             ['replace-by-more-options']: createMoreOptionsEntryWithReturn(
@@ -96,6 +97,12 @@ export default class QuantMEReplaceMenuProvider {
         };
     }
 
+    /**
+     * Creates MoreOptionsEntry for the QuantME data objects configurations.
+     *
+     * @param element the given element the menu entries are requested for.
+     * @return {{'replace-by-quantme-data-options': {label: string, className: string, action: Function}}}
+     */
     createQuantMEDataEntry(element) {
         const bpmnFactory = this.bpmnFactory;
         const modeling = this.modeling;
@@ -103,6 +110,7 @@ export default class QuantMEReplaceMenuProvider {
         const replaceElement = this.replaceElement;
         const commandStack = this.commandStack;
 
+        // create menu entries to replace the current element by the configuration represented by the menu entry
         let options = createConfigurationsEntries(
             element,
             'dataflow-data-map-object-icon',

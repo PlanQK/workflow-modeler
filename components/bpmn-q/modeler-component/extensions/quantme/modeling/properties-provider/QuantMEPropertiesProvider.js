@@ -1,7 +1,6 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from "../../Constants";
 import * as dataConsts from "../../../data-extension/Constants";
-
 import {
     DataPreparationTaskProperties,
     HardwareSelectionSubprocessProperties,
@@ -20,10 +19,8 @@ import ConfigurationsProperties from '../../../../editor/configurations/Configur
 
 const LOW_PRIORITY = 500;
 
-
 /**
- * A provider with a `#getGroups(element)` method
- * that exposes groups for a diagram element.
+ * A provider with a `#getGroups(element)` method that exposes groups for a diagram element.
  *
  * @param propertiesPanel
  * @param injector
@@ -69,6 +66,8 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
                 groups[2] = ImplementationGroup(element, injector, getWineryEndpoint());
             }
 
+            // add properties group for displaying the properties defined by the configurations if a configuration
+            // is applied to the current element
             if (is(element, dataConsts.DATA_MAP_OBJECT)) {
 
                 const selectedConfiguration = dataObjectConfigs().getQuantMEDataConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
@@ -85,6 +84,14 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
 
 QuantMEPropertiesProvider.$inject = ['propertiesPanel', 'injector', 'translate', 'eventBus', 'bpmnFactory'];
 
+/**
+ * Create properties group to display custom QuantME properties in the properties panel. The entries of this group
+ * depend on the actual type of the given element and are determined in QuantMEProps.
+ *
+ * @param element The given element
+ * @param translate The translate function of the bpmn-js modeler.
+ * @return {{entries: ([{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|*|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]), id: string, label}}
+ */
 function createQuantMEGroup(element, translate) {
 
     // add required properties to general tab
@@ -95,6 +102,15 @@ function createQuantMEGroup(element, translate) {
     };
 }
 
+/**
+ * Properties group to show customized implementation options entry for service tasks.
+ *
+ * @param element The element to show the properties for.
+ * @param injector The injector of the bpmn-js modeler
+ * @param wineryEndpoint The winery endpoint of the QuantME plugin
+ * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
+ * @constructor
+ */
 function ImplementationGroup(element, injector, wineryEndpoint) {
     const translate = injector.get('translate');
 
@@ -115,7 +131,7 @@ function ImplementationGroup(element, injector, wineryEndpoint) {
 }
 
 /**
- * Add the property entries for the QuantME attributes to the given group
+ * Add the property entries for the QuantME attributes to the given group based on the type of the QuantME element
  *
  * @param element the QuantME element
  */
@@ -150,6 +166,15 @@ function QuantMEProps(element) {
     }
 }
 
+/**
+ * Create properties group to display the QuantME configurations applied to the DataMapObject
+ *
+ * @param element The given DataMapObject
+ * @param injector The injector of the bpmn-js modeler.
+ * @param translate The translate function.
+ * @param configuration The configuration applied to the given DataMapObject
+ * @return {{entries: (*), id: string, label}}
+ */
 function createQuantMEDataGroup(element, injector, translate, configuration) {
 
     return {

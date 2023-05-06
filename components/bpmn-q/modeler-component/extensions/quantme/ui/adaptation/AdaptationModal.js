@@ -10,15 +10,22 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React, {useState} from "react";
+import React from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
-// import { Modal } from 'camunda-modeler-plugin-helpers/components';
 
 // polyfill upcoming structural components
 const Title = Modal.Title || (({children}) => <h2>{children}</h2>);
 const Body = Modal.Body || (({children}) => <div>{children}</div>);
 const Footer = Modal.Footer || (({children}) => <div>{children}</div>);
 
+/**
+ * React component which contains a modal to analyze the current workflow for hybrid loops
+ * and improve it if necessary.
+ *
+ * @param onClose Callback called when the modal is closed
+ * @return {JSX.Element}
+ * @constructor
+ */
 export default function AdaptationModal({onClose}) {
 
     const onSubmit = () => onClose({

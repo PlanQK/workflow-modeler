@@ -1,4 +1,3 @@
-//
 import * as consts from "../../Constants";
 import {isTextFieldEntryEdited, isSelectEntryEdited} from "@bpmn-io/properties-panel";
 import {AlgorithmEntry} from "./QuantMEPropertyEntries.js";
@@ -19,7 +18,11 @@ import {
     ShotsEntry, SimulatorsAllowedEntry,
     UrlEntry
 } from "./QuantMEPropertyEntries";
-import {ORACLE_ID} from "../../Constants";
+
+/**
+ * This file contains all properties of the QuantME task types and the entries they define.
+ */
+
 
 export function QuantumComputationTaskProperties(element) {
 

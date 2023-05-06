@@ -1,16 +1,11 @@
 import React from "react";
 
 import QuantMEExtensionModule from "./modeling";
-import AdaptationPlugin from "./ui/adaptation/AdaptationPlugin";
-import QuantMEController from "./ui/control/QuantMEController";
-import DeploymentPlugin from "./ui/deployment/services/DeploymentPlugin";
-import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import BPMNConfigTab from "./configTabs/BPMNConfigTab";
 import OpenToscaTab from "./configTabs/OpenToscaTab";
 import NisqAnalyzerTab from "./configTabs/NisqAnalyzerTab";
 import QrmDataTab from "./configTabs/QrmDataTab";
 import HybridRuntimeTab from "./configTabs/HybridRuntimeTab";
-import NotificationHandler from "../../editor/ui/notifications/NotificationHandler";
 import {getQRMs} from "./qrm-manager";
 import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
 import {getXml} from "../../editor/util/IoUtilities";
@@ -19,7 +14,6 @@ import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
 import DataObjectConfigurationsTab from './configurations/DataObjectConfigurationsTab';
-import UpdateDataObjectConfigurationsButton from './configurations/UpdateDataObjectConfigurationsButton';
 
 import quantMEStyles from './styling/quantme.css';
 import QuantMEPluginButton from "./ui/QuantMEPluginButton";
@@ -70,16 +64,6 @@ export default {
     transformExtensionButton: <TransformationButton name='QuantME Transformation' transformWorkflow={
         async (xml) => {
 
-            // load current xml if not given as parameter
-            if (!xml) {
-                const modeler = getModeler();
-                xml = await getXml(modeler);
-            }
-
-
-            // const modeler = getModeler();
-            //
-            // let xml = await modeler.get('bpmnjs').saveXML();
             let currentQRMs = getQRMs();
             return await startQuantmeReplacementProcess(xml, currentQRMs,
                 {

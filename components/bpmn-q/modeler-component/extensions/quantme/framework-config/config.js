@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// hard coded default values for the config entries which are used if no values are configured via the plugin config
 const defaultConfig = {
     quantmeDataConfigurationsEndpoint: 'http://localhost:8100/data-objects',
     opentoscaEndpoint: 'http://192.168.178.20:1337/csars',

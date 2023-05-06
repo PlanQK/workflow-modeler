@@ -10,7 +10,6 @@
  */
 
 import fetch from 'node-fetch';
-// const fetch = require('node-fetch');
 
 /**
  * Get the URLs to all folders in the given public repository

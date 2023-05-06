@@ -9,20 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// import extensionElementsHelper from 'bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper';
 import $ from 'jquery';
-import BpmnModeler from 'bpmn-js/lib/Modeler';
-// import { elementTemplates } from '@bpmn-io/properties-panel';
-import quantMEModdleExtension from '../resources/quantum4bpmn.json';
-import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
-import quantMEModule from '../modeling';
-import {createTempModeler} from "../../../editor/ModelerHandler";
-import {addExtensionElements, getExtensionElementsList} from "../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import {getInputOutput} from "../../../editor/util/camunda-utils/InputOutputUtil";
-import {useService} from "bpmn-js-properties-panel";
-import {getXml} from "../../../editor/util/IoUtilities";
-
-// let cmdHelper = require('')
 
 /**
  * Check if the given task is a QuantME task

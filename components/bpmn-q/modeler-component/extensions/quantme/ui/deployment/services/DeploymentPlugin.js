@@ -11,8 +11,6 @@
 
 /* eslint-disable no-unused-vars*/
 import React, {Fragment, PureComponent} from 'react';
-// import React, { Fragment, PureComponent } from 'camunda-modeler-plugin-helpers/react';
-// import { Fill } from 'camunda-modeler-plugin-helpers/components';
 
 import ServiceDeploymentOverviewModal from './ServiceDeploymentOverviewModal';
 import ServiceDeploymentInputModal from './ServiceDeploymentInputModal';
@@ -23,7 +21,6 @@ import {bindUsingPull, bindUsingPush} from '../../../deployment/BindingUtils';
 import {getServiceTasksToDeploy} from '../../../deployment/DeploymentUtils';
 import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
-import {getXml} from "../../../../../editor/util/IoUtilities";
 import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
 
 const defaultState = {
@@ -37,13 +34,7 @@ export default class DeploymentPlugin extends PureComponent {
     constructor(props) {
         super(props);
 
-        // modelers for all tabs to enable switching between them
-        this.modelers = {};
-
         this.state = defaultState;
-
-        // get backend to trigger workflow deployment
-        this.backend = '';//props._getGlobal('backend');
 
         this.handleDeploymentOverviewClosed = this.handleDeploymentOverviewClosed.bind(this);
         this.handleDeploymentInputClosed = this.handleDeploymentInputClosed.bind(this);
@@ -53,28 +44,6 @@ export default class DeploymentPlugin extends PureComponent {
     componentDidMount() {
 
         this.modeler = getModeler();
-        // get modeler to access current workflow
-        // this.props.subscribe('bpmn.modeler.created', (event) => {
-        //
-        //   const {
-        //     modeler, tab
-        //   } = event;
-        //
-        //   // save modeler and activate as current modeler
-        //   this.modelers[tab.id] = modeler;
-        //   this.modeler = modeler;
-        // });
-        //
-        // // change to modeler corresponding to the active tab
-        // this.props.subscribe('app.activeTabChanged', ({ activeTab }) => {
-        //   this.modeler = this.modelers[activeTab.id];
-        //   this.state = defaultState;
-        // });
-        //
-        // // remove corresponding modeler if tab is closed
-        // this.props.subscribe('app.closedTab', ({ tab }) => {
-        //   delete this.modelers[tab.id];
-        // });
     }
 
     /**
@@ -330,42 +299,6 @@ export default class DeploymentPlugin extends PureComponent {
         return csarsToDeploy;
     }
 
-    // /**
-    //  * Deploy the current workflow to the Camunda engine
-    //  */
-    // async deployWorkflow() {
-    //
-    //   // get XML of the current workflow
-    //   const rootElement = getRootProcess(this.modeler.getDefinitions());
-    //   const xml = (await this.modeler.saveXML({ format: true })).xml;
-    //
-    //   // check if there are views defined for the modeler and include them in the deployment
-    //   let viewsDict = {};
-    //   if (this.modeler.views !== undefined) {
-    //     console.log('Adding additional views during deployment: ', this.modeler.views);
-    //     viewsDict = this.modeler.views;
-    //   }
-    //
-    //   // start deployment of workflow and views
-    //   let result = await deployWorkflow(rootElement.id, xml, viewsDict);
-    //
-    //   if (result.status === 'failed') {
-    //     NotificationHandler.getInstance().displayNotification({
-    //       type: 'error',
-    //       title: 'Unable to deploy workflow',
-    //       content: 'Workflow deployment failed. Please check the configured Camunda engine endpoint!',
-    //       duration: 20000
-    //     });
-    //   } else {
-    //     NotificationHandler.getInstance().displayNotification({
-    //       type: 'info',
-    //       title: 'Workflow successfully deployed',
-    //       content: 'Workflow successfully deployed under deployment Id: ' + result.deployedProcessDefinition.deploymentId,
-    //       duration: 20000
-    //     });
-    //   }
-    // }
-
     render() {
 
         // render deployment button and pop-up menu
@@ -376,10 +309,6 @@ export default class DeploymentPlugin extends PureComponent {
                     <span className="app-icon-service-deployment"><span
                         className="indent">Service Deployment</span></span>
                 </button>
-                {/*<button type="button" className="toolbar-btn" title="Deploy the current workflow"*/}
-                {/*  onClick={() => this.deployWorkflow()}>*/}
-                {/*  <span className="workflow-deployment"><span className="indent">Workflow Deployment</span></span>*/}
-                {/*</button>*/}
             </div>
             {this.state.windowOpenDeploymentOverview && (
                 <ServiceDeploymentOverviewModal

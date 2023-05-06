@@ -21,7 +21,7 @@ import * as consts from '../../Constants';
 import {addExtensionElements} from '../../../../editor/util/camunda-utils/ExtensionElementsUtil';
 import {createTempModelerFromXml, createPlainModeler} from '../../../../editor/ModelerHandler';
 import {getPropertiesToCopy, insertShape} from '../../../../editor/util/TransformationUtilities';
-import {getCamundaInputOutput, getRootProcess} from '../../../../editor/util/ModellingUtilities';
+import {getCamundaInputOutput, getExtensionElements, getRootProcess} from '../../../../editor/util/ModellingUtilities';
 import {getXml} from '../../../../editor/util/IoUtilities';
 
 /**
@@ -33,6 +33,7 @@ export async function replaceHardwareSelectionSubprocess(subprocess, parent, mod
     let modeling = modeler.get('modeling');
     let elementRegistry = modeler.get('elementRegistry');
     let commandStack = modeler.get('commandStack');
+    let moddle = modeler.get('moddle');
 
     // replace QuantumHardwareSelectionSubprocess with traditional subprocess
     let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {type: 'bpmn:SubProcess'});
@@ -186,7 +187,8 @@ export async function replaceHardwareSelectionSubprocess(subprocess, parent, mod
     modeling.connect(joiningGateway, invokeTransformedFragment, {type: 'bpmn:SequenceFlow'});
 
     // pass all variables between the caller and callee workflow
-    let extensionElements = addExtensionElements(invokeTransformedFragmentBo, invokeTransformedFragmentBo, bpmnFactory.create('camunda:In'), bpmnFactory, commandStack)['extensionElements'];
+    addExtensionElements(invokeTransformedFragmentBo, invokeTransformedFragmentBo, bpmnFactory.create('camunda:In'), bpmnFactory, commandStack);
+    let extensionElements = getExtensionElements(invokeTransformedFragmentBo, moddle);
     let invokeTransformedFragmentIn = extensionElements.values[0];
     let invokeTransformedFragmentOut = bpmnFactory.create('camunda:Out');
     extensionElements.values.push(invokeTransformedFragmentOut);

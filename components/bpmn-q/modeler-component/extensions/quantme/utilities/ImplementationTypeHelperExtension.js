@@ -9,19 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getExtension} from "./Utilities";
 import {
     getListenerBusinessObject,
     getServiceTaskLikeBusinessObject,
     isDmnCapable,
     isExternalCapable,
-    isListener,
     isServiceTaskLike
 } from "../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import {getExtensionElementsList} from "../../../editor/util/camunda-utils/ExtensionElementsUtil";
-
-// const extensionsElementHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
-// const implementationTypeHelper = require('./ImplementationTypeHelper');
 
 export function getImplementationType(element) {
 

@@ -26,13 +26,14 @@ const defaultState = {
     adaptationOpen: false
 };
 
+/**
+ * React component which contains a button which opens the adaption modal when clicked.
+ */
 export default class AdaptationPlugin extends PureComponent {
 
     constructor(props) {
         super(props);
 
-        // modelers for all tabs to enable switching between them
-        // this.modelers = {};
         this.modeler = getModeler();
 
         this.state = defaultState;
@@ -41,40 +42,7 @@ export default class AdaptationPlugin extends PureComponent {
         this.handleRewriteClosed = this.handleRewriteClosed.bind(this);
 
         // get QuantME component from the backend, e.g., to retrieve current QRMs
-        this.quantME = '';//props._getGlobal('quantME');
-
-        // get config to update details in the backend
-        this.backendConfig = '';//props._getGlobal('config');
-    }
-
-    componentDidMount() {
-
-        // const eventBus = useService('eventBus');
-        //
-        // // get modeler to access current workflow
-        // eventBus.on('bpmn.modeler.created', (event) => {
-        //
-        //   const {
-        //     modeler, tab
-        //   } = event;
-        //
-        //   // save modeler and activate as current modeler
-        //   this.modelers[tab.id] = modeler;
-        //   this.modeler = modeler;
-        // });
-        //
-        // // change to modeler corresponding to the active tab
-        // //TODO: reactivate if tabs are added
-        // eventBus.on('app.activeTabChanged', ({ activeTab }) => {
-        //   this.modeler = this.modelers[activeTab.id];
-        //   this.state = defaultState;
-        // });
-        //
-        // //TODO: reactivate if tabs are added
-        // //remove corresponding modeler if tab is closed
-        // eventBus.on('app.closedTab', ({ tab }) => {
-        //   delete this.modelers[tab.id];
-        // });
+        this.quantME = '';
     }
 
     async handleAdaptationClosed(result) {

@@ -11,17 +11,21 @@
 
 import React from "@bpmn-io/properties-panel/preact/compat";
 
-let ModelUtil = require('bpmn-js/lib/util/ModelUtil');
-import {TextFieldEntry, isTextFieldEntryEdited, TextAreaEntry, SelectEntry} from '@bpmn-io/properties-panel';
+import {TextFieldEntry, SelectEntry} from '@bpmn-io/properties-panel';
 import * as consts from '../../Constants';
 import {useService} from 'bpmn-js-properties-panel';
-import {useState} from "@bpmn-io/properties-panel/preact/hooks";
+import {HiddenTextFieldEntry} from '../../../../editor/popup/HiddenTextFieldEntry';
+
+/**
+ * All entries needed to display the different properties introduced through the QuantME task types. One entry represents one
+ * property.
+ */
 
 export function AlgorithmEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -49,19 +53,19 @@ export function ProviderEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
     const getValue = function () {
         return element.businessObject.provider;
-    }
+    };
 
     const setValue = function (newValue) {
         return modeling.updateProperties(element, {
             provider: newValue
         });
-    }
+    };
 
     return <TextFieldEntry
         id={consts.PROVIDER}
@@ -77,7 +81,7 @@ export function QuantumCircuitEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -105,7 +109,7 @@ export function UrlEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -132,7 +136,7 @@ export function EncodingSchemaEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -160,7 +164,7 @@ export function ProgrammingLanguageEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -187,7 +191,7 @@ export function OracleIdEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -214,7 +218,7 @@ export function OracleCircuitEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -241,7 +245,7 @@ export function OracleURLEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -268,7 +272,7 @@ export function QpuEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -295,7 +299,7 @@ export function ShotsEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -327,7 +331,7 @@ export function MaxAgeEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -354,7 +358,7 @@ export function ProvidersEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -381,7 +385,7 @@ export function SimulatorsAllowedEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -408,7 +412,7 @@ export function SelectionStrategyEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -435,7 +439,7 @@ export function CalibrationMethodEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -460,9 +464,9 @@ export function CalibrationMethodEntry({element}) {
         {value: 'sclableTMatrix', label: 'Sclable T-Matrix'}
     ];
 
-    const getOptions = function (element) {
+    const getOptions = function () {
         return selectOptions;
-    }
+    };
 
     return <SelectEntry
         id={consts.CALIBRATION_METHOD}
@@ -478,7 +482,7 @@ export function MitigationMethodEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -526,7 +530,7 @@ export function MitigationMethodEntry({element}) {
         {value: 'dnnREM', label: 'DNN-Based REM'}
     ];
 
-    const getOptions = function (element) {
+    const getOptions = function () {
         return selectOptions;
     };
 
@@ -544,7 +548,7 @@ export function DNNHiddenLayersEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -562,7 +566,7 @@ export function DNNHiddenLayersEntry({element}) {
         let mitigationMethod = element.businessObject.mitigationMethod;
         console.log('MitigationMethode is now ' + mitigationMethod + ', so this entry has now hide = ' + !(mitigationMethod === 'dnnREM'));
         return !(mitigationMethod === 'dnnREM');
-    }
+    };
 
     return <HiddenTextFieldEntry
         id={consts.DNN_HIDDEN_LAYER}
@@ -578,7 +582,7 @@ export function NeighborhoodRangeEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -618,7 +622,7 @@ export function ObjectiveFunctionEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -651,7 +655,7 @@ export function OptimizerEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -685,11 +689,9 @@ export function MaxREMCostsEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
-
-    const [hide, setHide] = useState(false);
 
     const getValue = function () {
         return element.businessObject.maxREMCosts;
@@ -719,7 +721,7 @@ export function MaxCMSizeEntry({element}) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
-        return str
+        return str;
     };
     const debounce = useService('debounceInput');
 
@@ -751,18 +753,4 @@ export function MaxCMSizeEntry({element}) {
         validate={validate}
         hidden={hidden}
     />;
-}
-
-function HiddenTextFieldEntry({id, element, label, getValue, setValue, debounce, hidden}) {
-
-    return <>
-        {!hidden() && (<TextFieldEntry
-            id={id}
-            element={element}
-            label={label}
-            getValue={getValue}
-            setValue={setValue}
-            debounce={debounce}
-        />)}
-    </>;
 }

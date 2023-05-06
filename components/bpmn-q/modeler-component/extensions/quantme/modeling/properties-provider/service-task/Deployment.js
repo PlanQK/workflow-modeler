@@ -1,5 +1,4 @@
 import {SelectEntry} from "@bpmn-io/properties-panel";
-import * as consts from "../../../Constants";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import {useService} from "bpmn-js-properties-panel";
 import {getServiceTaskLikeBusinessObject} from "../../../../../editor/util/camunda-utils/ImplementationTypeUtils";
@@ -16,14 +15,15 @@ import {getImplementationType} from "../../../utilities/ImplementationTypeHelper
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// const entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
-//       cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-
 const jquery = require('jquery');
 
 const QUANTME_NAMESPACE_PULL = 'http://quantil.org/quantme/pull';
 const QUANTME_NAMESPACE_PUSH = 'http://quantil.org/quantme/push';
 
+/**
+ * Entry to display the custom Implementation option deployment for BPMN service task. Through this option you can define
+ * a CSAR as implementation of a service task.
+ */
 export function Deployment({element, translate, wineryEndpoint}) {
 
     const modeling = useService('modeling');
@@ -63,7 +63,6 @@ export function Deployment({element, translate, wineryEndpoint}) {
         }
         return arrValues;
     };
-    // setControlValue: true;
 
     const get = function () {
         let bo = getServiceTaskLikeBusinessObject(element);
@@ -76,7 +75,7 @@ export function Deployment({element, translate, wineryEndpoint}) {
 
     const set = function (value) {
         let prop = {deploymentModelUrl: value.deploymentModelUrl || ''};
-        return modeling.updateProperties(element, prop) //cmdHelper.updateBusinessObject(element, bo, prop);
+        return modeling.updateProperties(element, prop);
     };
 
     const validate = function (element, values, node) {
@@ -86,18 +85,8 @@ export function Deployment({element, translate, wineryEndpoint}) {
     const hidden = function () {
         const implType = getImplementationType(element);
         console.log('getImplementationType returns ' + implType);
-        const hide = !(implType === 'deploymentModel');
-        return hide;
+        return !(implType === 'deploymentModel');
     };
-
-    // const deploymentEntry = entryFactory.selectBox({
-    //   id: 'deployment',
-    //   label: translate('CSAR Name'),
-    //   dataValueLabel: 'deploymentModelUrlLabel',
-    //   modelProperty: 'deploymentModelUrl',
-    //
-    //
-    // });
 
     return <>
         {!hidden() && (<SelectEntry

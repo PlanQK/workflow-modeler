@@ -1,6 +1,12 @@
 import React from 'react';
 import {instance as quantmeDataObjectConfigs} from './DataObjectConfigurations';
 
+/**
+ * React button component which updates the loaded configurations of the DataObjectConfigurations endpoint when clicked.
+ *
+ * @return {JSX.Element}
+ * @constructor
+ */
 export default function UpdateDataObjectConfigurationsButton() {
 
     return <div style={{display: 'flex'}}>

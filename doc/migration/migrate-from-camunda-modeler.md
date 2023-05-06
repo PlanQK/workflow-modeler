@@ -59,6 +59,9 @@ Panel. Refer to [this guide](https://github.com/bpmn-io/bpmn-js-examples/tree/ma
 to find out how the new version allows the extension of the properties panel or check the
 implementation of the [Properties Provider of the QuantME plugin](../../components/bpmn-q/modeler-component/extensions/quantme/modeling/properties-provider/QuantMEPropertiesProvider.js).
 
+Basically in the new version, properties are grouped in groups. Each group is defined by a set of properties. Each property 
+is represented by one entry which defines the representation of this entry in the properties panel.
+
 ## UI extensions
 The buttons and the config dialog of the QuantME transformation framework are adapted to the extensions of the UI the Quantum
 Workflow Modeler allows. Therefore, all tabs of the config dialog are separated in React components, one component per tab,

@@ -9,10 +9,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* eslint-disable no-unused-vars */
-// import React, { useState } from 'camunda-modeler-plugin-helpers/react';
-// import { Modal } from 'camunda-modeler-plugin-helpers/components';
-
 // polyfill upcoming structural components
 import Modal from "../../../../editor/ui/modal/Modal";
 import React from "react";

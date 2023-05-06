@@ -53,7 +53,6 @@ export function getNisqAnalyzerEndpoint() {
 export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
     if (nisqAnalyzerEndpoint !== null && nisqAnalyzerEndpoint !== undefined) {
         config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
-        // app.emit('menu:action', 'nisqAnalyzerEndpointChanged', nisqAnalyzerEndpoint);
     }
 }
 
@@ -75,7 +74,6 @@ export function getTransformationFrameworkEndpoint() {
 export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoint) {
     if (transformationFrameworkEndpoint !== null && transformationFrameworkEndpoint !== undefined) {
         config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
-        // app.emit('menu:action', 'transformationFrameworkEndpointChanged', transformationFrameworkEndpoint);
     }
 }
 
@@ -101,7 +99,6 @@ export function getOpenTOSCAEndpoint() {
 export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
     if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
         config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, '');
-        // app.emit('menu:action', 'opentoscaEndpointChanged', config.opentoscaEndpoint);
     }
 }
 
@@ -127,7 +124,6 @@ export function getWineryEndpoint() {
 export function setWineryEndpoint(wineryEndpoint) {
     if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
         config.wineryEndpoint = wineryEndpoint.replace(/\/$/, '');
-        // app.emit('menu:action', 'wineryEndpointChanged', config.wineryEndpoint);
     }
 }
 
@@ -153,7 +149,6 @@ export function getQRMRepositoryPath() {
 export function setQRMRepositoryPath(repositoryPath) {
     if (repositoryPath !== null && repositoryPath !== undefined) {
         config.githubRepositoryPath = repositoryPath;
-        // app.emit('menu:action', 'qrmRepoPathChanged', repositoryPath);
     }
 }
 
@@ -179,7 +174,6 @@ export function getQRMRepositoryName() {
 export function setQRMRepositoryName(repositoryName) {
     if (repositoryName !== null && repositoryName !== undefined) {
         config.githubRepositoryName = repositoryName;
-        // app.emit('menu:action', 'qrmRepoNameChanged', repositoryName);
     }
 }
 
@@ -205,7 +199,6 @@ export function getQRMRepositoryUserName() {
 export function setQRMUserName(userName) {
     if (userName !== null && userName !== undefined) {
         config.githubUsername = userName;
-        // app.emit('menu:action', 'qrmUserNameChanged', userName);
     }
 }
 
@@ -231,7 +224,6 @@ export function getQiskitRuntimeHandlerEndpoint() {
 export function setQiskitRuntimeHandlerEndpoint(endpoint) {
     if (endpoint !== null && endpoint !== undefined) {
         config.qiskitRuntimeHandlerEndpoint = endpoint;
-        // app.emit('menu:action', 'qiskitRuntimeHandlerEndpointChanged', endpoint);
     }
 }
 
@@ -257,7 +249,6 @@ export function getScriptSplitterEndpoint() {
 export function setScriptSplitterEndpoint(endpoint) {
     if (endpoint !== null && endpoint !== undefined) {
         config.scriptSplitterEndpoint = endpoint;
-        // app.emit('menu:action', 'scriptSplitterEndpointChanged', endpoint);
     }
 }
 
@@ -283,7 +274,6 @@ export function getScriptSplitterThreshold() {
 export function setScriptSplitterThreshold(threshold) {
     if (threshold !== null && threshold !== undefined) {
         config.scriptSplitterThreshold = threshold;
-        // app.emit('menu:action', 'scriptSplitterThresholdChanged', threshold);
     }
 }
 
@@ -309,7 +299,6 @@ export function getHybridRuntimeProvenance() {
 export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
     if (hybridRuntimeProvenance !== null && hybridRuntimeProvenance !== undefined) {
         config.hybridRuntimeProvenance = hybridRuntimeProvenance;
-        // app.emit('menu:action', 'hybridRuntimeProvenanceChanged', hybridRuntimeProvenance);
     }
 }
 
@@ -335,7 +324,6 @@ export function getAWSRuntimeHandlerEndpoint() {
 export function setAWSRuntimeHandlerEndpoint(endpoint) {
     if (endpoint !== null && endpoint !== undefined) {
         config.awsRuntimeHandlerEndpoint = endpoint;
-        // app.emit('menu:action', 'awsRuntimeHandlerEndpointChanged', endpoint);
     }
 }
 

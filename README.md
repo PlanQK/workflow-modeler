@@ -25,6 +25,19 @@ Refer to the [documentation](doc/README.md) for further information.
 ## Node Version
 The project was created with npm 8.19.2 and node 18.12.1.
 
+## Quickstart
+
+To start the modeler in standalone web app clone the repository and navigate to ```./components/bpmn-q```. Then 
+execute: 
+```
+npm install
+```
+to install all dependencies and 
+```
+npm run dev
+```
+to start the modeler in a simple html website which runs on localhost:8080.
+
 ## How to use this Library
 
 To use the Quantum Workflow Modeler component in your application you have to install its npm package which is published 

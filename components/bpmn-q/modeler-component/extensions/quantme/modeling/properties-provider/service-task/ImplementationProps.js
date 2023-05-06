@@ -1,5 +1,4 @@
 import {TextFieldEntry, isTextFieldEntryEdited} from '@bpmn-io/properties-panel';
-
 import {DmnImplementationProps} from './DmnImplementationProps';
 import {ImplementationTypeProps} from './ImplementationTypeProps';
 
@@ -7,13 +6,18 @@ import {useService} from "bpmn-js-properties-panel";
 import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
 import {
     getServiceTaskLikeBusinessObject,
-    isDmnCapable,
-    isExternalCapable
 } from "../../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import {getExtensionElementsList} from "../../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import {Deployment} from "./Deployment";
 
-
+/**
+ * Properties group for service tasks. Extends the original implementation by adding a new selection option to the
+ * implementation entry: deployment.
+ *
+ * @param props
+ * @return {{component: function(*): preact.VNode<any>, isEdited: function(*): *, id: string}[]|*[]}
+ * @constructor
+ */
 export function ImplementationProps(props) {
     const {
         element,
@@ -26,21 +30,6 @@ export function ImplementationProps(props) {
     }
 
     const implementationType = getImplementationType(element);
-
-    // const hasDmnSupport = isDmnCapable(element);
-    // const hasExternalSupport = isExternalCapable(element);
-    //
-    // const options = {
-    //     getBusinessObject: function (element) {
-    //         return element && element.businessObject;
-    //     },
-    //     getImplementationType: getImplementationType,
-    //     hasDmnSupport: hasDmnSupport,
-    //     hasExternalSupport: hasExternalSupport,
-    //     hasServiceTaskLikeSupport: true,
-    //     hasDeploymentSupport: true,
-    //     hasScriptSupport: isSc
-    // };
 
     // (1) display implementation type select
     const entries = [
@@ -92,15 +81,10 @@ export function ImplementationProps(props) {
                 component: ConnectorId,
                 isEdited: isTextFieldEntryEdited
             }
-        )
-    } else if (implementationType === 'deploymentModel') {
-        // const options = {
-        //     getBusinessObject: function (element) {
-        //         return element && element.businessObject;
-        //     },
-        //     getImplementationType: getImplementationType,
-        // };
+        );
 
+    // custom extension
+    } else if (implementationType === 'deploymentModel') {
         entries.push({
             id: 'deployment',
             element,
@@ -108,7 +92,7 @@ export function ImplementationProps(props) {
             wineryEndpoint,
             component: Deployment,
             isEdited: isTextFieldEntryEdited
-        })
+        });
     }
 
     return entries;
