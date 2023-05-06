@@ -8,6 +8,12 @@ import {getAllElementsInProcess, insertShape} from '../../../editor/util/Transfo
 import * as consts from '../QHAnaConstants';
 import * as qhanaConsts from '../QHAnaConstants';
 
+/**
+ * Replace QHAna extensions with camunda bpmn elements so that it complies with the standard
+ *
+ * @param xml the xml model which contains the elements to replace
+ * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
+ */
 export async function startQHAnaReplacementProcess(xml) {
     let modeler = await createTempModelerFromXml(xml);
     let elementRegistry = modeler.get('elementRegistry');
@@ -28,11 +34,10 @@ export async function startQHAnaReplacementProcess(xml) {
     rootProcess.isExecutable = true;
 
     // get all QHAna Service Tasks from the process
-
-    // get all PlanQK modeling constructs from the process
     const qhanaServiceTasks = getAllElementsInProcess(rootProcess, elementRegistry, consts.QHANA_SERVICE_TASK);
     console.log('Process contains ' + qhanaServiceTasks.length + ' QHAna service tasks to replace...');
 
+    // get all QHAna Service Step Tasks from the process
     const qhanaServiceStepTasks = getAllElementsInProcess(rootProcess, elementRegistry, consts.QHANA_SERVICE_STEP_TASK);
     console.log('Process contains ' + qhanaServiceStepTasks.length + ' QHAna service step tasks to replace...');
 
@@ -41,7 +46,7 @@ export async function startQHAnaReplacementProcess(xml) {
         return {status: 'transformed', xml: xml};
     }
 
-    // replace each qhana:QHAnaServiceTask with an ServiceTask with external implementation
+    // replace each qhana:QHAnaServiceTask with a ServiceTask with external implementation
     for (let qhanaServiceTask of qhanaServiceTasks) {
 
         let replacementSuccess = false;
@@ -80,7 +85,13 @@ export async function startQHAnaReplacementProcess(xml) {
 
 
 /**
- * Replace the given QHAna service task by a BPMN service task
+ * Replace the given QHAna service task by a BPMN service task.
+ *
+ * @param definitions Definitions of the workflow
+ * @param qhanaServiceTask The task to replace
+ * @param parentProcess The parent process of the task
+ * @param modeler The current modeler
+ * @return {Promise<boolean>}
  */
 async function replaceQHAnaServiceTaskByServiceTask(definitions, qhanaServiceTask, parentProcess, modeler) {
 
@@ -105,7 +116,13 @@ async function replaceQHAnaServiceTaskByServiceTask(definitions, qhanaServiceTas
 }
 
 /**
- * Replace the given QHAna service step task by a BPMN service task
+ * Replace the given QHAna service step task by a BPMN service task.
+ *
+ * @param definitions Definitions of the workflow
+ * @param qhanaServiceTask The task to replace
+ * @param parentProcess The parent process of the task
+ * @param modeler The current modeler
+ * @return {Promise<boolean>}
  */
 async function replaceQHAnaServiceStepTaskByServiceTask(definitions, qhanaServiceTask, parentProcess, modeler) {
 

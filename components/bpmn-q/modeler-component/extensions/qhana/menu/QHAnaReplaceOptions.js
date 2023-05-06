@@ -1,5 +1,6 @@
 import * as consts from '../QHAnaConstants';
 
+// QHAna replace options for BPMN tasks
 export var TASK = [
     {
         label: 'QHAna Service Step Task',

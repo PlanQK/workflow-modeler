@@ -2,6 +2,12 @@ import {isTextFieldEntryEdited, TextFieldEntry} from '@bpmn-io/properties-panel'
 import {useService} from 'bpmn-js-properties-panel';
 import * as consts from '../QHAnaConstants';
 
+/**
+ * Properties group for the properties panel. Contains entries for all attributes for a QHAna service step task.
+ *
+ * @param element The element the properties are from.
+ * @return {[{component: (function(*): preact.VNode<any>), isEdited: ((function(*): *)|*), id: string, element}]}
+ */
 export default function (element) {
 
     return [

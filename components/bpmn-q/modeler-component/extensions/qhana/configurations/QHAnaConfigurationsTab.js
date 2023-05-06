@@ -1,11 +1,19 @@
 import React, {useState} from 'react';
 import * as configManager from '../config/QHAnaConfigManager';
 
+/**
+ * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change
+ * the urls pointing to the API of the QHAna plugin registry.
+ *
+ * @return {JSX.Element} The tab as a React component
+ * @constructor
+ */
 export default function QHAnaConfigurationsTab() {
 
     const [listPluginsEndpoint, setListPluginsEndpoint] = useState(configManager.getListPluginsURL());
     const [getPluginEndpoint, setGetPluginEndpoint] = useState(configManager.getGetPluginsURL());
 
+    // save changed values on close
     QHAnaConfigurationsTab.prototype.onClose = () => {
         configManager.setListPluginsURL(listPluginsEndpoint);
         configManager.setGetPluginsURL(getPluginEndpoint);

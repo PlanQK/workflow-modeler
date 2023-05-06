@@ -1,6 +1,9 @@
 import React from 'react';
 import {instance as qhanaServiceConfigs} from '../configurations/QHAnaConfigurations';
 
+/**
+ * React button component which updates the loaded QHAna service task configurations when clicked
+ */
 export default function UpdateQHAnaConfigurationsButton() {
 
     return <div style={{display: 'flex'}}>

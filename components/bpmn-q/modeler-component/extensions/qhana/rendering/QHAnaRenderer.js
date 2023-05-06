@@ -3,12 +3,15 @@ import * as consts from '../QHAnaConstants';
 import {drawTaskSVG} from '../../../editor/util/RenderUtilities';
 import {getSVG} from './QHAnaSVGMap';
 
+/**
+ * Custom renderer for rendering the extension elements of the QHAna plugin.
+ */
 export default class QHAnaRenderer extends BpmnRenderer {
 
     constructor(config, eventBus, styles, pathMap, canvas, textRenderer) {
         super(config, eventBus, styles, pathMap, canvas, textRenderer, 1001);
 
-        // create handlers to render the data flow extension elements
+        // create handlers to render the  QHAna extension elements
         this.qhanaHandler = {
             [consts.QHANA_SERVICE_TASK]: function (self, parentGfx, element) {
                 const task = self.renderer('bpmn:Task')(parentGfx, element);
@@ -33,12 +36,6 @@ export default class QHAnaRenderer extends BpmnRenderer {
     }
 
     canRender(element) {
-
-        if (element.type === 'bpmn:ServiceTask') {
-            console.log('////================================================================================');
-            console.log(element);
-            console.log('////================================================================================');
-        }
 
         // only return true if handler for rendering is registered
         return this.qhanaHandler[element.type];

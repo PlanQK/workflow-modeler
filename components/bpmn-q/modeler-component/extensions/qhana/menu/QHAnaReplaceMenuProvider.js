@@ -10,6 +10,10 @@ import * as qhanaReplaceOptions from './QHAnaReplaceOptions';
 import * as dataConsts from '../../data-extension/Constants';
 import {appendElement} from '../../../editor/util/ModellingUtilities';
 
+/**
+ * Menu Provider for bpmn-replace which is opened for a diagram element. Adds replacement entries to replace the custom
+ * elements of the QHAna plugin.
+ */
 export default class QHAnaReplaceMenuProvider {
 
     constructor(popupMenu, bpmnReplace, modeling, bpmnFactory, commandStack, translate, elementFactory, create, autoPlace) {
@@ -26,12 +30,12 @@ export default class QHAnaReplaceMenuProvider {
         this.autoPlace = autoPlace;
     }
 
-    getPopupMenuHeaderEntries() {
-        return function (entries) {
-            return entries;
-        };
-    }
-
+    /**
+     * Overwrites the default menu provider to add menu entries to replace the element with QHAna extension elements
+     *
+     * @param element the element for which the replacement entries are requested
+     * @returns {*} an array with menu entries
+     */
     getPopupMenuEntries(element) {
         const self = this;
         return function (entries) {
@@ -41,7 +45,10 @@ export default class QHAnaReplaceMenuProvider {
                 return entries;
             }
 
+            // set entries to apply QHAna service task configurations to a QHAna service task
             if (is(element, consts.QHANA_SERVICE_TASK)) {
+
+                // create menu entries for each configuration loaded from the QHAna Configurations Endpoint
                 const configEntries = createConfigurationsEntries(element, 'qhana-service-task', qhanaServiceConfigs().getQHAnaServiceConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
 
                 if (Object.entries(configEntries).length > 0) {
@@ -49,6 +56,7 @@ export default class QHAnaReplaceMenuProvider {
                 }
             }
 
+            // add entries for QHAna service tasks and QHAna service step tasks as replacement for BPMN tasks
             if (is(element, 'bpmn:Task')) {
                 const qhanaEntry = self.createQHAnaEntry(element);
                 return Object.assign(qhanaEntry, entries);
@@ -58,13 +66,23 @@ export default class QHAnaReplaceMenuProvider {
         };
     }
 
+    /**
+     * Create menu entries to replace a BPMN task element with the QHAna extension elements, namely a QHAna Service Step Task,
+     * a QHAna service task or a configuration for a QHAna service task.
+     *
+     * @param element The element the menu entries are requested for
+     * @return {{'replace-by-qhana-tasks': {label: string, className: string, action: Function}}}
+     */
     createQHAnaEntry(element) {
         const popupMenu = this.popupMenu;
         const translate = this.translate;
         const replaceElement = this.replaceElement;
 
         const qhanaTasksEntries = createMenuEntries(element, qhanaReplaceOptions.TASK, translate, replaceElement);
+
+        // get entry for QHAna service tasks and its configurations
         const qhanaServiceTaskEntry = this.createQHAnaServiceTaskEntry(element);
+
         const qhanaEntries = Object.assign(qhanaTasksEntries, qhanaServiceTaskEntry);
         return {
             ['replace-by-qhana-tasks']: createMoreOptionsEntryWithReturn(
@@ -78,6 +96,13 @@ export default class QHAnaReplaceMenuProvider {
         };
     }
 
+    /**
+     * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for QHAna service tasks and
+     * a QHAna service task element.
+     *
+     * @param element The element the menu entries are requested for.
+     * @return {{'replace-by-qhana-options': {label: string, className: string, action: Function}}}
+     */
     createQHAnaServiceTaskEntry(element) {
         const bpmnFactory = this.bpmnFactory;
         const modeling = this.modeling;
@@ -124,6 +149,7 @@ export default class QHAnaReplaceMenuProvider {
                     name: config.name.replace(/\s+/g, '_') + '_output',
                 });
 
+                // add the output attributes to the content attribute of the DataMapObject
                 for (let outputAttribute of outputAttributes) {
 
                     const attributeContent = dataMapObjectBusinessObject.get(dataConsts.CONTENT);
@@ -137,6 +163,7 @@ export default class QHAnaReplaceMenuProvider {
             }
         }
 
+        // create menu entries for the configurations loaded from the QHAna configurations endpoint
         let options = createConfigurationsEntries(
             element,
             'qhana-service-task',
@@ -148,6 +175,7 @@ export default class QHAnaReplaceMenuProvider {
             action
         );
 
+        // create a MoreOptionsEntry displaying the configurations entries
         return {
             ['replace-by-qhana-options']: createMoreOptionsEntryWithReturn(
                 element,

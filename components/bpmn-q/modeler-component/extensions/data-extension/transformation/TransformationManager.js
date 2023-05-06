@@ -150,6 +150,7 @@ export async function startDataFlowReplacementProcess(xml) {
 
     const globalProcessVariables = {};
 
+    // transform DataMapObjects to data objects
     let transformationSuccess = transformDataMapObjects(rootProcess, definitions, globalProcessVariables, modeler);
     if (!transformationSuccess) {
         const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';
@@ -160,6 +161,7 @@ export async function startDataFlowReplacementProcess(xml) {
         };
     }
 
+    // transform DataStoreMap to data stores
     transformationSuccess = transformDataStoreMaps(rootProcess, definitions, globalProcessVariables, modeler);
     if (!transformationSuccess) {
         const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';
@@ -170,6 +172,7 @@ export async function startDataFlowReplacementProcess(xml) {
         };
     }
 
+    // transform TransformationTasks to service tasks
     transformationSuccess = transformTransformationTask(rootProcess, definitions, globalProcessVariables, modeler);
     if (!transformationSuccess) {
         const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';

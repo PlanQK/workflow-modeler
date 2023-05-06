@@ -2,12 +2,18 @@ import ConfigurationsEndpoint from '../../../editor/configurations/Configuration
 import * as configManager from '../config/QHAnaConfigManager';
 import * as consts from '../QHAnaConstants';
 
+/**
+ * Custom ConfigurationsEndpoint for the QHAna Plugin. Extends the ConfigurationsEndpoint to fetch the configurations directly
+ * from the QHAna plugin registry.
+ */
 export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint {
-
     constructor() {
         super('');
     }
 
+    /**
+     * Fetch all plugins from the QHAna plugin registry and transform them into configurations for QHAna service tasks.
+     */
     fetchConfigurations() {
 
         const self = this;
@@ -26,6 +32,7 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                     allServices.forEach(function (service) {
                         serviceId = service.resourceKey.pluginId;
 
+                        // fetch plugin details for serviceId
                         fetch(configManager.getGetPluginsURL() + serviceId + '/')
                             .then(response => response.json())
                             .then(data => {
@@ -33,6 +40,7 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
                                 console.log('Received QHAna service details for service ' + serviceId);
                                 console.log(serviceData);
 
+                                // create configuration from serviceData
                                 self._configurations.push(createConfigurationForServiceData(serviceData));
 
                             })
@@ -50,14 +58,26 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
             });
     }
 
+    /**
+     * Returns all Configurations for QHAna service tasks which are saved in this endpoint.
+     */
     getQHAnaServiceConfigurations() {
         return this.getConfigurations(consts.QHANA_SERVICE_TASK);
     }
 
+    /**
+     * Retruns the configuration with the given ID.
+     *
+     * @param id The given ID.
+     * @return {*}
+     */
     getQHAnaServiceConfiguration(id) {
         return this.getConfiguration(id);
     }
 
+    /**
+     * Updates the saved configurations by fetching again all plugins from the QHAna plugin registry
+     */
     updateQHAnaServiceConfigurations() {
         this.fetchConfigurations();
     }
@@ -65,13 +85,26 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
 
 let configEndpointInstance;
 
+/**
+ * Returns or creates the current instance of the QHAnaConfigurationsEndpoint.
+ *
+ * @return {QHAnaConfigurationsEndpoint} the current instance.
+ */
 export function instance() {
     if (!configEndpointInstance) {
+        // create new QHAna endpoint if no instance exists
         configEndpointInstance = new QHAnaConfigurationsEndpoint();
     }
     return configEndpointInstance;
 }
 
+/**
+ * Creates a Configuration out of the given service data. The service data is a json string specifing a QHAna service of
+ * the QHAna plugin registry.
+ *
+ * @param serviceData The QHAna service description.
+ * @return {{name, description, appliesTo: string, groupLabel: string, attributes: [{editable: string, name: string, label: string, type: string, value, bindTo: {name: string}},{editable: string, name: string, label: string, type: string, value, bindTo: {name: string}},{editable: string, name: string, label: string, type: string, value, bindTo: {name: string}},{editable: string, name: string, label: string, type: string, value, bindTo: {name: string}}], id}}
+ */
 export function createConfigurationForServiceData(serviceData) {
     const configuration = {
         name: serviceData.title,
@@ -123,7 +156,7 @@ export function createConfigurationForServiceData(serviceData) {
         ]
     };
 
-    // add inputs and outputs
+    // add inputs
     serviceData.entryPoint.dataInput.forEach(function (input, index) {
         configuration.attributes.push({
             name: 'qinput.input_' + index,
@@ -144,6 +177,7 @@ export function createConfigurationForServiceData(serviceData) {
         });
     });
 
+    // add outputs
     serviceData.entryPoint.dataOutput.forEach(function (output, index) {
 
         const value = [

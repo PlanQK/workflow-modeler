@@ -1,5 +1,11 @@
 import * as qhanaConsts from '../QHAnaConstants';
 
+/**
+ * Return SVG for the given ID
+ *
+ * @param svgId The given ID
+ * @returns {*} The SVG as an object {tronsform: matrix( Scalingfactor, 0, 0, Scalingfactor, shift X, shift y), svg: svgString}
+ */
 export function getSVG(svgId) {
 
     // to insert svgs easily just open them in your browser, copy the outer html and insert it using ctrl + alt + shift + v in intellij to avoid formatting,escaping etc.
