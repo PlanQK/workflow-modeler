@@ -6,6 +6,12 @@ import {dispatchWorkflowEvent} from '../events/EditorEventHandler';
 import {workflowEventTypes} from '../EditorConstants';
 import NotificationHandler from "./notifications/NotificationHandler";
 
+/**
+ * React button which starts loading a saved workflow from the users local file system
+ *
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function OpenButton() {
 
     const inputRef = useRef(null);

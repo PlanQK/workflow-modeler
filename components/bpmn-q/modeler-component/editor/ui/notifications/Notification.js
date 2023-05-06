@@ -12,6 +12,11 @@ import React, {PureComponent} from 'react';
 
 export const NOTIFICATION_TYPES = ['info', 'success', 'error', 'warning'];
 
+/**
+ * React component to display notifications
+ *
+ * @type {string[]}
+ */
 export default class Notification extends PureComponent {
     static getDerivedStateFromError() {
         return {error: true};

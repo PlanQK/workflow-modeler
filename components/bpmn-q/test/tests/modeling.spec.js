@@ -1,4 +1,3 @@
-import {getExtensionElement} from '../../modeler-component/extensions/planqk/exec-completion/CompletionUtilities';
 import {createModeler, createTempModeler} from '../../modeler-component/editor/ModelerHandler';
 import {
     getExtension,

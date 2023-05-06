@@ -23,15 +23,6 @@ import {getMoreOptions} from "../util/PopupMenuUtilities";
  *
  * Based on the PopupMenuComponent of diagram-js (https://github.com/bpmn-io/diagram-js/blob/develop/lib/features/popup-menu/PopupMenuComponent.js)
  *
- * @param {function} onClose
- * @param {function} position
- * @param {string} className
- * @param {Array} entries
- * @param {Array} headerEntries
- * @param {number} scale
- * @param {string} [title]
- * @param {boolean} [search]
- * @param {number} [width]
  */
 export default function SearchablePopupMenuComponent(props) {
     const {
@@ -61,10 +52,12 @@ export default function SearchablePopupMenuComponent(props) {
 
     const [value, setValue] = useState('');
 
+    // collect MoreOptionEntries
     const extendedOptionsEntries = originalEntries.flatMap(function (entry) {
         return getMoreOptions(entry);
     });
 
+    // filter menu entries based on the value
     const filterEntries = useCallback((entriesToFilter, value) => {
 
         if (!searchable || !value || value === '') {

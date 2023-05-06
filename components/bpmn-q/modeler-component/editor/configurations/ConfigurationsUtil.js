@@ -113,6 +113,14 @@ export function handleConfigurationsAction(element, config, bpmnFactory, modelin
     });
 }
 
+/**
+ * Returns a function which sets the value of the ConfigurationAttribute to the property specified in bindTo.
+ *
+ * @param element The element the Configuration is applied to.
+ * @param attribute The ConfigurationAttribute
+ * @param modeling Modeling dependency of the bpmn-js modeler
+ * @returns {function(*): *}
+ */
 export function setAttributeValue(element, attribute, modeling) {
     return (newValue) => {
         return modeling.updateProperties(element, {
@@ -121,11 +129,19 @@ export function setAttributeValue(element, attribute, modeling) {
     };
 }
 
+/**
+ * Returns a function which gets the value of the property specified in bindTo of the given ConfigurationAttribute or
+ * the value specified in the ConfigurationAttribute if no value is defined for the property.
+ *
+ * @param element The element the Configuration is applied to.
+ * @returns {(function(*): (*))|*}
+ */
 export function getAttributeValue(element) {
     return (attribute) => {
         const businessObject = getBusinessObject(element);
         const realValue = businessObject.get(attribute.bindTo.name) || '';
 
+        // return the value of the property if defined or the value defined in the attribute
         if (realValue && realValue !== '') {
             return realValue;
         } else {
@@ -134,47 +150,82 @@ export function getAttributeValue(element) {
     };
 }
 
+/**
+ * Returns a function which adds the value specified in the callback to the key value map of the element defined in the
+ * property with the name specified in bindTo of the ConfigurationAttribute.
+ *
+ * @param element The element the Configuration is applied to.
+ * @param attribute The given ConfigurationAttribute.
+ * @param bpmnFactory The bpmnFactory of the current bpmn-js modeler.
+ * @param commandStack The commandStack of the current bpmn-js modeler.
+ * @returns {(function(*): void)|*}
+ */
 export function addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack) {
     return (value) => {
 
         const bo = element.businessObject;
 
         const businessObject = getBusinessObject(element);
-        const attributeContent = bo.get(attribute.bindTo.name) || [];
+        const keyValueMap = bo.get(attribute.bindTo.name) || [];
 
-        const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
-        if (existingAttr) {
+        // add the value to the key value map
+        const existingEntry = keyValueMap.find((entry) => entry.name === attribute.name);
+        if (existingEntry) {
+
+            // overwrite value of existing key value entry
             commandStack.execute('element.updateModdleProperties', {
                 element,
-                moddleElement: existingAttr,
+                moddleElement: existingEntry,
                 properties: {value: value},
             });
         } else {
+
+            // create new key value entry
             const param = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {name: attribute.name, value: value});
 
+            // add new entry to the key value map and save changes
             commandStack.execute('element.updateModdleProperties', {
                 element,
                 moddleElement: businessObject,
-                properties: {[attribute.bindTo.name]: attributeContent.concat(param)},
+                properties: {[attribute.bindTo.name]: keyValueMap.concat(param)},
             });
         }
     };
 }
 
+/**
+ * Returns a function which gets the value of a key value map property of the given element. The exact property
+ * will be defined by bindTo of the ConfigurationAttribute handed in the callback
+ *
+ * @param element The given element
+ * @returns {(function(*): (*))|*}
+ */
 export function getAttributeValueFromKeyValueMap(element) {
     return (attribute) => {
         const businessObject = getBusinessObject(element);
-        const attributeContent = businessObject.get(attribute.bindTo.name) || [];
+        const keyValueMap = businessObject.get(attribute.bindTo.name) || [];
 
-        const existingAttr = attributeContent.find((entry) => entry.name === attribute.name);
-        if (existingAttr) {
-            return existingAttr.value;
+        // return value of respective key value entry or return the value of ConfigurationAttribute
+        const existingEntry = keyValueMap.find((entry) => entry.name === attribute.name);
+        if (existingEntry) {
+            return existingEntry.value;
         } else {
             return attribute.value;
         }
     };
 }
 
+/**
+ * Returns a function which adds the value of the callback to the camunda io property of the given element. It is added
+ * either to camunda:inputs or camunda:outputs. This is defined by the camundaType.
+ *
+ * @param element The given element.
+ * @param bpmnFactory The bpmnFactory of the current bpmn-js modeler.
+ * @param camundaType The type of the camunda property, either camunda:InputMapParameter or camunda:OutputMapParameter.
+ * @param attribute The ConfigurationAttribute defining the exact entry which will be added to the camunda io property.
+ * @param modeling The modeling module of the current bpmn-js modeler.
+ * @returns {(function(*): void)|*}
+ */
 export function addAttributeValueToCamundaIO(element, bpmnFactory, camundaType, attribute, modeling) {
     return (value) => {
 
@@ -211,6 +262,15 @@ export function addAttributeValueToCamundaIO(element, bpmnFactory, camundaType, 
     };
 }
 
+/**
+ * Returns a function which gets the value of a specific entry of the camunda io property of the given element. The entry
+ * is defined by the ConfigurationAttribute given through the callback.
+ *
+ * @param element The given element.
+ * @param bpmnFactory The bpmnFactory of the current bpmn-js modeler.
+ * @param camundaType The type of the camunda property, either camunda:InputMapParameter or camunda:OutputMapParameter.
+ * @returns {(function(*): (*))|*}
+ */
 export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType) {
 
     return (attribute) => {
@@ -221,7 +281,7 @@ export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType
         const parameters = camundaType === 'camunda:InputParameter' ? inputOutput.inputParameters : inputOutput.outputParameters;
         let existingInputParameter = parameters.find((entry) => entry.name === attribute.name);
 
-        // return value of existing io parameter or the default value of the configurations attribute
+        // return value of existing io parameter or the default value of the ConfigurationAttribute
         if (existingInputParameter) {
             return existingInputParameter.value;
         } else {
@@ -230,6 +290,19 @@ export function getAttributeValueFromCamundaIO(element, bpmnFactory, camundaType
     };
 }
 
+/**
+ * Extracts an icon object out of its string representation. The icon string is saved in the configsIcon property of the
+ * given element if it is defined.
+ *
+ * Example of an icon object:
+ * icon: {
+ *  transform: 'matrix(0.22, 0, 0, 0.22, 3, 3)',
+ *  svg: '<svg/>...</svg>',
+ * },
+ *
+ * @param element The given element.
+ * @returns {undefined|any} The icon object or undefined if no such property exists or the saved icon string is not correct formatted
+ */
 export function extractConfigSVG(element) {
     const svgStr = element.businessObject.get(configsConsts.CONFIGURATIONS_ICON);
     if (svgStr) {

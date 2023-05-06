@@ -10,7 +10,7 @@
  */
 
 import {getXml} from "../../../../editor/util/IoUtilities";
-import {createModelerFromXml} from '../../../../editor/ModelerHandler';
+import {createTempModelerFromXml} from '../../../../editor/ModelerHandler';
 
 /**
  * Rewrite the workflow available within the given modeler using the given optimization candidate
@@ -40,7 +40,7 @@ export async function rewriteWorkflow(modeler, candidate, provenanceCollectionEn
             console.log('View before rewriting already exists. Updating existing view!');
             let existingView = modeler.views['view-before-rewriting'];
             console.log('Existing view has Xml: ', existingView);
-            viewModeler = await createModelerFromXml(existingView);
+            viewModeler = await createTempModelerFromXml(existingView);
             viewElementRegistry = viewModeler.get('elementRegistry');
         }
 

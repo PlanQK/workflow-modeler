@@ -66,6 +66,10 @@ and added via the Plugin Object to the modeler. The buttons of the QuantME frame
 and also added via the Plugin Object to the UI of the modeler. Refer [this guide](../quantum-workflow-modeler/editor/ui-extension/extend-ui-via-plugin-object.md) 
 for further information on how to extend the UI of the Quantum Workflow Modeler.
 
+## Utility Functions
+
+## Replace Menu Provider
+
 ## Deprecated APIs
 
 ##### Access of the DI

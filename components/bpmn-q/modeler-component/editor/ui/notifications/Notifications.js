@@ -13,6 +13,9 @@ import {createPortal} from 'react-dom';
 import Notification from './Notification';
 import {NOTIFICATION_TYPES} from "./NotificationHandler";
 
+/**
+ * React component to manage Notification components
+ */
 export default class Notifications extends PureComponent {
     constructor(props) {
         super(props);
@@ -20,18 +23,20 @@ export default class Notifications extends PureComponent {
         this.container = props.container;
         this.state = {
             notifications: props.notifications || []
-        }
+        };
         this.currentNotificationId = -1;
     }
 
-    // componentDidMount() {
-    //   document.body.appendChild(this.container);
-    // }
-    //
-    // componentWillUnmount() {
-    //   document.body.removeChild(this.container);
-    // }
-
+    /**
+     * Display new Notification of the given type, title and content. Define the duration the Notification should
+     * be displayed by duration.
+     *
+     * @param type The type of the Notification.
+     * @param title The title of the Notification.
+     * @param content The content of the Notification.
+     * @param duration The duration of the Notification.
+     * @returns {{update: update, close: close}}
+     */
     displayNotification({type = 'info', title, content, duration = 4000}) {
         const notifications = this.state.notifications;
 
@@ -72,6 +77,9 @@ export default class Notifications extends PureComponent {
         };
     }
 
+    /**
+     * Close all displayed Notifications.
+     */
     closeNotifications() {
         this.setState({notifications: []});
     }
@@ -83,12 +91,18 @@ export default class Notifications extends PureComponent {
             return currentId !== id ? notification : {...notification, ...options};
         });
 
-        this.setState({notifications: notifications})
+        this.setState({notifications: notifications});
     }
 
+    /**
+     * Close the Notification with the given ID.
+     *
+     * @param id The ID of the Notification to close.
+     * @private
+     */
     _closeNotification(id) {
         const notifications = this.state.notifications.filter(({id: currentId}) => currentId !== id);
-        this.setState({notifications: notifications})
+        this.setState({notifications: notifications});
     }
 
     render() {

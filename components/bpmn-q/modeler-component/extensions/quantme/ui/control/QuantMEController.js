@@ -18,7 +18,7 @@ import {configureBasedOnHardwareSelection} from '../../replacement/hardware-sele
 import {getServiceTasksToDeploy} from '../../deployment/DeploymentUtils';
 import {createServiceInstance, uploadCSARToContainer} from '../../deployment/OpenTOSCAUtils';
 import {bindUsingPull, bindUsingPush} from '../../deployment/BindingUtils';
-import {createModelerFromXml, getModeler} from "../../../../editor/ModelerHandler";
+import {createTempModelerFromXml, getModeler} from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import {getQRMs, updateQRMs} from "../../qrm-manager";
 import {getXml} from "../../../../editor/util/IoUtilities";
@@ -111,7 +111,7 @@ export default class QuantMEController extends PureComponent {
                     }
 
                     // get all ServiceTasks that require a service deployment
-                    let modeler = await createModelerFromXml(result.xml);
+                    let modeler = await createTempModelerFromXml(result.xml);
                     let csarsToDeploy = getServiceTasksToDeploy(getRootProcess(modeler.getDefinitions()));
                     console.log('Found %i CSARs associated with ServiceTasks: ', csarsToDeploy.length, csarsToDeploy);
 
@@ -238,7 +238,7 @@ export default class QuantMEController extends PureComponent {
         //       }
         //
         //       // get all ServiceTasks that require a service deployment
-        //       let modeler = await createModelerFromXml(result.xml);
+        //       let modeler = await createTempModelerFromXml(result.xml);
         //       let csarsToDeploy = getServiceTasksToDeploy(getRootProcess(modeler.getDefinitions()));
         //       console.log('Found %i CSARs associated with ServiceTasks: ', csarsToDeploy.length, csarsToDeploy);
         //

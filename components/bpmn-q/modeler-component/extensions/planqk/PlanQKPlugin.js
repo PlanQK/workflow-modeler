@@ -19,10 +19,10 @@ export default {
             // let xml = await getXml(modeler);
 
             // load current xml if not given as parameter
-            if (!xml) {
-                const modeler = getModeler();
-                xml = await getXml(modeler);
-            }
+            // if (!xml) {
+            //     const modeler = getModeler();
+            //     xml = await getXml(modeler);
+            // }
 
             return await startPlanqkReplacementProcess(xml);
 

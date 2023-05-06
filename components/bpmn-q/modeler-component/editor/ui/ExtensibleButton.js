@@ -1,11 +1,15 @@
 import React, {Component, createRef, useState} from 'react';
 
+/**
+ * React component defining a button which displays a list of buttons, the sub buttons under the button if the user clicks on it. Can be used
+ * to group several button into one.
+ */
 export default class ExtensibleButton extends Component {
     constructor(props) {
         super(props);
 
         const {
-            subButtons,
+            subButtons, // array of buttons which are grouped into this button
             title,
             styleClass,
             description,
@@ -33,12 +37,14 @@ export default class ExtensibleButton extends Component {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
+    // open or close sub buttons
     handleClick() {
         this.setState(state => ({
             isToggleOn: !state.isToggleOn
         }));
     }
 
+    // close the ExtensibleButton of the user clicks somewhere outside this component
     handleClickOutside = (event) => {
         if (
             this.wrapperRef &&

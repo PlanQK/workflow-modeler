@@ -16,7 +16,7 @@ import * as Constants from '../Constants';
 import {replaceHardwareSelectionSubprocess} from './hardware-selection/QuantMEHardwareSelectionHandler';
 import {replaceCuttingSubprocess} from './circuit-cutting/QuantMECuttingHandler';
 import {insertShape} from '../../../editor/util/TransformationUtilities';
-import {createModelerFromXml, createTempModelerFromXml} from '../../../editor/ModelerHandler';
+import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import {
     getCamundaInputOutput,
     getDefinitionsFromXml,

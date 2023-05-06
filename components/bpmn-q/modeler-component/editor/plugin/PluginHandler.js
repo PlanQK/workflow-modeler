@@ -5,7 +5,12 @@ import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
 import EditorTab from "../config/EditorTab";
 
-// list of plugins integrated in the modeler
+/**
+ * Handler for plugins of the modeler. Controls active plugins and the properties they define. Central access point to
+ * get the extensions the plugins define.
+ */
+
+// list of plugins integrated in the modeler, register new plugins here
 const PLUGINS = [
     DataFlowPlugin,
     QHAnaPlugin,
@@ -48,13 +53,16 @@ export function getActivePlugins() {
 }
 
 /**
+ * Returns all additional modules for the bpmn-js modeler the active plugins define in their extensionModule
+ * property as an array.
  *
- * @returns {*[]}
+ * @returns {*[]} Array of additional modules defined by the active plugins.
  */
 export function getAdditionalModules() {
 
     const modules = [];
 
+    // load all additional modules of the active plugins
     for (let plugin of getActivePlugins()) {
         if (plugin.extensionModule) {
             modules.push(plugin.extensionModule);
@@ -66,10 +74,16 @@ export function getAdditionalModules() {
     return modules;
 }
 
+/**
+ * Returns all css style modules the active plugins define in their styling property as an array.
+ *
+ * @returns {*[]} Array of css style modules defined by the active plugins.
+ */
 export function getStyles() {
 
     let styles = [];
 
+    // load css styles of the active plugins
     for (let plugin of getActivePlugins()) {
         if (plugin.styling) {
             styles = styles.concat(plugin.styling);
@@ -81,9 +95,16 @@ export function getStyles() {
     return styles;
 }
 
+/**
+ * Returns an objects with all moddle extensions for the bpmn-js modeler the active plugins define in their moddleDescription property.
+ * The returned object contains a property for each plugin with its name and the moddle extension as value.
+ *
+ * @returns {*[]} Object containing the moddle extensions defined by the active plugins.
+ */
 export function getModdleExtension() {
     const extensions = {};
 
+    // load all moddle extensions defined by the active plugins
     for (let plugin of getActivePlugins()) {
         if (plugin.moddleDescription) {
             extensions[plugin.name] = plugin.moddleDescription;
@@ -95,9 +116,15 @@ export function getModdleExtension() {
     return extensions;
 }
 
+/**
+ * Returns all transformation buttons the active plugins define in their transformExtensionButton property as an array.
+ *
+ * @returns {*[]} Array of css style modules defined by the active plugins.
+ */
 export function getTransformationButtons() {
     const transformationButtons = [];
 
+    // load all transformation buttons of the active plugins
     for (let plugin of getActivePlugins()) {
         if (plugin.transformExtensionButton) {
             transformationButtons.push(plugin.transformExtensionButton);
@@ -108,6 +135,11 @@ export function getTransformationButtons() {
     return transformationButtons;
 }
 
+/**
+ * Returns all react buttons the active plugins define for the toolbar of the modeler in their buttons property as an array.
+ *
+ * @returns {*[]} Array of buttons defined by the active plugins.
+ */
 export function getPluginButtons() {
     const pluginButtons = [];
 
@@ -123,6 +155,12 @@ export function getPluginButtons() {
     return pluginButtons;
 }
 
+/**
+ * Returns all config tabs the active plugins define in their configTabs property as an array. Each plugin can define
+ * multiple config tabs or none.
+ *
+ * @returns {*[]} Array of config tabs defined by the active plugins.
+ */
 export function getConfigTabs() {
 
     // add default editor tab to configure editor configs
@@ -132,6 +170,7 @@ export function getConfigTabs() {
         configTab: EditorTab,
     }];
 
+    // load the config tabs of the active plugins into one array
     for (let plugin of getActivePlugins()) {
         if (plugin.configTabs) {
             configTabs = configTabs.concat(plugin.configTabs);

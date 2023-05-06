@@ -25,7 +25,7 @@ import {
     getTaskOrder
 } from './RuntimeHandlerUtils';
 import {getXml} from "../../../../../editor/util/IoUtilities";
-import {createModelerFromXml} from '../../../../../editor/ModelerHandler';
+import {createTempModelerFromXml} from '../../../../../editor/ModelerHandler';
 import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
 
 /**
@@ -66,7 +66,7 @@ export async function getQiskitRuntimeProgramDeploymentModel(candidate, modelerC
     }
 
     // import transformed XML to the modeler
-    let modeler = await createModelerFromXml(transformationResult.xml);
+    let modeler = await createTempModelerFromXml(transformationResult.xml);
     let rootElement = getRootProcess(modeler.getDefinitions());
 
     // check if transformed XML contains invalid modeling constructs

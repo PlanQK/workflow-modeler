@@ -5,8 +5,8 @@ const editorConfig = require('../config/EditorConfigManager');
 
 let FormData = require('form-data');
 import fetch from 'node-fetch';
-import * as editorConsts from '../EditorConstants';
 
+// workflow with a start event to use as template for new workflows
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
     '  <bpmn2:process id="Process_1" isExecutable="false">\n' +
@@ -134,7 +134,7 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
         });
     }
 
-    // make the request and wait for deployed endpoint
+    // make the request and wait for the response of the deployment endpoint
     try {
         const response = await fetch(editorConfig.getCamundaEndpoint() + '/deployment/create', {
             method: 'POST',
@@ -154,7 +154,6 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
                 return {status: 'failed'};
             }
 
-
             dispatchWorkflowEvent(workflowEventTypes.DEPLOYED, workflowXml, workflowName);
 
             return {
@@ -171,21 +170,30 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
     }
 }
 
+/**
+ * Handle the given transformed workflow as defined by the transformedWorkflowHandler entry of the editor configs. The handling
+ * will not be executed if the dispatched event is caught.
+ *
+ * @param workflowXml The transformed workflow as xml.
+ * @returns {Promise<void>}
+ */
 export async function handleTransformedWorkflow(workflowXml) {
     const fileName = editorConfig.getFileName().split('.')[0] + '_transformed.bpmn';
 
+    // dispatch workflow transformed event
     const eventNotCaught = dispatchWorkflowEvent(workflowEventTypes.TRANSFORMED, workflowXml, fileName);
 
     console.log(`Transformed Workflow Event caught? - ${eventNotCaught}`);
 
+    // execute respective handle function if event was not already solved
     if (eventNotCaught) {
         const handlerId = editorConfig.getTransformedWorkflowHandler();
 
         switch (handlerId) {
-            case transformedWorkflowHandlers.NEW_TAB:
+            case transformedWorkflowHandlers.NEW_TAB: // open workflow in new browser tab
                 openInNewTab(workflowXml, fileName);
                 break;
-            case transformedWorkflowHandlers.SAVE_AS_FILE:
+            case transformedWorkflowHandlers.SAVE_AS_FILE: // save workflow to local file system
                 await saveXmlAsLocalFile(workflowXml, fileName);
                 break;
             default:
@@ -194,6 +202,12 @@ export async function handleTransformedWorkflow(workflowXml) {
     }
 }
 
+/**
+ * Opens given workflow in new browser tab.
+ *
+ * @param workflowXml The workflow as xml string.
+ * @param fileName The name of the workflow.
+ */
 export function openInNewTab(workflowXml, fileName) {
 
     const newWindow = window.open(window.location.href, "_blank");

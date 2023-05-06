@@ -1,18 +1,27 @@
 import React, {useState} from "react";
 
+/**
+ * React button which contains a transformation function to transform the workflow. The button contains a button and a
+ * checkbox. The Checkbox defines if the transformation function of the button should be executed or not.
+ *
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function TransformationButton(props) {
 
     const {
-        transformWorkflow,
+        transformWorkflow, // transformation function of this component
         title,
         name,
         className,
-        selectedCallback,
-        isChecked,
+        selectedCallback, // callback for propagating changes of the checkbox
+        isChecked, // initial value for the checkbox
     } = props;
 
     const [checked, setChecked] = useState(isChecked);
 
+    // call selectedCallback if the checkbox changes
     const handleCheckboxChange = () => {
         setChecked(!checked);
         selectedCallback(!checked, name);
@@ -29,5 +38,5 @@ export default function TransformationButton(props) {
             </button>
 
         </div>
-    )
+    );
 }

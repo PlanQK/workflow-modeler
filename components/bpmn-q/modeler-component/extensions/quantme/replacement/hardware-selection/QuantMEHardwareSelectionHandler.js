@@ -19,7 +19,7 @@ import {
 } from './HardwareSelectionScripts';
 import * as consts from '../../Constants';
 import {addExtensionElements} from '../../../../editor/util/camunda-utils/ExtensionElementsUtil';
-import {createModelerFromXml, createPlainModeler} from '../../../../editor/ModelerHandler';
+import {createTempModelerFromXml, createPlainModeler} from '../../../../editor/ModelerHandler';
 import {getPropertiesToCopy, insertShape} from '../../../../editor/util/TransformationUtilities';
 import {getCamundaInputOutput, getRootProcess} from '../../../../editor/util/ModellingUtilities';
 import {getXml} from '../../../../editor/util/IoUtilities';
@@ -212,7 +212,7 @@ export async function replaceHardwareSelectionSubprocess(subprocess, parent, mod
  * @return the configured workflow model
  */
 export async function configureBasedOnHardwareSelection(xml, provider, qpu, circuitLanguage) {
-    let modeler = await createModelerFromXml(xml);
+    let modeler = await createTempModelerFromXml(xml);
     let elementRegistry = modeler.get('elementRegistry');
 
     // get root element of the current diagram

@@ -1,6 +1,6 @@
 import {is} from 'bpmn-js/lib/util/ModelUtil';
 import {getXml, loadDiagram} from '../../../editor/util/IoUtilities';
-import {createLightweightModeler, createTempModelerFromXml} from '../../../editor/ModelerHandler';
+import {createLightweightModeler, createTempModeler, createTempModelerFromXml} from '../../../editor/ModelerHandler';
 import * as consts from '../Constants';
 import {
     getAllElementsForProcess,
@@ -14,7 +14,6 @@ import {
     addFormField, findSequenceFlowConnection, getDocumentation,
     getRootProcess, setDocumentation,
 } from '../../../editor/util/ModellingUtilities';
-import {createLink} from "browserify-css/browser";
 
 /**
  * Replace data flow extensions with camunda bpmn elements so that it complies with the standard
@@ -90,10 +89,10 @@ export async function startDataFlowReplacementProcess(xml) {
 
             // document the transformation in the source and target elements
             const currentSourceDoc = getDocumentation(sourceDataMapObject.businessObject) || '';
-            setDocumentation(sourceDataMapObject, currentSourceDoc.concat(createTransformationSourceDocs(transformationAssociation)), bpmnFactory, modeling);
+            setDocumentation(sourceDataMapObject, currentSourceDoc.concat(createTransformationSourceDocs(transformationAssociation)), bpmnFactory);
 
             const currentTargetDoc = getDocumentation(targetDataMapObject.businessObject) || '';
-            setDocumentation(targetDataMapObject, currentTargetDoc.concat(createTransformationTargetDocs(transformationAssociation)), bpmnFactory, modeling);
+            setDocumentation(targetDataMapObject, currentTargetDoc.concat(createTransformationTargetDocs(transformationAssociation)), bpmnFactory);
         }
     }
 
@@ -119,7 +118,7 @@ export async function startDataFlowReplacementProcess(xml) {
             dataMapObject = source;
             businessObject = dataMapObject.businessObject;
 
-            addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
+            addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory);
         }
 
         // if target === DataMapObject: content als output in source
@@ -144,7 +143,7 @@ export async function startDataFlowReplacementProcess(xml) {
                 }
 
             } else {
-                addCamundaOutputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory, moddle);
+                addCamundaOutputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory);
             }
         }
     }
@@ -235,7 +234,7 @@ function transformDataMapObjects(rootProcess, definitions, globalProcessVariable
         if (result.success) {
             const currentDoc = getDocumentation(dataMapObjectBo) || '';
             const dataDoc = createDataMapObjectDocs(dataMapObjectBo);
-            setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory, modeling);
+            setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
         } else {
             return {success: false, failedData: dataMapObjectBo};
         }
@@ -274,7 +273,7 @@ function transformDataStoreMaps(rootProcess, definitions, globalProcessVariables
         if (result.success) {
             const currentDoc = getDocumentation(dataStoreMap) || '';
             const dataDoc = createDataStoreMapDocs(dataStoreMap);
-            setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory, modeling);
+            setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
         } else {
             return {success: false, failedData: dataStoreMap};
         }
@@ -303,7 +302,7 @@ function transformTransformationTask(rootProcess, definitions, globalProcessVari
             return {success: false, failedData: transformationTask};
         }
 
-        addCamundaInputMapParameter(result.element.businessObject, consts.PARAMETERS, transformationTask.get(consts.PARAMETERS), bpmnFactory, moddle);
+        addCamundaInputMapParameter(result.element.businessObject, consts.PARAMETERS, transformationTask.get(consts.PARAMETERS), bpmnFactory);
     }
     return {success: true};
 }
@@ -332,7 +331,7 @@ function createGlobalProcessVariables(globalProcessVariables, rootProcess, defin
             newTaskBo.name = 'Create Process Variables [Generated]';
 
             for (let processVariable of globalProcessVariables[processId]) {
-                addCamundaOutputMapParameter(newTaskBo, processVariable.name, processVariable.map, bpmnFactory, moddle);
+                addCamundaOutputMapParameter(newTaskBo, processVariable.name, processVariable.map, bpmnFactory);
             }
 
             const outgoingFlowElements = startEventBo.outgoing || [];

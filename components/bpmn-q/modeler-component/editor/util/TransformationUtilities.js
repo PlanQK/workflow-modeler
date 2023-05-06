@@ -1,6 +1,5 @@
 import {isFlowLikeElement} from './ModellingUtilities';
-import * as consts from '../../extensions/planqk/utilities/Constants';
-import {is} from 'bpmn-js/lib/util/ModelUtil';
+import {getDi, is} from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * Insert the given element and all child elements into the diagram
@@ -52,15 +51,14 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
     if (newElement.$type === 'bpmn:SubProcess') {
 
         // get the shape element related to the subprocess
-        let shape = newElement.di;
+        let shape = getDi(element);
         if (shape && shape.isExpanded) {
-
             // expand the new element
             elementRegistry.get(element.id).businessObject.di.isExpanded = true;
         }
 
         // preserve messages defined in ReceiveTasks
-    } else if (newElement.$type === 'bpmn:ReceiveTask') {
+    } else if (newElement.$type === 'bpmn:ReceiveTask' && newElement.messageRef) {
 
         // get message from the replacement and check if a corresponding message was already created
         let oldMessage = newElement.messageRef;
@@ -239,27 +237,14 @@ export function getAllElementsInProcess(processBo, elementRegistry, elementType)
     return elements;
 }
 
-export function getAllElementsInProcessWithInheritance(processBo, elementRegistry, elementType) {
-
-    // retrieve parent object for later replacement
-    const processElement = elementRegistry.get(processBo.id);
-
-    const elements = [];
-    const flowElements = processBo.flowElements;
-    for (let i = 0; i < flowElements.length; i++) {
-        let flowElement = flowElements[i];
-        if (is(flowElement, elementType)) {
-            elements.push({element: flowElement, parent: processElement});
-        }
-
-        // recursively retrieve service tasks if subprocess is found
-        if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
-            Array.prototype.push.apply(elements, getAllElementsInProcess(flowElement, elementRegistry, elementType));
-        }
-    }
-    return elements;
-}
-
+/**
+ * Finds and returns all elements which inherit from the given type in the process
+ *
+ * @param processBo The process the searched elements are in
+ * @param elementRegistry The element register of all elements of the process
+ * @param elementType The searched element type
+ * @returns {*[]} All elements of the process with the elementType
+ */
 export function getAllElementsForProcess(processBo, elementRegistry, elementType) {
 
     // retrieve parent object for later replacement

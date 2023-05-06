@@ -13,6 +13,7 @@ import {
     is
 } from 'bpmn-js/lib/util/ModelUtil';
 import {getExtensionElementsList} from "./ExtensionElementsUtil";
+import {createElement, nextId} from "./ElementUtil";
 
 function getElements(businessObject, type, property) {
     const elements = getExtensionElementsList(businessObject, type);

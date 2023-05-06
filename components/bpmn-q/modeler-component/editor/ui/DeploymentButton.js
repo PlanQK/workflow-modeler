@@ -4,6 +4,13 @@ import {deployWorkflowToCamunda} from '../util/IoUtilities';
 import {getCamundaEndpoint} from '../config/EditorConfigManager';
 import {getRootProcess} from '../util/ModellingUtilities';
 
+/**
+ * React button for starting the deployment of the workflow.
+ *
+ * @param props
+ * @returns {JSX.Element} The React button
+ * @constructor
+ */
 export default function DeploymentButton(props) {
 
     const {modeler} = props;

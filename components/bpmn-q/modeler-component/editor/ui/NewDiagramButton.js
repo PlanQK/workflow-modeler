@@ -1,6 +1,13 @@
 import React from 'react';
 import {createNewDiagram} from '../util/IoUtilities';
 
+/**
+ * React button which creates a new workflow.
+ *
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function NewDiagramButton(props) {
 
     const {modeler} = props;

@@ -12,7 +12,7 @@
 import lodash from 'lodash';
 import generateImage from '../../../../editor/util/camunda-utils/generateImage';
 import {getRootProcess} from '../../../../editor/util/ModellingUtilities';
-import {createModelerFromXml} from '../../../../editor/ModelerHandler';
+import {createTempModelerFromXml} from '../../../../editor/ModelerHandler';
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
@@ -77,7 +77,7 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
     console.log('Visualizing optimization candidate: ', optimizationCandidate);
 
     // create new modeler for the visualization
-    let modeler = await createModelerFromXml(workflowXml);
+    let modeler = await createTempModelerFromXml(workflowXml);
     let modeling = modeler.get('modeling');
     let elementRegistry = modeler.get('elementRegistry');
     let rootElement = getRootProcess(modeler.getDefinitions());

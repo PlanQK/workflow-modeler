@@ -5,8 +5,14 @@ import NewDiagramButton from "./NewDiagramButton";
 import DeploymentButton from "./DeploymentButton";
 import ConfigPlugin from "../config/ConfigPlugin";
 import TransformationToolbarButton from "./TransformationToolbarButton";
-// import '../resources/styling/editor-ui.css';
 
+/**
+ * React component which displays the toolbar of the modeler
+ *
+ * @param props Properties of the toolbar
+ * @returns {JSX.Element} The React component
+ * @constructor
+ */
 export default function ButtonToolbar(props) {
 
     const {

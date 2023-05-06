@@ -4,10 +4,21 @@ import {getXml, handleTransformedWorkflow} from '../util/IoUtilities';
 import NotificationHandler from './notifications/NotificationHandler';
 import {getModeler} from '../ModelerHandler';
 
+/**
+ * Component which groups the TransformationButtons defined by the plugins. Each button defines a transformation function which
+ * can be activated via its checkbox. With a click on this component all active transformation functions will be executed
+ * after each other.
+ *
+ * The grouped TransformationButtons can be displayed by a click on the wretch icon of this component.
+ *
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function TransformationToolbarButton(props) {
 
     const {
-        subButtons,
+        subButtons, // list of transformation buttons
         title,
         styleClass,
     } = props;
@@ -26,12 +37,15 @@ export default function TransformationToolbarButton(props) {
      */
     const [transformationStates, setTransformationStates] = useState(initialTransformationStates);
 
+    // execute the transformation functions of each button
     async function startTransformation() {
 
+        // get current workflow of the modeler as xml string
         const modeler = getModeler();
         let xml = await getXml(modeler);
         let tmp;
 
+        // show notification if at least one transformation function is active
         if (Object.entries(transformationStates).some((state) => state[1])) {
             NotificationHandler.getInstance().displayNotification({
                 type: 'info',
@@ -48,6 +62,8 @@ export default function TransformationToolbarButton(props) {
                 if (transformationStates[transformationButton.props.name]) {
 
                     console.log('Starting Transformation for ' + transformationButton.props.name);
+
+                    // execute transformation function of the button
                     tmp = await transformationButton.props.transformWorkflow(xml);
 
                     if (tmp && tmp.status === 'transformed') {
@@ -55,6 +71,7 @@ export default function TransformationToolbarButton(props) {
 
                     } else {
 
+                        // break process if one transformation failes
                         const cause = tmp.cause || 'Transformation failed because of an unexpected error.';
 
                         NotificationHandler.getInstance().displayNotification({
@@ -67,6 +84,8 @@ export default function TransformationToolbarButton(props) {
                 }
             }
             if (xml) {
+
+                // handle transformed workflow (open in new tab, save to file storage etc.)
                 await handleTransformedWorkflow(xml);
             }
 
@@ -81,6 +100,7 @@ export default function TransformationToolbarButton(props) {
         }
     }
 
+    // close displayed TransformationButtons if the user clicks outside this component
     const handleOutsideClick = event => {
         if (wrapperRef.current && !wrapperRef.current.contains(event.composedPath()[0])) {
             setToggleOn(false);

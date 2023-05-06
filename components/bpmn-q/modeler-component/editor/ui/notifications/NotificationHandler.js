@@ -31,7 +31,7 @@ export default class NotificationHandler {
      * Creates a new Notifications React Component with a fixed ref to access the methods of the component.
      *
      * @param notifications The initial set of components to display wright after creation.
-     * @param notificationsContainer
+     * @param notificationsContainer DOM element the notifications are rendered into.
      * @returns the created Notifications React Component
      */
     createNotificationsComponent(notifications, notificationsContainer) {
@@ -48,7 +48,7 @@ export default class NotificationHandler {
      *
      * @param type The NOTIFICATION_TYPES of the notification.
      * @param title The title of the notification.
-     * @param content The text displayed by the the notification.
+     * @param content The text displayed by the notification.
      * @param duration The duration in milliseconds.
      */
     displayNotification({type = 'info', title, content, duration = 4000}) {
