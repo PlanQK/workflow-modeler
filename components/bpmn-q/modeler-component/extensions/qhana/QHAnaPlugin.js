@@ -6,8 +6,6 @@ import ExtensibleButton from '../../editor/ui/ExtensibleButton';
 import UpdateQHAnaConfigurationsButton from './ui/UpdateQHAnaConfigurationsButton';
 import QHAnaConfigurationsTab from './configurations/QHAnaConfigurationsTab';
 import {startQHAnaReplacementProcess} from './transformation/QHAnaTransformationHandler';
-import {getModeler} from '../../editor/ModelerHandler';
-import {getXml} from '../../editor/util/IoUtilities';
 import qhanaStyles from './resources/qhana-icons.css';
 
 let qhanaModdleDescriptor = require('./resources/qhana-extension.json');
@@ -34,13 +32,6 @@ export default {
     styling: [qhanaStyles],
     transformExtensionButton: <TransformationButton name='QHAna Transformation' transformWorkflow={
         async (xml) => {
-
-            // load current xml if not given as parameter
-            if (!xml) {
-                const modeler = getModeler();
-                xml = await getXml(modeler);
-            }
-
             return await startQHAnaReplacementProcess(xml);
         }
     }/>,
