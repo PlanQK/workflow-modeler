@@ -68,7 +68,9 @@ const modelerComponent = document.createElement('quantum-workflow-modeler');
 ```
 to integrate the modeler component into the UI of your application.
 
-Activate the plugins you want to use in your instance of the modeler by setting the pluginConfig attribute.
+Activate the plugins you want to use in your instance of the modeler by setting the pluginConfig attribute. You can only 
+set the pluginConfigs attribute if the modelerComponent is already available in the DOM. If you do not do that, the rendering
+will fail.
 ```javascript
 modelerComponent.pluginConfigs = [
     {

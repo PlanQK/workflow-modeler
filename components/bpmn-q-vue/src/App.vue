@@ -18,7 +18,7 @@ import QFlowModeler from "./components/QFlowModeler.vue";
     >
       <h1 style="margin: 10px">Vue BPMN Modeler</h1>
       <div
-        id="button-container"
+        id="vue-button-container"
         style="
           display: flex;
           flex-shrink: 0;
