@@ -24,6 +24,10 @@ describe('Test QHAnaConfigurations', function () {
             sinon.assert.calledOnce(fetchStub);
         });
 
+        after(function () {
+            sinon.restore();
+        });
+
         describe('Test getQuantMEDataConfigurations()', function () {
 
             it('should return all data object configurations', function () {

@@ -23,6 +23,10 @@ describe('Test the TransformationTaskConfigurationsEndpoint', function () {
         sinon.assert.calledOnce(fetchStub);
     });
 
+    after(function () {
+        sinon.restore();
+    });
+
     it('Should load two configurations', function () {
         const configs = getTransformationTaskConfigurations();
 

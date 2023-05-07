@@ -20,6 +20,10 @@ describe('Test configurations', function () {
             configurationsEndpoint.fetchConfigurations();
         });
 
+        after(function () {
+            sinon.restore();
+        });
+
         describe('Test getConfigurations()', function () {
 
             it('getConfiguration should return configurations for given type', function () {

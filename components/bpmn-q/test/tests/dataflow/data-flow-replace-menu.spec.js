@@ -78,5 +78,7 @@ describe('Test DataFlow Replace Menu', function () {
         expect(menuEntries['ID21'].label).to.equal('XML to JSON Transformation');
         expect(menuEntries['ID22'].label).to.equal('CSV to JSON Transformation');
         expect(menuEntries['ID23'].label).to.equal('Json to Xml Transformation');
+
+        sinon.restore();
     });
 });
