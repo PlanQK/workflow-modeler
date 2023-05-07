@@ -10,7 +10,6 @@
  */
 
 import fetch from 'node-fetch';
-// const fetch = require('node-fetch');
 
 /**
  * Get the URLs to all folders in the given public repository
@@ -19,22 +18,22 @@ import fetch from 'node-fetch';
  * @param repoName the name of the repository
  * @param repoPath the path to the root folder in the repository to use
  */
-export const getFoldersInRepository = async function(userName, repoName, repoPath) {
-  const directoryURLs = [];
-  let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`);
-  const contents = await response.json();
+export const getFoldersInRepository = async function (userName, repoName, repoPath) {
+    const directoryURLs = [];
+    let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`);
+    const contents = await response.json();
 
-  if (response.status !== 200) {
-    throw 'Status code not equal to 200: ' + response.status;
-  }
-
-  for (let i = 0; i < contents.length; i++) {
-    let item = contents[i];
-    if (item.type === 'dir') {
-      directoryURLs.push(item.url);
+    if (response.status !== 200) {
+        throw 'Status code not equal to 200: ' + response.status;
     }
-  }
-  return directoryURLs;
+
+    for (let i = 0; i < contents.length; i++) {
+        let item = contents[i];
+        if (item.type === 'dir') {
+            directoryURLs.push(item.url);
+        }
+    }
+    return directoryURLs;
 };
 
 /**
@@ -43,9 +42,9 @@ export const getFoldersInRepository = async function(userName, repoName, repoPat
  * @param fileURL the URL to the file to retrieve
  * @returns the content of the given file
  */
-export const getFileContent = async function(fileURL) {
-  let response = await fetch(fileURL);
-  return await response.text();
+export const getFileContent = async function (fileURL) {
+    let response = await fetch(fileURL);
+    return await response.text();
 };
 
 /**
@@ -53,17 +52,17 @@ export const getFileContent = async function(fileURL) {
  *
  * @param folderURL the URL to the folder in the github repository
  */
-export const getFilesInFolder = async function(folderURL) {
-  const fileURLs = [];
-  let response = await fetch(folderURL);
-  const contents = await response.json();
+export const getFilesInFolder = async function (folderURL) {
+    const fileURLs = [];
+    let response = await fetch(folderURL);
+    const contents = await response.json();
 
-  for (let i = 0; i < contents.length; i++) {
-    let item = contents[i];
-    if (item.type === 'file') {
-      fileURLs.push({ name: item.name, download_url: item.download_url });
+    for (let i = 0; i < contents.length; i++) {
+        let item = contents[i];
+        if (item.type === 'file') {
+            fileURLs.push({name: item.name, download_url: item.download_url});
+        }
     }
-  }
-  return fileURLs;
+    return fileURLs;
 };
 

@@ -11,71 +11,70 @@
 
 import defaultConfig from "./config";
 import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
+
 let config = {};
 
 /**
  * Get the endpoint for Data Object Configurations
  */
 export function getQuantMEDataConfigurationsEndpoint() {
-  if (config.quantmeDataConfigurationsEndpoint === undefined) {
-    setQuantMEDataConfigurationsEndpoint(
-      getPluginConfig('quantme').quantmeDataConfigurationsEndpoint
-      || defaultConfig.quantmeDataConfigurationsEndpoint);
-  }
-  return config.quantmeDataConfigurationsEndpoint;
+    if (config.quantmeDataConfigurationsEndpoint === undefined) {
+        setQuantMEDataConfigurationsEndpoint(
+            getPluginConfig('quantme').quantmeDataConfigurationsEndpoint
+            || defaultConfig.quantmeDataConfigurationsEndpoint);
+    }
+    return config.quantmeDataConfigurationsEndpoint;
 }
 
 /**
  * Set the endpoint for Data Object Configurations
  */
 export function setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint) {
-  if (dataConfigurationsEndpoint !== null && dataConfigurationsEndpoint !== undefined) {
-    config.quantmeDataConfigurationsEndpoint = dataConfigurationsEndpoint;
-  }
+    if (dataConfigurationsEndpoint !== null && dataConfigurationsEndpoint !== undefined) {
+        config.quantmeDataConfigurationsEndpoint = dataConfigurationsEndpoint;
+    }
 }
 
 /**
  * Get the NISQ Analyzer endpoint
  */
 export function getNisqAnalyzerEndpoint() {
-  if (config.nisqAnalyzerEndpoint === undefined) {
-    setNisqAnalyzerEndpoint(
-      getPluginConfig('quantme').nisqAnalyzerEndpoint
-      || defaultConfig.nisqAnalyzerEndpoint);
-  }
-  return config.nisqAnalyzerEndpoint;
+    if (config.nisqAnalyzerEndpoint === undefined) {
+        setNisqAnalyzerEndpoint(
+            getPluginConfig('quantme').nisqAnalyzerEndpoint
+            || defaultConfig.nisqAnalyzerEndpoint);
+    }
+    return config.nisqAnalyzerEndpoint;
 }
 
 /**
  * Set the NISQ Analyzer endpoint
  */
 export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
-  if (nisqAnalyzerEndpoint !== null && nisqAnalyzerEndpoint !== undefined) {
-    config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
-    // app.emit('menu:action', 'nisqAnalyzerEndpointChanged', nisqAnalyzerEndpoint);
-  }
+    if (nisqAnalyzerEndpoint !== null && nisqAnalyzerEndpoint !== undefined) {
+        config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
+    }
 }
 
 /**
  * Get the Transformation Framework endpoint
  */
 export function getTransformationFrameworkEndpoint() {
-  if (config.transformationFrameworkEndpoint === undefined) {
-    setTransformationFrameworkEndpoint(
-      getPluginConfig('quantme').transformationFrameworkEndpoint
-      || defaultConfig.transformationFrameworkEndpoint);
-  }
-  return config.transformationFrameworkEndpoint;
+    if (config.transformationFrameworkEndpoint === undefined) {
+        setTransformationFrameworkEndpoint(
+            getPluginConfig('quantme').transformationFrameworkEndpoint
+            || defaultConfig.transformationFrameworkEndpoint);
+    }
+    return config.transformationFrameworkEndpoint;
 }
 
 /**
  * Set the Transformation Framework endpoint
  */
 export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoint) {
-  if (transformationFrameworkEndpoint !== null && transformationFrameworkEndpoint !== undefined) {
-    config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
-    // app.emit('menu:action', 'transformationFrameworkEndpointChanged', transformationFrameworkEndpoint);
-  }
+    if (transformationFrameworkEndpoint !== null && transformationFrameworkEndpoint !== undefined) {
+        config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
+    }
 }
 
 /**
@@ -84,12 +83,12 @@ export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoi
  * @return {string} the currently specified endpoint of the OpenTOSCA container
  */
 export function getOpenTOSCAEndpoint() {
-  if (config.opentoscaEndpoint === undefined) {
-    setOpenTOSCAEndpoint(
-      getPluginConfig('quantme').opentoscaEndpoint
-      || defaultConfig.opentoscaEndpoint);
-  }
-  return config.opentoscaEndpoint;
+    if (config.opentoscaEndpoint === undefined) {
+        setOpenTOSCAEndpoint(
+            getPluginConfig('quantme').opentoscaEndpoint
+            || defaultConfig.opentoscaEndpoint);
+    }
+    return config.opentoscaEndpoint;
 }
 
 /**
@@ -98,10 +97,9 @@ export function getOpenTOSCAEndpoint() {
  * @param opentoscaEndpoint the endpoint of the OpenTOSCA container
  */
 export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
-  if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
-    config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, '');
-    // app.emit('menu:action', 'opentoscaEndpointChanged', config.opentoscaEndpoint);
-  }
+    if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
+        config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, '');
+    }
 }
 
 /**
@@ -110,12 +108,12 @@ export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
  * @return {string} the currently specified endpoint of the Winery
  */
 export function getWineryEndpoint() {
-  if (config.wineryEndpoint === undefined) {
-    setWineryEndpoint(
-      getPluginConfig('quantme').wineryEndpoint
-      || defaultConfig.wineryEndpoint);
-  }
-  return config.wineryEndpoint;
+    if (config.wineryEndpoint === undefined) {
+        setWineryEndpoint(
+            getPluginConfig('quantme').wineryEndpoint
+            || defaultConfig.wineryEndpoint);
+    }
+    return config.wineryEndpoint;
 }
 
 /**
@@ -124,10 +122,9 @@ export function getWineryEndpoint() {
  * @param wineryEndpoint the endpoint of the Winery
  */
 export function setWineryEndpoint(wineryEndpoint) {
-  if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
-    config.wineryEndpoint = wineryEndpoint.replace(/\/$/, '');
-    // app.emit('menu:action', 'wineryEndpointChanged', config.wineryEndpoint);
-  }
+    if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
+        config.wineryEndpoint = wineryEndpoint.replace(/\/$/, '');
+    }
 }
 
 /**
@@ -136,12 +133,12 @@ export function setWineryEndpoint(wineryEndpoint) {
  * @return {string} the specified repository path
  */
 export function getQRMRepositoryPath() {
-  if (config.githubRepositoryPath === undefined) {
-    setQRMRepositoryPath(
-      getPluginConfig('quantme').githubRepositoryPath
-      || defaultConfig.githubRepositoryPath);
-  }
-  return config.githubRepositoryPath;
+    if (config.githubRepositoryPath === undefined) {
+        setQRMRepositoryPath(
+            getPluginConfig('quantme').githubRepositoryPath
+            || defaultConfig.githubRepositoryPath);
+    }
+    return config.githubRepositoryPath;
 }
 
 /**
@@ -150,10 +147,9 @@ export function getQRMRepositoryPath() {
  * @param repositoryPath the repository path
  */
 export function setQRMRepositoryPath(repositoryPath) {
-  if (repositoryPath !== null && repositoryPath !== undefined) {
-    config.githubRepositoryPath = repositoryPath;
-    // app.emit('menu:action', 'qrmRepoPathChanged', repositoryPath);
-  }
+    if (repositoryPath !== null && repositoryPath !== undefined) {
+        config.githubRepositoryPath = repositoryPath;
+    }
 }
 
 /**
@@ -162,12 +158,12 @@ export function setQRMRepositoryPath(repositoryPath) {
  * @return {string} the specified repository name
  */
 export function getQRMRepositoryName() {
-  if (config.githubRepositoryName === undefined) {
-    setQRMRepositoryName(
-      getPluginConfig('quantme').githubRepositoryName
-      || defaultConfig.githubRepositoryName);
-  }
-  return config.githubRepositoryName;
+    if (config.githubRepositoryName === undefined) {
+        setQRMRepositoryName(
+            getPluginConfig('quantme').githubRepositoryName
+            || defaultConfig.githubRepositoryName);
+    }
+    return config.githubRepositoryName;
 }
 
 /**
@@ -176,10 +172,9 @@ export function getQRMRepositoryName() {
  * @param repositoryName the repository name
  */
 export function setQRMRepositoryName(repositoryName) {
-  if (repositoryName !== null && repositoryName !== undefined) {
-    config.githubRepositoryName = repositoryName;
-    // app.emit('menu:action', 'qrmRepoNameChanged', repositoryName);
-  }
+    if (repositoryName !== null && repositoryName !== undefined) {
+        config.githubRepositoryName = repositoryName;
+    }
 }
 
 /**
@@ -188,12 +183,12 @@ export function setQRMRepositoryName(repositoryName) {
  * @return {string} the specified username
  */
 export function getQRMRepositoryUserName() {
-  if (config.githubUsername === undefined) {
-    setQRMUserName(
-      getPluginConfig('quantme').githubUsername
-      || defaultConfig.githubUsername);
-  }
-  return config.githubUsername;
+    if (config.githubUsername === undefined) {
+        setQRMUserName(
+            getPluginConfig('quantme').githubUsername
+            || defaultConfig.githubUsername);
+    }
+    return config.githubUsername;
 }
 
 /**
@@ -202,10 +197,9 @@ export function getQRMRepositoryUserName() {
  * @param userName the username
  */
 export function setQRMUserName(userName) {
-  if (userName !== null && userName !== undefined) {
-    config.githubUsername = userName;
-    // app.emit('menu:action', 'qrmUserNameChanged', userName);
-  }
+    if (userName !== null && userName !== undefined) {
+        config.githubUsername = userName;
+    }
 }
 
 /**
@@ -214,12 +208,12 @@ export function setQRMUserName(userName) {
  * @return {string} the specified endpoint
  */
 export function getQiskitRuntimeHandlerEndpoint() {
-  if (config.qiskitRuntimeHandlerEndpoint === undefined) {
-    setQiskitRuntimeHandlerEndpoint(
-      getPluginConfig('quantme').qiskitRuntimeHandlerEndpoint
-      || defaultConfig.qiskitRuntimeHandlerEndpoint);
-  }
-  return config.qiskitRuntimeHandlerEndpoint;
+    if (config.qiskitRuntimeHandlerEndpoint === undefined) {
+        setQiskitRuntimeHandlerEndpoint(
+            getPluginConfig('quantme').qiskitRuntimeHandlerEndpoint
+            || defaultConfig.qiskitRuntimeHandlerEndpoint);
+    }
+    return config.qiskitRuntimeHandlerEndpoint;
 }
 
 /**
@@ -228,10 +222,9 @@ export function getQiskitRuntimeHandlerEndpoint() {
  * @param endpoint the endpoint
  */
 export function setQiskitRuntimeHandlerEndpoint(endpoint) {
-  if (endpoint !== null && endpoint !== undefined) {
-    config.qiskitRuntimeHandlerEndpoint = endpoint;
-    // app.emit('menu:action', 'qiskitRuntimeHandlerEndpointChanged', endpoint);
-  }
+    if (endpoint !== null && endpoint !== undefined) {
+        config.qiskitRuntimeHandlerEndpoint = endpoint;
+    }
 }
 
 /**
@@ -240,12 +233,12 @@ export function setQiskitRuntimeHandlerEndpoint(endpoint) {
  * @return {string} the specified endpoint
  */
 export function getScriptSplitterEndpoint() {
-  if (config.scriptSplitterEndpoint === undefined) {
-    setScriptSplitterEndpoint(
-      getPluginConfig('quantme').scriptSplitterEndpoint
-      || defaultConfig.scriptSplitterEndpoint);
-  }
-  return config.scriptSplitterEndpoint;
+    if (config.scriptSplitterEndpoint === undefined) {
+        setScriptSplitterEndpoint(
+            getPluginConfig('quantme').scriptSplitterEndpoint
+            || defaultConfig.scriptSplitterEndpoint);
+    }
+    return config.scriptSplitterEndpoint;
 }
 
 /**
@@ -254,10 +247,9 @@ export function getScriptSplitterEndpoint() {
  * @param endpoint the endpoint
  */
 export function setScriptSplitterEndpoint(endpoint) {
-  if (endpoint !== null && endpoint !== undefined) {
-    config.scriptSplitterEndpoint = endpoint;
-    // app.emit('menu:action', 'scriptSplitterEndpointChanged', endpoint);
-  }
+    if (endpoint !== null && endpoint !== undefined) {
+        config.scriptSplitterEndpoint = endpoint;
+    }
 }
 
 /**
@@ -266,12 +258,12 @@ export function setScriptSplitterEndpoint(endpoint) {
  * @return {int} the specified threshold
  */
 export function getScriptSplitterThreshold() {
-  if (config.scriptSplitterThreshold === undefined) {
-    setScriptSplitterThreshold(
-      getPluginConfig('quantme').scriptSplitterThreshold
-      || defaultConfig.scriptSplitterThreshold);
-  }
-  return config.scriptSplitterThreshold;
+    if (config.scriptSplitterThreshold === undefined) {
+        setScriptSplitterThreshold(
+            getPluginConfig('quantme').scriptSplitterThreshold
+            || defaultConfig.scriptSplitterThreshold);
+    }
+    return config.scriptSplitterThreshold;
 }
 
 /**
@@ -280,10 +272,9 @@ export function getScriptSplitterThreshold() {
  * @param threshold the threshold
  */
 export function setScriptSplitterThreshold(threshold) {
-  if (threshold !== null && threshold !== undefined) {
-    config.scriptSplitterThreshold = threshold;
-    // app.emit('menu:action', 'scriptSplitterThresholdChanged', threshold);
-  }
+    if (threshold !== null && threshold !== undefined) {
+        config.scriptSplitterThreshold = threshold;
+    }
 }
 
 /**
@@ -292,12 +283,12 @@ export function setScriptSplitterThreshold(threshold) {
  * @return {boolean} the current value of the hybrid runtime provenance flag
  */
 export function getHybridRuntimeProvenance() {
-  if (config.hybridRuntimeProvenance === undefined) {
-    setHybridRuntimeProvenance(
-      getPluginConfig('quantme').hybridRuntimeProvenance
-      || defaultConfig.hybridRuntimeProvenance);
-  }
-  return config.hybridRuntimeProvenance;
+    if (config.hybridRuntimeProvenance === undefined) {
+        setHybridRuntimeProvenance(
+            getPluginConfig('quantme').hybridRuntimeProvenance
+            || defaultConfig.hybridRuntimeProvenance);
+    }
+    return config.hybridRuntimeProvenance;
 }
 
 /**
@@ -306,10 +297,9 @@ export function getHybridRuntimeProvenance() {
  * @param hybridRuntimeProvenance the new value of the hybrid runtime provenance flag
  */
 export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
-  if (hybridRuntimeProvenance !== null && hybridRuntimeProvenance !== undefined) {
-    config.hybridRuntimeProvenance = hybridRuntimeProvenance;
-    // app.emit('menu:action', 'hybridRuntimeProvenanceChanged', hybridRuntimeProvenance);
-  }
+    if (hybridRuntimeProvenance !== null && hybridRuntimeProvenance !== undefined) {
+        config.hybridRuntimeProvenance = hybridRuntimeProvenance;
+    }
 }
 
 /**
@@ -318,12 +308,12 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
  * @return {string} the specified endpoint
  */
 export function getAWSRuntimeHandlerEndpoint() {
-  if (config.awsRuntimeHandlerEndpoint === undefined) {
-    setAWSRuntimeHandlerEndpoint(
-      getPluginConfig('quantme').awsRuntimeHandlerEndpoint
-      || defaultConfig.awsRuntimeHandlerEndpoint);
-  }
-  return config.awsRuntimeHandlerEndpoint;
+    if (config.awsRuntimeHandlerEndpoint === undefined) {
+        setAWSRuntimeHandlerEndpoint(
+            getPluginConfig('quantme').awsRuntimeHandlerEndpoint
+            || defaultConfig.awsRuntimeHandlerEndpoint);
+    }
+    return config.awsRuntimeHandlerEndpoint;
 }
 
 /**
@@ -332,10 +322,9 @@ export function getAWSRuntimeHandlerEndpoint() {
  * @param endpoint the endpoint
  */
 export function setAWSRuntimeHandlerEndpoint(endpoint) {
-  if (endpoint !== null && endpoint !== undefined) {
-    config.awsRuntimeHandlerEndpoint = endpoint;
-    // app.emit('menu:action', 'awsRuntimeHandlerEndpointChanged', endpoint);
-  }
+    if (endpoint !== null && endpoint !== undefined) {
+        config.awsRuntimeHandlerEndpoint = endpoint;
+    }
 }
 
 /**
@@ -343,5 +332,5 @@ export function setAWSRuntimeHandlerEndpoint(endpoint) {
  * by setting this.comfig to an empty js object.
  */
 export function resetConfig() {
-  config = {};
+    config = {};
 }

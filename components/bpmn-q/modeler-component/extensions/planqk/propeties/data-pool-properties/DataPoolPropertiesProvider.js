@@ -7,51 +7,57 @@ const LOW_PRIORITY = 500;
 
 
 /**
- * A provider with a `#getGroups(element)` method
- * that exposes groups for a diagram element.
+ * A provider of the properties panel of the bpmn-js modeler. Provides custom groups for PlanQK data pools.
  *
- * @param propertiesPanel
- * @param {Function} translate
+ * @param propertiesPanel The properties panel this provider is registered at.
+ * @param {Function} translate The translate function of the bpmn-js modeler.
  */
 export default function DataPoolPropertiesProvider(propertiesPanel, translate) {
 
-  /**
-   * Return the groups provided for the given element.
-   *
-   * @param element
-   *
-   * @return groups middleware
-   */
-  this.getGroups = function (element) {
-
     /**
-     * We return a middleware that modifies
-     * the existing groups.
+     * Return the groups provided for the given element.
      *
-     * @param {Object[]} groups
+     * @param element The element the groups are requested for.
      *
-     * @return {Object[]} modified groups
+     * @return groups middleware
      */
-    return function (groups) {
+    this.getGroups = function (element) {
 
-      if (is(element, consts.PLANQK_DATA_POOL)) {
-        groups.unshift(createDataPoolDetailsGroup(element, translate));
-      }
+        /**
+         * Add custom group for PlanQK Data Pools
+         *
+         * @param {Object[]} groups
+         *
+         * @return {Object[]} modified groups
+         */
+        return function (groups) {
 
-      return groups;
-    }
-  };
+            // Adds properties group for PlanQK Data Pool properties
+            if (is(element, consts.PLANQK_DATA_POOL)) {
+                groups.unshift(createDataPoolDetailsGroup(element, translate));
+            }
 
-  propertiesPanel.registerProvider(LOW_PRIORITY, this);
+            return groups;
+        };
+    };
+
+    propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
 DataPoolPropertiesProvider.$inject = ['propertiesPanel', 'translate', 'dataPools'];
 
+/**
+ * Creates a group to display the name, link a description attributes of the given PlanQK data pool
+ *
+ * @param element The given PlanQK data pool.
+ * @param {Function} translate The translate function of the bpmn-js modeler.
+ * @return {{entries: ([{component: (function(*): VNode<*>), isEdited: ((function(*): *)|*), id: string, element},{component: (function(*): VNode<*>), isEdited: ((function(*): *)|*), id: string, element},{component: (function(*): VNode<*>), isEdited: ((function(*): *)|*), id: string, element}]|*), id: string, label}}
+ */
 function createDataPoolDetailsGroup(element, translate) {
 
-  return {
-    id: 'dataPoolProperties',
-    label: translate('Data Pool Properties'),
-    entries: planqkDataPoolProps(element)
-  };
+    return {
+        id: 'dataPoolProperties',
+        label: translate('Data Pool Properties'),
+        entries: planqkDataPoolProps(element)
+    };
 }

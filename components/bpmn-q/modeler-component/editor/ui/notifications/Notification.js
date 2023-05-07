@@ -12,66 +12,71 @@ import React, {PureComponent} from 'react';
 
 export const NOTIFICATION_TYPES = ['info', 'success', 'error', 'warning'];
 
+/**
+ * React component to display notifications
+ *
+ * @type {string[]}
+ */
 export default class Notification extends PureComponent {
-  static getDerivedStateFromError() {
-    return {error: true};
-  }
-
-  state = {
-    error: false
-  };
-
-  componentDidMount() {
-    const {duration} = this.props;
-
-    if (duration) {
-      this.setupTimeout(duration);
+    static getDerivedStateFromError() {
+        return {error: true};
     }
-  }
 
-  componentDidUpdate(previousProps) {
-    const currentDuration = this.props.duration;
+    state = {
+        error: false
+    };
 
-    const {duration: previousDuration} = previousProps;
+    componentDidMount() {
+        const {duration} = this.props;
 
-    if (currentDuration !== previousDuration) {
-      this.resetTimeout();
-
-      currentDuration && this.setupTimeout(currentDuration);
+        if (duration) {
+            this.setupTimeout(duration);
+        }
     }
-  }
 
-  componentWillUnmount() {
-    this.resetTimeout();
-  }
+    componentDidUpdate(previousProps) {
+        const currentDuration = this.props.duration;
 
-  setupTimeout(duration) {
-    this.timeout = setTimeout(() => {
-      this.props.close();
-    }, duration);
-  }
+        const {duration: previousDuration} = previousProps;
 
-  resetTimeout() {
-    this.timeout && clearTimeout(this.timeout);
-  }
+        if (currentDuration !== previousDuration) {
+            this.resetTimeout();
 
-  componentDidCatch() {
-    this.props.close();
-  }
+            currentDuration && this.setupTimeout(currentDuration);
+        }
+    }
 
-  render() {
-    const {
-      close,
-      content,
-      title,
-    } = this.props;
+    componentWillUnmount() {
+        this.resetTimeout();
+    }
 
-    return this.state.error ? null : <div className="Notification">
-      <span className="close" onClick={close}/>
-      <h2>
-        {title}
-      </h2>
-      {content && <div className="content">{content}</div>}
-    </div>;
-  }
+    setupTimeout(duration) {
+        this.timeout = setTimeout(() => {
+            this.props.close();
+        }, duration);
+    }
+
+    resetTimeout() {
+        this.timeout && clearTimeout(this.timeout);
+    }
+
+    componentDidCatch() {
+        this.props.close();
+    }
+
+    render() {
+        const {
+            close,
+            content,
+            title,
+        } = this.props;
+
+        return this.state.error ? null : <div className="qwm-Notification">
+            <span className="qwm-close" onClick={close}/>
+            <h2>
+                {title}
+            </h2>
+            {content && <div className="qwm-content">{content}</div>}
+        </div>;
+    }
 }

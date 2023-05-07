@@ -1,30 +1,11 @@
-* {
-    box-sizing: border-box;
-}
-
-body, html {
-
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-
-    font-size: 12px;
-
-    height: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-a:link {
-    text-decoration: none;
-}
-
-.content,
-.content > div {
+.qwm-content,
+.qwm-content > div {
     width: 100%;
     height: 100%;
     overflow: hidden;
 }
 
-.content > .message {
+.qwm-content > .qwm-message {
     text-align: center;
     display: table;
 
@@ -32,42 +13,42 @@ a:link {
     color: #111;
 }
 
-.content > .message .note {
+.qwm-content > .qwm-message .qwm-note {
     vertical-align: middle;
     text-align: center;
     display: table-cell;
 }
 
-.content .error .details {
+.qwm-content .qwm-error .qwm-details {
     max-width: 500px;
     font-size: 12px;
     margin: 20px auto;
     text-align: left;
 }
 
-.content .error pre {
+.qwm-content .qwm-error pre {
     border: solid 1px #CCC;
     background: #EEE;
     padding: 10px;
 }
 
-.content:not(.with-error) .error,
-.content.with-error .intro,
-.content.with-diagram .intro {
+.qwm-content:not(.with-error) .qwm-error,
+.qwm-content.with-error .qwm-intro,
+.qwm-content.with-diagram .qwm-intro {
     display: none;
 }
 
 
-.content .canvas,
-.content.with-error .canvas {
+.qwm-content .qwm-canvas,
+.qwm-content.with-error .qwm-canvas {
     visibility: hidden;
 }
 
-.content.with-diagram .canvas {
+.qwm-content.with-diagram .qwm-canvas {
     visibility: visible;
 }
 
-.buttons {
+.qwm-buttons {
     position: fixed;
     bottom: 20px;
     left: 20px;
@@ -77,21 +58,21 @@ a:link {
     list-style: none;
 }
 
-.buttons > li {
+.qwm-buttons > li {
     display: inline-block;
     margin-right: 10px;
 }
-.buttons > li > a {
+.qwm-buttons > li > a {
     background: #DDD;
     border: solid 1px #666;
     display: inline-block;
     padding: 5px;
 }
 
-.buttons a {
+.qwm-buttons a {
     opacity: 0.3;
 }
 
-.buttons a.active {
+.qwm-buttons a.active {
     opacity: 1.0;
 }

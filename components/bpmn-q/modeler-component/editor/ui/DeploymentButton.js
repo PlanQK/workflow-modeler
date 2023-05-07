@@ -1,9 +1,16 @@
 import React from 'react';
 import NotificationHandler from './notifications/NotificationHandler';
-import {deployWorkflowToCamunda} from '../../common/util/IoUtilities';
+import {deployWorkflowToCamunda} from '../util/IoUtilities';
 import {getCamundaEndpoint} from '../config/EditorConfigManager';
-import {getRootProcess} from '../../common/util/ModellingUtilities';
+import {getRootProcess} from '../util/ModellingUtilities';
 
+/**
+ * React button for starting the deployment of the workflow.
+ *
+ * @param props
+ * @returns {JSX.Element} The React button
+ * @constructor
+ */
 export default function DeploymentButton(props) {
 
     const {modeler} = props;
@@ -20,7 +27,7 @@ export default function DeploymentButton(props) {
 
         // get XML of the current workflow
         const rootElement = getRootProcess(modeler.getDefinitions());
-        const xml = (await modeler.saveXML({ format: true })).xml;
+        const xml = (await modeler.saveXML({format: true})).xml;
 
         // check if there are views defined for the modeler and include them in the deployment
         let viewsDict = {};
@@ -51,9 +58,9 @@ export default function DeploymentButton(props) {
 
     return (
         <>
-            <button type="button" className="toolbar-btn" title="Deploy the current workflow to a workflow engine"
+            <button type="button" className="qwm-toolbar-btn" title="Deploy the current workflow to a workflow engine"
                     onClick={() => deploy()}>
-                <span className="workflow-deployment-btn"><span className="indent">Deploy Workflow</span></span>
+                <span className="qwm-workflow-deployment-btn"><span className="qwm-indent">Deploy Workflow</span></span>
             </button>
         </>
     );

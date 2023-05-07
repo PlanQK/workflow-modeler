@@ -10,37 +10,37 @@
  */
 
 import BpmnFactory from 'bpmn-js/lib/features/modeling/BpmnFactory';
-import { isQuantMETask } from '../utilities/Utilities';
-import { READOUT_ERROR_MITIGATION_TASK } from '../Constants';
+import {isQuantMETask} from '../utilities/Utilities';
+import {READOUT_ERROR_MITIGATION_TASK} from '../Constants';
 
 /**
  * This class implements functionality when creating shapes representing QuantME tasks
  */
 export default class QuantMEFactory extends BpmnFactory {
-  constructor(moddle) {
-    super(moddle);
-  }
-
-  _ensureId(element) {
-
-    // handle all non QuantME elements as usual
-    if (!isQuantMETask(element)) {
-      super._ensureId(element);
-      return;
+    constructor(moddle) {
+        super(moddle);
     }
 
-    // add an Id to QuantME elements if not already defined
-    if (!element.id) {
-      var prefix = (element.$type || '').replace(/^[^:]*:/g, '') + '_';
-      element.id = this._model.ids.nextPrefixed(prefix, element);
-    }
+    _ensureId(element) {
 
-    // setting default for selectlist
-    if (element.$type === READOUT_ERROR_MITIGATION_TASK) {
-      element.mitigationMethod = 'matrixInversion';
-      element.calibrationMethod = 'fullMatrix';
+        // handle all non QuantME elements as usual
+        if (!isQuantMETask(element)) {
+            super._ensureId(element);
+            return;
+        }
+
+        // add an Id to QuantME elements if not already defined
+        if (!element.id) {
+            var prefix = (element.$type || '').replace(/^[^:]*:/g, '') + '_';
+            element.id = this._model.ids.nextPrefixed(prefix, element);
+        }
+
+        // setting default for selectlist
+        if (element.$type === READOUT_ERROR_MITIGATION_TASK) {
+            element.mitigationMethod = 'matrixInversion';
+            element.calibrationMethod = 'fullMatrix';
+        }
     }
-  }
 }
 
 QuantMEFactory.$inject = ['moddle'];

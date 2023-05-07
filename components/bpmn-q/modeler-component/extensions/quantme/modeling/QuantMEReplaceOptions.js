@@ -11,118 +11,74 @@
 
 import * as consts from '../Constants';
 
-export const DEMO = [
-  {
-    label: 'Demo Task 1',
-    actionName: 'replace-with-demo-1',
-    className: 'bpmn-icon-service',
-    target: {
-      type: 'bpmn:ServiceTask'
-    }
-  },
-  {
-    label: 'Demo Task 2',
-    actionName: 'replace-with-demo-2',
-    className: 'bpmn-icon-service',
-    target: {
-      type: 'bpmn:ServiceTask'
-    }
-  },
-  {
-    label: 'Demo Task 3',
-    actionName: 'replace-with-demo-3',
-    className: 'bpmn-icon-service',
-    target: {
-      type: 'bpmn:ServiceTask'
-    }
-  },
-];
-
-export const DUMMY = [
-  {
-    label: 'Dummy Task 1',
-    actionName: 'replace-with-dummy-1',
-    className: 'bpmn-icon-send',
-    target: {
-      type: 'bpmn:ServiceTask'
-    }
-  },
-  {
-    label: 'Dummy Task 2',
-    actionName: 'replace-with-dummy-2',
-    className: 'bpmn-icon-send',
-    target: {
-      type: 'bpmn:ServiceTask'
-    }
-  },
-];
-
+// QuantME replace options for a BPMN task
 export var TASK = [
-  {
-    label: 'Quantum Hardware Selection Subprocess',
-    actionName: 'replace-with-hardware-selection-subprocess',
-    className: 'bpmn-icon-hardware-selection-subprocess',
-    target: {
-      type: consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+    {
+        label: 'Quantum Hardware Selection Subprocess',
+        actionName: 'replace-with-hardware-selection-subprocess',
+        className: 'bpmn-icon-hardware-selection-subprocess',
+        target: {
+            type: consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+        }
+    },
+    {
+        label: 'Quantum Computation Task',
+        actionName: 'replace-with-quantum-computation-task',
+        className: 'bpmn-icon-task-quantum-computation',
+        target: {
+            type: consts.QUANTUM_COMPUTATION_TASK
+        }
+    },
+    {
+        label: 'Quantum Circuit Loading Task',
+        actionName: 'replace-with-quantum-circuit-loading-task',
+        className: 'bpmn-icon-circuit-loading',
+        target: {
+            type: consts.QUANTUM_CIRCUIT_LOADING_TASK
+        }
+    },
+    {
+        label: 'Data Preparation Task',
+        actionName: 'replace-with-data-preparation-task',
+        className: 'bpmn-icon-data-preparation',
+        target: {
+            type: consts.DATA_PREPARATION_TASK
+        }
+    },
+    {
+        label: 'Oracle Expansion Task',
+        actionName: 'replace-with-oracle-expansion-task',
+        className: 'bpmn-icon-oracle-expansion',
+        target: {
+            type: consts.ORACLE_EXPANSION_TASK
+        }
+    },
+    {
+        label: 'Quantum Circuit Execution Task',
+        actionName: 'replace-with-quantum-circuit-execution-task',
+        className: 'bpmn-icon-circuit-execution',
+        target: {
+            type: consts.QUANTUM_CIRCUIT_EXECUTION_TASK
+        }
+    },
+    {
+        label: 'Readout-Error Mitigation Task',
+        actionName: 'replace-with-readout-error-mitigation-task',
+        className: 'bpmn-icon-error-mitigation',
+        target: {
+            type: consts.READOUT_ERROR_MITIGATION_TASK
+        }
     }
-  },
-  {
-    label: 'Quantum Computation Task',
-    actionName: 'replace-with-quantum-computation-task',
-    className: 'bpmn-icon-task-quantum-computation',
-    target: {
-      type: consts.QUANTUM_COMPUTATION_TASK
-    }
-  },
-  {
-    label: 'Quantum Circuit Loading Task',
-    actionName: 'replace-with-quantum-circuit-loading-task',
-    className: 'bpmn-icon-circuit-loading',
-    target: {
-      type: consts.QUANTUM_CIRCUIT_LOADING_TASK
-    }
-  },
-  {
-    label: 'Data Preparation Task',
-    actionName: 'replace-with-data-preparation-task',
-    className: 'bpmn-icon-data-preparation',
-    target: {
-      type: consts.DATA_PREPARATION_TASK
-    }
-  },
-  {
-    label: 'Oracle Expansion Task',
-    actionName: 'replace-with-oracle-expansion-task',
-    className: 'bpmn-icon-oracle-expansion',
-    target: {
-      type: consts.ORACLE_EXPANSION_TASK
-    }
-  },
-  {
-    label: 'Quantum Circuit Execution Task',
-    actionName: 'replace-with-quantum-circuit-execution-task',
-    className: 'bpmn-icon-circuit-execution',
-    target: {
-      type: consts.QUANTUM_CIRCUIT_EXECUTION_TASK
-    }
-  },
-  {
-    label: 'Readout-Error Mitigation Task',
-    actionName: 'replace-with-readout-error-mitigation-task',
-    className: 'bpmn-icon-error-mitigation',
-    target: {
-      type: consts.READOUT_ERROR_MITIGATION_TASK
-    }
-  }
 ];
 
+// QuantME replace options for a BPMN subprocess
 export var SUBPROCESS = [
-  {
-    label: 'Quantum Hardware Selection Subprocess',
-    actionName: 'replace-with-hardware-selection-subprocess',
-    className: 'bpmn-icon-hardware-selection-subprocess',
-    target: {
-      type: consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+    {
+        label: 'Quantum Hardware Selection Subprocess',
+        actionName: 'replace-with-hardware-selection-subprocess',
+        className: 'bpmn-icon-hardware-selection-subprocess',
+        target: {
+            type: consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+        }
     }
-  }
 ];

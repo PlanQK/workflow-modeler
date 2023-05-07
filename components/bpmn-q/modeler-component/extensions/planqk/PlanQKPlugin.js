@@ -1,13 +1,14 @@
 import React from 'react';
 import planqkStyles from './resources/css/planqk-icons.css';
 import PlanQKExtensionModule from './';
-import {getXml, saveXmlAsLocalFile} from "../../common/util/IoUtilities";
-import {startPlanqkReplacementProcess} from "./exec-completion/PlanqkServiceTaskCompletion";
-import {getModeler} from "../../editor/ModelerHandler";
+import {startPlanqkReplacementProcess} from "./exec-completion/PlanQKServiceTaskCompletion";
 import TransformationButton from "../../editor/ui/TransformationButton";
 
-let planqkModdleDescriptor = require('./resources/planqk-service-task-ext.json')
+let planqkModdleDescriptor = require('./resources/planqk-service-task-ext.json');
 
+/**
+ * Plugin Object of the PlanQK extension. Used to register the plugin in the plugin handler of the modeler.
+ */
 export default {
     name: 'planqk',
     extensionModule: PlanQKExtensionModule,
@@ -15,20 +16,8 @@ export default {
     styling: [planqkStyles],
     transformExtensionButton: <TransformationButton name='PlanQK Transformation' transformWorkflow={
         async (xml) => {
-            // const modeler = getModeler();
-            // let xml = await getXml(modeler);
-
-            // load current xml if not given as parameter
-            if (!xml) {
-                const modeler = getModeler();
-                xml = await getXml(modeler);
-            }
 
             return await startPlanqkReplacementProcess(xml);
-
-            // async function (xml) {
-            //     await saveXmlAsLocalFile(xml, "myProcess.bpmn");
-            // }
         }
     }/>,
 }

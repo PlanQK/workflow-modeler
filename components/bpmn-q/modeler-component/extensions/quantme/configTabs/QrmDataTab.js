@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
 
+/**
+ * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change the
+ * QRM data.
+ *
+ * @return {JSX.Element} The tab as a React component
+ * @constructor
+ */
 export default function QrmDataTab() {
 
     const [githubRepositoryName, setGithubRepositoryName] = useState(config.getQRMRepositoryName());
@@ -12,30 +19,30 @@ export default function QrmDataTab() {
 
     const editorActions = modeler.get('editorActions');
 
+    // register editor action listener for changes in config entries
     if (!editorActions._actions.hasOwnProperty('qrmRepoNameChanged')) {
         editorActions.register({
-            qrmRepoNameChanged: function(qrmRepoName) {
+            qrmRepoNameChanged: function (qrmRepoName) {
                 self.modeler.config.githubRepositoryName = qrmRepoName;
             }
         });
     }
-
     if (!editorActions._actions.hasOwnProperty('qrmUserNameChanged')) {
         editorActions.register({
-            qrmUserNameChanged: function(qrmUserName) {
+            qrmUserNameChanged: function (qrmUserName) {
                 self.modeler.config.githubUsername = qrmUserName;
             }
         });
     }
-
     if (!editorActions._actions.hasOwnProperty('qrmRepoPathChanged')) {
         editorActions.register({
-            qrmRepoPathChanged: function(qrmRepoPath) {
+            qrmRepoPathChanged: function (qrmRepoPath) {
                 self.modeler.config.githubRepositoryPath = qrmRepoPath;
             }
         });
     }
 
+    // save changed config entries on close
     QrmDataTab.prototype.onClose = () => {
         modeler.config.githubRepositoryName = githubRepositoryName;
         modeler.config.githubUsername = githubUsername;
@@ -43,7 +50,7 @@ export default function QrmDataTab() {
         config.setQRMRepositoryName(githubRepositoryName);
         config.setQRMUserName(githubUsername);
         config.setQRMRepositoryPath(githubRepositoryPath);
-    }
+    };
 
     return <>
         <h3>QRM Data</h3>
@@ -81,7 +88,7 @@ export default function QrmDataTab() {
             </tr>
             </tbody>
         </table>
-    </>
+    </>;
 }
 
 QrmDataTab.prototype.config = () => {
@@ -90,4 +97,4 @@ QrmDataTab.prototype.config = () => {
     modeler.config.githubRepositoryName = config.getQRMRepositoryName();
     modeler.config.githubUsername = config.getQRMRepositoryUserName();
     modeler.config.githubRepositoryPath = config.getQRMRepositoryPath();
-}
+};

@@ -1,71 +1,71 @@
 import {expect} from 'chai';
 import {createTempModeler} from '../../../../modeler-component/editor/ModelerHandler';
-import {loadDiagram} from '../../../../modeler-component/common/util/IoUtilities';
-import {BRANCHED_WORKFLOW, DATA_START_EVENT_WORKFLOW} from '../../../helpers/BPMNWorkflowHelper';
+import {loadDiagram} from '../../../../modeler-component/editor/util/IoUtilities';
+import {BRANCHED_WORKFLOW, DATA_START_EVENT_WORKFLOW} from '../../helpers/BPMNWorkflowHelper';
 import {
     findSequenceFlowConnection,
     isConnectedWith
-} from '../../../../modeler-component/common/util/ModellingUtilities';
+} from '../../../../modeler-component/editor/util/ModellingUtilities';
 
 describe('Test ModellingUtils.js', function () {
 
     describe('Test findSequenceFlowConnection', function () {
-        
+
         let modeler;
         let elementRegistry;
-        
+
         beforeEach('Create new modeler instance with loaded example workflow', async function () {
             modeler = createTempModeler();
             await loadDiagram(BRANCHED_WORKFLOW, modeler);
             elementRegistry = modeler.get('elementRegistry');
         });
-        
+
         it('Should find direct connection', function () {
             const task21 = elementRegistry.get('Task21');
             const task3 = elementRegistry.get('Task3');
-            
+
             const isConnected = findSequenceFlowConnection(task21, task3, new Set(), elementRegistry);
             expect(isConnected).to.be.true;
         });
-        
+
         it('Should find connection through gateways', function () {
             const task1 = elementRegistry.get('Task1');
             const task42 = elementRegistry.get('Task42');
-            
+
             const isConnected = findSequenceFlowConnection(task1, task42, new Set(), elementRegistry);
             expect(isConnected).to.be.true;
         });
-        
+
         it('Should find connection with the same task', function () {
             const task1 = elementRegistry.get('Task1');
-            
+
             const isConnected = findSequenceFlowConnection(task1, task1, new Set(), elementRegistry);
             expect(isConnected).to.be.true;
         });
-        
+
         it('Should find connection through loops', function () {
             const task3 = elementRegistry.get('Task3');
             const task21 = elementRegistry.get('Task21');
-            
+
             const isConnected = findSequenceFlowConnection(task3, task21, new Set(), elementRegistry);
             expect(isConnected).to.be.true;
         });
-        
+
         it('Should not find connection reverse to the direction of the control flow', function () {
             const task21 = elementRegistry.get('Task21');
             const task1 = elementRegistry.get('Task1');
-            
+
             let isConnected = findSequenceFlowConnection(task21, task1, new Set(), elementRegistry);
             expect(isConnected).to.be.false;
-            
+
             const task41 = elementRegistry.get('Task41');
             const task42 = elementRegistry.get('Task42');
-            
+
             isConnected = findSequenceFlowConnection(task41, task42, new Set(), elementRegistry);
             expect(isConnected).to.be.false;
         });
     });
-    
+
     describe('Test isConnectedWith()', function () {
 
         let modeler;
@@ -102,6 +102,44 @@ describe('Test ModellingUtils.js', function () {
 
             const isConnected = isConnectedWith(start1, 'bpmn:Task');
             expect(isConnected).to.be.true;
+        });
+    });
+
+    describe('Test getExtensionElement()', function () {
+
+        let modeler;
+        let bpmnFactory;
+
+        before(function () {
+            modeler = createTempModeler();
+            bpmnFactory = modeler.get('bpmnFactory');
+        });
+
+        it('Should get newly created extensionElement', function () {
+            const element = bpmnFactory.create('bpmn:Task');
+
+            // const extensionElement = getExtensionElement(element, );
+            // const extesionElement = getExtensionElementsList()
+            // const fsdfa = getExtension()
+        });
+    });
+
+    describe('Test addFormFieldForMap()', function () {
+
+        let modeler;
+        let bpmnFactory;
+
+        before(function () {
+            modeler = createTempModeler();
+            bpmnFactory = modeler.get('bpmnFactory');
+        });
+
+        it('Should add form field for KeyValueMap', function () {
+            const element = bpmnFactory.create('bpmn:Task');
+
+            // const extensionElement = getExtensionElement(element, );
+            // const extesionElement = getExtensionElementsList()
+            // const fsdfa = getExtension()
         });
     });
 });

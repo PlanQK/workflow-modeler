@@ -15,10 +15,10 @@ import QuantMEPathMap from './QuantMEPathMap';
 import QuantMEPropertiesProvider from './properties-provider/QuantMEPropertiesProvider';
 
 export default {
-  __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider'],
-  quantMERenderer: ['type', QuantMERenderer],
-  quantMEReplaceMenu: ['type', QuantMEReplaceMenuProvider],
-  bpmnFactory: ['type', QuantMEFactory],
-  quantMEPathMap: ['type', QuantMEPathMap],
-  propertiesProvider: ['type', QuantMEPropertiesProvider]
+    __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider'],
+    quantMERenderer: ['type', QuantMERenderer],
+    quantMEReplaceMenu: ['type', QuantMEReplaceMenuProvider],
+    bpmnFactory: ['type', QuantMEFactory],
+    quantMEPathMap: ['type', QuantMEPathMap],
+    propertiesProvider: ['type', QuantMEPropertiesProvider]
 };

@@ -1,4 +1,6 @@
-.extensible-btn, .toolbar-btn {
+.qwm-extensible-btn, .qwm-toolbar-btn {
+    box-sizing: border-box;
+    outline: none;
     background-color: transparent;
     border: none;
     border-radius: 6px;
@@ -10,46 +12,46 @@
     color: #636363;
 }
 
-.toolbar-btn:hover {
+.qwm-toolbar-btn:hover {
     background-color: #f7f7f9;
 }
 
-.toolbar-btn:active {
+.qwm-toolbar-btn:active {
     background-color: #e8e8e8;
 }
 
-.toolbar-transformation-btn {
+.qwm-toolbar-transformation-btn {
     background-color: transparent;
     border: none;
     border-radius: 6px;
 }
 
-.toolbar-transformation-btn:hover {
+.qwm-toolbar-transformation-btn:hover {
     background-color: #e8e8e8;
 }
 
-.toolbar-transformation-btn:active {
+.qwm-toolbar-transformation-btn:active {
     background-color: #e8e8e8;
 }
 
-.toolbar-splitter {
+.qwm-toolbar-splitter {
     margin: 5px;
     border: 1px solid #cccccc;
     max-height: 100%;
 }
 
-.toolbar {
+.qwm-toolbar {
     background: #ffffff;
     display: flex;
     /*align-items: flex-start;*/
     overflow: auto;
 }
 
-.extensible-btn {
+.qwm-extensible-btn {
     background-color: #e8e8e8;
 }
 
-.extensible-buttons-list {
+.qwm-extensible-buttons-list {
     background: #ffffff;
     position: absolute;
     display: flex;
@@ -60,7 +62,7 @@
     overflow: auto;
 }
 
-.icon-saving:before {
+.qwm-icon-saving:before {
     content: "";
     width: 15px;
     height: 15px;
@@ -71,7 +73,7 @@
     float: left;
 }
 
-.icon-open-file:before {
+.qwm-icon-open-file:before {
     content: "";
     width: 20px;
     height: 15px;
@@ -82,7 +84,7 @@
     float: left;
 }
 
-.icon-new-file:before {
+.qwm-icon-new-file:before {
     content: "";
     width: 15px;
     height: 15px;
@@ -94,11 +96,11 @@
 }
 
 
-.toolbar-transformation-edit-icon {
+.qwm-toolbar-transformation-edit-icon {
     border-color: #cccccc;
     content: "";
-    width: 15px;
-    height: 15px;
+    width: 17px;
+    height: 17px;
     background-size: contain;
     background-image: url("../icons/wrench-icon-outline.svg");
     background-repeat: no-repeat;
@@ -108,7 +110,7 @@
     margin-top: 2px;
 }
 
-.workflow-deployment-btn:before {
+.qwm-workflow-deployment-btn:before {
     content: "";
     display: block;
     width: 15px;
@@ -118,7 +120,7 @@
     float: left;
 }
 
-.workflow-transformation-btn:before {
+.qwm-workflow-transformation-btn:before {
     content: "";
     display: block;
     width: 15px;
@@ -128,7 +130,7 @@
     float: left;
 }
 
-.popup-menu-more-options:after {
+.qwm-popup-menu-more-options:after {
     content: "";
     background-size: contain;
     background-repeat: no-repeat;
@@ -141,7 +143,7 @@
     margin-top: 2px;
 }
 
-.popup-menu-less-options:before {
+.qwm-popup-menu-less-options:before {
     content: "";
     width: 23px;
     height: 15px;
@@ -153,6 +155,6 @@
     margin-top: 2px;
 }
 
-.tmp {
+.qwm-tmp {
     background: url("../icons/save-outline-icon.png") no-repeat center center;
 }

@@ -9,20 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// import extensionElementsHelper from 'bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper';
 import $ from 'jquery';
-import BpmnModeler from 'bpmn-js/lib/Modeler';
-// import { elementTemplates } from '@bpmn-io/properties-panel';
-import quantMEModdleExtension from '../resources/quantum4bpmn.json';
-import camundaModdlePackage from 'camunda-bpmn-moddle/resources/camunda.json';
-import quantMEModule from '../modeling';
-import {createTempModeler} from "../../../editor/ModelerHandler";
-import {addExtensionElements, getExtensionElementsList} from "../../../common/util/camunda-utils/ExtensionElementsUtil";
-import {getInputOutput} from "../../../common/util/camunda-utils/InputOutputUtil";
-import {useService} from "bpmn-js-properties-panel";
-import {getXml} from "../../../common/util/IoUtilities";
-
-// let cmdHelper = require('')
 
 /**
  * Check if the given task is a QuantME task
@@ -31,7 +18,7 @@ import {getXml} from "../../../common/util/IoUtilities";
  * @returns true if the passed task is a QuantME task, false otherwise
  */
 export function isQuantMETask(task) {
-  return task.$type.startsWith('quantme:');
+    return task.$type.startsWith('quantme:');
 }
 
 /**
@@ -41,25 +28,25 @@ export function isQuantMETask(task) {
  * @return the list of contained QuantumCircuitExecutionTasks
  */
 export function getQuantumCircuitExecutionTasks(modelingElements) {
-  return modelingElements.filter(element => element.$type === 'quantme:QuantumCircuitExecutionTask');
+    return modelingElements.filter(element => element.$type === 'quantme:QuantumCircuitExecutionTask');
 }
 
 export function performAjax(targetUrl, dataToSend) {
-  return new Promise(function(resolve, reject) {
-    $.ajax({
-      type: 'POST',
-      url: targetUrl,
-      data: dataToSend,
-      processData: false,
-      contentType: false,
-      beforeSend: function() {
-      },
-      success: function(data) {
-        resolve(data);
-      },
-      error: function(err) {
-        reject(err);
-      }
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'POST',
+            url: targetUrl,
+            data: dataToSend,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+            },
+            success: function (data) {
+                resolve(data);
+            },
+            error: function (err) {
+                reject(err);
+            }
+        });
     });
-  });
 }

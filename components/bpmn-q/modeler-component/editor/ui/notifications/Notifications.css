@@ -1,4 +1,4 @@
-.Notifications {
+.qwm-Notifications {
     display: flex;
     flex-direction: column-reverse;
     z-index: 500;

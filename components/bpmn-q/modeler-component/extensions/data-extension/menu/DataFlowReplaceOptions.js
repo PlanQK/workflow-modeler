@@ -1,5 +1,6 @@
 import * as consts from '../Constants';
 
+// replace options for a BPMN task
 export const TASK = [
     {
         id: 'dataflow-transformation-task',
@@ -11,6 +12,7 @@ export const TASK = [
     },
 ];
 
+// replace options for a BPMN data store
 export const DATA_STORE = [
     {
         id: 'dataflow-data-store-map',
@@ -22,6 +24,7 @@ export const DATA_STORE = [
     },
 ];
 
+// replace options for  BPMN data object
 export const DATA_OBJECT = [
     {
         id: 'dataflow-data-map-object',

@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {getModeler} from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
 
+/**
+ * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change the
+ * hybrid runtime configs.
+ *
+ * @return {JSX.Element} The tab as a React component
+ * @constructor
+ */
 export default function HybridRuntimeTab() {
 
     const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] = useState(config.getQiskitRuntimeHandlerEndpoint());
@@ -15,33 +22,33 @@ export default function HybridRuntimeTab() {
     const editorActions = modeler.get('editorActions');
     const eventBus = modeler.get('eventBus');
 
+    // register editor action listener for changes in config entries
     if (!editorActions._actions.hasOwnProperty('qiskitRuntimeHandlerEndpointChanged')) {
         editorActions.register({
-            qiskitRuntimeHandlerEndpointChanged: function(qiskitRuntimeHandlerEndpoint) {
+            qiskitRuntimeHandlerEndpointChanged: function (qiskitRuntimeHandlerEndpoint) {
                 self.modeler.config.qiskitRuntimeHandlerEndpoint = qiskitRuntimeHandlerEndpoint;
                 eventBus.fire('config.updated', self.modeler.config);
             }
         });
     }
-
     if (!editorActions._actions.hasOwnProperty('awsRuntimeHandlerEndpointChanged')) {
         editorActions.register({
-            awsRuntimeHandlerEndpointChanged: function(awsRuntimeHandlerEndpoint) {
+            awsRuntimeHandlerEndpointChanged: function (awsRuntimeHandlerEndpoint) {
                 self.modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
                 eventBus.fire('config.updated', self.modeler.config);
             }
         });
     }
-
     if (!editorActions._actions.hasOwnProperty('hybridRuntimeProvenanceChanged')) {
         editorActions.register({
-            hybridRuntimeProvenanceChanged: function(hybridRuntimeProvenance) {
+            hybridRuntimeProvenanceChanged: function (hybridRuntimeProvenance) {
                 self.modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
                 eventBus.fire('config.updated', self.modeler.config);
             }
         });
     }
 
+    // save changed config entries on close
     HybridRuntimeTab.prototype.onClose = () => {
         modeler.config.qiskitRuntimeHandlerEndpoint = qiskitRuntimeHandlerEndpoint;
         modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
@@ -89,7 +96,8 @@ export default function HybridRuntimeTab() {
                         checked={hybridRuntimeProvenanceBoolean}
                         onChange={() => {
                             hybridRuntimeProvenanceBoolean = !hybridRuntimeProvenanceBoolean;
-                            setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);}}/>
+                            setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);
+                        }}/>
                 </td>
             </tr>
             </tbody>

@@ -1,10 +1,10 @@
 import {isTextFieldEntryEdited, TextFieldEntry, CheckboxEntry, isCheckboxEntryEdited} from "@bpmn-io/properties-panel";
 import {useService} from 'bpmn-js-properties-panel';
-import {nextId} from '../../common/util/camunda-utils/ElementUtil';
+import {nextId} from '../util/camunda-utils/ElementUtil';
 import {
-  addAttributeValueToCamundaIO, addAttributeValueToKeyValueMap, getAttributeValue,
-  getAttributeValueFromCamundaIO,
-  getAttributeValueFromKeyValueMap, setAttributeValue
+    addAttributeValueToCamundaIO, addAttributeValueToKeyValueMap, getAttributeValue,
+    getAttributeValueFromCamundaIO,
+    getAttributeValueFromKeyValueMap, setAttributeValue
 } from './ConfigurationsUtil';
 
 /**
@@ -18,60 +18,60 @@ import {
  */
 export default function ConfigurationsProperties(element, injector, translate, configuration) {
 
-  const bpmnFactory = injector.get('bpmnFactory');
-  const modeling = injector.get('modeling');
-  const commandStack = injector.get('commandStack');
+    const bpmnFactory = injector.get('bpmnFactory');
+    const modeling = injector.get('modeling');
+    const commandStack = injector.get('commandStack');
 
-  // generate entries based on the attributes of the configuration and their definitions
-  return configuration.attributes.map(function (attribute) {
+    // generate entries based on the attributes of the configuration and their definitions
+    return configuration.attributes.map(function (attribute) {
 
-    // do not display hidden attributes
-    if (attribute.hide) {
-      return {};
-    }
+        // do not display hidden attributes
+        if (attribute.hide) {
+            return {};
+        }
 
-    let component;
-    let isEdited;
-    switch (attribute.type) {
-      case 'Boolean':
-        component = BooleanEntry;
-        isEdited = isCheckboxEntryEdited;
-        break;
-      default: // String
-        component = TextEntry;
-        isEdited = isTextFieldEntryEdited;
-        break;
-    }
+        let component;
+        let isEdited;
+        switch (attribute.type) {
+            case 'Boolean':
+                component = BooleanEntry;
+                isEdited = isCheckboxEntryEdited;
+                break;
+            default: // String
+                component = TextEntry;
+                isEdited = isTextFieldEntryEdited;
+                break;
+        }
 
-    // set setter and getter depending on the type of the bindTo attribute
-    let setValue;
-    let getValue;
-    switch (attribute.bindTo.type) {
-      case 'camunda:InputParameter':
-      case 'camunda:OutputParameter':
-        setValue = addAttributeValueToCamundaIO(element, bpmnFactory, attribute.bindTo.type, attribute, modeling);
-        getValue = getAttributeValueFromCamundaIO(element, bpmnFactory, attribute.bindTo.type);
-        break;
-      case 'KeyValueMap':
-        setValue = addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack);
-        getValue = getAttributeValueFromKeyValueMap(element);
-        break;
-      default:
-        setValue = setAttributeValue(element, attribute, modeling);
-        getValue = getAttributeValue(element);
-        break;
-    }
+        // set setter and getter depending on the type of the bindTo attribute
+        let setValue;
+        let getValue;
+        switch (attribute.bindTo.type) {
+            case 'camunda:InputParameter':
+            case 'camunda:OutputParameter':
+                setValue = addAttributeValueToCamundaIO(element, bpmnFactory, attribute.bindTo.type, attribute, modeling);
+                getValue = getAttributeValueFromCamundaIO(element, bpmnFactory, attribute.bindTo.type);
+                break;
+            case 'KeyValueMap':
+                setValue = addAttributeValueToKeyValueMap(element, attribute, bpmnFactory, commandStack);
+                getValue = getAttributeValueFromKeyValueMap(element);
+                break;
+            default:
+                setValue = setAttributeValue(element, attribute, modeling);
+                getValue = getAttributeValue(element);
+                break;
+        }
 
-    return {
-      id: nextId(attribute.name),
-      attribute,
-      setValue: setValue,
-      getValue: getValue,
-      component: component,
-      isEdited: isEdited,
-      disabled: true,
-    };
-  });
+        return {
+            id: nextId(attribute.name),
+            attribute,
+            setValue: setValue,
+            getValue: getValue,
+            component: component,
+            isEdited: isEdited,
+            disabled: true,
+        };
+    });
 }
 
 /**
@@ -81,25 +81,25 @@ export default function ConfigurationsProperties(element, injector, translate, c
  * @returns {preact.VNode<any>}
  */
 function TextEntry(props) {
-  const {
-    idPrefix,
-    attribute,
-    setValue,
-    getValue,
-  } = props;
+    const {
+        idPrefix,
+        attribute,
+        setValue,
+        getValue,
+    } = props;
 
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
+    const translate = useService('translate');
+    const debounce = useService('debounceInput');
 
-  return TextFieldEntry({
-    element: attribute,
-    id: idPrefix + '-value',
-    label: translate(attribute.label),
-    disabled: attribute.disable,
-    getValue,
-    setValue,
-    debounce
-  });
+    return TextFieldEntry({
+        element: attribute,
+        id: idPrefix + '-value',
+        label: translate(attribute.label),
+        disabled: attribute.disable,
+        getValue,
+        setValue,
+        debounce
+    });
 }
 
 /**
@@ -109,33 +109,33 @@ function TextEntry(props) {
  * @returns {preact.VNode<any>}
  */
 function BooleanEntry(props) {
-  const {
-    idPrefix,
-    attribute,
-    setValue,
-    getValue,
-  } = props;
+    const {
+        idPrefix,
+        attribute,
+        setValue,
+        getValue,
+    } = props;
 
-  console.log(attribute.label);
+    console.log(attribute.label);
 
-  const translate = useService('translate');
+    const translate = useService('translate');
 
-  const getBoolValue = (attribute) => {
-    const boolStr = getValue(attribute);
-    try {
-      return JSON.parse(boolStr);
-    } catch (error) {
-      console.log(`Failed to parse ${boolStr} to boolean.`);
-    }
+    const getBoolValue = (attribute) => {
+        const boolStr = getValue(attribute);
+        try {
+            return JSON.parse(boolStr);
+        } catch (error) {
+            console.log(`Failed to parse ${boolStr} to boolean.`);
+        }
 
-  };
+    };
 
-  return CheckboxEntry({
-    element: attribute,
-    id: idPrefix + '-value',
-    label: translate(attribute.label),
-    disabled: attribute.disable,
-    getValue: getBoolValue,
-    setValue,
-  });
+    return CheckboxEntry({
+        element: attribute,
+        id: idPrefix + '-value',
+        label: translate(attribute.label),
+        disabled: attribute.disable,
+        getValue: getBoolValue,
+        setValue,
+    });
 }

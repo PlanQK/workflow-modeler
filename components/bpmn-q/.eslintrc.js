@@ -25,5 +25,6 @@ module.exports = {
         "no-prototype-builtins": "off",
         "react/jsx-key": "off",
         "no-unused-vars": "off",
+        "no-useless-escape": "off",
     }
 };

@@ -11,8 +11,21 @@ import {getAdditionalModules, getModdleExtension} from "./plugin/PluginHandler";
 
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
+/**
+ * Handler which manages the creation of bpmn-js modeler instances. It controls the access to the modeler instance currently
+ * rendered in the Quantum Workflow Modeler and allows the creation of modelers with different configurations.
+ */
+
+// the current modeler instance rendered into the UI of the Quantum Workflow Modeler
 let modeler = undefined;
 
+/**
+ * Create a new bpmn-js modeler instance and save it.
+ *
+ * @param containerId ID of the element of the DOM the modeler should be rendered into
+ * @param propertiesParentId The ID of the DOM element the properties panel will be displayed in
+ * @returns {Modeler} The created bpmn-js modeler instance
+ */
 export function createModeler(containerId, propertiesParentId) {
 
     modeler = new BpmnModeler({
@@ -21,16 +34,16 @@ export function createModeler(containerId, propertiesParentId) {
             parent: propertiesParentId
         },
         additionalModules: getModules(),
-        keyboard: {
-            bindTo: document
-        },
+        // keyboard: {
+        //     bindTo: document
+        // },
         moddleExtensions: getExtensions(),
     });
     return modeler;
 }
 
 /**
- * Create a new modeler object with the QuantME moodle but without exentsion modules
+ * Create a new modeler object with the Camunda extensions but no custom extensions
  *
  * @return the created modeler
  */
@@ -48,6 +61,12 @@ export function createPlainModeler() {
     });
 }
 
+/**
+ * Creates a modeler with all additional modules and extension moddles from all active plugins which is not
+ * saved in as the current modeler instance
+ *
+ * @returns the created modeler
+ */
 export function createTempModeler() {
     return new BpmnModeler({
         additionalModules: getModules(),
@@ -58,12 +77,25 @@ export function createTempModeler() {
     });
 }
 
+/**
+ * Create a Modeler with only Camunda native extensions and no additional modules
+ *
+ * @returns the created bpmn-js modeler
+ */
 export function createLightweightModeler() {
     return new BpmnModeler({
         moddleExtensions: getExtensions(),
     });
 }
 
+/**
+ * Creates a modeler with all additional modules and extension moddles from all active plugins which is not
+ * saved in as the current modeler instance and load the given xml into it.
+ *
+ * @param xml the xml representing the BPMN diagram to load
+ *
+ * @returns the created modeler
+ */
 export async function createTempModelerFromXml(xml) {
     // create new modeler with the custom QuantME extensions
     const bpmnModeler = createTempModeler();
@@ -79,30 +111,15 @@ export async function createTempModelerFromXml(xml) {
 }
 
 /**
- * Create a new modeler object and import the given XML BPMN diagram
- *
- * @param xml the xml representing the BPMN diagram
- * @return the modeler containing the BPMN diagram
+ * Returns the current modeler instance rendered into the UI of the Quantum Workflow Modeler
  */
-export async function createModelerFromXml(xml) {
-
-    // create new modeler with the custom QuantME extensions
-    const bpmnModeler = createModeler();
-
-    // import the xml containing the definitions
-    try {
-        await bpmnModeler.importXML(xml);
-        return bpmnModeler;
-    } catch (err) {
-        console.error(err);
-    }
-    return undefined;
-}
-
 export function getModeler() {
     return modeler;
 }
 
+/**
+ * Returns all additional modules for the bpmn-js modeler necessary to use all modelling extensions of the active plugins.
+ */
 function getModules() {
     const pluginModules = getAdditionalModules();
     let additionalModules = [
@@ -120,6 +137,9 @@ function getModules() {
     return additionalModules;
 }
 
+/**
+ * Returns all moddle extensions for the bpmn-js modeler necessary to use all modelling extensions of the active plugins.
+ */
 function getExtensions() {
     let moddleExtension = Object.assign({
         camunda: camundaModdleDescriptor,
