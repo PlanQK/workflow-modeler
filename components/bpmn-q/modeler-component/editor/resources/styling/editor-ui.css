@@ -1,4 +1,6 @@
 .qwm-extensible-btn, .qwm-toolbar-btn {
+    box-sizing: border-box;
+    outline: none;
     background-color: transparent;
     border: none;
     border-radius: 6px;

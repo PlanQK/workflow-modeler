@@ -45,7 +45,7 @@ export default class PlanQKPaletteProvider {
             },
             'create.planqk-service-task': {
                 group: 'planqk',
-                className: 'planqk-icon-palette-service-task',
+                className: 'qwm-planqk-icon-palette-service-task',
                 title: translate('Creates a task that calls a PlanQK service you subscribed to'),
                 action: {
                     click: createPlanQKServiceTask,
@@ -54,7 +54,7 @@ export default class PlanQKPaletteProvider {
             },
             'create.planqk-data-pool': {
                 group: 'planqk',
-                className: 'planqk-icon-palette-data-pool',
+                className: 'qwm-planqk-icon-palette-data-pool',
                 title: translate('Creates a PlanQK Data Pool to fetch data from'),
                 action: {
                     click: createDataPool,

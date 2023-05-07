@@ -98,7 +98,7 @@ export default class PlanQKMenuProvider {
                 'PlanQK Service Tasks',
                 popupMenu,
                 options,
-                'planqk-icon-service-task'
+                'qwm-planqk-icon-service-task'
             )
         };
     }
@@ -219,7 +219,7 @@ export default class PlanQKMenuProvider {
          */
         return {
             label: label,
-            className: 'planqk-logo',
+            className: 'qwm-planqk-logo',
             action: function () {
 
                 // set the properties of the currently selected element to the respective values of the data pool

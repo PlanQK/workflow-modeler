@@ -10,10 +10,10 @@ import {updateTransformationTaskConfigurations} from "../transf-task-configs/Tra
 export default function UpdateTransformationTaskConfigurationsButton() {
 
     return <div style={{display: 'flex'}}>
-        <button type="button" className="toolbar-btn"
+        <button type="button" className="qwm-toolbar-btn"
                 title="Update DataFlow transformation task configurations from repository"
                 onClick={() => updateTransformationTaskConfigurations()}>
-            <span className="dataflow-update-transformation-task-configs"><span className="indent">Update Task Configurations</span></span>
+            <span className="dataflow-update-transformation-task-configs"><span className="qwm-indent">Update Task Configurations</span></span>
         </button>
     </div>;
 }

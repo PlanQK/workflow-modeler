@@ -8,8 +8,6 @@ import QrmDataTab from "./configTabs/QrmDataTab";
 import HybridRuntimeTab from "./configTabs/HybridRuntimeTab";
 import {getQRMs} from "./qrm-manager";
 import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
-import {getXml} from "../../editor/util/IoUtilities";
-import {getModeler} from "../../editor/ModelerHandler";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";

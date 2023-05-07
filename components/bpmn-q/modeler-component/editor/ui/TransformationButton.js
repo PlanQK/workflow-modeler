@@ -28,7 +28,7 @@ export default function TransformationButton(props) {
     };
 
     return (
-        <div style={{display: 'flex'}} className="toolbar-btn">
+        <div style={{display: 'flex'}} className="qwm-toolbar-btn">
             <input type="checkbox" style={{margin: '0 0 0 5px'}} onChange={handleCheckboxChange} checked={checked}/>
             <button type="button" className="qwm-toolbar-btn" style={{margin: '0 0 0 0'}}
                     title={title || "Transform the current workflow"}>

@@ -1,4 +1,4 @@
-.qhana-service-task:before {
+.qwm-qhana-service-task:before {
     content: "";
     width: 15px;
     height: 15px;
@@ -10,7 +10,7 @@
     margin: 0 6px 0 0;
 }
 
-.qhana-service-step-task:before {
+.qwm-qhana-service-step-task:before {
     content: "";
     width: 15px;
     height: 15px;
@@ -22,7 +22,7 @@
     margin: 0 6px 0 0;
 }
 
-.qhana-update-services:before {
+.qwm-qhana-update-services:before {
     content: "";
     width: 15px;
     height: 15px;

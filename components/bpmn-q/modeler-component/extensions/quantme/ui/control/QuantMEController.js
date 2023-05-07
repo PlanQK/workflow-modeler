@@ -179,9 +179,9 @@ export default class QuantMEController extends PureComponent {
 
     render() {
         return <div style={{display: 'flex'}}>
-            <button type="button" className="toolbar-btn" title="Update QRMs from repository"
+            <button type="button" className="qwm-toolbar-btn" title="Update QRMs from repository"
                     onClick={() => this.updateQRMs()}>
-                <span className="qrm-reload"><span className="indent">Update QRMs</span></span>
+                <span className="qrm-reload"><span className="qwm-indent">Update QRMs</span></span>
             </button>
         </div>;
     }

@@ -74,8 +74,8 @@ export default function ServiceDeploymentOverviewModal({onClose, initValues}) {
 
         <Footer>
             <div id="deploymentButtons" ref={footerRef}>
-                <button type="button" className="btn btn-primary" onClick={() => onNext()}>Upload CSARs</button>
-                <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Cancel</button>
+                <button type="button" className="qwm-btn qwm-btn-primary" onClick={() => onNext()}>Upload CSARs</button>
+                <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>Cancel</button>
             </div>
         </Footer>
     </Modal>;

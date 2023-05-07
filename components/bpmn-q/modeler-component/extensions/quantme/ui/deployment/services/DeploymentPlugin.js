@@ -304,10 +304,10 @@ export default class DeploymentPlugin extends PureComponent {
         // render deployment button and pop-up menu
         return (<Fragment>
             <div style={{display: 'flex'}} slot="toolbar">
-                <button type="button" className="toolbar-btn" title="Open service deployment menu"
+                <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
                         onClick={() => this.setState({windowOpenDeploymentOverview: true})}>
                     <span className="app-icon-service-deployment"><span
-                        className="indent">Service Deployment</span></span>
+                        className="qwm-indent">Service Deployment</span></span>
                 </button>
             </div>
             {this.state.windowOpenDeploymentOverview && (

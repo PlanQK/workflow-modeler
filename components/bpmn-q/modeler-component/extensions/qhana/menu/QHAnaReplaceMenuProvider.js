@@ -49,7 +49,7 @@ export default class QHAnaReplaceMenuProvider {
             if (is(element, consts.QHANA_SERVICE_TASK)) {
 
                 // create menu entries for each configuration loaded from the QHAna Configurations Endpoint
-                const configEntries = createConfigurationsEntries(element, 'qhana-service-task', qhanaServiceConfigs().getQHAnaServiceConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
+                const configEntries = createConfigurationsEntries(element, 'qwm-qhana-service-task', qhanaServiceConfigs().getQHAnaServiceConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
 
                 if (Object.entries(configEntries).length > 0) {
                     return configEntries;
@@ -91,7 +91,7 @@ export default class QHAnaReplaceMenuProvider {
                 'QHAna Tasks',
                 popupMenu,
                 qhanaEntries,
-                'qhana-service-task'
+                'qwm-qhana-service-task'
             )
         };
     }
@@ -166,7 +166,7 @@ export default class QHAnaReplaceMenuProvider {
         // create menu entries for the configurations loaded from the QHAna configurations endpoint
         let options = createConfigurationsEntries(
             element,
-            'qhana-service-task',
+            'qwm-qhana-service-task',
             qhanaServiceConfigs().getQHAnaServiceConfigurations(),
             bpmnFactory,
             modeling,
@@ -183,7 +183,7 @@ export default class QHAnaReplaceMenuProvider {
                 'QHAna Service Tasks',
                 popupMenu,
                 options,
-                'qhana-service-task'
+                'qwm-qhana-service-task'
             )
         };
     }

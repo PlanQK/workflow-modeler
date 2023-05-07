@@ -62,10 +62,10 @@ export default function AdaptationModal({onClose}) {
 
         <Footer>
             <div id="hybridLoopAdaptationFormButtons">
-                <button ref={analysisButtonRef} type="submit" className="btn btn-primary"
+                <button ref={analysisButtonRef} type="submit" className="qwm-btn qwm-btn-primary"
                         onClick={() => onSubmit()}>Analyze Workflow
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Cancel</button>
+                <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>Cancel</button>
             </div>
         </Footer>
     </Modal>;

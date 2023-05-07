@@ -1,14 +1,14 @@
-.planqk-icon-palette-service-task {
+.qwm-planqk-icon-palette-service-task {
     content: url("../icons/service-task-palette-icon.svg");
     padding: 11px 8px 11px 10px;
 }
 
-.planqk-icon-palette-data-pool {
+.qwm-planqk-icon-palette-data-pool {
     content: url("../icons/data-pool-palette-icon.svg");
     padding: 10px;
 }
 
-.planqk-icon-service-task:before {
+.qwm-planqk-icon-service-task:before {
     content: "";
     width: 20px;
     height: 20px;
@@ -20,7 +20,7 @@
     margin: 0 6px 0 0;
 }
 
-.planqk-icon-data-pool:before {
+.qwm-planqk-icon-data-pool:before {
     content: "";
     width: 20px;
     height: 20px;
@@ -32,7 +32,7 @@
     margin: 0 6px 0 0;
 }
 
-.planqk-logo:before {
+.qwm-planqk-logo:before {
     content: "";
     display: block;
     background: url("../icons/planqk-icon.png") no-repeat;

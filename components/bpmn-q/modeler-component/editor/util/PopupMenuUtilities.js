@@ -58,7 +58,7 @@ export function createMoreOptionsEntryWithReturn(originalElement, title, entryNa
 export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu, entries, customStyleClass) {
 
     // add customStyleClass to the default classname if set
-    const classname = customStyleClass ? 'popup-menu-more-options ' + customStyleClass : 'popup-menu-more-options';
+    const classname = customStyleClass ? 'qwm-popup-menu-more-options ' + customStyleClass : 'popup-menu-more-options';
 
     // create a popup menu entry which triggers a new popup menu for the optionsType
     return {
@@ -96,7 +96,7 @@ export function createLessOptionsEntry(originalElement, title, entryName, popupM
     // create a popup menu entry which triggers a new popup menu for the optionsType
     return {
         label: entryName,
-        className: 'popup-menu-less-options',
+        className: 'qwm-popup-menu-less-options',
         action: function () {
             popupMenu.openWithEntries(originalElement, "bpmn-replace", entries,
                 {

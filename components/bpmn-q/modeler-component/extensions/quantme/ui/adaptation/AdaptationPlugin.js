@@ -199,10 +199,10 @@ export default class AdaptationPlugin extends PureComponent {
         // render loop analysis button and pop-up menu
         return (<>
             <div style={{display: 'flex'}}>
-                <button type="button" className="toolbar-btn"
+                <button type="button" className="qwm-toolbar-btn"
                         title="Open menu to analyse and improve hybrid loops"
                         onClick={() => this.setState({adaptationOpen: true})}>
-                    <span className="hybrid-loop-adaptation"><span className="indent">Improve Hybrid Loops</span></span>
+                    <span className="hybrid-loop-adaptation"><span className="qwm-indent">Improve Hybrid Loops</span></span>
                 </button>
             </div>
             {this.state.adaptationOpen && (

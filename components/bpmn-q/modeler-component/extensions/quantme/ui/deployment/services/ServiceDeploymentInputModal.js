@@ -122,8 +122,8 @@ export default function ServiceDeploymentInputModal({onClose, initValues}) {
 
         <Footer>
             <div id="deploymentButtons" ref={footerRef}>
-                <button type="button" className="btn btn-primary" onClick={() => onNext()}>Deploy Services</button>
-                <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Cancel</button>
+                <button type="button" className="qwm-btn qwm-btn-primary" onClick={() => onNext()}>Deploy Services</button>
+                <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>Cancel</button>
             </div>
         </Footer>
     </Modal>;
