@@ -25,21 +25,21 @@ export default function ButtonToolbar(props) {
 
     return (
         <Fragment>
-            <div className="toolbar">
-                <hr className="toolbar-splitter"/>
+            <div className="qwm-toolbar">
+                <hr className="qwm-toolbar-splitter"/>
                 <NewDiagramButton modeler={modeler}/>
                 <SaveButton modeler={modeler}/>
                 <OpenButton/>
-                <hr className="toolbar-splitter"/>
+                <hr className="qwm-toolbar-splitter"/>
                 <ConfigPlugin/>
-                <hr className="toolbar-splitter"/>
+                <hr className="qwm-toolbar-splitter"/>
                 {hasTransformations && <TransformationToolbarButton
                     subButtons={transformButtons}
                     title='Transform Workflow'
-                    styleClass="workflow-transformation-btn"/>
+                    styleClass="qwm-workflow-transformation-btn"/>
                 }
                 <DeploymentButton modeler={modeler}/>
-                <hr className="toolbar-splitter"/>
+                <hr className="qwm-toolbar-splitter"/>
                 {React.Children.toArray(pluginButtons)}
             </div>
         </Fragment>

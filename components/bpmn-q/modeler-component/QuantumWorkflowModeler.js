@@ -71,7 +71,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         this.innerHTML = `
             <div style="display: flex; flex-direction: column; height: 100%;">
               <div id="button-container" style="flex-shrink: 0;"></div>
-              <hr class="toolbar-splitter" />
+              <hr class="qwm-toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1;">
                 <div id="canvas" style="width: 100%"></div>
                 <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>

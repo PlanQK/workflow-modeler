@@ -1,4 +1,4 @@
-.btn {
+.qwm-btn {
     min-width: 120px;
     height: 35px;
     border-radius: 3px;
@@ -12,44 +12,44 @@
     padding-left: 15px;
     padding-right: 15px;
 }
-.btn-primary {
+.qwm-btn-primary {
     color: #fdfdfe;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2);
     border: solid 1px var(--blue-darken-62);
     background-color: var(--blue-base-65);
 }
-.btn-primary:hover {
+.qwm-btn-primary:hover {
     border: solid 1px var(--blue-darken-55);
     background-color: var(--blue-darken-62);
 }
-.btn-primary:active {
+.qwm-btn-primary:active {
     border: solid 1px var(--blue-darken-48);
     background-color: var(--blue-darken-55);
 }
-.btn-primary:disabled {
+.qwm-btn-primary:disabled {
     box-shadow: none;
     border: solid 1px var(--blue-lighten-82);
     background-color: var(--blue-lighten-75);
     color: rgba(253,253,254,0.8);
 }
-.btn-secondary {
+.qwm-btn-secondary {
     color: var(--grey-darken-33);
     box-shadow: 0 2px 2px 0 var(--color-000000-opacity-10);
     border: solid 1px var(--silver-darken-80);
     background-color: var(--silver-base-97);
 }
-.btn-secondary:hover {
+.qwm-btn-secondary:hover {
     background-color: var(--silver-darken-94);
 }
-.btn-secondary:active {
+.qwm-btn-secondary:active {
     background-color: var(--silver-darken-87);
 }
-.btn-secondary:disabled {
+.qwm-btn-secondary:disabled {
     box-shadow: none;
     border: solid 1px var(--silver-darken-87);
     background-color: var(--silver-base-97);
     color: var(--color-535353-opacity-50);
 }
-.btn + .btn {
+.qwm-btn + .qwm-btn {
     margin-left: 15px;
 }

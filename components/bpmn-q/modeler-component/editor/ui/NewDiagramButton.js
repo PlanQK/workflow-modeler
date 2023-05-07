@@ -13,9 +13,9 @@ export default function NewDiagramButton(props) {
     const {modeler} = props;
 
     return (
-        <button className="toolbar-btn" title="Create new workflow diagram" onClick={() => createNewDiagram(modeler)}>
-            <span className="icon-new-file">
-                <span className="indent">New Diagram</span>
+        <button className="qwm-toolbar-btn" title="Create new workflow diagram" onClick={() => createNewDiagram(modeler)}>
+            <span className="qwm-icon-new-file">
+                <span className="qwm-indent">New Diagram</span>
             </span>
         </button>
     );

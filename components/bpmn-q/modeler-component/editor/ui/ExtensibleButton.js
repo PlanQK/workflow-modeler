@@ -65,14 +65,14 @@ export default class ExtensibleButton extends Component {
     render() {
         return (
             <div ref={this.wrapperRef}>
-                <button className={this.state.isToggleOn ? 'extensible-btn' : 'toolbar-btn'}
+                <button className={this.state.isToggleOn ? 'qwm-extensible-btn' : 'qwm-toolbar-btn'}
                         title={this.state.description} onClick={this.handleClick}>
                     <span className={this.state.styleClass}>
-                        <span className="indent">{this.state.title}</span>
+                        <span className="qwm-indent">{this.state.title}</span>
                     </span>
                 </button>
                 {this.state.isToggleOn &&
-                    <div className="extensible-buttons-list">
+                    <div className="qwm-extensible-buttons-list">
                         {React.Children.toArray(this.state.subButtons)}
                     </div>
                 }

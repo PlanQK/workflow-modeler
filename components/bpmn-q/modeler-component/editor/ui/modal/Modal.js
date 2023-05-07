@@ -61,9 +61,9 @@ export default class Modal extends PureComponent {
 
         return ReactDOM.createPortal(
             <KeyboardInteractionTrap>
-                <div className="modal" tabIndex="-1" role="dialog">
-                    <div className={classNames('modal-dialog', className)} ref={this.modalRef} role="document">
-                        <div className="modal-content">
+                <div className="qwm-modal" tabIndex="-1" role="dialog">
+                    <div className={classNames('qwm-modal-dialog', className)} ref={this.modalRef} role="document">
+                        <div className="qwm-modal-content">
                             {children}
                             {onClose && (<Close onClick={this.close}/>)}
                         </div>
@@ -92,8 +92,8 @@ function Title(props) {
     } = props;
 
     return (
-        <div className={classNames('modal-header', className)} {...rest}>
-            <h2 className="modal-title">
+        <div className={classNames('qwm-modal-header', className)} {...rest}>
+            <h2 className="qwm-modal-title">
                 {children}
             </h2>
         </div>
@@ -106,7 +106,7 @@ function Close(props) {
     } = props;
 
     return (
-        <button className="close" onClick={onClick} aria-label="Close">
+        <button className="qwm-close" onClick={onClick} aria-label="Close">
             {/*<CloseIcon/>*/}
             {/*<img src={CloseIcon} aria-hidden="true" />*/}
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
@@ -126,7 +126,7 @@ function Body(props) {
     } = props;
 
     return (
-        <div className={classNames('modal-body', className)} {...rest}>
+        <div className={classNames('qwm-modal-body', className)} {...rest}>
             {children}
         </div>
     );
@@ -140,7 +140,7 @@ function Footer(props) {
     } = props;
 
     return (
-        <div className={classNames('modal-footer', className)} {...rest}>
+        <div className={classNames('qwm-modal-footer', className)} {...rest}>
             {props.children}
         </div>
     );

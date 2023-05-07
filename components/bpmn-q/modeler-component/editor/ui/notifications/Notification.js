@@ -71,12 +71,12 @@ export default class Notification extends PureComponent {
             title,
         } = this.props;
 
-        return this.state.error ? null : <div className="Notification">
-            <span className="close" onClick={close}/>
+        return this.state.error ? null : <div className="qwm-Notification">
+            <span className="qwm-close" onClick={close}/>
             <h2>
                 {title}
             </h2>
-            {content && <div className="content">{content}</div>}
+            {content && <div className="qwm-content">{content}</div>}
         </div>;
     }
 }

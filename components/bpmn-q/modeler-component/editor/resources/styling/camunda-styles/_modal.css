@@ -1,4 +1,4 @@
-.modal {
+.qwm-modal {
     position: absolute;
     top: 0;
     left: 0;
@@ -8,7 +8,7 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 12px;
 }
-.modal:before {
+.qwm-modal:before {
     content: '';
     position: fixed;
     left: 0;
@@ -19,7 +19,7 @@
     opacity: .2;
     z-index: 1001;
 }
-.modal-dialog {
+.qwm-modal-dialog {
     position: fixed;
     left: 0;
     right: 0;
@@ -34,31 +34,31 @@
     background-color: var(--silver-lighten-99);
     color: var(--grey-darken-33);
 }
-.modal-content,
-.modal-content > form {
+.qwm-modal-content,
+.qwm-modal-content > form {
     display: flex;
     flex: auto;
     flex-direction: column;
     max-height: 84vh;
 }
-.modal-header {
+.qwm-modal-header {
     padding: 20px 60px 20px 20px;
     background-color: var(--silver-base-97);
     font-size: 16px;
     border-bottom: solid 1px var(--silver-darken-87);
 }
-.modal-title {
+.qwm-modal-title {
     margin: 0;
     font-size: 16px;
     font-weight: bold;
 }
-.modal-body {
+.qwm-modal-body {
     padding: 16px 20px 20px 20px;
     overflow-y: auto;
     font-size: 14px;
     background-color: var(--silver-lighten-99);
 }
-.modal-body legend {
+.qwm-modal-body legend {
     font-size: 14px;
     font-weight: bold;
     font-stretch: normal;
@@ -68,25 +68,25 @@
     color: var(--grey-darken-33);
     margin-bottom: 23px;
 }
-.modal-body fieldset {
+.qwm-modal-body fieldset {
     border-style: none;
     margin: 20px auto;
     padding-left: 0;
     padding-right: 0;
 }
-.modal-body form {
+.qwm-modal-body form {
     font-size: 1.1em;
 }
-.modal-body .fields {
+.qwm-modal-body .qwm-fields {
     display: grid;
     grid-row-gap: 15px;
 }
-.modal-footer {
+.qwm-modal-footer {
     padding: 15px 20px;
     border-top: solid 1px var(--silver-darken-87);
     text-align: right;
 }
-.modal-dialog .close {
+.qwm-modal-dialog .qwm-close {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -97,9 +97,9 @@
     border-radius: 3px;
     background-color: transparent;
 }
-.modal-dialog .close:hover {
+.qwm-modal-dialog .close:hover {
     background-color: var(--silver-darken-94);
 }
-.modal-dialog .close:focus {
+.qwm-modal-dialog .close:focus {
     background-color: var(--silver-darken-87);
 }

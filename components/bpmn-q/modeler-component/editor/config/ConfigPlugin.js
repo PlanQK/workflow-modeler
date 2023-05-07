@@ -52,9 +52,9 @@ export default class ConfigPlugin extends PureComponent {
         // render config button and pop-up menu
         return (<Fragment>
             <div style={{display: 'flex'}} slot="toolbar">
-                <button type="button" className="toolbar-btn" title="Open configuration menu"
+                <button type="button" className="qwm-toolbar-btn" title="Open configuration menu"
                         onClick={() => this.setState({configOpen: true})}>
-                    <span className="btn-config"><span className="indent">Configuration</span></span>
+                    <span className="qwm-btn-config"><span className="indent">Configuration</span></span>
                 </button>
             </div>
             {this.state.configOpen && (

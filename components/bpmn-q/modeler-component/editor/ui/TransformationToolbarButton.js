@@ -142,26 +142,26 @@ export default function TransformationToolbarButton(props) {
 
     return (
         <div ref={wrapperRef}>
-            <button className={isToggleOn ? 'extensible-btn' : 'toolbar-btn'}
+            <button className={isToggleOn ? 'qwm-extensible-btn' : 'qwm-toolbar-btn'}
                     title="Transform current workflow into native BPMN">
                 <div style={{display: 'flex'}}>
                     <div style={{display: 'flex',}}>
                     <span className={styleClass} onClick={() => startTransformation()}>
-                        <span className="indent">{title}</span>
+                        <span className="qwm-indent">{title}</span>
                     </span>
 
                     </div>
-                    <hr className="toolbar-splitter"/>
-                    <div className="toolbar-transformation-btn" style={{display: 'flex'}} onClick={handleClick}>
-                        <span className="toolbar-transformation-edit-icon">
-                            <span className="indent"/>
+                    <hr className="qwm-toolbar-splitter"/>
+                    <div className="qwm-toolbar-transformation-btn" style={{display: 'flex'}} onClick={handleClick}>
+                        <span className="qwm-toolbar-transformation-edit-icon">
+                            <span className="qwm-indent"/>
                         </span>
                     </div>
                 </div>
             </button>
 
             {isToggleOn &&
-                <div className="extensible-buttons-list">
+                <div className="qwm-extensible-buttons-list">
                     {
                         subButtons.map(function (entry, index) {
                             return (<TransformationButton

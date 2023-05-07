@@ -40,7 +40,7 @@ export default function EditorTab() {
         <h3>Workflow Engine configuration:</h3>
         <table>
             <tbody>
-            <tr className="spaceUnder">
+            <tr className="qwm-spaceUnder">
                 <td align="right">Camunda Engine Endpoint</td>
                 <td align="left">
                     <input

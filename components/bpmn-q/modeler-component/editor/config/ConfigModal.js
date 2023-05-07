@@ -65,14 +65,14 @@ export default function ConfigModal({onClose, configTabs}) {
         <Body>
             <form id="configForm" onSubmit={onSubmit}>
                 <div style={{display: 'flex'}}>
-                    <div id="configButtons" className="tabButtonsContainer">
+                    <div id="configButtons" className="qwm-tabButtonsContainer">
                         {React.Children.toArray(configTabs.map((tab, index) => <button type="button"
-                                                                                       className="innerConfig btn-primary"
+                                                                                       className="qwm-innerConfig qwm-btn-primary"
                                                                                        onClick={() => openTab(tab.tabId, index)}>{tab.tabTitle}</button>))}
                     </div>
 
                     <div id="configElements" ref={elementsRootRef}>
-                        {React.Children.toArray(configTabs.map((tab, index) => <div className="spaceAbove"
+                        {React.Children.toArray(configTabs.map((tab, index) => <div className="qwm-spaceAbove"
                                                                                     hidden={!(index === 0)}
                                                                                     id={tab.tabId}>{tab.configTab()}</div>))}
                     </div>
@@ -82,8 +82,8 @@ export default function ConfigModal({onClose, configTabs}) {
 
         <Footer>
             <div id="configFormButtons">
-                <button type="submit" className="btn btn-primary" form="configForm">Save</button>
-                <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Cancel</button>
+                <button type="submit" className="qwm-btn qwm-btn-primary" form="configForm">Save</button>
+                <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>Cancel</button>
             </div>
         </Footer>
     </Modal>;

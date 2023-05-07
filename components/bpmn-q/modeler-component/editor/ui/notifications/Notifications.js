@@ -115,6 +115,6 @@ export default class Notifications extends PureComponent {
         }).reverse();
 
         // className={ css.Notifications }
-        return createPortal(<div className="Notifications">{notificationComponents}</div>, this.container);
+        return createPortal(<div className="qwm-Notifications">{notificationComponents}</div>, this.container);
     }
 }

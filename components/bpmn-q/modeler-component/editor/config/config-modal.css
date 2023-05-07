@@ -1,4 +1,4 @@
-.innerConfig {
+.qwm-innerConfig {
     min-width: 100px;
     max-width: 100px;
     min-height: auto;
@@ -14,15 +14,15 @@
     padding: 5px;
 }
 
-.innerConfig + .innerConfig {
+.qwm-innerConfig + .qwm-innerConfig {
     margin-top: 5px;
 }
 
-.indent {
+.qwm-indent {
     margin-left: 5px;
 }
 
-.btn-config:before {
+.qwm-btn-config:before {
     content: "";
     display: block;
     width: 15px;
@@ -32,40 +32,17 @@
     float: left;
 }
 
-.btn-primary:focus {
+.qwm-btn-primary:focus {
     border: solid 1px var(--blue-darken-48);
     background-color: var(--blue-darken-55);
 }
 
-.spaceAbove {
+.qwm-spaceAbove {
     padding-top: 1em;
     margin-left: 10px;
 }
 
-ul {
-    padding-left: 20px;
-}
-
-table {
-    table-layout: fixed;
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-
-.tabButtonsContainer {
+.qwm-tabButtonsContainer {
     display: flex;
     flex-direction: column;
     align-items: flex-start;

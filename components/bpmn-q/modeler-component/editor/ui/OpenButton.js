@@ -63,12 +63,12 @@ export default function OpenButton() {
 
     return (
         <>
-            <input ref={inputRef} className="toolbar-btn" title="Open new workflow diagram" style={{display: 'none'}}
+            <input ref={inputRef} className="qwm-toolbar-btn" title="Open new workflow diagram" style={{display: 'none'}}
                    type="file" accept=".bpmn"
                    onChange={(event) => handleChange(event)}/>
-            <button className="toolbar-btn" onClick={() => handleClick()}>
-                <span className="icon-open-file">
-                    <span className="indent">Open</span>
+            <button className="qwm-toolbar-btn" onClick={() => handleClick()}>
+                <span className="qwm-icon-open-file">
+                    <span className="qwm-indent">Open</span>
                 </span>
             </button>
         </>
