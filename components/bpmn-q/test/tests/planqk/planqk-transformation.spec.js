@@ -1,7 +1,7 @@
-import {createTempModeler} from '../../modeler-component/editor/ModelerHandler';
-import {loadDiagram} from '../../modeler-component/editor/util/IoUtilities';
-import {setPluginConfig} from '../../modeler-component/editor/plugin/PluginConfigHandler';
-
+const {setPluginConfig} = require("../../../modeler-component/editor/plugin/PluginConfigHandler");
+const {startPlanqkReplacementProcess} = require("../../../modeler-component/extensions/planqk/exec-completion/PlanQKServiceTaskCompletion");
+const {validPlanqkDiagram} = require("../helpers/DiagramHelper");
+const chai = require("chai");
 const app1 = {
     id: 'app1',
     description: '',
@@ -61,40 +61,40 @@ const dp3 = {
     link: 'https://platform.planqk.de/datapools/2a7d74a6-adsa-400a-8f0c-7125aef5613e/',
     description: 'Replace this by a real description',
 };
+describe('Test the PlanQKServiceTaskCompletion of the PlanQK extension.', function () {
 
-const pluginConfigs = [
-    {
-        name: 'dataflow',
-        config: {}
-    },
-    {
-        name: 'planqk',
-        config: {
-            serviceEndpointBaseUrl: 'http://dummy.com',
-            subscriptions: [sub1, sub2, sub3],
-            oauthInfoByAppMap: {
-                app1: {consumerKey: 'app1ConsumerKey', consumerSecret: 'app1ConsumerSecret'},
-                app2: {consumerKey: 'app2ConsumerKey', consumerSecret: 'app2ConsumerSecret'},
+    describe('Transformation of PlanQK extensions', function () {
+
+        it('should create a valid transformed workflow', async function () {
+            // setConfig();
+            setPluginConfig([{
+                name: 'dataflow',
+                config: {}
             },
-            dataPools: [dp1, dp2, dp3],
-        }
-    },
-    {
-        name: 'quantme',
-        config: {
-            test: 'test',
-        }
-    }
-];
+                {
+                    name: 'planqk',
+                    config: {
+                        serviceEndpointBaseUrl: 'http://dummy.com',
+                        subscriptions: [sub1, sub2, sub3],
+                        oauthInfoByAppMap: {
+                            app1: {consumerKey: 'app1ConsumerKey', consumerSecret: 'app1ConsumerSecret'},
+                            app2: {consumerKey: 'app2ConsumerKey', consumerSecret: 'app2ConsumerSecret'},
+                        },
+                        dataPools: [dp1, dp2, dp3],
+                    }
+                },
+                {
+                    name: 'quantme',
+                    config: {
+                        test: 'test',
+                    }
+                }]);
+            const result = await startPlanqkReplacementProcess(validPlanqkDiagram);
 
-export async function instantiateModeler(diagram) {
-    setConfig();
-    const modeler = createTempModeler();
-    await loadDiagram(diagram, modeler);
+            chai.expect(result.status).to.equal('transformed');
 
-    return modeler;
-}
-
-export function setConfig() {
-    setPluginConfig(pluginConfigs);
-}
+            // check that all extension elements are replaced
+            chai.expect(result.xml).to.not.contain('planqk:');
+        });
+    });
+});

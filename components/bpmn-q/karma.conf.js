@@ -13,17 +13,21 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'test/tests/configurations.spec.js',
-            'test/tests/editor.spec.js',
-            'test/tests/plugin.spec.js',
-            'test/tests/modeling.spec.js',
-            'test/tests/transformation.spec.js',
+            'test/tests/editor/configurations.spec.js',
+            'test/tests/editor/editor.spec.js',
+            'test/tests/editor/plugin.spec.js',
+            'test/tests/planqk/planqk-transformation.spec.js',
+            'test/tests/quantme/quantme-transformation.spec.js',
             'test/tests/editor/utils/modelling-util.spec.js',
             'test/tests/qhana/qhana-plugin-config.spec.js',
             'test/tests/qhana/qhana-service-configs.spec.js',
-            'test/tests/quantme/data-object-congis.spec.js',
+            'test/tests/quantme/data-object-configs.spec.js',
             'test/tests/quantme/quantme-config.spec.js',
             'test/tests/dataflow/data-flow-transformation.spec.js',
+            'test/tests/dataflow/data-flow-plugin-config.spec.js',
+            'test/tests/dataflow/data-flow-configurations-endpoint.spec.js',
+            'test/tests/dataflow/data-flow-palette.spec.js',
+            'test/tests/dataflow/data-flow-replace-menu.spec.js',
         ],
 
         // list of files / patterns to exclude

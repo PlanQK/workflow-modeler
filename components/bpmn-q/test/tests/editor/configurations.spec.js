@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
-import ConfigurationsEndpoint from '../../modeler-component/editor/configurations/ConfigurationEndpoint';
+import ConfigurationsEndpoint from '../../../modeler-component/editor/configurations/ConfigurationEndpoint';
 import {VALID_DUMMY_CONFIGURATIONS} from '../helpers/ConfigurationsHelper';
 
 describe('Test configurations', function () {

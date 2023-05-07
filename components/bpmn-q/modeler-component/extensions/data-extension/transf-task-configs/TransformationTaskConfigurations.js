@@ -40,7 +40,7 @@ export function updateTransformationTaskConfigurations() {
  *
  * @return {ConfigurationsEndpoint} the instance of the ConfigurationsEndpoint
  */
-function transformationConfigs() {
+export function transformationConfigs() {
     if (!endpoint) {
         endpoint = new ConfigurationsEndpoint(dataConfig.getConfigurationsEndpoint());
     }

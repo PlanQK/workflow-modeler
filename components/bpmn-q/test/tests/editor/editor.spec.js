@@ -1,6 +1,6 @@
-import {getAllConfigs, setPluginConfig} from '../../modeler-component/editor/plugin/PluginConfigHandler';
+import {getAllConfigs, setPluginConfig} from '../../../modeler-component/editor/plugin/PluginConfigHandler';
 import {expect} from 'chai';
-import * as editorConfig from '../../modeler-component/editor/config/EditorConfigManager';
+import * as editorConfig from '../../../modeler-component/editor/config/EditorConfigManager';
 
 describe('Test editor functions', function () {
 

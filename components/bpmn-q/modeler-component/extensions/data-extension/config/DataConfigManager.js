@@ -6,7 +6,7 @@ const defaultConfig = {
 };
 
 // current config
-const config = {};
+let config = {};
 
 /**
  * Get the url to the Configurations endpoint to fetch transformation task Configurations from
@@ -31,4 +31,11 @@ export function setConfigurationsEndpoint(configurationsEndpoint) {
         // remove trailing slashes
         config.configurationsEndpoint = configurationsEndpoint.replace(/\/$/, '');
     }
+}
+
+/**
+ * Resets the all config entries
+ */
+export function resetConfig() {
+    config = {};
 }

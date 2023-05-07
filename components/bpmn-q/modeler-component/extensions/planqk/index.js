@@ -13,12 +13,12 @@ export default {
     serviceTaskPropertiesProvider: ['type', ServiceTaskPropertiesProvider],
     dataPoolPropertiesProvider: ['type', DataPoolPropertiesProvider],
     activeSubscriptions: ['type', () => {
-        return getPluginConfig('planqk').subscriptions;
+        return getPluginConfig('planqk').subscriptions || [];
     }],
     oauthInfoByAppMap: ['type', () => {
-        return getPluginConfig('planqk').oauthInfoByAppMap;
+        return getPluginConfig('planqk').oauthInfoByAppMap || {};
     }],
     dataPools: ['type', () => {
-        return getPluginConfig('planqk').dataPools;
+        return getPluginConfig('planqk').dataPools || [];
     }],
 };

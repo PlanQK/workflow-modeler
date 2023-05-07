@@ -30,7 +30,7 @@ commands under the ./components/bpmn-q directory.
 The modeler is tested via karma and Unit tests written with mocha and chai. The Unit tests are executed sequentially to avoid 
 race conditions and side effects. Therefore, all tests are listed in the [karma config](../../components/bpmn-q/karma.conf.js).
 The tests are located in the [tests directory](../../components/bpmn-q/test/tests). Helpers 
-for running tests can be found in the [helpers directory](../../components/bpmn-q/test/helpers). New test files have to be 
+for running tests can be found in the [helpers directory](../../components/bpmn-q/test/tests/helpers). New test files have to be 
 added to the [karma config](../../components/bpmn-q/karma.conf.js):
 ```javascript
 module.exports = function (config) {

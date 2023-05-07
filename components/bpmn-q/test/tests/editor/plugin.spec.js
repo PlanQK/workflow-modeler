@@ -1,15 +1,15 @@
-import {createTempModeler} from '../../modeler-component/editor/ModelerHandler';
+import {createTempModeler} from '../../../modeler-component/editor/ModelerHandler';
 import {expect} from 'chai';
 import {
     getActivePlugins,
     getAdditionalModules, getConfigTabs, getModdleExtension,
     getPluginButtons, getStyles, getTransformationButtons
-} from '../../modeler-component/editor/plugin/PluginHandler';
+} from '../../../modeler-component/editor/plugin/PluginHandler';
 import {
     getAllConfigs,
     getPluginConfig,
     setPluginConfig
-} from '../../modeler-component/editor/plugin/PluginConfigHandler';
+} from '../../../modeler-component/editor/plugin/PluginConfigHandler';
 
 describe('Test plugins', function () {
 

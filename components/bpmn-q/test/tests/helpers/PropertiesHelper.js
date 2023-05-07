@@ -1,4 +1,4 @@
-import {getCamundaInputOutput} from '../../modeler-component/editor/util/ModellingUtilities';
+import {getCamundaInputOutput} from '../../../modeler-component/editor/util/ModellingUtilities';
 import {expect} from 'chai';
 
 export function testTaskIo(taskElement, expectedInputs, expectedOutputs, bpmnFactory) {

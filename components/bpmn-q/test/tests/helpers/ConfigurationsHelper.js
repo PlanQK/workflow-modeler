@@ -40,8 +40,7 @@ export const VALID_DUMMY_CONFIGURATIONS = [
             {
                 name: "RedirectUrl",
                 label: "Redirect URL",
-                // value: "",
-                type: "string", // string, boolean, selection
+                type: "string",
                 editable: true,
                 bindTo: "Options"
             },
@@ -49,7 +48,7 @@ export const VALID_DUMMY_CONFIGURATIONS = [
                 name: "Url",
                 label: "Redirect URL",
                 value: "facebook.de/login",
-                type: "string", // string, boolean, selection
+                type: "string",
                 editable: true,
                 bindTo: "Options",
             }
