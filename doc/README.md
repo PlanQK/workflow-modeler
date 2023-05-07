@@ -6,7 +6,7 @@ project.
 ## Table of Content
 This documentation contains of the following sections:
 
-### Developer Setup
+### [Developer Setup](devloper-setup/developer-setup.md)
 Guide for developers to set up this project for further development
 
 ### Integration Guide

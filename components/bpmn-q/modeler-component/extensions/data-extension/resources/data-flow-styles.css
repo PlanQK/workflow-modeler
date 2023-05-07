@@ -37,16 +37,25 @@
 .dataflow-transformation-task-palette-icon {
     content: url("../resources/icons/transformation-task.svg");
     padding: 11px 8px 11px 10px;
+    box-sizing: border-box;
+    margin: 0;
+    outline: none;
 }
 
 .dataflow-data-store-map-task-palette-icon {
     content: url("../resources/icons/data-store-map-icon.svg");
     padding: 10px;
+    box-sizing: border-box;
+    margin: 0;
+    outline: none;
 }
 
 .dataflow-data-map-object-palette-icon {
     content: url("../resources/icons/data-map-object-icon.svg");
     padding: 10px 13px 10px 14px;
+    box-sizing: border-box;
+    margin: 0;
+    outline: none;
 }
 
 .dataflow-transformation-association-icon:before {

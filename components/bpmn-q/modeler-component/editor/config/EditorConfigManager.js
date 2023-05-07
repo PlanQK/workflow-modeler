@@ -3,7 +3,7 @@ import {transformedWorkflowHandlers} from '../EditorConstants';
 
 // default configurations of the editor
 const defaultConfig = {
-    camundaEndpoint: 'http://192.168.178.20:8080/engine-rest',
+    camundaEndpoint: 'http://localhost:8080/engine-rest',
     fileName: 'quantum-workflow-model.bpmn',
     transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
 };

@@ -41,7 +41,7 @@ export default function RewriteModal({onClose, candidates}) {
                         <tr className="spaceUnder">
                             <td align="right">Qiskit Runtime</td>
                             <td align="left">
-                                <button type="button" className="btn btn-secondary"
+                                <button type="button" className="qwm-btn qwm-btn-secondary"
                                         onClick={() => onSubmit(i, 'Qiskit Runtime')}>Rewrite Workflow
                                 </button>
                             </td>
@@ -49,7 +49,7 @@ export default function RewriteModal({onClose, candidates}) {
                         <tr className="spaceUnder">
                             <td align="right">AWS Runtime</td>
                             <td align="left">
-                                <button type="button" className="btn btn-secondary"
+                                <button type="button" className="qwm-btn qwm-btn-secondary"
                                         onClick={() => onSubmit(i, 'AWS Runtime')}>Rewrite Workflow
                                 </button>
                             </td>
@@ -73,7 +73,7 @@ export default function RewriteModal({onClose, candidates}) {
                         <tr className="spaceUnder">
                             <td align="right">Qiskit Runtime</td>
                             <td align="left">
-                                <button type="button" className="btn btn-secondary"
+                                <button type="button" className="qwm-btn qwm-btn-secondary"
                                         onClick={() => onSubmit(i, 'Qiskit Runtime')}>Rewrite Workflow
                                 </button>
                             </td>
@@ -81,7 +81,7 @@ export default function RewriteModal({onClose, candidates}) {
                         <tr className="spaceUnder">
                             <td align="right">AWS Runtime</td>
                             <td align="left">
-                                <button type="button" className="btn btn-secondary"
+                                <button type="button" className="qwm-btn qwm-btn-secondary"
                                         onClick={() => onSubmit(i, 'AWS Runtime')}>Rewrite Workflow
                                 </button>
                             </td>
@@ -140,7 +140,7 @@ export default function RewriteModal({onClose, candidates}) {
 
         <Footer>
             <div id="rewriteFormButtons">
-                <button type="button" className="btn btn-secondary" onClick={() => onClose()}>Done</button>
+                <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>Done</button>
             </div>
         </Footer>
     </Modal>;

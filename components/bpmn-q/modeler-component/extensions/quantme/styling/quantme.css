@@ -1,13 +1,6 @@
 @import url('~bpmn-font/dist/css/bpmn-embedded.css');
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    outline: none;
-    padding: 0;
-}
-
-.quantme-logo:before {
+.qwm .quantme-logo:before {
     content: "";
     width: 15px;
     height: 15px;
@@ -18,7 +11,7 @@
     float: left;
 }
 
-.quantme-tasks-icon:before {
+.qwm .quantme-tasks-icon:before {
     content: "";
     width: 20px;
     height: 20px;
@@ -30,7 +23,7 @@
     margin: 0 6px 0 0;
 }
 
-.qrm-reload:before {
+.qwm .qrm-reload:before {
     content: "";
     display: block;
     width: 15px;
@@ -40,7 +33,7 @@
     float: left;
 }
 
-.hybrid-loop-adaptation:before {
+.qwm .hybrid-loop-adaptation:before {
     content: "";
     display: block;
     width: 15px;
@@ -50,7 +43,7 @@
     float: left;
 }
 
-.workflow-transformation:before {
+.qwm .workflow-transformation:before {
     content: "";
     display: block;
     width: 15px;
@@ -60,7 +53,7 @@
     float: left;
 }
 
-.workflow-deployment:before {
+.qwm .workflow-deployment:before {
     content: "";
     display: block;
     width: 15px;
@@ -70,7 +63,7 @@
     float: left;
 }
 
-.config:before {
+.qwm .config:before {
     content: "";
     display: block;
     width: 15px;
@@ -80,7 +73,7 @@
     float: left;
 }
 
-.app-icon-service-deployment:before {
+.qwm .app-icon-service-deployment:before {
     content: "";
     width: 15px;
     height: 15px;
@@ -91,72 +84,31 @@
     float: left;
 }
 
-.indent {
+.qwm .indent {
     margin-left: 5px;
 }
 
-ul {
-    padding-left: 20px;
-}
-
-table {
-    table-layout: fixed;
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-
-#progress {
-    width: 100%;
-    background-color: #ddd;
-}
-
-#bar {
-    width: 1%;
-    height: 30px;
-    background-color: #4CAF50;
-}
-
-.spaceUnder {
+.qwm .spaceUnder {
     padding-bottom: 1em;
 }
 
-.spaceUnderSmall {
+.qwm .spaceUnderSmall {
     padding-bottom: 0.3em;
 }
 
-.spaceAbove {
+.qwm .spaceAbove {
     padding-top: 1em;
 }
 
-tr.spaceUnder>td {
-}
-
-html, body, #container {
-    height: 100%;
-}
-
-.hidden {
+.qwm .hidden {
     display: none;
 }
 
-.djs-label {
+.qwm .djs-label {
     font-family: 'Arial', sans-serif;
 }
 
-.bpmn-icon-hardware-selection-subprocess:before {
+.qwm .bpmn-icon-hardware-selection-subprocess:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-hardware-selection-subprocess.png") no-repeat;
@@ -166,7 +118,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-task-quantum-computation:before {
+.qwm .bpmn-icon-task-quantum-computation:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-quantum-computation-task.png") no-repeat;
@@ -176,7 +128,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-circuit-loading:before {
+.qwm .bpmn-icon-circuit-loading:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-quantum-circuit-loading-task.png") no-repeat;
@@ -186,7 +138,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-data-preparation:before {
+.qwm .bpmn-icon-data-preparation:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-data-preparation-task.png") no-repeat;
@@ -196,7 +148,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-oracle-expansion:before {
+.qwm .bpmn-icon-oracle-expansion:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-oracle-expansion-task.png") no-repeat;
@@ -206,7 +158,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-circuit-execution:before {
+.qwm .bpmn-icon-circuit-execution:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-circuit-execution-task.png") no-repeat;
@@ -216,7 +168,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-error-mitigation:before {
+.qwm .bpmn-icon-error-mitigation:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-readout-error-task.png") no-repeat;
@@ -226,7 +178,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-parameter-optimization:before {
+.qwm .bpmn-icon-parameter-optimization:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-parameter-optimization-task.png") no-repeat;
@@ -236,7 +188,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-result-evaluation:before {
+.qwm .bpmn-icon-result-evaluation:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-result-evaluation-task.png") no-repeat;
@@ -246,7 +198,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-variational-quantum-algorithm:before {
+.qwm .bpmn-icon-variational-quantum-algorithm:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-variational-quantum-algorithm-task.png") no-repeat;
@@ -256,7 +208,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-warm-starting:before {
+.qwm .bpmn-icon-warm-starting:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-warm-starting-task.png") no-repeat;
@@ -266,7 +218,7 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.bpmn-icon-circuit-cutting:before {
+.qwm .bpmn-icon-circuit-cutting:before {
     content: "";
     display: block;
     background: url("../resources/menu-icon-cutting-subprocess.png") no-repeat;
@@ -276,14 +228,14 @@ html, body, #container {
     margin: 0 6px 0 0;
 }
 
-.adaptation-tab {
+.qwm .adaptation-tab {
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
 }
 
 /* Style the buttons that are used to open the tab content */
-.adaptation-tab-button {
+.qwm .adaptation-tab-button {
     background-color: inherit;
     float: left;
     border: none;
@@ -294,16 +246,16 @@ html, body, #container {
 }
 
 /* Change background color of buttons on hover */
-.adaptation-tab-button:hover {
+.qwm .adaptation-tab-button:hover {
     background-color: #ddd;
 }
 
 /* Create an active/current tablink class */
-.adaptation-tab-button.active {
+.qwm .adaptation-tab-button.active {
     background-color: #ccc;
 }
 
-.rewrite-failed-button:after {
+.qwm .rewrite-failed-button:after {
     content: "";
     display: block;
     width: 15px;
@@ -314,12 +266,12 @@ html, body, #container {
     padding-left: 20px;
 }
 
-.rewrite-failed-button:disabled{
+.qwm .rewrite-failed-button:disabled{
     background-color: #f44336;
     color: #000000;
 }
 
-.rewrite-successful-button:disabled{
+.qwm .rewrite-successful-button:disabled{
     background-color: #008000;
     color: #000000;
 }

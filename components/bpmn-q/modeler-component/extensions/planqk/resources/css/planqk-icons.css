@@ -1,11 +1,17 @@
 .qwm-planqk-icon-palette-service-task {
     content: url("../icons/service-task-palette-icon.svg");
     padding: 11px 8px 11px 10px;
+    box-sizing: border-box;
+    margin: 0;
+    outline: none;
 }
 
 .qwm-planqk-icon-palette-data-pool {
     content: url("../icons/data-pool-palette-icon.svg");
     padding: 10px;
+    box-sizing: border-box;
+    margin: 0;
+    outline: none;
 }
 
 .qwm-planqk-icon-service-task:before {

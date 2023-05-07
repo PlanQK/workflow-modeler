@@ -69,7 +69,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
      */
     setInnerHtml() {
         this.innerHTML = `
-            <div style="display: flex; flex-direction: column; height: 100%;">
+            <div style="display: flex; flex-direction: column; height: 100%;" class="qwm">
               <div id="button-container" style="flex-shrink: 0;"></div>
               <hr class="qwm-toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1;">

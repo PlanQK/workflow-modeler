@@ -19,6 +19,48 @@
     opacity: .2;
     z-index: 1001;
 }
+
+.qwm-modal ul {
+    padding-left: 20px;
+}
+
+.qwm-modal table {
+    table-layout: fixed;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.qwm-modal td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.qwm-modal tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.qwm-modal #progress {
+    width: 100%;
+    background-color: #ddd;
+}
+
+.qwm-modal #bar {
+    width: 1%;
+    height: 30px;
+    background-color: #4CAF50;
+}
+
+.qwm-modal tr.spaceUnder>td {
+}
+
+.qwm-modal html, body, #container {
+    height: 100%;
+}
+
 .qwm-modal-dialog {
     position: fixed;
     left: 0;
