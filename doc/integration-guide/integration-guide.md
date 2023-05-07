@@ -78,4 +78,4 @@ You can configure the plugins like described [here](../quantum-workflow-modeler/
 of the config is defined by the plugin and can be looked up in the documentation of the respective plugin.
 
 You can add listeners to custom events the Quantum Workflow Modeler triggers for changes in the currently loaded workflow,
-like saving or loading a workflow. Read the [EventHandler documentation]() to learn more about the events of the modeler.
+like saving or loading a workflow. Read the [EventHandler documentation](../quantum-workflow-modeler/events/event-handler-doc.md) to learn more about the events of the modeler.

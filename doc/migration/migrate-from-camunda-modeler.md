@@ -1,7 +1,7 @@
 # Migration from Camunda Modeler to Quantum Workflow Modeler
 This file describes, what to look for when migrating the QuantME Transformation Framework 
 from the [Camunda Modeler](https://github.com/camunda/camunda-modeler) to the Quantum Workflow Modeler 
-which is based on the [bpmn-js Modeler](https://github.com/bpmn-io/bpmn-js/). To ease the tracability of the changes made to
+which is based on the [bpmn-js Modeler](https://github.com/bpmn-io/bpmn-js/). To ease the traceability of the changes made to
 integrate the QuantME Transformation Framework into the Quantum Workflow Modeler, the folder structure and the class and 
 script names were not changed during migration. Therefore, you can look for the class or script you want to migrate in the
 Quantum Workflow Modeler to find out how it was transformed.
@@ -55,12 +55,16 @@ to the respective classes and scripts of the QuantME plugin to see how they were
 
 ## Properties Panel
 The properties panel was recreated during migration because the Quantum Workflow Modeler uses a newer version of the Properties 
-Panel. Refer to [this guide](https://github.com/bpmn-io/bpmn-js-examples/tree/master/properties-panel-extension) 
+Panel. Refer to [this guide](../extend%20bpmn-js/properties-panel/custom-properties-panel.md) or the [Camunda Documentation](https://github.com/bpmn-io/bpmn-js-examples/tree/master/properties-panel-extension) 
 to find out how the new version allows the extension of the properties panel or check the
 implementation of the [Properties Provider of the QuantME plugin](../../components/bpmn-q/modeler-component/extensions/quantme/modeling/properties-provider/QuantMEPropertiesProvider.js).
 
 Basically in the new version, properties are grouped in groups. Each group is defined by a set of properties. Each property 
 is represented by one entry which defines the representation of this entry in the properties panel.
+
+## Replace Menu Provider
+Through the upgrade of the bpmn-js version, the recommended way to add custom ReplaceMenuProviders changed. Refer to [this guider](../extend%20bpmn-js/menu-entries/custom-replace-entries.md) 
+for further information. The Replace Menu Provider of the QuantME Transformation Framework has to be changed to this structure.
 
 ## UI extensions
 The buttons and the config dialog of the QuantME transformation framework are adapted to the extensions of the UI the Quantum
@@ -70,10 +74,11 @@ and also added via the Plugin Object to the UI of the modeler. Refer [this guide
 for further information on how to extend the UI of the Quantum Workflow Modeler.
 
 ## Utility Functions
+Many Utility function which where available in the Camunda Modeler are no longer available in bpmn-js. Refer to the [Utilities of the editor](../../components/bpmn-q/modeler-component/editor/util)
+for some custom utilities, also to replace broken utility functions in your QunatME code. To further ease the migration,
+some utility functions of camunda are copied into [this directory](../../components/bpmn-q/modeler-component/editor/util/camunda-utils)
+which can be used to replace the calls to the camunda modeler utilities.
 
-## Replace Menu Provider
-
-## Deprecated APIs
-
-##### Access of the DI
-no longer over .di, now use getDi() from ModelUtil, https://github.com/bpmn-io/bpmn-js/issues/1472
+## Access of the DI
+To access the diagram element of a business object, you can no longer use ```.di```. You now have to use ```getDi()``` 
+from ModelUtil like described in [this issue](https://github.com/bpmn-io/bpmn-js/issues/1472).
