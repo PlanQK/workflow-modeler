@@ -2,6 +2,16 @@
 The PlanQK plugin adds the DataPool and PlanQKServiceTask modelling elements. It depends on the DataFlow plugin because
 the DataPool extends the DataStoreMap. To use the PlanQK plugin, the DataFlow plugin must also be active.
 
+## Structure
+- [PlanQK Plugin Object](../../../../components/bpmn-q/modeler-component/extensions/planqk/PlanQKPlugin.js)
+- [PlanQK Transformation Function](../../../../components/bpmn-q/modeler-component/extensions/planqk/exec-completion/PlanQKServiceTaskCompletion.js)
+- [Utilities](../../../../components/bpmn-q/modeler-component/extensions/planqk/utilities)
+- bpmn-js Extension Module
+  - [Properties Panel Providers](../../../../components/bpmn-q/modeler-component/extensions/planqk/propeties)
+  - [Menu Provider](../../../../components/bpmn-q/modeler-component/extensions/planqk/PlanQKMenuProvider.js)
+  - [Palette Provider](../../../../components/bpmn-q/modeler-component/extensions/planqk/PlanQKPaletteProvider.js)
+  - [Rendering](../../../../components/bpmn-q/modeler-component/extensions/planqk/PlanQKRenderer.js)
+
 ## Configuration of the PlanQK Plugin
 The config attribute of the PlanQK Plugin must have the following structure:
 

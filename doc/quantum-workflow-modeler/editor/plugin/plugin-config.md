@@ -1,4 +1,4 @@
-# Configuration your plugin
+# Configurat your plugin
 You can hand custom config data to each plugin. The config data is defined in the code which integrated the modeler and 
 handed to the integrated modeler instance. You can define the structure of the config data as you need it.
 

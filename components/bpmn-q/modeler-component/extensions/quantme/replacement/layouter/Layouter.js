@@ -10,7 +10,7 @@
  */
 
 import {getDi, is} from 'bpmn-js/lib/util/ModelUtil';
-import {isFlowLikeElement} from '../util/ModellingUtilities';
+import {isFlowLikeElement} from '../../../../editor/util/ModellingUtilities';
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = '10';
