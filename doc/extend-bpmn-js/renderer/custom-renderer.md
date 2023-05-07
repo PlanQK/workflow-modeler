@@ -17,7 +17,7 @@ export default class CustomRenderer extends BpmnRenderer {
             ['custom:MyData']: function (self, parentGfx, element) {
                 const task = self.renderer('bpmn:DataObject')(parentGfx, element);
 
-                let svg = extractConfigSVG(element) || getSVG(consts.DATA_TYPE_DATA_MAP_OBJECT);
+                let svg = getSVG(consts.DATA_TYPE_DATA_MAP_OBJECT);
                 drawDataElementSVG(parentGfx, svg);
 
                 return task;
@@ -25,7 +25,7 @@ export default class CustomRenderer extends BpmnRenderer {
             ['custom:MyTask']: function (self, parentGfx, element) {
                 const task = self.renderer('bpmn:Task')(parentGfx, element);
 
-                let svg = extractConfigSVG(element) || getSVG(consts.TASK_TYPE_TRANSFORMATION_TASK);
+                let svg = getSVG(consts.TASK_TYPE_TRANSFORMATION_TASK);
                 drawTaskSVG(parentGfx, svg);
 
                 return task;

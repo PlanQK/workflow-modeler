@@ -1,6 +1,6 @@
 # Workflow Events
 The Quantum Workflow Modeler dispatches [Custom HTML Events](https://developer.mozilla.org/en-US/docs/Web/Events/Creating_and_triggering_events)
-when the workflow of the modeler changes. The event types the modeler creates are defined in [workflowEventTypes](../../../components/bpmn-q/modeler-component/editor/EditorConstants.js)
+when the workflow of the modeler changes. The event types the modeler creates are defined in [workflowEventTypes](../../../../components/bpmn-q/modeler-component/editor/EditorConstants.js)
 Currently four Events are dispatched:
 - LOADED: ('quantum-workflow-loaded'), when a new workflow is loaded in modeler
 - SAVED: ('quantum-workflow-saved'), when a workflow is saved
@@ -20,7 +20,7 @@ const newEvent = new CustomEvent(type, {
 ````
 
 ## Event Handler
-The dispatching of the events are controlled by the [EditorEventHandler](../../../components/bpmn-q/modeler-component/editor/events/EditorEventHandler.js).
+The dispatching of the events are controlled by the [EditorEventHandler](../../../../components/bpmn-q/modeler-component/editor/events/EditorEventHandler.js).
 Use this class to dispatch a workflow Event via the ```dispatchWorkflowEvent()``` function or add a listener for the 
 workflow events with ````addWorkflowEventListener()````.
 

@@ -21,7 +21,7 @@ export default {
     extensionModule: MyExtensionModule,
     moddleDescription: MyModdleExtension,
     transformExtensionButton: <TransformationButton name='QuantME Transformation' transformWorkflow={
-        async () => {
+        async (xml) => {
             // define the transformation of your custom extensions back into native bpmn
         }
     }/>,
@@ -29,7 +29,6 @@ export default {
 ```
 
 A plugin consists of the following entries:
-
 
 | Entry Name |  | Description |
 | -------- | -------- | -------- |

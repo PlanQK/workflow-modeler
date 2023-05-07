@@ -16,7 +16,7 @@ The implementation of the modeler is located in the [bpmn-q folder](components/b
 modeler in different UI frameworks can be found [here for a Vue.js app](components/bpmn-q-vue) 
 and [here for an Angular app](components/bpmn-q-angular). 
 
-The Quantum Workflow Modeler is a HTML web component. Its inner structure is defined in an shadow DOM to avoid CSS conflicts.
+The Quantum Workflow Modeler is a HTML web component.
 The UI components of the modeler are defined with React-js and written in JavaScript. To package the project, webpack is used.
 The tests of the project use mocha with chai for karma.
 
@@ -92,7 +92,7 @@ You can configure the plugins like described [here](doc/quantum-workflow-modeler
 of the config is defined by the plugin and can be looked up in the documentation of the respective plugin. 
 
 You can add listeners to custom events the Quantum Workflow Modeler triggers for changes in the currently loaded workflow, 
-like saving or loading a workflow. Read the [EventHandler documentation]() to learn more about the events of the modeler. 
+like saving or loading a workflow. Read the [EventHandler documentation](doc/quantum-workflow-modeler/editor/events/event-handler-doc.md) to learn more about the events of the modeler. 
 
 ## Development Setup
 

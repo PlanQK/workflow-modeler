@@ -40,13 +40,13 @@ modelerComponent.pluginConfigs = [
             dataPools: [dp1],
         }
     },
-    ...
+    // ...
 ]
 ```
 
-| Entry Name | Description |
-| -------- | -------- |
-| serviceEndpointBaseUrl |  |
-| subscriptions | Array of subsriptions for PlanQK Services |
-| oauthInfoByAppMap | Consumer key and consumer secret of PlanQK applications |
+| Entry Name | Description                                                                                                                         |
+| -------- |-------------------------------------------------------------------------------------------------------------------------------------|
+| serviceEndpointBaseUrl | Base URL pointing to the endpoint for PlanQK services                                                                               |
+| subscriptions | Array of subsriptions for PlanQK Services                                                                                           |
+| oauthInfoByAppMap | Consumer key and consumer secret of PlanQK applications                                                                             |
 | dataPools | Array PlanQK data pools. Each data pool consists of a name, an id, a link to the data pool on the PlanQK platform and a description |
