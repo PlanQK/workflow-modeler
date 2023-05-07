@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import FocusTrap from './FocusTrap';
 import EscapeTrap from './EscapeTrap';
 import KeyboardInteractionTrap from './KeyboardInteractionTrap';
-import * as editorConfig from '../../config/EditorConfigManager';
 
 /**
  * React component to display a modal.
@@ -71,7 +70,7 @@ export default class Modal extends PureComponent {
                     </div>
                 </div>
             </KeyboardInteractionTrap>,
-            editorConfig.getShadowRoot()
+            document.body
         );
     }
 }

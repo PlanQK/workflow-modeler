@@ -61,27 +61,6 @@ export function setFileName(fileName) {
 }
 
 /**
- * Get the current shadow root
- *
- * @return {string} the currently specified endpoint of the Camunda engine
- */
-export function getShadowRoot() {
-    return config.shadowRoot;
-}
-
-/**
- * Set the current shadow root
- *
- * @param shadowRoot the shadow root the modeler is built in
- */
-export function setShadowRoot(shadowRoot) {
-    if (shadowRoot) {
-        config.shadowRoot = shadowRoot;
-    }
-}
-
-
-/**
  * Get the id of the handler to handle transformed workflows
  *
  * @return {string} the currently specified handler id

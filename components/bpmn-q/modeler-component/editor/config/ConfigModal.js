@@ -12,6 +12,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import Modal from '../ui/modal/Modal';
+import './config-modal.css';
 
 // polyfill upcoming structural components
 const Title = Modal.Title || (({children}) => <h2>{children}</h2>);

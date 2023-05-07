@@ -23,7 +23,9 @@ export default function TransformationToolbarButton(props) {
         styleClass,
     } = props;
 
+    // flag defining if the subButtons should be displayed or not
     const [isToggleOn, setToggleOn] = useState(false);
+
     const wrapperRef = useRef(null);
 
     // initially activate all transformations
@@ -33,7 +35,8 @@ export default function TransformationToolbarButton(props) {
     });
 
     /*
-    Saves whether a transformation should be executed, if the state of a transformation is true, this transformation will be executed
+    Saves whether a transformation should be executed, if the state of a transformation is true,
+    this transformation will be executed
      */
     const [transformationStates, setTransformationStates] = useState(initialTransformationStates);
 
@@ -100,26 +103,42 @@ export default function TransformationToolbarButton(props) {
         }
     }
 
-    // close displayed TransformationButtons if the user clicks outside this component
-    const handleOutsideClick = event => {
-        if (wrapperRef.current && !wrapperRef.current.contains(event.composedPath()[0])) {
-            setToggleOn(false);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleOutsideClick);
-        return () => {
-            document.removeEventListener('mousedown', handleOutsideClick);
-        };
-    }, []);
-
     // callback to activate/ deactivate a transformation
     function selectedCallback(isActive, transformationName) {
         const newState = transformationStates;
         newState[transformationName] = isActive;
         setTransformationStates(newState);
     }
+
+    // opens/ closes subButtons by inverting isToggleOn
+    function handleClick() {
+
+        if (!isToggleOn) {
+
+            // dispatch event to close other extensible buttons
+            const newEvent = new CustomEvent('new-extensible-button-opened', {
+                detail: {
+                    openButtonId: title + styleClass,
+                },
+            });
+            return document.dispatchEvent(newEvent);
+        }
+
+        setToggleOn(!isToggleOn);
+    }
+
+    // close displayed TransformationButtons if another ExtensibleButton is opening
+    const openingListener = event => {
+        const currentId = title + styleClass;
+        setToggleOn(currentId === event.detail.openButtonId);
+    };
+
+    useEffect(() => {
+        document.addEventListener('new-extensible-button-opened', openingListener);
+        return () => {
+            document.removeEventListener('new-extensible-button-opened', openingListener);
+        };
+    }, []);
 
     return (
         <div ref={wrapperRef}>
@@ -133,7 +152,7 @@ export default function TransformationToolbarButton(props) {
 
                     </div>
                     <hr className="toolbar-splitter"/>
-                    <div className="toolbar-transformation-btn" style={{display: 'flex'}} onClick={() => setToggleOn(!isToggleOn)}>
+                    <div className="toolbar-transformation-btn" style={{display: 'flex'}} onClick={handleClick}>
                         <span className="toolbar-transformation-edit-icon">
                             <span className="indent"/>
                         </span>

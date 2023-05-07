@@ -24,34 +24,42 @@ export default class ExtensibleButton extends Component {
         };
 
         this.handleClick = this.handleClick.bind(this);
-        this.handleClickOutside = this.handleClickOutside.bind(this);
+        this.openingListener = this.openingListener.bind(this);
 
         this.wrapperRef = createRef();
     }
 
     componentDidMount() {
-        document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener('new-extensible-button-opened', this.openingListener);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('new-extensible-button-opened', this.openingListener);
     }
 
     // open or close sub buttons
     handleClick() {
+
+        if (!this.state.isToggleOn) {
+
+            // dispatch event to close other extensible buttons
+            const newEvent = new CustomEvent('new-extensible-button-opened', {
+                detail: {
+                    openButtonId: this.state.title + this.state.styleClass,
+                },
+            });
+            return document.dispatchEvent(newEvent);
+        }
+
         this.setState(state => ({
-            isToggleOn: !state.isToggleOn
+            isToggleOn: !state.isToggleOn,
         }));
     }
 
-    // close the ExtensibleButton of the user clicks somewhere outside this component
-    handleClickOutside = (event) => {
-        if (
-            this.wrapperRef &&
-            !this.wrapperRef.current.contains(event.composedPath()[0])
-        ) {
-            this.setState({ isToggleOn: false });
-        }
+    // callback for a listener to close this button if another extensible button is opening
+    openingListener = (event) => {
+        const currentId = this.state.title + this.state.styleClass;
+        this.setState({ isToggleOn: currentId === event.detail.openButtonId});
     };
 
     render() {

@@ -1,3 +1,15 @@
+import 'bpmn-js/dist/assets/diagram-js.css';
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
+import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
+import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
+import './editor/resources/styling/modeler.css';
+import './editor/resources/styling/editor-ui.css';
+import './editor/ui/notifications/Notifications.css';
+import './editor/ui/notifications/Notification.css';
+import './editor/resources/styling/camunda-styles/style.css';
+
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
@@ -9,21 +21,6 @@ import {getPluginConfig, setPluginConfig} from "./editor/plugin/PluginConfigHand
 import * as editorConfig from './editor/config/EditorConfigManager';
 import {initEditorEventHandler} from './editor/events/EditorEventHandler';
 
-import diagramJsStyle from 'bpmn-js/dist/assets/diagram-js.css';
-import bpmnEmbeddedStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
-import bpmnCodesStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
-import bpmnStyle from 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
-import elementTemplatesStyle from 'bpmn-js-properties-panel/dist/assets/element-templates.css';
-import propertiesPanelStyle from 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
-import modelerStyle from './editor/resources/styling/modeler.css' ;
-import editorUiStyle from './editor/resources/styling/editor-ui.css';
-import notificationsStyle from './editor/ui/notifications/Notifications.css';
-import notificationStyle from './editor/ui/notifications/Notification.css';
-import configModal from './editor/config/config-modal.css';
-import lessStyle from './editor/resources/styling/camunda-styles/style.css';
-
-import bpmnFonts from './editor/resources/styling/bpmn-fonts.css';
-
 /**
  * The Quantum Workflow modeler HTML web component which contains the bpmn-js modeler to model BPMN diagrams, an editor
  * component for workflow editing functionality and plugins which add model extensions to the bpmn-js modeler and allow
@@ -32,21 +29,14 @@ import bpmnFonts from './editor/resources/styling/bpmn-fonts.css';
 export class QuantumWorkflowModeler extends HTMLElement {
 
     workflowModel;
-    shadowRoot;
-
     constructor() {
         super();
-
-        // add css sheet which publishes the bpmn font to the head of the document
-        let fontStyleTag = document.createElement('style');
-        fontStyleTag.innerHTML = bpmnFonts;
-        document.head.appendChild(fontStyleTag);
     }
 
     connectedCallback() {
 
         // create the HTML structure of the component
-        this.setShadowDOM();
+        this.setInnerHtml();
 
         // add listener for post messages containing a workflow to load into the modeler
         const self = this;
@@ -77,54 +67,17 @@ export class QuantumWorkflowModeler extends HTMLElement {
     /**
      * Set up the inner structure of the component
      */
-    setShadowDOM() {
-
-        // create new shadow root if not already exists
-        if (!this.shadowRoot) {
-            this.shadowRoot = this.attachShadow({mode: "open"});
-            editorConfig.setShadowRoot(this.shadowRoot);
-        }
-        this.shadowRoot.innerHTML = ``;
-
-        const div = document.createElement('div');
-
-        // add styles as style tags to the shadow dom
-        console.log('Start appending styles');
-        this.appendStyle(lessStyle);
-        this.appendStyle(bpmnEmbeddedStyle);
-        this.appendStyle(bpmnCodesStyle);
-        this.appendStyle(diagramJsStyle);
-        this.appendStyle(bpmnStyle);
-        this.appendStyle(elementTemplatesStyle);
-        this.appendStyle(propertiesPanelStyle);
-        this.appendStyle(modelerStyle);
-        this.appendStyle(editorUiStyle);
-        this.appendStyle(notificationsStyle);
-        this.appendStyle(notificationStyle);
-        this.appendStyle(configModal);
-
-        // add styles of the plugins
-        for (let styling of getStyles()) {
-            this.appendStyle(styling);
-        }
-
-        console.log('Start div');
-
-        // define inner structure of the shadow DOM
-        div.setAttribute("style", "display: flex; flex-direction: column; height: 100%;");
-        div.innerHTML = `
+    setInnerHtml() {
+        this.innerHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%;">
               <div id="button-container" style="flex-shrink: 0;"></div>
               <hr class="toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1;">
                 <div id="canvas" style="width: 100%"></div>
                 <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
               </div>
-              <div id="qwm-notification-container"></div>`;
-
-        console.log('Finished div');
-
-        // Attach the created element to the shadow DOM
-        this.shadowRoot.appendChild(div);
+              <div id="qwm-notification-container"></div>
+            </div>`;
     }
 
     /**
@@ -138,8 +91,8 @@ export class QuantumWorkflowModeler extends HTMLElement {
         initEditorEventHandler(this);
 
         // get and reset the container in which the bpmn-js modeler and its properties panel should be rendered
-        const bpmnContainer = this.shadowRoot.querySelector('#canvas');
-        const propertiesPanelContainer = this.shadowRoot.querySelector('#properties');
+        const bpmnContainer = document.getElementById('canvas');
+        const propertiesPanelContainer = document.getElementById('properties');
         bpmnContainer.innerHTML = '';
         propertiesPanelContainer.innerHTML = '';
 
@@ -148,7 +101,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         console.log('Created Modeler');
 
         // set up the notification handler and render it into the DOM
-        const notificationsContainer = this.shadowRoot.querySelector('#qwm-notification-container');
+        const notificationsContainer = document.getElementById('qwm-notification-container');
         const handler = NotificationHandler.getInstance();
         const notificationComponent = handler.createNotificationsComponent([], notificationsContainer);
 
@@ -160,7 +113,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         const transformationButtons = getTransformationButtons();
 
         // integrate the React ButtonToolbar into its DOM container
-        const root = createRoot(this.shadowRoot.querySelector('#button-container'));
+        const root = createRoot(document.getElementById('button-container'));
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
                                    transformButtons={transformationButtons}/>);
 
@@ -171,17 +124,6 @@ export class QuantumWorkflowModeler extends HTMLElement {
         } else {
             createNewDiagram(modeler);
         }
-    }
-
-    /**
-     * Create a style tag containing the styling of the given style and add the style tag to the shadow DOM
-     *
-     * @param style The given style
-     */
-    appendStyle(style) {
-        let styleTag = document.createElement('style');
-        styleTag.innerHTML = style;
-        this.shadowRoot.appendChild(styleTag);
     }
 
     /**
@@ -225,7 +167,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         setPluginConfig(configs);
 
         // rerender shadow dom to add plugin elements
-        this.setShadowDOM();
+        this.setInnerHtml();
 
         // restart modeler to apply plugin config when shadow dom is rendered
         requestAnimationFrame(() => {
