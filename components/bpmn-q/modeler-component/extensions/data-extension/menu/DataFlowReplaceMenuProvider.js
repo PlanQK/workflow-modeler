@@ -64,8 +64,8 @@ export default class DataFlowReplaceMenuProvider {
 
             // set entries for the transformation task configurations as replacement for a DataFlow transformation task
             if (is(element, consts.TRANSFORMATION_TASK)) {
-                let filteredOptions = filter(replaceOptions.TASK, isDifferentType(element));
-                const configEntries = createMenuEntries(element, filteredOptions, self.translate, self.replaceElement);
+                //let filteredOptions = filter(replaceOptions.TASK, isDifferentType(element));
+                let configEntries = {}
                 const dataConfigurations = createConfigurationsEntries(
                     element,
                     'dataflow-transformation-task-icon',
@@ -75,10 +75,15 @@ export default class DataFlowReplaceMenuProvider {
                     self.commandStack,
                     self.replaceElement
                 );
-
-                if (Object.entries(configEntries).length > 0) {
+                
+                if (element.businessObject.name) {
+                    configEntries = createMenuEntries(element, replaceOptions.TASK, self.translate, self.replaceElement);
                     return Object.assign(configEntries, dataConfigurations);
                 }
+          
+
+                return Object.assign(dataConfigurations, entries);
+                
             }
 
             // add MoreOptionsEntry for transformation task as replacement for BPMN task types
