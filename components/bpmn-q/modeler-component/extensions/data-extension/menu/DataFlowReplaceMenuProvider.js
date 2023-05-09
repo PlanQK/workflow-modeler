@@ -9,6 +9,8 @@ import * as consts from '../Constants';
 import {createConfigurationsEntries} from '../../../editor/configurations/ConfigurationsUtil';
 import {getTransformationTaskConfigurations} from '../transf-task-configs/TransformationTaskConfigurations';
 import {replaceConnection} from '../../../editor/util/ModellingUtilities';
+import { filter } from 'min-dash';
+import { isDifferentType } from 'bpmn-js/lib/features/popup-menu/util/TypeUtil';
 
 /**
  * Menu Provider for bpmn-replace which is opened for a diagram element. Adds replacement entries to replace the element with the
@@ -62,7 +64,8 @@ export default class DataFlowReplaceMenuProvider {
 
             // set entries for the transformation task configurations as replacement for a DataFlow transformation task
             if (is(element, consts.TRANSFORMATION_TASK)) {
-                const configEntries = createMenuEntries(element, replaceOptions.TASK, self.translate, self.replaceElement);
+                let filteredOptions = filter(replaceOptions.TASK, isDifferentType(element));
+                const configEntries = createMenuEntries(element, filteredOptions, self.translate, self.replaceElement);
                 const dataConfigurations = createConfigurationsEntries(
                     element,
                     'dataflow-transformation-task-icon',
@@ -86,13 +89,15 @@ export default class DataFlowReplaceMenuProvider {
 
             // add entries for data map objects as replacement for BPMN data objects
             if (is(element, 'bpmn:DataObjectReference')) {
-                const dataEntries = createMenuEntries(element, replaceOptions.DATA_OBJECT, self.translate, self.replaceElement);
+                let filteredOptions = filter(replaceOptions.DATA_OBJECT, isDifferentType(element));
+                const dataEntries = createMenuEntries(element, filteredOptions, self.translate, self.replaceElement);
                 return Object.assign(dataEntries, entries);
             }
 
             // add entries for data store maps as replacement for BPMN data stores
             if (is(element, 'bpmn:DataStoreReference')) {
-                const storeEntries = createMenuEntries(element, replaceOptions.DATA_STORE, self.translate, self.replaceElement);
+                let filteredOptions = filter(replaceOptions.DATA_STORE, isDifferentType(element));
+                const storeEntries = createMenuEntries(element, filteredOptions, self.translate, self.replaceElement);
                 return Object.assign(storeEntries, entries);
             }
 
@@ -141,7 +146,8 @@ export default class DataFlowReplaceMenuProvider {
             commandStack,
             replaceElement
         );
-        options = Object.assign(createMenuEntries(element, replaceOptions.TASK, translate, replaceElement), options);
+        let filteredOptions = filter(replaceOptions.TASK, isDifferentType(element));
+        options = Object.assign(createMenuEntries(element, filteredOptions, translate, replaceElement), options);
 
         return {
             ['replace-by-more-transf-task-options']: createMoreOptionsEntryWithReturn(
