@@ -61,6 +61,12 @@ export class QuantumWorkflowModeler extends HTMLElement {
             // start the bpmn-js modeler and render the React components
             this.startModeler();
         });
+
+        const beforeUnloadListener = (event) => {
+            event.preventDefault();
+            return event.returnValue = '';
+        };
+        addEventListener("beforeunload", beforeUnloadListener, {capture: true});
     }
 
 

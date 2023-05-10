@@ -310,9 +310,10 @@ export function getCamundaInputOutput(bo, bpmnFactory) {
  * @param task The BPMN task element
  * @param name The given name of the parameter
  * @param value The given value
+ * @param bpmnFactory
  */
-export function setInputParameter(task, name, value) {
-    let parameter = getInputParameter(task, name, 'camunda:InputOutput');
+export function setInputParameter(task, name, value, bpmnFactory) {
+    let parameter = getInputParameter(task, name, bpmnFactory);
     if (parameter) {
         parameter.value = value;
     }
@@ -324,9 +325,10 @@ export function setInputParameter(task, name, value) {
  * @param task The BPMN task element
  * @param name The given name of the parameter
  * @param value The given value
+ * @param bpmnFactory
  */
-export function setOutputParameter(task, name, value) {
-    let parameter = getOutputParameter(task, name, 'camunda:InputOutput');
+export function setOutputParameter(task, name, value, bpmnFactory) {
+    let parameter = getOutputParameter(task, name, bpmnFactory);
     if (parameter) {
         parameter.value = value;
     }
@@ -339,8 +341,8 @@ export function setOutputParameter(task, name, value) {
  * @param name The given name of the parameter
  * @param type The given value
  */
-export function getInputParameter(task, name, type) {
-    const extensionElement = getExtensionElements(task, type);
+export function getInputParameter(task, name, bpmnFactory) {
+    const extensionElement = getCamundaInputOutput(task, bpmnFactory);
 
     if (extensionElement && extensionElement.inputParameters) {
         for (const parameter of extensionElement.inputParameters) {
@@ -356,10 +358,10 @@ export function getInputParameter(task, name, type) {
  *
  * @param task The BPMN task element
  * @param name The given name of the parameter
- * @param type The given value
+ * @param bpmnFactory
  */
-export function getOutputParameter(task, name, type) {
-    const extensionElement = getExtensionElements(task, type);
+export function getOutputParameter(task, name, bpmnFactory) {
+    const extensionElement = getCamundaInputOutput(task, bpmnFactory);
 
     if (extensionElement && extensionElement.outputParameters) {
         for (const parameter of extensionElement.outputParameters) {
