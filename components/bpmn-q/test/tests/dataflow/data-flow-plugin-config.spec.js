@@ -26,10 +26,13 @@ describe('Test DataFlow plugin config', function () {
             setPluginConfig([
                 {
                     name: 'dataflow',
+                    config: {
+                        configurationsEndpoint: 'http://test:8000/service-task',
+                    }
                 }]
             );
 
-            expect(dataConfig.getConfigurationsEndpoint()).to.equal('http://localhost:8000/service-task');
+            expect(dataConfig.getConfigurationsEndpoint()).to.equal('http://test:8000/service-task');
         });
     });
 });

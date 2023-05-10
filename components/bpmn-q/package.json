@@ -42,6 +42,7 @@
     "min-dash": "^4.0.0",
     "min-dom": "^4.1.0",
     "node-fetch": "^2.1.2",
+    "process": "^0.11.10",
     "prefix-css-loader": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
