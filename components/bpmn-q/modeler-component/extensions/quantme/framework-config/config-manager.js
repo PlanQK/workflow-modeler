@@ -10,7 +10,7 @@
  */
 
 import defaultConfig from "./config";
-import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
+import { getPluginConfig } from '../../../editor/plugin/PluginConfigHandler';
 
 let config = {};
 
@@ -326,6 +326,29 @@ export function setAWSRuntimeHandlerEndpoint(endpoint) {
         config.awsRuntimeHandlerEndpoint = endpoint;
     }
 }
+
+/**
+ * Get the GitHub Token.
+ *
+ * @return {string} the specified token
+ */
+export function getGitHubToken() {
+    if (config.githubToken === undefined) {
+        return '';
+    }
+    return config.githubToken;
+};
+
+/**
+ * Set the GitHub Token to authenticate user.
+ *
+ * @param token the token
+ */
+export function setGitHubToken(token) {
+    if (token !== null && token !== undefined) {
+        config.githubToken = token;
+    }
+};
 
 /**
  * Reset all saved endpoints and configuration values back to default or the value of the respective plugin config

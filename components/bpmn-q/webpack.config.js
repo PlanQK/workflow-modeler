@@ -61,8 +61,10 @@ module.exports = {
             AWS_RUNTIME_HANDLER_ENDPOINT: 'http://localhost:8890',
             CAMUNDA_ENDPOINT: 'http://localhost:8080/engine-rest',
             DATA_CONFIG: 'http://localhost:8100/data-objects',
-            OPENTOSCA_ENDPOINT: 'http://localhost:1337/csars',
+            GITHUB_TOKEN: '',
             NISQ_ANALYZER_ENDPOINT: 'http://localhost:8098/nisq-analyzer',
+            OPENTOSCA_ENDPOINT: 'http://localhost:1337/csars',
+            PROVENANCE_COLLECTION: false,
             QISKIT_RUNTIME_HANDLER_ENDPOINT: 'http://localhost:8889',
             QHANA_GET_PLUGIN_URL: 'http://localhost:5006/api/plugins/',
             QHANA_LIST_PLUGINS_URL: 'http://localhost:5006/api/plugins/?item-count=100',
@@ -73,10 +75,9 @@ module.exports = {
             SCRIPT_SPLITTER_ENDPOINT: 'http://localhost:8891',
             SCRIPT_SPLITTER_THRESHOLD: 5,
             TRANSFORMATION_FRAMEWORK_ENDPOINT: 'http://localhost:8888',
-            WINERY_ENDPOINT: 'http://localhost:8081/winery',
-            PROVENANCE_COLLECTION: false
+            WINERY_ENDPOINT: 'http://localhost:8081/winery'
         })
     ],
     mode: 'development',
-    devtool: 'source-map',
+    devtool: 'source-map'
 };
