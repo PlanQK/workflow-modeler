@@ -157,6 +157,17 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
       context.shapes = shapes;
       eventBus.fire('removeSelection', context);
     });
+
+    this._registerAction('undoOperation', function(event) {
+      let context = {};
+      eventBus.fire('undo', context);
+    });
+
+    this._registerAction('redoOperation', function(event) {
+      let context = {};
+      eventBus.fire('redo', context);
+    });
+
     this._registerAction('moveToOrigin', function() {
       var rootElement = canvas.getRootElement(),
           boundingBox,

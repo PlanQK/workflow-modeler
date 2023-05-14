@@ -199,4 +199,28 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
     }
   });
 
+  // undo operation
+  // U
+  addListener('undoOperation', function(context) {
+    var event = context.keyEvent;
+
+    if (keyboard.isKey(['z', 'Z'], event)) {
+      editorActions.trigger('undo');
+
+      return true;
+    }
+  });
+
+  // undo operation
+  // U
+  addListener('redoOperation', function(context) {
+    var event = context.keyEvent;
+
+    if (keyboard.isKey(['y', 'Y'], event)) {
+      editorActions.trigger('redo');
+
+      return true;
+    }
+  });
+
 };
