@@ -39,6 +39,32 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
     dispatchWorkflowEvent(workflowEventTypes.SAVED, xml, editorConfig.getFileName());
 }
 
+export async function saveWorkflowAsSVG(modeler, fileName = editorConfig.getFileName()) {
+    const xml = await getXml(modeler);
+    modeler.saveSVG({ format: true }, function (error, svg) {
+        if (error) {
+            return;
+        }
+    
+        var svgBlob = new Blob([svg], {
+            type: 'image/svg+xml'
+        });
+    
+        var fileName = fileName + '.svg';
+    
+        var downloadLink = document.createElement('a');
+        downloadLink.download = fileName;
+        downloadLink.innerHTML = 'Get BPMN SVG';
+        downloadLink.href = window.URL.createObjectURL(svgBlob);
+        downloadLink.onclick = function (event) {
+            document.body.removeChild(event.target);
+        };
+        downloadLink.style.visibility = 'hidden';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();                                        
+    });               
+}
+
 /**
  * Saves the bpmn diagram which is currently opened in the given bpmn modeler as a bpmn file to the locale storage of the user.
  *
