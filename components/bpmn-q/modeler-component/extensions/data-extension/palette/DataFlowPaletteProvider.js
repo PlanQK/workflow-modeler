@@ -68,7 +68,7 @@ export default class DataFlowPaletteProvider {
             },
             'create.dataflow-data-map-object': {
                 group: 'dataflowExt',
-                className: 'dataflow-data-map-object-palette-icon',
+                className: 'bpmn-icon-data-map-object',
                 title: translate('Creates a Data Map Object to model data items'),
                 action: {
                     click: createDataMapObject,
@@ -77,7 +77,7 @@ export default class DataFlowPaletteProvider {
             },
             'create.dataflow-data-store-map': {
                 group: 'dataflowExt',
-                className: 'dataflow-data-store-map-task-palette-icon',
+                className: 'bpmn-icon-data-store-map',
                 title: translate('Creates a Data Store Map to model data stores'),
                 action: {
                     click: createDataStoreMap,
@@ -86,7 +86,7 @@ export default class DataFlowPaletteProvider {
             },
             'create.data-flow-transformation-task': {
                 group: 'dataflowExt',
-                className: 'dataflow-transformation-task-palette-icon',
+                className: 'bpmn-icon-transformation-task',
                 title: translate('Creates a task ot specify data transformations in'),
                 action: {
                     click: createTransformationTask,
