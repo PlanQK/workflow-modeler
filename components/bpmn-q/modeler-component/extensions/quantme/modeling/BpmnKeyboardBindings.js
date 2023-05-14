@@ -171,21 +171,6 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
       return true;
     }
   });
-
-  // activate delete element
-  // R
-  addListener('replaceElement', function(context) {
-
-    var event = context.keyEvent;
-
-    if (keyboard.isKey([ 'r', 'R' ], event)) {
-      editorActions.trigger('replaceElement', event);
-
-      return true;
-    }
-  });
-
-
   
   // delete selected element
   // D
