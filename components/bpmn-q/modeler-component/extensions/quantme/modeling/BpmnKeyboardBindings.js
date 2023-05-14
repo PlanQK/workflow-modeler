@@ -63,12 +63,12 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // search labels
-  // CTRL + F
+  // F
   addListener('find', function(context) {
 
     var event = context.keyEvent;
 
-    if (keyboard.isKey([ 'f', 'F' ], event) && keyboard.isCmd(event)) {
+    if (keyboard.isKey([ 'f', 'F' ], event)) {
       editorActions.trigger('find');
 
       return true;
@@ -120,40 +120,6 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
 
     if (keyboard.isKey([ 'h', 'H' ], event)) {
       editorActions.trigger('handTool');
-
-      return true;
-    }
-  });
-
-  // activate global connect tool
-  // C
-  addListener('globalConnectTool', function(context) {
-
-    var event = context.keyEvent;
-
-    if (keyboard.hasModifier(event)) {
-      return;
-    }
-
-    if (keyboard.isKey([ 'c', 'C' ], event)) {
-      editorActions.trigger('globalConnectTool');
-
-      return true;
-    }
-  });
-
-  // activate direct editing
-  // E
-  addListener('directEditing', function(context) {
-
-    var event = context.keyEvent;
-
-    if (keyboard.hasModifier(event)) {
-      return;
-    }
-
-    if (keyboard.isKey([ 'e', 'E' ], event)) {
-      editorActions.trigger('directEditing');
 
       return true;
     }
