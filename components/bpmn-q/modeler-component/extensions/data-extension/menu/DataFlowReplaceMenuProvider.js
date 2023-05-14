@@ -150,7 +150,7 @@ export default class DataFlowReplaceMenuProvider {
                 'Transformation Tasks',
                 popupMenu,
                 options,
-                'dataflow-transformation-task-icon'
+                'bpmn-icon-transformation-task'
             )
         };
     }
