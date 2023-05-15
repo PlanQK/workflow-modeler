@@ -38,6 +38,14 @@ npm run dev
 ```
 to start the modeler in a simple html website which runs on localhost:8080.
 
+## Execution in Docker
+To serve the application from a Docker container execute:
+```
+docker run --name workflow-modeler -p 8080:8080 ghcr.io/sequenc-consortium/workflow-modeler
+```
+One can add environment variables with the `-e <KEY>=<VALUE>` flag.
+
+
 ## How to use this Library
 
 To use the Quantum Workflow Modeler component in your application you have to install its npm package which is published 
