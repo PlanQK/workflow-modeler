@@ -31,7 +31,6 @@ BpmnKeyboardBindings.$inject = [
  * @param {BpmnEditorActions} editorActions
  */
 BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) {
-
   // inherit default bindings
   KeyboardBindings.prototype.registerBindings.call(this, keyboard, editorActions);
 
@@ -50,9 +49,8 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   }
 
   // select all elements
-  // CTRL + A
+  // Shift + A
   addListener('selectElements', function(context) {
-
     var event = context.keyEvent;
 
     if (keyboard.isKey([ 'a', 'A' ], event)) {
@@ -65,7 +63,6 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   // search labels
   // F
   addListener('find', function(context) {
-
     var event = context.keyEvent;
 
     if (keyboard.isKey([ 'f', 'F' ], event)) {
@@ -94,7 +91,6 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   // activate lasso tool
   // L
   addListener('lassoTool', function(context) {
-
     var event = context.keyEvent;
 
     if (keyboard.hasModifier(event)) {
@@ -111,7 +107,6 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   // activate hand tool
   // H
   addListener('handTool', function(context) {
-
     var event = context.keyEvent;
 
     if (keyboard.hasModifier(event)) {
@@ -128,7 +123,6 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   // activate replace element
   // R
   addListener('replaceElement', function(context) {
-
     var event = context.keyEvent;
 
     if (keyboard.isKey([ 'r', 'R' ], event)) {
@@ -162,8 +156,8 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
     }
   });
 
-  // undo operation
-  // U
+  // redo operation
+  // R
   addListener('redoOperation', function(context) {
     var event = context.keyEvent;
 
