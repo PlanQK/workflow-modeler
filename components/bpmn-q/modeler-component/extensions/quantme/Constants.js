@@ -1,14 +1,3 @@
-/**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
- * University of Stuttgart
- *
- * This program and the accompanying materials are made available under the
- * terms the Apache Software License 2.0
- * which is available at https://www.apache.org/licenses/LICENSE-2.0.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-
 // QNames of the QuantME constructs
 export const QUANTUM_COMPUTATION_TASK = 'quantme:QuantumComputationTask';
 export const QUANTUM_CIRCUIT_LOADING_TASK = 'quantme:QuantumCircuitLoadingTask';

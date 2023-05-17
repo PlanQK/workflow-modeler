@@ -1,4 +1,4 @@
-import {is} from 'bpmn-js/lib/util/ModelUtil';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from "../../Constants";
 import * as dataConsts from "../../../data-extension/Constants";
 import {
@@ -8,13 +8,18 @@ import {
     QuantumCircuitExecutionTaskProperties,
     QuantumCircuitLoadingTaskProperties,
     QuantumComputationTaskProperties,
-    ReadoutErrorMitigationTaskProperties
+    ReadoutErrorMitigationTaskProperties,
+    CircuitCuttingSubprocessEntries,
+    ResultEvaluationTaskEntries,
+    ParameterOptimizationTaskEntries,
+    VariationalQuantumAlgorithmTaskEntries,
+    WarmStartingTaskEntries
 } from "./QuantMETaskProperties";
-import {ImplementationProps} from "./service-task/ImplementationProps";
-import {Group} from "@bpmn-io/properties-panel";
-import {getWineryEndpoint} from '../../framework-config/config-manager';
+import { ImplementationProps } from "./service-task/ImplementationProps";
+import { Group } from "@bpmn-io/properties-panel";
+import { getWineryEndpoint } from '../../framework-config/config-manager';
 import * as configConsts from '../../../../editor/configurations/Constants';
-import {instance as dataObjectConfigs} from '../../configurations/DataObjectConfigurations';
+import { instance as dataObjectConfigs } from '../../configurations/DataObjectConfigurations';
 import ConfigurationsProperties from '../../../../editor/configurations/ConfigurationsProperties';
 
 const LOW_PRIORITY = 500;
@@ -119,7 +124,7 @@ function ImplementationGroup(element, injector, wineryEndpoint) {
         id: 'CamundaPlatform__Implementation',
         component: Group,
         entries: [
-            ...ImplementationProps({element, wineryEndpoint, translate})
+            ...ImplementationProps({ element, wineryEndpoint, translate })
         ]
     };
 
@@ -159,7 +164,16 @@ function QuantMEProps(element) {
 
         case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
             return HardwareSelectionSubprocessProperties(element);
-
+        case consts.CIRCUIT_CUTTING_SUBPROCESS:
+            return CircuitCuttingSubprocessEntries(element);
+        case consts.RESULT_EVALUATION_TASK:
+            return ResultEvaluationTaskEntries(element);
+        case consts.PARAMETER_OPTIMIZATION_TASK:
+            return ParameterOptimizationTaskEntries(element);
+        case consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK:
+            return VariationalQuantumAlgorithmTaskEntries(element);
+        case consts.WARM_STARTING_TASK:
+            return WarmStartingTaskEntries(element);
         default:
             console.log('Unsupported QuantME element of type: ', element.type);
 

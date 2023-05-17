@@ -11,7 +11,6 @@
 
 import {getPropertiesToCopy, insertChildElements, insertShape} from '../../../../editor/util/TransformationUtilities';
 import {getCamundaInputOutput, getDefinitionsFromXml, getRootProcess} from '../../../../editor/util/ModellingUtilities';
-
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
  */
@@ -28,7 +27,7 @@ export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler,
     console.log(replacementElementCut, replacementElementCombine);
 
     // replace QuantumHardwareSelectionSubprocess with traditional subprocess
-    let newSubProcess = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {type: 'bpmn:SubProcess'});
+    let newSubProcess = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), { type: 'bpmn:SubProcess' });
 
     // update the properties of the new element
     modeling.updateProperties(newSubProcess, getPropertiesToCopy(subprocess));
@@ -121,7 +120,7 @@ export function insertShapeAt(definitions, parent, newElement, pointToInsert, mo
     let modeling = modeler.get('modeling');
     let elementRegistry = modeler.get('elementRegistry');
 
-    let element = modeling.createShape({type: newElement.$type}, {x: 50, y: 50}, parent, {});
+    let element = modeling.createShape({ type: newElement.$type }, { x: 50, y: 50 }, parent, {});
     modeling.updateProperties(element, getPropertiesToCopy(newElement));
 
     let modelingConstructBo = elementRegistry.get(element.id).businessObject;
@@ -137,8 +136,8 @@ export function insertShapeAt(definitions, parent, newElement, pointToInsert, mo
 
     let sourceElement = elementRegistry.get(pointToInsert.sourceRef.id);
     let targetElement = elementRegistry.get(pointToInsert.targetRef.id);
-    modeling.connect(sourceElement, element, {type: 'bpmn:SequenceFlow'});
-    modeling.connect(element, targetElement, {type: 'bpmn:SequenceFlow'});
+    modeling.connect(sourceElement, element, { type: 'bpmn:SequenceFlow' });
+    modeling.connect(element, targetElement, { type: 'bpmn:SequenceFlow' });
     let removeEl = elementRegistry.get(pointToInsert.id);
     modeling.removeConnection(removeEl);
 
@@ -166,5 +165,5 @@ export function insertShapeAt(definitions, parent, newElement, pointToInsert, mo
             idMap = result['idMap'];
         }
     }
-    return {success: success, idMap: idMap, element: parent};
+    return { success: success, idMap: idMap, element: parent };
 }
