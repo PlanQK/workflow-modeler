@@ -123,6 +123,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
             transformButtons={transformationButtons} />);
         let panel = document.getElementById("properties");
+        let maindiv = document.getElementById("main-div")
 
         let isResizing = false;
         let startX;
@@ -167,6 +168,32 @@ export class QuantumWorkflowModeler extends HTMLElement {
         function handleMouseUp() {
             isResizing = false;
         }
+
+        const resizeButton = document.createElement('button');
+        resizeButton.className = "fa fa-angle-right";
+        resizeButton.style.position = 'absolute';
+        resizeButton.style.top = '50%';
+        let position = panel.firstElementChild.offsetLeft - panel.firstElementChild.offsetHeight + 64;
+        resizeButton.style.right = `${position}px`
+
+        maindiv.appendChild(resizeButton);
+
+        let isCollapsed = false;
+
+        resizeButton.addEventListener('click', function () {
+            if (isCollapsed) {
+                panel.style.display = 'block';
+                resizeButton.style.right = `${position}px`;
+                resizeButton.className = "fa fa-angle-right";
+            } else {
+                panel.style.display = 'none';
+                resizeButton.style.right = '0%';
+                resizeButton.className = "fa fa-angle-left";
+            }
+
+            isCollapsed = !isCollapsed;
+        });
+        
 
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
