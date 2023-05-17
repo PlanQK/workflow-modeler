@@ -172,10 +172,9 @@ export class QuantumWorkflowModeler extends HTMLElement {
         const resizeButton = document.createElement('button');
         resizeButton.className = "fa fa-angle-right";
         resizeButton.style.position = 'absolute';
-        resizeButton.style.top = '50%';
-        let position = panel.firstElementChild.offsetLeft - panel.firstElementChild.offsetHeight + 64;
-        resizeButton.style.right = `${position}px`
-
+        resizeButton.style.bottom = '3%';
+        const screenWidth = window.innerWidth;
+        resizeButton.style.right = '0';
         maindiv.appendChild(resizeButton);
 
         let isCollapsed = false;
@@ -183,11 +182,9 @@ export class QuantumWorkflowModeler extends HTMLElement {
         resizeButton.addEventListener('click', function () {
             if (isCollapsed) {
                 panel.style.display = 'block';
-                resizeButton.style.right = `${position}px`;
                 resizeButton.className = "fa fa-angle-right";
             } else {
                 panel.style.display = 'none';
-                resizeButton.style.right = '0%';
                 resizeButton.className = "fa fa-angle-left";
             }
 
