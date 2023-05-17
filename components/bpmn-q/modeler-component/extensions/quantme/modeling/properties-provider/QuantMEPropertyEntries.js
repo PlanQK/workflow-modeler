@@ -1150,8 +1150,8 @@ export function WarmStartingMethodEntry({ element }) {
     };
 
     const selectOptions = [
-        { value: 'initialStateWarmStartEgger', name: 'Initial State Warm-Start Egger' },
-        { value: 'initialParameterPrecomputation', name: 'Initial Parameter Precomputation' },
+        { value: 'initialStateWarmStartEgger', label: 'Initial State Warm-Start Egger' },
+        { value: 'initialParameterPrecomputation', label: 'Initial Parameter Precomputation' },
     ];
 
     const getOptions = function () {
@@ -1286,9 +1286,9 @@ export function OptimizationEntry({ element }) {
     };
 
     const selectOptions = [
-        { value: 'cobyla', name: 'Cobyla' },
-        { value: 'spsa', name: 'SPSA' },
-        { value: 'nelderMead', name: 'Nelder Mead' }
+        { value: 'cobyla', label: 'Cobyla' },
+        { value: 'spsa', label: 'SPSA' },
+        { value: 'nelderMead', label: 'Nelder Mead' }
     ];
 
     const getOptions = function () {
