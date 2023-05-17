@@ -123,30 +123,50 @@ export class QuantumWorkflowModeler extends HTMLElement {
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
             transformButtons={transformationButtons} />);
         let panel = document.getElementById("properties");
-        let maindiv = document.getElementById("main-div")
-        const collapseButton = document.createElement('button');
-        collapseButton.textContent = 'Properties Panel';
-        collapseButton.style.position = 'absolute';
-        collapseButton.style.top = '50%';
-        collapseButton.style.right = '17%';
-        collapseButton.style.transform = 'translateY(-50%)';
-        collapseButton.style.transform = 'rotate(-90deg)';
 
-        maindiv.appendChild(collapseButton);
+        let isResizing = false;
+        let startX;
+        let startY;
+        let startWidth;
+        let startHeight;
 
-        let isCollapsed = false;
+        // Mouse down event listener
+        panel.addEventListener('mousedown', handleMouseDown);
 
-        collapseButton.addEventListener('click', function () {
-            if (isCollapsed) {
-                panel.style.display = 'block';
-                collapseButton.style.right = '17%';
-            } else {
-                panel.style.display = 'none';
-                collapseButton.style.right = '-3%';
+        // Mouse move event listener
+        document.addEventListener('mousemove', handleMouseMove);
+
+        // Mouse up event listener
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Mouse down handler
+        function handleMouseDown(event) {
+            isResizing = true;
+            startX = event.clientX;
+            startY = event.clientY;
+            startWidth = parseInt(document.defaultView.getComputedStyle(panel).width, 10);
+            startHeight = parseInt(document.defaultView.getComputedStyle(panel).height, 10);
+        }
+
+        // Mouse move handler
+        function handleMouseMove(event) {
+            if (!isResizing) return;
+
+            const deltaX = event.clientX - startX;
+            let newWidth = startWidth - deltaX;
+            
+            // enable to completely hide the panel
+            if (newWidth < 20) {
+                newWidth = 0
             }
 
-            isCollapsed = !isCollapsed;
-        });
+            panel.style.width = `${newWidth}px`;
+        }
+
+        // Mouse up handler
+        function handleMouseUp() {
+            isResizing = false;
+        }
 
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
