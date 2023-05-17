@@ -75,6 +75,9 @@ module.exports = {
             SCRIPT_SPLITTER_ENDPOINT: 'http://localhost:8891',
             SCRIPT_SPLITTER_THRESHOLD: 5,
             TRANSFORMATION_FRAMEWORK_ENDPOINT: 'http://localhost:8888',
+            UPLOAD_FILE_NAME: 'workflow',
+            UPLOAD_GITHUB_REPO: '',
+            UPLOAD_GITHUB_USER: '',
             WINERY_ENDPOINT: 'http://localhost:8081/winery'
         })
     ],

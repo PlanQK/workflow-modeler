@@ -5,6 +5,7 @@ import NewDiagramButton from "./NewDiagramButton";
 import DeploymentButton from "./DeploymentButton";
 import ConfigPlugin from "../config/ConfigPlugin";
 import TransformationToolbarButton from "./TransformationToolbarButton";
+import UploadButton from "./UploadButton";
 
 /**
  * React component which displays the toolbar of the modeler
@@ -30,6 +31,7 @@ export default function ButtonToolbar(props) {
                 <NewDiagramButton modeler={modeler}/>
                 <SaveButton modeler={modeler}/>
                 <OpenButton/>
+                <UploadButton/>
                 <hr className="qwm-toolbar-splitter"/>
                 <ConfigPlugin/>
                 <hr className="qwm-toolbar-splitter"/>

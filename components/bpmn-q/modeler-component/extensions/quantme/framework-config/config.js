@@ -23,6 +23,9 @@ const defaultConfig = {
     githubRepositoryName: process.env.QRM_REPONAME,
     githubUsername: process.env.QRM_USERNAME,
     githubRepositoryPath: process.env.QRM_REPOPATH,
-    hybridRuntimeProvenance: process.env.PROVENANCE_COLLECTION
+    hybridRuntimeProvenance: process.env.PROVENANCE_COLLECTION,
+    uploadGithubRepositoryName: process.env.UPLOAD_GITHUB_REPO,
+    uploadGithubRepositoryOwner: process.env.UPLOAD_GITHUB_USER,
+    uploadFileName: process.env.UPLOAD_FILE_NAME
 };
 export default defaultConfig;

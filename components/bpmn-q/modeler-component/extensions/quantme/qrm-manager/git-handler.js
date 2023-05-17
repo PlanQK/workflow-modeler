@@ -10,6 +10,64 @@
  */
 
 import fetch from 'node-fetch';
+import { getXml } from '../../../editor/util/IoUtilities';
+
+export const uploadToGitHub = async function (modeler) {
+  const xmlContent = await getXml(modeler);
+  const githubRepoOwner = modeler.config.uploadGithubRepositoryUserName;
+  const githubRepo = modeler.config.uploadGithubRepositoryName;
+  const githubToken = modeler.config.githubToken;
+  const fileName = modeler.config.uploadFileName;
+
+  // Encode the XML content as a Base64 string
+  const encodedXml = btoa(xmlContent);
+
+  // Construct the API request to get the file's SHA
+  const apiUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${fileName}.bpmn`;
+  const accessToken = githubToken;
+
+  const request = {
+    headers: {
+      'Authorization': `Token ${accessToken}`
+    }
+  };
+
+  // Get the file's SHA
+  fetch(apiUrl, request)
+    .then(response => response.json())
+    .then(fileData => {
+      let updateUrl = apiUrl;
+      if (fileData.message !== 'Not Found') {
+        updateUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${fileName}.bpmn?sha=${fileData.sha}`;
+      }
+      
+      const commitMessage = 'Update file';
+      const branchName = 'master';
+
+      const updateRequest = {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Token ${accessToken}`,
+          'Content-Type': '*/*'
+        },
+        body: JSON.stringify({
+          message: commitMessage,
+          content: encodedXml,
+          sha: fileData.sha,
+          branch: branchName
+        })
+      };
+
+      // Update the file
+      return fetch(updateUrl, updateRequest);
+    })
+    .then(response => {
+      console.log('Upload successful:', response);
+    })
+    .catch(error => {
+      console.error('Upload failed:', error);
+    });
+}
 
 /**
  * Get the URLs to all folders in the given public repository
@@ -30,17 +88,17 @@ export const getFoldersInRepository = async function (userName, repoName, repoPa
     });
     const contents = await response.json();
 
-    if (response.status !== 200) {
-        throw 'Status code not equal to 200: ' + response.status;
-    }
+  if (response.status !== 200) {
+    throw 'Status code not equal to 200: ' + response.status;
+  }
 
-    for (let i = 0; i < contents.length; i++) {
-        let item = contents[i];
-        if (item.type === 'dir') {
-            directoryURLs.push(item.url);
-        }
+  for (let i = 0; i < contents.length; i++) {
+    let item = contents[i];
+    if (item.type === 'dir') {
+      directoryURLs.push(item.url);
     }
-    return directoryURLs;
+  }
+  return directoryURLs;
 };
 
 /**
@@ -50,8 +108,8 @@ export const getFoldersInRepository = async function (userName, repoName, repoPa
  * @returns the content of the given file
  */
 export const getFileContent = async function (fileURL) {
-    let response = await fetch(fileURL);
-    return await response.text();
+  let response = await fetch(fileURL);
+  return await response.text();
 };
 
 /**
