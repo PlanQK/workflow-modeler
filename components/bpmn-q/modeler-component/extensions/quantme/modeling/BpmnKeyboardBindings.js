@@ -65,7 +65,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   addListener('find', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey([ 'f', 'F' ], event)) {
+    if (keyboard.isKey([ 'f', 'F' ], event) && keyboard.isCmd(event)) {
       editorActions.trigger('find');
 
       return true;
@@ -149,7 +149,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   addListener('undoOperation', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(['z', 'Z'], event)) {
+    if (keyboard.isKey(['z', 'Z'], event) && keyboard.isCmd(event)) {
       editorActions.trigger('undo');
 
       return true;
@@ -161,7 +161,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   addListener('redoOperation', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(['y', 'Y'], event)) {
+    if (keyboard.isKey(['y', 'Y'], event) && keyboard.isCmd(event)) {
       editorActions.trigger('redo');
 
       return true;
