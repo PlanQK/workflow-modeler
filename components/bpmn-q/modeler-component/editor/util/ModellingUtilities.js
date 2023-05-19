@@ -630,8 +630,10 @@ export function addEntry(businessObject, element, entry, bpmnFactory) {
         }
     });
 
-    const commandStack = useService('commandStack');
-    commandStack.execute('properties-panel.multi-command-executor', commands);
+    return {extensionElements: extensionElements};
+
+    //const commandStack = useService('commandStack');
+    //commandStack.execute('properties-panel.multi-command-executor', commands);
 }
 
 /**
