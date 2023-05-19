@@ -2,8 +2,8 @@ import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
 
 // default config entries used if no value is specified in the initial plugin config
 const defaultConfig = {
-    qhanaListPluginsURL: 'http://localhost:5006/api/plugins/?item-count=100',
-    qhanqGetPluginURL: 'http://localhost:5006/api/plugins/',
+    qhanaListPluginsURL: process.env.QHANA_LIST_PLUGINS_URL,
+    qhanqGetPluginURL: process.env.QHANA_GET_PLUGIN_URL,
 };
 
 const config = {};

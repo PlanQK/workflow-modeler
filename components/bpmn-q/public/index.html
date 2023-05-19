@@ -7,9 +7,7 @@
     <title>Workflow Modeler</title>
 </head>
 <body>
-<div id="modeler-container" style="height: 100vh;
-  border: solid 3px #EEE;
-  position: relative;">
+<div id="modeler-container" style="position: relative; overflow: hidden; width: 100%; height: 98vh;">
     <quantum-workflow-modeler></quantum-workflow-modeler>
 </div>
 <script src="index.js"></script>
@@ -116,16 +114,16 @@
         {
             name: 'editor',
             config: {
-                camundaEndpoint: 'http://localhost:8080/engine-rest',
+                camundaEndpoint: '',
                 // defaultWorkflow: defaultWorkflow,
                 // transformedWorkflowHandler: 'SAVE_AS_FILE',
             }
         },
         {
             name: 'dataflow',
-            // config: {
-            //     configurationsEndpoint: 'hello',
-            // }
+            config: {
+                 configurationsEndpoint: '',
+            }
         },
         {
             name: 'qhana',
@@ -145,14 +143,14 @@
         {
             name: 'quantme',
             config: {
-                quantmeDataConfigurationsEndpoint: 'http://localhost:8100/data-objects',
-                opentoscaEndpoint: 'http://localhost:1337/csars',
-                wineryEndpoint: 'http://localhost:8093/winery',
-                nisqAnalyzerEndpoint: 'http://localhost:8098/nisq-analyzer',
-                transformationFrameworkEndpoint: 'http://localhost:8888',
-                qiskitRuntimeHandlerEndpoint: 'http://localhost:8889',
-                awsRuntimeHandlerEndpoint: 'http://localhost:8890',
-                scriptSplitterEndpoint: 'http://localhost:8891',
+                quantmeDataConfigurationsEndpoint: '',
+                opentoscaEndpoint: '',
+                wineryEndpoint: '',
+                nisqAnalyzerEndpoint: '',
+                transformationFrameworkEndpoint: '',
+                qiskitRuntimeHandlerEndpoint: '',
+                awsRuntimeHandlerEndpoint: '',
+                scriptSplitterEndpoint: '',
                 // scriptSplitterThreshold: 10,
                 // githubRepositoryName: 'test',
                 // githubUsername: 'test',

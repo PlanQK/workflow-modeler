@@ -10,7 +10,16 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
     describe('Transformation of QuantME extensions', function () {
 
         it('should create a valid transformed workflow', async function () {
-            setPluginConfig([{ name: 'dataflow' }, { name: 'quantme' }]);
+            setPluginConfig([{ name: 'dataflow' },
+                {
+                    name: 'quantme',
+                    config: {
+                        githubRepositoryName: 'QuantME-UseCases',
+                        githubUsername: 'UST-QuAntiL',
+                        githubRepositoryPath: '2022-closer/qrms'
+                    }
+                }]
+            );
             this.timeout(60000);
 
             const qrms = await updateQRMs();
