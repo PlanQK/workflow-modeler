@@ -9,11 +9,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getPropertiesToCopy, insertChildElements, insertShape} from '../../../../editor/util/TransformationUtilities';
-import {getCamundaInputOutput, getDefinitionsFromXml, getRootProcess} from '../../../../editor/util/ModellingUtilities';
+import { getPropertiesToCopy, insertChildElements, insertShape } from '../../../../editor/util/TransformationUtilities';
+import { getCamundaInputOutput, getDefinitionsFromXml, getRootProcess } from '../../../../editor/util/ModellingUtilities';
 /**
- * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
- */
+* Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
+*/
 export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler, definitions, transformationFrameworkEndpoint, camundaEndpoint) {
 
     console.log(subprocess, parent, qrm);
@@ -40,7 +40,7 @@ export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler,
 
     // retrieve business object of the new element
     let bo = elementRegistry.get(newSubProcess.id).businessObject;
-    bo.di.isExpanded = true;
+    bo.isExpanded = true;
 
     let attributes = {
         cuttingMethod: subprocess.cuttingMethod,
@@ -75,11 +75,11 @@ export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler,
 }
 
 /**
- * Extract cut and combine elements from QRM
- *
- * @param qrm QRM containing 1 task/subprocess for cutting which is connected to another task/subprocess for combining the results
- * @returns the cut and combine flowElements
- */
+* Extract cut and combine elements from QRM
+*
+* @param qrm QRM containing 1 task/subprocess for cutting which is connected to another task/subprocess for combining the results
+* @returns the cut and combine flowElements
+*/
 export async function getCuttingReplacementElements(qrm) {
 
     // get the root process of the replacement fragment
@@ -104,14 +104,14 @@ export async function getCuttingReplacementElements(qrm) {
 
 
 /**
- *
- * @param definitions the definitions element of the BPMN diagram
- * @param parent the parent element under which the new element should be attached
- * @param newElement the new element to insert
- * @param pointToInsert the sequence flow used as a incoming and outgoing flow for the new element
- * @param modeler the used modler
- * @param inputAttrs map of attributes that should be used as the modeling constructs inputs
- */
+*
+* @param definitions the definitions element of the BPMN diagram
+* @param parent the parent element under which the new element should be attached
+* @param newElement the new element to insert
+* @param pointToInsert the sequence flow used as a incoming and outgoing flow for the new element
+* @param modeler the used modler
+* @param inputAttrs map of attributes that should be used as the modeling constructs inputs
+*/
 export function insertShapeAt(definitions, parent, newElement, pointToInsert, modeler, inputAttrs) {
     let idMap = {};
 

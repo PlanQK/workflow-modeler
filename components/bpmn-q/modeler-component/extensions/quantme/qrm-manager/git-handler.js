@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Institute of Architecture of Application Systems -
+ * Copyright (c) 2021 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -19,8 +19,16 @@ import fetch from 'node-fetch';
  * @param repoPath the path to the root folder in the repository to use
  */
 export const getFoldersInRepository = async function (userName, repoName, repoPath) {
+  const token = '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'
     const directoryURLs = [];
-    let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`);
+    const headers = {};
+    if (token) {
+        headers['Authorization'] = `Token ${token}`;
+    }
+
+    let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`, {
+        headers: headers
+    });
     const contents = await response.json();
 
     if (response.status !== 200) {
@@ -51,18 +59,25 @@ export const getFileContent = async function (fileURL) {
  * Get the URLs to all files in the given folder of the github repository
  *
  * @param folderURL the URL to the folder in the github repository
+ * @param token github Token that can be used to authenticate
  */
 export const getFilesInFolder = async function (folderURL) {
+  const token = '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'
     const fileURLs = [];
-    let response = await fetch(folderURL);
+    const headers = {};
+    if (token) {
+        headers['Authorization'] = `Token ${token}`;
+    }
+    let response = await fetch(folderURL, {
+        headers: headers
+    });
     const contents = await response.json();
 
     for (let i = 0; i < contents.length; i++) {
         let item = contents[i];
         if (item.type === 'file') {
-            fileURLs.push({name: item.name, download_url: item.download_url});
+            fileURLs.push({ name: item.name, download_url: item.download_url });
         }
     }
     return fileURLs;
 };
-
