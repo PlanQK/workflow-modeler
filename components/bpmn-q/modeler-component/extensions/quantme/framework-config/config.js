@@ -9,20 +9,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// hard coded default values for the config entries which are used if no values are configured via the plugin config
+// takes either the environment variables or the default values definded in webpack.config
 const defaultConfig = {
-    quantmeDataConfigurationsEndpoint: 'http://localhost:8100/data-objects',
-    opentoscaEndpoint: 'http://localhost:1337/csars',
-    wineryEndpoint: 'http://localhost:8093/winery',
-    nisqAnalyzerEndpoint: 'http://localhost:8098/nisq-analyzer',
-    transformationFrameworkEndpoint: 'http://localhost:8888',
-    qiskitRuntimeHandlerEndpoint: 'http://localhost:8889',
-    awsRuntimeHandlerEndpoint: 'http://localhost:8890',
-    scriptSplitterEndpoint: 'http://localhost:8891',
-    scriptSplitterThreshold: 5,
-    githubRepositoryName: 'QuantME-UseCases',
-    githubUsername: 'UST-QuAntiL',
-    githubRepositoryPath: '2022-closer/qrms',
-    hybridRuntimeProvenance: false
+    quantmeDataConfigurationsEndpoint: process.env.DATA_CONFIG,
+    opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
+    wineryEndpoint: process.env.WINERY_ENDPOINT,
+    nisqAnalyzerEndpoint: process.env.NISQ_ANALYZER_ENDPOINT,
+    transformationFrameworkEndpoint: process.env.TRANSFORMATION_FRAMEWORK_ENDPOINT,
+    qiskitRuntimeHandlerEndpoint: process.env.QISKIT_RUNTIME_HANDLER_ENDPOINT,
+    awsRuntimeHandlerEndpoint: process.env.AWS_RUNTIME_HANDLER_ENDPOINT,
+    scriptSplitterEndpoint: process.env.SCRIPT_SPLITTER_ENDPOINT,
+    scriptSplitterThreshold: process.env.SCRIPT_SPLITTER_THRESHOLD,
+    githubRepositoryName: process.env.QRM_REPONAME,
+    githubUsername: process.env.QRM_USERNAME,
+    githubRepositoryPath: process.env.QRM_REPOPATH,
+    hybridRuntimeProvenance: process.env.PROVENANCE_COLLECTION
 };
 export default defaultConfig;

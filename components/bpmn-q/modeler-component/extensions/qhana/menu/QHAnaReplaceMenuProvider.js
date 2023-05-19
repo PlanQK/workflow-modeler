@@ -9,6 +9,8 @@ import {createMenuEntries, createMoreOptionsEntryWithReturn} from '../../../edit
 import * as qhanaReplaceOptions from './QHAnaReplaceOptions';
 import * as dataConsts from '../../data-extension/Constants';
 import {appendElement} from '../../../editor/util/ModellingUtilities';
+import { filter } from 'min-dash';
+import { isDifferentType } from 'bpmn-js/lib/features/popup-menu/util/TypeUtil';
 
 /**
  * Menu Provider for bpmn-replace which is opened for a diagram element. Adds replacement entries to replace the custom
@@ -77,8 +79,9 @@ export default class QHAnaReplaceMenuProvider {
         const popupMenu = this.popupMenu;
         const translate = this.translate;
         const replaceElement = this.replaceElement;
-
-        const qhanaTasksEntries = createMenuEntries(element, qhanaReplaceOptions.TASK, translate, replaceElement);
+        
+        let filteredOptions = filter(qhanaReplaceOptions.TASK, isDifferentType(element));
+        const qhanaTasksEntries = createMenuEntries(element, filteredOptions, translate, replaceElement);
 
         // get entry for QHAna service tasks and its configurations
         const qhanaServiceTaskEntry = this.createQHAnaServiceTaskEntry(element);
