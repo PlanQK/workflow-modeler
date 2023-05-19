@@ -5,6 +5,8 @@ import NewDiagramButton from "./NewDiagramButton";
 import DeploymentButton from "./DeploymentButton";
 import ConfigPlugin from "../config/ConfigPlugin";
 import TransformationToolbarButton from "./TransformationToolbarButton";
+import ShortcutPlugin from "../shortcut/ShortcutPlugin";
+
 
 /**
  * React component which displays the toolbar of the modeler
@@ -41,6 +43,7 @@ export default function ButtonToolbar(props) {
                 <DeploymentButton modeler={modeler}/>
                 <hr className="qwm-toolbar-splitter"/>
                 {React.Children.toArray(pluginButtons)}
+                <ShortcutPlugin/>
             </div>
         </Fragment>
     );
