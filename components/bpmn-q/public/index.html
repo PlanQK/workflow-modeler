@@ -1,167 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!--    <link rel="stylesheet" href="./modeler-styles.css">-->
     <meta charset="UTF-8">
     <title>Workflow Modeler</title>
 </head>
+
 <body>
-<div id="modeler-container" style="position: relative; overflow: hidden; width: 100%; height: 98vh;">
-    <quantum-workflow-modeler></quantum-workflow-modeler>
-</div>
-<script src="index.js"></script>
-<script>
-    const app1 = {
-        id: 'app1',
-        description: '',
-        attributes: null,
-        groups: [],
-        name: 'Seppones App',
-        subscriptionCount: 2
-    };
-    const api1 = {
-        id: 'api1',
-        name: 'Seppones API',
-        gatewayEndpoint: 'www.seppone-gateway.de/api1',
-        version: 'v1',
-        context: '/api1'
-    };
-    const api2 = {
-        id: 'api2',
-        name: 'Felixs API',
-        gatewayEndpoint: 'www.felix-gateway.de/api1',
-        version: 'v1',
-        context: '/api1'
-    };
-    const sub1 = {id: 'sub1', application: app1, api: api1};
-    const sub2 = {id: 'sub2', application: app1, api: api2};
-    const app2 = {
-        id: 'app2',
-        description: '',
-        attributes: null,
-        groups: [],
-        name: 'Falkis App',
-        subscriptionCount: 1
-    };
-    const api3 = {
-        id: 'api3',
-        name: 'Wuddis API',
-        gatewayEndpoint: 'www.wuddi-gateway.de/api1',
-        version: 'v1',
-        context: '/api3'
-    };
-    const sub3 = {id: 'sub3', application: app2, api: api3};
+    <div id="modeler-container" style="position: relative; overflow: hidden; width: 100%; height: 98vh;">
+        <quantum-workflow-modeler></quantum-workflow-modeler>
+    </div>
+    <div id="editor" style="display:none"></div>
+    <script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.getSession().setMode('ace/mode/xml');
+        editor.setTheme('ace/theme/textmate');
+    </script>
+    <script src="/index.js" type="text/javascript"></script>
+    <script>
+        const app1 = {
+            id: 'app1',
+            description: '',
+            attributes: null,
+            groups: [],
+            name: 'Seppones App',
+            subscriptionCount: 2
+        };
+        const api1 = {
+            id: 'api1',
+            name: 'Seppones API',
+            gatewayEndpoint: 'www.seppone-gateway.de/api1',
+            version: 'v1',
+            context: '/api1'
+        };
+        const api2 = {
+            id: 'api2',
+            name: 'Felixs API',
+            gatewayEndpoint: 'www.felix-gateway.de/api1',
+            version: 'v1',
+            context: '/api1'
+        };
+        const sub1 = { id: 'sub1', application: app1, api: api1 };
+        const sub2 = { id: 'sub2', application: app1, api: api2 };
+        const app2 = {
+            id: 'app2',
+            description: '',
+            attributes: null,
+            groups: [],
+            name: 'Falkis App',
+            subscriptionCount: 1
+        };
+        const api3 = {
+            id: 'api3',
+            name: 'Wuddis API',
+            gatewayEndpoint: 'www.wuddi-gateway.de/api1',
+            version: 'v1',
+            context: '/api3'
+        };
+        const sub3 = { id: 'sub3', application: app2, api: api3 };
 
-    const dp1 = {
-        name: 'Anomaly Detection: Bars & Stipes ',
-        id: '2a7d74a6-0fb5-400a-8f0c-7125aef5613e',
-        link: 'https://platform.planqk.de/datapools/2a7d74a6-0fb5-400a-8f0c-7125aef5613e/',
-        description: 'A synthetic dataset for the anomaly detection. There are two version of the dataset, a larger version consisting of 3x3 pixel images of bars and stripes and a small version of 2x2 pixel images. We provide pretrained models for both of these datasets to be used with the AnoGan service.',
-    };
-    const dp2 = {
-        name: 'IUnit Commitment Problem in PyPSA',
-        id: '2a7d74a6-0fb5-400a-asd3-7125aef5613e',
-        link: 'https://platform.planqk.de/datapools/2a7d74a6-0fb5-400a-asd3-7125aef5613e/',
-        description: 'A dataset with an infinite amount of data to train endless models.',
-    };
-    const dp3 = {
-        name: 'Quadratic Assignment Problem',
-        id: '2a7d74a6-adsa-400a-8f0c-7125aef5613e',
-        link: 'https://platform.planqk.de/datapools/2a7d74a6-adsa-400a-8f0c-7125aef5613e/',
-        description: 'Replace this by a real description',
-    };
+        const dp1 = {
+            name: 'Anomaly Detection: Bars & Stipes ',
+            id: '2a7d74a6-0fb5-400a-8f0c-7125aef5613e',
+            link: 'https://platform.planqk.de/datapools/2a7d74a6-0fb5-400a-8f0c-7125aef5613e/',
+            description: 'A synthetic dataset for the anomaly detection. There are two version of the dataset, a larger version consisting of 3x3 pixel images of bars and stripes and a small version of 2x2 pixel images. We provide pretrained models for both of these datasets to be used with the AnoGan service.',
+        };
+        const dp2 = {
+            name: 'IUnit Commitment Problem in PyPSA',
+            id: '2a7d74a6-0fb5-400a-asd3-7125aef5613e',
+            link: 'https://platform.planqk.de/datapools/2a7d74a6-0fb5-400a-asd3-7125aef5613e/',
+            description: 'A dataset with an infinite amount of data to train endless models.',
+        };
+        const dp3 = {
+            name: 'Quadratic Assignment Problem',
+            id: '2a7d74a6-adsa-400a-8f0c-7125aef5613e',
+            link: 'https://platform.planqk.de/datapools/2a7d74a6-adsa-400a-8f0c-7125aef5613e/',
+            description: 'Replace this by a real description',
+        };
 
-    const defaultWorkflow = '<?xml version="1.0" encoding="UTF-8"?> <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dataflow="https://github.com/data/transformation" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">   <bpmn2:process id="Process_1" isExecutable="true">     <dataflow:inputTransformationAssociation id="InputTransformationAssociation_036tblc" sourceRef="DataMapObject_0eefpli" targetRef="Activity_1bhhrz8">       <dataflow:keyValueEntry name="gandalf" value="dfghj" />     </dataflow:inputTransformationAssociation>     <dataflow:outputTransformationAssociation id="OutputTransformationAssociation_0mjw840" sourceRef="DataMapObject_0eefpli" targetRef="DataObjectReference_0g3qagn">       <dataflow:keyValueEntry name="json" value="${JSON1.json_value}" />     </dataflow:outputTransformationAssociation>     <bpmn2:startEvent id="StartEvent_1">       <bpmn2:outgoing>Flow_1ibilsp</bpmn2:outgoing>     </bpmn2:startEvent>     <bpmn2:sequenceFlow id="Flow_1ibilsp" sourceRef="StartEvent_1" targetRef="Activity_1bhhrz8" />     <bpmn2:endEvent id="Event_155kg36">       <bpmn2:incoming>Flow_19ssslg</bpmn2:incoming>     </bpmn2:endEvent>     <dataflow:transformationTask id="Activity_1bhhrz8" name="Json to Xml Transformation" selectedConfigurationId="hadsfgaj">       <bpmn2:extensionElements>         <camunda:inputOutput>           <camunda:inputParameter name="test_overwrite">no</camunda:inputParameter>           <camunda:outputParameter name="test_underwrite">yes</camunda:outputParameter>         </camunda:inputOutput>       </bpmn2:extensionElements>       <bpmn2:incoming>Flow_1ibilsp</bpmn2:incoming>       <bpmn2:outgoing>Flow_0drdvu6</bpmn2:outgoing>       <bpmn2:property id="Property_13do5p9" name="__targetRef_placeholder" />       <bpmn2:dataInputAssociation id="DataInputAssociation_1hw1x0x">         <bpmn2:sourceRef>DataStoreMap_0cn30am</bpmn2:sourceRef>         <bpmn2:targetRef>Property_13do5p9</bpmn2:targetRef>       </bpmn2:dataInputAssociation>       <bpmn2:dataOutputAssociation id="DataOutputAssociation_0gcsgav">         <bpmn2:targetRef>DataMapObject_04hm8tb</bpmn2:targetRef>       </bpmn2:dataOutputAssociation>       <dataflow:keyValueEntry name="xml-schema" value="https://localhost:8080/" />       <dataflow:keyValueEntry name="seed" value="4846138737" />       <dataflow:keyValueEntry name="allLowerCase" value="true" />     </dataflow:transformationTask>     <dataflow:dataMapObject id="DataMapObject_0eefpli" name="JSON1" dataObjectRef="DataObject_083hx97">       <dataflow:keyValueEntry name="json_value" value="{ &#34;name&#34;: &#34;The JSON File&#34;}" />       <dataflow:keyValueEntry name="author" value="Steve Jobs" />       <dataflow:keyValueEntry name="creation_date" value="12.04.2023" />     </dataflow:dataMapObject>     <bpmn2:dataObject id="DataObject_083hx97" />     <dataflow:dataMapObject id="DataMapObject_04hm8tb" name="XML1" dataObjectRef="DataObject_0qj3gd1">       <dataflow:keyValueEntry name="xml_value" value="" />     </dataflow:dataMapObject>     <bpmn2:dataObject id="DataObject_0qj3gd1" />     <dataflow:dataStoreMap id="DataStoreMap_0cn30am" name="XSD Repository">       <dataflow:keyValueEntry name="url" value="http://localhost:8080/" />       <dataflow:keyValueEntry name="access_token" value="adf1asd4fasd4f3asd54f3a4sds566s6dfa3dd" />     </dataflow:dataStoreMap>     <bpmn2:task id="Activity_1ct0yq4" name="Task 2">       <bpmn2:extensionElements>         <camunda:inputOutput>           <camunda:inputParameter name="test_input">i</camunda:inputParameter>           <camunda:outputParameter name="test_output">o</camunda:outputParameter>         </camunda:inputOutput>       </bpmn2:extensionElements>       <bpmn2:incoming>Flow_0drdvu6</bpmn2:incoming>       <bpmn2:outgoing>Flow_19ssslg</bpmn2:outgoing>       <bpmn2:property id="Property_15bi8x4" name="__targetRef_placeholder" />       <bpmn2:dataInputAssociation id="DataInputAssociation_1avmllx">         <bpmn2:sourceRef>DataObjectReference_0g3qagn</bpmn2:sourceRef>         <bpmn2:targetRef>Property_15bi8x4</bpmn2:targetRef>       </bpmn2:dataInputAssociation>     </bpmn2:task>     <bpmn2:sequenceFlow id="Flow_0drdvu6" sourceRef="Activity_1bhhrz8" targetRef="Activity_1ct0yq4" />     <bpmn2:sequenceFlow id="Flow_19ssslg" sourceRef="Activity_1ct0yq4" targetRef="Event_155kg36" />     <dataflow:dataMapObject id="DataObjectReference_0g3qagn" name="JSON2" dataObjectRef="DataObject_0bnpaf0">       <dataflow:keyValueEntry name="json" value="${JSON1.json_value}" />     </dataflow:dataMapObject>     <bpmn2:dataObject id="DataObject_0bnpaf0" />   </bpmn2:process>   <bpmndi:BPMNDiagram id="BPMNDiagram_1">     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">         <dc:Bounds x="412" y="240" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Event_155kg36_di" bpmnElement="Event_155kg36">         <dc:Bounds x="792" y="240" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Activity_1f2eda5_di" bpmnElement="Activity_1bhhrz8">         <dc:Bounds x="490" y="218" width="100" height="80" />         <bpmndi:BPMNLabel />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataMapObject_0eefpli_di" bpmnElement="DataMapObject_0eefpli">         <dc:Bounds x="412" y="355" width="36" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="413" y="412" width="34" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataMapObject_04hm8tb_di" bpmnElement="DataMapObject_04hm8tb">         <dc:Bounds x="602" y="85" width="36" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="606" y="142" width="28" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataStoreMap_0cn30am_di" bpmnElement="DataStoreMap_0cn30am">         <dc:Bounds x="375" y="85" width="50" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="362" y="142" width="77" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Activity_1ct0yq4_di" bpmnElement="Activity_1ct0yq4">         <dc:Bounds x="640" y="218" width="100" height="80" />         <bpmndi:BPMNLabel />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataMapObject_02jkpyr_di" bpmnElement="DataObjectReference_0g3qagn">         <dc:Bounds x="672" y="355" width="36" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="673" y="412" width="34" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNEdge id="Flow_1ibilsp_di" bpmnElement="Flow_1ibilsp">         <di:waypoint x="448" y="258" />         <di:waypoint x="490" y="258" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="DataInputAssociation_1hw1x0x_di" bpmnElement="DataInputAssociation_1hw1x0x">         <di:waypoint x="425" y="110" />         <di:waypoint x="520" y="110" />         <di:waypoint x="520" y="218" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="DataOutputAssociation_0gcsgav_di" bpmnElement="DataOutputAssociation_0gcsgav">         <di:waypoint x="570" y="218" />         <di:waypoint x="570" y="110" />         <di:waypoint x="602" y="110" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="DataInputAssociation_1avmllx_di" bpmnElement="DataInputAssociation_1avmllx">         <di:waypoint x="690" y="355" />         <di:waypoint x="690" y="298" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="Flow_0drdvu6_di" bpmnElement="Flow_0drdvu6">         <di:waypoint x="590" y="258" />         <di:waypoint x="640" y="258" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="Flow_19ssslg_di" bpmnElement="Flow_19ssslg">         <di:waypoint x="740" y="258" />         <di:waypoint x="792" y="258" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="InputTransformationAssociation_036tblc_di" bpmnElement="InputTransformationAssociation_036tblc">         <di:waypoint x="450" y="370" />         <di:waypoint x="540" y="370" />         <di:waypoint x="540" y="298" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="OutputTransformationAssociation_0mjw840_di" bpmnElement="OutputTransformationAssociation_0mjw840">         <di:waypoint x="450" y="385" />         <di:waypoint x="672" y="385" />       </bpmndi:BPMNEdge>     </bpmndi:BPMNPlane>   </bpmndi:BPMNDiagram> </bpmn2:definitions> '
+        const defaultWorkflow = '<?xml version="1.0" encoding="UTF-8"?> <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dataflow="https://github.com/data/transformation" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">   <bpmn2:process id="Process_1" isExecutable="true">     <dataflow:inputTransformationAssociation id="InputTransformationAssociation_036tblc" sourceRef="DataMapObject_0eefpli" targetRef="Activity_1bhhrz8">       <dataflow:keyValueEntry name="gandalf" value="dfghj" />     </dataflow:inputTransformationAssociation>     <dataflow:outputTransformationAssociation id="OutputTransformationAssociation_0mjw840" sourceRef="DataMapObject_0eefpli" targetRef="DataObjectReference_0g3qagn">       <dataflow:keyValueEntry name="json" value="${JSON1.json_value}" />     </dataflow:outputTransformationAssociation>     <bpmn2:startEvent id="StartEvent_1">       <bpmn2:outgoing>Flow_1ibilsp</bpmn2:outgoing>     </bpmn2:startEvent>     <bpmn2:sequenceFlow id="Flow_1ibilsp" sourceRef="StartEvent_1" targetRef="Activity_1bhhrz8" />     <bpmn2:endEvent id="Event_155kg36">       <bpmn2:incoming>Flow_19ssslg</bpmn2:incoming>     </bpmn2:endEvent>     <dataflow:transformationTask id="Activity_1bhhrz8" name="Json to Xml Transformation" selectedConfigurationId="hadsfgaj">       <bpmn2:extensionElements>         <camunda:inputOutput>           <camunda:inputParameter name="test_overwrite">no</camunda:inputParameter>           <camunda:outputParameter name="test_underwrite">yes</camunda:outputParameter>         </camunda:inputOutput>       </bpmn2:extensionElements>       <bpmn2:incoming>Flow_1ibilsp</bpmn2:incoming>       <bpmn2:outgoing>Flow_0drdvu6</bpmn2:outgoing>       <bpmn2:property id="Property_13do5p9" name="__targetRef_placeholder" />       <bpmn2:dataInputAssociation id="DataInputAssociation_1hw1x0x">         <bpmn2:sourceRef>DataStoreMap_0cn30am</bpmn2:sourceRef>         <bpmn2:targetRef>Property_13do5p9</bpmn2:targetRef>       </bpmn2:dataInputAssociation>       <bpmn2:dataOutputAssociation id="DataOutputAssociation_0gcsgav">         <bpmn2:targetRef>DataMapObject_04hm8tb</bpmn2:targetRef>       </bpmn2:dataOutputAssociation>       <dataflow:keyValueEntry name="xml-schema" value="https://localhost:8080/" />       <dataflow:keyValueEntry name="seed" value="4846138737" />       <dataflow:keyValueEntry name="allLowerCase" value="true" />     </dataflow:transformationTask>     <dataflow:dataMapObject id="DataMapObject_0eefpli" name="JSON1" dataObjectRef="DataObject_083hx97">       <dataflow:keyValueEntry name="json_value" value="{ &#34;name&#34;: &#34;The JSON File&#34;}" />       <dataflow:keyValueEntry name="author" value="Steve Jobs" />       <dataflow:keyValueEntry name="creation_date" value="12.04.2023" />     </dataflow:dataMapObject>     <bpmn2:dataObject id="DataObject_083hx97" />     <dataflow:dataMapObject id="DataMapObject_04hm8tb" name="XML1" dataObjectRef="DataObject_0qj3gd1">       <dataflow:keyValueEntry name="xml_value" value="" />     </dataflow:dataMapObject>     <bpmn2:dataObject id="DataObject_0qj3gd1" />     <dataflow:dataStoreMap id="DataStoreMap_0cn30am" name="XSD Repository">       <dataflow:keyValueEntry name="url" value="http://localhost:8080/" />       <dataflow:keyValueEntry name="access_token" value="adf1asd4fasd4f3asd54f3a4sds566s6dfa3dd" />     </dataflow:dataStoreMap>     <bpmn2:task id="Activity_1ct0yq4" name="Task 2">       <bpmn2:extensionElements>         <camunda:inputOutput>           <camunda:inputParameter name="test_input">i</camunda:inputParameter>           <camunda:outputParameter name="test_output">o</camunda:outputParameter>         </camunda:inputOutput>       </bpmn2:extensionElements>       <bpmn2:incoming>Flow_0drdvu6</bpmn2:incoming>       <bpmn2:outgoing>Flow_19ssslg</bpmn2:outgoing>       <bpmn2:property id="Property_15bi8x4" name="__targetRef_placeholder" />       <bpmn2:dataInputAssociation id="DataInputAssociation_1avmllx">         <bpmn2:sourceRef>DataObjectReference_0g3qagn</bpmn2:sourceRef>         <bpmn2:targetRef>Property_15bi8x4</bpmn2:targetRef>       </bpmn2:dataInputAssociation>     </bpmn2:task>     <bpmn2:sequenceFlow id="Flow_0drdvu6" sourceRef="Activity_1bhhrz8" targetRef="Activity_1ct0yq4" />     <bpmn2:sequenceFlow id="Flow_19ssslg" sourceRef="Activity_1ct0yq4" targetRef="Event_155kg36" />     <dataflow:dataMapObject id="DataObjectReference_0g3qagn" name="JSON2" dataObjectRef="DataObject_0bnpaf0">       <dataflow:keyValueEntry name="json" value="${JSON1.json_value}" />     </dataflow:dataMapObject>     <bpmn2:dataObject id="DataObject_0bnpaf0" />   </bpmn2:process>   <bpmndi:BPMNDiagram id="BPMNDiagram_1">     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">         <dc:Bounds x="412" y="240" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Event_155kg36_di" bpmnElement="Event_155kg36">         <dc:Bounds x="792" y="240" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Activity_1f2eda5_di" bpmnElement="Activity_1bhhrz8">         <dc:Bounds x="490" y="218" width="100" height="80" />         <bpmndi:BPMNLabel />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataMapObject_0eefpli_di" bpmnElement="DataMapObject_0eefpli">         <dc:Bounds x="412" y="355" width="36" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="413" y="412" width="34" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataMapObject_04hm8tb_di" bpmnElement="DataMapObject_04hm8tb">         <dc:Bounds x="602" y="85" width="36" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="606" y="142" width="28" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataStoreMap_0cn30am_di" bpmnElement="DataStoreMap_0cn30am">         <dc:Bounds x="375" y="85" width="50" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="362" y="142" width="77" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Activity_1ct0yq4_di" bpmnElement="Activity_1ct0yq4">         <dc:Bounds x="640" y="218" width="100" height="80" />         <bpmndi:BPMNLabel />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="DataMapObject_02jkpyr_di" bpmnElement="DataObjectReference_0g3qagn">         <dc:Bounds x="672" y="355" width="36" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="673" y="412" width="34" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNEdge id="Flow_1ibilsp_di" bpmnElement="Flow_1ibilsp">         <di:waypoint x="448" y="258" />         <di:waypoint x="490" y="258" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="DataInputAssociation_1hw1x0x_di" bpmnElement="DataInputAssociation_1hw1x0x">         <di:waypoint x="425" y="110" />         <di:waypoint x="520" y="110" />         <di:waypoint x="520" y="218" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="DataOutputAssociation_0gcsgav_di" bpmnElement="DataOutputAssociation_0gcsgav">         <di:waypoint x="570" y="218" />         <di:waypoint x="570" y="110" />         <di:waypoint x="602" y="110" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="DataInputAssociation_1avmllx_di" bpmnElement="DataInputAssociation_1avmllx">         <di:waypoint x="690" y="355" />         <di:waypoint x="690" y="298" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="Flow_0drdvu6_di" bpmnElement="Flow_0drdvu6">         <di:waypoint x="590" y="258" />         <di:waypoint x="640" y="258" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="Flow_19ssslg_di" bpmnElement="Flow_19ssslg">         <di:waypoint x="740" y="258" />         <di:waypoint x="792" y="258" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="InputTransformationAssociation_036tblc_di" bpmnElement="InputTransformationAssociation_036tblc">         <di:waypoint x="450" y="370" />         <di:waypoint x="540" y="370" />         <di:waypoint x="540" y="298" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="OutputTransformationAssociation_0mjw840_di" bpmnElement="OutputTransformationAssociation_0mjw840">         <di:waypoint x="450" y="385" />         <di:waypoint x="672" y="385" />       </bpmndi:BPMNEdge>     </bpmndi:BPMNPlane>   </bpmndi:BPMNDiagram> </bpmn2:definitions> '
 
-    const modelerComponent = document.querySelector('quantum-workflow-modeler');
-    // const modelerComponent = document.createElement('quantum-workflow-modeler')
+        const modelerComponent = document.querySelector('quantum-workflow-modeler');
+        // const modelerComponent = document.createElement('quantum-workflow-modeler')
 
-    modelerComponent.addEventListener('quantum-workflow-saved', (event) => {
-        console.log('------------------------------------------------');
-        console.log('Received saved quantum workflow ' + event.detail.workflowName + ':')
-        // console.log(event.detail.workflow);
-        console.log('------------------------------------------------');
+        modelerComponent.addEventListener('quantum-workflow-saved', (event) => {
+            console.log('------------------------------------------------');
+            console.log('Received saved quantum workflow ' + event.detail.workflowName + ':')
+            // console.log(event.detail.workflow);
+            console.log('------------------------------------------------');
 
-    }, false);
+        }, false);
 
-    modelerComponent.addEventListener('quantum-workflow-loaded', (event) => {
-        console.log('------------------------------------------------');
-        console.log('Received loaded quantum workflow ' + event.detail.workflowName + ':')
-        // console.log(event.detail.workflow);
-        console.log('------------------------------------------------');
+        modelerComponent.addEventListener('quantum-workflow-loaded', (event) => {
+            console.log('------------------------------------------------');
+            console.log('Received loaded quantum workflow ' + event.detail.workflowName + ':')
+            // console.log(event.detail.workflow);
+            console.log('------------------------------------------------');
 
-    }, false);
+        }, false);
 
-    modelerComponent.addEventListener('quantum-workflow-transformed', (event) => {
-        // event.preventDefault();
-        console.log('------------------------------------------------');
-        console.log('Received transformed quantum workflow ' + event.detail.workflowName + ':')
-        // console.log(event.detail.workflow);
-        console.log('------------------------------------------------');
+        modelerComponent.addEventListener('quantum-workflow-transformed', (event) => {
+            // event.preventDefault();
+            console.log('------------------------------------------------');
+            console.log('Received transformed quantum workflow ' + event.detail.workflowName + ':')
+            // console.log(event.detail.workflow);
+            console.log('------------------------------------------------');
 
-    }, false);
+        }, false);
 
-    modelerComponent.addEventListener('quantum-workflow-deployed', (event) => {
-        console.log('------------------------------------------------');
-        console.log('Received deployed quantum workflow ' + event.detail.workflowName + ':')
-        // console.log(event.detail.workflow);
-        console.log('------------------------------------------------');
+        modelerComponent.addEventListener('quantum-workflow-deployed', (event) => {
+            console.log('------------------------------------------------');
+            console.log('Received deployed quantum workflow ' + event.detail.workflowName + ':')
+            // console.log(event.detail.workflow);
+            console.log('------------------------------------------------');
 
-    }, false);
+        }, false);
 
-    const pluginConfigs = [
-        {
-            name: 'editor',
-            config: {
-                camundaEndpoint: '',
-                // defaultWorkflow: defaultWorkflow,
-                // transformedWorkflowHandler: 'SAVE_AS_FILE',
+        const pluginConfigs = [
+            {
+                name: 'editor',
+                config: {
+                    camundaEndpoint: '',
+                    // defaultWorkflow: defaultWorkflow,
+                    // transformedWorkflowHandler: 'SAVE_AS_FILE',
+                }
+            },
+            {
+                name: 'dataflow',
+                config: {
+                    configurationsEndpoint: '',
+                }
+            },
+            {
+                name: 'qhana',
+            },
+            {
+                name: 'planqk',
+                config: {
+                    serviceEndpointBaseUrl: 'http://dummy.com',
+                    subscriptions: [sub1, sub2, sub3],
+                    oauthInfoByAppMap: {
+                        app1: { consumerKey: 'app1ConsumerKey', consumerSecret: 'app1ConsumerSecret' },
+                        app2: { consumerKey: 'app2ConsumerKey', consumerSecret: 'app2ConsumerSecret' },
+                    },
+                    dataPools: [dp1, dp2, dp3],
+                }
+            },
+            {
+                name: 'quantme',
+                config: {
+                    quantmeDataConfigurationsEndpoint: '',
+                    opentoscaEndpoint: '',
+                    wineryEndpoint: '',
+                    nisqAnalyzerEndpoint: '',
+                    transformationFrameworkEndpoint: '',
+                    qiskitRuntimeHandlerEndpoint: '',
+                    awsRuntimeHandlerEndpoint: '',
+                    scriptSplitterEndpoint: '',
+                    // scriptSplitterThreshold: 10,
+                    // githubRepositoryName: 'test',
+                    // githubUsername: 'test',
+                    // githubRepositoryPath: 'test',
+                    // hybridRuntimeProvenance: true
+                }
             }
-        },
-        {
-            name: 'dataflow',
-            config: {
-                 configurationsEndpoint: '',
-            }
-        },
-        {
-            name: 'qhana',
-        },
-        {
-            name: 'planqk',
-            config: {
-                serviceEndpointBaseUrl: 'http://dummy.com',
-                subscriptions: [sub1, sub2, sub3],
-                oauthInfoByAppMap: {
-                    app1: {consumerKey: 'app1ConsumerKey', consumerSecret: 'app1ConsumerSecret'},
-                    app2: {consumerKey: 'app2ConsumerKey', consumerSecret: 'app2ConsumerSecret'},
-                },
-                dataPools: [dp1, dp2, dp3],
-            }
-        },
-        {
-            name: 'quantme',
-            config: {
-                quantmeDataConfigurationsEndpoint: '',
-                opentoscaEndpoint: '',
-                wineryEndpoint: '',
-                nisqAnalyzerEndpoint: '',
-                transformationFrameworkEndpoint: '',
-                qiskitRuntimeHandlerEndpoint: '',
-                awsRuntimeHandlerEndpoint: '',
-                scriptSplitterEndpoint: '',
-                // scriptSplitterThreshold: 10,
-                // githubRepositoryName: 'test',
-                // githubUsername: 'test',
-                // githubRepositoryPath: 'test',
-                // hybridRuntimeProvenance: true
-            }
-        }
-    ]
-    // const divContainer = document.getElementById('modeler-container');
-    // divContainer.append(modelerComponent);
+        ]
+        // const divContainer = document.getElementById('modeler-container');
+        // divContainer.append(modelerComponent);
 
-    modelerComponent.pluginConfigs = pluginConfigs;
+        modelerComponent.pluginConfigs = pluginConfigs;
 
     // const exampleWorkflow = '<?xml version="1.0" encoding="UTF-8"?> <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">   <bpmn2:process id="Process_1" isExecutable="false">     <bpmn2:startEvent id="StartEvent_1">       <bpmn2:outgoing>Flow_1kcmptx</bpmn2:outgoing>     </bpmn2:startEvent>     <bpmn2:task id="Activity_0ahfq1y">       <bpmn2:incoming>Flow_1kcmptx</bpmn2:incoming>       <bpmn2:outgoing>Flow_0d4z11j</bpmn2:outgoing>     </bpmn2:task>     <bpmn2:sequenceFlow id="Flow_1kcmptx" sourceRef="StartEvent_1" targetRef="Activity_0ahfq1y" />     <bpmn2:endEvent id="Event_0qqpbb9">       <bpmn2:incoming>Flow_0d4z11j</bpmn2:incoming>     </bpmn2:endEvent>     <bpmn2:sequenceFlow id="Flow_0d4z11j" sourceRef="Activity_0ahfq1y" targetRef="Event_0qqpbb9" />   </bpmn2:process>   <bpmndi:BPMNDiagram id="BPMNDiagram_1">     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">         <dc:Bounds x="412" y="240" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Activity_0ahfq1y_di" bpmnElement="Activity_0ahfq1y">         <dc:Bounds x="500" y="218" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="Event_0qqpbb9_di" bpmnElement="Event_0qqpbb9">         <dc:Bounds x="652" y="240" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNEdge id="Flow_1kcmptx_di" bpmnElement="Flow_1kcmptx">         <di:waypoint x="448" y="258" />         <di:waypoint x="500" y="258" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="Flow_0d4z11j_di" bpmnElement="Flow_0d4z11j">         <di:waypoint x="600" y="258" />         <di:waypoint x="652" y="258" />       </bpmndi:BPMNEdge>     </bpmndi:BPMNPlane>   </bpmndi:BPMNDiagram> </bpmn2:definitions> ';
     //
@@ -170,7 +179,8 @@
     // }
     // setTimeout(loadWorkflow, 8000);
 
-</script>
+    </script>
 
 </body>
+
 </html>

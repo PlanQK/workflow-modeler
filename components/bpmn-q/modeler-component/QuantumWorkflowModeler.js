@@ -11,15 +11,15 @@ import './editor/ui/notifications/Notification.css';
 import './editor/resources/styling/camunda-styles/style.css';
 
 import React from 'react';
-import {createRoot} from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
-import {createNewDiagram, loadDiagram} from "./editor/util/IoUtilities";
+import { createNewDiagram, loadDiagram } from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
-import {createModeler, getModeler} from "./editor/ModelerHandler";
-import {getPluginButtons, getStyles, getTransformationButtons} from "./editor/plugin/PluginHandler";
-import {getPluginConfig, setPluginConfig} from "./editor/plugin/PluginConfigHandler";
+import { createModeler, getModeler } from "./editor/ModelerHandler";
+import { getPluginButtons, getStyles, getTransformationButtons } from "./editor/plugin/PluginHandler";
+import { getPluginConfig, setPluginConfig } from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
-import {initEditorEventHandler} from './editor/events/EditorEventHandler';
+import { initEditorEventHandler } from './editor/events/EditorEventHandler';
 
 /**
  * The Quantum Workflow modeler HTML web component which contains the bpmn-js modeler to model BPMN diagrams, an editor
@@ -66,7 +66,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
             event.preventDefault();
             return event.returnValue = '';
         };
-        addEventListener("beforeunload", beforeUnloadListener, {capture: true});
+        addEventListener("beforeunload", beforeUnloadListener, { capture: true });
     }
 
 
@@ -121,10 +121,63 @@ export class QuantumWorkflowModeler extends HTMLElement {
         // integrate the React ButtonToolbar into its DOM container
         const root = createRoot(document.getElementById('button-container'));
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
-                                   transformButtons={transformationButtons}/>);
+            transformButtons={transformationButtons} />);
 
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
+        getModeler().on('commandStack.changed', function () {
+            getModeler().saveXML({ format: true }).then(function (result) {
+                modeler.xml = result;
+            })
+        });
+        let editor = document.getElementById('editor');
+        let aceEditor = ace.edit(editor);
+        let maindiv = document.getElementById('main-div');
+        let panel = document.getElementById('properties');
+        const editorButton = document.createElement('button');
+        editorButton.textContent = 'XML';
+        editorButton.style.position = 'absolute';
+        editorButton.style.bottom = '0%';
+        editorButton.style.left = `1%`;
+        editor.style.width = '99%';
+        editor.style.height = '96%';
+        editor.style.top = '0%';
+
+
+        let enabledXMLView = false;
+
+        editorButton.addEventListener('click', function () {
+            if (!enabledXMLView) {
+                editor.style.display = 'block';
+                panel.style.display = 'none';
+                editorButton.textContent = 'Diagram';
+
+                // Dynamically set the value of the editor
+                var xml = getModeler().xml;
+                if (xml.xml != undefined) {
+                    xml = xml.xml;
+                }
+                aceEditor.setValue(xml);
+            } else {
+                editor.style.display = 'none';
+                panel.style.display = 'block';
+                editorButton.textContent = 'XML';
+                editorButton.className = "fa fa-angle-left";
+
+                aceEditor.getSession().on('change', function () {
+                    update();
+                });
+
+                function update() {
+                    let xml = aceEditor.getSession().getValue();
+                    loadDiagram(xml, getModeler());
+                }
+            }
+
+            enabledXMLView = !enabledXMLView;
+        });
+
+        maindiv.appendChild(editorButton);
         if (this.workflowModel) {
             loadDiagram(this.workflowModel, getModeler()).then();
         } else {
