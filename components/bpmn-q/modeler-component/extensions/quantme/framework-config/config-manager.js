@@ -203,6 +203,31 @@ export function setQRMUserName(userName) {
 }
 
 /**
+ * Get the GitHub token used to access the QRM repository
+ *
+ * @return {string} the specified username
+ */
+export function getGithubToken() {
+    if (config.githubToken === undefined) {
+        setGithubToken(
+            getPluginConfig('quantme').githubToken
+            || defaultConfig.githubToken);
+    }
+    return config.githubToken;
+}
+
+/**
+ * Set the GitHub token used to access the QRM repository
+ *
+ * @param githubToken the username
+ */
+export function setGithubToken(githubToken) {
+    if (githubToken !== null && githubToken !== undefined) {
+        config.githubToken = githubToken;
+    }
+}
+
+/**
  * Get the endpoint of the Qiskit Runtime Handler
  *
  * @return {string} the specified endpoint

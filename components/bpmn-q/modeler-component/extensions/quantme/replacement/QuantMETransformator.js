@@ -112,8 +112,9 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
 
     // layout diagram after successful transformation
     layout(modeling, elementRegistry, rootElement);
-
-    return {status: 'transformed', xml: await getXml(modeler)};
+    let updated_xml = await getXml(modeler);
+    console.log(updated_xml);
+    return {status: 'transformed', xml: updated_xml};
 }
 
 /**
