@@ -23,6 +23,7 @@ const defaultConfig = {
     githubRepositoryName: process.env.QRM_REPONAME,
     githubUsername: process.env.QRM_USERNAME,
     githubRepositoryPath: process.env.QRM_REPOPATH,
+    githubToken: process.env.GITHUB_TOKEN,
     hybridRuntimeProvenance: process.env.PROVENANCE_COLLECTION
 };
 export default defaultConfig;

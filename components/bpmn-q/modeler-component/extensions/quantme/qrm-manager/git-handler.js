@@ -17,9 +17,9 @@ import fetch from 'node-fetch';
  * @param userName the username or organisation name the repository belongs to
  * @param repoName the name of the repository
  * @param repoPath the path to the root folder in the repository to use
+ * @param token github Token that can be used to authenticate
  */
-export const getFoldersInRepository = async function (userName, repoName, repoPath) {
-  const token = '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'
+export const getFoldersInRepository = async function (userName, repoName, repoPath, token) {
     const directoryURLs = [];
     const headers = {};
     if (token) {
@@ -61,8 +61,7 @@ export const getFileContent = async function (fileURL) {
  * @param folderURL the URL to the folder in the github repository
  * @param token github Token that can be used to authenticate
  */
-export const getFilesInFolder = async function (folderURL) {
-  const token = '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'
+export const getFilesInFolder = async function (folderURL, token) {
     const fileURLs = [];
     const headers = {};
     if (token) {
