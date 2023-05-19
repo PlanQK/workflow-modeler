@@ -619,7 +619,6 @@ export function NeighborhoodRangeEntry({ element }) {
 }
 
 export function ObjectiveFunctionEntry({ element }) {
-
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
         return str;
@@ -637,15 +636,31 @@ export function ObjectiveFunctionEntry({ element }) {
     };
 
     const hidden = function () {
-        let mitigationMethod = element.businessObject.mitigationMethod;
-        return !(mitigationMethod === 'geneticBasedREM');
+        let taskType = element.businessObject.$type;
+        if (taskType === 'quantme:ReadoutErrorMitigationTask') {
+            let mitigationMethod = element.businessObject.mitigationMethod;
+            return !(mitigationMethod === 'geneticBasedREM');
+        } else {
+            return false;
+        }
     };
 
-    return <HiddenTextFieldEntry
+    const selectOptions = [
+        { value: 'expectationValue', label: 'Expectation Value' },
+        { value: 'gibbs', label: 'Gibbs' },
+        { value: 'cvar', label: 'CVar' }
+    ];
+
+    const getOptions = function () {
+        return selectOptions;
+    };
+
+    return <SelectEntry
         id={consts.OBJECTIVE_FUNCTION}
         label={translate('Objective Function')}
         getValue={getValue}
         setValue={setValue}
+        getOptions={getOptions}
         debounce={debounce}
         hidden={hidden}
     />;
@@ -858,7 +873,7 @@ export function MaxNumberSubcircuitsEntry({ element }) {
     const debounce = useService('debounceInput');
 
     const getValue = function () {
-        return element.businessObject.maxNumSubCircuits
+        return element.businessObject.maxNumSubCircuits;
     };
 
     const setValue = function (newValue) {
