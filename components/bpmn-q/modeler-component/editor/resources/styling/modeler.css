@@ -76,3 +76,7 @@
 .qwm-buttons a.active {
     opacity: 1.0;
 }
+
+.bjs-drilldown {
+    display: none
+}

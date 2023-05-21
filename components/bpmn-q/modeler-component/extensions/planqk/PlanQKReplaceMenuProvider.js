@@ -4,6 +4,8 @@ import * as consts from './utilities/Constants';
 import {createMenuEntries, createMoreOptionsEntryWithReturn} from "../../editor/util/PopupMenuUtilities";
 import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 import * as planqkConsts from './utilities/Constants';
+import { filter } from 'min-dash';
+import { isDifferentType } from 'bpmn-js/lib/features/popup-menu/util/TypeUtil';
 
 /**
  * Replace menu provider of the PlanQK plugin. Adds custom replacement entries to model PlanQk service tasks and PlanQK data pools.
@@ -52,15 +54,10 @@ export default class PlanQKMenuProvider {
                 return Object.assign(dataPoolEntries, entries);
             }
 
-            // add entry to replace a data store by a data pool
-            if (is(element, 'bpmn:DataStoreReference') && !is(element, consts.PLANQK_DATA_POOL)) {
-                const dataStoreEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
-                return Object.assign(dataStoreEntries, entries);
-            }
-
             // add entry to replace a data object by a data pool
             if (is(element, 'bpmn:DataObjectReference')) {
-                const planqkEntries = createMenuEntries(element, planqkReplaceOptions.DATA_STORE, self.translate, self.replaceElement);
+                let filteredOptions = filter(planqkReplaceOptions.DATA_STORE, isDifferentType(element));
+                const planqkEntries = createMenuEntries(element, filteredOptions, self.translate, self.replaceElement);
                 return Object.assign(entries, planqkEntries);
             }
 
@@ -184,16 +181,21 @@ export default class PlanQKMenuProvider {
         let dataPoolEntries = {};
 
         // add entry for a generic, unspecific data pool
-        dataPoolEntries['replace-with-generic-data-pool'] = this.createNewDataPoolEntry(element, {
-            label: 'PlanQK Data Pool', name: '', link: '', description: ''
-        });
+        if (element.businessObject.name) {
+            dataPoolEntries['replace-with-generic-data-pool'] = this.createNewDataPoolEntry(element, {
+                label: 'PlanQK Data Pool', name: '', link: '', description: ''
+            });
+        }
 
         console.log(`Create menu entries for ${dataPools.length} data pools`);
 
         // create a replacement menu entry for each data pool
         for (let dataPool of dataPools) {
-            dataPoolEntries['replace-with-' + dataPool.id + ' (2)'] = this.createNewDataPoolEntry(element, dataPool);
+            if (element.businessObject.name !== dataPool.name) {
+                dataPoolEntries['replace-with-' + dataPool.id + ' (2)'] = this.createNewDataPoolEntry(element, dataPool);
+                }
         }
+       
         return dataPoolEntries;
     }
 

@@ -1,4 +1,4 @@
-import PlanQKMenuProvider from "./PlanQKMenuProvider";
+import PlanQKReplaceMenuProvider from "./PlanQKReplaceMenuProvider";
 import PlanQKPaletteProvider from "./PlanQKPaletteProvider";
 import PlanQKRenderer from "./PlanQKRenderer";
 import ServiceTaskPropertiesProvider from './propeties/service-task-properties/ServiceTaskPropertiesProvider';
@@ -7,7 +7,7 @@ import {getPluginConfig} from "../../editor/plugin/PluginConfigHandler";
 
 export default {
     __init__: ["planqkPaletteProvider", "customRenderer", "serviceTaskPropertiesProvider", "dataPoolPropertiesProvider", "planqkReplaceMenuProvider", "activeSubscriptions", "dataPools"],
-    planqkReplaceMenuProvider: ["type", PlanQKMenuProvider],
+    planqkReplaceMenuProvider: ["type", PlanQKReplaceMenuProvider],
     planqkPaletteProvider: ["type", PlanQKPaletteProvider],
     customRenderer: ['type', PlanQKRenderer],
     serviceTaskPropertiesProvider: ['type', ServiceTaskPropertiesProvider],
