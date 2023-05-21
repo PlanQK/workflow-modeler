@@ -13,8 +13,8 @@ export default function UploadButton() {
     return (
         <button className="qwm-toolbar-btn" title="Upload current workflow diagram to GitHub"
                 onClick={() => uploadToGitHub(getModeler())}>
-            <span className="qwm-icon-saving">
-                <span className="qwm-indent">Save</span>
+            <span className="qwm-icon-upload">
+                <span className="qwm-indent">Upload</span>
             </span>
         </button>
     );
