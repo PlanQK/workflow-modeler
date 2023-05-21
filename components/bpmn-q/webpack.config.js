@@ -61,6 +61,7 @@ module.exports = {
             AWS_RUNTIME_HANDLER_ENDPOINT: 'http://localhost:8890',
             CAMUNDA_ENDPOINT: 'http://localhost:8080/engine-rest',
             DATA_CONFIG: 'http://localhost:8100/data-objects',
+            DOWNLOAD_FILE_NAME: 'quantum-workflow-model',
             ENABLE_DATA_FLOW_PLUGIN: true,
             ENABLE_PLANQK_PLUGIN: true,
             ENABLE_QHANA_PLUGIN: true,

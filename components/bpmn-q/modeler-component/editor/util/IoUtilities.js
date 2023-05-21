@@ -1,5 +1,5 @@
-import {transformedWorkflowHandlers, workflowEventTypes} from '../EditorConstants';
-import {dispatchWorkflowEvent} from '../events/EditorEventHandler';
+import { transformedWorkflowHandlers, workflowEventTypes } from '../EditorConstants';
+import { dispatchWorkflowEvent } from '../events/EditorEventHandler';
 
 const editorConfig = require('../config/EditorConfigManager');
 
@@ -29,40 +29,15 @@ const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
  * @returns {Promise<void>}
  */
 export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileName()) {
-    const bpmnFile = await new File([xml], fileName, {type: 'text/xml'});
+    console.log(fileName)
+    const bpmnFile = await new File([xml], fileName, { type: 'text/xml' });
 
     const link = document.createElement('a');
-    link.download = fileName;
+    link.download = fileName + '.bpmn';
     link.href = URL.createObjectURL(bpmnFile);
     link.click();
 
     dispatchWorkflowEvent(workflowEventTypes.SAVED, xml, editorConfig.getFileName());
-}
-
-export async function saveWorkflowAsSVG(modeler, fileName = editorConfig.getFileName()) {
-    const xml = await getXml(modeler);
-    modeler.saveSVG({ format: true }, function (error, svg) {
-        if (error) {
-            return;
-        }
-    
-        var svgBlob = new Blob([svg], {
-            type: 'image/svg+xml'
-        });
-    
-        var fileName = fileName + '.svg';
-    
-        var downloadLink = document.createElement('a');
-        downloadLink.download = fileName;
-        downloadLink.innerHTML = 'Get BPMN SVG';
-        downloadLink.href = window.URL.createObjectURL(svgBlob);
-        downloadLink.onclick = function (event) {
-            document.body.removeChild(event.target);
-        };
-        downloadLink.style.visibility = 'hidden';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();                                        
-    });               
 }
 
 /**
@@ -72,9 +47,17 @@ export async function saveWorkflowAsSVG(modeler, fileName = editorConfig.getFile
  * @param fileName The name of the file.
  * @returns {Promise<void>}
  */
-export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName()) {
+export async function saveModelerAsLocalFile(modeler, saveAsBPMNFile, saveAsPNGFile, saveAsSVGFile, fileName = editorConfig.getFileName()) {
     const xml = await getXml(modeler);
-    return saveXmlAsLocalFile(xml, fileName);
+    if (saveAsBPMNFile) {
+        saveXmlAsLocalFile(xml, fileName);
+    }
+
+    if (saveAsSVGFile || saveAsPNGFile) {
+        saveWorkflowAsSVG(modeler, saveAsSVGFile, saveAsPNGFile, fileName);
+    }
+
+    return;
 }
 
 /**
@@ -84,7 +67,7 @@ export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.ge
  * @returns {Promise<*>} The xml diagram.
  */
 export async function getXml(modeler) {
-    const {xml} = await modeler.saveXML({format: true});
+    const { xml } = await modeler.saveXML({ format: true });
     return xml;
 }
 
@@ -109,7 +92,7 @@ export async function loadDiagram(xml, modeler, dispatchEvent = true) {
     } catch (err) {
         console.error(err);
 
-        return {error: err};
+        return { error: err };
     }
 }
 
@@ -146,7 +129,7 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
     }
 
     // add diagram to the body
-    const bpmnFile = new File([workflowXml], fileName, {type: 'text/xml'});
+    const bpmnFile = new File([workflowXml], fileName, { type: 'text/xml' });
     form.append('data', bpmnFile);
 
     // upload all provided views
@@ -177,7 +160,7 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
             // abort if there is not exactly one deployed process definition
             if (Object.values(result['deployedProcessDefinitions'] || {}).length !== 1) {
                 console.error('Invalid size of deployed process definitions list: ' + Object.values(result['deployedProcessDefinitions'] || {}).length);
-                return {status: 'failed'};
+                return { status: 'failed' };
             }
 
             dispatchWorkflowEvent(workflowEventTypes.DEPLOYED, workflowXml, workflowName);
@@ -188,11 +171,11 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
             };
         } else {
             console.error('Deployment of workflow returned invalid status code: %s', response.status);
-            return {status: 'failed'};
+            return { status: 'failed' };
         }
     } catch (error) {
         console.error('Error while executing post to deploy workflow: ' + error);
-        return {status: 'failed'};
+        return { status: 'failed' };
     }
 }
 
@@ -241,6 +224,60 @@ export function openInNewTab(workflowXml, fileName) {
     newWindow.onload = function () {
 
         // Pass the XML string to the new window using postMessage
-        newWindow.postMessage({workflow: workflowXml, name: fileName}, window.location.href);
+        newWindow.postMessage({ workflow: workflowXml, name: fileName }, window.location.href);
     };
+}
+
+export async function saveWorkflowAsSVG(modeler, saveAsSVG, saveAsPNG, fileName) {
+    const xml = await getXml(modeler);
+    modeler.saveSVG({ format: true }, function (error, svg) {
+        if (error) {
+            return;
+        }
+
+        var svgBlob = new Blob([svg], {
+            type: 'image/svg+xml'
+        });
+
+        var downloadLink = document.createElement('a');
+        downloadLink.download = fileName + '.svg';
+        downloadLink.innerHTML = 'Get BPMN SVG';
+        downloadLink.href = window.URL.createObjectURL(svgBlob);
+        downloadLink.onclick = function (event) {
+            document.body.removeChild(event.target);
+        };
+        downloadLink.style.visibility = 'hidden';
+        document.body.appendChild(downloadLink);
+        if (saveAsSVG) {
+            downloadLink.click();
+        }
+        if (saveAsPNG) {
+            convertSvgToPng(svg, fileName);
+        }
+    });
+}
+
+// Function to convert SVG to PNG using an external library
+function convertSvgToPng(svg, fileName) {
+    var img = new Image();
+    img.onload = function () {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        var pngDataUrl = canvas.toDataURL('image/png');
+        downloadPng(pngDataUrl, fileName);
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
+// Function to initiate the PNG download
+function downloadPng(pngDataUrl, fileName) {
+    var link = document.createElement('a');
+    link.href = pngDataUrl;
+    link.download = fileName + '.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
