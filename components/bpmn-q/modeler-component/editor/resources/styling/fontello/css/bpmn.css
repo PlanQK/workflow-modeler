@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'bpmn';
-    src: url('../font/bpmn.svg?29411517#bpmn') format('svg');
+    src: url('../font/bpmn.svg?19495667#bpmn') format('svg');
   }
 }
 */
@@ -28,6 +28,7 @@
   display: inline-block;
   text-decoration: inherit;
   width: 1em;
+  margin-right: .2em;
   text-align: center;
   /* opacity: .8; */
 
@@ -40,6 +41,7 @@
 
   /* Animation center compensation - margins should be symmetric */
   /* remove if not needed */
+  margin-left: .2em;
 
   /* you can be more comfortable with increased icons size */
   /* font-size: 120%; */
@@ -160,18 +162,18 @@
 .bpmn-icon-dataflow-transformation-task:before { content: '\e86e'; } /* '' */
 .bpmn-icon-planqk-service-task:before { content: '\e86f'; } /* '' */
 .bpmn-icon-dataflow-data-store-map:before { content: '\e870'; } /* '' */
-.bpmn-icon-dataflow-data-map-object:before { content: '\e871'; } /* '' */
 .bpmn-icon-quantme-hybrid-runtime-group:before { content: '\e872'; } /* '' */
-.bpmn-icon-quantme-evaluation-task:before { content: '\e873'; } /* '' */
-.bpmn-icon-quantme-variational-quantum-algorithm-task:before { content: '\e874'; } /* '' */
-.bpmn-icon-quantme-warm-starting-task:before { content: '\e875'; } /* '' */
 .bpmn-icon-quantme-optimization-task:before { content: '\e876'; } /* '' */
 .bpmn-icon-quantme-oracle-expansion-task:before { content: '\e877'; } /* '' */
 .bpmn-icon-quantme-quantum-circuit-execution-task:before { content: '\e878'; } /* '' */
 .bpmn-icon-quantme-quantum-circuit-loading-task:before { content: '\e879'; } /* '' */
-.bpmn-icon-quantme-quantum-computation-task:before { content: '\e87a'; } /* '' */
-.bpmn-icon-quantme-quantum-hardware-selection-subprocess:before { content: '\e87b'; } /* '' */
 .bpmn-icon-quantme-readout-error-mitigation-task:before { content: '\e87c'; } /* '' */
+.bpmn-icon-quantme-quantum-hardware-selection-subprocess:before { content: '\e87d'; } /* '' */
+.bpmn-icon-dataflow-data-map-object:before { content: '\e880'; } /* '' */
+.bpmn-icon-quantme-quantum-computation-task:before { content: '\e881'; } /* '' */
+.bpmn-icon-quantme-evaluation-task:before { content: '\e889'; } /* '' */
+.bpmn-icon-quantme-warm-starting-task:before { content: '\e88a'; } /* '' */
+.bpmn-icon-quantme-variational-quantum-algorithm-task:before { content: '\e88b'; } /* '' */
 .bpmn-icon-transaction:before { content: '\e8c4'; } /* '' */
 .bpmn-icon-screw-wrench:before { content: '\e8db'; } /* '' */
 .bpmn-icon-connection:before { content: '\e8dc'; } /* '' */

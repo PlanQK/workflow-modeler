@@ -71,7 +71,7 @@ export var TASK = [
   {
     label: 'Circuit Cutting Subprocess',
     actionName: 'replace-with-circuit-cutting-subprocess',
-    className: 'bpmn-icon-circuit-cutting',
+    className: 'bpmn-icon-quantme-cutting-subprocess',
     target: {
       type: consts.CIRCUIT_CUTTING_SUBPROCESS
     }
@@ -79,7 +79,7 @@ export var TASK = [
   {
     label: 'Quantum Computation Task',
     actionName: 'replace-with-quantum-computation-task',
-    className: 'bpmn-icon-task-quantum-computation',
+    className: 'bpmn-icon-quantme-quantum-computation-task',
     target: {
       type: consts.QUANTUM_COMPUTATION_TASK
     }
@@ -87,7 +87,7 @@ export var TASK = [
   {
     label: 'Quantum Circuit Loading Task',
     actionName: 'replace-with-quantum-circuit-loading-task',
-    className: 'bpmn-icon-circuit-loading',
+    className: 'bpmn-icon-quantme-quantum-circuit-loading-task',
     target: {
       type: consts.QUANTUM_CIRCUIT_LOADING_TASK
     }
@@ -95,7 +95,7 @@ export var TASK = [
   {
     label: 'Data Preparation Task',
     actionName: 'replace-with-data-preparation-task',
-    className: 'bpmn-icon-data-preparation',
+    className: 'bpmn-icon-quantme-data-preparation-task',
     target: {
       type: consts.DATA_PREPARATION_TASK
     }
@@ -103,7 +103,7 @@ export var TASK = [
   {
     label: 'Oracle Expansion Task',
     actionName: 'replace-with-oracle-expansion-task',
-    className: 'bpmn-icon-oracle-expansion',
+    className: 'bpmn-icon-quantme-oracle-expansion-task',
     target: {
       type: consts.ORACLE_EXPANSION_TASK
     }
@@ -111,7 +111,7 @@ export var TASK = [
   {
     label: 'Quantum Circuit Execution Task',
     actionName: 'replace-with-quantum-circuit-execution-task',
-    className: 'bpmn-icon-circuit-execution',
+    className: 'bpmn-icon-quantme-quantum-circuit-execution-task',
     target: {
       type: consts.QUANTUM_CIRCUIT_EXECUTION_TASK
     }
@@ -119,7 +119,7 @@ export var TASK = [
   {
     label: 'Readout-Error Mitigation Task',
     actionName: 'replace-with-readout-error-mitigation-task',
-    className: 'bpmn-icon-error-mitigation',
+    className: 'bpmn-icon-quantme-readout-error-mitigation-task',
     target: {
       type: consts.READOUT_ERROR_MITIGATION_TASK
     }
@@ -127,7 +127,7 @@ export var TASK = [
   {
     label: 'Parameter Optimization Task',
     actionName: 'replace-with-parameter-optimization-task',
-    className: 'bpmn-icon-parameter-optimization',
+    className: 'bpmn-icon-quantme-optimization-task',
     target: {
       type: consts.PARAMETER_OPTIMIZATION_TASK
     }
@@ -135,7 +135,7 @@ export var TASK = [
   {
     label: 'Result Evaluation Task',
     actionName: 'replace-with-result-evaluation-task',
-    className: 'bpmn-icon-result-evaluation',
+    className: 'bpmn-icon-quantme-evaluation-task',
     target: {
       type: consts.RESULT_EVALUATION_TASK
     }
@@ -143,7 +143,7 @@ export var TASK = [
   {
     label: 'Warm-Starting Task',
     actionName: 'replace-with-warm-starting-task',
-    className: 'bpmn-icon-warm-starting',
+    className: 'bpmn-icon-quantme-warm-starting-task',
     target: {
       type: consts.WARM_STARTING_TASK
     }
@@ -151,7 +151,7 @@ export var TASK = [
   {
     label: 'Variational Quantum Algorithm Task',
     actionName: 'replace-with-variational-quantum-algorithm-task',
-    className: 'bpmn-icon-variational-quantum-algorithm',
+    className: 'bpmn-icon-quantme-variational-quantum-algorithm-task',
     target: {
       type: consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK
     }
@@ -170,7 +170,7 @@ export var SUBPROCESS = [
   {
     label: 'Circuit Cutting Subprocess',
     actionName: 'replace-with-circuit-cutting-subprocess',
-    className: 'bpmn-icon-circuit-cutting',
+    className: 'bpmn-icon-quantme-cutting-subprocess',
     target: {
       type: consts.CIRCUIT_CUTTING_SUBPROCESS
     }
