@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -199,6 +199,31 @@ export function getQRMRepositoryUserName() {
 export function setQRMUserName(userName) {
     if (userName !== null && userName !== undefined) {
         config.githubUsername = userName;
+    }
+}
+
+/**
+ * Get the GitHub token used to access the QRM repository
+ *
+ * @return {string} the specified username
+ */
+export function getGithubToken() {
+    if (config.githubToken === undefined) {
+        setGithubToken(
+            getPluginConfig('quantme').githubToken
+            || defaultConfig.githubToken);
+    }
+    return config.githubToken;
+}
+
+/**
+ * Set the GitHub token used to access the QRM repository
+ *
+ * @param githubToken the username
+ */
+export function setGithubToken(githubToken) {
+    if (githubToken !== null && githubToken !== undefined) {
+        config.githubToken = githubToken;
     }
 }
 

@@ -75,6 +75,7 @@ export const uploadToGitHub = async function (modeler) {
  * @param userName the username or organisation name the repository belongs to
  * @param repoName the name of the repository
  * @param repoPath the path to the root folder in the repository to use
+ * @param token github Token that can be used to authenticate
  */
 export const getFoldersInRepository = async function (userName, repoName, repoPath, token) {
     const directoryURLs = [];

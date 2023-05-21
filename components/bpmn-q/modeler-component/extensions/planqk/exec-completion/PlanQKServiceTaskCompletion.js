@@ -2,7 +2,12 @@ import * as consts from "../utilities/Constants";
 import {getXml} from "../../../editor/util/IoUtilities";
 import {
     setInputParameter,
-    getDefinitionsFromXml, getRootProcess, getSingleFlowElement,
+    getDefinitionsFromXml,
+    getRootProcess,
+    getSingleFlowElement,
+    addCamundaInputParameter,
+    setOutputParameter,
+    getCamundaInputOutput,
 
 } from "../../../editor/util/ModellingUtilities";
 import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
@@ -136,8 +141,9 @@ async function replaceByInteractionSubprocess(definitions, task, parent, replace
     subprocessShape.isExpanded = true;
 
     // create inputs and outputs for the subprocess
-    applyTaskInput2Subprocess(task, result['element'].businessObject);
-    applyTaskOutput2Subprocess(task, result['element'].businessObject);
+    const bpmnFactory = modeler.get('bpmnFactory');
+    applyTaskInput2Subprocess(task, result['element'].businessObject, bpmnFactory);
+    applyTaskOutput2Subprocess(task, result['element'].businessObject, bpmnFactory);
 
     return result['success'];
 }
@@ -147,15 +153,21 @@ async function replaceByInteractionSubprocess(definitions, task, parent, replace
  *
  * @param taskBO The given PlanQK Service Task.
  * @param subprocessBO The given subprocess.
+ * @param bpmnFactory
  */
-function applyTaskInput2Subprocess(taskBO, subprocessBO) {
+function applyTaskInput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
 
-    setInputParameter(subprocessBO, "params", taskBO.params);
-    setInputParameter(subprocessBO, "data", taskBO.data);
-    setInputParameter(subprocessBO, "serviceEndpoint", taskBO.serviceEndpoint);
-    setInputParameter(subprocessBO, "tokenEndpoint", taskBO.tokenEndpoint);
-    setInputParameter(subprocessBO, "consumerSecret", taskBO.consumerSecret);
-    setInputParameter(subprocessBO, "consumerKey", taskBO.consumerKey);
+    const taskIo = getCamundaInputOutput(taskBO, bpmnFactory);
+    const subProcessIo = getCamundaInputOutput(subprocessBO, bpmnFactory);
+
+    subProcessIo.inputParameters.push(...taskIo.inputParameters);
+
+    setInputParameter(subprocessBO, "params", taskBO.params, bpmnFactory);
+    setInputParameter(subprocessBO, "data", taskBO.data, bpmnFactory);
+    setInputParameter(subprocessBO, "serviceEndpoint", taskBO.serviceEndpoint, bpmnFactory);
+    setInputParameter(subprocessBO, "tokenEndpoint", taskBO.tokenEndpoint, bpmnFactory);
+    setInputParameter(subprocessBO, "consumerSecret", taskBO.consumerSecret, bpmnFactory);
+    setInputParameter(subprocessBO, "consumerKey", taskBO.consumerKey, bpmnFactory);
 }
 
 /**
@@ -163,9 +175,16 @@ function applyTaskInput2Subprocess(taskBO, subprocessBO) {
  *
  * @param taskBO the PlanQK Service Task
  * @param subprocessBO the subprocess
+ * @param bpmnFactory
  */
-function applyTaskOutput2Subprocess(taskBO, subprocessBO) {
-    setInputParameter(subprocessBO, "result", taskBO.params);
+function applyTaskOutput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
+
+    const taskIo = getCamundaInputOutput(taskBO, bpmnFactory);
+    const subProcessIo = getCamundaInputOutput(subprocessBO, bpmnFactory);
+
+    subProcessIo.outputParameters.push(...taskIo.outputParameters);
+
+    setOutputParameter(subprocessBO, "result", taskBO.params, bpmnFactory);
 }
 
 /**

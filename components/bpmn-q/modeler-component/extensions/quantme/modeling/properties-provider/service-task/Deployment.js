@@ -5,7 +5,7 @@ import {getServiceTaskLikeBusinessObject} from "../../../../../editor/util/camun
 import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
 
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -56,7 +56,7 @@ export function Deployment({element, translate, wineryEndpoint}) {
                     }
                 }
             },
-            async: true
+            async: false
         });
         if (arrValues.length === 0) {
             arrValues.push({label: 'No CSARs available', value: ''});
@@ -65,21 +65,15 @@ export function Deployment({element, translate, wineryEndpoint}) {
     };
 
     const get = function () {
-        let bo = getServiceTaskLikeBusinessObject(element);
-        let deploymentModelUrl = bo && bo.get('quantme:deploymentModelUrl');
-        return {
-            deploymentModelUrl: deploymentModelUrl,
-            deploymentModelUrlLabel: translate('CSAR Name')
-        };
+        return element.businessObject.get('quantme:deploymentModelUrl');
     };
 
-    const set = function (value) {
-        let prop = {deploymentModelUrl: value.deploymentModelUrl || ''};
-        return modeling.updateProperties(element, prop);
+    const setValue = function (value) {
+        return modeling.updateProperties(element, {deploymentModelUrl: value || ''});
     };
 
-    const validate = function (element, values, node) {
-        return getImplementationType(element) === 'deploymentModel' && !values.deploymentModelUrl ? {deploymentModelUrl: translate('Must provide a CSAR')} : {};
+    const validate = function (values) {
+        return values === undefined || values===''? translate('Must provide a CSAR') : '';
     };
 
     const hidden = function () {
@@ -93,7 +87,7 @@ export function Deployment({element, translate, wineryEndpoint}) {
             id={'deployment'}
             label={translate('CSAR Name')}
             getValue={get}
-            setValue={set}
+            setValue={setValue}
             getOptions={selectOptions}
             validate={validate}
             debounce={debounce}

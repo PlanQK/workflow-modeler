@@ -310,9 +310,10 @@ export function getCamundaInputOutput(bo, bpmnFactory) {
  * @param task The BPMN task element
  * @param name The given name of the parameter
  * @param value The given value
+ * @param bpmnFactory
  */
-export function setInputParameter(task, name, value) {
-    let parameter = getInputParameter(task, name, 'camunda:InputOutput');
+export function setInputParameter(task, name, value, bpmnFactory) {
+    let parameter = getInputParameter(task, name, bpmnFactory);
     if (parameter) {
         parameter.value = value;
     }
@@ -324,9 +325,10 @@ export function setInputParameter(task, name, value) {
  * @param task The BPMN task element
  * @param name The given name of the parameter
  * @param value The given value
+ * @param bpmnFactory
  */
-export function setOutputParameter(task, name, value) {
-    let parameter = getOutputParameter(task, name, 'camunda:InputOutput');
+export function setOutputParameter(task, name, value, bpmnFactory) {
+    let parameter = getOutputParameter(task, name, bpmnFactory);
     if (parameter) {
         parameter.value = value;
     }
@@ -339,8 +341,8 @@ export function setOutputParameter(task, name, value) {
  * @param name The given name of the parameter
  * @param type The given value
  */
-export function getInputParameter(task, name, type) {
-    const extensionElement = getExtensionElements(task, type);
+export function getInputParameter(task, name, bpmnFactory) {
+    const extensionElement = getCamundaInputOutput(task, bpmnFactory);
 
     if (extensionElement && extensionElement.inputParameters) {
         for (const parameter of extensionElement.inputParameters) {
@@ -356,10 +358,10 @@ export function getInputParameter(task, name, type) {
  *
  * @param task The BPMN task element
  * @param name The given name of the parameter
- * @param type The given value
+ * @param bpmnFactory
  */
-export function getOutputParameter(task, name, type) {
-    const extensionElement = getExtensionElements(task, type);
+export function getOutputParameter(task, name, bpmnFactory) {
+    const extensionElement = getCamundaInputOutput(task, bpmnFactory);
 
     if (extensionElement && extensionElement.outputParameters) {
         for (const parameter of extensionElement.outputParameters) {
@@ -592,44 +594,20 @@ export function setDocumentation(element, newDocumentation, bpmnFactory) {
  * @returns {{extensionElements: elementType}} The updated extension elements
  */
 export function addEntry(businessObject, element, entry, bpmnFactory) {
-    const commands = [];
-
     let extensionElements = businessObject.get('extensionElements');
 
     // if there is no extensionElements list, create one
     if (!extensionElements) {
-
         extensionElements = createElement('bpmn:ExtensionElements', {values: [entry]}, businessObject, bpmnFactory);
-
-        commands.push({
-            cmd: 'element.updateModdleProperties',
-            context: {
-                element,
-                moddleElement: businessObject,
-                properties: {
-                    extensionElements
-                }
-            }
-        });
-
         return {extensionElements: extensionElements};
     }
+
+    // add extension element to list if it exists
     entry.$parent = extensionElements;
-
-    // (2) add extension element to list
-    commands.push({
-        cmd: 'element.updateModdleProperties',
-        context: {
-            element,
-            moddleElement: extensionElements,
-            properties: {
-                values: [...extensionElements.get('values'), entry]
-            }
-        }
-    });
-
-    const commandStack = useService('commandStack');
-    commandStack.execute('properties-panel.multi-command-executor', commands);
+    let values = extensionElements.get('values');
+    values.push(entry);
+    extensionElements.set('values', values);
+    return {extensionElements: extensionElements};
 }
 
 /**

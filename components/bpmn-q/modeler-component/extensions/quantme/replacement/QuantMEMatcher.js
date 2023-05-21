@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getDefinitionsFromXml, getRootProcess, getSingleFlowElement} from '../../../editor/util/ModellingUtilities';
+import { getDefinitionsFromXml, getRootProcess, getSingleFlowElement } from '../../../editor/util/ModellingUtilities';
 
 /**
  * Check if the given task matches the detector, i.e., has the same QuantME type and matching attributes
@@ -40,6 +40,16 @@ export function taskMatchesDetector(detectorElement, task) {
             return matchQuantumCircuitExecutionTask(detectorElement, task);
         case consts.READOUT_ERROR_MITIGATION_TASK:
             return matchReadoutErrorMitigationTask(detectorElement, task);
+        case consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK:
+            return matchVQATask(detectorElement, task);
+        case consts.WARM_STARTING_TASK:
+            return matchWarmStartingTask(detectorElement, task);
+        case consts.PARAMETER_OPTIMIZATION_TASK:
+            return matchParameterOptimizationTask(detectorElement, task);
+        case consts.RESULT_EVALUATION_TASK:
+            return matchResultEvaluationTask(detectorElement, task);
+        case consts.CIRCUIT_CUTTING_SUBPROCESS:
+            return matchCircuitCuttingSubprocess(detectorElement, task);
         default:
             console.log('Unsupported QuantME element of type: ', task.$type);
             return false;
@@ -47,7 +57,7 @@ export function taskMatchesDetector(detectorElement, task) {
 }
 
 import * as consts from '../Constants';
-import {isQuantMETask} from '../utilities/Utilities';
+import { isQuantMETask } from '../utilities/Utilities';
 
 /**
  * Compare the properties of QuantumComputationTasks
@@ -121,6 +131,62 @@ function matchReadoutErrorMitigationTask(detectorElement, task) {
         && matchesProperty(detectorElement.maxCMSize, task.maxCMSize, false)
         && matchesProperty(detectorElement.maxAge, task.maxAge, false)
         && matchesProperty(detectorElement.maxREMCosts, task.maxREMCosts, false);
+}
+
+/**
+ * Compare the properties of QuantumCircuitExecutionTasks
+ */
+function matchVQATask(detectorElement, task) {
+    return matchesProperty(detectorElement.algorithmicProblem, task.algorithmicProblem, true)
+        && matchesProperty(detectorElement.qpu, task.qpu, true)
+        && matchesProperty(detectorElement.provider, task.provider, true)
+        && matchesProperty(detectorElement.quantumAlgorithm, task.quantumAlgorithm, true)
+        && matchesProperty(detectorElement.optimizer, task.optimizer, true)
+        && matchesProperty(detectorElement.objectiveFunction, task.objectiveFunction, true)
+        && matchesProperty(detectorElement.cuttingMethod, task.cuttingMethod, false)
+        && matchesProperty(detectorElement.warmStartingMethod, task.warmStartingMethod, false)
+        && matchesProperty(detectorElement.mitigationMethod, task.mitigationMethod, false);
+}
+
+/**
+ * Compare the properties of QuantumCircuitExecutionTasks
+ */
+function matchWarmStartingTask(detectorElement, task) {
+    return matchesProperty(detectorElement.warmStartingMethod, task.warmStartingMethod, true)
+        && matchesProperty(detectorElement.quantumAlgorithm, task.quantumAlgorithm, false)
+        && matchesProperty(detectorElement.classicalAlgorithm, task.classicalAlgorithm, false)
+        && matchesProperty(detectorElement.repetitions, task.repetitions, false)
+        && matchesProperty(detectorElement.rounded, task.rounded, false);
+}
+
+/**
+ * Compare the properties of QuantumCircuitExecutionTasks
+ */
+function matchParameterOptimizationTask(detectorElement, task) {
+    return matchesProperty(detectorElement.optimizer, task.optimizer, true)
+        && matchesProperty(detectorElement.maxIterations, task.maxIterations, false)
+        && matchesProperty(detectorElement.toleranceThreshold, task.toleranceThreshold, false)
+        && matchesProperty(detectorElement.learningRate, task.learningRate, false);
+}
+
+/**
+ * Compare the properties of QuantumCircuitExecutionTasks
+ */
+function matchResultEvaluationTask(detectorElement, task) {
+    return matchesProperty(detectorElement.objectiveFunction, task.objectiveFunction, true)
+        && matchesProperty(detectorElement.costFunction, task.costFunction, true)
+        && matchesProperty(detectorElement.alpha, task.alpha, false)
+        && matchesProperty(detectorElement.eta, task.eta, false);
+}
+
+/**
+ * Compare the properties of QuantumCircuitExecutionTasks
+ */
+function matchCircuitCuttingSubprocess(detectorElement, task) {
+    return matchesProperty(detectorElement.cuttingMethod, task.cuttingMethod, true)
+        && matchesProperty(detectorElement.maxSubCircuitWidth, task.maxSubCircuitWidth, false)
+        && matchesProperty(detectorElement.maxNumberOfCuts, task.maxNumberOfCuts, false)
+        && matchesProperty(detectorElement.maxNumSubCircuits, task.maxNumSubCircuits, false);
 }
 
 /**
