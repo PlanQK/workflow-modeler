@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -20,6 +20,8 @@ import {
 } from '../../../editor/configurations/ConfigurationsUtil';
 import {instance as dataObjectConfigs} from '../configurations/DataObjectConfigurations';
 import * as dataConsts from "../../data-extension/Constants";
+import { filter } from 'min-dash';
+import { isDifferentType } from 'bpmn-js/lib/features/popup-menu/util/TypeUtil';
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
@@ -63,7 +65,8 @@ export default class QuantMEReplaceMenuProvider {
 
             // add additional elements to replace subprocesses
             if (is(element, 'bpmn:SubProcess')) {
-                const subprocessEntries = createMenuEntries(element, quantmeReplaceOptions.SUBPROCESS, self.translate, self.bpmnReplace.replaceElement);
+                let filteredOptions = filter(quantmeReplaceOptions.SUBPROCESS, isDifferentType(element));
+                const subprocessEntries = createMenuEntries(element, filteredOptions, self.translate, self.bpmnReplace.replaceElement);
                 return Object.assign(subprocessEntries, entries);
             }
 
@@ -81,9 +84,10 @@ export default class QuantMEReplaceMenuProvider {
         const popupMenu = this.popupMenu;
         const translate = this.translate;
         const replaceElement = this.bpmnReplace.replaceElement;
+        let filteredOptions = filter(quantmeReplaceOptions.TASK, isDifferentType(element));
 
         // create menu entries for the QuantME task types
-        let options = createMenuEntries(element, quantmeReplaceOptions.TASK, translate, replaceElement);
+        let options = createMenuEntries(element, filteredOptions, translate, replaceElement);
 
         return {
             ['replace-by-more-options']: createMoreOptionsEntryWithReturn(

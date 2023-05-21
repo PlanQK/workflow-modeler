@@ -17,10 +17,18 @@ import fetch from 'node-fetch';
  * @param userName the username or organisation name the repository belongs to
  * @param repoName the name of the repository
  * @param repoPath the path to the root folder in the repository to use
+ * @param token github Token that can be used to authenticate
  */
-export const getFoldersInRepository = async function (userName, repoName, repoPath) {
+export const getFoldersInRepository = async function (userName, repoName, repoPath, token) {
     const directoryURLs = [];
-    let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`);
+    const headers = {};
+    if (token) {
+        headers['Authorization'] = `Token ${token}`;
+    }
+
+    let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`, {
+        headers: headers
+    });
     const contents = await response.json();
 
     if (response.status !== 200) {
@@ -51,18 +59,24 @@ export const getFileContent = async function (fileURL) {
  * Get the URLs to all files in the given folder of the github repository
  *
  * @param folderURL the URL to the folder in the github repository
+ * @param token github Token that can be used to authenticate
  */
-export const getFilesInFolder = async function (folderURL) {
+export const getFilesInFolder = async function (folderURL, token) {
     const fileURLs = [];
-    let response = await fetch(folderURL);
+    const headers = {};
+    if (token) {
+        headers['Authorization'] = `Token ${token}`;
+    }
+    let response = await fetch(folderURL, {
+        headers: headers
+    });
     const contents = await response.json();
 
     for (let i = 0; i < contents.length; i++) {
         let item = contents[i];
         if (item.type === 'file') {
-            fileURLs.push({name: item.name, download_url: item.download_url});
+            fileURLs.push({ name: item.name, download_url: item.download_url });
         }
     }
     return fileURLs;
 };
-

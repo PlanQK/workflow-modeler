@@ -72,9 +72,8 @@ describe('Test DataFlow Replace Menu', function () {
 
         const menuEntries = dataFlowReplaceMenuProvider.getPopupMenuEntries(transformationTaskElement)({});
 
-        // should contain 'normal' transformation task + 3 configuration entries
-        expect(Object.entries(menuEntries).length).to.equal(4);
-        expect(menuEntries['dataflow-transformation-task'].label).to.equal('Data Transformation Task');
+        // should contain 3 configuration entries
+        expect(Object.entries(menuEntries).length).to.equal(3);
         expect(menuEntries['ID21'].label).to.equal('XML to JSON Transformation');
         expect(menuEntries['ID22'].label).to.equal('CSV to JSON Transformation');
         expect(menuEntries['ID23'].label).to.equal('Json to Xml Transformation');
