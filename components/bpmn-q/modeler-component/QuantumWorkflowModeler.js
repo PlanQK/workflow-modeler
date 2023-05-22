@@ -130,6 +130,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         let startY;
         let startWidth;
         let startHeight;
+        let width = document.defaultView.getComputedStyle(panel).width;
 
         // Mouse down event listener
         panel.addEventListener('mousedown', handleMouseDown);
@@ -148,6 +149,13 @@ export class QuantumWorkflowModeler extends HTMLElement {
             startWidth = parseInt(document.defaultView.getComputedStyle(panel).width, 10);
             startHeight = parseInt(document.defaultView.getComputedStyle(panel).height, 10);
         }
+        let isCollapsed = false;
+        const resizeButton = document.createElement('button');
+        resizeButton.className = "fa fa-angle-right";
+        resizeButton.style.position = 'absolute';
+        resizeButton.style.bottom = '3%';
+        resizeButton.style.right = '0';
+        maindiv.appendChild(resizeButton);
 
         // Mouse move handler
         function handleMouseMove(event) {
@@ -155,10 +163,12 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
             const deltaX = event.clientX - startX;
             let newWidth = startWidth - deltaX;
-            
+
             // enable to completely hide the panel
             if (newWidth < 20) {
-                newWidth = 0
+                newWidth = 0;
+                isCollapsed = true;
+                resizeButton.className = "fa fa-angle-left";
             }
 
             panel.style.width = `${newWidth}px`;
@@ -169,19 +179,11 @@ export class QuantumWorkflowModeler extends HTMLElement {
             isResizing = false;
         }
 
-        const resizeButton = document.createElement('button');
-        resizeButton.className = "fa fa-angle-right";
-        resizeButton.style.position = 'absolute';
-        resizeButton.style.bottom = '3%';
-        const screenWidth = window.innerWidth;
-        resizeButton.style.right = '0';
-        maindiv.appendChild(resizeButton);
-
-        let isCollapsed = false;
 
         resizeButton.addEventListener('click', function () {
             if (isCollapsed) {
                 panel.style.display = 'block';
+                panel.style.width = width;
                 resizeButton.className = "fa fa-angle-right";
             } else {
                 panel.style.display = 'none';
@@ -190,7 +192,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
             isCollapsed = !isCollapsed;
         });
-        
+
 
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
