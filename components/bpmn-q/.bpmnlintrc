@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "plugin:camunda/recommended",
+    "plugin:custom/recommended"
+  ],
+  "rules": {
+    "custom/quantme-tasks": "warn"
+  }
+}

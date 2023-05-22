@@ -1,3 +1,4 @@
 node_modules/*
 public/*
 !public/index.html
+bpmnlint-plugin-custom/node_modules/*

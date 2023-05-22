@@ -9,6 +9,7 @@ import './editor/resources/styling/editor-ui.css';
 import './editor/ui/notifications/Notifications.css';
 import './editor/ui/notifications/Notification.css';
 import './editor/resources/styling/camunda-styles/style.css';
+import 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
 
 import React from 'react';
 import {createRoot} from 'react-dom/client';
