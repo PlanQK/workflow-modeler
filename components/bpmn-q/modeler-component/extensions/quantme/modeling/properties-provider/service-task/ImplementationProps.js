@@ -96,7 +96,7 @@ export function ImplementationProps(props) {
             component: Deployment,
             isEdited: isTextFieldEntryEdited
         });
-        if (element.businessObject.deploymentModelUrl.includes(QUANTME_NAMESPACE_PUSH)) {
+        if (element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PUSH))) && element.businessObject.yml !== undefined) {
             const urls = extractUrlsFromYaml(element.businessObject.yml);
             entries.push({
                 id: 'connector',
