@@ -9,6 +9,7 @@ import './editor/resources/styling/editor-ui.css';
 import './editor/ui/notifications/Notifications.css';
 import './editor/ui/notifications/Notification.css';
 import './editor/resources/styling/camunda-styles/style.css';
+import './modeler.css';
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -80,7 +81,10 @@ export class QuantumWorkflowModeler extends HTMLElement {
               <hr class="qwm-toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1;">
                 <div id="canvas" style="width: 100%"></div>
-                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
+                <div id="propertiesbla" style="width: 25%;" >
+                    <div id="resizebar" style="resize-handle" draggable="true"></div>
+                    <div id="properties" style="overflow: auto; max-height: 93.5vh;  background: #f8f8f8;"></div>
+                </div>    
               </div>
               <div id="qwm-notification-container"></div>
             </div>`;
@@ -123,7 +127,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
             transformButtons={transformationButtons} />);
         let panel = document.getElementById("properties");
-        let maindiv = document.getElementById("main-div")
+        let maindiv = document.getElementById("main-div");
 
         let isResizing = false;
         let startX;
@@ -151,10 +155,10 @@ export class QuantumWorkflowModeler extends HTMLElement {
         }
         let isCollapsed = false;
         const resizeButton = document.createElement('button');
-        resizeButton.className = "fa fa-angle-right";
-        resizeButton.style.position = 'absolute';
+        resizeButton.className = "fa fa-angle-right resize";
+/*        resizeButton.style.position = 'absolute';
         resizeButton.style.bottom = '3%';
-        resizeButton.style.right = '0';
+        resizeButton.style.right = '0';*/
         maindiv.appendChild(resizeButton);
 
         // Mouse move handler
@@ -168,7 +172,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
             if (newWidth < 20) {
                 newWidth = 0;
                 isCollapsed = true;
-                resizeButton.className = "fa fa-angle-left";
+                resizeButton.className = "fa fa-angle-left resize";
             }
 
             panel.style.width = `${newWidth}px`;
@@ -184,10 +188,10 @@ export class QuantumWorkflowModeler extends HTMLElement {
             if (isCollapsed) {
                 panel.style.display = 'block';
                 panel.style.width = width;
-                resizeButton.className = "fa fa-angle-right";
+                resizeButton.className = "fa fa-angle-right resize";
             } else {
                 panel.style.display = 'none';
-                resizeButton.className = "fa fa-angle-left";
+                resizeButton.className = "fa fa-angle-left resize";
             }
 
             isCollapsed = !isCollapsed;

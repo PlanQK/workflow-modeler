@@ -1,0 +1,29 @@
+.resize {
+    position: absolute;
+    bottom: 45px;
+    right: 0;
+}
+
+#resizebar {
+    margin-left: -5px;
+    cursor: ew-resize;
+    z-index: 11;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 5px;
+    user-select: none;
+}
+
+.resize-handle {
+    margin-left: -5px;
+    cursor: ew-resize;
+    z-index: 11;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 5px;
+    user-select: none;
+}

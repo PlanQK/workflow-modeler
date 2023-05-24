@@ -1,6 +1,6 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
-const webpack = require('webpack')
+const webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -71,7 +71,7 @@ module.exports = {
             QHANA_GET_PLUGIN_URL: 'http://localhost:5006/api/plugins/',
             QHANA_LIST_PLUGINS_URL: 'http://localhost:5006/api/plugins/?item-count=100',
             QRM_USERNAME: '',
-            QRM_REPONAME: '', 
+            QRM_REPONAME: '',
             QRM_REPOPATH: '',
             SERVICE_DATA_CONFIG: 'http://localhost:8000/service-task',
             SCRIPT_SPLITTER_ENDPOINT: 'http://localhost:8891',
