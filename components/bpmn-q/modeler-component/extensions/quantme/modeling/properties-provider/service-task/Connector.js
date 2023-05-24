@@ -56,7 +56,9 @@ export function Connector({ element, translate, urls }) {
             name: 'url'
         });
 
-        const script = moddle.create("camunda:Script", { scriptFormat: 'JavaScript', value: 'k', resource: 'Inline' });
+        let endpointParameters = determineInputParameters(element.businessObject.yml);
+        let scriptValue = constructScript(endpointParameters);
+        const script = moddle.create("camunda:Script", { scriptFormat: 'JavaScript', value: scriptValue, resource: 'Inline' });
 
         const payloadInputParameter = moddle.create("camunda:InputParameter", {
             definition: script
@@ -69,7 +71,6 @@ export function Connector({ element, translate, urls }) {
 
         let outputParameters = [];
 
-        determineInputParameters(element.businessObject.yml);
         outputParameters = determineOutputParameters(element.businessObject.yml);
         let camundaOutputParameters = constructCamundaOutputParameters(outputParameters);
 
@@ -143,6 +144,7 @@ function determineInputParameters(yamlData) {
 
     // Access the properties of the schema
     const properties = Object.keys(schema.properties);
+    return properties;
 }
 
 function determineOutputParameters(yamlData) {
@@ -190,14 +192,37 @@ function constructCamundaOutputParameters(parameters) {
         let moddle = getModeler().get('moddle');
         const script = moddle.create("camunda:Script", {
             scriptFormat: 'JavaScript', value: 'var resp = connector.getVariable("response")\n' +
-                'resp = JSON.parse(resp)\n' + 'var ' + param + ' = resp.' + param + '\n' + 'print(' + param + ')\n' + param +';', resource: 'Inline'
+                'resp = JSON.parse(resp)\n' + 'var ' + param + ' = resp.' + param + '\n' + 'print(' + param + ')\n' + param + ';', resource: 'Inline'
         });
 
         const outputParameter = moddle.create("camunda:OutputParameter", {
-            definition: script,  name: param
+            definition: script, name: param
         });
         outputParameters.push(outputParameter);
 
     }
     return outputParameters;
+}
+
+function constructScript(parameters) {
+    let script = '';
+    let jsonString = 'var myJson = {';
+    for (let param of parameters) {
+        script += 'var ' + param + ' = execution.getVariable("' + param + '");\n';
+        jsonString += '"' + param + '":' + param + ',';
+    }
+    jsonString = removeLastComma(jsonString);
+    jsonString += '}\n';
+    script += jsonString;
+    script += 'myJson = JSON.stringify(myJson)\nmyJson = myJson';
+    return script;
+}
+
+function removeLastComma(str) {
+    var lastIndex = str.lastIndexOf(",");
+    if (lastIndex === -1) {
+        return str; // If comma is not found, return the original string
+    } else {
+        return str.slice(0, lastIndex) + str.slice(lastIndex + 1);
+    }
 }
