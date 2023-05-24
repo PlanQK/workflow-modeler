@@ -52,19 +52,19 @@ export function bindUsingPull(topicName, serviceTaskId, elementRegistry, modelin
 
     if (topicName === undefined || serviceTaskId === undefined || elementRegistry === undefined || modeling === undefined) {
         console.error('Topic name, service task id, element registry, and modeling required for binding using pull!');
-        return {success: false};
+        return { success: false };
     }
 
     // retrieve service task to bind
     let serviceTask = elementRegistry.get(serviceTaskId);
     if (serviceTask === undefined) {
         console.error('Unable to retrieve corresponding task for id: %s', serviceTaskId);
-        return {success: false};
+        return { success: false };
     }
 
     // remove deployment model URL and set topic
-    modeling.updateProperties(serviceTask, {'deploymentModelUrl': undefined, type: 'external', topic: topicName});
-    return {success: true};
+    modeling.updateProperties(serviceTask, { 'deploymentModelUrl': undefined, type: 'external', topic: topicName });
+    return { success: true };
 }
 
 /**
@@ -75,20 +75,35 @@ export function bindUsingPull(topicName, serviceTaskId, elementRegistry, modelin
  * @param elementRegistry the element registry of the modeler to find workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export function bindUsingPush(csar, serviceTaskId, elementRegistry) {
+export function bindUsingPush(csar, serviceTaskId, elementRegistry, modeling) {
+    let url = extractSelfserviceApplicationUrl(csar.properties);
 
     if (csar === undefined || serviceTaskId === undefined || elementRegistry === undefined) {
         console.error('CSAR details, service task id, and element registry required for binding using push!');
-        return {success: false};
+        return { success: false };
     }
 
     // retrieve service task to bind
     let serviceTask = elementRegistry.get(serviceTaskId);
     if (serviceTask === undefined) {
         console.error('Unable to retrieve corresponding task for id: %s', serviceTaskId);
-        return {success: false};
+        return { success: false };
     }
 
     console.warn('Binding using push currently not supported!');
-    return {success: false};
+    // remove deployment model URL and set topic
+    modeling.updateProperties(serviceTask, { 'deploymentModelUrl': undefined, type: 'external', topic: url });
+    return { success: true };
+}
+
+function extractSelfserviceApplicationUrl(properties) {
+    const regex = /\](.*)<\/ns0:selfserviceApplicationUrl>/;
+    const match = regex.exec(properties);
+
+    if (match) {
+        const value = match[1];
+        console.log(value);
+    } else {
+        console.log("Value not found");
+    }
 }

@@ -233,7 +233,7 @@ export default class DeploymentPlugin extends PureComponent {
                     if (csar.type === 'pull') {
                         bindingResponse = bindUsingPull(csar.topicName, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     } else if (csar.type === 'push') {
-                        bindingResponse = bindUsingPush(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'));
+                        bindingResponse = bindUsingPush(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     }
 
                     // abort if binding pattern is invalid or binding fails
