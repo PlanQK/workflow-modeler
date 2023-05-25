@@ -4,26 +4,16 @@
     right: 0;
 }
 
-#resizebar {
-    margin-left: -5px;
-    cursor: ew-resize;
-    z-index: 11;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 5px;
-    user-select: none;
+#properties {
+    cursor: default;
 }
 
-.resize-handle {
-    margin-left: -5px;
-    cursor: ew-resize;
-    z-index: 11;
+#properties::before {
+    content: '';
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 5px;
-    user-select: none;
+    cursor: w-resize;
+}
+
+body {
+    overflow-y: hidden;
 }

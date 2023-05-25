@@ -81,13 +81,124 @@ export class QuantumWorkflowModeler extends HTMLElement {
               <hr class="qwm-toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1;">
                 <div id="canvas" style="width: 100%"></div>
-                <div id="propertiesbla" style="width: 25%;" >
-                    <div id="resizebar" style="resize-handle" draggable="true"></div>
-                    <div id="properties" style="overflow: auto; max-height: 93.5vh;  background: #f8f8f8;"></div>
-                </div>    
+                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
               </div>
               <div id="qwm-notification-container"></div>
             </div>`;
+
+        let panel = document.getElementById("properties");
+        let maindiv = document.getElementById("main-div");
+
+        let isResizing = false;
+        let startX;
+        let startY;
+        let startWidth;
+        let startHeight;
+        let width = document.defaultView.getComputedStyle(panel).width;
+        var propertiesElement = document.getElementById("properties");
+
+        propertiesElement.addEventListener("mousemove", function (e) {
+            var rect = this.getBoundingClientRect();
+            var x = e.clientX - rect.left;
+            var y = e.clientY - rect.top;
+
+            var borderSize = 5;
+
+            if (
+                x < borderSize ||
+                x > rect.width - borderSize ||
+                y < borderSize ||
+                y > rect.height - borderSize
+            ) {
+                this.style.cursor = "w-resize";
+            } else {
+                this.style.cursor = "default";
+
+            }
+        });
+
+
+        // Mouse down event listener
+        panel.addEventListener('mousedown', handleMouseDown);
+
+        panel.addEventListener("mouseup", function () {
+            this.style.cursor = "default";
+        });
+
+        // Mouse move event listener
+        document.addEventListener('mousemove', handleMouseMove);
+
+        // Mouse up event listener
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Mouse down handler
+        function handleMouseDown(event) {
+            var rect = panel.getBoundingClientRect();
+            var x = event.clientX - rect.left;
+            var y = event.clientY - rect.top;
+
+            var borderSize = 5;
+
+            if (
+                x < borderSize ||
+                x > rect.width - borderSize ||
+                y < borderSize ||
+                y > rect.height - borderSize
+            ) {
+
+                isResizing = true;
+            }
+            startX = event.clientX;
+            startY = event.clientY;
+            startWidth = parseInt(document.defaultView.getComputedStyle(panel).width, 10);
+            startHeight = parseInt(document.defaultView.getComputedStyle(panel).height, 10);
+
+        }
+        let isCollapsed = false;
+        const resizeButton = document.createElement('button');
+        resizeButton.className = "fa fa-angle-right resize";
+        maindiv.appendChild(resizeButton);
+
+        // Mouse move handler
+        function handleMouseMove(event) {
+            if (!isResizing) { maindiv.style.cursor = "default"; return; }
+            maindiv.style.cursor = "w-resize";
+            panel.style.cursor = "w-resize";
+            const deltaX = event.clientX - startX;
+            let newWidth = startWidth - deltaX;
+
+            // enable to completely hide the panel
+            if (newWidth < 20) {
+                newWidth = 0;
+                isCollapsed = true;
+                resizeButton.className = "fa fa-angle-left resize";
+            }
+            panel.style.width = `${newWidth}px`;
+        }
+
+        // Mouse up handler
+        function handleMouseUp() {
+            panel.style.cursor = "default";
+            isResizing = false;
+        }
+
+
+        resizeButton.addEventListener('click', function () {
+            let offsetWidth = panel.offsetWidth;
+            if (isCollapsed) {
+                panel.style.display = 'block';
+                panel.style.width = offsetWidth;
+                if (panel.offsetWidth < parseInt(width, 10)) {
+                    panel.style.width = width;
+                }
+                resizeButton.className = "fa fa-angle-right resize";
+            } else {
+                panel.style.display = 'none';
+                resizeButton.className = "fa fa-angle-left resize";
+            }
+
+            isCollapsed = !isCollapsed;
+        });
     }
 
     /**
@@ -126,76 +237,6 @@ export class QuantumWorkflowModeler extends HTMLElement {
         const root = createRoot(document.getElementById('button-container'));
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
             transformButtons={transformationButtons} />);
-        let panel = document.getElementById("properties");
-        let maindiv = document.getElementById("main-div");
-
-        let isResizing = false;
-        let startX;
-        let startY;
-        let startWidth;
-        let startHeight;
-        let width = document.defaultView.getComputedStyle(panel).width;
-
-        // Mouse down event listener
-        panel.addEventListener('mousedown', handleMouseDown);
-
-        // Mouse move event listener
-        document.addEventListener('mousemove', handleMouseMove);
-
-        // Mouse up event listener
-        document.addEventListener('mouseup', handleMouseUp);
-
-        // Mouse down handler
-        function handleMouseDown(event) {
-            isResizing = true;
-            startX = event.clientX;
-            startY = event.clientY;
-            startWidth = parseInt(document.defaultView.getComputedStyle(panel).width, 10);
-            startHeight = parseInt(document.defaultView.getComputedStyle(panel).height, 10);
-        }
-        let isCollapsed = false;
-        const resizeButton = document.createElement('button');
-        resizeButton.className = "fa fa-angle-right resize";
-/*        resizeButton.style.position = 'absolute';
-        resizeButton.style.bottom = '3%';
-        resizeButton.style.right = '0';*/
-        maindiv.appendChild(resizeButton);
-
-        // Mouse move handler
-        function handleMouseMove(event) {
-            if (!isResizing) return;
-
-            const deltaX = event.clientX - startX;
-            let newWidth = startWidth - deltaX;
-
-            // enable to completely hide the panel
-            if (newWidth < 20) {
-                newWidth = 0;
-                isCollapsed = true;
-                resizeButton.className = "fa fa-angle-left resize";
-            }
-
-            panel.style.width = `${newWidth}px`;
-        }
-
-        // Mouse up handler
-        function handleMouseUp() {
-            isResizing = false;
-        }
-
-
-        resizeButton.addEventListener('click', function () {
-            if (isCollapsed) {
-                panel.style.display = 'block';
-                panel.style.width = width;
-                resizeButton.className = "fa fa-angle-right resize";
-            } else {
-                panel.style.display = 'none';
-                resizeButton.className = "fa fa-angle-left resize";
-            }
-
-            isCollapsed = !isCollapsed;
-        });
 
 
         // load initial workflow
