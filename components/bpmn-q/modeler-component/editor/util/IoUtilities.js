@@ -51,6 +51,8 @@ export async function saveModelerAsLocalFile(modeler, saveAsBPMNFile, saveAsPNGF
     const xml = await getXml(modeler);
     if (saveAsBPMNFile) {
         saveXmlAsLocalFile(xml, fileName);
+        await openFileDialog(xml)
+
     }
 
     if (saveAsSVGFile || saveAsPNGFile) {
@@ -250,6 +252,7 @@ export async function saveWorkflowAsSVG(modeler, saveAsSVG, saveAsPNG, fileName)
         document.body.appendChild(downloadLink);
         if (saveAsSVG) {
             downloadLink.click();
+            openFileDialog(svg)
         }
         if (saveAsPNG) {
             convertSvgToPng(svg, fileName);
@@ -279,5 +282,27 @@ function downloadPng(pngDataUrl, fileName) {
     link.download = fileName + '.png';
     document.body.appendChild(link);
     link.click();
+    openFileUrlDialog(pngDataUrl)
     document.body.removeChild(link);
+}
+
+async function openFileDialog(content) {
+    let fileHandle = await window.showSaveFilePicker({ startIn: 'pictures' });
+    writeFile(fileHandle, content)
+}
+
+async function openFileUrlDialog(content) {
+    let fileHandle = await window.showSaveFilePicker({ startIn: 'pictures' });
+    writeURLToFile(fileHandle, content)
+}
+async function writeFile(fileHandle, contents) {
+    const writable = await fileHandle.createWritable();
+    await writable.write(contents);
+    await writable.close();
+}
+
+async function writeURLToFile(fileHandle, url) {
+    const writable = await fileHandle.createWritable();
+    const response = await fetch(url);
+    await response.body.pipeTo(writable);
 }
