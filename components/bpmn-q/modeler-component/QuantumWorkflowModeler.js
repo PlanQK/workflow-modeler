@@ -17,7 +17,7 @@ import ButtonToolbar from "./editor/ui/ButtonToolbar";
 import { createNewDiagram, loadDiagram } from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import { createModeler, getModeler } from "./editor/ModelerHandler";
-import { getPluginButtons, getStyles, getTransformationButtons } from "./editor/plugin/PluginHandler";
+import { getPluginButtons, getTransformationButtons } from "./editor/plugin/PluginHandler";
 import { getPluginConfig, setPluginConfig } from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
 import { initEditorEventHandler } from './editor/events/EditorEventHandler';
@@ -81,7 +81,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
               <hr class="qwm-toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1;">
                 <div id="canvas" style="width: 100%"></div>
-                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
+                <div id="properties" style="overflow: auto; width:350px; max-height: 93.5vh; background: #f8f8f8;"></div>
               </div>
               <div id="qwm-notification-container"></div>
             </div>`;
@@ -91,10 +91,8 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
         let isResizing = false;
         let startX;
-        let startY;
         let startWidth;
-        let startHeight;
-        let width = document.defaultView.getComputedStyle(panel).width;
+        let width = panel.style.width;
         var propertiesElement = document.getElementById("properties");
 
         propertiesElement.addEventListener("mousemove", function (e) {
@@ -135,24 +133,18 @@ export class QuantumWorkflowModeler extends HTMLElement {
         function handleMouseDown(event) {
             var rect = panel.getBoundingClientRect();
             var x = event.clientX - rect.left;
-            var y = event.clientY - rect.top;
 
             var borderSize = 5;
 
             if (
                 x < borderSize ||
-                x > rect.width - borderSize ||
-                y < borderSize ||
-                y > rect.height - borderSize
+                x > rect.width - borderSize 
             ) {
 
                 isResizing = true;
             }
             startX = event.clientX;
-            startY = event.clientY;
-            startWidth = parseInt(document.defaultView.getComputedStyle(panel).width, 10);
-            startHeight = parseInt(document.defaultView.getComputedStyle(panel).height, 10);
-
+            startWidth = parseFloat(panel.style.width);
         }
         let isCollapsed = false;
         const resizeButton = document.createElement('button');
