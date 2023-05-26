@@ -83,8 +83,8 @@
     display: none;
     flex-wrap: wrap;
     align-items: center;
-    top: 30px;
-    left: 30px;
+    top: 20px;
+    left: 20px;
     padding: 0px;
     margin: 0px;
     font-size: 20px;
@@ -106,6 +106,9 @@
 .bjs-breadcrumbs li {
     display: inline-flex;
     padding-bottom: 5px;
+    font-size: 17px;
+    font-family: Arial, serif;
+    font-weight: bold;
 }
 
 .bjs-breadcrumbs li a {
@@ -139,4 +142,9 @@
 
 .selected .bjs-drilldown-empty {
     display: inherit;
+}
+
+.bjs-drilldown {
+    position: relative;
+    top: 10px;
 }
