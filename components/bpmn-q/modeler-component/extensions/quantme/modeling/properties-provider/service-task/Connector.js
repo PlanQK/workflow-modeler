@@ -53,7 +53,7 @@ export function Connector({ element, translate, urls }) {
             name: 'method', value: 'POST'
         });
         const urlInputParameter = moddle.create("camunda:InputParameter", {
-            name: 'url'
+            name: 'url', value: ''
         });
 
         let endpointParameters = determineInputParameters(element.businessObject.yml);

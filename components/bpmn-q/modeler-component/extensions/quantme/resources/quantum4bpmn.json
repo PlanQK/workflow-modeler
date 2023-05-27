@@ -384,6 +384,11 @@
             "name": "deploymentModelUrl",
             "isAttr": true,
             "type": "String"
+          },
+          {
+            "name": "connectorUrl",
+            "isAttr": true,
+            "type": "String"
           }
         ]
       },

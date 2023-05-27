@@ -75,8 +75,9 @@ export function bindUsingPull(topicName, serviceTaskId, elementRegistry, modelin
  * @param elementRegistry the element registry of the modeler to find workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export function bindUsingPush(csar, serviceTaskId, elementRegistry, modeling) {
-    let url = extractSelfserviceApplicationUrl(csar.properties);
+export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modeling) {
+    let url = await extractSelfserviceApplicationUrl(csar.properties);
+    let success = false;
 
     if (csar === undefined || serviceTaskId === undefined || elementRegistry === undefined) {
         console.error('CSAR details, service task id, and element registry required for binding using push!');
@@ -90,20 +91,38 @@ export function bindUsingPush(csar, serviceTaskId, elementRegistry, modeling) {
         return { success: false };
     }
 
-    console.warn('Binding using push currently not supported!');
-    // remove deployment model URL and set topic
-    modeling.updateProperties(serviceTask, { 'deploymentModelUrl': undefined, type: 'external', topic: url });
-    return { success: true };
+    let extensionElements = serviceTask.businessObject.extensionElements.values;
+    for (let i = 0; i < extensionElements.length; i++) {
+        let extensionElement = extensionElements[i];
+        if (extensionElement.$type === 'camunda:Connector') {
+            let inputParameters = extensionElement.inputOutput.inputParameters;
+            for (let j = 0; j < inputParameters.length; j++) {
+                let inputParameter = inputParameters[j];
+                if (inputParameter.name === 'url') {
+                    let connectorUrl = serviceTask.businessObject.connectorUrl;
+                    inputParameter.value = url + connectorUrl;
+                    success = true;
+                }
+            }
+        }
+    }
+    return { success: success };
 }
 
-function extractSelfserviceApplicationUrl(properties) {
-    const regex = /\](.*)<\/ns0:selfserviceApplicationUrl>/;
-    const match = regex.exec(properties);
+async function extractSelfserviceApplicationUrl(propertiesUrl, csar) {
 
-    if (match) {
-        const value = match[1];
-        console.log(value);
-    } else {
-        console.log("Value not found");
-    }
+    let properties = await fetchProperties(propertiesUrl);
+    let json = JSON.parse(properties);
+    const value = json.selfserviceApplicationUrl;
+    return value;
+}
+
+async function fetchProperties(url) {
+    const response = await fetch(url, {
+        headers: {
+            Accept: "application/json"
+        }
+    });
+    const json = await response.text();
+    return json;
 }

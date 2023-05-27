@@ -163,6 +163,7 @@ export default class DeploymentPlugin extends PureComponent {
                 console.log('Creating service instance for CSAR: ', csar);
 
                 let instanceCreationResponse = await createServiceInstance(csar, this.modeler.config.camundaEndpoint);
+                csar.properties = instanceCreationResponse.properties;
                 if (instanceCreationResponse.success === false) {
 
                     // notify user about failed instance creation

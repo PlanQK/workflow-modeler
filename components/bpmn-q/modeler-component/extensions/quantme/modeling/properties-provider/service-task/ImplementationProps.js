@@ -120,7 +120,7 @@ function extractUrlsFromYaml(content) {
     const paths = Object.keys(doc.paths);
     const urls = paths.map((path) => {
         const method = Object.keys(doc.paths[path])[0];
-        const url = `${path} [${method.toUpperCase()}]`;
+        const url = `${path}`;
         return url;
     });
 
