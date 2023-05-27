@@ -1,6 +1,6 @@
 {
   "name": "@planqk/quantum-workflow-modeler",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
   "main": "public/index.js",

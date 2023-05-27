@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -9,12 +9,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getPropertiesToCopy, insertChildElements, insertShape} from '../../../../editor/util/TransformationUtilities';
-import {getCamundaInputOutput, getDefinitionsFromXml, getRootProcess} from '../../../../editor/util/ModellingUtilities';
-
+import { getPropertiesToCopy, insertChildElements, insertShape } from '../../../../editor/util/TransformationUtilities';
+import { getCamundaInputOutput, getDefinitionsFromXml, getRootProcess } from '../../../../editor/util/ModellingUtilities';
 /**
- * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
- */
+* Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
+*/
 export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler, definitions, transformationFrameworkEndpoint, camundaEndpoint) {
 
     console.log(subprocess, parent, qrm);
@@ -28,7 +27,7 @@ export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler,
     console.log(replacementElementCut, replacementElementCombine);
 
     // replace QuantumHardwareSelectionSubprocess with traditional subprocess
-    let newSubProcess = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {type: 'bpmn:SubProcess'});
+    let newSubProcess = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), { type: 'bpmn:SubProcess' });
 
     // update the properties of the new element
     modeling.updateProperties(newSubProcess, getPropertiesToCopy(subprocess));
@@ -41,7 +40,7 @@ export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler,
 
     // retrieve business object of the new element
     let bo = elementRegistry.get(newSubProcess.id).businessObject;
-    bo.di.isExpanded = true;
+    bo.isExpanded = true;
 
     let attributes = {
         cuttingMethod: subprocess.cuttingMethod,
@@ -76,11 +75,11 @@ export async function replaceCuttingSubprocess(subprocess, parent, qrm, modeler,
 }
 
 /**
- * Extract cut and combine elements from QRM
- *
- * @param qrm QRM containing 1 task/subprocess for cutting which is connected to another task/subprocess for combining the results
- * @returns the cut and combine flowElements
- */
+* Extract cut and combine elements from QRM
+*
+* @param qrm QRM containing 1 task/subprocess for cutting which is connected to another task/subprocess for combining the results
+* @returns the cut and combine flowElements
+*/
 export async function getCuttingReplacementElements(qrm) {
 
     // get the root process of the replacement fragment
@@ -105,14 +104,14 @@ export async function getCuttingReplacementElements(qrm) {
 
 
 /**
- *
- * @param definitions the definitions element of the BPMN diagram
- * @param parent the parent element under which the new element should be attached
- * @param newElement the new element to insert
- * @param pointToInsert the sequence flow used as a incoming and outgoing flow for the new element
- * @param modeler the used modler
- * @param inputAttrs map of attributes that should be used as the modeling constructs inputs
- */
+*
+* @param definitions the definitions element of the BPMN diagram
+* @param parent the parent element under which the new element should be attached
+* @param newElement the new element to insert
+* @param pointToInsert the sequence flow used as a incoming and outgoing flow for the new element
+* @param modeler the used modler
+* @param inputAttrs map of attributes that should be used as the modeling constructs inputs
+*/
 export function insertShapeAt(definitions, parent, newElement, pointToInsert, modeler, inputAttrs) {
     let idMap = {};
 
@@ -121,7 +120,7 @@ export function insertShapeAt(definitions, parent, newElement, pointToInsert, mo
     let modeling = modeler.get('modeling');
     let elementRegistry = modeler.get('elementRegistry');
 
-    let element = modeling.createShape({type: newElement.$type}, {x: 50, y: 50}, parent, {});
+    let element = modeling.createShape({ type: newElement.$type }, { x: 50, y: 50 }, parent, {});
     modeling.updateProperties(element, getPropertiesToCopy(newElement));
 
     let modelingConstructBo = elementRegistry.get(element.id).businessObject;
@@ -137,8 +136,8 @@ export function insertShapeAt(definitions, parent, newElement, pointToInsert, mo
 
     let sourceElement = elementRegistry.get(pointToInsert.sourceRef.id);
     let targetElement = elementRegistry.get(pointToInsert.targetRef.id);
-    modeling.connect(sourceElement, element, {type: 'bpmn:SequenceFlow'});
-    modeling.connect(element, targetElement, {type: 'bpmn:SequenceFlow'});
+    modeling.connect(sourceElement, element, { type: 'bpmn:SequenceFlow' });
+    modeling.connect(element, targetElement, { type: 'bpmn:SequenceFlow' });
     let removeEl = elementRegistry.get(pointToInsert.id);
     modeling.removeConnection(removeEl);
 
@@ -166,5 +165,5 @@ export function insertShapeAt(definitions, parent, newElement, pointToInsert, mo
             idMap = result['idMap'];
         }
     }
-    return {success: success, idMap: idMap, element: parent};
+    return { success: success, idMap: idMap, element: parent };
 }
