@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getModeler } from "../ModelerHandler";
 import * as editorConfig from "./EditorConfigManager";
-import { transformedWorkflowHandlers } from '../EditorConstants';
+import { transformedWorkflowHandlers, saveFileFormats } from '../EditorConstants';
 
 /**
  * Tab for the ConfigModal. Used to allow the configurations of the editor configs, namely the camunda endpoint and the
@@ -15,6 +15,7 @@ export default function EditorTab() {
     const [camundaEndpoint, setCamundaEndpoint] = useState(editorConfig.getCamundaEndpoint());
     const [workflowHandler, setWorkflowHandler] = useState(editorConfig.getTransformedWorkflowHandler());
     const [fileName, setFileName] = useState(editorConfig.getFileName());
+    const [fileFormat, setFileFormat] = useState(editorConfig.getFileFormat());
 
     const modeler = getModeler();
 
@@ -45,6 +46,7 @@ export default function EditorTab() {
         editorConfig.setCamundaEndpoint(camundaEndpoint);
         editorConfig.setTransformedWorkflowHandler(workflowHandler);
         editorConfig.setFileName(fileName);
+        editorConfig.setFileFormat(fileFormat);
     };
 
     // return tab which contains entries to change the camunda endpoint and the workflow handler
@@ -96,6 +98,22 @@ export default function EditorTab() {
                             name="fileName"
                             value={fileName}
                             onChange={event => setFileName(event.target.value)} />
+                    </td>
+                </tr>
+                <tr className="spaceUnder">
+                    <td align="right">Download file format</td>
+                    <td align="left">
+                        <select
+                            name="fileFormat"
+                            value={fileFormat}
+                            onChange={event => setFileFormat(event.target.value)}>
+                            {Object.entries(saveFileFormats).map(([key, value]) => (
+                                <option key={value} value={value}>
+                                    {value}
+                                </option>
+                            ))}
+                        </select>
+
                     </td>
                 </tr>
             </tbody>

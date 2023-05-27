@@ -1,4 +1,5 @@
-import { transformedWorkflowHandlers, workflowEventTypes } from '../EditorConstants';
+import { file } from 'jszip';
+import { transformedWorkflowHandlers, workflowEventTypes, saveFileFormats } from '../EditorConstants';
 import { dispatchWorkflowEvent } from '../events/EditorEventHandler';
 
 const editorConfig = require('../config/EditorConfigManager');
@@ -47,16 +48,15 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
  * @param fileName The name of the file.
  * @returns {Promise<void>}
  */
-export async function saveModelerAsLocalFile(modeler, saveAsBPMNFile, saveAsPNGFile, saveAsSVGFile, fileName = editorConfig.getFileName()) {
+export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName(), fileFormat = editorConfig.getFileFormat()) {
     const xml = await getXml(modeler);
-    if (saveAsBPMNFile) {
-        saveXmlAsLocalFile(xml, fileName);
-        await openFileDialog(xml)
 
+    if (fileFormat === saveFileFormats.BPMN || fileFormat === saveFileFormats.ALL) {
+        await openFileDialog(xml, fileName, saveFileFormats.BPMN);
     }
 
-    if (saveAsSVGFile || saveAsPNGFile) {
-        saveWorkflowAsSVG(modeler, saveAsSVGFile, saveAsPNGFile, fileName);
+    if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG || fileFormat === saveFileFormats.PNG) {
+        saveWorkflowAsSVG(modeler, fileName, fileFormat);
     }
 
     return;
@@ -230,38 +230,22 @@ export function openInNewTab(workflowXml, fileName) {
     };
 }
 
-export async function saveWorkflowAsSVG(modeler, saveAsSVG, saveAsPNG, fileName) {
-    const xml = await getXml(modeler);
+export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
     modeler.saveSVG({ format: true }, function (error, svg) {
         if (error) {
             return;
         }
-
-        var svgBlob = new Blob([svg], {
-            type: 'image/svg+xml'
-        });
-
-        var downloadLink = document.createElement('a');
-        downloadLink.download = fileName + '.svg';
-        downloadLink.innerHTML = 'Get BPMN SVG';
-        downloadLink.href = window.URL.createObjectURL(svgBlob);
-        downloadLink.onclick = function (event) {
-            document.body.removeChild(event.target);
-        };
-        downloadLink.style.visibility = 'hidden';
-        document.body.appendChild(downloadLink);
-        if (saveAsSVG) {
-            downloadLink.click();
-            openFileDialog(svg)
+        if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG) {
+            openFileDialog(svg, fileName, saveFileFormats.SVG)
         }
-        if (saveAsPNG) {
-            convertSvgToPng(svg, fileName);
+        if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.PNG) {
+            convertSvgToPng(svg, fileName, saveFileFormats.PNG);
         }
     });
 }
 
 // Function to convert SVG to PNG using an external library
-function convertSvgToPng(svg, fileName) {
+function convertSvgToPng(svg, fileName, fileFormat) {
     var img = new Image();
     img.onload = function () {
         var canvas = document.createElement('canvas');
@@ -270,31 +254,26 @@ function convertSvgToPng(svg, fileName) {
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, img.width, img.height);
         var pngDataUrl = canvas.toDataURL('image/png');
-        downloadPng(pngDataUrl, fileName);
+        downloadPng(pngDataUrl, fileName, fileFormat);
     };
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 }
 
 // Function to initiate the PNG download
-function downloadPng(pngDataUrl, fileName) {
-    var link = document.createElement('a');
-    link.href = pngDataUrl;
-    link.download = fileName + '.png';
-    document.body.appendChild(link);
-    link.click();
-    openFileUrlDialog(pngDataUrl)
-    document.body.removeChild(link);
+function downloadPng(pngDataUrl, fileName, fileFormat) {
+    openFileUrlDialog(pngDataUrl, fileName, fileFormat);
 }
 
-async function openFileDialog(content) {
-    let fileHandle = await window.showSaveFilePicker({ startIn: 'pictures' });
-    writeFile(fileHandle, content)
+async function openFileDialog(content, fileName, fileFormat) {
+    let fileHandle = await window.showSaveFilePicker({ startIn: 'downloads', suggestedName: fileName + fileFormat });
+    writeFile(fileHandle, content);
 }
 
-async function openFileUrlDialog(content) {
-    let fileHandle = await window.showSaveFilePicker({ startIn: 'pictures' });
-    writeURLToFile(fileHandle, content)
+async function openFileUrlDialog(content, fileName, fileFormat) {
+    let fileHandle = await window.showSaveFilePicker({ startIn: 'downloads', suggestedName: fileName + fileFormat });
+    writeURLToFile(fileHandle, content);
 }
+
 async function writeFile(fileHandle, contents) {
     const writable = await fileHandle.createWritable();
     await writable.write(contents);
