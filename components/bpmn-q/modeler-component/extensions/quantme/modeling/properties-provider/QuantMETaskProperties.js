@@ -265,7 +265,6 @@ export function HardwareSelectionSubprocessProperties(element) {
 }
 
 export function CircuitCuttingSubprocessEntries(element) {
-    // add providers, simulatorsAllowed, and selectionStrategy attributes
     return [
         {
             id: consts.CUTTING_METHOD,
