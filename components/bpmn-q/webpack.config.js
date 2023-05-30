@@ -65,6 +65,7 @@ module.exports = {
             ENABLE_PLANQK_PLUGIN: true,
             ENABLE_QHANA_PLUGIN: true,
             ENABLE_QUANTME_PLUGIN: true,
+            GITHUB_TOKEN: '',
             OPENTOSCA_ENDPOINT: 'http://localhost:1337/csars',
             NISQ_ANALYZER_ENDPOINT: 'http://localhost:8098/nisq-analyzer',
             QISKIT_RUNTIME_HANDLER_ENDPOINT: 'http://localhost:8889',

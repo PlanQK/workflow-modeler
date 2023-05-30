@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -112,8 +112,9 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
 
     // layout diagram after successful transformation
     layout(modeling, elementRegistry, rootElement);
-
-    return {status: 'transformed', xml: await getXml(modeler)};
+    let updated_xml = await getXml(modeler);
+    console.log(updated_xml);
+    return {status: 'transformed', xml: updated_xml};
 }
 
 /**

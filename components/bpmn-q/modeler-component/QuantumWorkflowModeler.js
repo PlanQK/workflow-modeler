@@ -230,7 +230,6 @@ export class QuantumWorkflowModeler extends HTMLElement {
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
             transformButtons={transformationButtons} />);
 
-
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
         if (this.workflowModel) {

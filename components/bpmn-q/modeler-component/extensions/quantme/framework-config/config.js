@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -23,6 +23,7 @@ const defaultConfig = {
     githubRepositoryName: process.env.QRM_REPONAME,
     githubUsername: process.env.QRM_USERNAME,
     githubRepositoryPath: process.env.QRM_REPOPATH,
+    githubToken: process.env.GITHUB_TOKEN,
     hybridRuntimeProvenance: process.env.PROVENANCE_COLLECTION
 };
 export default defaultConfig;
