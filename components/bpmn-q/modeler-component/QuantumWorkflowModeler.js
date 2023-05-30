@@ -11,15 +11,15 @@ import './editor/ui/notifications/Notification.css';
 import './editor/resources/styling/camunda-styles/style.css';
 
 import React from 'react';
-import {createRoot} from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
-import {createNewDiagram, loadDiagram} from "./editor/util/IoUtilities";
+import { createNewDiagram, loadDiagram } from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
-import {createModeler, getModeler} from "./editor/ModelerHandler";
-import {getPluginButtons, getStyles, getTransformationButtons} from "./editor/plugin/PluginHandler";
-import {getPluginConfig, setPluginConfig} from "./editor/plugin/PluginConfigHandler";
+import { createModeler, getModeler } from "./editor/ModelerHandler";
+import { getPluginButtons, getTransformationButtons } from "./editor/plugin/PluginHandler";
+import { getPluginConfig, setPluginConfig } from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
-import {initEditorEventHandler} from './editor/events/EditorEventHandler';
+import { initEditorEventHandler } from './editor/events/EditorEventHandler';
 
 /**
  * The Quantum Workflow modeler HTML web component which contains the bpmn-js modeler to model BPMN diagrams, an editor
@@ -66,7 +66,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
             event.preventDefault();
             return event.returnValue = '';
         };
-        addEventListener("beforeunload", beforeUnloadListener, {capture: true});
+        addEventListener("beforeunload", beforeUnloadListener, { capture: true });
     }
 
 
@@ -121,7 +121,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         // integrate the React ButtonToolbar into its DOM container
         const root = createRoot(document.getElementById('button-container'));
         root.render(<ButtonToolbar modeler={modeler} pluginButtons={getPluginButtons()}
-                                   transformButtons={transformationButtons}/>);
+            transformButtons={transformationButtons} />);
 
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
