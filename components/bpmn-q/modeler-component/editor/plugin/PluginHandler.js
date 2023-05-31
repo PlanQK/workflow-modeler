@@ -42,12 +42,9 @@ function getActivePlugins() {
         activePlugins = [];
 
         const loadPlugin = (plugin) => {
-            console.log('-------')
-            console.log(activePlugins)
             if (!activePlugins.includes(plugin.plugin)) {
                 for (const dependency of plugin.dependencies) {
                     const dependencyPlugin = PLUGINS.find((p) => p.plugin.name === dependency);
-                    console.log(dependencyPlugin)
                     if (dependencyPlugin && !activePlugins.includes(dependencyPlugin.plugin)) {
                         activePlugins.push(dependencyPlugin.plugin);
                         loadPlugin(dependencyPlugin);
@@ -73,7 +70,6 @@ function getActivePlugins() {
 
 
 export function checkEnabledStatus(pluginName) {
-    console.log(pluginName)
     switch (pluginName) {
         case 'dataflow':
             return process.env.ENABLE_DATA_FLOW_PLUGIN;
@@ -82,7 +78,6 @@ export function checkEnabledStatus(pluginName) {
         case 'qhana':
             return process.env.ENABLE_QHANA_PLUGIN;
         case 'quantme':
-            console.log(process.env.ENABLE_QUANTME_PLUGIN)
             return process.env.ENABLE_QUANTME_PLUGIN;
     }
 }
