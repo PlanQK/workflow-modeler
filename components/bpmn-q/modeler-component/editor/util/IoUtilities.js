@@ -235,6 +235,7 @@ export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
         if (error) {
             return;
         }
+
         if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG) {
             openFileDialog(svg, fileName, saveFileFormats.SVG)
         }
@@ -265,12 +266,30 @@ function downloadPng(pngDataUrl, fileName, fileFormat) {
 }
 
 async function openFileDialog(content, fileName, fileFormat) {
-    let fileHandle = await window.showSaveFilePicker({ startIn: 'downloads', suggestedName: fileName + fileFormat });
+    let fileHandle = await window.showSaveFilePicker({
+        startIn: 'downloads', suggestedName: fileName + fileFormat, types: [
+            {
+                description: "BPMN file",
+                accept: { "text/plain": [".bpmn"] },
+            },
+            {
+                description: "SVG file",
+                accept: { "text/plain": [".svg"] },
+            }
+        ]
+    });
     writeFile(fileHandle, content);
 }
 
 async function openFileUrlDialog(content, fileName, fileFormat) {
-    let fileHandle = await window.showSaveFilePicker({ startIn: 'downloads', suggestedName: fileName + fileFormat });
+    let fileHandle = await window.showSaveFilePicker({
+        startIn: 'downloads', suggestedName: fileName + fileFormat, types: [
+            {
+                description: "PNG file",
+                accept: { "text/plain": [".png"] },
+            }
+        ]
+    });
     writeURLToFile(fileHandle, content);
 }
 
