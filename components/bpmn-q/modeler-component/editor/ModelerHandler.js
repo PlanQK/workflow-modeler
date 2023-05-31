@@ -138,7 +138,7 @@ function getModules() {
         CamundaPlatformPropertiesProviderModule,
         CamundaExtensionModule,
         CustomPopupMenuModule,
-        LintModule
+        LintModule,
         clipboardModule
     ].concat(pluginModules);
 
