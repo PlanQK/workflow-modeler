@@ -6,6 +6,10 @@ import QuantMETab from './configTabs/QuantMETab';
 import quantMEStyles from './styling/quantme.css';
 import QuantMEPluginButton from './ui/QuantMEPluginButton';
 import TransformationButton from "../../editor/ui/TransformationButton";
+import {getQRMs} from "./qrm-manager";
+import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
+import * as config from "./framework-config/config-manager";
+import * as camundaConfig from "../../editor/config/EditorConfigManager";
 
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json');
 
