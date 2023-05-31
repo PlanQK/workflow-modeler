@@ -5,6 +5,7 @@ import QuantMETab from './configTabs/QuantMETab';
 
 import quantMEStyles from './styling/quantme.css';
 import QuantMEPluginButton from './ui/QuantMEPluginButton';
+import TransformationButton from "../../editor/ui/TransformationButton";
 
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json');
 
@@ -23,5 +24,18 @@ export default {
     name: 'quantme',
     extensionModule: QuantMEExtensionModule,
     moddleDescription: quantMEModdleExtension,
-    styling: [quantMEStyles]
+    styling: [quantMEStyles],
+    transformExtensionButton: <TransformationButton name='QuantME Transformation' transformWorkflow={
+        async (xml) => {
+
+            let currentQRMs = getQRMs();
+            return await startQuantmeReplacementProcess(xml, currentQRMs,
+                {
+                    nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
+                    transformationFrameworkEndpoint: config.getTransformationFrameworkEndpoint(),
+                    camundaEndpoint: camundaConfig.getCamundaEndpoint()
+                }
+            );
+        }
+    }/>
 };
