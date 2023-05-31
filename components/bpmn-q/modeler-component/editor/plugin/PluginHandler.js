@@ -35,7 +35,7 @@ const PLUGINS = [
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
 let activePlugins = [];
 
-function getActivePlugins() {
+export function getActivePlugins() {
     if (activePlugins.length > 0) {
         return activePlugins;
     } else {
