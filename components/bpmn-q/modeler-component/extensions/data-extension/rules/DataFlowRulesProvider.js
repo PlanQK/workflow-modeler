@@ -5,6 +5,7 @@ import {
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import * as consts from '../Constants';
 import {isConnectedWith} from '../../../editor/util/ModellingUtilities';
+import { resetAutosaveTimeout } from '../../../editor/util/IoUtilities';
 
 /**
  * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
@@ -17,6 +18,7 @@ export default class CustomRulesProvider extends BpmnRules {
         const canConnectDataExtension = this.canConnectDataExtension;
         const canConnect = this.canConnect.bind(this);
         const canCreate = this.canCreate.bind(this);
+        let autosaveTimeout = 0;
 
         /**
          * Fired during creation of a new connection (while you selected the target of a connection)
@@ -56,6 +58,12 @@ export default class CustomRulesProvider extends BpmnRules {
                 context.position
             );
         });
+
+        eventBus.on("commandStack.changed", function() {
+            
+            // Reset the timeout on any change event
+            resetAutosaveTimeout(autosaveTimeout, true);
+          });
     }
 
     /**

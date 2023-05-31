@@ -1,11 +1,12 @@
 import {getPluginConfig} from '../plugin/PluginConfigHandler';
-import {transformedWorkflowHandlers} from '../EditorConstants';
+import {autoSaveFile, transformedWorkflowHandlers} from '../EditorConstants';
 
 // default configurations of the editor
 const defaultConfig = {
     camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
     fileName: 'quantum-workflow-model.bpmn',
     transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
+    autoSaveFileOption: autoSaveFile.INTERVAL
 };
 
 let config = {};
@@ -85,6 +86,33 @@ export function setTransformedWorkflowHandler(transformedWorkflowHandler) {
 
         // remove trailing slashes
         config.transformedWorkflowHandler = transformedWorkflowHandler;
+    }
+}
+
+/**
+ * Get the id of the handler to handle auto save of files.
+ *
+ * @return {string} the currently specified handler id
+ */
+export function getAutoSaveFileOption() {
+    if (config.autoSaveFileOption === undefined) {
+        const autoSaveFileOption = autoSaveFile[getPluginConfig('editor').autoSaveFileOption];
+        setAutoSaveFileOption(autoSaveFileOption || defaultConfig.autoSaveFileOption);
+    }
+    return config.autoSaveFileOption;
+}
+
+/**
+ * Set the id of the handler to handle auto save of files
+ *
+ * @param autoSaveFileOption the id of the transformed workflow handler
+ */
+export function setAutoSaveFileOption(autoSaveFileOption) {
+    if (autoSaveFileOption !== null && autoSaveFileOption !== undefined
+        // check that the new value is a valid handler id
+        && Object.values(autoSaveFile).includes(autoSaveFileOption)) {
+
+        config.autoSaveFileOption = autoSaveFileOption;
     }
 }
 

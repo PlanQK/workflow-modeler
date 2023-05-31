@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {getModeler} from "../ModelerHandler";
 import * as editorConfig from "./EditorConfigManager";
-import {transformedWorkflowHandlers} from '../EditorConstants';
+import {autoSaveFile, transformedWorkflowHandlers} from '../EditorConstants';
 
 /**
  * Tab for the ConfigModal. Used to allow the configurations of the editor configs, namely the camunda endpoint and the
@@ -14,6 +14,7 @@ export default function EditorTab() {
 
     const [camundaEndpoint, setCamundaEndpoint] = useState(editorConfig.getCamundaEndpoint());
     const [workflowHandler, setWorkflowHandler] = useState(editorConfig.getTransformedWorkflowHandler());
+    const [autoSaveFileOption, setAutoSaveFileOption] = useState(editorConfig.getAutoSaveFileOption());
 
     const modeler = getModeler();
 
@@ -33,6 +34,7 @@ export default function EditorTab() {
         modeler.config.camundaEndpoint = camundaEndpoint;
         editorConfig.setCamundaEndpoint(camundaEndpoint);
         editorConfig.setTransformedWorkflowHandler(workflowHandler);
+        editorConfig.setAutoSaveFileOption(autoSaveFileOption);
     };
 
     // return tab which contains entries to change the camunda endpoint and the workflow handler
@@ -69,6 +71,26 @@ export default function EditorTab() {
                         ))}
                     </select>
 
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <h3>Auto save file:</h3>
+        <table>
+            <tbody>
+            <tr className="spaceUnder">
+                <td align="right">Auto save file option:</td>
+                <td align="left">
+                    <select
+                        name="autoSaveFileOption"
+                        value={autoSaveFileOption}
+                        onChange={event => setAutoSaveFileOption(event.target.value)}>
+                        {Object.entries(autoSaveFile).map(([key, value]) => (
+                            <option key={value} value={value}>
+                                {value}
+                            </option>
+                        ))}
+                    </select>
                 </td>
             </tr>
             </tbody>

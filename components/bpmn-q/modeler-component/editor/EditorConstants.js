@@ -12,3 +12,8 @@ export const workflowEventTypes = {
     TRANSFORMED: 'quantum-workflow-transformed', // Workflow transformed
     DEPLOYED: 'quantum-workflow-deployed', // Workflow deployed to workflow engine
 };
+
+export const autoSaveFile = {
+    INTERVAL: 'Interval',
+    ON_ACTION: 'On Action'
+}
