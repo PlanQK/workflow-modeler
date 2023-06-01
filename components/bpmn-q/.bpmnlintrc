@@ -4,6 +4,9 @@
     "plugin:custom/recommended"
   ],
   "rules": {
-    "custom/quantme-tasks": "warn"
+    "custom/quantme-tasks": "warn",
+    "custom/subprocess-connected-end-event": "warn",
+    "custom/subprocess-required-start-event": "warn",
+    "camunda/no-collapsed-sub-processes": "off"
   }
 }
