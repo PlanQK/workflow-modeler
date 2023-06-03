@@ -30,6 +30,10 @@ module.exports = {
                 ],
             },
             {
+                test: /\.bpmnlintrc$/i,
+                use: 'bpmnlint-loader',
+            },
+            {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 use: [
