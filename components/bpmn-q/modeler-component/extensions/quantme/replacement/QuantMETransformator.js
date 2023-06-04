@@ -9,22 +9,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {layout} from './layouter/Layouter';
-import {matchesQRM} from './QuantMEMatcher';
-import {addQuantMEInputParameters} from './InputOutputHandler';
+import { layout } from './layouter/Layouter';
+import { matchesQRM } from './QuantMEMatcher';
+import { addQuantMEInputParameters } from './InputOutputHandler';
 import * as Constants from '../Constants';
-import {replaceHardwareSelectionSubprocess} from './hardware-selection/QuantMEHardwareSelectionHandler';
-import {replaceCuttingSubprocess} from './circuit-cutting/QuantMECuttingHandler';
-import {insertShape} from '../../../editor/util/TransformationUtilities';
-import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
+import { replaceHardwareSelectionSubprocess } from './hardware-selection/QuantMEHardwareSelectionHandler';
+import { replaceCuttingSubprocess } from './circuit-cutting/QuantMECuttingHandler';
+import { insertShape } from '../../../editor/util/TransformationUtilities';
+import { createTempModelerFromXml } from '../../../editor/ModelerHandler';
 import {
     getCamundaInputOutput,
     getDefinitionsFromXml,
     getRootProcess,
     getSingleFlowElement
 } from '../../../editor/util/ModellingUtilities';
-import {getXml} from '../../../editor/util/IoUtilities';
+import { getXml } from '../../../editor/util/IoUtilities';
 
+const { DOMParser } = require('xmldom');
+const xmlParser = require('xml-js');
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
  *
@@ -43,14 +45,14 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
     console.log(rootElement);
     if (typeof rootElement === 'undefined') {
         console.log('Unable to retrieve root process element from definitions!');
-        return {status: 'failed', cause: 'Unable to retrieve root process element from definitions!'};
+        return { status: 'failed', cause: 'Unable to retrieve root process element from definitions!' };
     }
 
     // get all QuantME modeling constructs from the process
     let replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
     console.log('Process contains ' + replacementConstructs.length + ' QuantME modeling constructs to replace...');
     if (!replacementConstructs || !replacementConstructs.length) {
-        return {status: 'transformed', xml: xml};
+        return { status: 'transformed', xml: xml };
     }
 
     // check for available replacement models for all QuantME modeling constructs
@@ -113,8 +115,23 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
     // layout diagram after successful transformation
     layout(modeling, elementRegistry, rootElement);
     let updated_xml = await getXml(modeler);
-    console.log(updated_xml);
-    return {status: 'transformed', xml: updated_xml};
+
+    // Parse the XML string into a JavaScript object
+    let xmlDoc = xmlParser.xml2js(updated_xml, { compact: true });
+
+    // Get all bpmndi:BPMNDiagram elements
+    let bpmnDiagrams = xmlDoc['bpmn:definitions']['bpmndi:BPMNDiagram'];
+
+    // Remove all bpmndi:BPMNDiagram elements except the first one
+    if (Array.isArray(bpmnDiagrams)) {
+        if (bpmnDiagrams.length > 1) {
+            xmlDoc['bpmn:definitions']['bpmndi:BPMNDiagram'] = bpmnDiagrams.slice(0, 1);
+        }
+    }
+
+    // Serialize the modified JavaScript object back to XML string
+    let modifiedXmlString = xmlParser.js2xml(xmlDoc, { compact: true });
+    return { status: 'transformed', xml: modifiedXmlString };
 }
 
 /**
@@ -130,7 +147,7 @@ export function getQuantMETasks(process, elementRegistry) {
     for (let i = 0; i < flowElements.length; i++) {
         let flowElement = flowElements[i];
         if (flowElement.$type && flowElement.$type.startsWith('quantme:')) {
-            quantmeTasks.push({task: flowElement, parent: processBo});
+            quantmeTasks.push({ task: flowElement, parent: processBo });
         }
 
         // recursively retrieve QuantME tasks if subprocess is found
@@ -160,7 +177,6 @@ async function getMatchingQRM(task, currentQRMs) {
  */
 async function replaceByFragment(definitions, task, parent, replacement, modeler) {
     let bpmnFactory = modeler.get('bpmnFactory');
-
     if (!replacement) {
         console.log('Replacement fragment is undefined. Aborting replacement!');
         return false;
@@ -175,6 +191,31 @@ async function replaceByFragment(definitions, task, parent, replacement, modeler
     }
 
     console.log('Replacement element: ', replacementElement);
+    
+    if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(replacementElement.$type)) {
+        
+        // Create a DOM parser
+        const parser = new DOMParser();
+
+        // Parse the XML string
+        const xmlDoc = parser.parseFromString(replacement, 'text/xml');
+
+        const bpmndiNamespace = 'http://www.omg.org/spec/BPMN/20100524/DI';
+        const bpmndiShapes = xmlDoc.getElementsByTagNameNS(bpmndiNamespace, 'BPMNShape');
+
+        let isExpanded = null;
+
+        for (let i = 0; i < bpmndiShapes.length; i++) {
+            const bpmnElement = bpmndiShapes[i].getAttribute('bpmnElement');
+            if (bpmnElement === replacementElement.id) {
+                isExpanded = bpmndiShapes[i].getAttribute('isExpanded');
+                replacementElement.isExpanded = isExpanded;
+                break;
+            }
+        }
+    }
+
+
     let result = insertShape(definitions, parent, replacementElement, {}, true, modeler, task);
 
     // add all attributes of the replaced QuantME task to the input parameters of the replacement fragment

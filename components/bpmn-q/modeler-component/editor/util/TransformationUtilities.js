@@ -1,5 +1,5 @@
-import {isFlowLikeElement} from './ModellingUtilities';
-import {getDi, is} from 'bpmn-js/lib/util/ModelUtil';
+import { isFlowLikeElement } from './ModellingUtilities';
+import { getDi, is } from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * Insert the given element and all child elements into the diagram
@@ -30,18 +30,18 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
         if (replace) {
 
             // replace old element to retain attached sequence flow, associations, data objects, ...
-            element = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), {type: newElement.$type});
+            element = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), { type: newElement.$type });
         } else {
 
             // create new shape for this element
-            element = modeling.createShape({type: newElement.$type}, {x: 50, y: 50}, parent, {});
+            element = modeling.createShape({ type: newElement.$type }, { x: 50, y: 50 }, parent, {});
         }
     } else {
 
         // create connection between two previously created elements
         let sourceElement = elementRegistry.get(idMap[newElement.sourceRef.id]);
         let targetElement = elementRegistry.get(idMap[newElement.targetRef.id]);
-        element = modeling.connect(sourceElement, targetElement, {type: newElement.$type});
+        element = modeling.connect(sourceElement, targetElement, { type: newElement.$type });
     }
 
     // store id to create sequence flows
@@ -52,13 +52,11 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
 
         // get the shape element related to the subprocess
         let shape = getDi(element);
-        shape.isExpanded = true;
 
-        // TODO: fix the following if, as the access to the DI of the new element is not possible with the current BPMN-JS version
-        /*if (shape && shape.isExpanded) {
-            // expand the new element
-            elementRegistry.get(element.id).businessObject.di.isExpanded = true;
-        }*/
+        // expand the replacement subprocess if the detector subprocess was expanded
+        if (shape && (newElement.isExpanded === 'true')) {
+            shape.isExpanded = true;
+        }
 
         // preserve messages defined in ReceiveTasks
     } else if (newElement.$type === 'bpmn:ReceiveTask' && newElement.messageRef) {
@@ -71,21 +69,21 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
             let message = bpmnFactory.create('bpmn:Message');
             message.name = oldMessage.name;
             definitions.rootElements.push(message);
-            modeling.updateProperties(element, {'messageRef': message});
+            modeling.updateProperties(element, { 'messageRef': message });
 
             // store id if other receive tasks reference the same message
             idMap[oldMessage.id] = message.id;
         } else {
 
             // reuse already created message and add it to receive task
-            modeling.updateProperties(element, {'messageRef': idMap[oldMessage.id]});
+            modeling.updateProperties(element, { 'messageRef': idMap[oldMessage.id] });
         }
     }
 
     // add element to which a boundary event is attached
     if (newElement.$type === 'bpmn:BoundaryEvent') {
         let hostElement = elementRegistry.get(idMap[newElement.attachedToRef.id]);
-        modeling.updateProperties(element, {'attachedToRef': hostElement.businessObject});
+        modeling.updateProperties(element, { 'attachedToRef': hostElement.businessObject });
         element.host = hostElement;
     }
 
@@ -109,7 +107,7 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
     }
 
     // return success flag and idMap with id mappings of this element and all children
-    return {success: success, idMap: idMap, element: element};
+    return { success: success, idMap: idMap, element: element };
 }
 
 /**
@@ -162,7 +160,7 @@ export function insertChildElements(definitions, parent, newElement, idMap, mode
         }
     }
 
-    return {success: success, idMap: idMap, element: parent};
+    return { success: success, idMap: idMap, element: parent };
 }
 
 /**
@@ -229,7 +227,7 @@ export function getAllElementsInProcess(processBo, elementRegistry, elementType)
     for (let i = 0; i < flowElementBos.length; i++) {
         let flowElementBo = flowElementBos[i];
         if (flowElementBo.$type && flowElementBo.$type === elementType) {
-            elements.push({element: flowElementBo, parent: processElement});
+            elements.push({ element: flowElementBo, parent: processElement });
         }
 
         // recursively retrieve service tasks if subprocess is found
@@ -258,7 +256,7 @@ export function getAllElementsForProcess(processBo, elementRegistry, elementType
     for (let i = 0; i < flowElements.length; i++) {
         let flowElement = flowElements[i];
         if (is(flowElement, elementType)) {
-            elements.push({element: flowElement, parent: processElement});
+            elements.push({ element: flowElement, parent: processElement });
         }
     }
     return elements;
