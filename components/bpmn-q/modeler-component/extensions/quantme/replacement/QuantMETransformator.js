@@ -122,6 +122,8 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
     // Get all bpmndi:BPMNDiagram elements
     let bpmnDiagrams = xmlDoc['bpmn:definitions']['bpmndi:BPMNDiagram'];
 
+    let subprocesses = xmlDoc['bpmn:definitions']['bpmn:process']['bpmn:subProcess'];
+
     // Remove all bpmndi:BPMNDiagram elements except the first one
     if (Array.isArray(bpmnDiagrams)) {
         if (bpmnDiagrams.length > 1) {
@@ -129,8 +131,17 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
         }
     }
 
+    // Remove the isExpanded attribute from the shapes
+    if (Array.isArray(subprocesses)) {
+        for (let i = 0; i < subprocesses.length; i++) {
+            let subprocessAttributes = subprocesses[i]['_attributes'];
+            delete subprocessAttributes.isExpanded;
+        }
+    }
+
     // Serialize the modified JavaScript object back to XML string
     let modifiedXmlString = xmlParser.js2xml(xmlDoc, { compact: true });
+
     return { status: 'transformed', xml: modifiedXmlString };
 }
 
@@ -191,9 +202,9 @@ async function replaceByFragment(definitions, task, parent, replacement, modeler
     }
 
     console.log('Replacement element: ', replacementElement);
-    
+
     if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(replacementElement.$type)) {
-        
+
         // Create a DOM parser
         const parser = new DOMParser();
 
