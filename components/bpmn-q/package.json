@@ -3,7 +3,7 @@
   "version": "0.1.8",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
-  "main": "public/index.js",
+  "main": "index.js",
   "files": [
     "public/**/*",
     "!public/index.html"
@@ -111,6 +111,12 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.0",
     "webpack-dev-server": "^4.11.1",
-    "xmlbuilder": "^15.1.1"
+    "xmlbuilder": "^15.1.1",
+    "bpmn-js-bpmnlint": "^0.14.0",
+    "bpmnlint": "^6.3.0",
+    "bpmnlint-loader": "^0.1.4",
+    "bpmnlint-plugin-camunda": "^0.4.2",
+    "bpmnlint-plugin-custom": "file:bpmnlint-plugin-custom",
+    "client": "file:client"
   }
 }
