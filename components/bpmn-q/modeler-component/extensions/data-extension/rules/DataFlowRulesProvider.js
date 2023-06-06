@@ -4,7 +4,7 @@ import {
     isAny
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import * as consts from '../Constants';
-import {isConnectedWith} from '../../../editor/util/ModellingUtilities';
+import { isConnectedWith } from '../../../editor/util/ModellingUtilities';
 
 /**
  * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
@@ -17,6 +17,15 @@ export default class CustomRulesProvider extends BpmnRules {
         const canConnectDataExtension = this.canConnectDataExtension;
         const canConnect = this.canConnect.bind(this);
         const canCreate = this.canCreate.bind(this);
+
+        // persist into local storage whenever
+        // copy took place
+        eventBus.on('copyPaste.elementsCopied', event => {
+            const { tree } = event;
+            
+            // persist in local storage, encoded as json
+            localStorage.setItem('bpmnClipboard', JSON.stringify(tree));
+        });
 
         /**
          * Fired during creation of a new connection (while you selected the target of a connection)
@@ -78,7 +87,7 @@ export default class CustomRulesProvider extends BpmnRules {
 
             // test connection via sequence flow
             if (this.canConnectSequenceFlow(source, target)) {
-                return {type: 'bpmn:SequenceFlow'};
+                return { type: 'bpmn:SequenceFlow' };
             }
         }
 
@@ -129,20 +138,20 @@ export default class CustomRulesProvider extends BpmnRules {
         if (isAny(source, [consts.DATA_MAP_OBJECT]) &&
             isAny(target, [consts.DATA_MAP_OBJECT])) {
             console.log('Create connection between DataMapObjects with ' + consts.OUTPUT_TRANSFORMATION_ASSOCIATION);
-            return {type: consts.OUTPUT_TRANSFORMATION_ASSOCIATION};
+            return { type: consts.OUTPUT_TRANSFORMATION_ASSOCIATION };
         }
 
         // the normal rules for a DataObject
         if (isAny(source, [consts.DATA_MAP_OBJECT]) && isAny(target, ['bpmn:Activity', 'bpmn:ThrowEvent'])) {
             console.log('Map to act');
-            return {type: 'bpmn:DataInputAssociation'};
+            return { type: 'bpmn:DataInputAssociation' };
         }
         if (isAny(target, [consts.DATA_MAP_OBJECT]) && isAny(source, ['bpmn:ThrowEvent'])) {
             console.log('Map to act');
             return false;
         }
         if (isAny(target, [consts.DATA_MAP_OBJECT]) && isAny(source, ['bpmn:Activity', 'bpmn:CatchEvent'])) {
-            return {type: 'bpmn:DataOutputAssociation'};
+            return { type: 'bpmn:DataOutputAssociation' };
         }
         if (isAny(source, [consts.DATA_MAP_OBJECT]) && isAny(target, ['bpmn:CatchEvent'])) {
             return false;

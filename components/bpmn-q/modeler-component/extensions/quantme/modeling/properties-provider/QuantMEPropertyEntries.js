@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -11,17 +11,17 @@
 
 import React from "@bpmn-io/properties-panel/preact/compat";
 
-import {TextFieldEntry, SelectEntry} from '@bpmn-io/properties-panel';
+import { TextFieldEntry, SelectEntry } from '@bpmn-io/properties-panel';
 import * as consts from '../../Constants';
-import {useService} from 'bpmn-js-properties-panel';
-import {HiddenTextFieldEntry} from '../../../../editor/popup/HiddenTextFieldEntry';
+import { useService } from 'bpmn-js-properties-panel';
+import { HiddenTextFieldEntry } from '../../../../editor/popup/HiddenTextFieldEntry';
 
 /**
  * All entries needed to display the different properties introduced through the QuantME task types. One entry represents one
  * property.
  */
 
-export function AlgorithmEntry({element}) {
+export function AlgorithmEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -49,7 +49,7 @@ export function AlgorithmEntry({element}) {
     />;
 }
 
-export function ProviderEntry({element}) {
+export function ProviderEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -77,7 +77,7 @@ export function ProviderEntry({element}) {
     />;
 }
 
-export function QuantumCircuitEntry({element}) {
+export function QuantumCircuitEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -105,7 +105,7 @@ export function QuantumCircuitEntry({element}) {
     />;
 }
 
-export function UrlEntry({element}) {
+export function UrlEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -132,7 +132,7 @@ export function UrlEntry({element}) {
     />;
 }
 
-export function EncodingSchemaEntry({element}) {
+export function EncodingSchemaEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -160,7 +160,7 @@ export function EncodingSchemaEntry({element}) {
     />;
 }
 
-export function ProgrammingLanguageEntry({element}) {
+export function ProgrammingLanguageEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -187,7 +187,7 @@ export function ProgrammingLanguageEntry({element}) {
     />;
 }
 
-export function OracleIdEntry({element}) {
+export function OracleIdEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -214,7 +214,7 @@ export function OracleIdEntry({element}) {
     />;
 }
 
-export function OracleCircuitEntry({element}) {
+export function OracleCircuitEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -241,7 +241,7 @@ export function OracleCircuitEntry({element}) {
     />;
 }
 
-export function OracleURLEntry({element}) {
+export function OracleURLEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -268,7 +268,7 @@ export function OracleURLEntry({element}) {
     />;
 }
 
-export function QpuEntry({element}) {
+export function QpuEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -295,7 +295,7 @@ export function QpuEntry({element}) {
     />;
 }
 
-export function ShotsEntry({element}) {
+export function ShotsEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -327,7 +327,7 @@ export function ShotsEntry({element}) {
     />;
 }
 
-export function MaxAgeEntry({element}) {
+export function MaxAgeEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -354,7 +354,7 @@ export function MaxAgeEntry({element}) {
     />;
 }
 
-export function ProvidersEntry({element}) {
+export function ProvidersEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -381,7 +381,7 @@ export function ProvidersEntry({element}) {
     />;
 }
 
-export function SimulatorsAllowedEntry({element}) {
+export function SimulatorsAllowedEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -408,7 +408,7 @@ export function SimulatorsAllowedEntry({element}) {
     />;
 }
 
-export function SelectionStrategyEntry({element}) {
+export function SelectionStrategyEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -435,7 +435,7 @@ export function SelectionStrategyEntry({element}) {
     />;
 }
 
-export function CalibrationMethodEntry({element}) {
+export function CalibrationMethodEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -454,14 +454,14 @@ export function CalibrationMethodEntry({element}) {
     };
 
     const selectOptions = [
-        {value: 'fullMatrix', label: 'Full Matrix'},
-        {value: 'tpnm', label: 'TPNM'},
-        {value: 'ctmp', label: 'CTMP'},
-        {value: 'ddot', label: 'DDOT'},
-        {value: 'conditionallyRigorous', label: 'Conditionally Rigorous'},
-        {value: 'fuzzyCMeans', label: 'Fuzzy C-Means'},
-        {value: 'cumulantCM', label: 'Cumulant CM'},
-        {value: 'sclableTMatrix', label: 'Sclable T-Matrix'}
+        { value: 'fullMatrix', label: 'Full Matrix' },
+        { value: 'tpnm', label: 'TPNM' },
+        { value: 'ctmp', label: 'CTMP' },
+        { value: 'ddot', label: 'DDOT' },
+        { value: 'conditionallyRigorous', label: 'Conditionally Rigorous' },
+        { value: 'fuzzyCMeans', label: 'Fuzzy C-Means' },
+        { value: 'cumulantCM', label: 'Cumulant CM' },
+        { value: 'sclableTMatrix', label: 'Sclable T-Matrix' }
     ];
 
     const getOptions = function () {
@@ -478,7 +478,7 @@ export function CalibrationMethodEntry({element}) {
     />;
 }
 
-export function MitigationMethodEntry({element}) {
+export function MitigationMethodEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -514,20 +514,20 @@ export function MitigationMethodEntry({element}) {
     };
 
     const selectOptions = [
-        {value: 'matrixInversion', label: 'Matrix Inversion'},
-        {value: 'pertubativeREM', label: 'Pertubative REM'},
-        {value: 'mthree', label: 'Mthree'},
-        {value: 'geneticBasedREM', label: 'Genetic-Based REM'},
-        {value: 'activeREM', label: 'Active REM'},
-        {value: 'modelFreeREM', label: 'Model-Free REM'},
-        {value: 'hybridREM', label: 'Hybrid REM'},
-        {value: 'crosstalkREM', label: 'Crosstalk-Focused REM'},
-        {value: 'sim', label: 'SIM'},
-        {value: 'aim', label: 'AIM'},
-        {value: 'bfa', label: 'BFA'},
-        {value: 'truncatedNeumannSeries', label: 'Truncated Neumann Series'},
-        {value: 'lsu', label: 'LSU'},
-        {value: 'dnnREM', label: 'DNN-Based REM'}
+        { value: 'matrixInversion', label: 'Matrix Inversion' },
+        { value: 'pertubativeREM', label: 'Pertubative REM' },
+        { value: 'mthree', label: 'Mthree' },
+        { value: 'geneticBasedREM', label: 'Genetic-Based REM' },
+        { value: 'activeREM', label: 'Active REM' },
+        { value: 'modelFreeREM', label: 'Model-Free REM' },
+        { value: 'hybridREM', label: 'Hybrid REM' },
+        { value: 'crosstalkREM', label: 'Crosstalk-Focused REM' },
+        { value: 'sim', label: 'SIM' },
+        { value: 'aim', label: 'AIM' },
+        { value: 'bfa', label: 'BFA' },
+        { value: 'truncatedNeumannSeries', label: 'Truncated Neumann Series' },
+        { value: 'lsu', label: 'LSU' },
+        { value: 'dnnREM', label: 'DNN-Based REM' }
     ];
 
     const getOptions = function () {
@@ -544,7 +544,7 @@ export function MitigationMethodEntry({element}) {
     />;
 }
 
-export function DNNHiddenLayersEntry({element}) {
+export function DNNHiddenLayersEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -578,7 +578,7 @@ export function DNNHiddenLayersEntry({element}) {
     />;
 }
 
-export function NeighborhoodRangeEntry({element}) {
+export function NeighborhoodRangeEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -618,8 +618,7 @@ export function NeighborhoodRangeEntry({element}) {
     />;
 }
 
-export function ObjectiveFunctionEntry({element}) {
-
+export function ObjectiveFunctionEntry({ element }) {
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
         return str;
@@ -637,21 +636,37 @@ export function ObjectiveFunctionEntry({element}) {
     };
 
     const hidden = function () {
-        let mitigationMethod = element.businessObject.mitigationMethod;
-        return !(mitigationMethod === 'geneticBasedREM');
+        let taskType = element.businessObject.$type;
+        if (taskType === 'quantme:ReadoutErrorMitigationTask') {
+            let mitigationMethod = element.businessObject.mitigationMethod;
+            return !(mitigationMethod === 'geneticBasedREM');
+        } else {
+            return false;
+        }
     };
 
-    return <HiddenTextFieldEntry
+    const selectOptions = [
+        { value: 'expectationValue', label: 'Expectation Value' },
+        { value: 'gibbs', label: 'Gibbs' },
+        { value: 'cvar', label: 'CVar' }
+    ];
+
+    const getOptions = function () {
+        return selectOptions;
+    };
+
+    return <SelectEntry
         id={consts.OBJECTIVE_FUNCTION}
         label={translate('Objective Function')}
         getValue={getValue}
         setValue={setValue}
+        getOptions={getOptions}
         debounce={debounce}
         hidden={hidden}
     />;
 }
 
-export function OptimizerEntry({element}) {
+export function OptimizerEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -685,7 +700,7 @@ export function OptimizerEntry({element}) {
     />;
 }
 
-export function MaxREMCostsEntry({element}) {
+export function MaxREMCostsEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -717,7 +732,7 @@ export function MaxREMCostsEntry({element}) {
     />;
 }
 
-export function MaxCMSizeEntry({element}) {
+export function MaxCMSizeEntry({ element }) {
 
     const modeling = useService('modeling');
     const translate = useService('translate') || function (str) {
@@ -752,5 +767,555 @@ export function MaxCMSizeEntry({element}) {
         debounce={debounce}
         validate={validate}
         hidden={hidden}
+    />;
+}
+
+export function CuttingMethodEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.cuttingMethod;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            cuttingMethod: newValue
+        });
+    };
+
+    return <TextFieldEntry
+        id={consts.CUTTING_METHOD}
+        element={element}
+        label={translate('Cutting Method')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+    />;
+}
+
+export function MaxSubCircuitWidthEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.maxSubCircuitWidth;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            maxSubCircuitWidth: newValue
+        });
+    };
+
+    const hidden = function () {
+        let cuttingMethod = element.businessObject.cuttingMethod;
+        return !(cuttingMethod === 'qiskit');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.MAX_SUBCIRCUIT_WIDTH}
+        label={translate('Maximum Sub-Circuit width')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function MaxNumberOfCutsEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.maxNumberOfCuts;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            maxNumberOfCuts: newValue
+        });
+    };
+
+    const hidden = function () {
+        let cuttingMethod = element.businessObject.cuttingMethod;
+        return !(cuttingMethod === 'qiskit');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.MAX_NUMBER_OF_CUTS}
+        label={translate('Maximum Number of Cuts')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function MaxNumberSubcircuitsEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.maxNumSubCircuits;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            mmaxNumSubCircuits: newValue
+        });
+    };
+
+    const hidden = function () {
+        let cuttingMethod = element.businessObject.cuttingMethod;
+        return !(cuttingMethod === 'qiskit');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.MAXIMUM_NUM_SUBCIRCUITS}
+        label={translate('Maximum Number of Sub-Circuits')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function CostFunctionEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.costFunction;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            costFunction: newValue
+        });
+    };
+
+    return <TextFieldEntry
+        id={consts.COST_FUNCTION}
+        element={element}
+        label={translate('Cost function to use')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+    />;
+}
+
+export function AlphaEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.alpha;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            alpha: newValue
+        });
+    };
+
+    const hidden = function () {
+        let objectiveFunction = element.businessObject.objectiveFunction;
+        return !(objectiveFunction === 'cvar');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.ALPHA}
+        label={translate('Alpha')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function EtaEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.eta;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            eta: newValue
+        });
+    };
+
+    const hidden = function () {
+        let objectiveFunction = element.businessObject.objectiveFunction;
+        return !(objectiveFunction === 'gibba');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.ETA}
+        label={translate('Eta')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function MaxIterationsEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.maxIterations;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            maxIterations: newValue
+        });
+    };
+
+    const hidden = function () {
+        let optimizer = element.businessObject.optimizer;
+        return !(optimizer === 'cobyla');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.MAX_ITERATIONS}
+        label={translate('Max Iterations')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function ToleranceThresholdEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.toleranceThreshold;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            toleranceThreshold: newValue
+        });
+    };
+
+    const hidden = function () {
+        let optimizer = element.businessObject.optimizer;
+        return !(optimizer === 'cobyla');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.TOLERANCE_THRESHOLD}
+        label={translate('Tolereance Threshold')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function LearningRateEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.learningRate;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            learningRate: newValue
+        });
+    };
+
+    const hidden = function () {
+        let optimizer = element.businessObject.optimizer;
+        return !(optimizer === 'cobyla');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.LEARNING_RATE}
+        label={translate('Learning Rate')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function AlgorithmicProblemEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.algorithmicProblem;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            algorithmicProblem: newValue
+        });
+    };
+
+    return <TextFieldEntry
+        id={consts.ALGORITHMIC_PROBLEM}
+        element={element}
+        label={translate('Algorithmic Problem (e.g. MaxCut)')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+    />;
+}
+
+export function QuantumAlgorithmEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.quantumAlgorithm;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            quantumAlgorithm: newValue
+        });
+    };
+
+    return <TextFieldEntry
+        id={consts.QUANTUM_ALGORITHM}
+        element={element}
+        label={translate('Quantum algorithm (e.g. QAOA)')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+    />;
+}
+
+export function WarmStartingMethodEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.warmStartingMethod;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            warmStartingMethod: newValue
+        });
+    };
+
+    const selectOptions = [
+        { value: 'initialStateWarmStartEgger', label: 'Initial State Warm-Start Egger' },
+        { value: 'initialParameterPrecomputation', label: 'Initial Parameter Precomputation' },
+    ];
+
+    const getOptions = function () {
+        return selectOptions;
+    };
+
+    return <SelectEntry
+        id={consts.WARM_STARTING_METHOD}
+        label={translate('Warm-Starting method')}
+        getValue={getValue}
+        setValue={setValue}
+        getOptions={getOptions}
+        debounce={debounce}
+    />;
+}
+
+export function ClassicalAlgorithmEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.classicalAlgorithm;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            classicalAlgorithm: newValue
+        });
+    };
+
+    const hidden = function () {
+        let warmStartingMethod = element.businessObject.warmStartingMethod;
+        return !(warmStartingMethod === 'initialStateWarmStartEgger');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.CLASSICAL_ALGORTHM}
+        label={translate('Classical algorithm used to warm-start')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function RepetitionsEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.repetitions;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            repetitions: newValue
+        });
+    };
+
+    const hidden = function () {
+        let warmStartingMethod = element.businessObject.warmStartingMethod;
+        return !(warmStartingMethod === 'initialStateWarmStartEgger');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.REPETITIONS}
+        label={translate('Repetitions of the classical algorithm for finding good approximation')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function RoundedEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.rounded;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            rounded: newValue
+        });
+    };
+
+    const hidden = function () {
+        let warmStartingMethod = element.businessObject.warmStartingMethod;
+        return !(warmStartingMethod === 'initialStateWarmStartEgger');
+    };
+
+    return <HiddenTextFieldEntry
+        id={consts.ROUNDED}
+        label={translate('Round classical result')}
+        getValue={getValue}
+        setValue={setValue}
+        debounce={debounce}
+        hidden={hidden}
+    />;
+}
+
+export function OptimizationEntry({ element }) {
+
+    const modeling = useService('modeling');
+    const translate = useService('translate') || function (str) {
+        return str;
+    };
+    const debounce = useService('debounceInput');
+
+    const getValue = function () {
+        return element.businessObject.optimizer;
+    };
+
+    const setValue = function (newValue) {
+        return modeling.updateProperties(element, {
+            optimizer: newValue
+        });
+    };
+
+    const selectOptions = [
+        { value: 'cobyla', label: 'Cobyla' },
+        { value: 'spsa', label: 'SPSA' },
+        { value: 'nelderMead', label: 'Nelder Mead' }
+    ];
+
+    const getOptions = function () {
+        return selectOptions;
+    };
+
+    return <SelectEntry
+        id={consts.OPTIMIZER}
+        label={translate('Optimizer')}
+        getValue={getValue}
+        setValue={setValue}
+        getOptions={getOptions}
+        debounce={debounce}
     />;
 }

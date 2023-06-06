@@ -2,3 +2,4 @@ node_modules/*
 public/*
 !public/index.html
 !public/src
+bpmnlint-plugin-custom/node_modules/*

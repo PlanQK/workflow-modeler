@@ -1,22 +1,39 @@
 import * as consts from "../../Constants";
-import {isTextFieldEntryEdited, isSelectEntryEdited} from "@bpmn-io/properties-panel";
-import {AlgorithmEntry} from "./QuantMEPropertyEntries.js";
+import { isTextFieldEntryEdited, isSelectEntryEdited } from "@bpmn-io/properties-panel";
+import { AlgorithmEntry, AlphaEntry } from "./QuantMEPropertyEntries.js";
 import {
     CalibrationMethodEntry,
     DNNHiddenLayersEntry,
     EncodingSchemaEntry, MaxAgeEntry, MaxCMSizeEntry, MaxREMCostsEntry,
     MitigationMethodEntry,
-    NeighborhoodRangeEntry, ObjectiveFunctionEntry, OptimizerEntry,
+    NeighborhoodRangeEntry,  OptimizerEntry,
     OracleCircuitEntry,
     OracleIdEntry,
     OracleURLEntry,
     ProgrammingLanguageEntry,
     ProviderEntry,
     ProvidersEntry,
-    QpuEntry,
     QuantumCircuitEntry, SelectionStrategyEntry,
     ShotsEntry, SimulatorsAllowedEntry,
-    UrlEntry
+    UrlEntry,
+    CuttingMethodEntry,
+    MaxSubCircuitWidthEntry,
+    MaxNumberOfCutsEntry,
+    MaxNumberSubcircuitsEntry,
+    CostFunctionEntry,
+    EtaEntry,
+    ObjectiveFunctionEntry,
+    MaxIterationsEntry,
+    ToleranceThresholdEntry,
+    LearningRateEntry,
+    AlgorithmicProblemEntry,
+    QpuEntry,
+    WarmStartingMethodEntry,
+    QuantumAlgorithmEntry,
+    ClassicalAlgorithmEntry,
+    RoundedEntry,
+    RepetitionsEntry,
+    OptimizationEntry
 } from "./QuantMEPropertyEntries";
 
 /**
@@ -242,6 +259,185 @@ export function HardwareSelectionSubprocessProperties(element) {
             id: consts.SELECTION_STRATEGY,
             element,
             component: SelectionStrategyEntry,
+            isEdited: isTextFieldEntryEdited
+        }
+    ];
+}
+
+export function CircuitCuttingSubprocessEntries(element) {
+    return [
+        {
+            id: consts.CUTTING_METHOD,
+            element,
+            component: CuttingMethodEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.MAX_SUBCIRCUIT_WIDTH,
+            element,
+            component: MaxSubCircuitWidthEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.MAX_NUMBER_OF_CUTS,
+            element,
+            component: MaxNumberOfCutsEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.MAXIMUM_NUM_SUBCIRCUITS,
+            element,
+            component: MaxNumberSubcircuitsEntry,
+            isEdited: isTextFieldEntryEdited
+        }
+    ];
+}
+
+export function ResultEvaluationTaskEntries(element) {
+    // add providers, simulatorsAllowed, and selectionStrategy attributes
+    return [
+        {
+            id: consts.OBJECTIVE_FUNCTION,
+            element,
+            component: ObjectiveFunctionEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.COST_FUNCTION,
+            element,
+            component: CostFunctionEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.ALPHA,
+            element,
+            component: AlphaEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.ETA,
+            element,
+            component: EtaEntry,
+            isEdited: isTextFieldEntryEdited
+        }
+    ];
+}
+
+export function ParameterOptimizationTaskEntries(element) {
+    // add providers, simulatorsAllowed, and selectionStrategy attributes
+    return [
+        {
+            id: consts.OPTIMIZER,
+            element,
+            component: OptimizationEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.MAX_ITERATIONS,
+            element,
+            component: MaxIterationsEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.TOLERANCE_THRESHOLD,
+            element,
+            component: ToleranceThresholdEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.LEARNING_RATE,
+            element,
+            component: LearningRateEntry,
+            isEdited: isTextFieldEntryEdited
+        }
+    ];
+}
+
+export function VariationalQuantumAlgorithmTaskEntries(element) {
+    // add providers, simulatorsAllowed, and selectionStrategy attributes
+    return [
+        {
+            id: consts.ALGORITHMIC_PROBLEM,
+            element,
+            component: AlgorithmicProblemEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.QUANTUM_ALGORITHM,
+            element,
+            component: QuantumAlgorithmEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.QPU,
+            element,
+            component: QpuEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.PROVIDER,
+            element,
+            component: ProviderEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.OPTIMIZER,
+            element,
+            component: OptimizerEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.CUTTING_METHOD,
+            element,
+            component: CuttingMethodEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.WARM_STARTING_METHOD,
+            element,
+            component: WarmStartingMethodEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.MITIGATION_METHOD,
+            element,
+            component: MitigationMethodEntry,
+            isEdited: isTextFieldEntryEdited
+        }
+    ];
+}
+
+export function WarmStartingTaskEntries(element) {
+    // add providers, simulatorsAllowed, and selectionStrategy attributes
+    return [
+        {
+            id: consts.WARM_STARTING_METHOD,
+            element,
+            component: WarmStartingMethodEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.QUANTUM_ALGORITHM,
+            element,
+            component: QuantumAlgorithmEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.CLASSICAL_ALGORTHM,
+            element,
+            component: ClassicalAlgorithmEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.REPETITIONS,
+            element,
+            component: RepetitionsEntry,
+            isEdited: isTextFieldEntryEdited
+        },
+        {
+            id: consts.ROUNDED,
+            element,
+            component: RoundedEntry,
             isEdited: isTextFieldEntryEdited
         }
     ];

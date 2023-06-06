@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -54,7 +54,7 @@ function layoutProcess(modeling, elementRegistry, process) {
             } else {
 
                 // layout elements in subprocess
-                if (flowElements[i].$type === 'bpmn:SubProcess') {
+                if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(flowElements[i].$type)) {
                     console.log('Flow element is subprocess. Layouting contained elements...');
                     const flowElement = elementRegistry.get(flowElements[i].id);
                     let oldBounds = getDi(flowElement).bounds;
