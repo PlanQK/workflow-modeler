@@ -1,11 +1,33 @@
-FROM node:18-alpine
-
+FROM node:18-alpine as builder
 LABEL maintainer = "Martin Beisel <martin.beisel@iaas.uni-stuttgart.de>"
-COPY "components/bpmn-q" /tmp
-WORKDIR /tmp
+COPY "components/bpmn-q" /app
+WORKDIR /app
+RUN npm ci
 
-RUN npm install 
+ARG DATA_CONFIG
+ARG OPENTOSCA_ENDPOINT
+ARG WINERY_ENDPOINT
+ARG NISQ_ANALYZER_ENDPOINT
+ARG TRANSFORMATION_FRAMEWORK_ENDPOINT
+ARG QISKIT_RUNTIME_HANDLER_ENDPOINT
+ARG AWS_RUNTIME_HANDLER_ENDPOINT
+ARG SCRIPT_SPLITTER_ENDPOINT
+ARG SCRIPT_SPLITTER_THRESHOLD
+ARG QRM_REPONAME
+ARG QRM_USERNAME
+ARG QRM_REPOPATH
+ARG PROVENANCE_COLLECTION
+ARG ENABLE_DATA_FLOW_PLUGIN
+ARG ENABLE_PLANQK_PLUGIN
+ARG ENABLE_QHANA_PLUGIN
+ARG ENABLE_QUANTME_PLUGIN
+ARG ENABLE_OPENTOSCA_PLUGIN
+RUN env
+RUN npm run build -- --mode=production
 
-EXPOSE 8080
 
-CMD npm run dev
+FROM nginxinc/nginx-unprivileged:alpine
+USER root
+RUN rm -rf /usr/share/nginx/html
+COPY --from=builder /app/public /usr/share/nginx/html
+USER 101
