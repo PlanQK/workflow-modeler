@@ -3,12 +3,12 @@ import {DmnImplementationProps} from './DmnImplementationProps';
 import {ImplementationTypeProps} from './ImplementationTypeProps';
 
 import {useService} from "bpmn-js-properties-panel";
-import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
 import {
     getServiceTaskLikeBusinessObject,
-} from "../../../../../editor/util/camunda-utils/ImplementationTypeUtils";
-import {getExtensionElementsList} from "../../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+} from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
+import {getExtensionElementsList} from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import {Deployment} from "./Deployment";
+import {getImplementationType} from "../../../quantme/utilities/ImplementationTypeHelperExtension";
 
 /**
  * Properties group for service tasks. Extends the original implementation by adding a new selection option to the

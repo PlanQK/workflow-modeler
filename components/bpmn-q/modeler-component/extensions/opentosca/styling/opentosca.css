@@ -1,0 +1,106 @@
+@import url('~bpmn-font/dist/css/bpmn-embedded.css');
+
+.qwm .quantme-tasks-icon:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-image: url("../resources/QuantME_Logo.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.qwm .config:before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/config-icon.png") no-repeat center center;
+    float: left;
+}
+
+.qwm .app-icon-service-deployment:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/service-deployment-icon.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
+
+.qwm .indent {
+    margin-left: 5px;
+}
+
+.qwm .spaceUnder {
+    padding-bottom: 1em;
+}
+
+.qwm .spaceUnderSmall {
+    padding-bottom: 0.3em;
+}
+
+.qwm .spaceAbove {
+    padding-top: 1em;
+}
+
+.qwm .hidden {
+    display: none;
+}
+
+.qwm .djs-label {
+    font-family: 'Arial', sans-serif;
+}
+
+.qwm .adaptation-tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.qwm .adaptation-tab-button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 14px 16px;
+}
+
+/* Change background color of buttons on hover */
+.qwm .adaptation-tab-button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.qwm .adaptation-tab-button.active {
+    background-color: #ccc;
+}
+
+.qwm .rewrite-failed-button:after {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/info.png") no-repeat center center;
+    float: right;
+    padding-left: 20px;
+}
+
+.qwm .rewrite-failed-button:disabled{
+    background-color: #f44336;
+    color: #000000;
+}
+
+.qwm .rewrite-successful-button:disabled{
+    background-color: #008000;
+    color: #000000;
+}

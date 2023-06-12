@@ -1,0 +1,23 @@
+{
+    "name": "OpenTOSCA4BPMN",
+    "uri": "https://github.com/UST-QuAntiL/OpenTOSCA",
+    "prefix": "opentosca",
+    "xml": {
+        "tagAlias": "lowerCase"
+    },
+    "types": [
+      {
+        "name": "ServiceTask",
+        "extends": [ "bpmn:ServiceTask" ],
+        "properties": [
+          {
+            "name": "deploymentModelUrl",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      }
+    ],
+    "enumerations": [],
+    "associations": []
+}

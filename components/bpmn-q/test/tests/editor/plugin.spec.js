@@ -24,22 +24,23 @@ describe('Test plugins', function () {
                 expect(getActivePlugins().length).to.equal(0);
             });
 
-            it('Should find 3 active plugins', function () {
-                setPluginConfig([{name: 'dataflow'}, {name: 'quantme'}, {name: 'planqk'}]);
+            it('Should find 4 active plugins', function () {
+                setPluginConfig([{name: 'dataflow'}, {name: 'quantme'}, {name: 'opentosca'}, {name: 'planqk'}]);
 
                 const plugins = getActivePlugins();
 
-                expect(plugins.length).to.equal(3);
+                expect(plugins.length).to.equal(4);
                 expect(plugins[0].name).to.equal('dataflow');
                 expect(plugins[1].name).to.equal('quantme');
-                expect(plugins[2].name).to.equal('planqk');
+                expect(plugins[2].name).to.equal('opentosca');
+                expect(plugins[3].name).to.equal('planqk');
             });
         });
 
         describe('Test getter for plugin attributes', function () {
 
             it('Should get correct plugin entries for active plugins', function () {
-                setPluginConfig([{name: 'dataflow'}, {name: 'quantme'}, {name: 'planqk'}]);
+                setPluginConfig([{name: 'dataflow'}, {name: 'quantme'}, {name: 'opentosca'}, {name: 'planqk'}]);
 
                 const modules = getAdditionalModules();
                 const extensions = getModdleExtension();
@@ -48,14 +49,15 @@ describe('Test plugins', function () {
                 const tabs = getConfigTabs();
                 const styles = getStyles();
 
-                expect(modules.length).to.equal(3);
+                expect(modules.length).to.equal(4);
                 expect(extensions['dataflow']).to.not.be.undefined;
                 expect(extensions['quantme']).to.not.be.undefined;
+                expect(extensions['opentosca']).to.not.be.undefined;
                 expect(extensions['planqk']).to.not.be.undefined;
                 expect(transfButtons.length).to.equal(3);
-                expect(buttons.length).to.equal(2);
+                expect(buttons.length).to.equal(3);
                 expect(tabs.length).to.equal(8);
-                expect(styles.length).to.equal(3);
+                expect(styles.length).to.equal(4);
             });
         });
     });

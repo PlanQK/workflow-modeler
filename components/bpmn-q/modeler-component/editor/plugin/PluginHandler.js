@@ -1,5 +1,6 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
+import OpenToscaPlugin from "../../extensions/opentosca/OpenToscaPlugin";
 import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
 import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
 import {getAllConfigs} from "./PluginConfigHandler";
@@ -16,6 +17,7 @@ const PLUGINS = [
     QHAnaPlugin,
     PlanQKPlugin,
     QuantMEPlugin,
+    OpenToscaPlugin
 ];
 
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
@@ -63,6 +65,8 @@ export function checkEnabledStatus(pluginName) {
             return process.env.ENABLE_QHANA_PLUGIN;
         case 'quantme':
             return process.env.ENABLE_QUANTME_PLUGIN;
+        case 'opentosca':
+            return process.env.ENABLE_OPENTOSCA_PLUGIN;
     }
 }
 /**

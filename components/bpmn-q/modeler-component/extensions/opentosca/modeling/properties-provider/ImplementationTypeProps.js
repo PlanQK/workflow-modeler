@@ -4,14 +4,14 @@ import {
 
 import {SelectEntry, isSelectEntryEdited} from '@bpmn-io/properties-panel';
 import {useService} from "bpmn-js-properties-panel";
-import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
-import {createElement} from "../../../../../editor/util/camunda-utils/ElementUtil"
+import {createElement} from "../../../../editor/util/camunda-utils/ElementUtil";
 import {
     getServiceTaskLikeBusinessObject, isDeploymentCapable,
     isDmnCapable,
     isExternalCapable, isServiceTaskLike
-} from "../../../../../editor/util/camunda-utils/ImplementationTypeUtils";
-import {getExtensionElementsList} from "../../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+} from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
+import {getExtensionElementsList} from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import {getImplementationType} from "../../../quantme/utilities/ImplementationTypeHelperExtension";
 
 
 const DELEGATE_PROPS = {
@@ -177,13 +177,13 @@ function ImplementationType(props) {
         if (isDeploymentCapable(businessObject)) {
             updatedProperties = {
                 ...updatedProperties,
-                'quantme:deploymentModelUrl': undefined
+                'opentosca:deploymentModelUrl': undefined
             };
 
             if (value === 'deploymentModel') {
                 updatedProperties = {
                     ...updatedProperties,
-                    'quantme:deploymentModelUrl': ''
+                    'opentosca:deploymentModelUrl': ''
                 };
             }
         }

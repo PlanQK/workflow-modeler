@@ -73,17 +73,6 @@
     float: left;
 }
 
-.qwm .app-icon-service-deployment:before {
-    content: "";
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("../resources/service-deployment-icon.png");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-}
-
 .qwm .indent {
     margin-left: 5px;
 }

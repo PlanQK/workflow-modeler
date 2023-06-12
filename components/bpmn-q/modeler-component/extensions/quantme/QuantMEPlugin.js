@@ -2,7 +2,6 @@ import React from "react";
 
 import QuantMEExtensionModule from "./modeling";
 import BPMNConfigTab from "./configTabs/BPMNConfigTab";
-import OpenToscaTab from "./configTabs/OpenToscaTab";
 import NisqAnalyzerTab from "./configTabs/NisqAnalyzerTab";
 import QrmDataTab from "./configTabs/QrmDataTab";
 import HybridRuntimeTab from "./configTabs/HybridRuntimeTab";
@@ -28,11 +27,6 @@ export default {
             tabId: 'DataConfigurationEndpointTab',
             tabTitle: 'QuantME Data',
             configTab: DataObjectConfigurationsTab,
-        },
-        {
-            tabId: 'OpenTOSCAEndpointTab',
-            tabTitle: 'OpenTOSCA',
-            configTab: OpenToscaTab,
         },
         {
             tabId: 'BPMNTab',

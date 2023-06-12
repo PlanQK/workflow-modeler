@@ -377,17 +377,6 @@
         ]
       },
       {
-        "name": "ServiceTask",
-        "extends": [ "bpmn:ServiceTask" ],
-        "properties": [
-          {
-            "name": "deploymentModelUrl",
-            "isAttr": true,
-            "type": "String"
-          }
-        ]
-      },
-      {
         "name": "Task",
         "extends": [ "bpmn:Task" ],
         "properties": [

@@ -7,7 +7,6 @@ import * as consts from '../Constants';
 export default class DataFlowPaletteProvider {
 
     constructor(bpmnFactory, create, elementFactory, palette, translate) {
-
         this.bpmnFactory = bpmnFactory;
         this.create = create;
         this.elementFactory = elementFactory;

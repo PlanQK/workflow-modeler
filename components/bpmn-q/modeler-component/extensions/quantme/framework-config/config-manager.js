@@ -78,56 +78,6 @@ export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoi
 }
 
 /**
- * Get the endpoint of the configured OpenTOSCA container
- *
- * @return {string} the currently specified endpoint of the OpenTOSCA container
- */
-export function getOpenTOSCAEndpoint() {
-    if (config.opentoscaEndpoint === undefined) {
-        setOpenTOSCAEndpoint(
-            getPluginConfig('quantme').opentoscaEndpoint
-            || defaultConfig.opentoscaEndpoint);
-    }
-    return config.opentoscaEndpoint;
-}
-
-/**
- * Set the endpoint of the OpenTOSCA container
- *
- * @param opentoscaEndpoint the endpoint of the OpenTOSCA container
- */
-export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
-    if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
-        config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, '');
-    }
-}
-
-/**
- * Get the endpoint of the configured Winery
- *
- * @return {string} the currently specified endpoint of the Winery
- */
-export function getWineryEndpoint() {
-    if (config.wineryEndpoint === undefined) {
-        setWineryEndpoint(
-            getPluginConfig('quantme').wineryEndpoint
-            || defaultConfig.wineryEndpoint);
-    }
-    return config.wineryEndpoint;
-}
-
-/**
- * Set the endpoint of the Winery
- *
- * @param wineryEndpoint the endpoint of the Winery
- */
-export function setWineryEndpoint(wineryEndpoint) {
-    if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
-        config.wineryEndpoint = wineryEndpoint.replace(/\/$/, '');
-    }
-}
-
-/**
  * Get the local path to the folder in the repository containing the QRMs
  *
  * @return {string} the specified repository path

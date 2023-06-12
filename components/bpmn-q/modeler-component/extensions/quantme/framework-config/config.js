@@ -12,8 +12,6 @@
 // takes either the environment variables or the default values definded in webpack.config
 const defaultConfig = {
     quantmeDataConfigurationsEndpoint: process.env.DATA_CONFIG,
-    opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
-    wineryEndpoint: process.env.WINERY_ENDPOINT,
     nisqAnalyzerEndpoint: process.env.NISQ_ANALYZER_ENDPOINT,
     transformationFrameworkEndpoint: process.env.TRANSFORMATION_FRAMEWORK_ENDPOINT,
     qiskitRuntimeHandlerEndpoint: process.env.QISKIT_RUNTIME_HANDLER_ENDPOINT,
