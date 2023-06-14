@@ -8,6 +8,7 @@ import {
 } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import {getExtensionElementsList} from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import {Deployment} from "./Deployment";
+import { ArtifactUpload } from './ArtifactUpload';
 import {getImplementationType} from "../../../quantme/utilities/ImplementationTypeHelperExtension";
 
 /**
@@ -93,6 +94,11 @@ export function ImplementationProps(props) {
             component: Deployment,
             isEdited: isTextFieldEntryEdited
         });
+        entries.push({
+            id: 'artifactUpload',
+            component: ArtifactUpload,
+            isEdited: isTextFieldEntryEdited
+        })
     }
 
     return entries;

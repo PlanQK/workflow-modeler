@@ -13,6 +13,20 @@
     color: #636363;
 }
 
+.qwm-properties-btn {
+    box-sizing: border-box;
+    outline: none;
+    background-color: transparent;
+    border: solid;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: Arial, serif;
+    font-weight: bold;
+    margin: 2px;
+    padding: 8px;
+    color: #636363;
+}
+
 .qwm-shortcuts {
     right: 0px;
     position: absolute;
