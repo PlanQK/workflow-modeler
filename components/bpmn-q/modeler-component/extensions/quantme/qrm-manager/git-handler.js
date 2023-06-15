@@ -14,7 +14,7 @@ import { getXml } from '../../../editor/util/IoUtilities';
 
 export const uploadToGitHub = async function (modeler) {
   const xmlContent = await getXml(modeler);
-  const githubRepoOwner = modeler.config.uploadGithubRepositoryUserName;
+  const githubRepoOwner = modeler.config.uploadGithubRepositoryOwner;
   const githubRepo = modeler.config.uploadGithubRepositoryName;
   const githubToken = modeler.config.githubToken;
   const fileName = modeler.config.uploadFileName;
@@ -40,7 +40,7 @@ export const uploadToGitHub = async function (modeler) {
       if (fileData.message !== 'Not Found') {
         updateUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${fileName}.bpmn?sha=${fileData.sha}`;
       }
-      
+
       const commitMessage = 'Update file';
       const branchName = 'master';
 
@@ -67,7 +67,7 @@ export const uploadToGitHub = async function (modeler) {
     .catch(error => {
       console.error('Upload failed:', error);
     });
-}
+};
 
 /**
  * Get the URLs to all folders in the given public repository
