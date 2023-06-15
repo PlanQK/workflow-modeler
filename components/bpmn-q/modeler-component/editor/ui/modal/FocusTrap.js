@@ -9,115 +9,109 @@
  */
 
 const focusableElementsSelector = [
-    'a[href]',
-    'button:not([disabled])',
-    'area[href]',
-    'input:not([disabled])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    'iframe',
-    'object',
-    'embed',
-    '*[tabindex]',
-    '*[contenteditable]'
+  "a[href]",
+  "button:not([disabled])",
+  "area[href]",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "iframe",
+  "object",
+  "embed",
+  "*[tabindex]",
+  "*[contenteditable]",
 ].join();
 
 export default function FocusTrap(getElement) {
+  let tabbing = false;
 
-    let tabbing = false;
+  function restoreFocus(target) {
+    const first = getFirstFocusableElement(),
+      last = getLastFocusableElement();
 
-    function restoreFocus(target) {
-
-        const first = getFirstFocusableElement(),
-            last = getLastFocusableElement();
-
-        // do nothing if there is no focusable element
-        if (!first) {
-            return;
-        }
-
-        if (target !== first) {
-            first.focus();
-        } else {
-            last.focus();
-        }
+    // do nothing if there is no focusable element
+    if (!first) {
+      return;
     }
 
-    function handleBlur(event) {
+    if (target !== first) {
+      first.focus();
+    } else {
+      last.focus();
+    }
+  }
 
-        // do nothing if focus stays inside the modal
-        if (getElement().contains(event.relatedTarget)) {
-            return;
-        }
-
-        if (!tabbing) {
-            return;
-        }
-
-        restoreFocus(event.target);
+  function handleBlur(event) {
+    // do nothing if focus stays inside the modal
+    if (getElement().contains(event.relatedTarget)) {
+      return;
     }
 
-    function handleKeyDown(event) {
-        if (isTab(event)) {
-            tabbing = true;
-        }
+    if (!tabbing) {
+      return;
     }
 
-    function handleKeyUp(event) {
-        tabbing = false;
+    restoreFocus(event.target);
+  }
+
+  function handleKeyDown(event) {
+    if (isTab(event)) {
+      tabbing = true;
+    }
+  }
+
+  function handleKeyUp(event) {
+    tabbing = false;
+  }
+
+  function getFirstFocusableElement() {
+    return getFocusableElements()[0];
+  }
+
+  function getLastFocusableElement() {
+    const elements = getFocusableElements();
+
+    return elements[elements.length - 1];
+  }
+
+  function getFocusableElements() {
+    return getElement().querySelectorAll(focusableElementsSelector);
+  }
+
+  function focus() {
+    // focus the first focusable element if currently
+    // focussed element is outside the modal
+    if (getElement().contains(document.activeElement)) {
+      return;
     }
 
-    function getFirstFocusableElement() {
-        return getFocusableElements()[0];
-    }
+    const focusable = getFirstFocusableElement();
 
-    function getLastFocusableElement() {
-        const elements = getFocusableElements();
+    focusable && focusable.focus();
+  }
 
-        return elements[elements.length - 1];
-    }
+  function mount() {
+    focus();
 
-    function getFocusableElements() {
-        return getElement().querySelectorAll(focusableElementsSelector);
-    }
+    document.addEventListener("blur", handleBlur, true);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+  }
 
-    function focus() {
+  function unmount() {
+    document.removeEventListener("blur", handleBlur, true);
+    document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("keyup", handleKeyUp);
+  }
 
-        // focus the first focusable element if currently
-        // focussed element is outside the modal
-        if (getElement().contains(document.activeElement)) {
-            return;
-        }
-
-        const focusable = getFirstFocusableElement();
-
-        focusable && focusable.focus();
-    }
-
-    function mount() {
-        focus();
-
-        document.addEventListener('blur', handleBlur, true);
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('keyup', handleKeyUp);
-    }
-
-    function unmount() {
-        document.removeEventListener('blur', handleBlur, true);
-        document.removeEventListener('keydown', handleKeyDown);
-        document.removeEventListener('keyup', handleKeyUp);
-    }
-
-    return {
-        mount,
-        unmount
-    };
-
+  return {
+    mount,
+    unmount,
+  };
 }
-
 
 // helpers ///////////////
 
 function isTab(event) {
-    return event.key === 'Tab';
+  return event.key === "Tab";
 }

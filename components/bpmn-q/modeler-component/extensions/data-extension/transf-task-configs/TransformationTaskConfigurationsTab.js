@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {getModeler} from "../../../editor/ModelerHandler";
+import React, { useState } from "react";
+import { getModeler } from "../../../editor/ModelerHandler";
 import * as dataConfigManager from "../config/DataConfigManager";
 
 /**
@@ -9,35 +9,42 @@ import * as dataConfigManager from "../config/DataConfigManager";
  * @constructor
  */
 export default function TransformationTaskConfigurationsTab() {
+  const [configurationsEndpoint, setConfigurationsEndpoint] = useState(
+    dataConfigManager.getConfigurationsEndpoint()
+  );
 
-    const [configurationsEndpoint, setConfigurationsEndpoint] = useState(dataConfigManager.getConfigurationsEndpoint());
+  // save changed endpoint url if the modal is closed
+  TransformationTaskConfigurationsTab.prototype.onClose = () => {
+    dataConfigManager.setConfigurationsEndpoint(configurationsEndpoint);
+  };
 
-    // save changed endpoint url if the modal is closed
-    TransformationTaskConfigurationsTab.prototype.onClose = () => {
-        dataConfigManager.setConfigurationsEndpoint(configurationsEndpoint);
-    };
-
-    return (<>
-        <h3>Data Configurations endpoint configuration:</h3>
-        <table>
-            <tbody>
-            <tr className="spaceUnder">
-                <td align="right">Configurations Endpoint</td>
-                <td align="left">
-                    <input
-                        type="string"
-                        name="configurationsEndpoint"
-                        value={configurationsEndpoint}
-                        onChange={event => setConfigurationsEndpoint(event.target.value)}/>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </>);
+  return (
+    <>
+      <h3>Data Configurations endpoint configuration:</h3>
+      <table>
+        <tbody>
+          <tr className="spaceUnder">
+            <td align="right">Configurations Endpoint</td>
+            <td align="left">
+              <input
+                type="string"
+                name="configurationsEndpoint"
+                value={configurationsEndpoint}
+                onChange={(event) =>
+                  setConfigurationsEndpoint(event.target.value)
+                }
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </>
+  );
 }
 
 TransformationTaskConfigurationsTab.prototype.config = () => {
-    const modeler = getModeler();
+  const modeler = getModeler();
 
-    modeler.config.transformationTaskConfigurationsEndpointChanged = dataConfigManager.getConfigurationsEndpoint();
+  modeler.config.transformationTaskConfigurationsEndpointChanged =
+    dataConfigManager.getConfigurationsEndpoint();
 };

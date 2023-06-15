@@ -1,15 +1,19 @@
 # Quantum Workflow Modeler - HTML Web Component
-This project contains the HTML web component for the Quantum Workflow Modeler and its implementation. 
+
+This project contains the HTML web component for the Quantum Workflow Modeler and its implementation.
 
 ## Node Version
+
 The project was created with npm 8.19.2 and node 18.12.1.
 
 ## Development Setup
 
-To set this project up for development clone the repository and open it in your favorite editor. 
+To set this project up for development clone the repository and open it in your favorite editor.
 
 Execute the following commands under this directory:
+
 ### Install dependencies
+
 ```
 npm install
 ```
@@ -18,30 +22,37 @@ npm install
 
 To execute the Quantum Workflow Modeler, a small test website can be run which only contains the modeler component.
 To start this website, execute
+
 ```
 npm run dev
 ```
+
 This will start a webpack dev server which loads the website specified in the [index.html file](components/bpmn-q/public/index.html)
 
 ### Build the Modeler
 
 To build the modeler execute
+
 ```
 npm run build
 ```
+
 This will build the modeler component with webpack into a single js file in the [public directory](components/bpmn-q/public).
 
 ### Run all Tests
 
 To execute all tests run
+
 ```
-npm test 
+npm test
 ```
-   This will run all mocha test specified in [karma.conf.js](components/bpmn-q/karma.conf.js) with karma.
+
+This will run all mocha test specified in [karma.conf.js](components/bpmn-q/karma.conf.js) with karma.
 
 ### External Endpoints
-   Some components of the modeler component need external endpoints to work properly. Refer to [this guide](doc/devloper-setup/developer-setup.md)
-   for setting up all used endpoints.
+
+Some components of the modeler component need external endpoints to work properly. Refer to [this guide](doc/devloper-setup/developer-setup.md)
+for setting up all used endpoints.
 
 ## Disclaimer of Warranty
 

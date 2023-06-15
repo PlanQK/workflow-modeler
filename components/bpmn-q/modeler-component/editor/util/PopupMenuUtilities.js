@@ -11,29 +11,35 @@
  * @param customStyleClass The style class of the MoreOptionsEntry.
  * @returns {{label: string, className: string, action: Function}} The created MoreOptionsEntry
  */
-export function createMoreOptionsEntryWithReturn(originalElement, title, entryName, popupMenu, options, customStyleClass) {
+export function createMoreOptionsEntryWithReturn(
+  originalElement,
+  title,
+  entryName,
+  popupMenu,
+  options,
+  customStyleClass
+) {
+  const lessOptionsEntry = createLessOptionsEntry(
+    originalElement,
+    "Change Element",
+    "All Entries",
+    popupMenu,
+    undefined
+  );
 
-    const lessOptionsEntry = createLessOptionsEntry(
-        originalElement,
-        'Change Element',
-        'All Entries',
-        popupMenu,
-        undefined,
-    );
+  // entries of the new popup menu
+  let entries = {};
+  entries["replace-by-less-options"] = lessOptionsEntry;
+  entries = Object.assign(entries, options);
 
-    // entries of the new popup menu
-    let entries = {};
-    entries['replace-by-less-options'] = lessOptionsEntry;
-    entries = Object.assign(entries, options);
-
-    return createMoreOptionsEntry(
-        title,
-        title,
-        entryName,
-        popupMenu,
-        entries,
-        customStyleClass,
-    );
+  return createMoreOptionsEntry(
+    title,
+    title,
+    entryName,
+    popupMenu,
+    entries,
+    customStyleClass
+  );
 }
 
 /**
@@ -55,27 +61,37 @@ export function createMoreOptionsEntryWithReturn(originalElement, title, entryNa
  * @returns {{ label: string, className: string, action: function}}: The popup menu entry which shows another popup menu
  * when clicked.
  */
-export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu, entries, customStyleClass) {
+export function createMoreOptionsEntry(
+  optionsType,
+  title,
+  entryName,
+  popupMenu,
+  entries,
+  customStyleClass
+) {
+  // add customStyleClass to the default classname if set
+  const classname = customStyleClass
+    ? "qwm-popup-menu-more-options " + customStyleClass
+    : "popup-menu-more-options";
 
-    // add customStyleClass to the default classname if set
-    const classname = customStyleClass ? 'qwm-popup-menu-more-options ' + customStyleClass : 'popup-menu-more-options';
-
-    // create a popup menu entry which triggers a new popup menu for the optionsType
-    return {
-        label: entryName,
-        className: classname,
-        moreOptions: entries,
-        action: function () {
-
-            popupMenu.openWithEntries({type: optionsType}, "bpmn-replace", entries,
-                {
-                    title: title,
-                    width: 300,
-                    search: true,
-                }
-            );
+  // create a popup menu entry which triggers a new popup menu for the optionsType
+  return {
+    label: entryName,
+    className: classname,
+    moreOptions: entries,
+    action: function () {
+      popupMenu.openWithEntries(
+        { type: optionsType },
+        "bpmn-replace",
+        entries,
+        {
+          title: title,
+          width: 300,
+          search: true,
         }
-    };
+      );
+    },
+  };
 }
 
 /**
@@ -91,22 +107,25 @@ export function createMoreOptionsEntry(optionsType, title, entryName, popupMenu,
  * @param entries The entries of the new popup menu (optional)
  * @returns {{action: action, className: string, label}} The created LessOptionsEntry
  */
-export function createLessOptionsEntry(originalElement, title, entryName, popupMenu, entries) {
-
-    // create a popup menu entry which triggers a new popup menu for the optionsType
-    return {
-        label: entryName,
-        className: 'qwm-popup-menu-less-options',
-        action: function () {
-            popupMenu.openWithEntries(originalElement, "bpmn-replace", entries,
-                {
-                    title: title,
-                    width: 300,
-                    search: true,
-                }
-            );
-        }
-    };
+export function createLessOptionsEntry(
+  originalElement,
+  title,
+  entryName,
+  popupMenu,
+  entries
+) {
+  // create a popup menu entry which triggers a new popup menu for the optionsType
+  return {
+    label: entryName,
+    className: "qwm-popup-menu-less-options",
+    action: function () {
+      popupMenu.openWithEntries(originalElement, "bpmn-replace", entries, {
+        title: title,
+        width: 300,
+        search: true,
+      });
+    },
+  };
 }
 
 /**
@@ -118,17 +137,26 @@ export function createLessOptionsEntry(originalElement, title, entryName, popupM
  * @param replaceElement The replaceElement function of the bpmn-js modeler.
  * @returns {{}} Object containing the created menu entries.
  */
-export function createMenuEntries(element, definitions, translate, replaceElement) {
+export function createMenuEntries(
+  element,
+  definitions,
+  translate,
+  replaceElement
+) {
+  let menuEntries = {};
+  let id;
 
-    let menuEntries = {};
-    let id;
-
-    // create menu entries for each entry in the definitions
-    for (let definition of definitions) {
-        id = definition.id || definition.actionName;
-        menuEntries[id] = createMenuEntry(element, definition, translate, replaceElement);
-    }
-    return menuEntries;
+  // create menu entries for each entry in the definitions
+  for (let definition of definitions) {
+    id = definition.id || definition.actionName;
+    menuEntries[id] = createMenuEntry(
+      element,
+      definition,
+      translate,
+      replaceElement
+    );
+  }
+  return menuEntries;
 }
 
 /**
@@ -141,23 +169,28 @@ export function createMenuEntries(element, definitions, translate, replaceElemen
  * @param action The action which is triggered when the menu entry is selected, if undefined the replaceAction is used.
  * @returns {{action: (function(): *), className, label}} The created menu entry.
  */
-export function createMenuEntry(element, definition, translate, replaceElement, action = undefined) {
+export function createMenuEntry(
+  element,
+  definition,
+  translate,
+  replaceElement,
+  action = undefined
+) {
+  // replace the element by the element type defined in definition.target
+  const replaceAction = function () {
+    console.log(definition.target);
+    return replaceElement(element, definition.target);
+  };
 
-    // replace the element by the element type defined in definition.target
-    const replaceAction = function () {
-        console.log(definition.target);
-        return replaceElement(element, definition.target);
-    };
+  const label = definition.label || "";
 
-    const label = definition.label || '';
+  action = action || replaceAction;
 
-    action = action || replaceAction;
-
-    return {
-        label: translate(label),
-        className: definition.className,
-        action: action
-    };
+  return {
+    label: translate(label),
+    className: definition.className,
+    action: action,
+  };
 }
 
 /**
@@ -167,16 +200,17 @@ export function createMenuEntry(element, definition, translate, replaceElement, 
  * @returns {*|unknown[]} List of menu entries or a single entry if the given entry is not a MoreOptionsEntry
  */
 export function getMoreOptions(entry) {
-    if (entry.moreOptions) {
+  if (entry.moreOptions) {
+    // skip first entry because this is the entry for returning to the original menu
+    return Object.entries(entry.moreOptions)
+      .slice(1)
+      .flatMap(function ([key, value]) {
+        value.id = key;
 
-        // skip first entry because this is the entry for returning to the original menu
-        return Object.entries(entry.moreOptions).slice(1).flatMap(function ([key, value]) {
-            value.id = key;
-
-            // recursively resolve each menu entry
-            return getMoreOptions(value);
-        });
-    } else {
-        return entry;
-    }
+        // recursively resolve each menu entry
+        return getMoreOptions(value);
+      });
+  } else {
+    return entry;
+  }
 }

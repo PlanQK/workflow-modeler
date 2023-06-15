@@ -1,196 +1,198 @@
 .qwm-extensible-btn,
 .qwm-toolbar-btn {
-    box-sizing: border-box;
-    outline: none;
-    background-color: transparent;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    font-family: Arial, serif;
-    font-weight: bold;
-    margin: 2px;
-    padding: 8px;
-    color: #636363;
+  box-sizing: border-box;
+  outline: none;
+  background-color: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: Arial, serif;
+  font-weight: bold;
+  margin: 2px;
+  padding: 8px;
+  color: #636363;
 }
 
 .qwm-shortcuts {
-    right: 0px;
-    position: absolute;
-    box-sizing: border-box;
-    outline: none;
-    background-color: transparent;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    font-family: Arial, serif;
-    font-weight: bold;
-    margin: 2px;
-    padding: 8px;
-    color: #636363;
+  right: 0px;
+  position: absolute;
+  box-sizing: border-box;
+  outline: none;
+  background-color: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: Arial, serif;
+  font-weight: bold;
+  margin: 2px;
+  padding: 8px;
+  color: #636363;
 }
 
 .qwm-shortcuts:hover {
-    background-color: #f7f7f9;
+  background-color: #f7f7f9;
 }
 
 .qwm-shortcuts:active {
-    background-color: #e8e8e8;
+  background-color: #e8e8e8;
 }
 
 .qwm-toolbar-btn:hover {
-    background-color: #f7f7f9;
+  background-color: #f7f7f9;
 }
 
 .qwm-toolbar-btn:active {
-    background-color: #e8e8e8;
+  background-color: #e8e8e8;
 }
 
 .qwm-toolbar-transformation-btn {
-    background-color: transparent;
-    border: none;
-    border-radius: 6px;
+  background-color: transparent;
+  border: none;
+  border-radius: 6px;
 }
 
 .qwm-toolbar-transformation-btn:hover {
-    background-color: #e8e8e8;
+  background-color: #e8e8e8;
 }
 
 .qwm-toolbar-transformation-btn:active {
-    background-color: #e8e8e8;
+  background-color: #e8e8e8;
 }
 
 .qwm-toolbar-splitter {
-    margin: 5px;
-    border: 1px solid #cccccc;
-    max-height: 100%;
+  margin: 5px;
+  border: 1px solid #cccccc;
+  max-height: 100%;
 }
 
 .qwm-toolbar {
-    background: #ffffff;
-    display: flex;
-    /*align-items: flex-start;*/
-    overflow: auto;
+  background: #ffffff;
+  display: flex;
+  /*align-items: flex-start;*/
+  overflow: auto;
 }
 
 .qwm-extensible-btn {
-    background-color: #e8e8e8;
+  background-color: #e8e8e8;
 }
 
 .qwm-extensible-buttons-list {
-    background: #ffffff;
-    position: absolute;
-    display: flex;
-    padding: 4px;
-    border: 2px solid #e8e8e8;
-    border-radius: 6px;
-    z-index: 9999;
-    overflow: auto;
+  background: #ffffff;
+  position: absolute;
+  display: flex;
+  padding: 4px;
+  border: 2px solid #e8e8e8;
+  border-radius: 6px;
+  z-index: 9999;
+  overflow: auto;
 }
 
 .qwm-icon-saving:before {
-    content: "";
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("../icons/save-outline-icon.png");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/save-outline-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
 }
 
 .qwm-icon-open-file:before {
-    content: "";
-    width: 20px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("../icons/open-folder-outline-icon.svg");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
+  content: "";
+  width: 20px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/open-folder-outline-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
 }
 
 .qwm-icon-new-file:before {
-    content: "";
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("../icons/blank-file-outline-icon.png");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/blank-file-outline-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
 }
 
 .qwm-icon-shortcut:before {
-    content: "";
-    width: 15px;
-    height: 20px;
-    margin-top: 3px;
-    background-size: contain;
-    background-image: url("../icons/shortcut.png");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
+  content: "";
+  width: 15px;
+  height: 20px;
+  margin-top: 3px;
+  background-size: contain;
+  background-image: url("../icons/shortcut.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
 }
 
 .qwm-toolbar-transformation-edit-icon {
-    border-color: #cccccc;
-    content: "";
-    width: 17px;
-    height: 17px;
-    background-size: contain;
-    background-image: url("../icons/wrench-icon-outline.svg");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-    margin-left: 3px;
-    margin-top: 2px;
+  border-color: #cccccc;
+  content: "";
+  width: 17px;
+  height: 17px;
+  background-size: contain;
+  background-image: url("../icons/wrench-icon-outline.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+  margin-left: 3px;
+  margin-top: 2px;
 }
 
 .qwm-workflow-deployment-btn:before {
-    content: "";
-    display: block;
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background: url("../icons/workflow-deployment-icon.png") no-repeat center center;
-    float: left;
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../icons/workflow-deployment-icon.png") no-repeat center
+    center;
+  float: left;
 }
 
 .qwm-workflow-transformation-btn:before {
-    content: "";
-    display: block;
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background: url("../icons/worklow-transformation-icon.png") no-repeat center center;
-    float: left;
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../icons/worklow-transformation-icon.png") no-repeat center
+    center;
+  float: left;
 }
 
 .qwm-popup-menu-more-options:after {
-    content: "";
-    background-size: contain;
-    background-repeat: no-repeat;
-    display: inline-block;
-    background-image: url("../icons/line-angle-right-icon.svg");
-    width: 16px;
-    height: 16px;
-    float: left;
-    margin-left: 6px;
-    margin-top: 2px;
+  content: "";
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  background-image: url("../icons/line-angle-right-icon.svg");
+  width: 16px;
+  height: 16px;
+  float: left;
+  margin-left: 6px;
+  margin-top: 2px;
 }
 
 .qwm-popup-menu-less-options:before {
-    content: "";
-    width: 23px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("../icons/line-angle-left-icon.svg");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-    margin-top: 2px;
+  content: "";
+  width: 23px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/line-angle-left-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+  margin-top: 2px;
 }
 
 .qwm-tmp {
-    background: url("../icons/save-outline-icon.png") no-repeat center center;
+  background: url("../icons/save-outline-icon.png") no-repeat center center;
 }

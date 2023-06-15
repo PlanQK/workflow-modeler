@@ -10,44 +10,36 @@
 
 /* global sinon */
 
-import React from 'react';
+import React from "react";
 
-import {
-  mount,
-  shallow
-} from 'enzyme';
+import { mount, shallow } from "enzyme";
 
-import Notification from '../Notification';
-import {describe, it, after, before} from "mocha";
+import Notification from "../Notification";
+import { describe, it, after, before } from "mocha";
 
-const { expect } = require('chai');
+const { expect } = require("chai");
 
-describe('<Notification>', function() {
-
-  it('should render', function() {
+describe("<Notification>", function () {
+  it("should render", function () {
     shallow(<Notification />);
   });
 
-
-  describe('duration', function() {
-
+  describe("duration", function () {
     let clock;
 
-    before(function() {
+    before(function () {
       clock = sinon.useFakeTimers();
     });
 
-    after(function() {
+    after(function () {
       clock.restore();
     });
 
-
-    it('should close automatically when <duration> is set', function() {
-
+    it("should close automatically when <duration> is set", function () {
       // given
       const closeSpy = sinon.spy();
 
-      shallow(<Notification duration={ 1000 } close={ closeSpy } />);
+      shallow(<Notification duration={1000} close={closeSpy} />);
 
       // when
       clock.tick(1000);
@@ -56,13 +48,13 @@ describe('<Notification>', function() {
       expect(closeSpy).to.have.been.calledOnce;
     });
 
-
-    it('should handle <duration> changes', function() {
-
+    it("should handle <duration> changes", function () {
       // given
       const closeSpy = sinon.spy();
 
-      const notification = shallow(<Notification duration={ 1000 } close={ closeSpy } />);
+      const notification = shallow(
+        <Notification duration={1000} close={closeSpy} />
+      );
 
       // when
       notification.setProps({ duration: 2000 });
@@ -79,13 +71,11 @@ describe('<Notification>', function() {
       expect(closeSpy).to.have.been.calledOnce;
     });
 
-
-    it('should NOT close automatically when <duration> is NOT set', function() {
-
+    it("should NOT close automatically when <duration> is NOT set", function () {
       // given
       const closeSpy = sinon.spy();
 
-      shallow(<Notification close={ closeSpy } />);
+      shallow(<Notification close={closeSpy} />);
 
       // when
       clock.tick(10000);
@@ -93,27 +83,22 @@ describe('<Notification>', function() {
       // then
       expect(closeSpy).to.have.not.been.called;
     });
-
   });
 
-
-  describe('error boundary', function() {
-
+  describe("error boundary", function () {
     let wrapper;
 
-    afterEach(function() {
+    afterEach(function () {
       wrapper && wrapper.unmount();
     });
 
-
-    it('should close notification if it throws', function() {
-
+    it("should close notification if it throws", function () {
       // given
-      const Content = () => 'content';
+      const Content = () => "content";
 
       const closeSpy = sinon.spy();
 
-      wrapper = mount(<Notification close={ closeSpy } content={ <Content /> } />);
+      wrapper = mount(<Notification close={closeSpy} content={<Content />} />);
 
       // when
       wrapper.find(Content).simulateError(new Error());
@@ -121,7 +106,5 @@ describe('<Notification>', function() {
       // then
       expect(closeSpy).to.have.been.calledOnce;
     });
-
   });
-
 });

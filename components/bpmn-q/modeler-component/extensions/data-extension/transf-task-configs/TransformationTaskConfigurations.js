@@ -1,5 +1,5 @@
-import ConfigurationsEndpoint from '../../../editor/configurations/ConfigurationEndpoint';
-import * as consts from '../Constants';
+import ConfigurationsEndpoint from "../../../editor/configurations/ConfigurationEndpoint";
+import * as consts from "../Constants";
 import * as dataConfig from "../config/DataConfigManager";
 
 /**
@@ -15,7 +15,7 @@ let endpoint;
  * @return The list of configurations fot transformation tasks
  */
 export function getTransformationTaskConfigurations() {
-    return transformationConfigs().getConfigurations(consts.TRANSFORMATION_TASK);
+  return transformationConfigs().getConfigurations(consts.TRANSFORMATION_TASK);
 }
 
 /**
@@ -25,14 +25,14 @@ export function getTransformationTaskConfigurations() {
  * @returns the configuration with the given id
  */
 export function getTransformationTaskConfiguration(id) {
-    return transformationConfigs().getConfiguration(id);
+  return transformationConfigs().getConfiguration(id);
 }
 
 /**
  * Update the loaded configurations by fetching them form the endpoint again.
  */
 export function updateTransformationTaskConfigurations() {
-    transformationConfigs().fetchConfigurations();
+  transformationConfigs().fetchConfigurations();
 }
 
 /**
@@ -41,8 +41,10 @@ export function updateTransformationTaskConfigurations() {
  * @return {ConfigurationsEndpoint} the instance of the ConfigurationsEndpoint
  */
 export function transformationConfigs() {
-    if (!endpoint) {
-        endpoint = new ConfigurationsEndpoint(dataConfig.getConfigurationsEndpoint());
-    }
-    return endpoint;
+  if (!endpoint) {
+    endpoint = new ConfigurationsEndpoint(
+      dataConfig.getConfigurationsEndpoint()
+    );
+  }
+  return endpoint;
 }

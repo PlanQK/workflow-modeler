@@ -8,35 +8,29 @@
  * except in compliance with the MIT License.
  */
 
-import React from 'react';
+import React from "react";
 
-import { shallow } from 'enzyme';
+import { shallow } from "enzyme";
 
-import Notifications from '..';
-import Notification from '../Notification';
-import {expect} from "chai";
+import Notifications from "..";
+import Notification from "../Notification";
+import { expect } from "chai";
 
-
-describe('<Notifications>', function() {
-
-  it('should render', function() {
-    shallow(<Notifications notifications={ [] } />);
+describe("<Notifications>", function () {
+  it("should render", function () {
+    shallow(<Notifications notifications={[]} />);
   });
 
-
-  it('should display notification', function() {
-
+  it("should display notification", function () {
     // given
     const notification = createNotification();
 
-    const wrapper = shallow(<Notifications notifications={ [ notification ] } />);
+    const wrapper = shallow(<Notifications notifications={[notification]} />);
 
     // then
     expect(wrapper.find(Notification)).to.have.lengthOf(1);
   });
-
 });
-
 
 // helpers //////////
 
@@ -45,8 +39,8 @@ function createNotification({
   content,
   duration = 0,
   id = 0,
-  title = 'title',
-  type = 'info'
+  title = "title",
+  type = "info",
 } = {}) {
   return {
     close,
@@ -54,6 +48,6 @@ function createNotification({
     duration,
     id,
     title,
-    type
+    type,
   };
 }

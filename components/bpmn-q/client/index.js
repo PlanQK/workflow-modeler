@@ -9,14 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { registerBpmnJSPlugin } from 'camunda-modeler-plugin-helpers';
+import { registerBpmnJSPlugin } from "camunda-modeler-plugin-helpers";
 
-import customLinterConfig from '../.bpmnlintrc';
+import customLinterConfig from "../.bpmnlintrc";
 
 registerBpmnJSPlugin({
   __init__: [
-    function(linting) {
+    function (linting) {
       linting.setLinterConfig(customLinterConfig);
-    }
-  ]
+    },
+  ],
 });

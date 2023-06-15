@@ -4,11 +4,9 @@
  * This code and the accompanying materials are made available by camunda under the
  * terms of the MIT License.
  */
-import Ids from 'ids';
+import Ids from "ids";
 
-import {
-    is
-} from 'bpmn-js/lib/util/ModelUtil';
+import { is } from "bpmn-js/lib/util/ModelUtil";
 
 /**
  * Create a new element and set its parent.
@@ -21,48 +19,48 @@ import {
  * @returns {djs.model.Base} element which is created
  */
 export function createElement(elementType, properties, parent, factory) {
-    const element = factory.create(elementType, properties);
+  const element = factory.create(elementType, properties);
 
-    if (parent) {
-        element.$parent = parent;
-    }
+  if (parent) {
+    element.$parent = parent;
+  }
 
-    return element;
+  return element;
 }
 
 /**
  * generate a semantic id with given prefix
  */
 export function nextId(prefix) {
-    const ids = new Ids([32, 32, 1]);
+  const ids = new Ids([32, 32, 1]);
 
-    return ids.nextPrefixed(prefix);
+  return ids.nextPrefixed(prefix);
 }
 
 export function getRoot(businessObject) {
-    let parent = businessObject;
+  let parent = businessObject;
 
-    while (parent.$parent) {
-        parent = parent.$parent;
-    }
+  while (parent.$parent) {
+    parent = parent.$parent;
+  }
 
-    return parent;
+  return parent;
 }
 
 export function filterElementsByType(objectList, type) {
-    const list = objectList || [];
+  const list = objectList || [];
 
-    return list.filter(element => is(element, type));
+  return list.filter((element) => is(element, type));
 }
 
 export function findRootElementsByType(businessObject, referencedType) {
-    const root = getRoot(businessObject);
+  const root = getRoot(businessObject);
 
-    return filterElementsByType(root.get('rootElements'), referencedType);
+  return filterElementsByType(root.get("rootElements"), referencedType);
 }
 
 export function findRootElementById(businessObject, type, id) {
-    const elements = findRootElementsByType(businessObject, type);
+  const elements = findRootElementsByType(businessObject, type);
 
-    return elements.find(element => element.id === id);
+  return elements.find((element) => element.id === id);
 }

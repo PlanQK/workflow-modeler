@@ -1,20 +1,23 @@
-import { is } from 'bpmn-js/lib/util/ModelUtil';
-import { getXml } from '../../../editor/util/IoUtilities';
-import { createTempModelerFromXml } from '../../../editor/ModelerHandler';
-import * as consts from '../Constants';
+import { is } from "bpmn-js/lib/util/ModelUtil";
+import { getXml } from "../../../editor/util/IoUtilities";
+import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
+import * as consts from "../Constants";
 import {
-    getAllElementsForProcess,
-    getAllElementsInProcess,
-    insertShape
-} from '../../../editor/util/TransformationUtilities';
+  getAllElementsForProcess,
+  getAllElementsInProcess,
+  insertShape,
+} from "../../../editor/util/TransformationUtilities";
 import {
-    addCamundaInputMapParameter,
-    addCamundaInputParameter,
-    addCamundaOutputMapParameter,
-    addFormField, findSequenceFlowConnection, getDocumentation,
-    getRootProcess, setDocumentation,
-} from '../../../editor/util/ModellingUtilities';
-import { layout } from '../../quantme/replacement/layouter/Layouter';
+  addCamundaInputMapParameter,
+  addCamundaInputParameter,
+  addCamundaOutputMapParameter,
+  addFormField,
+  findSequenceFlowConnection,
+  getDocumentation,
+  getRootProcess,
+  setDocumentation,
+} from "../../../editor/util/ModellingUtilities";
+import { layout } from "../../quantme/replacement/layouter/Layouter";
 
 /**
  * Replace data flow extensions with camunda bpmn elements so that it complies with the standard
@@ -23,182 +26,260 @@ import { layout } from '../../quantme/replacement/layouter/Layouter';
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
 export async function startDataFlowReplacementProcess(xml) {
-    let modeler = await createTempModelerFromXml(xml);
-    let elementRegistry = modeler.get('elementRegistry');
-    let modeling = modeler.get('modeling');
+  let modeler = await createTempModelerFromXml(xml);
+  let elementRegistry = modeler.get("elementRegistry");
+  let modeling = modeler.get("modeling");
 
-    // get root element of the current diagram
-    const definitions = modeler.getDefinitions();
-    const rootProcess = getRootProcess(definitions);
+  // get root element of the current diagram
+  const definitions = modeler.getDefinitions();
+  const rootProcess = getRootProcess(definitions);
 
-    console.log(rootProcess);
+  console.log(rootProcess);
 
-    if (typeof rootProcess === 'undefined') {
+  if (typeof rootProcess === "undefined") {
+    console.log("Unable to retrieve root process element from definitions!");
+    return {
+      status: "failed",
+      cause: "Unable to retrieve root process element from definitions!",
+    };
+  }
 
-        console.log('Unable to retrieve root process element from definitions!');
-        return { status: 'failed', cause: 'Unable to retrieve root process element from definitions!' };
+  // Mark process as executable
+  rootProcess.isExecutable = true;
+
+  const bpmnFactory = modeler.get("bpmnFactory");
+  const moddle = modeler.get("moddle");
+
+  // for each transformation association
+  const transformationAssociations = elementRegistry.filter(function (element) {
+    console.log(element.id);
+    return is(element, consts.TRANSFORMATION_ASSOCIATION);
+  });
+  console.log(
+    "Found " +
+      transformationAssociations.length +
+      " TransformationAssociations."
+  );
+
+  let targetDataMapObject,
+    sourceDataMapObject,
+    targetActivityElement,
+    targetContent;
+
+  for (let transformationAssociation of transformationAssociations) {
+    // if source === DataMapObject: expressions als inputs im target
+    if (
+      transformationAssociation.source.type === consts.DATA_MAP_OBJECT &&
+      transformationAssociation.target.type !== consts.DATA_MAP_OBJECT
+    ) {
+      targetActivityElement = transformationAssociation.target;
+
+      const expressions = transformationAssociation.businessObject.get(
+        consts.EXPRESSIONS
+      );
+      for (let expression of expressions) {
+        addCamundaInputParameter(
+          targetActivityElement.businessObject,
+          expression.name,
+          expression.value,
+          bpmnFactory
+        );
+      }
     }
 
-    // Mark process as executable
-    rootProcess.isExecutable = true;
+    // if target && source === DataMapObject: add expressions to content of target data map object
+    if (
+      transformationAssociation.source.type === consts.DATA_MAP_OBJECT &&
+      transformationAssociation.target.type === consts.DATA_MAP_OBJECT
+    ) {
+      targetDataMapObject = transformationAssociation.target;
+      sourceDataMapObject = transformationAssociation.source;
+      targetContent =
+        targetDataMapObject.businessObject.get(consts.CONTENT) || [];
 
-    const bpmnFactory = modeler.get('bpmnFactory');
-    const moddle = modeler.get('moddle');
+      const expressions = transformationAssociation.businessObject.get(
+        consts.EXPRESSIONS
+      );
+      for (let expression of expressions) {
+        targetContent.push(
+          bpmnFactory.create(consts.KEY_VALUE_ENTRY, {
+            name: expression.name,
+            value: expression.value,
+          })
+        );
+      }
 
-    // for each transformation association
-    const transformationAssociations = elementRegistry.filter(function (element) {
-        console.log(element.id);
-        return is(element, consts.TRANSFORMATION_ASSOCIATION);
-    });
-    console.log('Found ' + transformationAssociations.length + ' TransformationAssociations.');
+      // mark target data map objects as created through a transformation association
+      sourceDataMapObject.businessObject.createsThroughTransformation = true;
+      targetDataMapObject.businessObject.createdByTransformation = true;
 
-    let targetDataMapObject,
+      // document the transformation in the source and target elements
+      const currentSourceDoc =
+        getDocumentation(sourceDataMapObject.businessObject) || "";
+      setDocumentation(
         sourceDataMapObject,
-        targetActivityElement,
-        targetContent;
+        currentSourceDoc.concat(
+          createTransformationSourceDocs(transformationAssociation)
+        ),
+        bpmnFactory
+      );
 
-    for (let transformationAssociation of transformationAssociations) {
+      const currentTargetDoc =
+        getDocumentation(targetDataMapObject.businessObject) || "";
+      setDocumentation(
+        targetDataMapObject,
+        currentTargetDoc.concat(
+          createTransformationTargetDocs(transformationAssociation)
+        ),
+        bpmnFactory
+      );
+    }
+  }
 
-        // if source === DataMapObject: expressions als inputs im target
-        if ((transformationAssociation.source.type === consts.DATA_MAP_OBJECT) && (transformationAssociation.target.type !== consts.DATA_MAP_OBJECT)) {
-            targetActivityElement = transformationAssociation.target;
+  // for each data association
+  const dataAssociations = elementRegistry.filter(function (element) {
+    return is(element, "bpmn:DataAssociation");
+  });
+  console.log("Found " + dataAssociations.length + " DataAssociations.");
 
-            const expressions = transformationAssociation.businessObject.get(consts.EXPRESSIONS);
-            for (let expression of expressions) {
-                addCamundaInputParameter(targetActivityElement.businessObject, expression.name, expression.value, bpmnFactory);
-            }
-        }
+  let source, target, dataMapObject, activity, businessObject;
 
-        // if target && source === DataMapObject: add expressions to content of target data map object
-        if ((transformationAssociation.source.type === consts.DATA_MAP_OBJECT) && (transformationAssociation.target.type === consts.DATA_MAP_OBJECT)) {
-            targetDataMapObject = transformationAssociation.target;
-            sourceDataMapObject = transformationAssociation.source;
-            targetContent = targetDataMapObject.businessObject.get(consts.CONTENT) || [];
+  for (let dataAssociation of dataAssociations) {
+    source = dataAssociation.source;
+    target = dataAssociation.target;
 
-            const expressions = transformationAssociation.businessObject.get(consts.EXPRESSIONS);
-            for (let expression of expressions) {
-                targetContent.push(bpmnFactory.create(consts.KEY_VALUE_ENTRY, {
-                    name: expression.name,
-                    value: expression.value
-                }));
-            }
+    // if source === DataMapObject: content als input in target activity
+    if (source.type === consts.DATA_MAP_OBJECT) {
+      activity = target;
+      dataMapObject = source;
+      businessObject = dataMapObject.businessObject;
 
-            // mark target data map objects as created through a transformation association
-            sourceDataMapObject.businessObject.createsThroughTransformation = true;
-            targetDataMapObject.businessObject.createdByTransformation = true;
-
-            // document the transformation in the source and target elements
-            const currentSourceDoc = getDocumentation(sourceDataMapObject.businessObject) || '';
-            setDocumentation(sourceDataMapObject, currentSourceDoc.concat(createTransformationSourceDocs(transformationAssociation)), bpmnFactory);
-
-            const currentTargetDoc = getDocumentation(targetDataMapObject.businessObject) || '';
-            setDocumentation(targetDataMapObject, currentTargetDoc.concat(createTransformationTargetDocs(transformationAssociation)), bpmnFactory);
-        }
+      addCamundaInputMapParameter(
+        activity.businessObject,
+        businessObject.name,
+        businessObject.get(consts.CONTENT),
+        bpmnFactory
+      );
     }
 
-    // for each data association
-    const dataAssociations = elementRegistry.filter(function (element) {
-        return is(element, 'bpmn:DataAssociation');
-    });
-    console.log('Found ' + dataAssociations.length + ' DataAssociations.');
+    // if target === DataMapObject: content als output in source
+    if (target.type === consts.DATA_MAP_OBJECT) {
+      dataMapObject = target;
+      activity = source;
+      businessObject = dataMapObject.businessObject;
 
-    let source,
-        target,
-        dataMapObject,
-        activity,
-        businessObject;
+      if (source.type === "bpmn:StartEvent") {
+        const name = businessObject.get("name");
 
-    for (let dataAssociation of dataAssociations) {
-        source = dataAssociation.source;
-        target = dataAssociation.target;
-
-        // if source === DataMapObject: content als input in target activity
-        if (source.type === consts.DATA_MAP_OBJECT) {
-            activity = target;
-            dataMapObject = source;
-            businessObject = dataMapObject.businessObject;
-
-            addCamundaInputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory);
+        for (let c of businessObject.get(consts.CONTENT)) {
+          let formField = {
+            defaultValue: c.value,
+            id: name + "." + c.name,
+            label: name + "." + c.name,
+            type: "string",
+          };
+          addFormField(
+            activity.id,
+            formField,
+            elementRegistry,
+            moddle,
+            modeling
+          );
         }
-
-        // if target === DataMapObject: content als output in source
-        if (target.type === consts.DATA_MAP_OBJECT) {
-            dataMapObject = target;
-            activity = source;
-            businessObject = dataMapObject.businessObject;
-
-            if (source.type === 'bpmn:StartEvent') {
-
-                const name = businessObject.get('name');
-
-                for (let c of businessObject.get(consts.CONTENT)) {
-                    let formField =
-                    {
-                        'defaultValue': c.value,
-                        'id': name + '.' + c.name,
-                        'label': name + '.' + c.name,
-                        'type': 'string'
-                    };
-                    addFormField(activity.id, formField, elementRegistry, moddle, modeling);
-                }
-
-            } else {
-                addCamundaOutputMapParameter(activity.businessObject, businessObject.name, businessObject.get(consts.CONTENT), bpmnFactory);
-            }
-        }
+      } else {
+        addCamundaOutputMapParameter(
+          activity.businessObject,
+          businessObject.name,
+          businessObject.get(consts.CONTENT),
+          bpmnFactory
+        );
+      }
     }
+  }
 
-    const globalProcessVariables = {};
+  const globalProcessVariables = {};
 
-    // transform DataMapObjects to data objects
-    let transformationSuccess = transformDataMapObjects(rootProcess, definitions, globalProcessVariables, modeler);
+  // transform DataMapObjects to data objects
+  let transformationSuccess = transformDataMapObjects(
+    rootProcess,
+    definitions,
+    globalProcessVariables,
+    modeler
+  );
+  if (!transformationSuccess) {
+    const failureMessage =
+      `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` +
+      transformationSuccess.failedData.id +
+      " failed. Aborting process!";
+    console.log(failureMessage);
+    return {
+      status: "failed",
+      cause: failureMessage,
+    };
+  }
+
+  // transform DataStoreMap to data stores
+  transformationSuccess = transformDataStoreMaps(
+    rootProcess,
+    definitions,
+    globalProcessVariables,
+    modeler
+  );
+  if (!transformationSuccess) {
+    const failureMessage =
+      `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` +
+      transformationSuccess.failedData.id +
+      " failed. Aborting process!";
+    console.log(failureMessage);
+    return {
+      status: "failed",
+      cause: failureMessage,
+    };
+  }
+
+  // transform TransformationTasks to service tasks
+  transformationSuccess = transformTransformationTask(
+    rootProcess,
+    definitions,
+    globalProcessVariables,
+    modeler
+  );
+  if (!transformationSuccess) {
+    const failureMessage =
+      `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` +
+      transformationSuccess.failedData.id +
+      " failed. Aborting process!";
+    console.log(failureMessage);
+    return {
+      status: "failed",
+      cause: failureMessage,
+    };
+  }
+
+  if (Object.entries(globalProcessVariables).length > 0) {
+    transformationSuccess = createProcessContextVariablesTask(
+      globalProcessVariables,
+      rootProcess,
+      definitions,
+      modeler
+    );
     if (!transformationSuccess) {
-        const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';
-        console.log(failureMessage);
-        return {
-            status: 'failed',
-            cause: failureMessage,
-        };
+      const failureMessage =
+        `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` +
+        transformationSuccess.failedData.id +
+        " failed. Aborting process!";
+      console.log(failureMessage);
+      return {
+        status: "failed",
+        cause: failureMessage,
+      };
     }
+  }
 
-    // transform DataStoreMap to data stores
-    transformationSuccess = transformDataStoreMaps(rootProcess, definitions, globalProcessVariables, modeler);
-    if (!transformationSuccess) {
-        const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';
-        console.log(failureMessage);
-        return {
-            status: 'failed',
-            cause: failureMessage,
-        };
-    }
+  layout(modeling, elementRegistry, rootProcess);
 
-    // transform TransformationTasks to service tasks
-    transformationSuccess = transformTransformationTask(rootProcess, definitions, globalProcessVariables, modeler);
-    if (!transformationSuccess) {
-        const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';
-        console.log(failureMessage);
-        return {
-            status: 'failed',
-            cause: failureMessage,
-        };
-    }
-
-    if (Object.entries(globalProcessVariables).length > 0) {
-        transformationSuccess = createProcessContextVariablesTask(globalProcessVariables, rootProcess, definitions, modeler);
-        if (!transformationSuccess) {
-            const failureMessage = `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` + transformationSuccess.failedData.id + ' failed. Aborting process!';
-            console.log(failureMessage);
-            return {
-                status: 'failed',
-                cause: failureMessage,
-            };
-        }
-    }
-
-    layout(modeling, elementRegistry, rootProcess);
-
-    const transformedXML = await getXml(modeler);
-    return { status: 'transformed', xml: transformedXML };
+  const transformedXML = await getXml(modeler);
+  return { status: "transformed", xml: transformedXML };
 }
 
 /**
@@ -213,59 +294,79 @@ export async function startDataFlowReplacementProcess(xml) {
  * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
  *                      False else with details in failedData.
  */
-function transformDataMapObjects(rootProcess, definitions, processContextVariables, modeler) {
-    let bpmnFactory = modeler.get('bpmnFactory');
-    let elementRegistry = modeler.get('elementRegistry');
+function transformDataMapObjects(
+  rootProcess,
+  definitions,
+  processContextVariables,
+  modeler
+) {
+  let bpmnFactory = modeler.get("bpmnFactory");
+  let elementRegistry = modeler.get("elementRegistry");
 
-    // get all data map objects of the current process including subprocesses
-    const dataObjectMaps = getAllElementsInProcess(rootProcess, elementRegistry, consts.DATA_MAP_OBJECT);
-    console.log('Found ' + dataObjectMaps.length + ' DataObjectMapReferences to replace.');
+  // get all data map objects of the current process including subprocesses
+  const dataObjectMaps = getAllElementsInProcess(
+    rootProcess,
+    elementRegistry,
+    consts.DATA_MAP_OBJECT
+  );
+  console.log(
+    "Found " + dataObjectMaps.length + " DataObjectMapReferences to replace."
+  );
 
-    // replace all data map objects with data objects and transform the content attribute
-    for (let dataElement of dataObjectMaps) {
+  // replace all data map objects with data objects and transform the content attribute
+  for (let dataElement of dataObjectMaps) {
+    const dataMapObjectBo = dataElement.element;
+    const dataMapObjectElement = elementRegistry.get(dataMapObjectBo.id);
 
-        const dataMapObjectBo = dataElement.element;
-        const dataMapObjectElement = elementRegistry.get(dataMapObjectBo.id);
+    const isUsedBeforeInit = isDataMapObjectUsedBeforeInitialized(
+      dataMapObjectElement,
+      elementRegistry
+    );
 
-        const isUsedBeforeInit = isDataMapObjectUsedBeforeInitialized(dataMapObjectElement, elementRegistry);
+    // check if the content of the data map object has to be published in process content
+    if (
+      dataMapObjectBo.createdByTransformation ||
+      dataMapObjectBo.createsThroughTransformation ||
+      !dataMapObjectElement.incoming ||
+      dataMapObjectElement.incoming.length === 0 ||
+      isUsedBeforeInit
+    ) {
+      // const startEvents = getStartEvents();
+      const processElement = dataElement.parent;
 
-        // check if the content of the data map object has to be published in process content
-        if (dataMapObjectBo.createdByTransformation
-            || dataMapObjectBo.createsThroughTransformation
-            || !dataMapObjectElement.incoming
-            || dataMapObjectElement.incoming.length === 0
-            || isUsedBeforeInit) {
+      if (!processContextVariables[processElement.id]) {
+        processContextVariables[processElement.id] = [];
+      }
 
-            // const startEvents = getStartEvents();
-            const processElement = dataElement.parent;
-
-            if (!processContextVariables[processElement.id]) {
-                processContextVariables[processElement.id] = [];
-            }
-
-            // publish content of the data map object as process variable in process context
-            processContextVariables[processElement.id].push({
-                name: dataMapObjectBo.name,
-                map: dataMapObjectBo.get(consts.CONTENT)
-            });
-        }
-
-        // replace data map object by data object
-        const dataObject = bpmnFactory.create('bpmn:DataObjectReference');
-        const result = insertShape(definitions, dataObject.parent, dataObject, {}, true, modeler, dataMapObjectBo);
-
-        if (result.success) {
-
-            // set documentation property of the data object to document the data map object it replaces
-            const currentDoc = getDocumentation(dataMapObjectBo) || '';
-            const dataDoc = createDataMapObjectDocs(dataMapObjectBo);
-            setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
-        } else {
-            return { success: false, failedData: dataMapObjectBo };
-        }
-
+      // publish content of the data map object as process variable in process context
+      processContextVariables[processElement.id].push({
+        name: dataMapObjectBo.name,
+        map: dataMapObjectBo.get(consts.CONTENT),
+      });
     }
-    return { success: true };
+
+    // replace data map object by data object
+    const dataObject = bpmnFactory.create("bpmn:DataObjectReference");
+    const result = insertShape(
+      definitions,
+      dataObject.parent,
+      dataObject,
+      {},
+      true,
+      modeler,
+      dataMapObjectBo
+    );
+
+    if (result.success) {
+      // set documentation property of the data object to document the data map object it replaces
+      const currentDoc = getDocumentation(dataMapObjectBo) || "";
+      const dataDoc = createDataMapObjectDocs(dataMapObjectBo);
+      setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
+    } else {
+      return { success: false, failedData: dataMapObjectBo };
+    }
+  }
+  return { success: true };
 }
 
 /**
@@ -279,23 +380,40 @@ function transformDataMapObjects(rootProcess, definitions, processContextVariabl
  * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
  *                      False else with details in failedData.
  */
-function transformDataStoreMaps(rootProcess, definitions, processContextVariables, modeler) {
-    let elementRegistry = modeler.get('elementRegistry');
+function transformDataStoreMaps(
+  rootProcess,
+  definitions,
+  processContextVariables,
+  modeler
+) {
+  let elementRegistry = modeler.get("elementRegistry");
 
-    // get all data store maps of the current process including the data store maps in subprocesses
-    const dataStoreElements = getAllElementsInProcess(rootProcess, elementRegistry, consts.DATA_STORE_MAP);
-    console.log('Found ' + dataStoreElements.length + ' DataObjectMapReferences to replace.');
+  // get all data store maps of the current process including the data store maps in subprocesses
+  const dataStoreElements = getAllElementsInProcess(
+    rootProcess,
+    elementRegistry,
+    consts.DATA_STORE_MAP
+  );
+  console.log(
+    "Found " + dataStoreElements.length + " DataObjectMapReferences to replace."
+  );
 
-    // replace all data store maps and transform their details attributes
-    for (let dataElement of dataStoreElements) {
-        const result = transformDataStoreMap(dataElement.element, dataElement.parent, definitions, processContextVariables, modeler);
+  // replace all data store maps and transform their details attributes
+  for (let dataElement of dataStoreElements) {
+    const result = transformDataStoreMap(
+      dataElement.element,
+      dataElement.parent,
+      definitions,
+      processContextVariables,
+      modeler
+    );
 
-        if (!result.success) {
-            // break transformation and propagate failure
-            return { success: false, failedData: dataElement.element };
-        }
+    if (!result.success) {
+      // break transformation and propagate failure
+      return { success: false, failedData: dataElement.element };
     }
-    return { success: true };
+  }
+  return { success: true };
 }
 
 /**
@@ -310,37 +428,48 @@ function transformDataStoreMaps(rootProcess, definitions, processContextVariable
  * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
  *                      False else with details in failedData.
  */
-export function transformDataStoreMap(dataStoreMap, parentElement, definitions, processContextVariables, modeler) {
+export function transformDataStoreMap(
+  dataStoreMap,
+  parentElement,
+  definitions,
+  processContextVariables,
+  modeler
+) {
+  const bpmnFactory = modeler.get("bpmnFactory");
 
-    const bpmnFactory = modeler.get('bpmnFactory');
+  const processElement = parentElement;
+  if (!processContextVariables[processElement.id]) {
+    processContextVariables[processElement.id] = [];
+  }
 
-    const processElement = parentElement;
-    if (!processContextVariables[processElement.id]) {
-        processContextVariables[processElement.id] = [];
-    }
+  // publish details of the data store map as process variable in process context
+  processContextVariables[processElement.id].push({
+    name: dataStoreMap.name,
+    map: dataStoreMap.get(consts.DETAILS),
+  });
 
-    // publish details of the data store map as process variable in process context
-    processContextVariables[processElement.id].push({
-        name: dataStoreMap.name,
-        map: dataStoreMap.get(consts.DETAILS)
-    });
+  // replace data store map by data store
+  const dataStore = bpmnFactory.create("bpmn:DataStoreReference");
+  const result = insertShape(
+    definitions,
+    dataStore.parent,
+    dataStore,
+    {},
+    true,
+    modeler,
+    dataStoreMap
+  );
 
-    // replace data store map by data store
-    const dataStore = bpmnFactory.create('bpmn:DataStoreReference');
-    const result = insertShape(definitions, dataStore.parent, dataStore, {}, true, modeler, dataStoreMap);
-
-    if (result.success) {
-
-        // set documentation property of the data store to document the data store map it replaces
-        const currentDoc = getDocumentation(dataStoreMap) || '';
-        const dataDoc = createDataStoreMapDocs(dataStoreMap);
-        setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
-    } else {
-        return { success: false, failedData: dataStoreMap };
-    }
-    return { success: true };
+  if (result.success) {
+    // set documentation property of the data store to document the data store map it replaces
+    const currentDoc = getDocumentation(dataStoreMap) || "";
+    const dataDoc = createDataStoreMapDocs(dataStoreMap);
+    setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
+  } else {
+    return { success: false, failedData: dataStoreMap };
+  }
+  return { success: true };
 }
-
 
 /**
  * Transform TransformationTasks to service tasks. Add the parameters attribute of the TransformationTask as a camunda map
@@ -353,31 +482,56 @@ export function transformDataStoreMap(dataStoreMap, parentElement, definitions, 
  * @return {{success: boolean}|{success: boolean, failedData: *}} Success flag with True if transformation was successful,
  *                      False else with details in failedData.
  */
-function transformTransformationTask(rootProcess, definitions, processContextVariables, modeler) {
-    let bpmnFactory = modeler.get('bpmnFactory');
-    let elementRegistry = modeler.get('elementRegistry');
+function transformTransformationTask(
+  rootProcess,
+  definitions,
+  processContextVariables,
+  modeler
+) {
+  let bpmnFactory = modeler.get("bpmnFactory");
+  let elementRegistry = modeler.get("elementRegistry");
 
-    // get all transformation task of the root process including the tasks in subprocesses
-    const transformationTasks = getAllElementsInProcess(rootProcess, elementRegistry, consts.TRANSFORMATION_TASK);
-    console.log('Found ' + transformationTasks.length + ' DataObjectMapReferences to replace.');
+  // get all transformation task of the root process including the tasks in subprocesses
+  const transformationTasks = getAllElementsInProcess(
+    rootProcess,
+    elementRegistry,
+    consts.TRANSFORMATION_TASK
+  );
+  console.log(
+    "Found " +
+      transformationTasks.length +
+      " DataObjectMapReferences to replace."
+  );
 
-    // transform each task into a service task and add the parameters attribute to the inputs of the service task.
-    for (let taskElement of transformationTasks) {
+  // transform each task into a service task and add the parameters attribute to the inputs of the service task.
+  for (let taskElement of transformationTasks) {
+    const transformationTask = taskElement.element;
 
-        const transformationTask = taskElement.element;
+    // replace transformation task by new service task
+    const serviceTask = bpmnFactory.create("bpmn:ServiceTask");
+    const result = insertShape(
+      definitions,
+      serviceTask.parent,
+      serviceTask,
+      {},
+      true,
+      modeler,
+      transformationTask
+    );
 
-        // replace transformation task by new service task
-        const serviceTask = bpmnFactory.create('bpmn:ServiceTask');
-        const result = insertShape(definitions, serviceTask.parent, serviceTask, {}, true, modeler, transformationTask);
-
-        if (!result.success) {
-            return { success: false, failedData: transformationTask };
-        }
-
-        // add parameters attribute as camunda map to service task inputs
-        addCamundaInputMapParameter(result.element.businessObject, consts.PARAMETERS, transformationTask.get(consts.PARAMETERS), bpmnFactory);
+    if (!result.success) {
+      return { success: false, failedData: transformationTask };
     }
-    return { success: true };
+
+    // add parameters attribute as camunda map to service task inputs
+    addCamundaInputMapParameter(
+      result.element.businessObject,
+      consts.PARAMETERS,
+      transformationTask.get(consts.PARAMETERS),
+      bpmnFactory
+    );
+  }
+  return { success: true };
 }
 
 /**
@@ -390,36 +544,60 @@ function transformTransformationTask(rootProcess, definitions, processContextVar
  * @param modeler The modeler containing the workflow to transform
  * @return {{success: boolean}} True if the ProcessVariablesTask could be successfully created, False else.
  */
-export function createProcessContextVariablesTask(processContextVariables, rootProcess, definitions, modeler) {
-    const elementRegistry = modeler.get('elementRegistry');
-    const bpmnFactory = modeler.get('bpmnFactory');
-    const modeling = modeler.get('modeling');
+export function createProcessContextVariablesTask(
+  processContextVariables,
+  rootProcess,
+  definitions,
+  modeler
+) {
+  const elementRegistry = modeler.get("elementRegistry");
+  const bpmnFactory = modeler.get("bpmnFactory");
+  const modeling = modeler.get("modeling");
 
-    // add for each process or subprocess a new task to create process variables
-    for (let processEntry of Object.entries(processContextVariables)) {
-        const processId = processEntry[0];
-        const processBo = elementRegistry.get(processId).businessObject;
+  // add for each process or subprocess a new task to create process variables
+  for (let processEntry of Object.entries(processContextVariables)) {
+    const processId = processEntry[0];
+    const processBo = elementRegistry.get(processId).businessObject;
 
-        const startEvents = getAllElementsForProcess(processBo, elementRegistry, 'bpmn:StartEvent');
+    const startEvents = getAllElementsForProcess(
+      processBo,
+      elementRegistry,
+      "bpmn:StartEvent"
+    );
 
-        console.log(`Found ${startEvents && startEvents.length} StartEvents in process ${processId}`);
-        console.log(startEvents);
+    console.log(
+      `Found ${
+        startEvents && startEvents.length
+      } StartEvents in process ${processId}`
+    );
+    console.log(startEvents);
 
-        // add ProcessVariablesTask after each start event
-        for (let event of startEvents) {
-            const startEventBo = event.element;
-            const startEventElement = elementRegistry.get(startEventBo.id);
+    // add ProcessVariablesTask after each start event
+    for (let event of startEvents) {
+      const startEventBo = event.element;
+      const startEventElement = elementRegistry.get(startEventBo.id);
 
-            const newTaskBo = getProcessContextVariablesTask(startEventElement, event.parent, bpmnFactory, modeling, elementRegistry);
+      const newTaskBo = getProcessContextVariablesTask(
+        startEventElement,
+        event.parent,
+        bpmnFactory,
+        modeling,
+        elementRegistry
+      );
 
-            // add camunda map to outputs for each entry
-            for (let processVariable of processContextVariables[processId]) {
-                addCamundaOutputMapParameter(newTaskBo, processVariable.name, processVariable.map, bpmnFactory);
-            }
-        }
+      // add camunda map to outputs for each entry
+      for (let processVariable of processContextVariables[processId]) {
+        addCamundaOutputMapParameter(
+          newTaskBo,
+          processVariable.name,
+          processVariable.map,
+          bpmnFactory
+        );
+      }
     }
+  }
 
-    return { success: true };
+  return { success: true };
 }
 
 /**
@@ -433,52 +611,69 @@ export function createProcessContextVariablesTask(processContextVariables, rootP
  * @param elementRegistry The elementRegistry containing the current elements of the workflow.
  * @return {bpmn:Task} The ProcessContextVariables task for the start event
  */
-function getProcessContextVariablesTask(startEventElement, parent, bpmnFactory, modeling, elementRegistry) {
+function getProcessContextVariablesTask(
+  startEventElement,
+  parent,
+  bpmnFactory,
+  modeling,
+  elementRegistry
+) {
+  const startEventBo = startEventElement.businessObject;
 
-    const startEventBo = startEventElement.businessObject;
+  let processVariablesTaskBo;
 
-    let processVariablesTaskBo;
+  // check if ProcessContextVariables task already exists
+  if (
+    startEventElement.outgoing[0] &&
+    startEventElement.outgoing[0].target &&
+    startEventElement.outgoing[0].target.businessObject.name ===
+      "Create Process Variables [Generated]"
+  ) {
+    processVariablesTaskBo =
+      startEventElement.outgoing[0].target.businessObject;
+  } else {
+    processVariablesTaskBo = bpmnFactory.create("bpmn:Task");
+    processVariablesTaskBo.name = "Create Process Variables [Generated]";
 
-    // check if ProcessContextVariables task already exists
-    if (startEventElement.outgoing[0]
-        && startEventElement.outgoing[0].target
-        && startEventElement.outgoing[0].target.businessObject.name === 'Create Process Variables [Generated]') {
-        processVariablesTaskBo = startEventElement.outgoing[0].target.businessObject;
+    const outgoingFlowElements = startEventBo.outgoing || [];
 
-    } else {
-        processVariablesTaskBo = bpmnFactory.create('bpmn:Task');
-        processVariablesTaskBo.name = 'Create Process Variables [Generated]';
+    // height difference between the position of the center of a start event and a task
+    const Y_OFFSET_TASK = 19;
 
-        const outgoingFlowElements = startEventBo.outgoing || [];
+    // create new task
+    const newTaskElement = modeling.createShape(
+      {
+        type: "bpmn:Task",
+        businessObject: processVariablesTaskBo,
+      },
+      { x: startEventElement.x, y: startEventElement.y + Y_OFFSET_TASK },
+      parent,
+      {}
+    );
 
-        // height difference between the position of the center of a start event and a task
-        const Y_OFFSET_TASK = 19;
+    modeling.updateProperties(newTaskElement, processVariablesTaskBo);
 
-        // create new task
-        const newTaskElement = modeling.createShape({
-            type: 'bpmn:Task',
-            businessObject: processVariablesTaskBo,
-        }, { x: startEventElement.x, y: startEventElement.y + Y_OFFSET_TASK }, parent, {});
+    // move start event to the left to create space for the new task
+    modeling.moveElements([startEventElement], { x: -120, y: 0 });
 
-        modeling.updateProperties(newTaskElement, processVariablesTaskBo);
+    // connect new Task with activities which were connected with the start event
+    modeling.connect(startEventElement, newTaskElement, {
+      type: "bpmn:SequenceFlow",
+    });
+    for (let outgoingConnectionBo of outgoingFlowElements) {
+      const outgoingConnectionElement = elementRegistry.get(
+        outgoingConnectionBo.id
+      );
+      const target = outgoingConnectionElement.target;
 
-        // move start event to the left to create space for the new task
-        modeling.moveElements([startEventElement], { x: -120, y: 0 });
-
-        // connect new Task with activities which were connected with the start event
-        modeling.connect(startEventElement, newTaskElement, { type: 'bpmn:SequenceFlow' });
-        for (let outgoingConnectionBo of outgoingFlowElements) {
-            const outgoingConnectionElement = elementRegistry.get(outgoingConnectionBo.id);
-            const target = outgoingConnectionElement.target;
-
-            modeling.removeConnection(outgoingConnectionElement);
-            modeling.connect(newTaskElement, target, {
-                type: outgoingConnectionElement.type,
-                waypoints: outgoingConnectionElement.waypoints
-            });
-        }
+      modeling.removeConnection(outgoingConnectionElement);
+      modeling.connect(newTaskElement, target, {
+        type: outgoingConnectionElement.type,
+        waypoints: outgoingConnectionElement.waypoints,
+      });
     }
-    return processVariablesTaskBo;
+  }
+  return processVariablesTaskBo;
 }
 
 /**
@@ -488,34 +683,41 @@ function getProcessContextVariablesTask(startEventElement, parent, bpmnFactory, 
  * @param elementRegistry The elementRegistry containing all elements of the current workflow
  * @return {boolean}
  */
-function isDataMapObjectUsedBeforeInitialized(dataMapObjectElement, elementRegistry) {
+function isDataMapObjectUsedBeforeInitialized(
+  dataMapObjectElement,
+  elementRegistry
+) {
+  // return false if the element does not have incoming and outgoing connections
+  if (
+    !dataMapObjectElement.incoming ||
+    dataMapObjectElement.incoming.length === 0 ||
+    !dataMapObjectElement.outgoing ||
+    dataMapObjectElement.outgoing.length === 0
+  ) {
+    return false;
+  }
 
-    // return false if the element does not have incoming and outgoing connections
-    if (!dataMapObjectElement.incoming
-        || dataMapObjectElement.incoming.length === 0
-        || !dataMapObjectElement.outgoing
-        || dataMapObjectElement.outgoing.length === 0) {
-        return false;
+  // if there is one outgoing that connection with a target located before the first outgoing connection, return false
+  for (let incomingConnection of dataMapObjectElement.incoming) {
+    // check if there exists at least one outgoing connection to an element that is located in the sequence flow before
+    // the target of the incomingConnection
+    for (let outgoingConnection of dataMapObjectElement.outgoing) {
+      const found = findSequenceFlowConnection(
+        outgoingConnection.target,
+        incomingConnection.source,
+        new Set(),
+        elementRegistry
+      );
+      if (found) {
+        // there is an outgoing connection with a target before the incoming connection
+        break;
+      }
+
+      // found one incoming connection that is located before all outgoing connections
+      return false;
     }
-
-    // if there is one outgoing that connection with a target located before the first outgoing connection, return false
-    for (let incomingConnection of dataMapObjectElement.incoming) {
-
-        // check if there exists at least one outgoing connection to an element that is located in the sequence flow before
-        // the target of the incomingConnection
-        for (let outgoingConnection of dataMapObjectElement.outgoing) {
-            const found = findSequenceFlowConnection(outgoingConnection.target, incomingConnection.source, new Set(), elementRegistry);
-            if (found) {
-
-                // there is an outgoing connection with a target before the incoming connection
-                break;
-            }
-
-            // found one incoming connection that is located before all outgoing connections
-            return false;
-        }
-    }
-    return true;
+  }
+  return true;
 }
 
 /**
@@ -525,14 +727,14 @@ function isDataMapObjectUsedBeforeInitialized(dataMapObjectElement, elementRegis
  * @return {string} The documentation as a string.
  */
 function createDataMapObjectDocs(dataMapObjectBo) {
-    let doc = '\n \n Replaced DataMapObject, represents the following data: \n';
+  let doc = "\n \n Replaced DataMapObject, represents the following data: \n";
 
-    const contentMap = {};
-    for (let contentEntry of dataMapObjectBo.get(consts.CONTENT)) {
-        contentMap[contentEntry.name] = contentEntry.value;
-    }
+  const contentMap = {};
+  for (let contentEntry of dataMapObjectBo.get(consts.CONTENT)) {
+    contentMap[contentEntry.name] = contentEntry.value;
+  }
 
-    return doc.concat(JSON.stringify(contentMap));
+  return doc.concat(JSON.stringify(contentMap));
 }
 
 /**
@@ -542,14 +744,14 @@ function createDataMapObjectDocs(dataMapObjectBo) {
  * @return {string} The documentation as a string.
  */
 function createDataStoreMapDocs(dataStoreMapBo) {
-    let doc = '\n \n Replaced DataStoreMap, represents the following data: \n';
+  let doc = "\n \n Replaced DataStoreMap, represents the following data: \n";
 
-    const detailsMap = {};
-    for (let detailsEntry of dataStoreMapBo.get(consts.DETAILS)) {
-        detailsMap[detailsEntry.name] = detailsEntry.value;
-    }
+  const detailsMap = {};
+  for (let detailsEntry of dataStoreMapBo.get(consts.DETAILS)) {
+    detailsMap[detailsEntry.name] = detailsEntry.value;
+  }
 
-    return doc.concat(JSON.stringify(detailsMap));
+  return doc.concat(JSON.stringify(detailsMap));
 }
 
 /**
@@ -560,16 +762,20 @@ function createDataStoreMapDocs(dataStoreMapBo) {
  * @return {string} The documentation string
  */
 function createTransformationSourceDocs(transformationAssociationElement) {
-    const target = transformationAssociationElement.target;
+  const target = transformationAssociationElement.target;
 
-    const doc = `\n \n This object was transformed into ${target.name || target.id}. The transformation was defined by the following expressions: \n`;
+  const doc = `\n \n This object was transformed into ${
+    target.name || target.id
+  }. The transformation was defined by the following expressions: \n`;
 
-    const expressionsMap = {};
-    for (let expression of transformationAssociationElement.businessObject.get(consts.EXPRESSIONS)) {
-        expressionsMap[expression.name] = expression.value;
-    }
+  const expressionsMap = {};
+  for (let expression of transformationAssociationElement.businessObject.get(
+    consts.EXPRESSIONS
+  )) {
+    expressionsMap[expression.name] = expression.value;
+  }
 
-    return doc.concat(JSON.stringify(expressionsMap));
+  return doc.concat(JSON.stringify(expressionsMap));
 }
 
 /**
@@ -580,14 +786,18 @@ function createTransformationSourceDocs(transformationAssociationElement) {
  * @return {string} The documentation string
  */
 function createTransformationTargetDocs(transformationAssociationElement) {
-    const source = transformationAssociationElement.source;
+  const source = transformationAssociationElement.source;
 
-    const doc = `\n \n This object was created through a transformation of ${source.name || source.id}. The transformation was defined by the following expressions: \n`;
+  const doc = `\n \n This object was created through a transformation of ${
+    source.name || source.id
+  }. The transformation was defined by the following expressions: \n`;
 
-    const expressionsMap = {};
-    for (let expression of transformationAssociationElement.businessObject.get(consts.EXPRESSIONS)) {
-        expressionsMap[expression.name] = expression.value;
-    }
+  const expressionsMap = {};
+  for (let expression of transformationAssociationElement.businessObject.get(
+    consts.EXPRESSIONS
+  )) {
+    expressionsMap[expression.name] = expression.value;
+  }
 
-    return doc.concat(JSON.stringify(expressionsMap));
+  return doc.concat(JSON.stringify(expressionsMap));
 }

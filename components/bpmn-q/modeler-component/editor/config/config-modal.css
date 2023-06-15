@@ -1,53 +1,53 @@
 .qwm-innerConfig {
-    min-width: 100px;
-    max-width: 100px;
-    min-height: auto;
-    height: auto;
-    border-radius: 3px;
-    font-size: 13px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    text-align: center;
-    padding: 5px;
+  min-width: 100px;
+  max-width: 100px;
+  min-height: auto;
+  height: auto;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  padding: 5px;
 }
 
 .qwm-innerConfig + .qwm-innerConfig {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .qwm-indent {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .qwm-btn-config:before {
-    content: "";
-    display: block;
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background: url("../resources/icons/config-icon.png") no-repeat center center;
-    float: left;
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../resources/icons/config-icon.png") no-repeat center center;
+  float: left;
 }
 
 .qwm-btn-primary:focus {
-    border: solid 1px var(--blue-darken-48);
-    background-color: var(--blue-darken-55);
+  border: solid 1px var(--blue-darken-48);
+  background-color: var(--blue-darken-55);
 }
 
 .qwm-spaceAbove {
-    padding-top: 1em;
-    margin-left: 10px;
+  padding-top: 1em;
+  margin-left: 10px;
 }
 
 .qwm-tabButtonsContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    overflow: auto;
-    min-width: 120px;
-    max-height: 263px;
-    direction: rtl;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: auto;
+  min-width: 120px;
+  max-height: 263px;
+  direction: rtl;
 }

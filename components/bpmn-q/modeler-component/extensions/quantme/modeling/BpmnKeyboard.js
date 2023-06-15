@@ -1,23 +1,21 @@
-import {
-  isFunction
-} from 'min-dash';
+import { isFunction } from "min-dash";
 
-import inherits from 'inherits-browser';
+import inherits from "inherits-browser";
 
 import {
   closest as domClosest,
   event as domEvent,
-  matches as domMatches
-} from 'min-dom';
+  matches as domMatches,
+} from "min-dom";
 
 import {
   hasModifier,
   isCmd,
   isKey,
-  isShift
-} from 'diagram-js/lib/features/keyboard/KeyboardUtil';
+  isShift,
+} from "diagram-js/lib/features/keyboard/KeyboardUtil";
 
-import Keyboard from 'diagram-js/lib/features/keyboard/Keyboard';
+import Keyboard from "diagram-js/lib/features/keyboard/Keyboard";
 
 /**
  * @typedef {import('../../core/EventBus').default} EventBus
@@ -25,10 +23,10 @@ import Keyboard from 'diagram-js/lib/features/keyboard/Keyboard';
  * @typedef {({ keyEvent: KeyboardEvent }) => any} Listener
  */
 
-var KEYDOWN_EVENT = 'keyboard.keydown',
-  KEYUP_EVENT = 'keyboard.keyup';
+var KEYDOWN_EVENT = "keyboard.keydown",
+  KEYUP_EVENT = "keyboard.keyup";
 
-var HANDLE_MODIFIER_ATTRIBUTE = 'input-handle-modified-keys';
+var HANDLE_MODIFIER_ATTRIBUTE = "input-handle-modified-keys";
 
 var DEFAULT_PRIORITY = 1500;
 
@@ -62,10 +60,7 @@ export default function BpmnKeyboard(injector) {
 
 inherits(BpmnKeyboard, Keyboard);
 
-BpmnKeyboard.$inject = [
-  'injector'
-];
-
+BpmnKeyboard.$inject = ["injector"];
 
 Keyboard.prototype._keydownHandler = function (event) {
   this._keyHandler(event, KEYDOWN_EVENT);
@@ -83,7 +78,7 @@ Keyboard.prototype._keyHandler = function (event, type) {
   }
 
   var context = {
-    keyEvent: event
+    keyEvent: event,
   };
 
   eventBusResult = this._eventBus.fire(type || KEYDOWN_EVENT, context);
@@ -111,13 +106,20 @@ Keyboard.prototype._isModifiedKeyIgnored = function (event) {
 };
 
 Keyboard.prototype._getAllowedModifiers = function (element) {
-  var modifierContainer = domClosest(element, '[' + HANDLE_MODIFIER_ATTRIBUTE + ']', true);
+  var modifierContainer = domClosest(
+    element,
+    "[" + HANDLE_MODIFIER_ATTRIBUTE + "]",
+    true
+  );
 
-  if (!modifierContainer || (this._node && !this._node.contains(modifierContainer))) {
+  if (
+    !modifierContainer ||
+    (this._node && !this._node.contains(modifierContainer))
+  ) {
     return [];
   }
 
-  return modifierContainer.getAttribute(HANDLE_MODIFIER_ATTRIBUTE).split(',');
+  return modifierContainer.getAttribute(HANDLE_MODIFIER_ATTRIBUTE).split(",");
 };
 
 /**
@@ -126,17 +128,16 @@ Keyboard.prototype._getAllowedModifiers = function (element) {
  * @param {EventTarget} node
  */
 Keyboard.prototype.bind = function (node) {
-
   // make sure that the keyboard is only bound once to the DOM
   this.unbind();
 
   this._node = node;
 
   // bind key events
-  domEvent.bind(node, 'keydown', this._keydownHandler);
-  domEvent.bind(node, 'keyup', this._keyupHandler);
+  domEvent.bind(node, "keydown", this._keydownHandler);
+  domEvent.bind(node, "keyup", this._keyupHandler);
 
-  this._fire('bind');
+  this._fire("bind");
 };
 
 /**
@@ -150,11 +151,11 @@ Keyboard.prototype.unbind = function () {
   var node = this._node;
 
   if (node) {
-    this._fire('unbind');
+    this._fire("unbind");
 
     // unbind key events
-    domEvent.unbind(node, 'keydown', this._keydownHandler);
-    domEvent.unbind(node, 'keyup', this._keyupHandler);
+    domEvent.unbind(node, "keydown", this._keydownHandler);
+    domEvent.unbind(node, "keyup", this._keyupHandler);
   }
 
   this._node = null;
@@ -164,7 +165,7 @@ Keyboard.prototype.unbind = function () {
  * @param {string} event
  */
 Keyboard.prototype._fire = function (event) {
-  this._eventBus.fire('keyboard.' + event, { node: this._node });
+  this._eventBus.fire("keyboard." + event, { node: this._node });
 };
 
 /**
@@ -201,10 +202,11 @@ Keyboard.prototype.isCmd = isCmd;
 Keyboard.prototype.isShift = isShift;
 Keyboard.prototype.isKey = isKey;
 
-
-
 // helpers ///////
 
 function isInput(target) {
-  return target && (domMatches(target, 'input, textarea') || target.contentEditable === 'true');
+  return (
+    target &&
+    (domMatches(target, "input, textarea") || target.contentEditable === "true")
+  );
 }

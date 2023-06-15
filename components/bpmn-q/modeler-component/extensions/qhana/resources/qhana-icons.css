@@ -1,35 +1,35 @@
 .qwm-qhana-service-task:before {
-    content: "";
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("./icons/diagnostic-pulse-icon.svg");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-    margin: 0 6px 0 0;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("./icons/diagnostic-pulse-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+  margin: 0 6px 0 0;
 }
 
 .qwm-qhana-service-step-task:before {
-    content: "";
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("./icons/qhana-step.svg");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-    margin: 0 6px 0 0;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("./icons/qhana-step.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+  margin: 0 6px 0 0;
 }
 
 .qwm-qhana-update-services:before {
-    content: "";
-    width: 15px;
-    height: 15px;
-    background-size: contain;
-    background-image: url("./icons/update-icon.svg");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-    margin: 0 6px 0 0;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("./icons/update-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+  margin: 0 6px 0 0;
 }

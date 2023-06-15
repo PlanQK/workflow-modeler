@@ -1,5 +1,5 @@
-import {TextFieldEntry} from '@bpmn-io/properties-panel';
-import React from '@bpmn-io/properties-panel/preact/compat';
+import { TextFieldEntry } from "@bpmn-io/properties-panel";
+import React from "@bpmn-io/properties-panel/preact/compat";
 
 /**
  * Entry which can be used in a properties group of the properties panel. Allows the definition of a TextFieldEntry
@@ -16,16 +16,27 @@ import React from '@bpmn-io/properties-panel/preact/compat';
  * @return {JSX.Element}
  * @constructor
  */
-export function HiddenTextFieldEntry({id, element, label, getValue, setValue, debounce, hidden}) {
-
-    return <>
-        {!hidden() && (<TextFieldEntry
-            id={id}
-            element={element}
-            label={label}
-            getValue={getValue}
-            setValue={setValue}
-            debounce={debounce}
-        />)}
-    </>;
+export function HiddenTextFieldEntry({
+  id,
+  element,
+  label,
+  getValue,
+  setValue,
+  debounce,
+  hidden,
+}) {
+  return (
+    <>
+      {!hidden() && (
+        <TextFieldEntry
+          id={id}
+          element={element}
+          label={label}
+          getValue={getValue}
+          setValue={setValue}
+          debounce={debounce}
+        />
+      )}
+    </>
+  );
 }
