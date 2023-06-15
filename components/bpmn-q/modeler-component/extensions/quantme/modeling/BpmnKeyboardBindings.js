@@ -61,7 +61,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // search labels
-  // F
+  // CTRL + F
   addListener('find', function(context) {
     var event = context.keyEvent;
 
@@ -145,7 +145,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // undo operation
-  // U
+  // CTRL + U
   addListener('undoOperation', function(context) {
     var event = context.keyEvent;
 
@@ -157,7 +157,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // redo operation
-  // R
+  // CTRL + R
   addListener('redoOperation', function(context) {
     var event = context.keyEvent;
 
@@ -168,4 +168,13 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
     }
   });
 
+  // download files
+  // CTRL + S
+  addListener('downloadFiles', function(context) {
+    var event = context.keyEvent;
+    if (keyboard.isKey(['s', 'S'], event) && keyboard.isCmd(event)) {
+      editorActions.trigger('downloadFiles');
+      return true;
+    }
+  });
 };

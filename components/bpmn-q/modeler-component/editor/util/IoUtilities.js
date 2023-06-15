@@ -56,7 +56,7 @@ export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.ge
     }
 
     if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG || fileFormat === saveFileFormats.PNG) {
-        saveWorkflowAsSVG(modeler, fileName, fileFormat);
+        await saveWorkflowAsSVG(modeler, fileName, fileFormat);
     }
 
     return;
