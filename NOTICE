@@ -1,16 +1,12 @@
-
 The source code of this project is licensed under the Apache 2.0 license, found in the LICENSE file in this directory.
 
-The code of the QuantME Plugin und certain utility functions of the editor are based on and using code from the
-QuantME Transformation Framework, licensed under the MIT license and available
-under https://github.com/UST-QuAntiL/QuantME-TransformationFramework.
+The code of the QuantME Plugin and certain utility functions of the editor are based on and using code from the QuantME Transformation Framework, licensed under the MIT license and available under https://github.com/UST-QuAntiL/QuantME-TransformationFramework.
 
 The code of the PlanQK Plugin is based on the code of the workflow modeler prototype of the PlanQK Platform.
 
-Certain components of the editor use and extend the code of the bpmn-js repository, the diagram-js repository and the camunda-modeler
-repository of Camunda. The bpmn-js repository is licensed under the bpmn.io license and available in the following GitHub
-repository https://github.com/bpmn-io/bpmn-js. The diagram-js repository is licensed under the MIT license, available under
-the following link: https://github.com/bpmn-io/diagram-js. The camunda-modeler is licensed under the MIT license and available
-under the following link: https://github.com/camunda/camunda-modeler.
+Certain components of the editor use and extend the code of the bpmn-js repository, the diagram-js repository and the camunda-modeler repository of Camunda.
+The bpmn-js repository is licensed under the bpmn.io license and available in the following GitHub repository https://github.com/bpmn-io/bpmn-js.
+The diagram-js repository is licensed under the MIT license, available under the following link: https://github.com/bpmn-io/diagram-js.
+The camunda-modeler is licensed under the MIT license and available under the following link: https://github.com/camunda/camunda-modeler.
 
 Find copies of the third party license in the THIRD_PARTY_LICENSE directory under this directory.
