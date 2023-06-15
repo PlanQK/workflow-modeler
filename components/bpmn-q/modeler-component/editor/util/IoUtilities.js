@@ -30,7 +30,7 @@ const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
  * @returns {Promise<void>}
  */
 export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileName()) {
-    console.log(fileName)
+    console.log(fileName);
     const bpmnFile = await new File([xml], fileName, { type: 'text/xml' });
 
     const link = document.createElement('a');
@@ -266,8 +266,12 @@ function downloadPng(pngDataUrl, fileName, fileFormat) {
 }
 
 async function openFileDialog(content, fileName, fileFormat) {
+    let suggestedName = fileName;
+    if (suggestedName.includes('.bpmn')) {
+        suggestedName = fileName.split('.bpmn')[0]; 
+    } 
     let fileHandle = await window.showSaveFilePicker({
-        startIn: 'downloads', suggestedName: fileName + fileFormat, types: [
+        startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
             {
                 description: "BPMN file",
                 accept: { "text/plain": [".bpmn"] },
@@ -282,8 +286,12 @@ async function openFileDialog(content, fileName, fileFormat) {
 }
 
 async function openFileUrlDialog(content, fileName, fileFormat) {
+    let suggestedName = fileName;
+    if (suggestedName.includes('.bpmn')) {
+        suggestedName = fileName.split('.bpmn')[0]; 
+    } 
     let fileHandle = await window.showSaveFilePicker({
-        startIn: 'downloads', suggestedName: fileName + fileFormat, types: [
+        startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
             {
                 description: "PNG file",
                 accept: { "text/plain": [".png"] },
