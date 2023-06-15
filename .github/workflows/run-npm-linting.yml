@@ -23,6 +23,7 @@ jobs:
 
       - name: Install Node.js dependencies
         run: npm ci
+        working-directory: ./components/bpmn-q
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
