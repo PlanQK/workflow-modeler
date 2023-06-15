@@ -199,7 +199,7 @@ export function createConfigurationForServiceData(serviceData) {
       name: "qoutput.output_" + index,
       label: "qoutput.output_" + index,
       type: "String",
-      value: `\$\{output\}`, //JSON.stringify(value),
+      value: `$\{output}`, //JSON.stringify(value),
       hide: true,
       bindTo: {
         name: "outputParameters",

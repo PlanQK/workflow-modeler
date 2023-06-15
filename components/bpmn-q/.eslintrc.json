@@ -17,7 +17,6 @@
     "semi": [2, "always"],
     "react/prop-types": "off",
     "no-prototype-builtins": "off",
-    "react/jsx-key": "off",
-    "no-useless-escape": "off"
+    "react/jsx-key": "off"
   }
 }
