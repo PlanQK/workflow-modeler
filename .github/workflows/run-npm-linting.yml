@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Node.js dependencies
+      - name: Install Node.js dependencies and run linters
         run: |
           npm ci
           npm run lint
