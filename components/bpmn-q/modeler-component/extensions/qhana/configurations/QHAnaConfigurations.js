@@ -195,7 +195,6 @@ export function createConfigurationForServiceData(serviceData) {
 
   // add outputs
   serviceData.entryPoint.dataOutput.forEach(function (output, index) {
-
     configuration.attributes.push({
       name: "qoutput.output_" + index,
       label: "qoutput.output_" + index,

@@ -38,7 +38,6 @@ export default function QuantMEPropertiesProvider(
   injector,
   translate
 ) {
-
   /**
    * Return the groups provided for the given element.
    *

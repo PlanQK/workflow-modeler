@@ -7,9 +7,7 @@ import {
   updateTransformationTaskConfigurations,
 } from "../../../modeler-component/extensions/data-extension/transf-task-configs/TransformationTaskConfigurations";
 import sinon from "sinon";
-import {
-  THREE_TRANSF_TASK_CONFIGS
-} from "./TransformationTaskConfigurations";
+import { THREE_TRANSF_TASK_CONFIGS } from "./TransformationTaskConfigurations";
 
 describe("Test DataFlow Replace Menu", function () {
   let modeler;

@@ -29,7 +29,7 @@ export function ImplementationProps(props) {
   const implementationType = getImplementationType(element);
 
   // (1) display implementation type select
-  const entries = [...ImplementationTypeProps({ })];
+  const entries = [...ImplementationTypeProps({})];
 
   // (2) display implementation properties based on type
   if (implementationType === "class") {
