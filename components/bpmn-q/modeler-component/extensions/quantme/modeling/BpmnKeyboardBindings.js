@@ -183,7 +183,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
 
     // put into clipboard
     getModeler().get('clipboard').set(parsedCopy);
-  })
+  });
 
   /**
  * A factory function that returns a reviver to be

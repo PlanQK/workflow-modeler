@@ -20,7 +20,7 @@ import {
 import Notification from '../Notification';
 import {describe, it, after, before} from "mocha";
 
-const { expect } = require('chai')
+const { expect } = require('chai');
 
 describe('<Notification>', function() {
 

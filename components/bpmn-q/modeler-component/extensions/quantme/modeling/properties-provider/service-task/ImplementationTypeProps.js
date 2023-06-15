@@ -5,7 +5,7 @@ import {
 import {SelectEntry, isSelectEntryEdited} from '@bpmn-io/properties-panel';
 import {useService} from "bpmn-js-properties-panel";
 import {getImplementationType} from "../../../utilities/ImplementationTypeHelperExtension";
-import {createElement} from "../../../../../editor/util/camunda-utils/ElementUtil"
+import {createElement} from "../../../../../editor/util/camunda-utils/ElementUtil";
 import {
     getServiceTaskLikeBusinessObject, isDeploymentCapable,
     isDmnCapable,

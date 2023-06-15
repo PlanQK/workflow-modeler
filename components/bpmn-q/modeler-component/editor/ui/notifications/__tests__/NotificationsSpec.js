@@ -14,6 +14,7 @@ import { shallow } from 'enzyme';
 
 import Notifications from '..';
 import Notification from '../Notification';
+import {expect} from "chai";
 
 
 describe('<Notifications>', function() {

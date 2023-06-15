@@ -113,7 +113,7 @@ export default class AdaptationPlugin extends PureComponent {
                     content: 'Error during workflow analysis. Aborting rewriting modal!',
                     duration: 20000
                 });
-                console.log('Error during workflow analysis. Aborting rewriting modal!')
+                console.log('Error during workflow analysis. Aborting rewriting modal!');
 
                 this.setState({rewriteOpen: false});
                 return;

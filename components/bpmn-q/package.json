@@ -13,7 +13,9 @@
     "test:watch": "npm test -- --auto-watch --no-single-run",
     "build": "webpack",
     "dev": "webpack-dev-server",
-    "dev-open": "webpack-dev-server --open"
+    "dev-open": "webpack-dev-server --open",
+    "lint": "eslint --ext .js .",
+    "lint-fix": "eslint --fix --ext .js ."
   },
   "author": "",
   "license": "Apache-2.0",
