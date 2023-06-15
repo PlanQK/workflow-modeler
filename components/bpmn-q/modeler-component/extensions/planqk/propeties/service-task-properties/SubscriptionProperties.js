@@ -93,7 +93,7 @@ function SubscribedServices(props) {
  * TextAreaEntry for the subscription ID property of the PlanQK service task.
  */
 function SubscriptionId(props) {
-  const { element, id } = props;
+  const { element } = props;
 
   const translate = useService("translate");
   const debounce = useService("debounceInput");

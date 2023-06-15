@@ -5,7 +5,6 @@ import {
   getDefinitionsFromXml,
   getRootProcess,
   getSingleFlowElement,
-  addCamundaInputParameter,
   setOutputParameter,
   getCamundaInputOutput,
 } from "../../../editor/util/ModellingUtilities";

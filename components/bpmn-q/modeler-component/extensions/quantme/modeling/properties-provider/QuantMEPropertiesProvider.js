@@ -36,16 +36,8 @@ const LOW_PRIORITY = 500;
 export default function QuantMEPropertiesProvider(
   propertiesPanel,
   injector,
-  translate,
-  eventBus,
-  bpmnFactory
+  translate
 ) {
-  // subscribe to config updates to retrieve the currently defined Winery endpoint
-  const self = this;
-  let wineryEndpoint;
-  eventBus.on("config.updated", function (config) {
-    wineryEndpoint = config.wineryEndpoint;
-  });
 
   /**
    * Return the groups provided for the given element.
@@ -105,8 +97,6 @@ QuantMEPropertiesProvider.$inject = [
   "propertiesPanel",
   "injector",
   "translate",
-  "eventBus",
-  "bpmnFactory",
 ];
 
 /**

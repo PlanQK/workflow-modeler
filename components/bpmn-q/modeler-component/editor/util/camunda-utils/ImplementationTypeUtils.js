@@ -8,7 +8,6 @@ import { getBusinessObject, is } from "bpmn-js/lib/util/ModelUtil";
 
 import { isAny } from "bpmn-js/lib/features/modeling/util/ModelingUtil";
 import { getMessageEventDefinition } from "./EventDefinitionUtil";
-import { getExtensionElementsList } from "./ExtensionElementsUtil";
 
 /**
  * Check whether an element is camunda:ServiceTaskLike
@@ -46,11 +45,9 @@ export function isExternalCapable(element) {
 /**
  * Returns 'true'
  *
- * @param {djs.model.Base} element
- *
  * @return {boolean} true
  */
-export function isDeploymentCapable(element) {
+export function isDeploymentCapable() {
   return true;
 }
 

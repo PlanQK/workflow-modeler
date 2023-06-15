@@ -1,7 +1,6 @@
 import { SelectEntry } from "@bpmn-io/properties-panel";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import { useService } from "bpmn-js-properties-panel";
-import { getServiceTaskLikeBusinessObject } from "../../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import { getImplementationType } from "../../../utilities/ImplementationTypeHelperExtension";
 
 /**
@@ -28,7 +27,7 @@ export function Deployment({ element, translate, wineryEndpoint }) {
   const modeling = useService("modeling");
   const debounce = useService("debounceInput");
 
-  const selectOptions = function (element) {
+  const selectOptions = function () {
     const arrValues = [];
     jquery.ajax({
       url: wineryEndpoint + "/servicetemplates/?grouped",

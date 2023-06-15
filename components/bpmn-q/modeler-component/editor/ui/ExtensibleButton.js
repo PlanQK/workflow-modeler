@@ -1,4 +1,4 @@
-import React, { Component, createRef, useState } from "react";
+import React, { Component, createRef } from "react";
 
 /**
  * React component defining a button which displays a list of buttons, the sub buttons under the button if the user clicks on it. Can be used

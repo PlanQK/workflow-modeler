@@ -25,36 +25,6 @@ export function drawPath(parentGfx, d, attrs) {
 }
 
 /**
- * Draw a SVG rectangle with the given width, height, border radius and color
- *
- * Copied from https://github.com/bpmn-io/bpmn-js/blob/master/lib/draw/BpmnRenderer.js
- *
- * @param parentNode The parent element the svg rectangle is appended to.
- * @param width The given width
- * @param height The given height
- * @param borderRadius The given border radius
- * @param color The given color
- * @returns {SVGRectElement}
- */
-function drawRect(parentNode, width, height, borderRadius, color) {
-  const rect = svgCreate("rect");
-
-  svgAttr(rect, {
-    width: width,
-    height: height,
-    rx: borderRadius,
-    ry: borderRadius,
-    stroke: color,
-    strokeWidth: 2,
-    fill: color,
-  });
-
-  svgAppend(parentNode, rect);
-
-  return rect;
-}
-
-/**
  * Draw the given SVG in the parent element of type BPMN task
  *
  * @param parentGfx The parent element the SVG is drawn in

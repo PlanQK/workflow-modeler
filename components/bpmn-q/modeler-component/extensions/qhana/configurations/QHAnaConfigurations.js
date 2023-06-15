@@ -195,21 +195,6 @@ export function createConfigurationForServiceData(serviceData) {
 
   // add outputs
   serviceData.entryPoint.dataOutput.forEach(function (output, index) {
-    const value = [
-      {
-        value: "",
-        dataType: output.dataType,
-        required: '"' + output.required + '"',
-        contentType: JSON.stringify(output.contentType),
-      },
-    ];
-
-    // [
-    //   {name: 'value', value: ''},
-    //   {name: 'dataType', value: output.dataType},
-    //   {name: 'required', value: '"' + output.required + '"'},
-    //   {name: 'contentType', value: JSON.stringify(output.contentType)},
-    // ];
 
     configuration.attributes.push({
       name: "qoutput.output_" + index,

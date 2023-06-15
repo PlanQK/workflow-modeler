@@ -68,8 +68,8 @@ export default function EditorTab() {
                 value={workflowHandler}
                 onChange={(event) => setWorkflowHandler(event.target.value)}
               >
-                {Object.entries(transformedWorkflowHandlers).map(
-                  ([key, value]) => (
+                {Object.values(transformedWorkflowHandlers).map(
+                  (value) => (
                     <option key={value} value={value}>
                       {value}
                     </option>

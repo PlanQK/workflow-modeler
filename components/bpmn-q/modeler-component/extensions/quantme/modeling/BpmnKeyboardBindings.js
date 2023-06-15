@@ -172,7 +172,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
     }
   });
 
-  addListener("copy", function (context) {
+  addListener("copy", function () {
     // retrieve from local storage
     const serializedCopy = localStorage.getItem("bpmnClipboard");
 

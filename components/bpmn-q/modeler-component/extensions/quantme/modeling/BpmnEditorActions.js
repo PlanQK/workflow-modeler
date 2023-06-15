@@ -144,7 +144,7 @@ BpmnEditorActions.prototype._registerDefaultActions = function (injector) {
   }
 
   if (canvas && modeling) {
-    this._registerAction("deleteElement", function (event) {
+    this._registerAction("deleteElement", function () {
       let context = {};
       let shapes = selection.get();
       context.length = shapes.length;
@@ -152,12 +152,12 @@ BpmnEditorActions.prototype._registerDefaultActions = function (injector) {
       eventBus.fire("removeSelection", context);
     });
 
-    this._registerAction("undoOperation", function (event) {
+    this._registerAction("undoOperation", function () {
       let context = {};
       eventBus.fire("undo", context);
     });
 
-    this._registerAction("redoOperation", function (event) {
+    this._registerAction("redoOperation", function () {
       let context = {};
       eventBus.fire("redo", context);
     });

@@ -125,7 +125,7 @@ function Body(props) {
 }
 
 function Footer(props) {
-  const { children, className, ...rest } = props;
+  const { className, ...rest } = props;
 
   return (
     <div className={classNames("qwm-modal-footer", className)} {...rest}>

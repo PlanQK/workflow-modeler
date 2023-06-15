@@ -27,9 +27,7 @@ export async function replaceCuttingSubprocess(
   parent,
   qrm,
   modeler,
-  definitions,
-  transformationFrameworkEndpoint,
-  camundaEndpoint
+  definitions
 ) {
   console.log(subprocess, parent, qrm);
   let bpmnReplace = modeler.get("bpmnReplace");

@@ -42,7 +42,7 @@ const IMPLEMENTATION_TYPE_NONE_LABEL = "<none>",
   IMPLEMENTATION_TYPE_CONNECTOR_LABEL = "Connector",
   IMPLEMENTATION_TYPE_DEPLOYMENT_LABEL = "Deployment Model";
 
-export function ImplementationTypeProps(props) {
+export function ImplementationTypeProps() {
   return [
     {
       id: "implementationType",

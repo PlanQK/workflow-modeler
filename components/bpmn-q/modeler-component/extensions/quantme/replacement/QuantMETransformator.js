@@ -107,9 +107,7 @@ export async function startQuantmeReplacementProcess(
         replacementConstruct.parent,
         replacementConstruct.qrm.replacement,
         modeler,
-        definitions,
-        endpointConfig.transformationFrameworkEndpoint,
-        endpointConfig.camundaEndpoint
+        definitions
       );
       console.log("Successfully replaced Cutting Subprocess");
       if (!replacementSuccess) {

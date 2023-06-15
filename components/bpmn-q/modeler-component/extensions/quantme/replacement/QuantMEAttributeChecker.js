@@ -36,44 +36,44 @@ export function requiredAttributesAvailable(element) {
     case consts.ORACLE_EXPANSION_TASK:
       return checkOracleExpansionTask(bo);
     case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
-      return checkQuantumCircuitExecutionTask(bo);
+      return checkQuantumCircuitExecutionTask();
     case consts.READOUT_ERROR_MITIGATION_TASK:
       return checkReadoutErrorMitigationTask(bo);
     case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
       return checkHardwareSelectionSubprocess(bo);
     case consts.PARAMETER_OPTIMIZATION_TASK:
-      return checkParameterOptimizationTask(bo);
+      return checkParameterOptimizationTask();
     case consts.WARM_STARTING_TASK:
-      return checkWarmStartingTask(bo);
+      return checkWarmStartingTask();
     case consts.RESULT_EVALUATION_TASK:
-      return checkResultEvaluationTask(bo);
+      return checkResultEvaluationTask();
     case consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK:
-      return checkVariationalQuantumAlgorithmTask(bo);
+      return checkVariationalQuantumAlgorithmTask();
     case consts.CIRCUIT_CUTTING_SUBPROCESS:
-      return checkCircuitCuttingSubprocess(bo);
+      return checkCircuitCuttingSubprocess();
     default:
       console.log("Unsupported QuantME element of type: ", element.$type);
       return false;
   }
 }
 
-function checkParameterOptimizationTask(bo) {
+function checkParameterOptimizationTask() {
   return true;
 }
 
-function checkWarmStartingTask(bo) {
+function checkWarmStartingTask() {
   return true;
 }
 
-function checkResultEvaluationTask(bo) {
+function checkResultEvaluationTask() {
   return true;
 }
 
-function checkVariationalQuantumAlgorithmTask(bo) {
+function checkVariationalQuantumAlgorithmTask() {
   return true;
 }
 
-function checkCircuitCuttingSubprocess(bo) {
+function checkCircuitCuttingSubprocess() {
   return true;
 }
 
@@ -112,7 +112,7 @@ function checkOracleExpansionTask(bo) {
   );
 }
 
-function checkQuantumCircuitExecutionTask(bo) {
+function checkQuantumCircuitExecutionTask() {
   // all attributes are optional
   return true;
 }

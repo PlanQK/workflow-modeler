@@ -1,4 +1,3 @@
-import React from "@bpmn-io/properties-panel/preact/compat";
 import { TextFieldEntry } from "@bpmn-io/properties-panel";
 
 import { useService } from "bpmn-js-properties-panel";

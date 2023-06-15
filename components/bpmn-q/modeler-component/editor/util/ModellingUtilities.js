@@ -1,7 +1,6 @@
 import { createTempModelerFromXml } from "../ModelerHandler";
 import { getInputOutput } from "./camunda-utils/InputOutputUtil";
 import { getExtension } from "./camunda-utils/ExtensionElementsUtil";
-import { useService } from "bpmn-js-properties-panel";
 import { is } from "bpmn-js/lib/util/ModelUtil";
 
 /**

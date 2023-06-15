@@ -60,7 +60,7 @@ export default function FocusTrap(getElement) {
     }
   }
 
-  function handleKeyUp(event) {
+  function handleKeyUp() {
     tabbing = false;
   }
 

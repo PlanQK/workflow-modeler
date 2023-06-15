@@ -10,7 +10,6 @@ import React, { useState } from "react";
  */
 export default function TransformationButton(props) {
   const {
-    transformWorkflow, // transformation function of this component
     title,
     name,
     className,
