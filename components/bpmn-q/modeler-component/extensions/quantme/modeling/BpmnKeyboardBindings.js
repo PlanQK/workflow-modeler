@@ -1,7 +1,7 @@
-import inherits from "inherits-browser";
+import inherits from 'inherits-browser';
 
-import KeyboardBindings from "diagram-js/lib/features/keyboard/KeyboardBindings";
-import { getModeler } from "../../../editor/ModelerHandler";
+import KeyboardBindings from 'diagram-js/lib/features/keyboard/KeyboardBindings';
+import { getModeler } from '../../../editor/ModelerHandler';
 
 /**
  * @typedef {import('didi').Injector} Injector
@@ -20,7 +20,10 @@ export default function BpmnKeyboardBindings(injector) {
 
 inherits(BpmnKeyboardBindings, KeyboardBindings);
 
-BpmnKeyboardBindings.$inject = ["injector"];
+BpmnKeyboardBindings.$inject = [
+  'injector'
+];
+
 
 /**
  * Register available keyboard bindings.
@@ -28,16 +31,9 @@ BpmnKeyboardBindings.$inject = ["injector"];
  * @param {Keyboard} keyboard
  * @param {BpmnEditorActions} editorActions
  */
-BpmnKeyboardBindings.prototype.registerBindings = function (
-  keyboard,
-  editorActions
-) {
+BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) {
   // inherit default bindings
-  KeyboardBindings.prototype.registerBindings.call(
-    this,
-    keyboard,
-    editorActions
-  );
+  KeyboardBindings.prototype.registerBindings.call(this, keyboard, editorActions);
 
   /**
    * Add keyboard binding if respective editor action
@@ -47,6 +43,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
    * @param {Function} fn that implements the key binding
    */
   function addListener(action, fn) {
+
     if (editorActions.isRegistered(action)) {
       keyboard.addListener(fn);
     }
@@ -54,23 +51,23 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
 
   // select all elements
   // Shift + A
-  addListener("selectElements", function (context) {
+  addListener('selectElements', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(["a", "A"], event)) {
-      editorActions.trigger("selectElements");
+    if (keyboard.isKey([ 'a', 'A' ], event)) {
+      editorActions.trigger('selectElements');
 
       return true;
     }
   });
 
   // search labels
-  // F
-  addListener("find", function (context) {
+  // CTRL + F
+  addListener('find', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(["f", "F"], event) && keyboard.isCmd(event)) {
-      editorActions.trigger("find");
+    if (keyboard.isKey([ 'f', 'F' ], event) && keyboard.isCmd(event)) {
+      editorActions.trigger('find');
 
       return true;
     }
@@ -78,15 +75,15 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
 
   // activate space tool
   // S
-  addListener("spaceTool", function (context) {
+  addListener('spaceTool', function(context) {
     var event = context.keyEvent;
 
     if (keyboard.hasModifier(event)) {
       return;
     }
 
-    if (keyboard.isKey(["s", "S"], event)) {
-      editorActions.trigger("spaceTool");
+    if (keyboard.isKey([ 's', 'S' ], event)) {
+      editorActions.trigger('spaceTool');
 
       return true;
     }
@@ -94,15 +91,15 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
 
   // activate lasso tool
   // L
-  addListener("lassoTool", function (context) {
+  addListener('lassoTool', function(context) {
     var event = context.keyEvent;
 
     if (keyboard.hasModifier(event)) {
       return;
     }
 
-    if (keyboard.isKey(["l", "L"], event)) {
-      editorActions.trigger("lassoTool");
+    if (keyboard.isKey([ 'l', 'L' ], event)) {
+      editorActions.trigger('lassoTool');
 
       return true;
     }
@@ -110,15 +107,15 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
 
   // activate hand tool
   // H
-  addListener("handTool", function (context) {
+  addListener('handTool', function(context) {
     var event = context.keyEvent;
 
     if (keyboard.hasModifier(event)) {
       return;
     }
 
-    if (keyboard.isKey(["h", "H"], event)) {
-      editorActions.trigger("handTool");
+    if (keyboard.isKey([ 'h', 'H' ], event)) {
+      editorActions.trigger('handTool');
 
       return true;
     }
@@ -126,11 +123,11 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
 
   // activate replace element
   // R
-  addListener("replaceElement", function (context) {
+  addListener('replaceElement', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(["r", "R"], event)) {
-      editorActions.trigger("replaceElement", event);
+    if (keyboard.isKey([ 'r', 'R' ], event)) {
+      editorActions.trigger('replaceElement', event);
 
       return true;
     }
@@ -138,56 +135,66 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
 
   // delete selected element
   // D
-  addListener("removeSelection", function (context) {
+  addListener('removeSelection', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(["D", "d"], event)) {
-      editorActions.trigger("removeSelection");
+    if (keyboard.isKey(['D', 'd'], event)) {
+      editorActions.trigger('removeSelection');
 
       return true;
     }
   });
 
   // undo operation
-  // U
-  addListener("undoOperation", function (context) {
+  // CTRL + U
+  addListener('undoOperation', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(["z", "Z"], event) && keyboard.isCmd(event)) {
-      editorActions.trigger("undo");
+    if (keyboard.isKey(['z', 'Z'], event) && keyboard.isCmd(event)) {
+      editorActions.trigger('undo');
 
       return true;
     }
   });
 
   // redo operation
-  // R
-  addListener("redoOperation", function (context) {
+  // CTRL + R
+  addListener('redoOperation', function(context) {
     var event = context.keyEvent;
 
-    if (keyboard.isKey(["y", "Y"], event) && keyboard.isCmd(event)) {
-      editorActions.trigger("redo");
+    if (keyboard.isKey(['y', 'Y'], event) && keyboard.isCmd(event)) {
+      editorActions.trigger('redo');
 
       return true;
     }
   });
 
-  addListener("copy", function () {
+  // download files
+  // CTRL + S
+  addListener('downloadFiles', function(context) {
+    var event = context.keyEvent;
+    if (keyboard.isKey(['s', 'S'], event) && keyboard.isCmd(event)) {
+      event.preventDefault();
+      editorActions.trigger('downloadFiles');
+      return true;
+    }
+  });
+
+  // copy bpmn objects
+  addListener('copy', function(context) {
+
     // retrieve from local storage
-    const serializedCopy = localStorage.getItem("bpmnClipboard");
+    const serializedCopy = localStorage.getItem('bpmnClipboard');
 
     if (!serializedCopy) {
       return;
     }
 
     // parse tree, reinstantiating contained objects
-    const parsedCopy = JSON.parse(
-      serializedCopy,
-      createReviver(getModeler().get("moddle"))
-    );
+    const parsedCopy = JSON.parse(serializedCopy, createReviver(getModeler().get('moddle')));
 
     // put into clipboard
-    getModeler().get("clipboard").set(parsedCopy);
+    getModeler().get('clipboard').set(parsedCopy);
   });
 
   /**
@@ -199,10 +206,13 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
    * @return {Function}
    */
   function createReviver(moddle) {
+
     var elCache = {};
 
-    return function (key, object) {
-      if (typeof object === "object" && typeof object.$type === "string") {
+    return function(key, object) {
+
+      if (typeof object === 'object' && typeof object.$type === 'string') {
+
         var objectId = object.id;
 
         if (objectId && elCache[objectId]) {
@@ -226,4 +236,5 @@ BpmnKeyboardBindings.prototype.registerBindings = function (
       return object;
     };
   }
+
 };
