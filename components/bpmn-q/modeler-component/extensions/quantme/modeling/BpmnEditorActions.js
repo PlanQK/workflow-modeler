@@ -1,14 +1,12 @@
-import inherits from 'inherits-browser';
+import inherits from "inherits-browser";
 
-import EditorActions from 'diagram-js/lib/features/editor-actions/EditorActions';
+import EditorActions from "diagram-js/lib/features/editor-actions/EditorActions";
 
-import { filter } from 'min-dash';
+import { filter } from "min-dash";
 
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { is } from "bpmn-js/lib/util/ModelUtil";
 
-import {
-  getBBox
-} from 'diagram-js/lib/util/Elements';
+import { getBBox } from "diagram-js/lib/util/Elements";
 
 /**
  * Registers and executes BPMN specific editor actions.
@@ -21,48 +19,44 @@ export default function BpmnEditorActions(injector) {
 
 inherits(BpmnEditorActions, EditorActions);
 
-BpmnEditorActions.$inject = [
-  'injector'
-];
+BpmnEditorActions.$inject = ["injector"];
 
 /**
  * Register default actions.
  *
  * @param {Injector} injector
  */
-BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
-
+BpmnEditorActions.prototype._registerDefaultActions = function (injector) {
   // (0) invoke super method
 
   EditorActions.prototype._registerDefaultActions.call(this, injector);
 
   // (1) retrieve optional components to integrate with
 
-  var canvas = injector.get('canvas', false);
-  var elementRegistry = injector.get('elementRegistry', false);
-  var selection = injector.get('selection', false);
-  var spaceTool = injector.get('spaceTool', false);
-  var lassoTool = injector.get('lassoTool', false);
-  var handTool = injector.get('handTool', false);
-  var globalConnect = injector.get('globalConnect', false);
-  var distributeElements = injector.get('distributeElements', false);
-  var alignElements = injector.get('alignElements', false);
-  var directEditing = injector.get('directEditing', false);
-  var searchPad = injector.get('searchPad', false);
-  var modeling = injector.get('modeling', false);
-  var contextPad = injector.get('contextPad', false);
-  var eventBus = injector.get('eventBus', false);
+  var canvas = injector.get("canvas", false);
+  var elementRegistry = injector.get("elementRegistry", false);
+  var selection = injector.get("selection", false);
+  var spaceTool = injector.get("spaceTool", false);
+  var lassoTool = injector.get("lassoTool", false);
+  var handTool = injector.get("handTool", false);
+  var globalConnect = injector.get("globalConnect", false);
+  var distributeElements = injector.get("distributeElements", false);
+  var alignElements = injector.get("alignElements", false);
+  var directEditing = injector.get("directEditing", false);
+  var searchPad = injector.get("searchPad", false);
+  var modeling = injector.get("modeling", false);
+  var contextPad = injector.get("contextPad", false);
+  var eventBus = injector.get("eventBus", false);
 
   // (2) check components and register actions
 
   if (canvas && elementRegistry && selection) {
-    this._registerAction('selectElements', function() {
-
+    this._registerAction("selectElements", function () {
       // select all elements except for the invisible
       // root element
       var rootElement = canvas.getRootElement();
 
-      var elements = elementRegistry.filter(function(element) {
+      var elements = elementRegistry.filter(function (element) {
         return element !== rootElement;
       });
 
@@ -73,31 +67,31 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
   }
 
   if (spaceTool) {
-    this._registerAction('spaceTool', function() {
+    this._registerAction("spaceTool", function () {
       spaceTool.toggle();
     });
   }
 
   if (lassoTool) {
-    this._registerAction('lassoTool', function() {
+    this._registerAction("lassoTool", function () {
       lassoTool.toggle();
     });
   }
 
   if (handTool) {
-    this._registerAction('handTool', function() {
+    this._registerAction("handTool", function () {
       handTool.toggle();
     });
   }
 
   if (globalConnect) {
-    this._registerAction('globalConnectTool', function() {
+    this._registerAction("globalConnectTool", function () {
       globalConnect.toggle();
     });
   }
 
   if (selection && distributeElements) {
-    this._registerAction('distributeElements', function(opts) {
+    this._registerAction("distributeElements", function (opts) {
       var currentSelection = selection.get(),
         type = opts.type;
 
@@ -108,14 +102,14 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
   }
 
   if (selection && alignElements) {
-    this._registerAction('alignElements', function(opts) {
+    this._registerAction("alignElements", function (opts) {
       var currentSelection = selection.get(),
         aligneableElements = [],
         type = opts.type;
 
       if (currentSelection.length) {
-        aligneableElements = filter(currentSelection, function(element) {
-          return !is(element, 'bpmn:Lane');
+        aligneableElements = filter(currentSelection, function (element) {
+          return !is(element, "bpmn:Lane");
         });
 
         alignElements.trigger(aligneableElements, type);
@@ -124,7 +118,7 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
   }
 
   if (selection && modeling) {
-    this._registerAction('setColor', function(opts) {
+    this._registerAction("setColor", function (opts) {
       var currentSelection = selection.get();
 
       if (currentSelection.length) {
@@ -134,7 +128,7 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
   }
 
   if (selection && directEditing) {
-    this._registerAction('directEditing', function() {
+    this._registerAction("directEditing", function () {
       var currentSelection = selection.get();
 
       if (currentSelection.length) {
@@ -144,46 +138,48 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
   }
 
   if (searchPad) {
-    this._registerAction('find', function() {
+    this._registerAction("find", function () {
       searchPad.toggle();
     });
   }
 
   if (canvas && modeling) {
-    this._registerAction('deleteElement', function(event) {
+    this._registerAction("deleteElement", function () {
       let context = {};
       let shapes = selection.get();
       context.length = shapes.length;
       context.shapes = shapes;
-      eventBus.fire('removeSelection', context);
+      eventBus.fire("removeSelection", context);
     });
 
-    this._registerAction('downloadFiles', function(event) {
-      eventBus.fire('saveFile', {});
+    this._registerAction("downloadFiles", function () {
+      eventBus.fire("saveFile", {});
     });
 
-    this._registerAction('undoOperation', function(event) {
+    this._registerAction("undoOperation", function () {
       let context = {};
-      eventBus.fire('undo', context);
+      eventBus.fire("undo", context);
     });
 
-    this._registerAction('redoOperation', function(event) {
+    this._registerAction("redoOperation", function () {
       let context = {};
-      eventBus.fire('redo', context);
+      eventBus.fire("redo", context);
     });
 
-    this._registerAction('moveToOrigin', function() {
+    this._registerAction("moveToOrigin", function () {
       var rootElement = canvas.getRootElement(),
         boundingBox,
         elements;
 
-      if (is(rootElement, 'bpmn:Collaboration')) {
-        elements = elementRegistry.filter(function(element) {
-          return is(element.parent, 'bpmn:Collaboration');
+      if (is(rootElement, "bpmn:Collaboration")) {
+        elements = elementRegistry.filter(function (element) {
+          return is(element.parent, "bpmn:Collaboration");
         });
       } else {
-        elements = elementRegistry.filter(function(element) {
-          return element !== rootElement && !is(element.parent, 'bpmn:SubProcess');
+        elements = elementRegistry.filter(function (element) {
+          return (
+            element !== rootElement && !is(element.parent, "bpmn:SubProcess")
+          );
         });
       }
 
@@ -198,8 +194,8 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
   }
 
   if (selection && contextPad) {
-    this._registerAction('replaceElement', function(event) {
-      contextPad.triggerEntry('replace', 'click', event);
+    this._registerAction("replaceElement", function (event) {
+      contextPad.triggerEntry("replace", "click", event);
     });
   }
 };
