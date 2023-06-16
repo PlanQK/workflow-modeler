@@ -44,6 +44,10 @@ export default function ShortcutModal({ onClose }) {
                         <td className="binding"><code>ctrl + F</code></td>
                     </tr>
                     <tr>
+                        <td>Download</td>
+                        <td className="binding"><code>ctrl + S</code></td>
+                    </tr>
+                    <tr>
                         <td>Redo</td>
                         <td className="binding"><code>ctrl + Y</code></td>
                     </tr>

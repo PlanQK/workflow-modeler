@@ -62,7 +62,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // search labels
-  // F
+  // CTRL + F
   addListener('find', function(context) {
     var event = context.keyEvent;
 
@@ -132,7 +132,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
       return true;
     }
   });
-  
+
   // delete selected element
   // D
   addListener('removeSelection', function(context) {
@@ -146,7 +146,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // undo operation
-  // U
+  // CTRL + U
   addListener('undoOperation', function(context) {
     var event = context.keyEvent;
 
@@ -158,7 +158,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // redo operation
-  // R
+  // CTRL + R
   addListener('redoOperation', function(context) {
     var event = context.keyEvent;
 
@@ -169,6 +169,18 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
     }
   });
 
+  // download files
+  // CTRL + S
+  addListener('downloadFiles', function(context) {
+    var event = context.keyEvent;
+    if (keyboard.isKey(['s', 'S'], event) && keyboard.isCmd(event)) {
+      event.preventDefault();
+      editorActions.trigger('downloadFiles');
+      return true;
+    }
+  });
+
+  // copy bpmn objects
   addListener('copy', function(context) {
 
     // retrieve from local storage
@@ -183,7 +195,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
 
     // put into clipboard
     getModeler().get('clipboard').set(parsedCopy);
-  })
+  });
 
   /**
  * A factory function that returns a reviver to be
