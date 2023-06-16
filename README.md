@@ -1,28 +1,27 @@
 # Quantum Workflow Modeler
-A web-based modelling tool for modelling BPMN 2.0-based quantum workflows. It uses and extends the 
-[bpmn-js Modeler](https://github.com/bpmn-io/bpmn-js/) of Camunda which is embedded in the User Interface (UI) of the 
-Quantum Workflow Modeler and handles the graphical modelling of workflows. 
 
-It contains several modelling extensions to the BPMN standard which enable the modeling of an explicit, executable data 
-flow and the modelling of quantum specific modelling elements. New model extensions can be integrated plugin-based into 
-the modeler. Read [this guide](doc/quantum-workflow-modeler/editor/plugin/plugin-integration.md) to learn how you can integrate 
-your own modelling extensions into the modeler.
+A web-based modeling tool for modeling BPMN 2.0-based quantum workflows. 
+It uses and extends the [bpmn-js Modeler](https://github.com/bpmn-io/bpmn-js/) of Camunda which is embedded in the User Interface (UI) of the Quantum Workflow Modeler and handles the graphical modeling of workflows. 
 
-The modeler is implemented as an HTML web component and can be integrated in other web applications as a custom HMTL tag. 
-Read [this documentation](doc/integration-guide/integration-guide.md) to learn how you can 
-integrate the modeler in your application and which configuration options and interfaces you can use. 
+It contains several modeling extensions to the BPMN standard which enable the modeling of quantum workflows. 
+New model extensions can be integrated plugin-based into the modeler.
+Read [this guide](doc/quantum-workflow-modeler/editor/plugin/plugin-integration.md) to learn how you can integrate your own modeling extensions into the modeler.
 
-The implementation of the modeler is located in the [bpmn-q folder](components/bpmn-q). Example Projects to integrate the 
-modeler in different UI frameworks can be found [here for a Vue.js app](components/bpmn-q-vue) 
-and [here for an Angular app](components/bpmn-q-angular). 
+The modeler is implemented as an HTML web component and can be integrated into other web applications as a custom HTML tag. 
+Read [this documentation](doc/integration-guide/integration-guide.md) to learn how you can integrate the modeler into your application and which configuration options and interfaces you can use. 
 
-The Quantum Workflow Modeler is a HTML web component.
-The UI components of the modeler are defined with React-js and written in JavaScript. To package the project, webpack is used.
+The implementation of the modeler is located in the [bpmn-q folder](components/bpmn-q).
+Example projects to integrate the modeler in different UI frameworks can be found [here for a Vue.js app](components/bpmn-q-vue) and [here for an Angular app](components/bpmn-q-angular). 
+
+The Quantum Workflow Modeler is an HTML web component.
+The UI components of the modeler are defined with React-js and written in JavaScript.
+To package the project, webpack is used.
 The tests of the project use mocha with chai for karma.
 
 Refer to the [documentation](doc/README.md) for further information.
 
 ## Node Version
+
 The project was created with npm 8.19.2 and node 18.12.1.
 
 ## Quickstart
@@ -40,9 +39,8 @@ to start the modeler in a simple html website which runs on localhost:8080.
 
 ## How to use this Library
 
-To use the Quantum Workflow Modeler component in your application you have to install its npm package which is published 
-via GitHub packages. To access the package, you first [have to register the PlanQK namespace](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#installing-a-package) 
-to your npm setup and then [authenticate to GitHub](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token). 
+To use the Quantum Workflow Modeler component in your application you have to install its npm package which is published via GitHub packages.
+To access the package, you first [have to register the PlanQK namespace](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#installing-a-package) to your npm setup and then [authenticate to GitHub](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token). 
 A more detailed description can be found [here](doc/integration-guide/integration-guide.md).
 
 Then install the npm package with
@@ -50,8 +48,8 @@ Then install the npm package with
 $> npm install --save @planqk/quantum-workflow-modeler
 ```
 
-Register the Quantum Workflow Modeler component as a custom HTML tag in the UI framework you are using. The exact steps 
-depend on the specific framework, but here are guides how you can do that in [Angular](), [Vue.js]() and [plain HTML]().
+Register the Quantum Workflow Modeler component as a custom HTML tag in the UI framework you are using.
+The exact steps depend on the specific framework, but here are guides how you can do that in [Angular](), [Vue.js]() and [plain HTML]().
 
 Use the tag of the component, ```quantum-workflow-modeler``` directly in your HTML
 ```html
@@ -68,9 +66,9 @@ const modelerComponent = document.createElement('quantum-workflow-modeler');
 ```
 to integrate the modeler component into the UI of your application.
 
-Activate the plugins you want to use in your instance of the modeler by setting the pluginConfig attribute. You can only 
-set the pluginConfigs attribute if the modelerComponent is already available in the DOM. If you do not do that, the rendering
-will fail.
+Activate the plugins you want to use in your instance of the modeler by setting the pluginConfig attribute.
+You can only set the pluginConfigs attribute if the modelerComponent is already available in the DOM.
+If you do not do that, the rendering will fail.
 ```javascript
 modelerComponent.pluginConfigs = [
     {
@@ -88,23 +86,24 @@ modelerComponent.pluginConfigs = [
 ]
 ```
 
-You can configure the plugins like described [here](doc/quantum-workflow-modeler/editor/plugin/plugin-config.md). The structure 
-of the config is defined by the plugin and can be looked up in the documentation of the respective plugin. 
+You can configure the plugins as described [here](doc/quantum-workflow-modeler/editor/plugin/plugin-config.md).
+The structure of the config is defined by the plugin and can be looked up in the documentation of the respective plugin. 
 
 You can add listeners to custom events the Quantum Workflow Modeler triggers for changes in the currently loaded workflow, 
 like saving or loading a workflow. Read the [EventHandler documentation](doc/quantum-workflow-modeler/editor/events/event-handler-doc.md) to learn more about the events of the modeler. 
 
 ## Development Setup
 
-To set this project up for development clone the repository and open it in your favorite editor. The project code is under
-[./components](components) and is split in three parts: Under [bpmn-q](components/bpmn-q) is the actual code of the Quantum
-Workflow Modeler. Under [bpmn-q-angular](components/bpmn-q-angular) is an example project with Angular which integrates the
-modeler component. Under [bpmn-q-vue](components/bpmn-q-vue) is a simple Vue-js project which integrate the modeler. These 
-to projects do not contain code of the Quantum Workflow Modeler component. They are used for testing the integration of the 
-developed component to test and check its compatibility with other UI frameworks.
+To set this project up for development, clone the repository and open it in your favorite editor.
+The project code is under [./components](components) and is split in three parts:
+Under [bpmn-q](components/bpmn-q) is the actual code of the Quantum Workflow Modeler.
+Under [bpmn-q-angular](components/bpmn-q-angular) is an example project with Angular which integrates the modeler component.
+Under [bpmn-q-vue](components/bpmn-q-vue) is a simple Vue-js project which integrate the modeler.
+These to projects do not contain code of the Quantum Workflow Modeler component.
+They are used for testing the integration of the developed component to test and check its compatibility with other UI frameworks.
 
-The actual code for development is in [bpmn-q](components/bpmn-q). To set up the cloned project, execute the following 
-commands under the ./components/bpmn-q directory.
+The actual code for development is in [bpmn-q](components/bpmn-q).
+To set up the cloned project, execute the following commands under the ./components/bpmn-q directory.
 1. Install dependencies
     ```
     npm install
@@ -113,7 +112,7 @@ commands under the ./components/bpmn-q directory.
 2. Start the Modeler
 
     To execute the Quantum Workflow Modeler, a small test website can be run which only contains the modeler component. 
-    To start this website, execute
+    To start this website, execute:
     ```
     npm run dev
     ```
@@ -121,7 +120,7 @@ commands under the ./components/bpmn-q directory.
       
 3. Build the Modeler
     
-    To build the modeler execute
+    To build the modeler execute:
     ```
     npm run build
     ```
@@ -129,7 +128,7 @@ commands under the ./components/bpmn-q directory.
 
 4. Run all Tests
     
-    To execute all tests run
+    To execute all tests run:
     ```
     npm test 
    ```
@@ -141,16 +140,10 @@ commands under the ./components/bpmn-q directory.
 
 ## Disclaimer of Warranty
 
-Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its 
-Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, 
-without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR 
-PURPOSE.
-You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks 
-associated with Your exercise of permissions under this License.
+Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE.
+You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.
 
 ## Haftungsausschluss
 
 Dies ist ein Forschungsprototyp.
-Die Haftung für entgangenen Gewinn, Produktionsausfall, Betriebsunterbrechung, entgangene Nutzungen, Verlust von Daten 
-und Informationen, Finanzierungsaufwendungen sowie sonstige Vermögens- und Folgeschäden ist, außer in Fällen von grober 
-Fahrlässigkeit, Vorsatz und Personenschäden, ausgeschlossen.
+Die Haftung für entgangenen Gewinn, Produktionsausfall, Betriebsunterbrechung, entgangene Nutzungen, Verlust von Daten und Informationen, Finanzierungsaufwendungen sowie sonstige Vermögens- und Folgeschäden ist, außer in Fällen von grober Fahrlässigkeit, Vorsatz und Personenschäden, ausgeschlossen.
