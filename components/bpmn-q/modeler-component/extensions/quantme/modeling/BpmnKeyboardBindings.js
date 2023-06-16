@@ -173,8 +173,8 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   // CTRL + S
   addListener('downloadFiles', function(context) {
     var event = context.keyEvent;
-    event.preventDefault();
     if (keyboard.isKey(['s', 'S'], event) && keyboard.isCmd(event)) {
+      event.preventDefault();
       editorActions.trigger('downloadFiles');
       return true;
     }
