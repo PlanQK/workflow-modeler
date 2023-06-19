@@ -207,9 +207,9 @@ export function setQRMUserName(userName) {
  *
  * @return {string} the specified username
  */
-export function getGithubToken() {
+export function getGitHubToken() {
     if (config.githubToken === undefined) {
-        setGithubToken(
+        setGitHubToken(
             getPluginConfig('quantme').githubToken
             || defaultConfig.githubToken);
     }
@@ -221,7 +221,7 @@ export function getGithubToken() {
  *
  * @param githubToken the username
  */
-export function setGithubToken(githubToken) {
+export function setGitHubToken(githubToken) {
     if (githubToken !== null && githubToken !== undefined) {
         config.githubToken = githubToken;
     }
@@ -351,29 +351,6 @@ export function setAWSRuntimeHandlerEndpoint(endpoint) {
         config.awsRuntimeHandlerEndpoint = endpoint;
     }
 }
-
-/**
- * Get the GitHub Token.
- *
- * @return {string} the specified token
- */
-export function getGitHubToken() {
-    if (config.githubToken === undefined) {
-        return '';
-    }
-    return config.githubToken;
-};
-
-/**
- * Set the GitHub Token to authenticate user.
- *
- * @param token the token
- */
-export function setGitHubToken(token) {
-    if (token !== null && token !== undefined) {
-        config.githubToken = token;
-    }
-};
 
 /**
  * Get the upload Github Repository Name
