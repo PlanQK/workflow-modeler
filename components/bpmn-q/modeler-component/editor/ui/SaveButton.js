@@ -1,5 +1,5 @@
 import React from "react";
-import { saveModelerAsLocalFile } from "../util/IoUtilities";
+import {saveModelerAsLocalFile} from "../util/IoUtilities";
 
 /**
  * React button which saves the current workflow to the users local file system when clicked
@@ -10,19 +10,14 @@ import { saveModelerAsLocalFile } from "../util/IoUtilities";
  */
 export default function SaveButton(props) {
 
-    const { modeler } = props;
+    const {modeler} = props;
 
     return (
-        <div>
-            <button className="qwm-toolbar-btn" title="Save workflow">
-                <div style={{ display: 'flex' }}>
-                    <div style={{ display: 'flex', }}>
-                        <span className={"qwm-icon-saving"} onClick={() => { saveModelerAsLocalFile(modeler) }}>
-                            <span className="qwm-indent">Save</span>
-                        </span>
-                    </div>
-                </div>
-            </button>
-        </div>
-    )
+        <button className="qwm-toolbar-btn" title="Save current workflow diagram to local file storage"
+                onClick={() => saveModelerAsLocalFile(modeler)}>
+            <span className="qwm-icon-saving">
+                <span className="qwm-indent">Save</span>
+            </span>
+        </button>
+    );
 }
