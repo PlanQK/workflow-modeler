@@ -20,6 +20,8 @@ In the following, all environment variables that can be used to customize the wo
 
 * ```GITHUB_TOKEN``` (default: ''): Defines the GitHub Token which can be used to make authorized requests. For more information take a look at [GitHub Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
+* ```INTERVAL``` (default ms: '300000'): Defines the interval of the auto save feature. If changes are applied to the workflow then it get saved after `5` minutes. 
+
 * ```NISQ_ANALYZER_ENDPOINT``` (default: 'http://localhost:8098/nisq-analyzer'): Defines the endpoint of the [NISQ Analyzer](https://github.com/UST-QuAntiL/nisq-analyzer) to enable an automated hardware selection.
 
 * ```OPENTOSCA_ENDPOINT``` (default: 'http://localhost:1337/csars'): Defines the endpoint of the OpenTOSCA container to deploy services with.
