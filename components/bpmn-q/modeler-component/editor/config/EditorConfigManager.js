@@ -1,12 +1,13 @@
-import {getPluginConfig} from '../plugin/PluginConfigHandler';
-import {autoSaveFile, transformedWorkflowHandlers} from '../EditorConstants';
+import { getPluginConfig } from '../plugin/PluginConfigHandler';
+import { saveFileFormats, transformedWorkflowHandlers, autoSaveFile } from '../EditorConstants';
 
 // default configurations of the editor
 const defaultConfig = {
     camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
-    fileName: 'quantum-workflow-model.bpmn',
+    fileName: process.env.DOWNLOAD_FILE_NAME,
     transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
-    autoSaveFileOption: autoSaveFile.INTERVAL
+    autoSaveFileOption: autoSaveFile.INTERVAL,
+    fileFormat: saveFileFormats.BPMN
 };
 
 let config = {};
@@ -54,7 +55,7 @@ export function getFileName() {
  * @param fileName the new file name
  */
 export function setFileName(fileName) {
-    if (fileName !== null && fileName !== undefined && /^[a-zA-Z0-9-_]+\.bpmn$/.test(fileName)) {
+    if (fileName !== null && fileName !== undefined) {
 
         // remove trailing slashes
         config.fileName = fileName;
@@ -113,6 +114,32 @@ export function setAutoSaveFileOption(autoSaveFileOption) {
         && Object.values(autoSaveFile).includes(autoSaveFileOption)) {
 
         config.autoSaveFileOption = autoSaveFileOption;
+        }
+}
+/** 
+ * Get the file format
+ *
+ * @return {string} the currently specified handler id
+ */
+export function getFileFormat() {
+    if (config.fileFormat === undefined) {
+        const fileFormat = saveFileFormats[getPluginConfig('editor').fileFormat];
+        setFileFormat(fileFormat || defaultConfig.fileFormat);
+    }
+    return config.fileFormat;
+}
+
+/**
+ * Set the format of the downloaded file
+ *
+ * @param fileFormat the file format
+ */
+export function setFileFormat(fileFormat) {
+    if (fileFormat !== null && fileFormat !== undefined
+        // check that the new value is a valid handler id
+        && Object.values(saveFileFormats).includes(fileFormat)) {
+
+        config.fileFormat = fileFormat;
     }
 }
 

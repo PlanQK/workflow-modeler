@@ -2,7 +2,7 @@
 // supported options to handle a transformed workflow
 export const transformedWorkflowHandlers = {
     NEW_TAB: 'Open in new Tab',
-    SAVE_AS_FILE: 'Save as File',
+    SAVE_AS_FILE: 'Save as File'
 };
 
 // workflow event types dispatched by the EditorEventHandler
@@ -17,3 +17,11 @@ export const autoSaveFile = {
     INTERVAL: 'Interval',
     ON_ACTION: 'On Action'
 }
+
+// supported save file options
+export const saveFileFormats = {
+    ALL: 'all',
+    BPMN: '.bpmn',
+    PNG: '.png',
+    SVG: '.svg'
+};

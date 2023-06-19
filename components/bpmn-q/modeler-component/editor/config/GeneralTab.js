@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {getModeler} from "../ModelerHandler";
+import React, { useState } from 'react';
+import { getModeler } from "../ModelerHandler";
 import * as editorConfig from "./EditorConfigManager";
-import {autoSaveFile, transformedWorkflowHandlers} from '../EditorConstants';
+import { autoSaveFile, saveFileFormats, transformedWorkflowHandlers } from '../EditorConstants';
 
 /**
  * Tab for the ConfigModal. Used to allow the configurations of the editor configs, namely the camunda endpoint and the
@@ -15,6 +15,8 @@ export default function EditorTab() {
     const [camundaEndpoint, setCamundaEndpoint] = useState(editorConfig.getCamundaEndpoint());
     const [workflowHandler, setWorkflowHandler] = useState(editorConfig.getTransformedWorkflowHandler());
     const [autoSaveFileOption, setAutoSaveFileOption] = useState(editorConfig.getAutoSaveFileOption());
+    const [fileName, setFileName] = useState(editorConfig.getFileName());
+    const [fileFormat, setFileFormat] = useState(editorConfig.getFileFormat());
 
     const modeler = getModeler();
 
@@ -29,12 +31,24 @@ export default function EditorTab() {
         });
     }
 
+    // register listener for editor action to get changes on the camunda endpoint
+    if (!editorActions._actions.hasOwnProperty('fileNameChanged')) {
+        editorActions.register({
+            fileNameChanged: function (fileName) {
+                modeler.config.fileName = fileName;
+            }
+        });
+    }
+
     // save values of the tab entries in the editor config
     EditorTab.prototype.onClose = () => {
         modeler.config.camundaEndpoint = camundaEndpoint;
+        modeler.config.fileName = fileName;
         editorConfig.setCamundaEndpoint(camundaEndpoint);
         editorConfig.setTransformedWorkflowHandler(workflowHandler);
         editorConfig.setAutoSaveFileOption(autoSaveFileOption);
+        editorConfig.setFileName(fileName);
+        editorConfig.setFileFormat(fileFormat);
     };
 
     // return tab which contains entries to change the camunda endpoint and the workflow handler
@@ -42,37 +56,68 @@ export default function EditorTab() {
         <h3>Workflow Engine configuration:</h3>
         <table>
             <tbody>
-            <tr className="qwm-spaceUnder">
-                <td align="right">Camunda Engine Endpoint</td>
-                <td align="left">
-                    <input
-                        type="string"
-                        name="camundaEndpoint"
-                        value={camundaEndpoint}
-                        onChange={event => setCamundaEndpoint(event.target.value)}/>
-                </td>
-            </tr>
+                <tr className="qwm-spaceUnder">
+                    <td align="right">Camunda Engine Endpoint</td>
+                    <td align="left">
+                        <input
+                            type="string"
+                            name="camundaEndpoint"
+                            value={camundaEndpoint}
+                            onChange={event => setCamundaEndpoint(event.target.value)} />
+                    </td>
+                </tr>
             </tbody>
         </table>
         <h3>Handle for transformed workflows:</h3>
         <table>
             <tbody>
-            <tr className="spaceUnder">
-                <td align="right">Transformed Workflow Handler</td>
-                <td align="left">
-                    <select
-                        name="workflowHandler"
-                        value={workflowHandler}
-                        onChange={event => setWorkflowHandler(event.target.value)}>
-                        {Object.entries(transformedWorkflowHandlers).map(([key, value]) => (
-                            <option key={value} value={value}>
-                                {value}
-                            </option>
-                        ))}
-                    </select>
+                <tr className="spaceUnder">
+                    <td align="right">Transformed Workflow Handler</td>
+                    <td align="left">
+                        <select
+                            name="workflowHandler"
+                            value={workflowHandler}
+                            onChange={event => setWorkflowHandler(event.target.value)}>
+                            {Object.entries(transformedWorkflowHandlers).map(([key, value]) => (
+                                <option key={value} value={value}>
+                                    {value}
+                                </option>
+                            ))}
+                        </select>
 
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Download workflow:</h3>
+        <table>
+            <tbody>
+                <tr className="spaceUnder">
+                    <td align="right">Download file name</td>
+                    <td align="left">
+                        <input
+                            type="string"
+                            name="fileName"
+                            value={fileName}
+                            onChange={event => setFileName(event.target.value)} />
+                    </td>
+                </tr>
+                <tr className="spaceUnder">
+                    <td align="right">Download file format</td>
+                    <td align="left">
+                        <select
+                            name="fileFormat"
+                            value={fileFormat}
+                            onChange={event => setFileFormat(event.target.value)}>
+                            {Object.entries(saveFileFormats).map(([key, value]) => (
+                                <option key={value} value={value}>
+                                    {value}
+                                </option>
+                            ))}
+                        </select>
+
+                    </td>
+                </tr>
             </tbody>
         </table>
         <h3>Auto save file:</h3>
@@ -102,4 +147,5 @@ EditorTab.prototype.config = () => {
     const modeler = getModeler();
 
     modeler.config.camundaEndpoint = editorConfig.getCamundaEndpoint();
+    modeler.config.fileName = editorConfig.getFileName();
 };

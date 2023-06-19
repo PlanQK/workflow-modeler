@@ -1,4 +1,4 @@
-import { autoSaveFile, transformedWorkflowHandlers, workflowEventTypes } from '../EditorConstants';
+import { autoSaveFile, transformedWorkflowHandlers, workflowEventTypes, saveFileFormats } from '../EditorConstants';
 import { getModeler } from '../ModelerHandler';
 import { dispatchWorkflowEvent } from '../events/EditorEventHandler';
 
@@ -33,7 +33,7 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
     const bpmnFile = await new File([xml], fileName, { type: 'text/xml' });
 
     const link = document.createElement('a');
-    link.download = fileName;
+    link.download = fileName + '.bpmn';
     link.href = URL.createObjectURL(bpmnFile);
     link.click();
 
@@ -47,9 +47,22 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
  * @param fileName The name of the file.
  * @returns {Promise<void>}
  */
-export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName()) {
+export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName(), fileFormat = editorConfig.getFileFormat(), openWindow = true) {
     const xml = await getXml(modeler);
-    return saveXmlAsLocalFile(xml, fileName);
+    if (fileFormat === saveFileFormats.BPMN || fileFormat === saveFileFormats.ALL) {
+        if (openWindow) {
+            await openFileDialog(xml, fileName, saveFileFormats.BPMN);
+        } else {
+            console.log("hir")
+            saveXmlAsLocalFile(xml, fileName)
+        }
+    }
+
+    if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG || fileFormat === saveFileFormats.PNG) {
+        await saveWorkflowAsSVG(modeler, fileName, fileFormat);
+    }
+
+    return;
 }
 
 /**
@@ -229,7 +242,8 @@ export function resetAutosaveTimeout(autosaveTimeout, hasChanges, autoSaveFileOp
         autosaveTimeout = setTimeout(() => autosave(hasChanges), process.env.INTERVAL);
     } else {
         const timestamp = getTimestamp();
-        saveModelerAsLocalFile(getModeler(), `autosave_${timestamp}_${editorConfig.getFileName()}`)
+        console.log("los")
+        saveModelerAsLocalFile(getModeler(), `autosave_${timestamp}_${editorConfig.getFileName()}`, saveFileFormats.BPMN, false);
     }
 }
 
@@ -254,4 +268,87 @@ function getTimestamp() {
     const date = new Date();
     const timestamp = date.toISOString().replace(/:/g, '-');
     return timestamp;
+}
+
+export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
+    modeler.saveSVG({ format: true }, function (error, svg) {
+        if (error) {
+            return;
+        }
+
+        if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG) {
+            openFileDialog(svg, fileName, saveFileFormats.SVG)
+        }
+        if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.PNG) {
+            convertSvgToPng(svg, fileName, saveFileFormats.PNG);
+        }
+    });
+}
+
+// Function to convert SVG to PNG using an external library
+function convertSvgToPng(svg, fileName, fileFormat) {
+    var img = new Image();
+    img.onload = function () {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        var pngDataUrl = canvas.toDataURL('image/png');
+        downloadPng(pngDataUrl, fileName, fileFormat);
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
+// Function to initiate the PNG download
+function downloadPng(pngDataUrl, fileName, fileFormat) {
+    openFileUrlDialog(pngDataUrl, fileName, fileFormat);
+}
+
+async function openFileDialog(content, fileName, fileFormat) {
+    let suggestedName = fileName;
+    if (suggestedName.includes('.bpmn')) {
+        suggestedName = fileName.split('.bpmn')[0];
+    }
+    let fileHandle = await window.showSaveFilePicker({
+        startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
+            {
+                description: "BPMN file",
+                accept: { "text/plain": [".bpmn"] },
+            },
+            {
+                description: "SVG file",
+                accept: { "text/plain": [".svg"] },
+            }
+        ]
+    });
+    writeFile(fileHandle, content);
+}
+
+async function openFileUrlDialog(content, fileName, fileFormat) {
+    let suggestedName = fileName;
+    if (suggestedName.includes('.bpmn')) {
+        suggestedName = fileName.split('.bpmn')[0];
+    }
+    let fileHandle = await window.showSaveFilePicker({
+        startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
+            {
+                description: "PNG file",
+                accept: { "text/plain": [".png"] },
+            }
+        ]
+    });
+    writeURLToFile(fileHandle, content);
+}
+
+async function writeFile(fileHandle, contents) {
+    const writable = await fileHandle.createWritable();
+    await writable.write(contents);
+    await writable.close();
+}
+
+async function writeURLToFile(fileHandle, url) {
+    const writable = await fileHandle.createWritable();
+    const response = await fetch(url);
+    await response.body.pipeTo(writable);
 }
