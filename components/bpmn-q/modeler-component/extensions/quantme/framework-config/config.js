@@ -26,6 +26,7 @@ const defaultConfig = {
     hybridRuntimeProvenance: process.env.PROVENANCE_COLLECTION,
     uploadGithubRepositoryName: process.env.UPLOAD_GITHUB_REPO,
     uploadGithubRepositoryOwner: process.env.UPLOAD_GITHUB_USER,
-    uploadFileName: process.env.UPLOAD_FILE_NAME
+    uploadFileName: process.env.UPLOAD_FILE_NAME,
+    uploadBranchName: process.env.UPLOAD_BRANCH_NAME
 };
 export default defaultConfig;

@@ -14,6 +14,7 @@ export default function UploadTab() {
     const [uploadGithubRepositoryName, setUploadGithubRepositoryName] = useState(config.getUploadGithubRepositoryName());
     const [uploadGithubOwner, setUploadGithubOwner] = useState(config.getUploadGithubRepositoryOwner());
     const [uploadFileName, setUploadFileName] = useState(config.getUploadFileName());
+    const [uploadBranchName, setUploadBranchName] = useState(config.getUploadBranchName());
     const modeler = getModeler();
 
     const editorActions = modeler.get('editorActions');
@@ -41,15 +42,25 @@ export default function UploadTab() {
         });
     }
 
+    if (!editorActions._actions.hasOwnProperty('uploadBranchNameChanged')) {
+        editorActions.register({
+            uploadBranchNameChanged: function (uploadBranchName) {
+                self.modeler.config.uploadBranchName = uploadBranchName;
+            }
+        });
+    }
+
     // save changed config entries on close
     UploadTab.prototype.onClose = () => {
         modeler.config.uploadGithubRepositoryName = uploadGithubRepositoryName;
         modeler.config.uploadGithubRepositoryOwner = uploadGithubOwner;
         modeler.config.uploadFileName = uploadFileName;
+        modeler.config.uploadBranchName = uploadBranchName;
 
         config.setUploadGithubRepositoryName(uploadGithubRepositoryName);
         config.setUploadGithubRepositoryOwner(uploadGithubOwner);
         config.setUploadFileName(uploadFileName);
+        config.setUploadBranchName(uploadBranchName);
 
     };
 
@@ -78,6 +89,16 @@ export default function UploadTab() {
                 </td>
             </tr>
             <tr className="spaceUnder">
+                <td align="right">GitHub Repository Branch:</td>
+                <td align="left">
+                    <input
+                        type="string"
+                        name="uploadBranchName"
+                        value={uploadBranchName}
+                        onChange={event => setUploadBranchName(event.target.value)}/>
+                </td>
+            </tr>
+            <tr className="spaceUnder">
                 <td align="right">Workflow File Name:</td>
                 <td align="left">
                     <input
@@ -98,4 +119,5 @@ UploadTab.prototype.config = () => {
     modeler.config.uploadGithubRepositoryName = config.getUploadGithubRepositoryName();
     modeler.config.uploadGithubRepositoryOwner = config.getUploadGithubRepositoryOwner();
     modeler.config.uploadFileName = config.getUploadFileName();
+    modeler.config.uploadBranchName = config.getUploadBranchName();
 };

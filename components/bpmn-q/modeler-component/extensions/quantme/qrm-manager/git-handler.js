@@ -18,13 +18,12 @@ export const uploadToGitHub = async function (modeler) {
   const githubRepo = modeler.config.uploadGithubRepositoryName;
   const githubToken = modeler.config.githubToken;
   const fileName = modeler.config.uploadFileName;
+  let branchName = modeler.config.uploadBranchName;
+  let defaultBranch = 'main';
+  const accessToken = githubToken;
 
   // Encode the XML content as a Base64 string
   const encodedXml = btoa(xmlContent);
-
-  // Construct the API request to get the file's SHA
-  const apiUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${fileName}.bpmn`;
-  const accessToken = githubToken;
 
   const request = {
     headers: {
@@ -32,8 +31,36 @@ export const uploadToGitHub = async function (modeler) {
     }
   };
 
+  // Retrieve the default branch name from the repository url
+  const apiRepositoryUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}`;
+
+  // Set the branch name to the default branch name if no branch name is specified
+  await fetch(apiRepositoryUrl, request)
+    .then(response => response.json()).then(data => { defaultBranch = data.default_branch; if (branchName === '') { branchName = defaultBranch; } });
+  
+  // Construct the API request to get the file's SHA
+  const apiUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${fileName}.bpmn?ref=${branchName}`;
+  
+  // check if branch exists
+  let includesBranch = false;
+  const apiBranchUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/branches`;
+  await fetch(apiBranchUrl, request)
+    .then(response => response.json()).then(data => {
+      includesBranch = data.some(element => element.name === branchName);
+    });
+
+  if (!includesBranch) {
+    const apiBranchShaUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/branches/${defaultBranch}`;
+    let sha = '';
+    await fetch(apiBranchShaUrl, request)
+      .then(response => response.json()).then(data => {
+        sha = data.commit.sha;
+      });
+    await createNewBranch(githubRepoOwner, githubRepo, githubToken, branchName, sha);
+  }
+
   // Get the file's SHA
-  fetch(apiUrl, request)
+  await fetch(apiUrl, request)
     .then(response => response.json())
     .then(fileData => {
       let updateUrl = apiUrl;
@@ -42,7 +69,6 @@ export const uploadToGitHub = async function (modeler) {
       }
 
       const commitMessage = 'Update file';
-      const branchName = 'master';
 
       const updateRequest = {
         method: 'PUT',
@@ -78,16 +104,16 @@ export const uploadToGitHub = async function (modeler) {
  * @param token github Token that can be used to authenticate
  */
 export const getFoldersInRepository = async function (userName, repoName, repoPath, token) {
-    const directoryURLs = [];
-    const headers = {};
-    if (token) {
-        headers['Authorization'] = `Token ${token}`;
-    }
+  const directoryURLs = [];
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Token ${token}`;
+  }
 
-    let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`, {
-        headers: headers
-    });
-    const contents = await response.json();
+  let response = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${repoPath}?ref=HEAD`, {
+    headers: headers
+  });
+  const contents = await response.json();
 
   if (response.status !== 200) {
     throw 'Status code not equal to 200: ' + response.status;
@@ -120,21 +146,49 @@ export const getFileContent = async function (fileURL) {
  * @param token github Token that can be used to authenticate
  */
 export const getFilesInFolder = async function (folderURL, token) {
-    const fileURLs = [];
-    const headers = {};
-    if (token) {
-        headers['Authorization'] = `Token ${token}`;
-    }
-    let response = await fetch(folderURL, {
-        headers: headers
-    });
-    const contents = await response.json();
+  const fileURLs = [];
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Token ${token}`;
+  }
+  let response = await fetch(folderURL, {
+    headers: headers
+  });
+  const contents = await response.json();
 
-    for (let i = 0; i < contents.length; i++) {
-        let item = contents[i];
-        if (item.type === 'file') {
-            fileURLs.push({ name: item.name, download_url: item.download_url });
-        }
+  for (let i = 0; i < contents.length; i++) {
+    let item = contents[i];
+    if (item.type === 'file') {
+      fileURLs.push({ name: item.name, download_url: item.download_url });
     }
-    return fileURLs;
+  }
+  return fileURLs;
 };
+
+async function createNewBranch(repositoryOwner, repositoryName, accessToken, newBranchName, commitSHA) {
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${repositoryOwner}/${repositoryName}/git/refs`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ref: `refs/heads/${newBranchName}`,
+          sha: commitSHA,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      console.log(`New branch "${newBranchName}" created successfully!`);
+    } else {
+      const errorData = await response.json();
+      console.error(`Failed to create new branch: ${errorData.message}`);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}

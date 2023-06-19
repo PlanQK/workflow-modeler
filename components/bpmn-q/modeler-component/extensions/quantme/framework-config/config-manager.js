@@ -433,6 +433,25 @@ export function setUploadFileName(uploadFileName) {
 }
 
 /**
+ * Get the Upload Branch Name
+ */
+export function getUploadBranchName() {
+    if (config.uploadBranchName === undefined) {
+        setUploadBranchName(defaultConfig.uploadBranchName);
+    }
+    return config.uploadBranchName;
+}
+
+/**
+ * Set the Upload Branch Name
+ */
+export function setUploadBranchName(uploadBranchName) {
+    if (uploadBranchName !== null && uploadBranchName !== undefined) {
+        config.uploadBranchName = uploadBranchName;
+    }
+}
+
+/**
  * Reset all saved endpoints and configuration values back to default or the value of the respective plugin config
  * by setting this.comfig to an empty js object.
  */
