@@ -10,7 +10,7 @@
  */
 
 import defaultConfig from "./config";
-import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
+import { getPluginConfig } from '../../../editor/plugin/PluginConfigHandler';
 
 let config = {};
 
@@ -207,9 +207,9 @@ export function setQRMUserName(userName) {
  *
  * @return {string} the specified username
  */
-export function getGithubToken() {
+export function getGitHubToken() {
     if (config.githubToken === undefined) {
-        setGithubToken(
+        setGitHubToken(
             getPluginConfig('quantme').githubToken
             || defaultConfig.githubToken);
     }
@@ -221,7 +221,7 @@ export function getGithubToken() {
  *
  * @param githubToken the username
  */
-export function setGithubToken(githubToken) {
+export function setGitHubToken(githubToken) {
     if (githubToken !== null && githubToken !== undefined) {
         config.githubToken = githubToken;
     }
@@ -349,6 +349,82 @@ export function getAWSRuntimeHandlerEndpoint() {
 export function setAWSRuntimeHandlerEndpoint(endpoint) {
     if (endpoint !== null && endpoint !== undefined) {
         config.awsRuntimeHandlerEndpoint = endpoint;
+    }
+}
+
+/**
+ * Get the upload Github Repository Name
+ */
+export function getUploadGithubRepositoryName() {
+    if (config.uploadGithubRepositoryName === undefined) {
+        setUploadGithubRepositoryName(defaultConfig.uploadGithubRepositoryName);
+    }
+    return config.uploadGithubRepositoryName;
+}
+
+/**
+ * Set the upload Github Repositoryname
+ */
+export function setUploadGithubRepositoryName(uploadGithubRepositoryName) {
+    if (uploadGithubRepositoryName !== null && uploadGithubRepositoryName !== undefined) {
+        config.uploadGithubRepositoryName = uploadGithubRepositoryName;
+    }
+}
+
+/**
+ * Get the Upload Github Reposítory Owner
+ */
+export function getUploadGithubRepositoryOwner() {
+    if (config.uploadGithubRepositoryOwner === undefined) {
+        setUploadGithubRepositoryOwner(defaultConfig.uploadGithubRepositoryOwner);
+    }
+    return config.uploadGithubRepositoryOwner;
+}
+
+/**
+ * Set the Upload Github Repository User
+ */
+export function setUploadGithubRepositoryOwner(uploadGithubRepositoryOwner) {
+    if (uploadGithubRepositoryOwner !== null && uploadGithubRepositoryOwner !== undefined) {
+        config.uploadGithubRepositoryOwner = uploadGithubRepositoryOwner;
+    }
+}
+
+/**
+ * Get the Upload File Name
+ */
+export function getUploadFileName() {
+    if (config.uploadFileName === undefined) {
+        setUploadFileName(defaultConfig.uploadFileName);
+    }
+    return config.uploadFileName;
+}
+
+/**
+ * Set the Upload File Name
+ */
+export function setUploadFileName(uploadFileName) {
+    if (uploadFileName !== null && uploadFileName !== undefined) {
+        config.uploadFileName = uploadFileName;
+    }
+}
+
+/**
+ * Get the Upload Branch Name
+ */
+export function getUploadBranchName() {
+    if (config.uploadBranchName === undefined) {
+        setUploadBranchName(defaultConfig.uploadBranchName);
+    }
+    return config.uploadBranchName;
+}
+
+/**
+ * Set the Upload Branch Name
+ */
+export function setUploadBranchName(uploadBranchName) {
+    if (uploadBranchName !== null && uploadBranchName !== undefined) {
+        config.uploadBranchName = uploadBranchName;
     }
 }
 

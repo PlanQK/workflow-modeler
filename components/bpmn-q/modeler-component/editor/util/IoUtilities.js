@@ -33,7 +33,7 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
     const bpmnFile = await new File([xml], fileName, { type: 'text/xml' });
 
     const link = document.createElement('a');
-    link.download = fileName + '.bpmn';
+    link.download = fileName;
     link.href = URL.createObjectURL(bpmnFile);
     link.click();
 
@@ -72,7 +72,7 @@ export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.ge
  * @returns {Promise<*>} The xml diagram.
  */
 export async function getXml(modeler) {
-    const { xml } = await modeler.saveXML({ format: true });
+    const {xml} = await modeler.saveXML({format: true});
     return xml;
 }
 
@@ -97,7 +97,7 @@ export async function loadDiagram(xml, modeler, dispatchEvent = true) {
     } catch (err) {
         console.error(err);
 
-        return { error: err };
+        return {error: err};
     }
 }
 
@@ -134,7 +134,7 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
     }
 
     // add diagram to the body
-    const bpmnFile = new File([workflowXml], fileName, { type: 'text/xml' });
+    const bpmnFile = new File([workflowXml], fileName, {type: 'text/xml'});
     form.append('data', bpmnFile);
 
     // upload all provided views
@@ -165,7 +165,7 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
             // abort if there is not exactly one deployed process definition
             if (Object.values(result['deployedProcessDefinitions'] || {}).length !== 1) {
                 console.error('Invalid size of deployed process definitions list: ' + Object.values(result['deployedProcessDefinitions'] || {}).length);
-                return { status: 'failed' };
+                return {status: 'failed'};
             }
 
             dispatchWorkflowEvent(workflowEventTypes.DEPLOYED, workflowXml, workflowName);
@@ -176,11 +176,11 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
             };
         } else {
             console.error('Deployment of workflow returned invalid status code: %s', response.status);
-            return { status: 'failed' };
+            return {status: 'failed'};
         }
     } catch (error) {
         console.error('Error while executing post to deploy workflow: ' + error);
-        return { status: 'failed' };
+        return {status: 'failed'};
     }
 }
 
@@ -229,10 +229,9 @@ export function openInNewTab(workflowXml, fileName) {
     newWindow.onload = function () {
 
         // Pass the XML string to the new window using postMessage
-        newWindow.postMessage({ workflow: workflowXml, name: fileName }, window.location.href);
+        newWindow.postMessage({workflow: workflowXml, name: fileName}, window.location.href);
     };
 }
-
 
 export function resetAutosaveTimeout(autosaveTimeout, hasChanges, autoSaveFileOption = editorConfig.getAutoSaveFileOption()) {
     clearTimeout(autosaveTimeout);

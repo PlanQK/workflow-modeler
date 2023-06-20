@@ -158,10 +158,6 @@ BpmnEditorActions.prototype._registerDefaultActions = function(injector) {
       eventBus.fire('removeSelection', context);
     });
 
-    this._registerAction('downloadFiles', function(event) {
-      eventBus.fire('saveFile', {});
-    });
-
     this._registerAction('undoOperation', function(event) {
       let context = {};
       eventBus.fire('undo', context);

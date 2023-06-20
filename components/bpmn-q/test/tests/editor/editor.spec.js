@@ -49,11 +49,11 @@ describe('Test editor functions', function () {
             });
 
             afterEach('reset fileName', function () {
-                editorConfig.setFileName('quantum-workflow-model');
+                editorConfig.setFileName('quantum-workflow-model.bpmn');
             });
 
             it('Should configure fileName', function () {
-                const newFileName = 'new-file';
+                const newFileName = 'new-file.bpmn';
                 setPluginConfig([{name: 'editor', config: {fileName: newFileName}}]);
 
                 const endpointConfig = editorConfig.getFileName();
@@ -70,7 +70,7 @@ describe('Test editor functions', function () {
 
                 const endpointConfig = editorConfig.getFileName();
 
-                expect(endpointConfig).to.equal('quantum-workflow-model');
+                expect(endpointConfig).to.equal('quantum-workflow-model.bpmn');
             });
 
             it('Should use default camundaEndpoint if no pluginConfig is defined', function () {
@@ -78,7 +78,7 @@ describe('Test editor functions', function () {
 
                 const endpointConfig = editorConfig.getFileName();
 
-                expect(endpointConfig).to.equal('quantum-workflow-model');
+                expect(endpointConfig).to.equal('quantum-workflow-model.bpmn');
             });
         });
     });

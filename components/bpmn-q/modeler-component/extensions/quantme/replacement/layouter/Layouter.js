@@ -54,7 +54,7 @@ function layoutProcess(modeling, elementRegistry, process) {
             } else {
 
                 // layout elements in subprocess
-                if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(flowElements[i].$type)) {
+                if (flowElements[i].$type === 'bpmn:SubProcess') {
                     console.log('Flow element is subprocess. Layouting contained elements...');
                     const flowElement = elementRegistry.get(flowElements[i].id);
                     let oldBounds = getDi(flowElement).bounds;

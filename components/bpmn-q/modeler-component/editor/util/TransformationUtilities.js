@@ -48,17 +48,14 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
     idMap[newElement['id']] = element.id;
 
     // if the element is a subprocess, check if it is expanded in the replacement fragment and expand the new element
-    if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(newElement.$type)) {
+    if (newElement.$type === 'bpmn:SubProcess') {
 
         // get the shape element related to the subprocess
         let shape = getDi(element);
-        shape.isExpanded = true;
-
-        // TODO: fix the following if, as the access to the DI of the new element is not possible with the current BPMN-JS version
-        /*if (shape && shape.isExpanded) {
+        if (shape && shape.isExpanded) {
             // expand the new element
             elementRegistry.get(element.id).businessObject.di.isExpanded = true;
-        }*/
+        }
 
         // preserve messages defined in ReceiveTasks
     } else if (newElement.$type === 'bpmn:ReceiveTask' && newElement.messageRef) {

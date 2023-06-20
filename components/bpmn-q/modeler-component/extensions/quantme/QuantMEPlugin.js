@@ -2,14 +2,14 @@ import React from 'react';
 
 import QuantMEExtensionModule from './modeling';
 import QuantMETab from './configTabs/QuantMETab';
-
+import UploadTab from './configTabs/UploadTab';
+import {getQRMs} from './qrm-manager';
+import {startQuantmeReplacementProcess} from './replacement/QuantMETransformator';
+import * as camundaConfig from '../../editor/config/EditorConfigManager';
+import * as config from './framework-config/config-manager';
+import TransformationButton from '../../editor/ui/TransformationButton';
 import quantMEStyles from './styling/quantme.css';
 import QuantMEPluginButton from './ui/QuantMEPluginButton';
-import TransformationButton from "../../editor/ui/TransformationButton";
-import {getQRMs} from "./qrm-manager";
-import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
-import * as config from "./framework-config/config-manager";
-import * as camundaConfig from "../../editor/config/EditorConfigManager";
 
 let quantMEModdleExtension = require('./resources/quantum4bpmn.json');
 
@@ -23,6 +23,11 @@ export default {
             tabId: 'BPMNTab',
             tabTitle: 'QuantME Plugin',
             configTab: QuantMETab,
+        },
+        {
+            tabId: 'UploadTab',
+            tabTitle: 'Upload data',
+            configTab: UploadTab
         }
     ],
     name: 'quantme',

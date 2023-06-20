@@ -1,7 +1,6 @@
 import inherits from 'inherits-browser';
 
 import KeyboardBindings from 'diagram-js/lib/features/keyboard/KeyboardBindings';
-import { getModeler } from '../../../editor/ModelerHandler';
 
 /**
  * @typedef {import('didi').Injector} Injector
@@ -62,7 +61,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // search labels
-  // CTRL + F
+  // F
   addListener('find', function(context) {
     var event = context.keyEvent;
 
@@ -132,7 +131,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
       return true;
     }
   });
-
+  
   // delete selected element
   // D
   addListener('removeSelection', function(context) {
@@ -146,7 +145,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // undo operation
-  // CTRL + U
+  // U
   addListener('undoOperation', function(context) {
     var event = context.keyEvent;
 
@@ -158,7 +157,7 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
   });
 
   // redo operation
-  // CTRL + R
+  // R
   addListener('redoOperation', function(context) {
     var event = context.keyEvent;
 
@@ -168,73 +167,5 @@ BpmnKeyboardBindings.prototype.registerBindings = function(keyboard, editorActio
       return true;
     }
   });
-
-  // download files
-  // CTRL + S
-  addListener('downloadFiles', function(context) {
-    var event = context.keyEvent;
-    if (keyboard.isKey(['s', 'S'], event) && keyboard.isCmd(event)) {
-      event.preventDefault();
-      editorActions.trigger('downloadFiles');
-      return true;
-    }
-  });
-
-  // copy bpmn objects
-  addListener('copy', function(context) {
-
-    // retrieve from local storage
-    const serializedCopy = localStorage.getItem('bpmnClipboard');
-
-    if (!serializedCopy) {
-      return;
-    }
-
-    // parse tree, reinstantiating contained objects
-    const parsedCopy = JSON.parse(serializedCopy, createReviver(getModeler().get('moddle')));
-
-    // put into clipboard
-    getModeler().get('clipboard').set(parsedCopy);
-  });
-
-  /**
- * A factory function that returns a reviver to be
- * used with JSON#parse to reinstantiate moddle instances.
- *
- * @param  {Moddle} moddle
- *
- * @return {Function}
- */
-function createReviver(moddle) {
-
-  var elCache = {};
-
-  return function(key, object) {
-
-    if (typeof object === 'object' && typeof object.$type === 'string') {
-
-      var objectId = object.id;
-
-      if (objectId && elCache[objectId]) {
-        return elCache[objectId];
-      }
-
-      var type = object.$type;
-      var attrs = Object.assign({}, object);
-
-      delete attrs.$type;
-
-      var newEl = moddle.create(type, attrs);
-
-      if (objectId) {
-        elCache[objectId] = newEl;
-      }
-
-      return newEl;
-    }
-
-    return object;
-  };
-}
 
 };
