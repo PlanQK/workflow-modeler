@@ -48,7 +48,7 @@ export function insertShape(definitions, parent, newElement, idMap, replace, mod
     idMap[newElement['id']] = element.id;
 
     // if the element is a subprocess, check if it is expanded in the replacement fragment and expand the new element
-    if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(newElement.$type)) {
+    if (newElement.$type === 'bpmn:SubProcess') {
 
         // get the shape element related to the subprocess
         let shape = getDi(element);

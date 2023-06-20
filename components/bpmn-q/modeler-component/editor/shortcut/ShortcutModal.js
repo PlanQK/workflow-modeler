@@ -73,7 +73,7 @@ export default function ShortcutModal({ onClose }) {
                     </tr>
                     <tr>
                         <td>Replace Tool</td>
-                        <td className="binding"><code>R</code></td>
+                        <td className="binding">R</td>
                     </tr>
                     <tr>
                         <td>Space Tool</td>

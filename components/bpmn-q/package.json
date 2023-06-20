@@ -3,7 +3,7 @@
   "version": "0.1.8",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
-  "main": "index.js",
+  "main": "public/index.js",
   "files": [
     "public/**/*",
     "!public/index.html"
@@ -12,8 +12,7 @@
     "test": "karma start",
     "test:watch": "npm test -- --auto-watch --no-single-run",
     "build": "webpack",
-    "dev": "webpack-dev-server",
-    "dev-open": "webpack-dev-server --open"
+    "dev": "webpack-dev-server --open"
   },
   "author": "",
   "license": "Apache-2.0",
