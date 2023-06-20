@@ -118,29 +118,46 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
 
     // Parse the XML string into a JavaScript object
     let xmlDoc = xmlParser.xml2js(updated_xml, { compact: true });
+    const bpmnNamespace = 'http://www.omg.org/spec/BPMN/20100524/MODEL';
+    const diagramNamespace = 'http://www.omg.org/spec/BPMN/20100524/DI';
 
-    // Get all bpmndi:BPMNDiagram elements
-    let bpmnDiagrams = xmlDoc['bpmn:definitions']['bpmndi:BPMNDiagram'];
+    // retrieve the namespace prefixes from the rootElement
+    let prefixes = Object.entries(rootElement.$parent.$attrs);
+    const foundBpmnPair = prefixes.find(pair => pair[1] === bpmnNamespace);
+    const foundDiagramPair = prefixes.find(pair => pair[1] === diagramNamespace);
+    let modifiedXmlString = updated_xml;
+    if (foundBpmnPair && foundDiagramPair) {
 
-    let subprocesses = xmlDoc['bpmn:definitions']['bpmn:process']['bpmn:subProcess'];
+        // Remove xmlns: prefix from the key
+        const bpmnPrefix = foundBpmnPair[0].replace(/^xmlns:/, '');
+        const diagramPrefix = foundDiagramPair[0].replace(/^xmlns:/, ''); 
 
-    // Remove all bpmndi:BPMNDiagram elements except the first one
-    if (Array.isArray(bpmnDiagrams)) {
-        if (bpmnDiagrams.length > 1) {
-            xmlDoc['bpmn:definitions']['bpmndi:BPMNDiagram'] = bpmnDiagrams.slice(0, 1);
+        // Get all BPMNDiagram elements  
+        const definitionsElement = xmlDoc[bpmnPrefix + ':definitions'];
+
+        let subprocesses = definitionsElement[bpmnPrefix + ':process'][bpmnPrefix + ':subProcess'];
+        let bpmnDiagrams = definitionsElement[diagramPrefix + ':BPMNDiagram'];
+
+        // Remove all bpmndi:BPMNDiagram elements except the first one
+        if (Array.isArray(bpmnDiagrams)) {
+            if (bpmnDiagrams.length > 1) {
+                xmlDoc[bpmnPrefix + ':definitions'][diagramPrefix + ':BPMNDiagram'] = bpmnDiagrams.slice(0, 1);
+            }
         }
+
+        // Remove the isExpanded attribute from the shapes
+        if (Array.isArray(subprocesses)) {
+            for (let i = 0; i < subprocesses.length; i++) {
+                let subprocessAttributes = subprocesses[i]['_attributes'];
+                delete subprocessAttributes.isExpanded;
+            }
+        }
+
+        // Serialize the modified JavaScript object back to XML string
+        modifiedXmlString = xmlParser.js2xml(xmlDoc, { compact: true });
     }
 
-    // Remove the isExpanded attribute from the shapes
-    if (Array.isArray(subprocesses)) {
-        for (let i = 0; i < subprocesses.length; i++) {
-            let subprocessAttributes = subprocesses[i]['_attributes'];
-            delete subprocessAttributes.isExpanded;
-        }
-    }
 
-    // Serialize the modified JavaScript object back to XML string
-    let modifiedXmlString = xmlParser.js2xml(xmlDoc, { compact: true });
 
     return { status: 'transformed', xml: modifiedXmlString };
 }
@@ -193,6 +210,8 @@ async function replaceByFragment(definitions, task, parent, replacement, modeler
         return false;
     }
 
+    console.log(task)
+
     // get the root process of the replacement fragment
     let replacementProcess = getRootProcess(await getDefinitionsFromXml(replacement));
     let replacementElement = getSingleFlowElement(replacementProcess);
@@ -215,11 +234,15 @@ async function replaceByFragment(definitions, task, parent, replacement, modeler
         const bpmndiShapes = xmlDoc.getElementsByTagNameNS(bpmndiNamespace, 'BPMNShape');
 
         let isExpanded = null;
-
+        console.log(bpmndiShapes)
         for (let i = 0; i < bpmndiShapes.length; i++) {
             const bpmnElement = bpmndiShapes[i].getAttribute('bpmnElement');
+            console.log(bpmnElement)
             if (bpmnElement === replacementElement.id) {
+                console.log(replacementElement)
                 isExpanded = bpmndiShapes[i].getAttribute('isExpanded');
+                console.log(isExpanded);
+                console.log(bpmnElement)
                 replacementElement.isExpanded = isExpanded;
                 break;
             }
