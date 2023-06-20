@@ -15,6 +15,10 @@ export default function QrmDataTab() {
     const [githubUsername, setGithubUsername] = useState(config.getQRMRepositoryUserName());
     const [githubRepositoryPath, setGithubRepositoryPath] = useState(config.getQRMRepositoryPath());
     const [githubToken, setGitHubToken] = useState(config.getGitHubToken());
+    const [uploadGithubRepositoryName, setUploadGithubRepositoryName] = useState(config.getUploadGithubRepositoryName());
+    const [uploadGithubOwner, setUploadGithubOwner] = useState(config.getUploadGithubRepositoryOwner());
+    const [uploadFileName, setUploadFileName] = useState(config.getUploadFileName());
+    const [uploadBranchName, setUploadBranchName] = useState(config.getUploadBranchName());
     const modeler = getModeler();
 
     const editorActions = modeler.get('editorActions');
@@ -49,12 +53,52 @@ export default function QrmDataTab() {
         });
     }
 
+    if (!editorActions._actions.hasOwnProperty('uploadGithubRepositoryNameChanged')) {
+        editorActions.register({
+            uploadGithubRepositoryNameChanged: function (uploadGithubRepositoryName) {
+                self.modeler.config.uploadGithubRepositoryName = uploadGithubRepositoryName;
+            }
+        });
+    }
+    if (!editorActions._actions.hasOwnProperty('uploadGithubRepositoryOwnerChanged')) {
+        editorActions.register({
+            uploadGithubRepositoryOwnerChanged: function (uploadGithubRepositoryOwner) {
+                self.modeler.config.uploadGithubRepositoryOwner = uploadGithubRepositoryOwner;
+            }
+        });
+    }
+    if (!editorActions._actions.hasOwnProperty('uploadFileNameChanged')) {
+        editorActions.register({
+            uploadFileNameChanged: function (uploadFileName) {
+                self.modeler.config.uploadFileName = uploadFileName;
+            }
+        });
+    }
+
+    if (!editorActions._actions.hasOwnProperty('uploadBranchNameChanged')) {
+        editorActions.register({
+            uploadBranchNameChanged: function (uploadBranchName) {
+                self.modeler.config.uploadBranchName = uploadBranchName;
+            }
+        });
+    }
+
+
     // save changed config entries on close
     QrmDataTab.prototype.onClose = () => {
         modeler.config.githubRepositoryName = githubRepositoryName;
         modeler.config.githubUsername = githubUsername;
         modeler.config.githubRepositoryPath = githubRepositoryPath;
         modeler.config.githubToken = githubToken;
+        modeler.config.uploadGithubRepositoryName = uploadGithubRepositoryName;
+        modeler.config.uploadGithubRepositoryOwner = uploadGithubOwner;
+        modeler.config.uploadFileName = uploadFileName;
+        modeler.config.uploadBranchName = uploadBranchName;
+
+        config.setUploadGithubRepositoryName(uploadGithubRepositoryName);
+        config.setUploadGithubRepositoryOwner(uploadGithubOwner);
+        config.setUploadFileName(uploadFileName);
+        config.setUploadBranchName(uploadBranchName);
         config.setQRMRepositoryName(githubRepositoryName);
         config.setQRMUserName(githubUsername);
         config.setQRMRepositoryPath(githubRepositoryPath);
@@ -112,6 +156,51 @@ export default function QrmDataTab() {
                 </tr>
             </tbody>
         </table>
+        <h3>Upload Data</h3>
+        <table>
+            <tbody>
+            <tr className="spaceUnder">
+                <td align="right">GitHub Repository Owner:</td>
+                <td align="left">
+                    <input
+                        type="string"
+                        name="uploadGithubOwner"
+                        value={uploadGithubOwner}
+                        onChange={event => setUploadGithubOwner(event.target.value)}/>
+                </td>
+            </tr>
+            <tr className="spaceUnder">
+                <td align="right">GitHub Repository Name:</td>
+                <td align="left">
+                    <input
+                        type="string"
+                        name="uploadGithubRepositoryName"
+                        value={uploadGithubRepositoryName}
+                        onChange={event => setUploadGithubRepositoryName(event.target.value)}/>
+                </td>
+            </tr>
+            <tr className="spaceUnder">
+                <td align="right">GitHub Repository Branch:</td>
+                <td align="left">
+                    <input
+                        type="string"
+                        name="uploadBranchName"
+                        value={uploadBranchName}
+                        onChange={event => setUploadBranchName(event.target.value)}/>
+                </td>
+            </tr>
+            <tr className="spaceUnder">
+                <td align="right">Workflow File Name:</td>
+                <td align="left">
+                    <input
+                        type="string"
+                        name="uploadFileName"
+                        value={uploadFileName}
+                        onChange={event => setUploadFileName(event.target.value)}/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </>;
 }
 
@@ -122,5 +211,10 @@ QrmDataTab.prototype.config = () => {
     modeler.config.githubUsername = config.getQRMRepositoryUserName();
     modeler.config.githubRepositoryPath = config.getQRMRepositoryPath();
     modeler.config.githubToken = config.getGitHubToken();
+    
+    modeler.config.uploadGithubRepositoryName = config.getUploadGithubRepositoryName();
+    modeler.config.uploadGithubRepositoryOwner = config.getUploadGithubRepositoryOwner();
+    modeler.config.uploadFileName = config.getUploadFileName();
+    modeler.config.uploadBranchName = config.getUploadBranchName();
 
 };

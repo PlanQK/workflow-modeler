@@ -2,7 +2,6 @@ import React from 'react';
 
 import QuantMEExtensionModule from './modeling';
 import QuantMETab from './configTabs/QuantMETab';
-import UploadTab from './configTabs/UploadTab';
 import {getQRMs} from './qrm-manager';
 import {startQuantmeReplacementProcess} from './replacement/QuantMETransformator';
 import * as camundaConfig from '../../editor/config/EditorConfigManager';
@@ -23,11 +22,6 @@ export default {
             tabId: 'BPMNTab',
             tabTitle: 'QuantME Plugin',
             configTab: QuantMETab,
-        },
-        {
-            tabId: 'UploadTab',
-            tabTitle: 'Upload data',
-            configTab: UploadTab
         }
     ],
     name: 'quantme',
