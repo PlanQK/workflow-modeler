@@ -194,15 +194,3 @@
 .qwm-tmp {
     background: url("../icons/save-outline-icon.png") no-repeat center center;
 }
-
-.qwm-icon-upload:before {
-    content: "";
-    width: 15px;
-    height: 18px;
-    margin-top: 0px;
-    background-size: contain;
-    background-image: url("../icons/upload-icon.png");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-}

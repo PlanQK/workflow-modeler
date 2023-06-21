@@ -1,12 +1,13 @@
-import {getXml} from '../../../editor/util/IoUtilities';
-import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
+import { getXml } from '../../../editor/util/IoUtilities';
+import { createTempModelerFromXml } from '../../../editor/ModelerHandler';
 import {
     addCamundaInputParameter,
     getRootProcess,
 } from '../../../editor/util/ModellingUtilities';
-import {getAllElementsInProcess, insertShape} from '../../../editor/util/TransformationUtilities';
+import { getAllElementsInProcess, insertShape } from '../../../editor/util/TransformationUtilities';
 import * as consts from '../QHAnaConstants';
 import * as qhanaConsts from '../QHAnaConstants';
+import { layout } from '../../quantme/replacement/layouter/Layouter';
 
 /**
  * Replace QHAna extensions with camunda bpmn elements so that it complies with the standard
@@ -17,6 +18,7 @@ import * as qhanaConsts from '../QHAnaConstants';
 export async function startQHAnaReplacementProcess(xml) {
     let modeler = await createTempModelerFromXml(xml);
     let elementRegistry = modeler.get('elementRegistry');
+    let modeling = modeler.get('modeling');
 
     // get root element of the current diagram
     const definitions = modeler.getDefinitions();
@@ -27,7 +29,7 @@ export async function startQHAnaReplacementProcess(xml) {
     if (typeof rootProcess === 'undefined') {
 
         console.log('Unable to retrieve root process element from definitions!');
-        return {status: 'failed', cause: 'Unable to retrieve root process element from definitions!'};
+        return { status: 'failed', cause: 'Unable to retrieve root process element from definitions!' };
     }
 
     // Mark process as executable
@@ -43,7 +45,7 @@ export async function startQHAnaReplacementProcess(xml) {
 
     // skip transformation if no QHAna service tasks and no QHAna service step tasks exist in the process
     if ((!qhanaServiceTasks || !qhanaServiceTasks.length) && (!qhanaServiceStepTasks || !qhanaServiceStepTasks.length)) {
-        return {status: 'transformed', xml: xml};
+        return { status: 'transformed', xml: xml };
     }
 
     // replace each qhana:QHAnaServiceTask with a ServiceTask with external implementation
@@ -79,8 +81,9 @@ export async function startQHAnaReplacementProcess(xml) {
     }
 
     const transformedXml = await getXml(modeler);
+    layout(modeling, elementRegistry, rootProcess);
     // await saveResultXmlFn(transformedXml);
-    return {status: 'transformed', xml: transformedXml};
+    return { status: 'transformed', xml: transformedXml };
 }
 
 
@@ -99,7 +102,7 @@ async function replaceQHAnaServiceTaskByServiceTask(definitions, qhanaServiceTas
 
     // create a BPMN service task with implementation external
     const topic = 'qhana-plugin.' + qhanaServiceTask.get(qhanaConsts.IDENTIFIER);
-    const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', {type: 'external', topic: topic});
+    const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', { type: 'external', topic: topic });
 
     let result = insertShape(definitions, parentProcess, newServiceTask, {}, true, modeler, qhanaServiceTask);
 
@@ -130,7 +133,7 @@ async function replaceQHAnaServiceStepTaskByServiceTask(definitions, qhanaServic
 
     // create a BPMN service task with implementation external and the topic defined in the next step attribute
     const topic = 'plugin-step.' + consts.NEXT_STEP;
-    const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', {type: 'external', topic: topic});
+    const newServiceTask = bpmnFactory.create('bpmn:ServiceTask', { type: 'external', topic: topic });
 
     let result = insertShape(definitions, parentProcess, newServiceTask, {}, true, modeler, qhanaServiceTask);
 
