@@ -1,6 +1,6 @@
-import {getAllConfigs, setPluginConfig} from '../../../modeler-component/editor/plugin/PluginConfigHandler';
-import {createTempModeler} from '../../../modeler-component/editor/ModelerHandler';
-import {loadDiagram} from '../../../modeler-component/editor/util/IoUtilities';
+import { getAllConfigs, setPluginConfig } from '../../../modeler-component/editor/plugin/PluginConfigHandler';
+import { createTempModeler } from '../../../modeler-component/editor/ModelerHandler';
+import { loadDiagram } from '../../../modeler-component/editor/util/IoUtilities';
 import {
     COMPLETE_EXAMPLE_WORKFLOW,
     INPUT_TRANSFORMATION_ASSOCIATION,
@@ -15,20 +15,20 @@ import {
 import {
     startDataFlowReplacementProcess
 } from '../../../modeler-component/extensions/data-extension/transformation/TransformationManager';
-import {expect} from 'chai';
+import { expect } from 'chai';
 import {
     getDocumentation,
     getRootProcess
 } from '../../../modeler-component/editor/util/ModellingUtilities';
-import {getAllElementsForProcess} from '../../../modeler-component/editor/util/TransformationUtilities';
-import {testTaskIo} from '../helpers/PropertiesHelper';
+import { getAllElementsForProcess } from '../../../modeler-component/editor/util/TransformationUtilities';
+import { testTaskIo } from '../helpers/PropertiesHelper';
 
 describe('Test the TransformationManager of the data flow extension.', function () {
 
     describe('Test startDataFlowReplacementProcess()', function () {
 
         it('Should transform all data flow elements', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const pluginConfigs = getAllConfigs();
 
@@ -111,7 +111,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should add form fields to start event', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(PROCESS_INPUT_WORKFLOW);
 
@@ -140,7 +140,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should not transform anything if no data flow elements are present', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(PURE_BPMN_WORKFLOW);
 
@@ -148,11 +148,14 @@ describe('Test the TransformationManager of the data flow extension.', function 
 
             const workflow = result.xml.replace(/\n/g, ' ').trim();
 
-            expect(workflow).to.equal(UNTRANSFORMED_BPMN_WORKFLOW);
+            // Remove the bpmndi:BPMNDiagram element since the layouter will change the x & y coordinates
+            const workflowWithoutDiagramElements = workflow.replaceAll(/<bpmndi:BPMNDiagram[^>]+>[\s\S]*?<\/bpmndi:BPMNDiagram>/g, '');
+
+            expect(workflowWithoutDiagramElements).to.equal(UNTRANSFORMED_BPMN_WORKFLOW);
         });
 
         it('Should transform all input and output data map objects', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(MULTI_IO_WORKFLOW);
 
@@ -207,7 +210,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should created documentation in transformed data map objects', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(DOCUMENTATION_WORKFLOW);
 
@@ -246,7 +249,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should not create a task for publishing global process variables', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(ONLY_LOCAL_VARS_WORKFLOW);
 
@@ -265,7 +268,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should create a task for process variables because a DataMapObject is used before its initialization', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(USED_BEFORE_INIT_WORKFLOW);
 
@@ -294,7 +297,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should create a task for process variables for each start event', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(MULTIPLE_START_EVENTS_WORKFLOW);
 
@@ -336,7 +339,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should create a task for process variables inside the subprocess', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(SUBPROCESS_WORKFLOW);
 
@@ -379,7 +382,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should transform split and merged DataMapObjects', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(SPLIT_MERGE_WORKFLOW);
 
@@ -463,7 +466,7 @@ describe('Test the TransformationManager of the data flow extension.', function 
         });
 
         it('Should add TransformationAssociation expressions to the input', async function () {
-            setPluginConfig([{name: 'dataflow'}]);
+            setPluginConfig([{ name: 'dataflow' }]);
 
             const result = await startDataFlowReplacementProcess(INPUT_TRANSFORMATION_ASSOCIATION);
 

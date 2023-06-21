@@ -1,6 +1,6 @@
-import {is} from 'bpmn-js/lib/util/ModelUtil';
-import {getXml, loadDiagram} from '../../../editor/util/IoUtilities';
-import {createLightweightModeler} from '../../../editor/ModelerHandler';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getXml } from '../../../editor/util/IoUtilities';
+import { createTempModelerFromXml } from '../../../editor/ModelerHandler';
 import * as consts from '../Constants';
 import {
     getAllElementsForProcess,
@@ -14,6 +14,7 @@ import {
     addFormField, findSequenceFlowConnection, getDocumentation,
     getRootProcess, setDocumentation,
 } from '../../../editor/util/ModellingUtilities';
+import { layout } from '../../quantme/replacement/layouter/Layouter';
 
 /**
  * Replace data flow extensions with camunda bpmn elements so that it complies with the standard
@@ -22,8 +23,7 @@ import {
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
 export async function startDataFlowReplacementProcess(xml) {
-    let modeler = await createLightweightModeler();
-    await loadDiagram(xml, modeler);
+    let modeler = await createTempModelerFromXml(xml);
     let elementRegistry = modeler.get('elementRegistry');
     let modeling = modeler.get('modeling');
 
@@ -36,7 +36,7 @@ export async function startDataFlowReplacementProcess(xml) {
     if (typeof rootProcess === 'undefined') {
 
         console.log('Unable to retrieve root process element from definitions!');
-        return {status: 'failed', cause: 'Unable to retrieve root process element from definitions!'};
+        return { status: 'failed', cause: 'Unable to retrieve root process element from definitions!' };
     }
 
     // Mark process as executable
@@ -133,12 +133,12 @@ export async function startDataFlowReplacementProcess(xml) {
 
                 for (let c of businessObject.get(consts.CONTENT)) {
                     let formField =
-                        {
-                            'defaultValue': c.value,
-                            'id': name + '.' + c.name,
-                            'label': name + '.' + c.name,
-                            'type': 'string'
-                        };
+                    {
+                        'defaultValue': c.value,
+                        'id': name + '.' + c.name,
+                        'label': name + '.' + c.name,
+                        'type': 'string'
+                    };
                     addFormField(activity.id, formField, elementRegistry, moddle, modeling);
                 }
 
@@ -195,10 +195,10 @@ export async function startDataFlowReplacementProcess(xml) {
         }
     }
 
-    // layout(modeling, elementRegistry, rootProcess);
+    layout(modeling, elementRegistry, rootProcess);
 
     const transformedXML = await getXml(modeler);
-    return {status: 'transformed', xml: transformedXML};
+    return { status: 'transformed', xml: transformedXML };
 }
 
 /**
@@ -261,11 +261,11 @@ function transformDataMapObjects(rootProcess, definitions, processContextVariabl
             const dataDoc = createDataMapObjectDocs(dataMapObjectBo);
             setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
         } else {
-            return {success: false, failedData: dataMapObjectBo};
+            return { success: false, failedData: dataMapObjectBo };
         }
 
     }
-    return {success: true};
+    return { success: true };
 }
 
 /**
@@ -292,10 +292,10 @@ function transformDataStoreMaps(rootProcess, definitions, processContextVariable
 
         if (!result.success) {
             // break transformation and propagate failure
-            return {success: false, failedData: dataElement.element};
+            return { success: false, failedData: dataElement.element };
         }
     }
-    return {success: true};
+    return { success: true };
 }
 
 /**
@@ -336,9 +336,9 @@ export function transformDataStoreMap(dataStoreMap, parentElement, definitions, 
         const dataDoc = createDataStoreMapDocs(dataStoreMap);
         setDocumentation(result.element, currentDoc.concat(dataDoc), bpmnFactory);
     } else {
-        return {success: false, failedData: dataStoreMap};
+        return { success: false, failedData: dataStoreMap };
     }
-    return {success: true};
+    return { success: true };
 }
 
 
@@ -371,13 +371,13 @@ function transformTransformationTask(rootProcess, definitions, processContextVar
         const result = insertShape(definitions, serviceTask.parent, serviceTask, {}, true, modeler, transformationTask);
 
         if (!result.success) {
-            return {success: false, failedData: transformationTask};
+            return { success: false, failedData: transformationTask };
         }
 
         // add parameters attribute as camunda map to service task inputs
         addCamundaInputMapParameter(result.element.businessObject, consts.PARAMETERS, transformationTask.get(consts.PARAMETERS), bpmnFactory);
     }
-    return {success: true};
+    return { success: true };
 }
 
 /**
@@ -419,7 +419,7 @@ export function createProcessContextVariablesTask(processContextVariables, rootP
         }
     }
 
-    return {success: true};
+    return { success: true };
 }
 
 /**
@@ -458,15 +458,15 @@ function getProcessContextVariablesTask(startEventElement, parent, bpmnFactory, 
         const newTaskElement = modeling.createShape({
             type: 'bpmn:Task',
             businessObject: processVariablesTaskBo,
-        }, {x: startEventElement.x, y: startEventElement.y + Y_OFFSET_TASK}, parent, {});
+        }, { x: startEventElement.x, y: startEventElement.y + Y_OFFSET_TASK }, parent, {});
 
         modeling.updateProperties(newTaskElement, processVariablesTaskBo);
 
         // move start event to the left to create space for the new task
-        modeling.moveElements([startEventElement], {x: -120, y: 0});
+        modeling.moveElements([startEventElement], { x: -120, y: 0 });
 
         // connect new Task with activities which were connected with the start event
-        modeling.connect(startEventElement, newTaskElement, {type: 'bpmn:SequenceFlow'});
+        modeling.connect(startEventElement, newTaskElement, { type: 'bpmn:SequenceFlow' });
         for (let outgoingConnectionBo of outgoingFlowElements) {
             const outgoingConnectionElement = elementRegistry.get(outgoingConnectionBo.id);
             const target = outgoingConnectionElement.target;

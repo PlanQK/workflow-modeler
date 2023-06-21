@@ -4,7 +4,7 @@ import { saveFileFormats, transformedWorkflowHandlers, autoSaveFile } from '../E
 // default configurations of the editor
 const defaultConfig = {
     camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
-    fileName: 'quantum-workflow-model.bpmn',
+    fileName: process.env.DOWNLOAD_FILE_NAME,
     transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
     autoSaveFileOption: autoSaveFile.INTERVAL,
     fileFormat: saveFileFormats.BPMN
@@ -55,7 +55,7 @@ export function getFileName() {
  * @param fileName the new file name
  */
 export function setFileName(fileName) {
-    if (fileName !== null && fileName !== undefined && /^[a-zA-Z0-9-_]+\.bpmn$/.test(fileName)) {
+    if (fileName !== null && fileName !== undefined) {
 
         // remove trailing slashes
         config.fileName = fileName;
