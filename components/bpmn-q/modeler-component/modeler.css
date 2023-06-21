@@ -1,0 +1,19 @@
+.resize {
+    position: absolute;
+    bottom: 45px;
+    right: 0;
+}
+
+#properties {
+    cursor: default;
+}
+
+#properties::before {
+    content: '';
+    position: absolute;
+    cursor: w-resize;
+}
+
+body {
+    overflow-y: hidden;
+}
