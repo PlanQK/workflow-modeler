@@ -15,6 +15,7 @@ const defaultConfig = {
     opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
     wineryEndpoint: process.env.WINERY_ENDPOINT,
     nisqAnalyzerEndpoint: process.env.NISQ_ANALYZER_ENDPOINT,
+    githubToken: process.env.GITHUB_TOKEN,
     transformationFrameworkEndpoint: process.env.TRANSFORMATION_FRAMEWORK_ENDPOINT,
     qiskitRuntimeHandlerEndpoint: process.env.QISKIT_RUNTIME_HANDLER_ENDPOINT,
     awsRuntimeHandlerEndpoint: process.env.AWS_RUNTIME_HANDLER_ENDPOINT,
