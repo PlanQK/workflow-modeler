@@ -5,6 +5,7 @@ import BPMNConfigTab from "./configTabs/BPMNConfigTab";
 import NisqAnalyzerTab from "./configTabs/NisqAnalyzerTab";
 import QrmDataTab from "./configTabs/QrmDataTab";
 import HybridRuntimeTab from "./configTabs/HybridRuntimeTab";
+import UploadTab from "./configTabs/UploadTab";
 import {getQRMs} from "./qrm-manager";
 import {startQuantmeReplacementProcess} from "./replacement/QuantMETransformator";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
@@ -47,6 +48,11 @@ export default {
             tabId: 'HybridRuntimesTab',
             tabTitle: 'Hybrid Runtimes',
             configTab: HybridRuntimeTab,
+        },
+        {
+            tabId: 'UploadTab',
+            tabTitle: 'Upload data',
+            configTab: UploadTab,
         }
     ],
     name: 'quantme',
