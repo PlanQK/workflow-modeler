@@ -7,7 +7,8 @@ import {
 } from "bpmn-js-properties-panel";
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
 import CustomPopupMenuModule from "./popup/";
-import {getAdditionalModules, getModdleExtension} from "./plugin/PluginHandler";
+import { getAdditionalModules, getModdleExtension } from "./plugin/PluginHandler";
+import ModelerRulesModule from "./rules/";
 import LintModule from 'bpmn-js-bpmnlint';
 import bpmnlintConfig from '../../.bpmnlintrc';
 
@@ -38,7 +39,7 @@ export function createModeler(containerId, propertiesParentId) {
         },
         additionalModules: getModules(),
         keyboard: {
-             bindTo: document
+            bindTo: document
         },
         linting: {
             bpmnlint: bpmnlintConfig
@@ -139,7 +140,8 @@ function getModules() {
         CamundaExtensionModule,
         CustomPopupMenuModule,
         LintModule,
-        clipboardModule
+        clipboardModule,
+        ModelerRulesModule
     ].concat(pluginModules);
 
     console.log('\n Additional modules of the modeler: ');
