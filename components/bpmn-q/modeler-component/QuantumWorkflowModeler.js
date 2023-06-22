@@ -22,6 +22,7 @@ import { getPluginButtons, getTransformationButtons } from "./editor/plugin/Plug
 import { getPluginConfig, setPluginConfig } from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
 import { initEditorEventHandler } from './editor/events/EditorEventHandler';
+import $ from 'jquery';
 
 /**
  * The Quantum Workflow modeler HTML web component which contains the bpmn-js modeler to model BPMN diagrams, an editor
@@ -80,7 +81,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
             <div style="display: flex; flex-direction: column; height: 100%;" class="qwm">
               <div id="button-container" style="flex-shrink: 0;"></div>
               <hr class="qwm-toolbar-splitter" />
-              <div id="main-div" style="display: flex; flex: 1;">
+              <div id="main-div" style="display: flex; flex: 1; height: 100%">
                 <div id="canvas" style="width: 100%"></div>
                 <div id="properties" style="overflow: auto; width:350px; max-height: 93.5vh; background: #f8f8f8;"></div>
               </div>
@@ -94,14 +95,14 @@ export class QuantumWorkflowModeler extends HTMLElement {
         let startX;
         let startWidth;
         let width = panel.style.width;
-        var propertiesElement = document.getElementById("properties");
+        let propertiesElement = document.getElementById("properties");
 
         propertiesElement.addEventListener("mousemove", function (e) {
-            var rect = this.getBoundingClientRect();
-            var x = e.clientX - rect.left;
-            var y = e.clientY - rect.top;
+            let rect = this.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
 
-            var borderSize = 5;
+            let borderSize = 5;
 
             if (
                 x < borderSize ||
@@ -132,10 +133,10 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
         // Mouse down handler
         function handleMouseDown(event) {
-            var rect = panel.getBoundingClientRect();
-            var x = event.clientX - rect.left;
+            let rect = panel.getBoundingClientRect();
+            let x = event.clientX - rect.left;
 
-            var borderSize = 5;
+            let borderSize = 5;
 
             if (
                 x < borderSize ||
@@ -192,6 +193,91 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
             isCollapsed = !isCollapsed;
         });
+
+        let editor = document.getElementById('editor');
+        let dragging = false;
+        let aceEditor = ace.edit(editor);
+
+        const editorButton = document.createElement('button');
+        editorButton.className = 'xml-viewer-button';
+        editorButton.textContent = 'XML';
+
+        let enabledXMLView = false;
+
+        let editorWrap = document.getElementById('editor_wrap');
+
+        editorButton.addEventListener('click', function () {
+            if (!enabledXMLView) {
+                editor.style.display = 'block';
+                panel.style.display = 'none';
+                editorButton.textContent = 'Diagram';
+                editorWrap.style.display = 'block';
+
+                // Dynamically set the value of the editor
+                let xml = getModeler().xml;
+                if (xml.xml != undefined) {
+                    xml = xml.xml;
+                }
+                aceEditor.setValue(xml);
+            } else {
+                editor.style.display = 'none';
+                panel.style.display = 'block';
+                editorButton.textContent = 'XML';
+                editorWrap.style.display = 'none';
+
+
+                aceEditor.getSession().on('change', function () {
+                    update();
+                });
+
+                function update() {
+                    let xml = aceEditor.getSession().getValue();
+                    loadDiagram(xml, getModeler());
+                }
+            }
+
+            enabledXMLView = !enabledXMLView;
+        });
+
+        maindiv.appendChild(editorButton);
+
+        $("#editor_dragbar").mousedown(function (e) {
+            if(!enabledXMLView) return;
+            e.preventDefault();
+            dragging = true;
+          
+            let editorElement = $("#editor");
+            let editor_wrap = $("#editor_wrap");
+            let dragbar = $("#editor_dragbar");
+            let startY = e.pageY;
+            let startTop = parseInt(editorElement.css("top"));
+            let startHeight = editor_wrap.height();
+          
+            $(document).mousemove(function (e) {
+              if (!dragging) return;
+          
+              let actualY = e.pageY;
+              let deltaY = startY - actualY;
+              let newTop = startTop - deltaY;
+              let newHeight = startHeight + deltaY;
+
+              if(newHeight >= 200){
+                
+              editorElement.css("top", newTop + "px");
+              editor_wrap.css("height", newHeight + "px");
+              editorElement.css("height", newHeight + "px");
+              dragbar.css("top", newTop - dragbar.height() + "px");
+              aceEditor.resize();
+              }
+            });
+          });
+          
+          $(document).mouseup(function (e) {
+            if (dragging) {
+              dragging = false;
+              $(document).unbind("mousemove");
+            }
+          });
     }
 
     /**
@@ -238,54 +324,6 @@ export class QuantumWorkflowModeler extends HTMLElement {
                 modeler.xml = result;
             })
         });
-        let editor = document.getElementById('editor');
-        let aceEditor = ace.edit(editor);
-        let maindiv = document.getElementById('main-div');
-        let panel = document.getElementById('properties');
-        const editorButton = document.createElement('button');
-        editorButton.textContent = 'XML';
-        editorButton.style.position = 'absolute';
-        editorButton.style.bottom = '0%';
-        editorButton.style.left = `1%`;
-        editor.style.width = '99%';
-        editor.style.height = '96%';
-        editor.style.top = '0%';
-
-
-        let enabledXMLView = false;
-
-        editorButton.addEventListener('click', function () {
-            if (!enabledXMLView) {
-                editor.style.display = 'block';
-                panel.style.display = 'none';
-                editorButton.textContent = 'Diagram';
-
-                // Dynamically set the value of the editor
-                var xml = getModeler().xml;
-                if (xml.xml != undefined) {
-                    xml = xml.xml;
-                }
-                aceEditor.setValue(xml);
-            } else {
-                editor.style.display = 'none';
-                panel.style.display = 'block';
-                editorButton.textContent = 'XML';
-                editorButton.className = "fa fa-angle-left";
-
-                aceEditor.getSession().on('change', function () {
-                    update();
-                });
-
-                function update() {
-                    let xml = aceEditor.getSession().getValue();
-                    loadDiagram(xml, getModeler());
-                }
-            }
-
-            enabledXMLView = !enabledXMLView;
-        });
-
-        maindiv.appendChild(editorButton);
         if (this.workflowModel) {
             loadDiagram(this.workflowModel, getModeler()).then();
         } else {
