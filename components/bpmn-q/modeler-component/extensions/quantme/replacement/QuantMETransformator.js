@@ -130,7 +130,7 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
 
         // Remove xmlns: prefix from the key
         const bpmnPrefix = foundBpmnPair[0].replace(/^xmlns:/, '');
-        const diagramPrefix = foundDiagramPair[0].replace(/^xmlns:/, ''); 
+        const diagramPrefix = foundDiagramPair[0].replace(/^xmlns:/, '');
 
         // Get all BPMNDiagram elements  
         const definitionsElement = xmlDoc[bpmnPrefix + ':definitions'];
@@ -234,16 +234,18 @@ async function replaceByFragment(definitions, task, parent, replacement, modeler
         const bpmndiShapes = xmlDoc.getElementsByTagNameNS(bpmndiNamespace, 'BPMNShape');
 
         let isExpanded = null;
-        console.log(bpmndiShapes)
         for (let i = 0; i < bpmndiShapes.length; i++) {
             const bpmnElement = bpmndiShapes[i].getAttribute('bpmnElement');
-            console.log(bpmnElement)
             if (bpmnElement === replacementElement.id) {
-                console.log(replacementElement)
                 isExpanded = bpmndiShapes[i].getAttribute('isExpanded');
-                console.log(isExpanded);
-                console.log(bpmnElement)
                 replacementElement.isExpanded = isExpanded;
+
+                // check the children of each replacementElement
+                for (let j = 0; j < replacementElement.flowElements.length; j++) {
+                    if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(replacementElement.flowElements[j].$type)) {
+                        isChildExpanded(replacementElement.flowElements[j], bpmndiShapes);
+                    }
+                }
                 break;
             }
         }
@@ -257,4 +259,34 @@ async function replaceByFragment(definitions, task, parent, replacement, modeler
     addQuantMEInputParameters(task, inputOutputExtension, bpmnFactory);
 
     return result['success'];
+}
+
+/**
+ * Recursively checks the children of an element and updates the isExpanded attribute.
+ * @param {*} element 
+ * @param {*} bpmndiShapes the diagram elements
+ */
+function isChildExpanded(element, bpmndiShapes) {
+    if (element.flowElements !== undefined) {
+        for (let i = 0; i < element.flowElements.length; i++) {
+            const child = element.flowElements[i];
+            if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(child.$type)) {
+                if (isChildExpanded(child, bpmndiShapes)) {
+                    return true; 
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i < bpmndiShapes.length; i++) {
+        const bpmnElement = bpmndiShapes[i].getAttribute('bpmnElement');
+        if (bpmnElement === element.id && ['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(element.$type)) {
+            let isExpanded = bpmndiShapes[i].getAttribute('isExpanded');
+            element.isExpanded = isExpanded;
+            return true;
+
+        }
+    }
+
+    return false;
 }
