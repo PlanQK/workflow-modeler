@@ -216,3 +216,16 @@
     display: inline-block;
     float: left;
 }
+
+.qwm-icon-xml-viewer:before {
+    content: "";
+    width: 15px;
+    height: 18px;
+    margin-top: 0px;
+    background-size: contain;
+    background-image: url("../icons/upload-icon.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
+

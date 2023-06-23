@@ -198,55 +198,8 @@ export class QuantumWorkflowModeler extends HTMLElement {
         let dragging = false;
         let aceEditor = ace.edit(editor);
 
-        const editorButton = document.createElement('button');
-        editorButton.className = 'xml-viewer-button';
-        editorButton.textContent = 'XML';
-
-        let enabledXMLView = false;
-
-        let editorWrap = document.getElementById('editor_wrap');
-
-        editorButton.addEventListener('click', function () {
-            let modelerContainer = document.getElementById('modeler-container');
-            if (!enabledXMLView) {
-                modelerContainer.style.height = '93vh';
-                editor.style.display = 'block';
-                editor.style.height = '100px'
-                panel.style.display = 'none';
-                editorButton.textContent = 'Diagram';
-                editorWrap.style.display = 'block';
-
-                // Dynamically set the value of the editor
-                let xml = getModeler().xml;
-                if (xml.xml != undefined) {
-                    xml = xml.xml;
-                }
-                aceEditor.setValue(xml);
-            } else {
-                modelerContainer.style.height = '98vh';
-                editor.style.display = 'none';
-                panel.style.display = 'block';
-                editorButton.textContent = 'XML';
-                editorWrap.style.display = 'none';
-
-
-                aceEditor.getSession().on('change', function () {
-                    update();
-                });
-
-                function update() {
-                    let xml = aceEditor.getSession().getValue();
-                    loadDiagram(xml, getModeler());
-                }
-            }
-
-            enabledXMLView = !enabledXMLView;
-        });
-
-        maindiv.appendChild(editorButton);
 
         $("#editor_dragbar").mousedown(function (e) {
-            if (!enabledXMLView) return;
             e.preventDefault();
             dragging = true;
 
@@ -271,7 +224,6 @@ export class QuantumWorkflowModeler extends HTMLElement {
                 // wrapper element
                 const editorHeight = 2 * newHeight;
                 if (newHeight >= 75 && heightInVh <= 89) {
-
                     editorElement.css("top", newTop + "px");
                     editor_wrap.css("height", newHeight + "px");
                     editorElement.css("height", editorHeight + "px");
