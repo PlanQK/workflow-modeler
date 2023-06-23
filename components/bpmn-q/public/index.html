@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!--    <link rel="stylesheet" href="./modeler-styles.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="UTF-8">
     <title>Workflow Modeler</title>
 </head>
+
 <body>
 <div id="modeler-container" style="position: relative; overflow: hidden; width: 100%; height: 98vh;">
     <quantum-workflow-modeler></quantum-workflow-modeler>
 </div>
-<script src="index.js"></script>
+<div id="editor_wrap" style="display: none;">
+    <div id="editor_dragbar"></div>
+    <div id="editor"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/mode-xml.min.js"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.getSession().setMode('ace/mode/xml');
+    editor.setTheme('ace/theme/textmate');
+</script>
+<script src="/index.js" type="text/javascript"></script>
 <script>
     const app1 = {
         id: 'app1',
@@ -122,7 +135,7 @@
         {
             name: 'dataflow',
             config: {
-                 configurationsEndpoint: '',
+                configurationsEndpoint: '',
             }
         },
         {
@@ -177,4 +190,5 @@
 </script>
 
 </body>
+
 </html>
