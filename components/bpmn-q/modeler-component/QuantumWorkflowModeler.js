@@ -140,7 +140,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
             if (
                 x < borderSize ||
-                x > rect.width - borderSize 
+                x > rect.width - borderSize
             ) {
 
                 isResizing = true;
@@ -209,6 +209,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         editorButton.addEventListener('click', function () {
             if (!enabledXMLView) {
                 editor.style.display = 'block';
+                editor.style.height = '100px'
                 panel.style.display = 'none';
                 editorButton.textContent = 'Diagram';
                 editorWrap.style.display = 'block';
@@ -242,42 +243,45 @@ export class QuantumWorkflowModeler extends HTMLElement {
         maindiv.appendChild(editorButton);
 
         $("#editor_dragbar").mousedown(function (e) {
-            if(!enabledXMLView) return;
+            if (!enabledXMLView) return;
             e.preventDefault();
             dragging = true;
-          
+
             let editorElement = $("#editor");
             let editor_wrap = $("#editor_wrap");
             let dragbar = $("#editor_dragbar");
             let startY = e.pageY;
             let startTop = parseInt(editorElement.css("top"));
             let startHeight = editor_wrap.height();
-          
-            $(document).mousemove(function (e) {
-              if (!dragging) return;
-          
-              let actualY = e.pageY;
-              let deltaY = startY - actualY;
-              let newTop = startTop - deltaY;
-              let newHeight = startHeight + deltaY;
 
-              if(newHeight >= 200){
-                
-              editorElement.css("top", newTop + "px");
-              editor_wrap.css("height", newHeight + "px");
-              editorElement.css("height", newHeight + "px");
-              dragbar.css("top", newTop - dragbar.height() + "px");
-              aceEditor.resize();
-              }
+            $(document).mousemove(function (e) {
+                if (!dragging) return;
+
+                let actualY = e.pageY;
+                let deltaY = startY - actualY;
+                let newTop = startTop - deltaY;
+                let newHeight = startHeight + deltaY;
+                const viewportHeight = window.innerHeight;
+                const heightInVh = (newHeight / viewportHeight) * 100;
+
+
+                if (newHeight >= 200 && heightInVh <= 89) {
+
+                    editorElement.css("top", newTop + "px");
+                    editor_wrap.css("height", newHeight + "px");
+                    editorElement.css("height", newHeight + "px");
+                    dragbar.css("top", newTop - dragbar.height() + "px");
+                    aceEditor.resize();
+                }
             });
-          });
-          
-          $(document).mouseup(function (e) {
+        });
+
+        $(document).mouseup(function (e) {
             if (dragging) {
-              dragging = false;
-              $(document).unbind("mousemove");
+                dragging = false;
+                $(document).unbind("mousemove");
             }
-          });
+        });
     }
 
     /**
