@@ -207,7 +207,9 @@ export class QuantumWorkflowModeler extends HTMLElement {
         let editorWrap = document.getElementById('editor_wrap');
 
         editorButton.addEventListener('click', function () {
+            let modelerContainer = document.getElementById('modeler-container');
             if (!enabledXMLView) {
+                modelerContainer.style.height = '93vh';
                 editor.style.display = 'block';
                 editor.style.height = '100px'
                 panel.style.display = 'none';
@@ -221,6 +223,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
                 }
                 aceEditor.setValue(xml);
             } else {
+                modelerContainer.style.height = '98vh';
                 editor.style.display = 'none';
                 panel.style.display = 'block';
                 editorButton.textContent = 'XML';
