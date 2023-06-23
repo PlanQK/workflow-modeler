@@ -267,12 +267,14 @@ export class QuantumWorkflowModeler extends HTMLElement {
                 const viewportHeight = window.innerHeight;
                 const heightInVh = (newHeight / viewportHeight) * 100;
 
-
-                if (newHeight >= 200 && heightInVh <= 89) {
+                // since we move the editor element up we need to add the actual height of the 
+                // wrapper element
+                const editorHeight = 2 * newHeight;
+                if (newHeight >= 75 && heightInVh <= 89) {
 
                     editorElement.css("top", newTop + "px");
                     editor_wrap.css("height", newHeight + "px");
-                    editorElement.css("height", newHeight + "px");
+                    editorElement.css("height", editorHeight + "px");
                     dragbar.css("top", newTop - dragbar.height() + "px");
                     aceEditor.resize();
                 }
