@@ -10,7 +10,7 @@
  */
 
 import defaultConfig from "./config";
-import { getPluginConfig } from '../../../editor/plugin/PluginConfigHandler';
+import { getPluginConfig } from "../../../editor/plugin/PluginConfigHandler";
 
 let config = {};
 
@@ -20,8 +20,9 @@ let config = {};
 export function getQuantMEDataConfigurationsEndpoint() {
   if (config.quantmeDataConfigurationsEndpoint === undefined) {
     setQuantMEDataConfigurationsEndpoint(
-      getPluginConfig('quantme').quantmeDataConfigurationsEndpoint
-      || defaultConfig.quantmeDataConfigurationsEndpoint);
+      getPluginConfig("quantme").quantmeDataConfigurationsEndpoint ||
+        defaultConfig.quantmeDataConfigurationsEndpoint
+    );
   }
   return config.quantmeDataConfigurationsEndpoint;
 }
@@ -29,8 +30,13 @@ export function getQuantMEDataConfigurationsEndpoint() {
 /**
  * Set the endpoint for Data Object Configurations
  */
-export function setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint) {
-  if (dataConfigurationsEndpoint !== null && dataConfigurationsEndpoint !== undefined) {
+export function setQuantMEDataConfigurationsEndpoint(
+  dataConfigurationsEndpoint
+) {
+  if (
+    dataConfigurationsEndpoint !== null &&
+    dataConfigurationsEndpoint !== undefined
+  ) {
     config.quantmeDataConfigurationsEndpoint = dataConfigurationsEndpoint;
   }
 }
@@ -41,8 +47,9 @@ export function setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint)
 export function getNisqAnalyzerEndpoint() {
   if (config.nisqAnalyzerEndpoint === undefined) {
     setNisqAnalyzerEndpoint(
-      getPluginConfig('quantme').nisqAnalyzerEndpoint
-      || defaultConfig.nisqAnalyzerEndpoint);
+      getPluginConfig("quantme").nisqAnalyzerEndpoint ||
+        defaultConfig.nisqAnalyzerEndpoint
+    );
   }
   return config.nisqAnalyzerEndpoint;
 }
@@ -62,8 +69,9 @@ export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
 export function getTransformationFrameworkEndpoint() {
   if (config.transformationFrameworkEndpoint === undefined) {
     setTransformationFrameworkEndpoint(
-      getPluginConfig('quantme').transformationFrameworkEndpoint
-      || defaultConfig.transformationFrameworkEndpoint);
+      getPluginConfig("quantme").transformationFrameworkEndpoint ||
+        defaultConfig.transformationFrameworkEndpoint
+    );
   }
   return config.transformationFrameworkEndpoint;
 }
@@ -71,8 +79,13 @@ export function getTransformationFrameworkEndpoint() {
 /**
  * Set the Transformation Framework endpoint
  */
-export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoint) {
-  if (transformationFrameworkEndpoint !== null && transformationFrameworkEndpoint !== undefined) {
+export function setTransformationFrameworkEndpoint(
+  transformationFrameworkEndpoint
+) {
+  if (
+    transformationFrameworkEndpoint !== null &&
+    transformationFrameworkEndpoint !== undefined
+  ) {
     config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
   }
 }
@@ -85,8 +98,9 @@ export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoi
 export function getOpenTOSCAEndpoint() {
   if (config.opentoscaEndpoint === undefined) {
     setOpenTOSCAEndpoint(
-      getPluginConfig('quantme').opentoscaEndpoint
-      || defaultConfig.opentoscaEndpoint);
+      getPluginConfig("quantme").opentoscaEndpoint ||
+        defaultConfig.opentoscaEndpoint
+    );
   }
   return config.opentoscaEndpoint;
 }
@@ -98,7 +112,7 @@ export function getOpenTOSCAEndpoint() {
  */
 export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
   if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
-    config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, '');
+    config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, "");
   }
 }
 
@@ -110,8 +124,8 @@ export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
 export function getWineryEndpoint() {
   if (config.wineryEndpoint === undefined) {
     setWineryEndpoint(
-      getPluginConfig('quantme').wineryEndpoint
-      || defaultConfig.wineryEndpoint);
+      getPluginConfig("quantme").wineryEndpoint || defaultConfig.wineryEndpoint
+    );
   }
   return config.wineryEndpoint;
 }
@@ -123,7 +137,7 @@ export function getWineryEndpoint() {
  */
 export function setWineryEndpoint(wineryEndpoint) {
   if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
-    config.wineryEndpoint = wineryEndpoint.replace(/\/$/, '');
+    config.wineryEndpoint = wineryEndpoint.replace(/\/$/, "");
   }
 }
 
@@ -135,8 +149,9 @@ export function setWineryEndpoint(wineryEndpoint) {
 export function getQRMRepositoryPath() {
   if (config.githubRepositoryPath === undefined) {
     setQRMRepositoryPath(
-      getPluginConfig('quantme').githubRepositoryPath
-      || defaultConfig.githubRepositoryPath);
+      getPluginConfig("quantme").githubRepositoryPath ||
+        defaultConfig.githubRepositoryPath
+    );
   }
   return config.githubRepositoryPath;
 }
@@ -160,8 +175,9 @@ export function setQRMRepositoryPath(repositoryPath) {
 export function getQRMRepositoryName() {
   if (config.githubRepositoryName === undefined) {
     setQRMRepositoryName(
-      getPluginConfig('quantme').githubRepositoryName
-      || defaultConfig.githubRepositoryName);
+      getPluginConfig("quantme").githubRepositoryName ||
+        defaultConfig.githubRepositoryName
+    );
   }
   return config.githubRepositoryName;
 }
@@ -185,8 +201,8 @@ export function setQRMRepositoryName(repositoryName) {
 export function getQRMRepositoryUserName() {
   if (config.githubUsername === undefined) {
     setQRMUserName(
-      getPluginConfig('quantme').githubUsername
-      || defaultConfig.githubUsername);
+      getPluginConfig("quantme").githubUsername || defaultConfig.githubUsername
+    );
   }
   return config.githubUsername;
 }
@@ -210,8 +226,8 @@ export function setQRMUserName(userName) {
 export function getGitHubToken() {
   if (config.githubToken === undefined) {
     setGitHubToken(
-      getPluginConfig('quantme').githubToken
-      || defaultConfig.githubToken);
+      getPluginConfig("quantme").githubToken || defaultConfig.githubToken
+    );
   }
   return config.githubToken;
 }
@@ -235,8 +251,9 @@ export function setGitHubToken(githubToken) {
 export function getQiskitRuntimeHandlerEndpoint() {
   if (config.qiskitRuntimeHandlerEndpoint === undefined) {
     setQiskitRuntimeHandlerEndpoint(
-      getPluginConfig('quantme').qiskitRuntimeHandlerEndpoint
-      || defaultConfig.qiskitRuntimeHandlerEndpoint);
+      getPluginConfig("quantme").qiskitRuntimeHandlerEndpoint ||
+        defaultConfig.qiskitRuntimeHandlerEndpoint
+    );
   }
   return config.qiskitRuntimeHandlerEndpoint;
 }
@@ -260,8 +277,9 @@ export function setQiskitRuntimeHandlerEndpoint(endpoint) {
 export function getScriptSplitterEndpoint() {
   if (config.scriptSplitterEndpoint === undefined) {
     setScriptSplitterEndpoint(
-      getPluginConfig('quantme').scriptSplitterEndpoint
-      || defaultConfig.scriptSplitterEndpoint);
+      getPluginConfig("quantme").scriptSplitterEndpoint ||
+        defaultConfig.scriptSplitterEndpoint
+    );
   }
   return config.scriptSplitterEndpoint;
 }
@@ -285,8 +303,9 @@ export function setScriptSplitterEndpoint(endpoint) {
 export function getScriptSplitterThreshold() {
   if (config.scriptSplitterThreshold === undefined) {
     setScriptSplitterThreshold(
-      getPluginConfig('quantme').scriptSplitterThreshold
-      || defaultConfig.scriptSplitterThreshold);
+      getPluginConfig("quantme").scriptSplitterThreshold ||
+        defaultConfig.scriptSplitterThreshold
+    );
   }
   return config.scriptSplitterThreshold;
 }
@@ -310,8 +329,9 @@ export function setScriptSplitterThreshold(threshold) {
 export function getHybridRuntimeProvenance() {
   if (config.hybridRuntimeProvenance === undefined) {
     setHybridRuntimeProvenance(
-      getPluginConfig('quantme').hybridRuntimeProvenance
-      || defaultConfig.hybridRuntimeProvenance);
+      getPluginConfig("quantme").hybridRuntimeProvenance ||
+        defaultConfig.hybridRuntimeProvenance
+    );
   }
   return config.hybridRuntimeProvenance;
 }
@@ -322,7 +342,10 @@ export function getHybridRuntimeProvenance() {
  * @param hybridRuntimeProvenance the new value of the hybrid runtime provenance flag
  */
 export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
-  if (hybridRuntimeProvenance !== null && hybridRuntimeProvenance !== undefined) {
+  if (
+    hybridRuntimeProvenance !== null &&
+    hybridRuntimeProvenance !== undefined
+  ) {
     config.hybridRuntimeProvenance = hybridRuntimeProvenance;
   }
 }
@@ -335,8 +358,9 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
 export function getAWSRuntimeHandlerEndpoint() {
   if (config.awsRuntimeHandlerEndpoint === undefined) {
     setAWSRuntimeHandlerEndpoint(
-      getPluginConfig('quantme').awsRuntimeHandlerEndpoint
-      || defaultConfig.awsRuntimeHandlerEndpoint);
+      getPluginConfig("quantme").awsRuntimeHandlerEndpoint ||
+        defaultConfig.awsRuntimeHandlerEndpoint
+    );
   }
   return config.awsRuntimeHandlerEndpoint;
 }
@@ -366,7 +390,10 @@ export function getUploadGithubRepositoryName() {
  * Set the upload Github Repositoryname
  */
 export function setUploadGithubRepositoryName(uploadGithubRepositoryName) {
-  if (uploadGithubRepositoryName !== null && uploadGithubRepositoryName !== undefined) {
+  if (
+    uploadGithubRepositoryName !== null &&
+    uploadGithubRepositoryName !== undefined
+  ) {
     config.uploadGithubRepositoryName = uploadGithubRepositoryName;
   }
 }
@@ -385,7 +412,10 @@ export function getUploadGithubRepositoryOwner() {
  * Set the Upload Github Repository User
  */
 export function setUploadGithubRepositoryOwner(uploadGithubRepositoryOwner) {
-  if (uploadGithubRepositoryOwner !== null && uploadGithubRepositoryOwner !== undefined) {
+  if (
+    uploadGithubRepositoryOwner !== null &&
+    uploadGithubRepositoryOwner !== undefined
+  ) {
     config.uploadGithubRepositoryOwner = uploadGithubRepositoryOwner;
   }
 }

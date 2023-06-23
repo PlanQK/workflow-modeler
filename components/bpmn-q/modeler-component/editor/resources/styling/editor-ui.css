@@ -152,7 +152,8 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background: url("../icons/workflow-deployment-icon.png") no-repeat center center;
+  background: url("../icons/workflow-deployment-icon.png") no-repeat center
+    center;
   float: left;
 }
 
@@ -162,7 +163,8 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background: url("../icons/worklow-transformation-icon.png") no-repeat center center;
+  background: url("../icons/worklow-transformation-icon.png") no-repeat center
+    center;
   float: left;
 }
 

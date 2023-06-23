@@ -1,5 +1,5 @@
 import React from "react";
-import { uploadToGitHub } from '../../extensions/quantme/qrm-manager/git-handler';
+import { uploadToGitHub } from "../../extensions/quantme/qrm-manager/git-handler";
 import { getModeler } from "../ModelerHandler";
 
 /**
@@ -9,13 +9,15 @@ import { getModeler } from "../ModelerHandler";
  * @constructor
  */
 export default function UploadButton() {
-
-    return (
-        <button className="qwm-toolbar-btn" title="Upload current workflow diagram to GitHub"
-                onClick={() => uploadToGitHub(getModeler())}>
-            <span className="qwm-icon-upload">
-                <span className="qwm-indent">Upload</span>
-            </span>
-        </button>
-    );
+  return (
+    <button
+      className="qwm-toolbar-btn"
+      title="Upload current workflow diagram to GitHub"
+      onClick={() => uploadToGitHub(getModeler())}
+    >
+      <span className="qwm-icon-upload">
+        <span className="qwm-indent">Upload</span>
+      </span>
+    </button>
+  );
 }
