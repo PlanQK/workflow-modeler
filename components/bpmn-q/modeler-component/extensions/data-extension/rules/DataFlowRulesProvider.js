@@ -1,12 +1,18 @@
-import BpmnRules from "bpmn-js/lib/features/rules/BpmnRules";
-import { is, isAny } from "bpmn-js/lib/features/modeling/util/ModelingUtil";
-import * as consts from "../Constants";
-import { isConnectedWith } from "../../../editor/util/ModellingUtilities";
+import BpmnRules from 'bpmn-js/lib/features/rules/BpmnRules';
+import {
+  is,
+  isAny
+} from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
+import * as consts from '../Constants';
+import { isConnectedWith } from '../../../editor/util/ModellingUtilities';
+import { getModeler } from '../../../editor/ModelerHandler';
+import ace from 'ace-builds';
 
 /**
  * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
  */
 export default class CustomRulesProvider extends BpmnRules {
+
   constructor(eventBus) {
     super(eventBus);
 
@@ -16,17 +22,18 @@ export default class CustomRulesProvider extends BpmnRules {
 
     // persist into local storage whenever
     // copy took place
-    eventBus.on("copyPaste.elementsCopied", (event) => {
+    eventBus.on('copyPaste.elementsCopied', event => {
       const { tree } = event;
 
       // persist in local storage, encoded as json
-      localStorage.setItem("bpmnClipboard", JSON.stringify(tree));
+      localStorage.setItem('bpmnClipboard', JSON.stringify(tree));
     });
 
     /**
      * Fired during creation of a new connection (while you selected the target of a connection)
      */
-    this.addRule("connection.create", 200000, function (context) {
+    this.addRule('connection.create', 200000, function (context) {
+
       const source = context.source,
         target = context.target;
 
@@ -36,7 +43,8 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a connection between two elements is drawn again, e.g. after dragging an element
      */
-    this.addRule("connection.reconnect", 200000000000, function (context) {
+    this.addRule('connection.reconnect', 200000000000, function (context) {
+
       const source = context.source,
         target = context.target;
 
@@ -50,7 +58,8 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a new shape for an element is created
      */
-    this.addRule("shape.create", 200000000000, function (context) {
+    this.addRule('shape.create', 200000000000, function (context) {
+
       return canCreate(
         context.shape,
         context.target,
@@ -58,6 +67,22 @@ export default class CustomRulesProvider extends BpmnRules {
         context.position
       );
     });
+
+    // update xml viewer on diagram change
+    eventBus.on("commandStack.changed", function () {
+      let editor = document.getElementById('editor');
+      let aceEditor = ace.edit(editor);
+      let modeler = getModeler();
+      if (modeler) {
+        modeler.saveXML({ format: true }).then(function (result) {
+          if (result.xml != undefined) {
+            result = result.xml;
+          }
+          aceEditor.setValue(result);
+        })
+      }
+    });
+
   }
 
   /**
@@ -69,20 +94,18 @@ export default class CustomRulesProvider extends BpmnRules {
    * @param connection The given connection element
    */
   canConnect(source, target, connection) {
-    console.log("##### can connect");
+    console.log('##### can connect');
 
     // test connection via transformation association if source or target are DataMapObjects
-    if (
-      is(source, consts.DATA_MAP_OBJECT) ||
-      is(target, consts.DATA_MAP_OBJECT)
-    ) {
+    if (is(source, consts.DATA_MAP_OBJECT) || is(target, consts.DATA_MAP_OBJECT)) {
       return this.canConnectDataExtension(source, target);
     }
 
-    if (!is(connection, "bpmn:DataAssociation")) {
+    if (!is(connection, 'bpmn:DataAssociation')) {
+
       // test connection via sequence flow
       if (this.canConnectSequenceFlow(source, target)) {
-        return { type: "bpmn:SequenceFlow" };
+        return { type: 'bpmn:SequenceFlow' };
       }
     }
 
@@ -97,13 +120,10 @@ export default class CustomRulesProvider extends BpmnRules {
    * @param target The given target element
    */
   canConnectSequenceFlow(source, target) {
-    console.log("##### canConnectSequenceFlow");
+    console.log('##### canConnectSequenceFlow');
 
     // do not allow sequence flow connections with DataMapObjects
-    if (
-      is(source, consts.DATA_MAP_OBJECT) ||
-      is(target, consts.DATA_MAP_OBJECT)
-    ) {
+    if (is(source, consts.DATA_MAP_OBJECT) || is(target, consts.DATA_MAP_OBJECT)) {
       return false;
     }
 
@@ -119,88 +139,50 @@ export default class CustomRulesProvider extends BpmnRules {
    * @returns {{type: string}|boolean}
    */
   canConnectDataExtension(source, target) {
-    console.log("##### can connect data extension");
+    console.log('##### can connect data extension');
 
     // block outgoing connections from loop, parallel und multi instance markers to data map objects
-    if (
-      source.businessObject.loopCharacteristics &&
-      is(target, consts.DATA_MAP_OBJECT)
-    ) {
+    if (source.businessObject.loopCharacteristics && is(target, consts.DATA_MAP_OBJECT)) {
       return false;
     }
 
     // block connections from or to a data map object that is connected with a start event
-    if (
-      (is(source, consts.DATA_MAP_OBJECT) &&
-        isConnectedWith(source, "bpmn:StartEvent")) ||
-      (is(target, consts.DATA_MAP_OBJECT) &&
-        isConnectedWith(target, "bpmn:StartEvent"))
-    ) {
+    if ((is(source, consts.DATA_MAP_OBJECT) && isConnectedWith(source, 'bpmn:StartEvent'))
+      || (is(target, consts.DATA_MAP_OBJECT) && isConnectedWith(target, 'bpmn:StartEvent'))) {
       return false;
     }
 
     // add rule for connections via a DataTransformationAssociation
-    if (
-      isAny(source, [consts.DATA_MAP_OBJECT]) &&
-      isAny(target, [consts.DATA_MAP_OBJECT])
-    ) {
-      console.log(
-        "Create connection between DataMapObjects with " +
-          consts.OUTPUT_TRANSFORMATION_ASSOCIATION
-      );
+    if (isAny(source, [consts.DATA_MAP_OBJECT]) &&
+      isAny(target, [consts.DATA_MAP_OBJECT])) {
+      console.log('Create connection between DataMapObjects with ' + consts.OUTPUT_TRANSFORMATION_ASSOCIATION);
       return { type: consts.OUTPUT_TRANSFORMATION_ASSOCIATION };
     }
 
     // the normal rules for a DataObject
-    if (
-      isAny(source, [consts.DATA_MAP_OBJECT]) &&
-      isAny(target, ["bpmn:Activity", "bpmn:ThrowEvent"])
-    ) {
-      console.log("Map to act");
-      return { type: "bpmn:DataInputAssociation" };
+    if (isAny(source, [consts.DATA_MAP_OBJECT]) && isAny(target, ['bpmn:Activity', 'bpmn:ThrowEvent'])) {
+      console.log('Map to act');
+      return { type: 'bpmn:DataInputAssociation' };
     }
-    if (
-      isAny(target, [consts.DATA_MAP_OBJECT]) &&
-      isAny(source, ["bpmn:ThrowEvent"])
-    ) {
-      console.log("Map to act");
+    if (isAny(target, [consts.DATA_MAP_OBJECT]) && isAny(source, ['bpmn:ThrowEvent'])) {
+      console.log('Map to act');
       return false;
     }
-    if (
-      isAny(target, [consts.DATA_MAP_OBJECT]) &&
-      isAny(source, ["bpmn:Activity", "bpmn:CatchEvent"])
-    ) {
-      return { type: "bpmn:DataOutputAssociation" };
+    if (isAny(target, [consts.DATA_MAP_OBJECT]) && isAny(source, ['bpmn:Activity', 'bpmn:CatchEvent'])) {
+      return { type: 'bpmn:DataOutputAssociation' };
     }
-    if (
-      isAny(source, [consts.DATA_MAP_OBJECT]) &&
-      isAny(target, ["bpmn:CatchEvent"])
-    ) {
+    if (isAny(source, [consts.DATA_MAP_OBJECT]) && isAny(target, ['bpmn:CatchEvent'])) {
       return false;
     }
 
     // restrict connections via sequence flow
-    if (
-      isAny(source, [consts.DATA_MAP_OBJECT]) &&
-      isAny(target, [
-        "bpmn:DataObjectReference",
-        "bpmn:DataStoreReference",
-        "bpmn:Gateway",
-      ])
-    ) {
-      console.log(
-        "No data association between DataObjectMap and DataObjectReference."
-      );
+    if (isAny(source, [consts.DATA_MAP_OBJECT]) &&
+      isAny(target, ['bpmn:DataObjectReference', 'bpmn:DataStoreReference', 'bpmn:Gateway'])) {
+      console.log('No data association between DataObjectMap and DataObjectReference.');
       return false;
     }
-    if (
-      isAny(source, [
-        "bpmn:DataObjectReference",
-        "bpmn:DataStoreReference",
-        "bpmn:Gateway",
-      ]) &&
-      isAny(target, [consts.DATA_MAP_OBJECT])
-    ) {
+    if (isAny(source, ['bpmn:DataObjectReference', 'bpmn:DataStoreReference', 'bpmn:Gateway']) &&
+      isAny(target, [consts.DATA_MAP_OBJECT])) {
       return false;
     }
   }
@@ -215,11 +197,12 @@ export default class CustomRulesProvider extends BpmnRules {
    * @returns {boolean|*|boolean}
    */
   canCreate(shape, target, source, position) {
-    console.log("##### can create");
+    console.log('##### can create');
 
     // do not allow insertion of DataMapObjects
-    if (is(shape, "data:DataObjectMapReference")) {
-      if (isAny(target, ["bpmn:SequenceFlow", "bpmn:DataAssociation"])) {
+    if (is(shape, 'data:DataObjectMapReference')) {
+
+      if (isAny(target, ['bpmn:SequenceFlow', 'bpmn:DataAssociation'])) {
         return false;
       }
     }
@@ -244,4 +227,6 @@ export default class CustomRulesProvider extends BpmnRules {
     return super.canConnectAssociation(source, target);
   }
 }
-CustomRulesProvider.$inject = ["eventBus"];
+CustomRulesProvider.$inject = [
+  'eventBus',
+];
