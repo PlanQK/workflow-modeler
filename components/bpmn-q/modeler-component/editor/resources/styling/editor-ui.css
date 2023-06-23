@@ -195,6 +195,16 @@
     background: url("../icons/save-outline-icon.png") no-repeat center center;
 }
 
+#editor {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.ace_print-margin {
+    display: none;
+}
+
 .qwm-icon-upload:before {
     content: "";
     width: 15px;
@@ -206,3 +216,16 @@
     display: inline-block;
     float: left;
 }
+
+.qwm-icon-xml-viewer:before {
+    content: "";
+    width: 20px;
+    height: 18px;
+    margin-top: 0px;
+    background-size: contain;
+    background-image: url("../icons/xml-viewer-icon.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
+

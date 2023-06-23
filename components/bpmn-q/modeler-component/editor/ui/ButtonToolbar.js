@@ -7,7 +7,7 @@ import ConfigPlugin from "../config/ConfigPlugin";
 import TransformationToolbarButton from "./TransformationToolbarButton";
 import UploadButton from "./UploadButton";
 import ShortcutPlugin from "../shortcut/ShortcutPlugin";
-
+import XMLViewerButton from "./XMLViewerButton";
 
 /**
  * React component which displays the toolbar of the modeler
@@ -34,6 +34,7 @@ export default function ButtonToolbar(props) {
                 <SaveButton modeler={modeler}/>
                 <OpenButton/>
                 <UploadButton/>
+                <XMLViewerButton/>
                 <hr className="qwm-toolbar-splitter"/>
                 <ConfigPlugin/>
                 <hr className="qwm-toolbar-splitter"/>

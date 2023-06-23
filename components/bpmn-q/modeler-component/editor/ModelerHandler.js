@@ -7,8 +7,12 @@ import {
 } from "bpmn-js-properties-panel";
 import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
 import CustomPopupMenuModule from "./popup/";
-import {getAdditionalModules, getModdleExtension} from "./plugin/PluginHandler";
+import { getAdditionalModules, getModdleExtension } from "./plugin/PluginHandler";
+import ModelerRulesModule from "./rules/";
+import LintModule from 'bpmn-js-bpmnlint';
+import bpmnlintConfig from '../../.bpmnlintrc';
 
+import Clipboard from 'diagram-js/lib/features/clipboard/Clipboard';
 let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
 /**
@@ -35,7 +39,10 @@ export function createModeler(containerId, propertiesParentId) {
         },
         additionalModules: getModules(),
         keyboard: {
-             bindTo: document
+            bindTo: document
+        },
+        linting: {
+            bpmnlint: bpmnlintConfig
         },
         moddleExtensions: getExtensions(),
     });
@@ -122,6 +129,9 @@ export function getModeler() {
  */
 function getModules() {
     const pluginModules = getAdditionalModules();
+    var clipboardModule = {
+        'clipboard': [ 'value', new Clipboard() ]
+      };
     let additionalModules = [
         BpmnPalletteModule,
         BpmnPropertiesPanelModule,
@@ -129,6 +139,9 @@ function getModules() {
         CamundaPlatformPropertiesProviderModule,
         CamundaExtensionModule,
         CustomPopupMenuModule,
+        LintModule,
+        clipboardModule,
+        ModelerRulesModule
     ].concat(pluginModules);
 
     console.log('\n Additional modules of the modeler: ');
