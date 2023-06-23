@@ -30,7 +30,6 @@ const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
  * @returns {Promise<void>}
  */
 export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileName()) {
-    console.log(fileName);
     const bpmnFile = await new File([xml], fileName, { type: 'text/xml' });
 
     const link = document.createElement('a');
@@ -82,19 +81,21 @@ export async function getXml(modeler) {
  * @returns {Promise<undefined|*>} Undefined, if an error occurred during import.
  */
 export async function loadDiagram(xml, modeler, dispatchEvent = true) {
+    if (xml !== '') {
+        try {
+            const result = await modeler.importXML(xml);
+            modeler.xml = xml;
 
-    try {
-        const result = await modeler.importXML(xml);
+            if (dispatchEvent) {
+                dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, editorConfig.getFileName());
+            }
 
-        if (dispatchEvent) {
-            dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, editorConfig.getFileName());
+            return result;
+        } catch (err) {
+            console.error(err);
+
+            return { error: err };
         }
-
-        return result;
-    } catch (err) {
-        console.error(err);
-
-        return { error: err };
     }
 }
 

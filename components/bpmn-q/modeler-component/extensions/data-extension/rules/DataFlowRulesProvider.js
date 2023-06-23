@@ -5,6 +5,8 @@ import {
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import * as consts from '../Constants';
 import { isConnectedWith } from '../../../editor/util/ModellingUtilities';
+import { getModeler } from '../../../editor/ModelerHandler';
+import ace from 'ace-builds';
 
 /**
  * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
@@ -22,7 +24,7 @@ export default class CustomRulesProvider extends BpmnRules {
         // copy took place
         eventBus.on('copyPaste.elementsCopied', event => {
             const { tree } = event;
-            
+
             // persist in local storage, encoded as json
             localStorage.setItem('bpmnClipboard', JSON.stringify(tree));
         });
@@ -65,6 +67,22 @@ export default class CustomRulesProvider extends BpmnRules {
                 context.position
             );
         });
+
+        // update xml viewer on diagram change
+        eventBus.on("commandStack.changed", function () {
+            let editor = document.getElementById('editor');
+            let aceEditor = ace.edit(editor);
+            let modeler = getModeler();
+            if (modeler) {
+                modeler.saveXML({ format: true }).then(function (result) {
+                    if (result.xml != undefined) {
+                        result = result.xml;
+                    }
+                    aceEditor.setValue(result);
+                })
+            }
+        });
+
     }
 
     /**

@@ -22,6 +22,7 @@ import { getPluginButtons, getTransformationButtons } from "./editor/plugin/Plug
 import { getPluginConfig, setPluginConfig } from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
 import { initEditorEventHandler } from './editor/events/EditorEventHandler';
+import $ from 'jquery';
 
 /**
  * The Quantum Workflow modeler HTML web component which contains the bpmn-js modeler to model BPMN diagrams, an editor
@@ -80,7 +81,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
             <div style="display: flex; flex-direction: column; height: 100%;" class="qwm">
               <div id="button-container" style="flex-shrink: 0;"></div>
               <hr class="qwm-toolbar-splitter" />
-              <div id="main-div" style="display: flex; flex: 1;">
+              <div id="main-div" style="display: flex; flex: 1; height: 100%">
                 <div id="canvas" style="width: 100%"></div>
                 <div id="properties" style="overflow: auto; width:350px; max-height: 93.5vh; background: #f8f8f8;"></div>
               </div>
@@ -94,14 +95,14 @@ export class QuantumWorkflowModeler extends HTMLElement {
         let startX;
         let startWidth;
         let width = panel.style.width;
-        var propertiesElement = document.getElementById("properties");
+        let propertiesElement = document.getElementById("properties");
 
         propertiesElement.addEventListener("mousemove", function (e) {
-            var rect = this.getBoundingClientRect();
-            var x = e.clientX - rect.left;
-            var y = e.clientY - rect.top;
+            let rect = this.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
 
-            var borderSize = 5;
+            let borderSize = 5;
 
             if (
                 x < borderSize ||
@@ -132,14 +133,14 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
         // Mouse down handler
         function handleMouseDown(event) {
-            var rect = panel.getBoundingClientRect();
-            var x = event.clientX - rect.left;
+            let rect = panel.getBoundingClientRect();
+            let x = event.clientX - rect.left;
 
-            var borderSize = 5;
+            let borderSize = 5;
 
             if (
                 x < borderSize ||
-                x > rect.width - borderSize 
+                x > rect.width - borderSize
             ) {
 
                 isResizing = true;
@@ -192,6 +193,52 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
             isCollapsed = !isCollapsed;
         });
+
+        let editor = document.getElementById('editor');
+        let dragging = false;
+        let aceEditor = ace.edit(editor);
+
+
+        $("#editor_dragbar").mousedown(function (e) {
+            e.preventDefault();
+            dragging = true;
+
+            let editorElement = $("#editor");
+            let editor_wrap = $("#editor_wrap");
+            let dragbar = $("#editor_dragbar");
+            let startY = e.pageY;
+            let startTop = parseInt(editorElement.css("top"));
+            let startHeight = editor_wrap.height();
+
+            $(document).mousemove(function (e) {
+                if (!dragging) return;
+
+                let actualY = e.pageY;
+                let deltaY = startY - actualY;
+                let newTop = startTop - deltaY;
+                let newHeight = startHeight + deltaY;
+                const viewportHeight = window.innerHeight;
+                const heightInVh = (newHeight / viewportHeight) * 100;
+
+                // since we move the editor element up we need to add the actual height of the 
+                // wrapper element
+                const editorHeight = 2 * newHeight;
+                if (newHeight >= 75 && heightInVh <= 89) {
+                    editorElement.css("top", newTop + "px");
+                    editor_wrap.css("height", newHeight + "px");
+                    editorElement.css("height", editorHeight + "px");
+                    dragbar.css("top", newTop - dragbar.height() + "px");
+                    aceEditor.resize();
+                }
+            });
+        });
+
+        $(document).mouseup(function (e) {
+            if (dragging) {
+                dragging = false;
+                $(document).unbind("mousemove");
+            }
+        });
     }
 
     /**
@@ -233,6 +280,11 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
+        getModeler().on('commandStack.changed', function () {
+            getModeler().saveXML({ format: true }).then(function (result) {
+                modeler.xml = result;
+            })
+        });
         if (this.workflowModel) {
             loadDiagram(this.workflowModel, getModeler()).then();
         } else {
