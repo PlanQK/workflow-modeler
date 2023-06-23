@@ -5,6 +5,7 @@ import {
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import * as consts from '../Constants';
 import { isConnectedWith } from '../../../editor/util/ModellingUtilities';
+import { getModeler } from '../../../editor/ModelerHandler';
 
 /**
  * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
@@ -65,6 +66,19 @@ export default class CustomRulesProvider extends BpmnRules {
                 context.position
             );
         });
+
+        // update xml viewer on diagram change
+        eventBus.on("commandStack.changed", function() {
+            let editor = document.getElementById('editor');
+            let aceEditor = ace.edit(editor);
+            getModeler().saveXML({ format: true }).then(function (result) {
+                if (result.xml != undefined) {
+                    result = result.xml;
+                }
+                aceEditor.setValue(result);
+            })
+          });
+
     }
 
     /**
