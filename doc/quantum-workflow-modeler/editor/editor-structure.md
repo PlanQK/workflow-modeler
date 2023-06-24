@@ -29,7 +29,7 @@ Modal Component from Camunda.
 
 ### [Notifications Component](../../../components/bpmn-q/modeler-component/editor/ui/notifications)
 Notification Components based on the Notifications of the Camunda Modeler to display Notifications in the Quantum Workflow Modeler. Includes the [NotificationHandler](../../../components/bpmn-q/modeler-component/editor/ui/notifications/NotificationHandler.js)
-which manages the creation and displaying of Notifications.
+which manages the creation and display of Notifications.
 
 ### [Extensible Button Component](../../../components/bpmn-q/modeler-component/editor/ui/ExtensibleButton.js)
 Button component which can be expanded to show a configurable set of sub buttons. Can be used
