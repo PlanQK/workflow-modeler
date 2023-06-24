@@ -31,7 +31,7 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
             });
 
             chai.expect(result.status).to.equal('transformed');
-
+            console.log(result.xml);
             // check that all extension elements are replaced
             chai.expect(result.xml).to.not.contain('<quantme:');
 

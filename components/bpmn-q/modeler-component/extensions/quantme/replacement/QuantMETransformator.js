@@ -151,10 +151,15 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
             }
         }
 
-        process[bpmnPrefix + ':subProcess'] = removeIsExpandedAttribute(subprocesses, bpmnPrefix, quantmePrefix);
-        process[quantmePrefix + ':quantumHardwareSelectionSubprocess'] = removeIsExpandedAttribute(quantmeHardwareSelectionSubprocess, bpmnPrefix, quantmePrefix);
-        process[quantmePrefix + ':circuitCuttingSubprocess'] = removeIsExpandedAttribute(quantmeCuttingSubprocess, bpmnPrefix, quantmePrefix);
-
+        if (subprocesses !== undefined) {
+            process[bpmnPrefix + ':subProcess'] = removeIsExpandedAttribute(subprocesses, bpmnPrefix, quantmePrefix);
+        }
+        if (quantmeHardwareSelectionSubprocess !== undefined) {
+            process[quantmePrefix + ':quantumHardwareSelectionSubprocess'] = removeIsExpandedAttribute(quantmeHardwareSelectionSubprocess, bpmnPrefix, quantmePrefix);
+        }
+        if (quantmeCuttingSubprocess) {
+            process[quantmePrefix + ':circuitCuttingSubprocess'] = removeIsExpandedAttribute(quantmeCuttingSubprocess, bpmnPrefix, quantmePrefix);
+        }
         // Serialize the modified JavaScript object back to XML string
         modifiedXmlString = xmlParser.js2xml(xmlDoc, { compact: true });
     }
