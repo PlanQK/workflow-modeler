@@ -67,7 +67,7 @@ export default class DataFlowReplaceMenuProvider {
                 let configEntries = {};
                 const dataConfigurations = createConfigurationsEntries(
                     element,
-                    'bpmn-dataflow-transformation-task',
+                    'dataflow-transformation-task-icon',
                     getTransformationTaskConfigurations(),
                     self.bpmnFactory,
                     self.modeling,
@@ -156,7 +156,7 @@ export default class DataFlowReplaceMenuProvider {
                 'Transformation Tasks',
                 popupMenu,
                 options,
-                'bpmn-icon-dataflow-transformation-task'
+                'dataflow-transformation-tasks-menu-icon'
             )
         };
     }

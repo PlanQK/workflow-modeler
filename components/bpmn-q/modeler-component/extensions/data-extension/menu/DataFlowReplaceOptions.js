@@ -5,7 +5,7 @@ export const TASK = [
     {
         id: 'dataflow-transformation-task',
         label: 'Data Transformation Task',
-        className: 'bpmn-icon-dataflow-transformation-task',
+        className: 'dataflow-transformation-task-menu-icon',
         target: {
             type: consts.TRANSFORMATION_TASK
         }
@@ -17,7 +17,7 @@ export const DATA_STORE = [
     {
         id: 'dataflow-data-store-map',
         label: 'Data Store Map',
-        className: 'bpmn-icon-dataflow-data-store-map',
+        className: 'dataflow-data-store-map-icon',
         target: {
             type: consts.DATA_STORE_MAP
         }
@@ -29,7 +29,7 @@ export const DATA_OBJECT = [
     {
         id: 'dataflow-data-map-object',
         label: 'Data Map Object',
-        className: 'bpmn-icon-dataflow-data-map-object',
+        className: 'dataflow-data-map-object-menu-icon',
         target: {
             type: consts.DATA_MAP_OBJECT
         }

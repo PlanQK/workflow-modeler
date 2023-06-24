@@ -1,7 +1,4 @@
 import 'bpmn-js/dist/assets/diagram-js.css';
-import './editor/resources/styling/fontello/css/bpmn.css';
-import './editor/resources/styling/fontello/css/bpmn-embedded.css';
-import './editor/resources/styling/fontello/css/bpmn-codes.css';
 import 'bpmn-js-properties-panel/dist/assets/element-templates.css';
 import 'bpmn-js-properties-panel/dist/assets/properties-panel.css';
 import './editor/resources/styling/modeler.css';
