@@ -61,8 +61,10 @@ function drawRect(parentNode, width, height, borderRadius, color) {
  * @param parentGfx The parent element the SVG is drawn in
  * @param importSVG The SVG
  * @param svgAttributes Attributes for the SVG
+ * @param foreground true if SVG should be above Task
+ * @returns The created svg element
  */
-export function drawTaskSVG(parentGfx, importSVG, svgAttributes) {
+export function drawTaskSVG(parentGfx, importSVG, svgAttributes, foreground) {
     const innerSvgStr = importSVG.svg,
         transformDef = importSVG.transform;
 
@@ -70,15 +72,21 @@ export function drawTaskSVG(parentGfx, importSVG, svgAttributes) {
     svgAttr(groupDef, {transform: transformDef});
     innerSVG(groupDef, innerSvgStr);
 
-    // set task box opacity to 0 such that icon can be in the background
-    svgAttr(svgSelect(parentGfx, 'rect'), {'fill-opacity': 0});
+    if(!foreground) {
+        // set task box opacity to 0 such that icon can be in the background
+        svgAttr(svgSelect(parentGfx, 'rect'), { 'fill-opacity': 0 });
+    }
 
     if (svgAttributes) {
         svgAttr(groupDef, svgAttributes);
     }
 
-    // draw svg in the background
-    parentGfx.prepend(groupDef);
+    if(foreground) {
+        parentGfx.append(groupDef);
+    } else {
+        parentGfx.prepend(groupDef);
+    }
+    return groupDef;
 }
 
 /**

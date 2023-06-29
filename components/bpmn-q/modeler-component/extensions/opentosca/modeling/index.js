@@ -8,9 +8,11 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-import ServiceTaskPropertiesProvider from "./properties-provider/ServiceTaskPropertiesProvider";
+import ServiceTaskPropertiesProvider from './properties-provider/ServiceTaskPropertiesProvider'
+import OpenToscaRenderer from './OpenToscaRenderer'
 
 export default {
-    __init__: ['customPropertiesProvider'],
-    customPropertiesProvider: ['type', ServiceTaskPropertiesProvider]
+  __init__: ['openToscaRenderer', 'customPropertiesProvider'],
+  openToscaRenderer: ['type', OpenToscaRenderer],
+  customPropertiesProvider: ['type', ServiceTaskPropertiesProvider],
 };

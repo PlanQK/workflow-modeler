@@ -25,6 +25,7 @@ module.exports = function (config) {
             'test/tests/quantme/quantme-config.spec.js',
             'test/tests/opentosca/opentosca-config.spec.js',
             'test/tests/opentosca/deployment-utils.spec.js',
+            'test/tests/opentosca/deployment-model-renderer.spec.js',
             'test/tests/dataflow/data-flow-transformation.spec.js',
             'test/tests/dataflow/data-flow-plugin-config.spec.js',
             'test/tests/dataflow/data-flow-configurations-endpoint.spec.js',

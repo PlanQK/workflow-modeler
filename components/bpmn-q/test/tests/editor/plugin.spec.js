@@ -55,9 +55,9 @@ describe('Test plugins', function () {
                 expect(extensions['opentosca']).to.not.be.undefined;
                 expect(extensions['planqk']).to.not.be.undefined;
                 expect(transfButtons.length).to.equal(3);
-                expect(buttons.length).to.equal(2);
+                expect(buttons.length).to.equal(3);
                 expect(tabs.length).to.equal(9);
-                expect(styles.length).to.equal(3);
+                expect(styles.length).to.equal(4);
             });
         });
     });
