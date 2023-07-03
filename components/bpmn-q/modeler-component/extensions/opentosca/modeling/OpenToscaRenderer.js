@@ -32,8 +32,10 @@ const STROKE_STYLE = {
 };
 
 export default class OpenToscaRenderer extends BpmnRenderer {
-    constructor(config, eventBus, styles, pathMap, canvas, textRenderer) {
+    constructor(config, eventBus, styles, pathMap, canvas, textRenderer, commandStack, elementRegistry) {
         super(config, eventBus, styles, pathMap, canvas, textRenderer, HIGH_PRIORITY);
+        this.commandStack = commandStack;
+        this.elementRegistry = elementRegistry;
         this.styles = styles;
         this.textRenderer = textRenderer;
 
@@ -45,6 +47,46 @@ export default class OpenToscaRenderer extends BpmnRenderer {
             }
         };
         this.addMarkerDefinition(canvas);
+        this.registerShowDeploymentModelHandler();
+    }
+
+    registerShowDeploymentModelHandler() {
+        this.commandStack.register("deploymentModel.showAll", {
+            execute: ({showDeploymentModel}) => {
+                const elementsWithDeploymentModel = this.elementRegistry
+                    .filter(element => element.businessObject.get('opentosca:deploymentModelUrl'));
+                const changed = [];
+                for (const element of elementsWithDeploymentModel) {
+                    const wasShownDeploymentModel = !!element.showDeploymentModel;
+                    element.showDeploymentModel = showDeploymentModel;
+                    element.wasShownDeploymentModel = wasShownDeploymentModel;
+                    if (wasShownDeploymentModel !== showDeploymentModel) {
+                        changed.push(element);
+                    }
+                }
+                return changed;
+            },
+
+            revert({showDeploymentModel}) {
+                return this.execute({showDeploymentModel: !showDeploymentModel});
+            }
+        });
+
+        this.commandStack.register("deploymentModel.show", {
+            execute: ({element, showDeploymentModel}) => {
+                const wasShownDeploymentModel = !!element.showDeploymentModel;
+                element.showDeploymentModel = showDeploymentModel;
+                element.wasShownDeploymentModel = wasShownDeploymentModel;
+                if (wasShownDeploymentModel !== showDeploymentModel) {
+                    return [element];
+                }
+                return [];
+            },
+
+            revert({element, showDeploymentModel}) {
+                return this.execute({element, showDeploymentModel: !showDeploymentModel});
+            }
+        });
     }
 
     addMarkerDefinition(canvas) {
@@ -86,16 +128,16 @@ export default class OpenToscaRenderer extends BpmnRenderer {
         button.style['pointer-events'] = 'all';
         button.style['cursor'] = 'pointer';
         button.addEventListener('click', (e) => {
-            element.showDeploymentModel = !element.showDeploymentModel;
             e.preventDefault();
-            if (element.showDeploymentModel) {
-                this.showDeploymentModel(parentGfx, element, deploymentModelUrl);
-            } else {
-                this.removeDeploymentModel(parentGfx);
-            }
+            this.commandStack.execute("deploymentModel.show", {
+                element: element,
+                showDeploymentModel: !element.showDeploymentModel
+            });
         });
         if (element.showDeploymentModel) {
             this.showDeploymentModel(parentGfx, element, deploymentModelUrl);
+        } else {
+            this.removeDeploymentModel(parentGfx);
         }
     }
 
@@ -117,6 +159,7 @@ export default class OpenToscaRenderer extends BpmnRenderer {
                     content: e.message,
                     duration: 2000
                 });
+                return;
             }
         }
         const groupDef = svgCreate('g', {id: DEPLOYMENT_GROUP_ID});
@@ -219,7 +262,9 @@ OpenToscaRenderer.$inject = [
     'styles',
     'pathMap',
     'canvas',
-    'textRenderer'
+    'textRenderer',
+    'commandStack',
+    'elementRegistry'
 ];
 
 

@@ -22,6 +22,7 @@ import {getServiceTasksToDeploy} from '../../../deployment/DeploymentUtils';
 import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
+import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 
 const defaultState = {
     windowOpenDeploymentOverview: false,
@@ -42,8 +43,8 @@ export default class DeploymentPlugin extends PureComponent {
     }
 
     componentDidMount() {
-
         this.modeler = getModeler();
+        this.commandStack = this.modeler.get("commandStack");
     }
 
     /**
@@ -299,17 +300,35 @@ export default class DeploymentPlugin extends PureComponent {
         return csarsToDeploy;
     }
 
-    render() {
+    showDeployment(show) {
+        this.commandStack.execute("deploymentModel.showAll", {
+            showDeploymentModel: show
+        });
+    }
 
+    render() {
         // render deployment button and pop-up menu
         return (<Fragment>
-            <div style={{display: 'flex'}} slot="toolbar">
-                <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
-                        onClick={() => this.setState({windowOpenDeploymentOverview: true})}>
+            <ExtensibleButton
+                title="OpenTosca"
+                styleClass="app-icon-service-deployment"
+                description="Show buttons of the OpenTosca plugin"
+                subButtons={[
+                    <button type="button" className="qwm-toolbar-btn" title="Show deployment"
+                            onClick={() => this.showDeployment(true)}>
+                    <span className="qrm-reload"><span
+                        className="qwm-indent">Show deployment</span></span>
+                    </button>,
+                    <button type="button" className="qwm-toolbar-btn" title="Hide deployment"
+                            onClick={() => this.showDeployment(false)}>
+                    <span className="qrm-reload"><span
+                        className="qwm-indent">Hide deployment</span></span>
+                    </button>,
+                    <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
+                            onClick={() => this.setState({windowOpenDeploymentOverview: true})}>
                     <span className="app-icon-service-deployment"><span
                         className="qwm-indent">Service Deployment</span></span>
-                </button>
-            </div>
+                    </button>]}/>
             {this.state.windowOpenDeploymentOverview && (
                 <ServiceDeploymentOverviewModal
                     onClose={this.handleDeploymentOverviewClosed}
