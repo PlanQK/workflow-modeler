@@ -146,7 +146,7 @@ export var SUBPROCESS = [
   {
     label: 'Quantum Hardware Selection Subprocess',
     actionName: 'replace-with-hardware-selection-subprocess',
-    className: 'qwm quantme-tasks-icon-hardware-selection',
+    className: 'qwm bpmn-quantme-tasks-icon-hardware-selection',
     target: {
       type: consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     }
@@ -154,7 +154,7 @@ export var SUBPROCESS = [
   {
     label: 'Circuit Cutting Subprocess',
     actionName: 'replace-with-circuit-cutting-subprocess',
-    className: 'qwm quantme-tasks-icon-cutting',
+    className: 'qwm bpmn-quantme-tasks-icon-cutting',
     target: {
       type: consts.CIRCUIT_CUTTING_SUBPROCESS
     }

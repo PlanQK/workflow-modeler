@@ -422,6 +422,26 @@
     margin-top: 3px;
 }
 
+.qwm .bpmn-quantme-tasks-icon-hardware-selection:before {
+    content: "";
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumHardwareSelectionSubprocess_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .bpmn-quantme-tasks-icon-cutting:before {
+    content: "";
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingSubprocess_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
 .djs-popup-label {
     margin-top: -2px;
 }
@@ -429,3 +449,7 @@
 .djs-popup-entry-name .qwm .quantme-tasks-icon-result-evaluation {
     margin-top: 5px;
 }
+
+.djs-popup-results .djs-popup-group .entry[data-id="replace-with-hardware-selection-subprocess"] .djs-popup-label {
+    margin-left: 10px; /* Adjust the value as per your requirements */
+  }
