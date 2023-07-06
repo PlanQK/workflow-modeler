@@ -856,7 +856,7 @@ export function MaxNumberOfCutsEntry({ element }) {
 
     return <HiddenTextFieldEntry
         id={consts.MAX_NUMBER_OF_CUTS}
-        label={translate('Maximum Sub-Circuit width')}
+        label={translate('Maximum Number of Cuts')}
         getValue={getValue}
         setValue={setValue}
         debounce={debounce}
@@ -1273,8 +1273,8 @@ export function RoundedEntry({ element }) {
     };
 
     return <HiddenTextFieldEntry
-        id={consts.REPETITIONS}
-        label={translate('Repetitions of the classical algorithm for finding good approximation')}
+        id={consts.ROUNDED}
+        label={translate('Round classical result')}
         getValue={getValue}
         setValue={setValue}
         debounce={debounce}

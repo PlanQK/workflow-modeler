@@ -21,9 +21,12 @@ export const getCurrentQRMs = async function () {
 
     // get all folders of the defined QRM repository which could contain a QRM
     let folders = [];
+    let repoPath = config.getQRMRepositoryPath().replace(/^\/|\/$/g, '');
+    let QRMs = [];
+
+
     try {
-        let repoPath = config.getQRMRepositoryPath().replace(/^\/|\/$/g, '');
-        folders = await gitHandler.getFoldersInRepository(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), repoPath, config.getGithubToken());
+        folders = await gitHandler.getFoldersInRepository(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), repoPath, config.getGitHubToken());
     } catch (error) {
         throw 'Unable to load QRMs from Github repository with username \''
         + config.getQRMRepositoryUserName() + '\', repository name \'' + config.getQRMRepositoryName() + '\', and path \''
@@ -32,15 +35,16 @@ export const getCurrentQRMs = async function () {
 
     // filter invalid folders and retrieve QRMs
     console.log('Found %i folders with QRM candidates!', folders.length);
-    let QRMs = [];
+
     for (let i = 0; i < folders.length; i++) {
-        let qrm = await getQRM(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), folders[i], config.getGithubToken());
+        let qrm = await getQRM(config.getQRMRepositoryUserName(), config.getQRMRepositoryName(), folders[i], config.getGitHubToken());
         if (qrm != null) {
             QRMs.push(qrm);
         } else {
             console.log('Folder %s does not contain a valid QRM!', folders[i]);
         }
     }
+
 
     return QRMs;
 };
@@ -51,7 +55,7 @@ export const getCurrentQRMs = async function () {
  * @param userName the Github username to which the QRM repository belongs
  * @param repoName the Github repository name to load the QRMs from
  * @param qrmUrl the URL to the folder containing the potential QRM
- * @param token github Token that can be used to authenticate
+ * @param token the Github token to authenticate requests
  * @returns the QRM if it is valid or null otherwise
  */
 async function getQRM(userName, repoName, qrmUrl, token) {
