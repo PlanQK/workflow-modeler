@@ -4,7 +4,7 @@ the DataPool extends the DataStoreMap. To use the PlanQK plugin, the DataFlow pl
 
 ## Overview
 An overview of all modeling elements:
-![PlanQK Overview](PlanQK-Overview.PNG)
+![PlanQK Overview](PlanQK-Overview.png)
 
 ## Structure
 - [PlanQK Plugin Object](../../../../components/bpmn-q/modeler-component/extensions/planqk/PlanQKPlugin.js)

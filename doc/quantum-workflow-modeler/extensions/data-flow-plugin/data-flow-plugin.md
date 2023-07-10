@@ -3,7 +3,7 @@ Plugin which adds modelling elements to allow the explicit and executable modell
 
 ## Overview
 An overview of all modeling elements:
-![DataFlow Overview](DataFlow-Overview.PNG)
+![DataFlow Overview](DataFlow-Overview.png)
 
 ## Structure
 - [DataFlow Plugin Object](../../../../components/bpmn-q/modeler-component/extensions/data-extension/DataFlowPlugin.js)

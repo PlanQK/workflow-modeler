@@ -2,9 +2,8 @@
 Plugin which integrates elements for modeling QHAna Services, loaded from the [QHAna Plugin Registry](https://github.com/UST-QuAntiL/qhana-plugin-registry) as configurations. 
 
 ## Overview
-
 An overview of all modeling elements:
-![QHAna Overview](QHAna-Overview.PNG)
+![QHAna Overview](QHAna-Overview.png)
 
 ## Structure
 - [QHAna Plugin Object](../../../../components/bpmn-q/modeler-component/extensions/qhana/QHAnaPlugin.js)
