@@ -58,7 +58,7 @@ export function Connector({ element, translate, urls }) {
 
         let endpointParameters = determineInputParameters(element.businessObject.yml);
         let scriptValue = constructScript(endpointParameters);
-        const script = moddle.create("camunda:Script", { scriptFormat: 'JavaScript', value: scriptValue, resource: 'Inline' });
+        const script = moddle.create("camunda:Script", { scriptFormat: 'Groovy', value: scriptValue, resource: 'Inline' });
 
         const payloadInputParameter = moddle.create("camunda:InputParameter", {
             definition: script
@@ -101,7 +101,7 @@ export function Connector({ element, translate, urls }) {
 
 function determineInputParameters(yamlData) {
     // Parse the YAML data
-    const data = yaml.safeLoad(yamlData);
+    const data = yaml.load(yamlData);
 
     // Initialize an object to store the input parameters
     const inputParameters = {};
@@ -123,7 +123,7 @@ function determineInputParameters(yamlData) {
         }
     }
 
-    const document = yaml.safeLoad(yamlData);
+    const document = yaml.load(yamlData);
 
     // Access the dynamically determined schema
     const schemaPath = 'components.schemas.GroverAlgorithmRequest';
@@ -149,7 +149,7 @@ function determineInputParameters(yamlData) {
 
 function determineOutputParameters(yamlData) {
     // Parse the YAML data
-    const data = yaml.safeLoad(yamlData);
+    const data = yaml.load(yamlData);
 
     // Initialize an object to store the input parameters
     let outputParameters = [];
@@ -191,8 +191,8 @@ function constructCamundaOutputParameters(parameters) {
     for (let param of parameters) {
         let moddle = getModeler().get('moddle');
         const script = moddle.create("camunda:Script", {
-            scriptFormat: 'JavaScript', value: 'var resp = connector.getVariable("response")\n' +
-                'resp = JSON.parse(resp)\n' + 'var ' + param + ' = resp.' + param + '\n' + 'print(' + param + ')\n' + param + ';', resource: 'Inline'
+            scriptFormat: 'Groovy', value: 'def resp = connector.getVariable("response");\n' +
+                'resp = new groovy.json.JsonSlurper().parseText(resp);\n' + 'def ' + param + ' = resp.get(' + param + ');\n' + 'println(' + param + ');\n' + 'return ' + param + ';', resource: 'Inline'
         });
 
         const outputParameter = moddle.create("camunda:OutputParameter", {
@@ -204,17 +204,19 @@ function constructCamundaOutputParameters(parameters) {
     return outputParameters;
 }
 
+
+
 function constructScript(parameters) {
-    let script = '';
-    let jsonString = 'var myJson = {';
+    let script = 'import groovy.json.JsonBuilder;\n';
+    let jsonString = 'def request = [:];\n';
     for (let param of parameters) {
-        script += 'var ' + param + ' = execution.getVariable("' + param + '");\n';
-        jsonString += '"' + param + '":' + param + ',';
+        script += 'def ' + param + ' = execution.getVariable("' + param + '");\n' +'println(' + param + ');\n';
+        jsonString += 'request.put("' + param + '",' + param + ');\n';
     }
-    jsonString = removeLastComma(jsonString);
-    jsonString += '}\n';
+    //jsonString = removeLastComma(jsonString);
+    jsonString += 'requeststring = new JsonBuilder(request).toPrettyString();\nreturn requeststring;';
     script += jsonString;
-    script += 'myJson = JSON.stringify(myJson)\nmyJson = myJson';
+    //script += 'myJson = JSON.stringify(myJson)\nmyJson = myJson';
     return script;
 }
 
