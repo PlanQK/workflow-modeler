@@ -9,6 +9,8 @@ import './editor/resources/styling/editor-ui.css';
 import './editor/ui/notifications/Notifications.css';
 import './editor/ui/notifications/Notification.css';
 import './editor/resources/styling/camunda-styles/style.css';
+import 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
+import './modeler.css';
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -16,10 +18,11 @@ import ButtonToolbar from "./editor/ui/ButtonToolbar";
 import { createNewDiagram, loadDiagram } from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import { createModeler, getModeler } from "./editor/ModelerHandler";
-import { getPluginButtons, getStyles, getTransformationButtons } from "./editor/plugin/PluginHandler";
+import { getPluginButtons, getTransformationButtons } from "./editor/plugin/PluginHandler";
 import { getPluginConfig, setPluginConfig } from "./editor/plugin/PluginConfigHandler";
 import * as editorConfig from './editor/config/EditorConfigManager';
 import { initEditorEventHandler } from './editor/events/EditorEventHandler';
+import $ from 'jquery';
 
 /**
  * The Quantum Workflow modeler HTML web component which contains the bpmn-js modeler to model BPMN diagrams, an editor
@@ -78,12 +81,164 @@ export class QuantumWorkflowModeler extends HTMLElement {
             <div style="display: flex; flex-direction: column; height: 100%;" class="qwm">
               <div id="button-container" style="flex-shrink: 0;"></div>
               <hr class="qwm-toolbar-splitter" />
-              <div id="main-div" style="display: flex; flex: 1;">
+              <div id="main-div" style="display: flex; flex: 1; height: 100%">
                 <div id="canvas" style="width: 100%"></div>
-                <div id="properties" style="overflow: auto; max-height: 93.5vh; width: 25%; background: #f8f8f8;"></div>
+                <div id="properties" style="overflow: auto; width:350px; max-height: 93.5vh; background: #f8f8f8;"></div>
               </div>
               <div id="qwm-notification-container"></div>
             </div>`;
+
+        let panel = document.getElementById("properties");
+        let maindiv = document.getElementById("main-div");
+
+        let isResizing = false;
+        let startX;
+        let startWidth;
+        let width = panel.style.width;
+        let propertiesElement = document.getElementById("properties");
+
+        propertiesElement.addEventListener("mousemove", function (e) {
+            let rect = this.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            let borderSize = 5;
+
+            if (
+                x < borderSize ||
+                x > rect.width - borderSize ||
+                y < borderSize ||
+                y > rect.height - borderSize
+            ) {
+                this.style.cursor = "w-resize";
+            } else {
+                this.style.cursor = "default";
+
+            }
+        });
+
+
+        // Mouse down event listener
+        panel.addEventListener('mousedown', handleMouseDown);
+
+        panel.addEventListener("mouseup", function () {
+            this.style.cursor = "default";
+        });
+
+        // Mouse move event listener
+        document.addEventListener('mousemove', handleMouseMove);
+
+        // Mouse up event listener
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Mouse down handler
+        function handleMouseDown(event) {
+            let rect = panel.getBoundingClientRect();
+            let x = event.clientX - rect.left;
+
+            let borderSize = 5;
+
+            if (
+                x < borderSize ||
+                x > rect.width - borderSize
+            ) {
+
+                isResizing = true;
+            }
+            startX = event.clientX;
+            startWidth = parseFloat(panel.style.width);
+        }
+        let isCollapsed = false;
+        const resizeButton = document.createElement('button');
+        resizeButton.className = "fa fa-angle-right resize";
+        maindiv.appendChild(resizeButton);
+
+        // Mouse move handler
+        function handleMouseMove(event) {
+            if (!isResizing) { maindiv.style.cursor = "default"; return; }
+            maindiv.style.cursor = "w-resize";
+            panel.style.cursor = "w-resize";
+            const deltaX = event.clientX - startX;
+            let newWidth = startWidth - deltaX;
+
+            // enable to completely hide the panel
+            if (newWidth < 20) {
+                newWidth = 0;
+                isCollapsed = true;
+                resizeButton.className = "fa fa-angle-left resize";
+            }
+            panel.style.width = `${newWidth}px`;
+        }
+
+        // Mouse up handler
+        function handleMouseUp() {
+            panel.style.cursor = "default";
+            isResizing = false;
+        }
+
+
+        resizeButton.addEventListener('click', function () {
+            let offsetWidth = panel.offsetWidth;
+            if (isCollapsed) {
+                panel.style.display = 'block';
+                panel.style.width = offsetWidth;
+                if (panel.offsetWidth < parseInt(width, 10)) {
+                    panel.style.width = width;
+                }
+                resizeButton.className = "fa fa-angle-right resize";
+            } else {
+                panel.style.display = 'none';
+                resizeButton.className = "fa fa-angle-left resize";
+            }
+
+            isCollapsed = !isCollapsed;
+        });
+
+        let editor = document.getElementById('editor');
+        let dragging = false;
+        let aceEditor = ace.edit(editor);
+
+
+        $("#editor_dragbar").mousedown(function (e) {
+            e.preventDefault();
+            dragging = true;
+
+            let editorElement = $("#editor");
+            let editor_wrap = $("#editor_wrap");
+            let dragbar = $("#editor_dragbar");
+            let startY = e.pageY;
+            let startTop = parseInt(editorElement.css("top"));
+            let startHeight = editor_wrap.height();
+
+            $(document).mousemove(function (e) {
+                if (!dragging) return;
+
+                let actualY = e.pageY;
+                let deltaY = startY - actualY;
+                let newTop = startTop - deltaY;
+                let newHeight = startHeight + deltaY;
+                const viewportHeight = window.innerHeight;
+                const heightInVh = (newHeight / viewportHeight) * 100;
+
+                // since we move the editor element up we need to add the actual height of the 
+                // wrapper element
+                const editorHeight = 2 * newHeight;
+                if (newHeight >= 75 && heightInVh <= 89) {
+                    editorElement.css("top", newTop + "px");
+                    editor_wrap.css("height", newHeight + "px");
+                    editorElement.css("height", editorHeight + "px");
+                    dragbar.css("top", newTop - dragbar.height() + "px");
+                    aceEditor.resize();
+                }
+            });
+        });
+
+        $(document).mouseup(function (e) {
+            if (dragging) {
+                dragging = false;
+                $(document).unbind("mousemove");
+            }
+        });
     }
 
     /**
@@ -125,6 +280,11 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
         // load initial workflow
         this.workflowModel = this.workflowModel || getPluginConfig('editor').defaultWorkflow;
+        getModeler().on('commandStack.changed', function () {
+            getModeler().saveXML({ format: true }).then(function (result) {
+                modeler.xml = result;
+            })
+        });
         if (this.workflowModel) {
             loadDiagram(this.workflowModel, getModeler()).then();
         } else {

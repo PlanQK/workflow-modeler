@@ -1,5 +1,6 @@
-import {transformedWorkflowHandlers, workflowEventTypes} from '../EditorConstants';
-import {dispatchWorkflowEvent} from '../events/EditorEventHandler';
+import { file } from 'jszip';
+import { transformedWorkflowHandlers, workflowEventTypes, saveFileFormats } from '../EditorConstants';
+import { dispatchWorkflowEvent } from '../events/EditorEventHandler';
 
 const editorConfig = require('../config/EditorConfigManager');
 
@@ -29,10 +30,10 @@ const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
  * @returns {Promise<void>}
  */
 export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileName()) {
-    const bpmnFile = await new File([xml], fileName, {type: 'text/xml'});
+    const bpmnFile = await new File([xml], fileName, { type: 'text/xml' });
 
     const link = document.createElement('a');
-    link.download = fileName;
+    link.download = fileName + '.bpmn';
     link.href = URL.createObjectURL(bpmnFile);
     link.click();
 
@@ -46,9 +47,18 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
  * @param fileName The name of the file.
  * @returns {Promise<void>}
  */
-export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName()) {
+export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName(), fileFormat = editorConfig.getFileFormat()) {
     const xml = await getXml(modeler);
-    return saveXmlAsLocalFile(xml, fileName);
+
+    if (fileFormat === saveFileFormats.BPMN || fileFormat === saveFileFormats.ALL) {
+        await openFileDialog(xml, fileName, saveFileFormats.BPMN);
+    }
+
+    if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG || fileFormat === saveFileFormats.PNG) {
+        await saveWorkflowAsSVG(modeler, fileName, fileFormat);
+    }
+
+    return;
 }
 
 /**
@@ -58,7 +68,7 @@ export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.ge
  * @returns {Promise<*>} The xml diagram.
  */
 export async function getXml(modeler) {
-    const {xml} = await modeler.saveXML({format: true});
+    const { xml } = await modeler.saveXML({ format: true });
     return xml;
 }
 
@@ -71,19 +81,21 @@ export async function getXml(modeler) {
  * @returns {Promise<undefined|*>} Undefined, if an error occurred during import.
  */
 export async function loadDiagram(xml, modeler, dispatchEvent = true) {
+    if (xml !== '') {
+        try {
+            const result = await modeler.importXML(xml);
+            modeler.xml = xml;
 
-    try {
-        const result = await modeler.importXML(xml);
+            if (dispatchEvent) {
+                dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, editorConfig.getFileName());
+            }
 
-        if (dispatchEvent) {
-            dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, editorConfig.getFileName());
+            return result;
+        } catch (err) {
+            console.error(err);
+
+            return { error: err };
         }
-
-        return result;
-    } catch (err) {
-        console.error(err);
-
-        return {error: err};
     }
 }
 
@@ -120,7 +132,7 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
     }
 
     // add diagram to the body
-    const bpmnFile = new File([workflowXml], fileName, {type: 'text/xml'});
+    const bpmnFile = new File([workflowXml], fileName, { type: 'text/xml' });
     form.append('data', bpmnFile);
 
     // upload all provided views
@@ -151,7 +163,7 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
             // abort if there is not exactly one deployed process definition
             if (Object.values(result['deployedProcessDefinitions'] || {}).length !== 1) {
                 console.error('Invalid size of deployed process definitions list: ' + Object.values(result['deployedProcessDefinitions'] || {}).length);
-                return {status: 'failed'};
+                return { status: 'failed' };
             }
 
             dispatchWorkflowEvent(workflowEventTypes.DEPLOYED, workflowXml, workflowName);
@@ -162,11 +174,11 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
             };
         } else {
             console.error('Deployment of workflow returned invalid status code: %s', response.status);
-            return {status: 'failed'};
+            return { status: 'failed' };
         }
     } catch (error) {
         console.error('Error while executing post to deploy workflow: ' + error);
-        return {status: 'failed'};
+        return { status: 'failed' };
     }
 }
 
@@ -215,6 +227,89 @@ export function openInNewTab(workflowXml, fileName) {
     newWindow.onload = function () {
 
         // Pass the XML string to the new window using postMessage
-        newWindow.postMessage({workflow: workflowXml, name: fileName}, window.location.href);
+        newWindow.postMessage({ workflow: workflowXml, name: fileName }, window.location.href);
     };
+}
+
+export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
+    modeler.saveSVG({ format: true }, function (error, svg) {
+        if (error) {
+            return;
+        }
+
+        if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG) {
+            openFileDialog(svg, fileName, saveFileFormats.SVG)
+        }
+        if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.PNG) {
+            convertSvgToPng(svg, fileName, saveFileFormats.PNG);
+        }
+    });
+}
+
+// Function to convert SVG to PNG using an external library
+function convertSvgToPng(svg, fileName, fileFormat) {
+    var img = new Image();
+    img.onload = function () {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        var pngDataUrl = canvas.toDataURL('image/png');
+        downloadPng(pngDataUrl, fileName, fileFormat);
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
+// Function to initiate the PNG download
+function downloadPng(pngDataUrl, fileName, fileFormat) {
+    openFileUrlDialog(pngDataUrl, fileName, fileFormat);
+}
+
+async function openFileDialog(content, fileName, fileFormat) {
+    let suggestedName = fileName;
+    if (suggestedName.includes('.bpmn')) {
+        suggestedName = fileName.split('.bpmn')[0]; 
+    } 
+    let fileHandle = await window.showSaveFilePicker({
+        startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
+            {
+                description: "BPMN file",
+                accept: { "text/plain": [".bpmn"] },
+            },
+            {
+                description: "SVG file",
+                accept: { "text/plain": [".svg"] },
+            }
+        ]
+    });
+    writeFile(fileHandle, content);
+}
+
+async function openFileUrlDialog(content, fileName, fileFormat) {
+    let suggestedName = fileName;
+    if (suggestedName.includes('.bpmn')) {
+        suggestedName = fileName.split('.bpmn')[0]; 
+    } 
+    let fileHandle = await window.showSaveFilePicker({
+        startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
+            {
+                description: "PNG file",
+                accept: { "text/plain": [".png"] },
+            }
+        ]
+    });
+    writeURLToFile(fileHandle, content);
+}
+
+async function writeFile(fileHandle, contents) {
+    const writable = await fileHandle.createWritable();
+    await writable.write(contents);
+    await writable.close();
+}
+
+async function writeURLToFile(fileHandle, url) {
+    const writable = await fileHandle.createWritable();
+    const response = await fetch(url);
+    await response.body.pipeTo(writable);
 }

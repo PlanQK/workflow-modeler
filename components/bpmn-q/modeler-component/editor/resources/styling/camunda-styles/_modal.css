@@ -31,7 +31,7 @@
     width: 100%;
 }
 
-.qwm-modal td, th {
+.qwm-modal td, .qwm-modal th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
