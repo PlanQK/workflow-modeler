@@ -10,6 +10,7 @@ import {
 import { getExtensionElementsList } from "../../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import { Deployment } from "./Deployment";
 import { Connector } from './Connector';
+import { YamlUpload } from './YamlUpload';
 const yaml = require('js-yaml');
 const QUANTME_NAMESPACE_PUSH = 'http://quantil.org/quantme/push';
 
@@ -96,8 +97,15 @@ export function ImplementationProps(props) {
             component: Deployment,
             isEdited: isTextFieldEntryEdited
         });
-        if (element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PUSH))) && element.businessObject.yml !== undefined) {
-            const urls = extractUrlsFromYaml(element.businessObject.yml);
+
+        entries.push({
+            id: 'yamlUpload',
+            component: YamlUpload,
+            isEdited: isTextFieldEntryEdited
+        })
+
+        if (element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PUSH))) && element.businessObject.yaml !== undefined) {
+            const urls = extractUrlsFromYaml(element.businessObject.yaml);
             entries.push({
                 id: 'connector',
                 element,
@@ -105,11 +113,9 @@ export function ImplementationProps(props) {
                 urls,
                 component: Connector,
                 isEdited: isTextFieldEntryEdited
-            }
-            )
+            })
         }
     }
-
     return entries;
 }
 

@@ -16,10 +16,9 @@ import QuantMEPropertiesProvider from './properties-provider/QuantMEPropertiesPr
 import BpmnKeyboardBinding from './BpmnKeyboardBindings';
 import BpmnEditorActions from './BpmnEditorActions';
 import BpmnKeyboard from './BpmnKeyboard';
-import QuantMEContextPad from './QuantMEContextPad';
 
 export default {
-  __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider', 'keyboardBindings', 'editorActions', 'keyboard', 'quantMEContextPad'],
+  __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider', 'keyboardBindings', 'editorActions', 'keyboard'],
   quantMERenderer: ['type', QuantMERenderer],
   quantMEReplaceMenu: ['type', QuantMEReplaceMenuProvider],
   bpmnFactory: ['type', QuantMEFactory],
@@ -27,6 +26,5 @@ export default {
   propertiesProvider: ['type', QuantMEPropertiesProvider],
   keyboardBindings: ['type', BpmnKeyboardBinding],
   editorActions: ['type', BpmnEditorActions],
-  quantMEContextPad: ['type', QuantMEContextPad],
   keyboard: ['type', BpmnKeyboard]
 };

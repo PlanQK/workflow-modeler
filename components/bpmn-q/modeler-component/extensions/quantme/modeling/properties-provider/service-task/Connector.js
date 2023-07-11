@@ -56,7 +56,7 @@ export function Connector({ element, translate, urls }) {
             name: 'url', value: ''
         });
 
-        let endpointParameters = determineInputParameters(element.businessObject.yml);
+        let endpointParameters = determineInputParameters(element.businessObject.yaml);
         let scriptValue = constructScript(endpointParameters);
         const script = moddle.create("camunda:Script", { scriptFormat: 'Groovy', value: scriptValue, resource: 'Inline' });
 
@@ -71,7 +71,7 @@ export function Connector({ element, translate, urls }) {
 
         let outputParameters = [];
 
-        outputParameters = determineOutputParameters(element.businessObject.yml);
+        outputParameters = determineOutputParameters(element.businessObject.yaml);
         let camundaOutputParameters = constructCamundaOutputParameters(outputParameters);
 
         let inputOutput = moddle.create('camunda:InputOutput', { inputParameters: inputParameters, outputParameters: camundaOutputParameters })
