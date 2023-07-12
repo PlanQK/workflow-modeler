@@ -84,7 +84,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
               <div id="main-div" style="display: flex; flex: 1; height: 100%">
                 <div id="canvas" style="width: 100%"></div>
                 <div id="properties" style="overflow: auto; width:350px; max-height: 93.5vh; background: #f8f8f8;"></div>
-                <div id="wizardDiv"></div>
+                <div id="modal-container"></div>
               </div>
               <div id="qwm-notification-container"></div>
             </div>`;

@@ -36,18 +36,21 @@
 }
 
 
-.wizard-button {
-    box-sizing: border-box;
+.qwm-artifact-upload-btn {
     outline: none;
-    background-color: transparent;
-    border: solid;
-    border-radius: 6px;
-    font-size: 15px;
-    font-family: Arial, serif;
-    font-weight: bold;
-    color: #636363;
-    padding: 3px 6px 2px;
+    background-color: var(--color-grey-225-10-97);
+    border: 1px solid var(--color-grey-225-10-75);
+    border-radius: 4px;
     margin: 2px 32px 6px 12px;
+    padding: 2px 6px 2px 6px;
+    fill: var(--add-entry-fill-color);
+}
+
+.qwm-artifact-upload-btn:hover {
+    color: white;
+    border: 1px solid white;
+    background-color: var(--color-blue-205-100-50);
+    fill: var(--add-entry-hover-fill-color);
 }
 
 .wizard-tab-content {

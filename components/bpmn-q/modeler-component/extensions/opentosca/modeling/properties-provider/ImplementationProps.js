@@ -96,9 +96,10 @@ export function ImplementationProps(props) {
         });
         entries.push({
             id: 'artifactUpload',
+            translate,
             component: ArtifactUpload,
             isEdited: isTextFieldEntryEdited
-        })
+        });
     }
 
     return entries;

@@ -310,19 +310,19 @@ export default class DeploymentPlugin extends PureComponent {
         // render deployment button and pop-up menu
         return (<Fragment>
             <ExtensibleButton
-                title="OpenTosca"
+                title="OpenTOSCA"
                 styleClass="app-icon-service-deployment"
-                description="Show buttons of the OpenTosca plugin"
+                description="Show buttons of the OpenTOSCA plugin"
                 subButtons={[
-                    <button type="button" className="qwm-toolbar-btn" title="Show deployment"
+                    <button type="button" className="qwm-toolbar-btn" title="Show Deployment"
                             onClick={() => this.showDeployment(true)}>
-                    <span className="qrm-reload"><span
-                        className="qwm-indent">Show deployment</span></span>
+                    <span className="show-icon"><span
+                        className="qwm-indent">Show Deployment</span></span>
                     </button>,
-                    <button type="button" className="qwm-toolbar-btn" title="Hide deployment"
+                    <button type="button" className="qwm-toolbar-btn" title="Hide Deployment"
                             onClick={() => this.showDeployment(false)}>
-                    <span className="qrm-reload"><span
-                        className="qwm-indent">Hide deployment</span></span>
+                    <span className="hide-icon"><span
+                        className="qwm-indent">Hide Deployment</span></span>
                     </button>,
                     <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
                             onClick={() => this.setState({windowOpenDeploymentOverview: true})}>
