@@ -1,17 +1,5 @@
 @import url('~bpmn-font/dist/css/bpmn-embedded.css');
 
-.qwm .quantme-tasks-icon:before {
-    content: "";
-    width: 20px;
-    height: 20px;
-    background-size: contain;
-    background-image: url("../resources/QuantME_Logo.svg");
-    background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-    margin: 0 6px 0 0;
-}
-
 .qwm .config:before {
     content: "";
     display: block;
@@ -22,11 +10,22 @@
     float: left;
 }
 
-.qwm .app-icon-service-deployment:before {
+.qwm .app-icon-opentosca:before {
     content: "";
     width: 15px;
     height: 15px;
     background-image: url("../resources/opentosca-icon.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+}
+
+.qwm .app-icon-service-deployment:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-image: url("../resources/service-deployment-icon.png");
     background-size: contain;
     background-repeat: no-repeat;
     display: inline-block;

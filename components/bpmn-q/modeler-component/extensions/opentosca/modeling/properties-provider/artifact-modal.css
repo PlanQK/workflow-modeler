@@ -25,7 +25,7 @@
     background-color: var(--blue-darken-62);
 }
 
-.tabButtonsContainer {
+.tab-buttons-container {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -53,7 +53,7 @@
     fill: var(--add-entry-hover-fill-color);
 }
 
-.wizard-tab-content {
+.upload-tab-content {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;

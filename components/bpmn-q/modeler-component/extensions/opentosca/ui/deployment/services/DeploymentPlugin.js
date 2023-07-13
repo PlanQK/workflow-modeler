@@ -311,7 +311,7 @@ export default class DeploymentPlugin extends PureComponent {
         return (<Fragment>
             <ExtensibleButton
                 title="OpenTOSCA"
-                styleClass="app-icon-service-deployment"
+                styleClass="app-icon-opentosca"
                 description="Show buttons of the OpenTOSCA plugin"
                 subButtons={[
                     <button type="button" className="qwm-toolbar-btn" title="Show Deployment"
