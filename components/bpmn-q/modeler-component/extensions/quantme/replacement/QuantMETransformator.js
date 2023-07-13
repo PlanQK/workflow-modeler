@@ -299,39 +299,42 @@ function isChildExpanded(element, bpmndiShapes) {
 
 /**
  * Recursively removes the isExpanded attribute from the bpmn shapes.
- * @param {*} subprocessElements 
- * @param {*} bpmnPrefix 
- * @param {*} quantmePrefix 
- * @returns the updated subprocess elements
+ * 
+ * @param subprocessElements 
+ * @param bpmnPrefix 
+ * @param quantmePrefix 
+ * @returns the modified subprocess elements 
  */
 function removeIsExpandedAttribute(subprocessElements, bpmnPrefix, quantmePrefix) {
     if (Array.isArray(subprocessElements)) {
         for (let i = 0; i < subprocessElements.length; i++) {
             let subprocess = subprocessElements[i];
-
-            let subprocessAttributes = subprocess['_attributes'];
-            delete subprocessAttributes.isExpanded;
+            deleteAttribute(subprocess, bpmnPrefix, quantmePrefix);
             let subprocesses = subprocess[bpmnPrefix + ':subProcess'];
-            if (subprocesses !== undefined) {
-                let attributes = subprocesses['_attributes'];
-                delete attributes.isExpanded;
-                removeIsExpandedAttribute(subprocesses, bpmnPrefix, quantmePrefix);
-            }
+            deleteAttribute(subprocesses, bpmnPrefix, quantmePrefix);
             let quantmeCuttingSubprocess = subprocess[quantmePrefix + ':circuitCuttingSubprocess'];
-
-            if (quantmeCuttingSubprocess !== undefined) {
-                let attributes = quantmeCuttingSubprocess['_attributes'];
-                delete attributes.isExpanded;
-                removeIsExpandedAttribute(quantmeCuttingSubprocess, bpmnPrefix, quantmePrefix);
-            }
+            deleteAttribute(quantmeCuttingSubprocess, bpmnPrefix, quantmePrefix);
             let quantmeHardwareSelectionSubprocess = subprocess[quantmePrefix + ':quantumHardwareSelectionSubprocess'];
-            if (quantmeHardwareSelectionSubprocess !== undefined) {
-                let attributes = quantmeHardwareSelectionSubprocess['_attributes'];
-                delete attributes.isExpanded;
-                removeIsExpandedAttribute(quantmeHardwareSelectionSubprocess, bpmnPrefix, quantmePrefix);
-            }
-
+            deleteAttribute(quantmeHardwareSelectionSubprocess, bpmnPrefix, quantmePrefix);
         }
         return subprocessElements;
+    } else {
+        let subprocesses = subprocessElements[bpmnPrefix + ':subProcess'];
+        deleteAttribute(subprocesses, bpmnPrefix, quantmePrefix);
+        let quantmeCuttingSubprocess = subprocessElements[quantmePrefix + ':circuitCuttingSubprocess'];
+        deleteAttribute(quantmeCuttingSubprocess, bpmnPrefix, quantmePrefix);
+        let quantmeHardwareSelectionSubprocess = subprocessElements[quantmePrefix + ':quantumHardwareSelectionSubprocess'];
+        deleteAttribute(quantmeHardwareSelectionSubprocess, bpmnPrefix, quantmePrefix);
+        return subprocessElements;
+    }
+}
+
+function deleteAttribute(element, bpmnPrefix, quantmePrefix) {
+    if (element !== undefined) {
+        let attributes = element['_attributes'];
+        if (attributes !== undefined) {
+            delete attributes.isExpanded;
+        }
+        removeIsExpandedAttribute(element, bpmnPrefix, quantmePrefix);
     }
 }
