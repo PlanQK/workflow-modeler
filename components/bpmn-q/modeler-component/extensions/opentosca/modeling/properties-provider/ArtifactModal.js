@@ -22,8 +22,8 @@ const Body = Modal.Body;
 const Footer = Modal.Footer;
 
 /**
- * Modal that allows the usere to create OpenTOSCA deployment models based on a given artifact.
- * A artifact can either be a local file or a Dockerimage reference
+ * Modal that allows the user to create OpenTOSCA deployment models based on a given artifact.
+ * An artifact can either be a local file or a Dockerimage reference.
  *
  * @param onClose Function called when the modal is closed.
  * @returns {JSX.Element} The modal as React component
@@ -45,7 +45,7 @@ export default function ArtifactUploadModal({onClose}) {
 
     return (
         <Modal onClose={onClose}>
-            <Title>Artifact Wizard</Title>
+            <Title>Artifact Modal</Title>
 
             <Body>
                 <div className="qwm-spaceAbove">

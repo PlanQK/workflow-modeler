@@ -1,6 +1,6 @@
 import {HeaderButton} from '@bpmn-io/properties-panel';
 import React from 'react';
-import ArtifactWizardModal from './ArtifactWizardModal';
+import ArtifactModal from './ArtifactModal';
 import {createRoot} from 'react-dom/client';
 import './artifact-modal.css';
 
@@ -12,7 +12,7 @@ export function ArtifactUpload(props) {
 
     const onClick = () => {
         const root = createRoot(document.getElementById("modal-container"));
-        root.render(<ArtifactWizardModal onClose={() => root.unmount()}/>);
+        root.render(<ArtifactModal onClose={() => root.unmount()}/>);
     };
 
     return HeaderButton({
