@@ -23,6 +23,7 @@ const DEPLOYMENT_REL_MARKER_ID = 'deployment-rel';
 
 const NODE_WIDTH = 100;
 const NODE_HEIGHT = 60;
+const NODE_SHIFT_MARGIN = 5;
 const STROKE_STYLE = {
     strokeLinecap: 'round',
     strokeLinejoin: 'round',
@@ -48,6 +49,7 @@ export default class OpenToscaRenderer extends BpmnRenderer {
         };
         this.addMarkerDefinition(canvas);
         this.registerShowDeploymentModelHandler();
+        this.currentlyShownDeploymentsModels = new Map();
     }
 
     registerShowDeploymentModelHandler() {
@@ -137,7 +139,7 @@ export default class OpenToscaRenderer extends BpmnRenderer {
         if (element.showDeploymentModel) {
             this.showDeploymentModel(parentGfx, element, deploymentModelUrl);
         } else {
-            this.removeDeploymentModel(parentGfx);
+            this.removeDeploymentModel(parentGfx, element);
         }
     }
 
@@ -151,7 +153,7 @@ export default class OpenToscaRenderer extends BpmnRenderer {
                 element.showDeploymentModel = false;
                 element.loadedDeploymentModelUrl = null;
                 element.deploymentModelTopology = null;
-                this.removeDeploymentModel(parentGfx);
+                this.removeDeploymentModel(parentGfx, element);
                 console.error(e);
                 NotificationHandler.getInstance().displayNotification({
                     type: 'warning',
@@ -182,6 +184,21 @@ export default class OpenToscaRenderer extends BpmnRenderer {
                 this.drawNodeTemplate(groupDef, nodeTemplate, position);
             }
         }
+        const boundingBox = {
+            left: Math.min(...[...positions.values()].map(p => p.x)) + element.x,
+            top: Math.min(...[...positions.values()].map(p => p.y)) + element.y,
+            right: Math.max(...[...positions.values()].map(p => p.x)) + NODE_WIDTH + element.x,
+            bottom: Math.max(...[...positions.values()].map(p => p.y)) + NODE_HEIGHT + element.y
+        };
+
+        const previousBoundingBox = this.currentlyShownDeploymentsModels.get(element.id)?.boundingBox;
+        if (JSON.stringify(previousBoundingBox) !== JSON.stringify(boundingBox)) {
+            this.mayBeMoveNeighborNodes(boundingBox, element);
+        }
+
+        this.currentlyShownDeploymentsModels.set(element.id, {
+            boundingBox
+        });
 
         for (let relationshipTemplate of relationshipTemplates) {
             const start = positions.get(relationshipTemplate.sourceElement.ref);
@@ -192,8 +209,71 @@ export default class OpenToscaRenderer extends BpmnRenderer {
         }
     }
 
-    removeDeploymentModel(parentGfx) {
-        const group = select(parentGfx, '#' + DEPLOYMENT_GROUP_ID)
+    mayBeMoveNeighborNodes(newBoundingBox, element) {
+        let shifts = {
+            right: 0,
+            left: 0,
+        };
+        for (const [otherElementId, otherDeploymentModel] of this.currentlyShownDeploymentsModels.entries()) {
+            if (otherElementId === element.id) continue;
+            const otherBoundingBox = otherDeploymentModel.boundingBox;
+            if (newBoundingBox.left < otherBoundingBox.right && newBoundingBox.right > otherBoundingBox.left &&
+                newBoundingBox.top < otherBoundingBox.bottom && newBoundingBox.bottom > otherBoundingBox.top) {
+                const distRightShift = newBoundingBox.right - otherBoundingBox.left - shifts.right;
+                const distLeftShift = otherBoundingBox.right - newBoundingBox.left - shifts.left;
+
+                if (distRightShift < distLeftShift && distRightShift > 0) {
+                    shifts.right += distRightShift;
+                } else if (distLeftShift < distRightShift && distLeftShift > 0) {
+                    shifts.left += distLeftShift;
+                }
+            }
+        }
+
+        const allElements = this.elementRegistry.getAll();
+        const commands = [];
+
+        if (shifts.right || shifts.left) {
+            const xPosition = (newBoundingBox.left + newBoundingBox.right) / 2
+            for (const otherElement of allElements) {
+                let otherXPosition = element.x + NODE_WIDTH / 2;
+                const otherElementBoundingBox = this.currentlyShownDeploymentsModels.get(otherElement.id)?.boundingBox;
+                if (otherElementBoundingBox) {
+                    otherXPosition = (otherElementBoundingBox.left + otherElementBoundingBox.right) / 2;
+                }
+                let xShift
+                if (shifts.right && otherXPosition >= xPosition && otherElement.id !== element.id) {
+                    xShift = shifts.right + NODE_SHIFT_MARGIN
+                } else if (shifts.left && otherXPosition <= xPosition && otherElement.id !== element.id) {
+                    xShift = -shifts.left - NODE_SHIFT_MARGIN
+                } else {
+                    continue
+                }
+                // Can not move elements without parent
+                if(!otherElement.parent) continue;
+                commands.push({
+                    cmd: 'shape.move',
+                    context: {
+                        shape: otherElement,
+                        hints: {},
+                        delta: {x: xShift, y: 0}
+                    }
+                });
+                if (otherElementBoundingBox) {
+                    otherElementBoundingBox.left += xShift;
+                    otherElementBoundingBox.right += xShift;
+                }
+            }
+        }
+
+        if (commands.length > 0) {
+            this.commandStack.execute('properties-panel.multi-command-executor', commands);
+        }
+    }
+
+    removeDeploymentModel(parentGfx, element) {
+        this.currentlyShownDeploymentsModels.delete(element.id);
+        const group = select(parentGfx, '#' + DEPLOYMENT_GROUP_ID);
         if (group) {
             group.remove();
         }
