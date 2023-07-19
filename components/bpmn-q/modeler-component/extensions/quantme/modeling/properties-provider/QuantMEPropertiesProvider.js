@@ -13,7 +13,8 @@ import {
     ResultEvaluationTaskEntries,
     ParameterOptimizationTaskEntries,
     VariationalQuantumAlgorithmTaskEntries,
-    WarmStartingTaskEntries
+    WarmStartingTaskEntries,
+    CuttingResultCombinationTaskEntries
 } from "./QuantMETaskProperties";
 import { ImplementationProps } from "./service-task/ImplementationProps";
 import { Group } from "@bpmn-io/properties-panel";
@@ -166,6 +167,8 @@ function QuantMEProps(element) {
             return HardwareSelectionSubprocessProperties(element);
         case consts.CIRCUIT_CUTTING_SUBPROCESS:
             return CircuitCuttingSubprocessEntries(element);
+        case consts.CIRCUIT_CUTTING_TASK:
+            return CircuitCuttingSubprocessEntries(element);
         case consts.RESULT_EVALUATION_TASK:
             return ResultEvaluationTaskEntries(element);
         case consts.PARAMETER_OPTIMIZATION_TASK:
@@ -174,6 +177,8 @@ function QuantMEProps(element) {
             return VariationalQuantumAlgorithmTaskEntries(element);
         case consts.WARM_STARTING_TASK:
             return WarmStartingTaskEntries(element);
+        case consts.CUTTING_RESULT_COMBINATION_TASK:
+            return CuttingResultCombinationTaskEntries(element);
         default:
             console.log('Unsupported QuantME element of type: ', element.type);
 

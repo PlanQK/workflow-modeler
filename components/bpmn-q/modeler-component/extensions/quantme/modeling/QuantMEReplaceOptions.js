@@ -140,6 +140,22 @@ export var TASK = [
       type: consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK
     }
   },
+  {
+    label: 'Circuit Cutting Task',
+    actionName: 'replace-with-circuit-cutting-task',
+    className: 'qwm quantme-tasks-icon-cutting',
+    target: {
+      type: consts.CIRCUIT_CUTTING_TASK
+    }
+  },
+  {
+    label: 'Cutting Result Combination Task',
+    actionName: 'replace-with-cutting-result-combination-task',
+    className: 'qwm quantme-tasks-icon-cutting-result-combination',
+    target: {
+      type: consts.CUTTING_RESULT_COMBINATION_TASK
+    }
+  }
 ];
 
 export var SUBPROCESS = [

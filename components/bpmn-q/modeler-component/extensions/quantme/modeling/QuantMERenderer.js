@@ -90,6 +90,16 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, 'SUBPROCESS_TYPE_CIRCUIT_CUTTING');
         return subprocess;
       },
+      [consts.CIRCUIT_CUTTING_TASK]: function(self, parentGfx, element) {
+        var task = self.renderer('bpmn:Task')(parentGfx, element);
+        drawTaskSVG(parentGfx, 'SUBPROCESS_TYPE_CIRCUIT_CUTTING');
+        return task;
+      },
+      [consts.CUTTING_RESULT_COMBINATION_TASK]: function(self, parentGfx, element) {
+        var task = self.renderer('bpmn:Task')(parentGfx, element);
+        drawTaskSVG(parentGfx, 'TASK_TYPE_RESULT_COMBINATION');
+        return task;
+      },
       [consts.QUANTUM_COMPUTATION_TASK]: function(self, parentGfx, element) {
         var task = self.renderer('bpmn:Task')(parentGfx, element);
 

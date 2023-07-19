@@ -442,6 +442,17 @@
     margin-top: 3px;
 }
 
+.qwm .quantme-tasks-icon-cutting-result-combination:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingResultCombinationTask_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
 .djs-popup-label {
     margin-top: -2px;
 }
@@ -453,3 +464,7 @@
 .djs-popup-results .djs-popup-group .entry[data-id="replace-with-hardware-selection-subprocess"] .djs-popup-label {
     margin-left: 10px; /* Adjust the value as per your requirements */
   }
+
+.djs-popup-results .djs-popup-group .entry[data-id="replace-by-more-options"] .djs-popup-label {
+    margin-top: -1px; /* Adjust the value as per your requirements */
+}
