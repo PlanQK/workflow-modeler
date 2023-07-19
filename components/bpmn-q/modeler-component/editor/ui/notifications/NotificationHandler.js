@@ -50,6 +50,7 @@ export default class NotificationHandler {
      * @param title The title of the notification.
      * @param content The text displayed by the notification.
      * @param duration The duration in milliseconds.
+     * @returns the id of the created notification.
      */
     displayNotification({type = 'info', title, content, duration = 4000}) {
         this.notificationRef.current.displayNotification({
@@ -58,6 +59,8 @@ export default class NotificationHandler {
             content: content,
             duration: duration
         });
+
+        return this.notificationRef.current.currentNotificationId - 1; // -1 because the id is incremented before the notification is displayed
     }
 
     /**
@@ -65,5 +68,9 @@ export default class NotificationHandler {
      */
     closeNotifications() {
         this.notificationRef.current.closeNotifications();
+    }
+
+    closeNotification(id) {
+        this.notificationRef.current.closeNotification(id);
     }
 }

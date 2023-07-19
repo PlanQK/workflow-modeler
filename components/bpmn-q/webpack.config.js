@@ -10,7 +10,9 @@ module.exports = {
         filename: 'index.js',
         path: path.resolve(__dirname, 'public'),
     },
-
+    devServer: {
+        allowedHosts: "all"
+    },
     module: {
         rules: [
             {

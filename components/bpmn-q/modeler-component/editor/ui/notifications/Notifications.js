@@ -101,8 +101,16 @@ export default class Notifications extends PureComponent {
      * @private
      */
     _closeNotification(id) {
+        console.log(id);
+        console.log(this.state.notifications);
         const notifications = this.state.notifications.filter(({id: currentId}) => currentId !== id);
+        console.log(notifications);
         this.setState({notifications: notifications});
+        console.log(this.state.notifications);
+    }
+
+    closeNotification(id) {
+        this._closeNotification(id);
     }
 
     render() {
