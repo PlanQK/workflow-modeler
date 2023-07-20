@@ -50,6 +50,10 @@ export function taskMatchesDetector(detectorElement, task) {
             return matchResultEvaluationTask(detectorElement, task);
         case consts.CIRCUIT_CUTTING_SUBPROCESS:
             return matchCircuitCuttingSubprocess(detectorElement, task);
+        case consts.CIRCUIT_CUTTING_TASK:
+            return matchCircuitCuttingTask(detectorElement, task);
+        case consts.CUTTING_RESULT_COMBINATION_TASK:
+            return matchCuttingResultCombinationTask(detectorElement, task);
         default:
             console.log('Unsupported QuantME element of type: ', task.$type);
             return false;
@@ -187,6 +191,23 @@ function matchCircuitCuttingSubprocess(detectorElement, task) {
         && matchesProperty(detectorElement.maxSubCircuitWidth, task.maxSubCircuitWidth, false)
         && matchesProperty(detectorElement.maxNumberOfCuts, task.maxNumberOfCuts, false)
         && matchesProperty(detectorElement.maxNumSubCircuits, task.maxNumSubCircuits, false);
+}
+
+/**
+ * Compare the properties of QuantumCircuitExecutionTasks
+ */
+function matchCircuitCuttingTask(detectorElement, task) {
+    return matchesProperty(detectorElement.cuttingMethod, task.cuttingMethod, true)
+        && matchesProperty(detectorElement.maxSubCircuitWidth, task.maxSubCircuitWidth, false)
+        && matchesProperty(detectorElement.maxNumberOfCuts, task.maxNumberOfCuts, false)
+        && matchesProperty(detectorElement.maxNumSubCircuits, task.maxNumSubCircuits, false);
+}
+
+/**
+ * Compare the properties of QuantumCircuitExecutionTasks
+ */
+function matchCuttingResultCombinationTask(detectorElement, task) {
+    return matchesProperty(detectorElement.cuttingMethod, task.cuttingMethod, true);
 }
 
 /**

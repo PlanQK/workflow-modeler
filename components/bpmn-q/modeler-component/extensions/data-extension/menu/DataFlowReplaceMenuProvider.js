@@ -139,7 +139,7 @@ export default class DataFlowReplaceMenuProvider {
         // create replacement entries for each loaded transformation task configuration
         let options = createConfigurationsEntries(
             element,
-            'dataflow-transformation-task-icon',
+            'bpmn-icon-dataflow-transformation-task',
             getTransformationTaskConfigurations(),
             bpmnFactory,
             modeling,
@@ -156,7 +156,7 @@ export default class DataFlowReplaceMenuProvider {
                 'Transformation Tasks',
                 popupMenu,
                 options,
-                'dataflow-transformation-task-icon'
+                'dataflow-transformation-tasks-menu-icon'
             )
         };
     }
@@ -184,7 +184,7 @@ export default class DataFlowReplaceMenuProvider {
             const definition = {
                 label: 'Transformation Association',
                 id: entryId,
-                className: 'dataflow-transformation-association-icon',
+                className: 'bpmn-icon-dataflow-transformation-association',
             };
 
             // define action to replace with a transformation association
@@ -225,7 +225,7 @@ export default class DataFlowReplaceMenuProvider {
             const definition = {
                 label: 'Data Association',
                 id: entryId,
-                className: 'dataflow-data-association-icon',
+                className: 'bpmn-icon-dataflow-data-association-icon',
             };
 
             // create action to replace the transformation association by a data association

@@ -575,6 +575,43 @@
             "type": "String"
           }
         ]
+      },
+      {
+        "name": "CircuitCuttingTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "cuttingMethod",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxSubCircuitWidth",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxNumberOfCuts",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "maxNumSubCircuits",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "CuttingResultCombinationTask",
+        "superClass": [ "bpmn:Task" ],
+        "properties": [
+          {
+            "name": "cuttingMethod",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
       }
     ],
     "enumerations": [],
