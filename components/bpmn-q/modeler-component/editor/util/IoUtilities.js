@@ -237,13 +237,11 @@ export function openInNewTab(workflowXml, fileName) {
 
 export function resetAutosaveTimeout(autosaveTimeout, hasChanges, autoSaveFileOption = editorConfig.getAutoSaveFileOption()) {
     clearTimeout(autosaveTimeout);
-    hasChanges = hasChanges;
 
     if (autoSaveFileOption === autoSaveFile.INTERVAL) {
-        autosaveTimeout = setTimeout(() => autosave(hasChanges), process.env.INTERVAL);
+        setTimeout(() => autosave(hasChanges), process.env.INTERVAL);
     } else {
         const timestamp = getTimestamp();
-        console.log("los")
         saveModelerAsLocalFile(getModeler(), `autosave_${timestamp}_${editorConfig.getFileName()}`, saveFileFormats.BPMN, false);
     }
 }
