@@ -32,7 +32,6 @@ const PLUGINS = [
 ];
 ```
 
-
 ## Dependency resolution
 The provided [code](../../../components/bpmn-q/modeler-component/editor/plugin/PluginHandler.js#L38) handles transitive dependencies by using a recursive approach to load plugins and their dependencies.
 Here is a breakdown of how the code handles transitive dependencies:

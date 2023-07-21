@@ -236,7 +236,7 @@ export function resetAutosaveTimeout(autosaveTimeout, hasChanges, autoSaveFileOp
     clearTimeout(autosaveTimeout);
 
     if (autoSaveFileOption === autoSaveFile.INTERVAL) {
-        setTimeout(() => autosave(hasChanges), process.env.INTERVAL);
+        setTimeout(() => autosave(hasChanges), process.env.AUTOSAVE_INTERVAL);
     } else {
         const timestamp = getTimestamp();
         saveModelerAsLocalFile(getModeler(), `autosave_${timestamp}_${editorConfig.getFileName()}`, saveFileFormats.BPMN, false);
@@ -251,7 +251,7 @@ function autosave(hasChanges) {
                 // Save the XML
                 console.log('Autosaved:', xml);
                 const timestamp = getTimestamp();
-                saveXmlAsLocalFile(xml, `autosave_${timestamp}_${editorConfig.getFileName()}`)
+                saveXmlAsLocalFile(xml, `autosave_${timestamp}_${editorConfig.getFileName()}`);
             }
         });
     }

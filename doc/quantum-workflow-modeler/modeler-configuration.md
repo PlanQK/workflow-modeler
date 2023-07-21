@@ -20,7 +20,7 @@ In the following, all environment variables that can be used to customize the wo
 
 * ```GITHUB_TOKEN``` (default: ''): Defines the GitHub Token which can be used to make authorized requests. For more information take a look at [GitHub Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
-* ```INTERVAL``` (default ms: '300000'): Defines the interval of the auto save feature. If changes are applied to the workflow then it get saved after `5` minutes. 
+* ```AUTOSAVE_INTERVAL``` (default ms: '300000'): Defines the interval of the auto save feature. If changes are applied to the workflow then it get saved after `5` minutes. 
 
 * ```NISQ_ANALYZER_ENDPOINT``` (default: 'http://localhost:8098/nisq-analyzer'): Defines the endpoint of the [NISQ Analyzer](https://github.com/UST-QuAntiL/nisq-analyzer) to enable an automated hardware selection.
 
@@ -32,11 +32,11 @@ In the following, all environment variables that can be used to customize the wo
 
 * ```QHANA_LIST_PLUGINS_URL``` (default: 'http://localhost:5006/api/plugins/?item-count=100'): Defines the plugin list url for QHAna.
 
-* ```QRM_USERNAME``` (default: ' '): Defines the Github username to access the [QRM-Repository](../QRM-Repository)
+* ```QRM_USERNAME``` (default: ' '): Defines the GitHub username to access the [QRM-Repository](../QRM-Repository)
 
-* ```QRM_REPONAME``` (default: ' '): Defines the Github repository name to access the [QRM-Repository](../QRM-Repository)
+* ```QRM_REPONAME``` (default: ' '): Defines the GitHub repository name to access the [QRM-Repository](../QRM-Repository)
 
-* ```QRM_REPOPATH``` (default: ' '): Defines the local path in the Github repository to the folder containing the [QRM-Repository](../QRM-Repository). This parameter is optional and if it is not set, the root folder of the repository is used.
+* ```QRM_REPOPATH``` (default: ' '): Defines the local path in the GitHub repository to the folder containing the [QRM-Repository](../QRM-Repository). This parameter is optional and if it is not set, the root folder of the repository is used.
 
 * ```SERVICE_DATA_CONFIG``` (default: 'http://localhost:8000/service-task'): Defines the configuration for the service task.
 
@@ -49,6 +49,5 @@ In the following, all environment variables that can be used to customize the wo
 * ```WINERY_ENDPOINT``` (default: 'http://localhost:8081/winery'): Defines the endpoint of the Winery to retrieve deployment models for services from.
 
 * ```PROVENANCE_COLLECTION``` (default: 'false'): Defines if the intermediate results of the workflow executed should be collected.
-
 
 The value of an environment variable is accessed using `process.env.ENV_NAME`. If you want to add a new environment variable, add it to the [webpack.config](../../../../../components/bpmn-q/webpack.config.js) file and restart the application.
