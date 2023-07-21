@@ -442,3 +442,14 @@ export function WarmStartingTaskEntries(element) {
         }
     ];
 }
+
+export function CuttingResultCombinationTaskEntries(element) {
+    return [
+        {
+            id: consts.CUTTING_METHOD,
+            element,
+            component: CuttingMethodEntry,
+            isEdited: isTextFieldEntryEdited
+        }
+    ];
+}
