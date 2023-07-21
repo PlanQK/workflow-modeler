@@ -1,11 +1,11 @@
-import { autoSaveFile, transformedWorkflowHandlers, workflowEventTypes, saveFileFormats } from '../EditorConstants';
-import { getModeler } from '../ModelerHandler';
-import { dispatchWorkflowEvent } from '../events/EditorEventHandler';
+import { autoSaveFile, saveFileFormats, transformedWorkflowHandlers, workflowEventTypes } from "../EditorConstants";
+import { getModeler } from "../ModelerHandler";
+import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
+import fetch from "node-fetch";
 
 const editorConfig = require('../config/EditorConfigManager');
 
 let FormData = require('form-data');
-import fetch from 'node-fetch';
 
 // workflow with a start event to use as template for new workflows
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -53,16 +53,13 @@ export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.ge
         if (openWindow) {
             await openFileDialog(xml, fileName, saveFileFormats.BPMN);
         } else {
-            console.log("hir")
-            saveXmlAsLocalFile(xml, fileName)
+            await saveXmlAsLocalFile(xml, fileName);
         }
     }
 
     if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG || fileFormat === saveFileFormats.PNG) {
         await saveWorkflowAsSVG(modeler, fileName, fileFormat);
     }
-
-    return;
 }
 
 /**
@@ -265,8 +262,7 @@ function autosave(hasChanges) {
 
 function getTimestamp() {
     const date = new Date();
-    const timestamp = date.toISOString().replace(/:/g, '-');
-    return timestamp;
+    return date.toISOString().replace(/:/g, '-');
 }
 
 export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
