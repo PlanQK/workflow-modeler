@@ -144,10 +144,37 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
         let quantmeHardwareSelectionSubprocess = process[quantmePrefix + 'quantumHardwareSelectionSubprocess'];
         let bpmnDiagrams = definitionsElement[diagramPrefix + ':BPMNDiagram'];
 
-        // Remove all bpmndi:BPMNDiagram elements except the first one
+        let subprocessBpmnElement = [];
+
+        // remove additional planes & extract bpmnElement
+        for (let i = 0; i < bpmnDiagrams.length; i++) {
+            let bpmnPlane = JSON.parse(JSON.stringify(bpmnDiagrams[i]));
+            subprocessBpmnElement.push(bpmnPlane['bpmndi:BPMNPlane']['_attributes']['bpmnElement']);
+        }
+       
+        let shapes = JSON.parse(JSON.stringify(bpmnDiagrams[0]['bpmndi:BPMNPlane']))['bpmndi:BPMNShape'];
+        for (let i = 0; i < shapes.length; i++) {
+            let shape = shapes[i];
+            let bpmnShape = shape._attributes.bpmnElement;
+            let height = bpmnDiagrams[0]['bpmndi:BPMNPlane']['bpmndi:BPMNShape'][i]['dc:Bounds']['_attributes'].height;
+            if (height === 10 || height === '10') {
+                bpmnDiagrams[0]['bpmndi:BPMNPlane']['bpmndi:BPMNShape'][i]['dc:Bounds']['_attributes'].height = 80;
+                bpmnDiagrams[0]['bpmndi:BPMNPlane']['bpmndi:BPMNShape'][i]['dc:Bounds']['_attributes'].width = 100;
+            }
+        }
+
+        // Remove all bpmndi:BPMNDiagram elements which do not contain bpmn shapes
         if (Array.isArray(bpmnDiagrams)) {
             if (bpmnDiagrams.length > 1) {
-                xmlDoc[bpmnPrefix + ':definitions'][diagramPrefix + ':BPMNDiagram'] = bpmnDiagrams.slice(0, 1);
+
+                // extract the diagrams with shapes
+                let diagram = [];
+                for (let i = 0; i < bpmnDiagrams.length; i++) {
+                    if (bpmnDiagrams[i]['bpmndi:BPMNPlane']['bpmndi:BPMNShape'] !== undefined) {
+                        diagram.push(bpmnDiagrams[i]);
+                    }
+                }
+                xmlDoc[bpmnPrefix + ':definitions'][diagramPrefix + ':BPMNDiagram'] = diagram;
             }
         }
 
@@ -160,10 +187,10 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
         if (quantmeCuttingSubprocess) {
             process[quantmePrefix + ':circuitCuttingSubprocess'] = removeIsExpandedAttribute(quantmeCuttingSubprocess, bpmnPrefix, quantmePrefix);
         }
+
         // Serialize the modified JavaScript object back to XML string
         modifiedXmlString = xmlParser.js2xml(xmlDoc, { compact: true });
     }
-
 
 
     return { status: 'transformed', xml: modifiedXmlString };
@@ -272,9 +299,9 @@ async function replaceByFragment(definitions, task, parent, replacement, modeler
  * @param {*} bpmndiShapes the diagram elements
  */
 function isChildExpanded(element, bpmndiShapes) {
-
     for (let i = 0; i < bpmndiShapes.length; i++) {
         const bpmnElement = bpmndiShapes[i].getAttribute('bpmnElement');
+
         if (bpmnElement === element.id && ['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(element.$type)) {
             let isExpanded = bpmndiShapes[i].getAttribute('isExpanded');
             if (isExpanded) {
