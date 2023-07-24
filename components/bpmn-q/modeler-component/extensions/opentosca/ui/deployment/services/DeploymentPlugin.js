@@ -15,6 +15,7 @@ import React, {Fragment, PureComponent} from 'react';
 import ServiceDeploymentOverviewModal from './ServiceDeploymentOverviewModal';
 import ServiceDeploymentInputModal from './ServiceDeploymentInputModal';
 import ServiceDeploymentBindingModal from './ServiceDeploymentBindingModal';
+import ServiceDeploymentTransformationModal from './ServiceDeploymentTransformationModal';
 
 import {createServiceInstance, uploadCSARToContainer} from '../../../deployment/OpenTOSCAUtils';
 import {bindUsingPull, bindUsingPush} from '../../../deployment/BindingUtils';
@@ -25,6 +26,7 @@ import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 
 const defaultState = {
+    windowOpenDeploymentTransformation: false,
     windowOpenDeploymentOverview: false,
     windowOpenDeploymentInput: false,
     windowOpenDeploymentBinding: false
@@ -40,6 +42,7 @@ export default class DeploymentPlugin extends PureComponent {
         this.handleDeploymentOverviewClosed = this.handleDeploymentOverviewClosed.bind(this);
         this.handleDeploymentInputClosed = this.handleDeploymentInputClosed.bind(this);
         this.handleDeploymentBindingClosed = this.handleDeploymentBindingClosed.bind(this);
+        this.handleDeploymentTransformationClosed = this.handleDeploymentTransformationClosed.bind(this);
     }
 
     componentDidMount() {
@@ -106,7 +109,8 @@ export default class DeploymentPlugin extends PureComponent {
                     this.setState({
                         windowOpenDeploymentOverview: false,
                         windowOpenDeploymentInput: false,
-                        windowOpenDeploymentBinding: false
+                        windowOpenDeploymentBinding: false,
+                        windowOpenDeploymentTransformation: false
                     });
                     return;
                 }
@@ -125,6 +129,7 @@ export default class DeploymentPlugin extends PureComponent {
                 windowOpenDeploymentOverview: false,
                 windowOpenDeploymentInput: true,
                 windowOpenDeploymentBinding: false,
+                windowOpenDeploymentTransformation: false,
                 csarList: csarList
             });
             return;
@@ -134,7 +139,8 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
+            windowOpenDeploymentTransformation: false
         });
     }
 
@@ -178,7 +184,8 @@ export default class DeploymentPlugin extends PureComponent {
                     this.setState({
                         windowOpenDeploymentOverview: false,
                         windowOpenDeploymentInput: false,
-                        windowOpenDeploymentBinding: false
+                        windowOpenDeploymentBinding: false,
+                        windowOpenDeploymentTransformation: false
                     });
                     return;
                 }
@@ -198,7 +205,8 @@ export default class DeploymentPlugin extends PureComponent {
             this.setState({
                 windowOpenDeploymentOverview: false,
                 windowOpenDeploymentInput: false,
-                windowOpenDeploymentBinding: true
+                windowOpenDeploymentBinding: true,
+                windowOpenDeploymentTransformation: false
             });
             return;
         }
@@ -207,7 +215,8 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
+            windowOpenDeploymentTransformation: false
         });
     }
 
@@ -252,7 +261,8 @@ export default class DeploymentPlugin extends PureComponent {
                         this.setState({
                             windowOpenDeploymentOverview: false,
                             windowOpenDeploymentInput: false,
-                            windowOpenDeploymentBinding: false
+                            windowOpenDeploymentBinding: false,
+                            windowOpenDeploymentTransformation: false
                         });
                         return;
                     }
@@ -271,7 +281,8 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
+            windowOpenDeploymentTransformation: false
         });
     }
 
@@ -306,6 +317,34 @@ export default class DeploymentPlugin extends PureComponent {
         });
     }
 
+    /**
+     * Handle the result of a close operation on the tramfpr,atopm
+     *
+     * @param result the result from the close operation
+     */
+    handleDeploymentTransformationClosed(result) {
+        console.log(result);
+        if (result && result.hasOwnProperty('onDemand')) {
+            if (result.onDemand === true) {
+                //TODO: Cooles Deployment
+            }
+            this.setState({
+                windowOpenDeploymentOverview: true,
+                windowOpenDeploymentInput: false,
+                windowOpenDeploymentBinding: false,
+                windowOpenDeploymentTransformation: false
+            });
+            return;
+        }
+        // handle cancellation
+        this.setState({
+            windowOpenDeploymentOverview: false,
+            windowOpenDeploymentInput: false,
+            windowOpenDeploymentBinding: false,
+            windowOpenDeploymentTransformation: false
+        });
+    }
+
     render() {
         // render deployment button and pop-up menu
         return (<Fragment>
@@ -325,10 +364,16 @@ export default class DeploymentPlugin extends PureComponent {
                         className="qwm-indent">Hide Deployment</span></span>
                     </button>,
                     <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
-                            onClick={() => this.setState({windowOpenDeploymentOverview: true})}>
+                            onClick={() => this.setState({windowOpenDeploymentTransformation: true})}>
                     <span className="app-icon-service-deployment"><span
                         className="qwm-indent">Service Deployment</span></span>
                     </button>]}/>
+            {this.state.windowOpenDeploymentTransformation && (
+                <ServiceDeploymentTransformationModal
+                    onClose={this.handleDeploymentTransformationClosed}
+                    initValues={this.getServiceTasksToDeployForModal()}
+                />
+            )}
             {this.state.windowOpenDeploymentOverview && (
                 <ServiceDeploymentOverviewModal
                     onClose={this.handleDeploymentOverviewClosed}
