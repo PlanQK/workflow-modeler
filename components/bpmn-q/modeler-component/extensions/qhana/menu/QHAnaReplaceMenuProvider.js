@@ -94,7 +94,7 @@ export default class QHAnaReplaceMenuProvider {
                 'QHAna Tasks',
                 popupMenu,
                 qhanaEntries,
-                'qwm-qhana-service-task'
+                'qwm-qhana-service-task-menu'
             )
         };
     }

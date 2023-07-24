@@ -1,9 +1,5 @@
 import * as consts from '../Constants';
 
-/**
- * Custom palette provider to add entries for creating the modelling elements of the DataFlow extension to the
- * palette of the bpmn-js modeler.
- */
 export default class DataFlowPaletteProvider {
 
     constructor(bpmnFactory, create, elementFactory, palette, translate) {
@@ -15,21 +11,15 @@ export default class DataFlowPaletteProvider {
         palette.registerProvider(this);
     }
 
-    /**
-     * Returns the palette entries for the DataFlow elements
-     */
     getPaletteEntries() {
-        return this.createDataFlowEntries();
+        return this.createPlanqkServiceTaskEntry();
     }
 
-    /**
-     * Returns palette entries to create DataMapObjects, DataStoreMaps and TransformationTasks
-     */
-    createDataFlowEntries() {
+    createPlanqkServiceTaskEntry() {
         const {bpmnFactory, create, elementFactory, translate} = this;
 
-        // start creation of a DataMapObject
-        function createDataMapObject(event) {
+         // start creation of a DataMapObject
+         function createDataMapObject(event) {
             const businessObject = bpmnFactory.create(consts.DATA_MAP_OBJECT);
             let shape = elementFactory.createShape({
                 type: consts.DATA_MAP_OBJECT,
@@ -57,8 +47,8 @@ export default class DataFlowPaletteProvider {
             });
             create.start(event, shape);
         }
+        
 
-        // create and return new palette entries
         return {
             // add separator line to delimit the new group
             'dataflow-separator': {
@@ -91,7 +81,7 @@ export default class DataFlowPaletteProvider {
                     click: createTransformationTask,
                     dragstart: createTransformationTask,
                 }
-            },
+            }
         };
     }
 }
