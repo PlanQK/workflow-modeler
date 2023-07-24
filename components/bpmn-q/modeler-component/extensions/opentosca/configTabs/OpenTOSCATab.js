@@ -9,7 +9,7 @@ import * as config from "../framework-config/config-manager";
  * @return {JSX.Element} The tab as a React component
  * @constructor
  */
-export default function OpenToscaTab() {
+export default function OpenTOSCATab() {
 
     const [opentoscaEndpoint, setOpentoscaEndpoint] = useState(config.getOpenTOSCAEndpoint());
     const [wineryEndpoint, setWineryEndpoint] = useState(config.getWineryEndpoint());
@@ -37,7 +37,7 @@ export default function OpenToscaTab() {
     }
 
     // save changed config entries on close
-    OpenToscaTab.prototype.onClose = () => {
+    OpenTOSCATab.prototype.onClose = () => {
         modeler.config.opentoscaEndpoint = opentoscaEndpoint;
         modeler.config.wineryEndpoint = wineryEndpoint;
         config.setOpenTOSCAEndpoint(opentoscaEndpoint);
@@ -73,7 +73,7 @@ export default function OpenToscaTab() {
     </>;
 }
 
-OpenToscaTab.prototype.config = () => {
+OpenTOSCATab.prototype.config = () => {
     const modeler = getModeler();
 
     modeler.config.opentoscaEndpoint = config.getOpenTOSCAEndpoint();

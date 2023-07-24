@@ -66,22 +66,22 @@
     flex-grow: 2;
 }
 
-.wizard-properties-panel-input {
+.upload-properties-panel-input {
     padding: 3px 6px 2px;
     border: 1px solid hsl(225, 10%, 75%);
     border-radius: 2px;
     background-color: rgb(247, 247, 248);
     font-size: 14px;
     font-family: inherit;
-  }
+}
 
-.wizard-properties-panel-label {
+.upload-properties-panel-label {
     display: block;
     font-size: var(--text-size-small);
     margin: 2px 0 1px;
 }
 
-.wizard-artifact-div {
+.upload-artifact-tab {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -91,19 +91,19 @@
     width: 100%
 }
 
-.wizard-artifact-selector{
+.upload-artifact-selector {
     flex: 1;
     max-width: 282px;
 }
 
-.wizard-file-upload {
+.upload-file-upload {
     flex: 1;
     max-width: 282px;
     overflow: clip;
     text-overflow: ellipsis;
 }
 
-.wizard-file-upload-button {
+.upload-file-upload-button {
     overflow: hidden;
     text-overflow: ellipsis;
 }

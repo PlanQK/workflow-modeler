@@ -1,6 +1,6 @@
 import React from "react";
 
-import OpenToscaTab from "./configTabs/OpenToscaTab";
+import OpenTOSCATab from "./configTabs/OpenTOSCATab";
 
 import opentoscaStyles from './styling/opentosca.css';
 import DeploymentPlugin from "./ui/deployment/services/DeploymentPlugin";
@@ -17,7 +17,7 @@ export default {
         {
             tabId: 'OpenTOSCAEndpointTab',
             tabTitle: 'OpenTOSCA',
-            configTab: OpenToscaTab,
+            configTab: OpenTOSCATab,
         }
     ],
     extensionModule: OpenToscaExtensionModule,

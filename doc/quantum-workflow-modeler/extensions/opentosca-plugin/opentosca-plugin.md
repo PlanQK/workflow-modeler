@@ -22,4 +22,4 @@ The deployment model is only shown if a top level node is found. The top level n
 - [OpenTOSCA Config](../../../../components/bpmn-q/modeler-component/extensions/opentosca/framework-config)
 - [bpmn-js Extension Module](../../../../components/bpmn-q/modeler-component/extensions/opentosca/modeling)
 - [Service Deployment to OpenTOSCA](../../../../components/bpmn-q/modeler-component/extensions/opentosca/ui/deployment)
-- [Deployment Model Renderer](../../../../components/bpmn-q/modeler-component/extensions/opentosca/modeling/OpenToscaRenderer.js)
+- [Deployment Model Renderer](../../../../components/bpmn-q/modeler-component/extensions/opentosca/modeling/OpenTOSCARenderer.js)

@@ -20,8 +20,9 @@ import {
     getNodeTypeQName,
     getArtifactTemplateInfo,
     insertTopNodeTag
-} from '../../winery-manager/winery-handler';
+} from '../../deployment/WineryUtils';
 import NotificationHandler from '../../../../editor/ui/notifications/NotificationHandler';
+import {getWineryEndpoint} from "../../framework-config/config-manager";
 
 
 // polyfill upcoming structural components
@@ -39,30 +40,26 @@ const Footer = Modal.Footer;
  * @returns {JSX.Element} The modal as React component
  * @constructor
  */
-export default function ArtifactUploadModal({onClose, wineryEndpoint, element, commandStack}) {
+export default function ArtifactUploadModal({onClose, element, commandStack}) {
     const [uploadFile, setUploadFile] = useState(null);
     const [textInputDockerImage, setTextInputDockerImage] = useState('');
     const [selectedTab, setSelectedTab] = useState("artifact");
     const [selectedOption, setSelectedOption] = useState("");
     const [selectedOptionName, setSelectedOptionName] = useState("");
-    const [options, setOptions] = useState([]);
     const [artifactTypes, setArtifactTypes] = useState([]);
     const [acceptTypes, setAcceptTypes] = useState('');
-    const [isCreating, setIsCreating] = useState(false);
 
 
     async function updateArtifactSelect() {
-        const response = await fetch(`${wineryEndpoint}/artifacttypes/?includeVersions=true`, {
+        const response = await fetch(`${getWineryEndpoint()}/artifacttypes/?includeVersions=true`, {
             headers: {
                 'Accept': 'application/json',
             },
         }).then(res => res.json());
 
-        const newOptions = response
-            .filter(option => option.name.includes("WAR") || option.name.includes("PythonArchive"))
-            .map(option => <ArtifactSelectItem value={option.qName} name={option.name}/>);
-        setOptions(newOptions);
-        setArtifactTypes(response);
+        const artifactTypes = response
+            .filter(option => option.name.includes("WAR") || option.name.includes("PythonArchive"));
+        setArtifactTypes(artifactTypes);
     }
 
     const allowedFileTypes = {
@@ -71,7 +68,12 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
     };
 
     async function createServiceTemplate() {
-        setIsCreating(true);
+        const {close: closeNotification} = NotificationHandler.getInstance().displayNotification({
+            type: 'info',
+            title: 'Uploading Artifact...',
+            content: 'Uploading artifact for ' + element.id,
+            duration: 1000 * 60 * 60 // very long time out because this notification gets closed after the API calls are finished
+        });
         let serviceTemplateAddress;
         try {
             const namePrefix = element.businessObject.name ?? "";
@@ -86,6 +88,7 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
                 `${namePrefix}Artifact-${element.id}`, selectedOption);
             await insertTopNodeTag(serviceTemplateAddress, nodeTypeQName);
         } catch (e) {
+            setTimeout(closeNotification, 1);
             NotificationHandler.getInstance().displayNotification({
                 type: 'error',
                 title: 'Service Template Creation failed',
@@ -93,8 +96,6 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
                 duration: 2000
             });
             return;
-        } finally {
-            setIsCreating(false);
         }
         const deploymentModelUrl = `{{ wineryEndpoint }}/servicetemplates/${serviceTemplateAddress}?csar`;
         commandStack.execute('element.updateModdleProperties', {
@@ -104,7 +105,7 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
                 'opentosca:deploymentModelUrl': deploymentModelUrl
             }
         });
-
+        setTimeout(closeNotification, 1);
         NotificationHandler.getInstance().displayNotification({
             type: 'info',
             title: 'Service Template Created',
@@ -120,8 +121,8 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
         console.log('Text input:', textInputDockerImage);
         if (selectedTab === "artifact") {
             if (uploadFile !== null && selectedOption !== "") {
-                await createServiceTemplate();
                 onClose();
+                await createServiceTemplate();
             } else {
                 onClose();
                 setTimeout(function () {
@@ -178,22 +179,23 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
 
                     {selectedTab === "artifact" && (
                         <div className={`tab-content ${selectedTab === "artifact" ? "active" : ""} upload-tab-content`}>
-                            <div className='wizard-artifact-div'>
-                                <div className='wizard-artifact-selector'>
-                                    <label className="wizard-properties-panel-label">Select an Option:</label>
-                                    <select id="wizard-artifact-select" value={selectedOption}
-                                            onChange={handleOptionChange} className="wizard-properties-panel-input">
+                            <div className='upload-artifact-tab'>
+                                <div className='upload-artifact-selector'>
+                                    <label className="upload-properties-panel-label">Select an Option:</label>
+                                    <select id="upload-artifact-select" value={selectedOption}
+                                            onChange={handleOptionChange} className="upload-properties-panel-input">
                                         <option value="" disabled={isOptionSelected}>-- Select --</option>
-                                        {options}
+                                        {artifactTypes.map(option => <option value={option.qName}
+                                                                             key={option.qName}>{option.name}</option>)}
                                     </select>
                                 </div>
                                 {isOptionSelected && (
-                                    <div className="wizard-file-upload">
+                                    <div className="upload-file-upload">
                                         <div>
                                             <label
-                                                className="wizard-properties-panel-label">{`Upload ${selectedOptionName.charAt(0).toUpperCase() + selectedOptionName.slice(1)}:`}</label>
+                                                className="upload-properties-panel-label">{`Upload ${selectedOptionName.charAt(0).toUpperCase() + selectedOptionName.slice(1)}:`}</label>
                                             <input
-                                                className=".wizard-file-upload-button"
+                                                className="upload-file-upload-button"
                                                 type="file"
                                                 id="fileUpload"
                                                 accept={acceptTypes}
@@ -221,9 +223,8 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
 
             <Footer>
                 <div id="upload-form-buttons">
-                    <button type="button" className="qwm-btn qwm-btn-primary" form="upload-form" onClick={onSubmit}
-                            disabled={isCreating}>
-                        {isCreating ? "Creating..." : "Create"}
+                    <button type="button" className="qwm-btn qwm-btn-primary" form="upload-form" onClick={onSubmit}>
+                        Create
                     </button>
                     <button type="button" className="qwm-btn qwm-btn-secondary" onClick={onClose}>
                         Cancel
@@ -231,12 +232,5 @@ export default function ArtifactUploadModal({onClose, wineryEndpoint, element, c
                 </div>
             </Footer>
         </Modal>
-    );
-}
-
-function ArtifactSelectItem(props) {
-    const {value, name} = props;
-    return (
-        <option value={value}>{name}</option>
     );
 }

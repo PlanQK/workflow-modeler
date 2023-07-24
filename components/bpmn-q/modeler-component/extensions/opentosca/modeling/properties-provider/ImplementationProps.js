@@ -98,7 +98,6 @@ export function ImplementationProps(props) {
             id: 'artifactUpload',
             element,
             translate,
-            wineryEndpoint,
             component: ArtifactUpload,
             isEdited: isTextFieldEntryEdited
         });

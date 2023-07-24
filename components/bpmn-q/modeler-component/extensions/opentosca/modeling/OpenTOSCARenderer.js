@@ -10,11 +10,11 @@ import BpmnRenderer from 'bpmn-js/lib/draw/BpmnRenderer';
 
 import buttonIcon from '../resources/show-deployment-button.svg?raw';
 import {drawTaskSVG} from '../../../editor/util/RenderUtilities';
-import * as config from '../framework-config/config-manager';
 import NotificationHandler from '../../../editor/ui/notifications/NotificationHandler';
 import {append as svgAppend, attr as svgAttr, create as svgCreate, select, prepend as svgPrepend} from 'tiny-svg';
 import {query as domQuery} from 'min-dom';
-import {loadTopology} from "../deployment/OpenTOSCAUtils";
+
+import {loadTopology} from "../deployment/WineryUtils";
 
 const HIGH_PRIORITY = 14001;
 const SERVICE_TASK_TYPE = 'bpmn:ServiceTask';
@@ -23,7 +23,7 @@ const DEPLOYMENT_REL_MARKER_ID = 'deployment-rel';
 
 const NODE_WIDTH = 100;
 const NODE_HEIGHT = 60;
-const NODE_SHIFT_MARGIN = 5;
+const NODE_SHIFT_MARGIN = 10;
 const STROKE_STYLE = {
     strokeLinecap: 'round',
     strokeLinejoin: 'round',
@@ -32,7 +32,7 @@ const STROKE_STYLE = {
     strokeDasharray: 4,
 };
 
-export default class OpenToscaRenderer extends BpmnRenderer {
+export default class OpenTOSCARenderer extends BpmnRenderer {
     constructor(config, eventBus, styles, pathMap, canvas, textRenderer, commandStack, elementRegistry) {
         super(config, eventBus, styles, pathMap, canvas, textRenderer, HIGH_PRIORITY);
         this.commandStack = commandStack;
@@ -131,6 +131,7 @@ export default class OpenToscaRenderer extends BpmnRenderer {
         button.style['cursor'] = 'pointer';
         button.addEventListener('click', (e) => {
             e.preventDefault();
+            element.deploymentModelTopology = undefined;
             this.commandStack.execute("deploymentModel.show", {
                 element: element,
                 showDeploymentModel: !element.showDeploymentModel
@@ -336,7 +337,7 @@ export default class OpenToscaRenderer extends BpmnRenderer {
     }
 }
 
-OpenToscaRenderer.$inject = [
+OpenTOSCARenderer.$inject = [
     'config',
     'eventBus',
     'styles',

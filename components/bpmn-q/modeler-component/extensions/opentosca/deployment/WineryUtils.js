@@ -9,7 +9,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as config from "../framework-config/config-manager";
 import {getWineryEndpoint} from "../framework-config/config-manager";
+import {fetch} from "whatwg-fetch";
 
 const QUANTME_NAMESPACE_PUSH = 'http://quantil.org/quantme/push';
 
@@ -227,3 +229,47 @@ export function getNodeTypeQName(artifactTypeQName) {
     return nodeTypeQNameMapping.get(artifactTypeQName);
 }
 
+export async function loadTopology(deploymentModelUrl) {
+    if (deploymentModelUrl.startsWith('{{ wineryEndpoint }}')) {
+        deploymentModelUrl = deploymentModelUrl.replace('{{ wineryEndpoint }}', config.getWineryEndpoint());
+    }
+    let topology;
+    let tags;
+    try {
+        topology = await fetch(deploymentModelUrl.replace('?csar', 'topologytemplate'))
+            .then(res => res.json());
+        tags = await fetch(deploymentModelUrl.replace('?csar', 'tags'))
+            .then(res => res.json());
+
+    } catch (e) {
+        throw new Error('An unexpected error occurred during loading the deployments models topology.');
+    }
+    let topNode;
+    const topNodeTag = tags.find(tag => tag.name === "top-node");
+    if (topNodeTag) {
+        const topNodeId = topNodeTag.value;
+        topNode = topology.nodeTemplates.find(nodeTemplate => nodeTemplate.id === topNodeId);
+        if (!topNode) {
+            throw new Error(`Top level node "${topNodeId}" not found.`);
+        }
+    } else {
+        let nodes = new Map(topology.nodeTemplates.map(nodeTemplate => [nodeTemplate.id, nodeTemplate]));
+        for (let relationship of topology.relationshipTemplates) {
+            if (relationship.name === "HostedOn") {
+                nodes.delete(relationship.targetElement.ref);
+            }
+        }
+        if (nodes.size === 1) {
+            topNode = nodes.values().next().value;
+        }
+    }
+    if (!topNode) {
+        throw new Error("No top level node found.");
+    }
+
+    return {
+        topNode,
+        nodeTemplates: topology.nodeTemplates,
+        relationshipTemplates: topology.relationshipTemplates
+    };
+}
