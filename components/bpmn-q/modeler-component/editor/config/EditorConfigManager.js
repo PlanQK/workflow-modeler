@@ -7,7 +7,8 @@ const defaultConfig = {
     fileName: process.env.DOWNLOAD_FILE_NAME,
     transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
     autoSaveFileOption: autoSaveFile.INTERVAL,
-    fileFormat: saveFileFormats.BPMN
+    fileFormat: saveFileFormats.BPMN,
+    autoSaveIntervalSize: process.env.AUTOSAVE_INTERVAL
 };
 
 let config = {};
@@ -116,6 +117,7 @@ export function setAutoSaveFileOption(autoSaveFileOption) {
         config.autoSaveFileOption = autoSaveFileOption;
         }
 }
+
 /** 
  * Get the file format
  *
@@ -140,6 +142,29 @@ export function setFileFormat(fileFormat) {
         && Object.values(saveFileFormats).includes(fileFormat)) {
 
         config.fileFormat = fileFormat;
+    }
+}
+
+/** 
+ * Get the autosave interval size
+ *
+ * @return {string} the current interval size
+ */
+export function getAutoSaveIntervalSize() {
+    if (config.autoSaveIntervalSize === undefined) {
+        setAutoSaveIntervalSize(getPluginConfig('editor').autoSaveIntervalSize || defaultConfig.autoSaveIntervalSize);
+    }
+    return config.autoSaveIntervalSize;
+}
+
+/**
+ * Set the interval size of the autosave function
+ *
+ * @param intervalSize the interval size 
+ */
+export function setAutoSaveIntervalSize(intervalSize) {
+    if (intervalSize !== null && intervalSize !== undefined) {
+        config.autoSaveIntervalSize = intervalSize;
     }
 }
 

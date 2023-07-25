@@ -236,7 +236,7 @@ export function resetAutosaveTimeout(autosaveTimeout, hasChanges, autoSaveFileOp
     clearTimeout(autosaveTimeout);
 
     if (autoSaveFileOption === autoSaveFile.INTERVAL) {
-        setTimeout(() => autosave(hasChanges), process.env.AUTOSAVE_INTERVAL);
+        setTimeout(() => autosave(hasChanges), editorConfig.getAutoSaveIntervalSize());
     } else {
         const timestamp = getTimestamp();
         saveModelerAsLocalFile(getModeler(), `autosave_${timestamp}_${editorConfig.getFileName()}`, saveFileFormats.BPMN, false);
