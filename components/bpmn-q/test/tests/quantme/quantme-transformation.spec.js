@@ -10,7 +10,7 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
 
     describe('Transformation of QuantME extensions', function () {
 
-        it('should create a valid transformed workflow die zweite', async function () {
+        it('should create a valid native workflow model after two transformations', async function () {
             setPluginConfig([{ name: 'dataflow' },
             {
                 name: 'quantme',
@@ -26,8 +26,8 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
             let qrms = await updateQRMs();
             chai.expect(qrms.length).to.equal(10);
 
-            config.setQRMUserName('LaviniaStiliadou');
-            config.setQRMRepositoryName('QuantMEUseCase');
+            config.setQRMUserName('UST-QuAntiL');
+            config.setQRMRepositoryName('QuantME-UseCases');
             config.setQRMRepositoryPath('2023-icwe/part2');
 
             let qrmMaxCut = await updateQRMs();
