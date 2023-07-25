@@ -1,23 +1,32 @@
-import {is} from 'bpmn-js/lib/util/ModelUtil';
-import * as replaceOptions from './DataFlowReplaceOptions';
+import { is } from "bpmn-js/lib/util/ModelUtil";
+import * as replaceOptions from "./DataFlowReplaceOptions";
 import {
   createMenuEntries,
   createMenuEntry,
-  createMoreOptionsEntryWithReturn
+  createMoreOptionsEntryWithReturn,
 } from "../../../editor/util/PopupMenuUtilities";
-import * as consts from '../Constants';
-import {createConfigurationsEntries} from '../../../editor/configurations/ConfigurationsUtil';
-import {getTransformationTaskConfigurations} from '../transf-task-configs/TransformationTaskConfigurations';
-import {replaceConnection} from '../../../editor/util/ModellingUtilities';
-import { filter } from 'min-dash';
-import { isDifferentType } from 'bpmn-js/lib/features/popup-menu/util/TypeUtil';
+import * as consts from "../Constants";
+import { createConfigurationsEntries } from "../../../editor/configurations/ConfigurationsUtil";
+import { getTransformationTaskConfigurations } from "../transf-task-configs/TransformationTaskConfigurations";
+import { replaceConnection } from "../../../editor/util/ModellingUtilities";
+import { filter } from "min-dash";
+import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
 
 /**
  * Menu Provider for bpmn-replace which is opened for a diagram element. Adds replacement entries to replace the element with the
  * data flow extension elements.
  */
 export default class DataFlowReplaceMenuProvider {
-  constructor(popupMenu, translate, bpmnReplace, modeling, bpmnFactory, moddle, elementRegistry, commandStack) {
+  constructor(
+    popupMenu,
+    translate,
+    bpmnReplace,
+    modeling,
+    bpmnFactory,
+    moddle,
+    elementRegistry,
+    commandStack
+  ) {
     popupMenu.registerProvider("bpmn-replace", this);
 
     this.replaceElement = bpmnReplace.replaceElement;
@@ -38,7 +47,6 @@ export default class DataFlowReplaceMenuProvider {
    */
   getPopupMenuHeaderEntries(element) {
     return function (entries) {
-
       // remove all header entries (it is only the collection marker) for DataMapObjects because they do not support them
       if (is(element, consts.DATA_MAP_OBJECT)) {
         return {};
@@ -56,9 +64,12 @@ export default class DataFlowReplaceMenuProvider {
   getPopupMenuEntries(element) {
     const self = this;
     return function (entries) {
-
       // do not show entries for extension elements of other plugins
-      if (!(element.type.startsWith('bpmn') || element.type.startsWith('dataflow'))) {
+      if (
+        !(
+          element.type.startsWith("bpmn") || element.type.startsWith("dataflow")
+        )
+      ) {
         return entries;
       }
 
@@ -67,7 +78,7 @@ export default class DataFlowReplaceMenuProvider {
         let configEntries = {};
         const dataConfigurations = createConfigurationsEntries(
           element,
-          'dataflow-transformation-task-icon',
+          "dataflow-transformation-task-icon",
           getTransformationTaskConfigurations(),
           self.bpmnFactory,
           self.modeling,
@@ -76,35 +87,60 @@ export default class DataFlowReplaceMenuProvider {
         );
 
         if (element.businessObject.name) {
-          configEntries = createMenuEntries(element, replaceOptions.TASK, self.translate, self.replaceElement);
+          configEntries = createMenuEntries(
+            element,
+            replaceOptions.TASK,
+            self.translate,
+            self.replaceElement
+          );
           return Object.assign(configEntries, dataConfigurations);
         }
         return Object.assign(dataConfigurations, entries);
       }
 
       // add MoreOptionsEntry for transformation task as replacement for BPMN task types
-      if (is(element, 'bpmn:Task')) {
+      if (is(element, "bpmn:Task")) {
         const taskEntries = self.createTransformationTasksEntries(element);
         return Object.assign(taskEntries, entries);
       }
 
       // add entries for data map objects as replacement for BPMN data objects
-      if (is(element, 'bpmn:DataObjectReference')) {
-        let filteredOptions = filter(replaceOptions.DATA_OBJECT, isDifferentType(element));
-        const dataEntries = createMenuEntries(element, filteredOptions, self.translate, self.replaceElement);
+      if (is(element, "bpmn:DataObjectReference")) {
+        let filteredOptions = filter(
+          replaceOptions.DATA_OBJECT,
+          isDifferentType(element)
+        );
+        const dataEntries = createMenuEntries(
+          element,
+          filteredOptions,
+          self.translate,
+          self.replaceElement
+        );
         return Object.assign(dataEntries, entries);
       }
 
       // add entries for data store maps as replacement for BPMN data stores
-      if (is(element, 'bpmn:DataStoreReference')) {
-        let filteredOptions = filter(replaceOptions.DATA_STORE, isDifferentType(element));
-        const storeEntries = createMenuEntries(element, filteredOptions, self.translate, self.replaceElement);
+      if (is(element, "bpmn:DataStoreReference")) {
+        let filteredOptions = filter(
+          replaceOptions.DATA_STORE,
+          isDifferentType(element)
+        );
+        const storeEntries = createMenuEntries(
+          element,
+          filteredOptions,
+          self.translate,
+          self.replaceElement
+        );
         return Object.assign(storeEntries, entries);
       }
 
       // set entry for transformation association as replacement for BPMN data association
-      if (is(element, 'bpmn:DataAssociation') && !is(element, consts.TRANSFORMATION_ASSOCIATION)) {
-        const associationEntry = self.createTransformationAssociationEntry(element);
+      if (
+        is(element, "bpmn:DataAssociation") &&
+        !is(element, consts.TRANSFORMATION_ASSOCIATION)
+      ) {
+        const associationEntry =
+          self.createTransformationAssociationEntry(element);
         if (associationEntry) {
           return associationEntry;
         }
@@ -139,7 +175,7 @@ export default class DataFlowReplaceMenuProvider {
     // create replacement entries for each loaded transformation task configuration
     let options = createConfigurationsEntries(
       element,
-      'bpmn-icon-dataflow-transformation-task',
+      "bpmn-icon-dataflow-transformation-task",
       getTransformationTaskConfigurations(),
       bpmnFactory,
       modeling,
@@ -147,17 +183,20 @@ export default class DataFlowReplaceMenuProvider {
       replaceElement
     );
     let filteredOptions = filter(replaceOptions.TASK, isDifferentType(element));
-    options = Object.assign(createMenuEntries(element, filteredOptions, translate, replaceElement), options);
+    options = Object.assign(
+      createMenuEntries(element, filteredOptions, translate, replaceElement),
+      options
+    );
 
     return {
-      ['replace-by-more-transf-task-options']: createMoreOptionsEntryWithReturn(
+      ["replace-by-more-transf-task-options"]: createMoreOptionsEntryWithReturn(
         element,
-        'Transformation Tasks',
-        'Transformation Tasks',
+        "Transformation Tasks",
+        "Transformation Tasks",
         popupMenu,
         options,
-        'dataflow-transformation-tasks-menu-icon'
-      )
+        "dataflow-transformation-tasks-menu-icon"
+      ),
     };
   }
 
@@ -169,22 +208,23 @@ export default class DataFlowReplaceMenuProvider {
    * @returns {{}} The created replacement entry
    */
   createTransformationAssociationEntry(element) {
-
     const modeling = this.modeling;
     const translate = this.translate;
     const replaceElement = this.replaceElement;
 
-    const entryId = 'replace-with-transformation-flow';
+    const entryId = "replace-with-transformation-flow";
 
     // if DataObjectMap -- TransformationAssociation -> Activity
-    if (is(element.source, consts.DATA_MAP_OBJECT) &&
-      (is(element.target, 'bpmn:Activity') && !is(element.target, consts.DATA_MAP_OBJECT))) {
-
+    if (
+      is(element.source, consts.DATA_MAP_OBJECT) &&
+      is(element.target, "bpmn:Activity") &&
+      !is(element.target, consts.DATA_MAP_OBJECT)
+    ) {
       // create definition for menu entry to replace with a transformation association
       const definition = {
-        label: 'Transformation Association',
+        label: "Transformation Association",
         id: entryId,
-        className: 'bpmn-icon-dataflow-transformation-association',
+        className: "bpmn-icon-dataflow-transformation-association",
       };
 
       // define action to replace with a transformation association
@@ -192,7 +232,7 @@ export default class DataFlowReplaceMenuProvider {
         let associationType = consts.OUTPUT_TRANSFORMATION_ASSOCIATION;
 
         // replace with an input or output transformation association depending on the type of the data association
-        if (is(element, 'bpmn:DataInputAssociation')) {
+        if (is(element, "bpmn:DataInputAssociation")) {
           associationType = consts.INPUT_TRANSFORMATION_ASSOCIATION;
         }
         replaceConnection(element, associationType, modeling);
@@ -200,7 +240,13 @@ export default class DataFlowReplaceMenuProvider {
 
       // create menu entry
       return {
-        [entryId]: createMenuEntry(element, definition, translate, replaceElement, action),
+        [entryId]: createMenuEntry(
+          element,
+          definition,
+          translate,
+          replaceElement,
+          action
+        ),
       };
     }
   }
@@ -218,42 +264,52 @@ export default class DataFlowReplaceMenuProvider {
     const replaceElement = this.replaceElement;
 
     // create entry if transformation association does NOT connect two data map objects
-    if (!(is(element.source, consts.DATA_MAP_OBJECT) && is(element.target, consts.DATA_MAP_OBJECT))) {
-
+    if (
+      !(
+        is(element.source, consts.DATA_MAP_OBJECT) &&
+        is(element.target, consts.DATA_MAP_OBJECT)
+      )
+    ) {
       // create definition of menu entry
-      const entryId = 'replace-with-data-association';
+      const entryId = "replace-with-data-association";
       const definition = {
-        label: 'Data Association',
+        label: "Data Association",
         id: entryId,
-        className: 'bpmn-icon-dataflow-data-association-icon',
+        className: "bpmn-icon-dataflow-data-association-icon",
       };
 
       // create action to replace the transformation association by a data association
       const action = function () {
-        let associationType = 'bpmn:DataOutputAssociation';
+        let associationType = "bpmn:DataOutputAssociation";
 
         // replace with an input or output data association depending on the type of the transformation association
         if (is(element, consts.INPUT_TRANSFORMATION_ASSOCIATION)) {
-          associationType = 'bpmn:DataInputAssociation';
+          associationType = "bpmn:DataInputAssociation";
         }
         replaceConnection(element, associationType, modeling);
       };
 
       // create menu entry
       return {
-        [entryId]: createMenuEntry(element, definition, translate, replaceElement, action),
+        [entryId]: createMenuEntry(
+          element,
+          definition,
+          translate,
+          replaceElement,
+          action
+        ),
       };
     }
   }
 }
 
 DataFlowReplaceMenuProvider.$inject = [
-  'popupMenu',
-  'translate',
-  'bpmnReplace',
-  'modeling',
-  'bpmnFactory',
-  'moddle',
-  'elementRegistry',
-  'commandStack',
+  "popupMenu",
+  "translate",
+  "bpmnReplace",
+  "modeling",
+  "bpmnFactory",
+  "moddle",
+  "elementRegistry",
+  "commandStack",
 ];

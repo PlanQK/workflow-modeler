@@ -8,7 +8,7 @@
   "types": [
     {
       "name": "QuantMEProcess",
-      "extends": [ "bpmn:Process" ],
+      "extends": ["bpmn:Process"],
       "properties": [
         {
           "name": "flowElements",
@@ -20,7 +20,7 @@
     },
     {
       "name": "QuantumHardwareSelectionSubprocess",
-      "superClass": [ "bpmn:SubProcess" ],
+      "superClass": ["bpmn:SubProcess"],
       "properties": [
         {
           "name": "providers",
@@ -41,7 +41,7 @@
     },
     {
       "name": "CircuitCuttingSubprocess",
-      "superClass": [ "bpmn:SubProcess" ],
+      "superClass": ["bpmn:SubProcess"],
       "properties": [
         {
           "name": "cuttingMethod",
@@ -67,7 +67,7 @@
     },
     {
       "name": "QuantumComputationTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "algorithm",
@@ -83,7 +83,7 @@
     },
     {
       "name": "QuantumCircuitLoadingTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "quantumCircuit",
@@ -98,7 +98,7 @@
     },
     {
       "name": "DataPreparationTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "encodingSchema",
@@ -114,7 +114,7 @@
     },
     {
       "name": "OracleExpansionTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "oracleId",
@@ -139,7 +139,7 @@
     },
     {
       "name": "QuantumCircuitExecutionTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "provider",
@@ -165,9 +165,7 @@
     },
     {
       "name": "ParameterOptimizationTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "optimizer",
@@ -193,9 +191,7 @@
     },
     {
       "name": "VariationalQuantumAlgorithmTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "quantumAlgorithm",
@@ -246,9 +242,7 @@
     },
     {
       "name": "ResultEvaluationTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "objectiveFunction",
@@ -274,9 +268,7 @@
     },
     {
       "name": "WarmStartingTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "warmStartingMethod",
@@ -307,7 +299,7 @@
     },
     {
       "name": "ReadoutErrorMitigationTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "provider",
@@ -378,7 +370,7 @@
     },
     {
       "name": "ServiceTask",
-      "extends": [ "bpmn:ServiceTask" ],
+      "extends": ["bpmn:ServiceTask"],
       "properties": [
         {
           "name": "deploymentModelUrl",
@@ -389,7 +381,7 @@
     },
     {
       "name": "Task",
-      "extends": [ "bpmn:Task" ],
+      "extends": ["bpmn:Task"],
       "properties": [
         {
           "name": "hybridRuntimeExecution",
@@ -410,7 +402,7 @@
     },
     {
       "name": "CircuitCuttingSubprocess",
-      "superClass": [ "bpmn:SubProcess" ],
+      "superClass": ["bpmn:SubProcess"],
       "properties": [
         {
           "name": "cuttingMethod",
@@ -436,9 +428,7 @@
     },
     {
       "name": "ParameterOptimizationTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "optimizer",
@@ -464,9 +454,7 @@
     },
     {
       "name": "VariationalQuantumAlgorithmTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "quantumAlgorithm",
@@ -517,9 +505,7 @@
     },
     {
       "name": "ResultEvaluationTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "objectiveFunction",
@@ -545,9 +531,7 @@
     },
     {
       "name": "WarmStartingTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "warmStartingMethod",
@@ -578,7 +562,7 @@
     },
     {
       "name": "CircuitCuttingTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "cuttingMethod",
@@ -604,7 +588,7 @@
     },
     {
       "name": "CuttingResultCombinationTask",
-      "superClass": [ "bpmn:Task" ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "cuttingMethod",

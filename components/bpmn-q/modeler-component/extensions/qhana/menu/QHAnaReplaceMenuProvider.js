@@ -1,24 +1,36 @@
-import {is} from 'bpmn-js/lib/util/ModelUtil';
+import { is } from "bpmn-js/lib/util/ModelUtil";
 import {
   createConfigurationsEntries,
   handleConfigurationsAction,
-} from '../../../editor/configurations/ConfigurationsUtil';
-import * as consts from '../QHAnaConstants';
-import {instance as qhanaServiceConfigs} from '../configurations/QHAnaConfigurations';
-import {createMenuEntries, createMoreOptionsEntryWithReturn} from '../../../editor/util/PopupMenuUtilities';
-import * as qhanaReplaceOptions from './QHAnaReplaceOptions';
-import * as dataConsts from '../../data-extension/Constants';
-import {appendElement} from '../../../editor/util/ModellingUtilities';
-import { filter } from 'min-dash';
-import { isDifferentType } from 'bpmn-js/lib/features/popup-menu/util/TypeUtil';
+} from "../../../editor/configurations/ConfigurationsUtil";
+import * as consts from "../QHAnaConstants";
+import { instance as qhanaServiceConfigs } from "../configurations/QHAnaConfigurations";
+import {
+  createMenuEntries,
+  createMoreOptionsEntryWithReturn,
+} from "../../../editor/util/PopupMenuUtilities";
+import * as qhanaReplaceOptions from "./QHAnaReplaceOptions";
+import * as dataConsts from "../../data-extension/Constants";
+import { appendElement } from "../../../editor/util/ModellingUtilities";
+import { filter } from "min-dash";
+import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
 
 /**
  * Menu Provider for bpmn-replace which is opened for a diagram element. Adds replacement entries to replace the custom
  * elements of the QHAna plugin.
  */
 export default class QHAnaReplaceMenuProvider {
-
-  constructor(popupMenu, bpmnReplace, modeling, bpmnFactory, commandStack, translate, elementFactory, create, autoPlace) {
+  constructor(
+    popupMenu,
+    bpmnReplace,
+    modeling,
+    bpmnFactory,
+    commandStack,
+    translate,
+    elementFactory,
+    create,
+    autoPlace
+  ) {
     popupMenu.registerProvider("bpmn-replace", this);
 
     this.replaceElement = bpmnReplace.replaceElement;
@@ -41,17 +53,25 @@ export default class QHAnaReplaceMenuProvider {
   getPopupMenuEntries(element) {
     const self = this;
     return function (entries) {
-
       // do not show entries for extension elements of other plugins
-      if (!(element.type.startsWith('bpmn') || element.type.startsWith('qhana'))) {
+      if (
+        !(element.type.startsWith("bpmn") || element.type.startsWith("qhana"))
+      ) {
         return entries;
       }
 
       // set entries to apply QHAna service task configurations to a QHAna service task
       if (is(element, consts.QHANA_SERVICE_TASK)) {
-
         // create menu entries for each configuration loaded from the QHAna Configurations Endpoint
-        const configEntries = createConfigurationsEntries(element, 'qwm-qhana-service-task', qhanaServiceConfigs().getQHAnaServiceConfigurations(), self.bpmnFactory, self.modeling, self.commandStack, self.replaceElement);
+        const configEntries = createConfigurationsEntries(
+          element,
+          "qwm-qhana-service-task",
+          qhanaServiceConfigs().getQHAnaServiceConfigurations(),
+          self.bpmnFactory,
+          self.modeling,
+          self.commandStack,
+          self.replaceElement
+        );
 
         if (Object.entries(configEntries).length > 0) {
           return configEntries;
@@ -59,7 +79,7 @@ export default class QHAnaReplaceMenuProvider {
       }
 
       // add entries for QHAna service tasks and QHAna service step tasks as replacement for BPMN tasks
-      if (is(element, 'bpmn:Task')) {
+      if (is(element, "bpmn:Task")) {
         const qhanaEntry = self.createQHAnaEntry(element);
         return Object.assign(qhanaEntry, entries);
       }
@@ -80,22 +100,33 @@ export default class QHAnaReplaceMenuProvider {
     const translate = this.translate;
     const replaceElement = this.replaceElement;
 
-    let filteredOptions = filter(qhanaReplaceOptions.TASK, isDifferentType(element));
-    const qhanaTasksEntries = createMenuEntries(element, filteredOptions, translate, replaceElement);
+    let filteredOptions = filter(
+      qhanaReplaceOptions.TASK,
+      isDifferentType(element)
+    );
+    const qhanaTasksEntries = createMenuEntries(
+      element,
+      filteredOptions,
+      translate,
+      replaceElement
+    );
 
     // get entry for QHAna service tasks and its configurations
     const qhanaServiceTaskEntry = this.createQHAnaServiceTaskEntry(element);
 
-    const qhanaEntries = Object.assign(qhanaTasksEntries, qhanaServiceTaskEntry);
+    const qhanaEntries = Object.assign(
+      qhanaTasksEntries,
+      qhanaServiceTaskEntry
+    );
     return {
-      ['replace-by-qhana-tasks']: createMoreOptionsEntryWithReturn(
+      ["replace-by-qhana-tasks"]: createMoreOptionsEntryWithReturn(
         element,
-        'QHAna Tasks',
-        'QHAna Tasks',
+        "QHAna Tasks",
+        "QHAna Tasks",
         popupMenu,
         qhanaEntries,
-        'qwm-qhana-service-task-menu'
-      )
+        "qwm-qhana-service-task-menu"
+      ),
     };
   }
 
@@ -121,16 +152,20 @@ export default class QHAnaReplaceMenuProvider {
      for the outputs of the service task as defined in the configuration
      */
     function action(event, config) {
-
       // replace element with configuration type if types mismatch
       let newElement;
       if (element.type !== config.appliesTo) {
-        newElement = replaceElement(element, {type: config.appliesTo});
+        newElement = replaceElement(element, { type: config.appliesTo });
       }
 
       // split config attributes in output and non output attributes
-      const outputAttributes = config.attributes.filter(attribute => attribute.bindTo.type === 'camunda:OutputMapParameter') || [];
-      const nonOutputAttributes = config.attributes.filter(attribute => attribute.bindTo.type !== 'camunda:OutputMapParameter');
+      const outputAttributes =
+        config.attributes.filter(
+          (attribute) => attribute.bindTo.type === "camunda:OutputMapParameter"
+        ) || [];
+      const nonOutputAttributes = config.attributes.filter(
+        (attribute) => attribute.bindTo.type !== "camunda:OutputMapParameter"
+      );
 
       const newConfig = {
         name: config.name,
@@ -139,27 +174,42 @@ export default class QHAnaReplaceMenuProvider {
       };
 
       // set properties of the QHAna service task based on the configuration
-      handleConfigurationsAction(newElement || element, newConfig, bpmnFactory, modeling, commandStack);
+      handleConfigurationsAction(
+        newElement || element,
+        newConfig,
+        bpmnFactory,
+        modeling,
+        commandStack
+      );
 
       // create a data map object and set ist content to the outputs if output attributes are defined
       if (outputAttributes.length > 0) {
         // create a data map object for the output data
-        const dataMapObject = appendElement(dataConsts.DATA_MAP_OBJECT, newElement, event, bpmnFactory, elementFactory, create, autoPlace);
+        const dataMapObject = appendElement(
+          dataConsts.DATA_MAP_OBJECT,
+          newElement,
+          event,
+          bpmnFactory,
+          elementFactory,
+          create,
+          autoPlace
+        );
         const dataMapObjectBusinessObject = dataMapObject.businessObject;
 
         // set name of new created data map object
         modeling.updateProperties(dataMapObject, {
-          name: config.name.replace(/\s+/g, '_') + '_output',
+          name: config.name.replace(/\s+/g, "_") + "_output",
         });
 
         // add the output attributes to the content attribute of the DataMapObject
         for (let outputAttribute of outputAttributes) {
-
-          const attributeContent = dataMapObjectBusinessObject.get(dataConsts.CONTENT);
+          const attributeContent = dataMapObjectBusinessObject.get(
+            dataConsts.CONTENT
+          );
 
           const param = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {
             name: outputAttribute.name,
-            value: outputAttribute.value
+            value: outputAttribute.value,
           });
           attributeContent.push(param);
         }
@@ -169,7 +219,7 @@ export default class QHAnaReplaceMenuProvider {
     // create menu entries for the configurations loaded from the QHAna configurations endpoint
     let options = createConfigurationsEntries(
       element,
-      'qwm-qhana-service-task',
+      "qwm-qhana-service-task",
       qhanaServiceConfigs().getQHAnaServiceConfigurations(),
       bpmnFactory,
       modeling,
@@ -180,26 +230,26 @@ export default class QHAnaReplaceMenuProvider {
 
     // create a MoreOptionsEntry displaying the configurations entries
     return {
-      ['replace-by-qhana-options']: createMoreOptionsEntryWithReturn(
+      ["replace-by-qhana-options"]: createMoreOptionsEntryWithReturn(
         element,
-        'QHAna Service Tasks',
-        'QHAna Service Tasks',
+        "QHAna Service Tasks",
+        "QHAna Service Tasks",
         popupMenu,
         options,
-        'qwm-qhana-service-task'
-      )
+        "qwm-qhana-service-task"
+      ),
     };
   }
 }
 
 QHAnaReplaceMenuProvider.$inject = [
-  'popupMenu',
-  'bpmnReplace',
-  'modeling',
-  'bpmnFactory',
-  'commandStack',
-  'translate',
-  'elementFactory',
-  'create',
-  'autoPlace'
+  "popupMenu",
+  "bpmnReplace",
+  "modeling",
+  "bpmnFactory",
+  "commandStack",
+  "translate",
+  "elementFactory",
+  "create",
+  "autoPlace",
 ];
