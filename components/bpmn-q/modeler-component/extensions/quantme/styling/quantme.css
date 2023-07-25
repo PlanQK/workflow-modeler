@@ -1,285 +1,470 @@
-@import url("~bpmn-font/dist/css/bpmn-embedded.css");
+@import url('~bpmn-font/dist/css/bpmn-embedded.css');
 
 .qwm .quantme-logo:before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("../resources/quant-me-logo.png");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/quant-me-logo.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
 }
 
 .qwm .quantme-tasks-icon:before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background-size: contain;
-  background-image: url("../resources/QuantME_Logo.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-image: url("../resources/QuantME_Logo.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
 }
 
 .qwm .qrm-reload:before {
-  content: "";
-  display: block;
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background: url("../resources/qrm-reload-icon.png") no-repeat center center;
-  float: left;
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/qrm-reload-icon.png") no-repeat center center;
+    float: left;
 }
 
 .qwm .hybrid-loop-adaptation:before {
-  content: "";
-  display: block;
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background: url("../resources/hybrid-loop-adapation-icon.png") no-repeat
-    center center;
-  float: left;
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/hybrid-loop-adapation-icon.png") no-repeat center center;
+    float: left;
 }
 
 .qwm .workflow-transformation:before {
-  content: "";
-  display: block;
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background: url("../resources/worklow-transformation-icon.png") no-repeat
-    center center;
-  float: left;
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/worklow-transformation-icon.png") no-repeat center center;
+    float: left;
 }
 
 .qwm .workflow-deployment:before {
-  content: "";
-  display: block;
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background: url("../resources/workflow-deployment-icon.png") no-repeat center
-    center;
-  float: left;
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/workflow-deployment-icon.png") no-repeat center center;
+    float: left;
 }
 
 .qwm .config:before {
-  content: "";
-  display: block;
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background: url("../resources/config-icon.png") no-repeat center center;
-  float: left;
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/config-icon.png") no-repeat center center;
+    float: left;
 }
 
 .qwm .app-icon-service-deployment:before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("../resources/service-deployment-icon.png");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/service-deployment-icon.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
 }
 
 .qwm .indent {
-  margin-left: 5px;
+    margin-left: 5px;
 }
 
 .qwm .spaceUnder {
-  padding-bottom: 1em;
+    padding-bottom: 1em;
 }
 
 .qwm .spaceUnderSmall {
-  padding-bottom: 0.3em;
+    padding-bottom: 0.3em;
 }
 
 .qwm .spaceAbove {
-  padding-top: 1em;
+    padding-top: 1em;
 }
 
 .qwm .hidden {
-  display: none;
+    display: none;
 }
 
 .qwm .djs-label {
-  font-family: "Arial", sans-serif;
+    font-family: 'Arial', sans-serif;
 }
 
 .qwm .bpmn-icon-hardware-selection-subprocess:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-hardware-selection-subprocess.png")
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-hardware-selection-subprocess.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-task-quantum-computation:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-quantum-computation-task.png")
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-quantum-computation-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-circuit-loading:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-quantum-circuit-loading-task.png")
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-quantum-circuit-loading-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-data-preparation:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-data-preparation-task.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-data-preparation-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-oracle-expansion:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-oracle-expansion-task.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-oracle-expansion-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-circuit-execution:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-circuit-execution-task.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-circuit-execution-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-error-mitigation:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-readout-error-task.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-readout-error-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-parameter-optimization:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-parameter-optimization-task.png")
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-parameter-optimization-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-result-evaluation:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-result-evaluation-task.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-result-evaluation-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-variational-quantum-algorithm:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-variational-quantum-algorithm-task.png")
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-variational-quantum-algorithm-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-warm-starting:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-warm-starting-task.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-warm-starting-task.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .bpmn-icon-circuit-cutting:before {
-  content: "";
-  display: block;
-  background: url("../resources/menu-icon-cutting-subprocess.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../resources/menu-icon-cutting-subprocess.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .qwm .adaptation-tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
 }
 
 /* Style the buttons that are used to open the tab content */
 .qwm .adaptation-tab-button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  transition: 0.3s;
-  padding: 14px 16px;
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 14px 16px;
 }
 
 /* Change background color of buttons on hover */
 .qwm .adaptation-tab-button:hover {
-  background-color: #ddd;
+    background-color: #ddd;
 }
 
 /* Create an active/current tablink class */
 .qwm .adaptation-tab-button.active {
-  background-color: #ccc;
+    background-color: #ccc;
 }
 
 .qwm .rewrite-failed-button:after {
-  content: "";
-  display: block;
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background: url("../resources/info.png") no-repeat center center;
-  float: right;
-  padding-left: 20px;
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background: url("../resources/info.png") no-repeat center center;
+    float: right;
+    padding-left: 20px;
 }
 
-.qwm .rewrite-failed-button:disabled {
-  background-color: #f44336;
-  color: #000000;
+.qwm .rewrite-failed-button:disabled{
+    background-color: #f44336;
+    color: #000000;
 }
 
-.qwm .rewrite-successful-button:disabled {
-  background-color: #008000;
-  color: #000000;
+.qwm .rewrite-successful-button:disabled{
+    background-color: #008000;
+    color: #000000;
+}
+
+
+.qwm .quantme-tasks-icon-cutting:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingSubprocess_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+
+.qwm .quantme-tasks-icon-variational:before {
+    content: "";
+    width: 20px;
+    margin-right: 5px;
+    height: 15px;
+    margin-top: 3px;
+    background-size: contain;
+    background-image: url("../resources/Variationaldrawio.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.qwm .quantme-tasks-icon-warm:before {
+    content: "";
+    width: 20px;
+    margin-right: 5px;
+    margin-top: 1px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/WarmStartingTask_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.qwm .quantme-tasks-icon-result-evaluation:before {
+    content: "";
+    margin-right: 5px;
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/EvaluationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-parameter-optimization:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/OptimizationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-readout-error:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/ReadoutErrorMitigationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-circuit-execution:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumCircuitExecution_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-oracle:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/OracleExpansionTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-data-preparation:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/DataPreparationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-circuit-loading:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumCircuitLoadingTask_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-circuit-execution:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumCircuitExecution_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-quantum-computation:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumComputationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-hardware-selection:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumHardwareSelectionSubprocess_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .bpmn-quantme-tasks-icon-hardware-selection:before {
+    content: "";
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumHardwareSelectionSubprocess_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .bpmn-quantme-tasks-icon-cutting:before {
+    content: "";
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingSubprocess_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-cutting-result-combination:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingResultCombinationTask_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.djs-popup-label {
+    margin-top: -2px;
+}
+
+.djs-popup-entry-name .qwm .quantme-tasks-icon-result-evaluation {
+    margin-top: 5px;
+}
+
+.djs-popup-results .djs-popup-group .entry[data-id="replace-with-hardware-selection-subprocess"] .djs-popup-label {
+    margin-left: 10px; /* Adjust the value as per your requirements */
+}
+
+.djs-popup-results .djs-popup-group .entry[data-id="replace-by-more-options"] .djs-popup-label {
+    margin-top: -1px; /* Adjust the value as per your requirements */
 }

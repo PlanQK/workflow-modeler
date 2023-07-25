@@ -1,4 +1,4 @@
-import { is } from "bpmn-js/lib/util/ModelUtil";
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 import * as consts from "../../Constants";
 import * as dataConsts from "../../../data-extension/Constants";
 import {
@@ -14,13 +14,14 @@ import {
   ParameterOptimizationTaskEntries,
   VariationalQuantumAlgorithmTaskEntries,
   WarmStartingTaskEntries,
+  CuttingResultCombinationTaskEntries
 } from "./QuantMETaskProperties";
 import { ImplementationProps } from "./service-task/ImplementationProps";
 import { Group } from "@bpmn-io/properties-panel";
-import { getWineryEndpoint } from "../../framework-config/config-manager";
-import * as configConsts from "../../../../editor/configurations/Constants";
-import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
-import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
+import { getWineryEndpoint } from '../../framework-config/config-manager';
+import * as configConsts from '../../../../editor/configurations/Constants';
+import { instance as dataObjectConfigs } from '../../configurations/DataObjectConfigurations';
+import ConfigurationsProperties from '../../../../editor/configurations/ConfigurationsProperties';
 
 const LOW_PRIORITY = 500;
 
@@ -33,11 +34,15 @@ const LOW_PRIORITY = 500;
  * @param eventBus
  * @param bpmnFactory
  */
-export default function QuantMEPropertiesProvider(
-  propertiesPanel,
-  injector,
-  translate
-) {
+export default function QuantMEPropertiesProvider(propertiesPanel, injector, translate, eventBus, bpmnFactory) {
+
+  // subscribe to config updates to retrieve the currently defined Winery endpoint
+  const self = this;
+  let wineryEndpoint;
+  eventBus.on('config.updated', function (config) {
+    wineryEndpoint = config.wineryEndpoint;
+  });
+
   /**
    * Return the groups provided for the given element.
    *
@@ -46,6 +51,7 @@ export default function QuantMEPropertiesProvider(
    * @return {(Object[]) => (Object[])} groups middleware
    */
   this.getGroups = function (element) {
+
     /**
      * We return a middleware that modifies
      * the existing groups.
@@ -55,34 +61,24 @@ export default function QuantMEPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
+
       // add properties of QuantME tasks to panel
-      if (element.type && element.type.startsWith("quantme:")) {
+      if (element.type && element.type.startsWith('quantme:')) {
         groups.unshift(createQuantMEGroup(element, translate));
       }
 
       // update ServiceTasks with the deployment extension
-      if (element.type && element.type === "bpmn:ServiceTask") {
+      if (element.type && element.type === 'bpmn:ServiceTask') {
         groups[2] = ImplementationGroup(element, injector, getWineryEndpoint());
       }
 
       // add properties group for displaying the properties defined by the configurations if a configuration
       // is applied to the current element
       if (is(element, dataConsts.DATA_MAP_OBJECT)) {
-        const selectedConfiguration =
-          dataObjectConfigs().getQuantMEDataConfiguration(
-            element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID)
-          );
+
+        const selectedConfiguration = dataObjectConfigs().getQuantMEDataConfiguration(element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID));
         if (selectedConfiguration) {
-          groups.splice(
-            1,
-            0,
-            createQuantMEDataGroup(
-              element,
-              injector,
-              translate,
-              selectedConfiguration
-            )
-          );
+          groups.splice(1, 0, createQuantMEDataGroup(element, injector, translate, selectedConfiguration));
         }
       }
       return groups;
@@ -92,11 +88,7 @@ export default function QuantMEPropertiesProvider(
   propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
-QuantMEPropertiesProvider.$inject = [
-  "propertiesPanel",
-  "injector",
-  "translate",
-];
+QuantMEPropertiesProvider.$inject = ['propertiesPanel', 'injector', 'translate', 'eventBus', 'bpmnFactory'];
 
 /**
  * Create properties group to display custom QuantME properties in the properties panel. The entries of this group
@@ -107,11 +99,12 @@ QuantMEPropertiesProvider.$inject = [
  * @return {{entries: ([{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|*|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]), id: string, label}}
  */
 function createQuantMEGroup(element, translate) {
+
   // add required properties to general tab
   return {
-    id: "quantmeServiceDetails",
-    label: translate("Details"),
-    entries: QuantMEProps(element),
+    id: 'quantmeServiceDetails',
+    label: translate('Details'),
+    entries: QuantMEProps(element)
   };
 }
 
@@ -125,13 +118,15 @@ function createQuantMEGroup(element, translate) {
  * @constructor
  */
 function ImplementationGroup(element, injector, wineryEndpoint) {
-  const translate = injector.get("translate");
+  const translate = injector.get('translate');
 
   const group = {
-    label: translate("Implementation"),
-    id: "CamundaPlatform__Implementation",
+    label: translate('Implementation'),
+    id: 'CamundaPlatform__Implementation',
     component: Group,
-    entries: [...ImplementationProps({ element, wineryEndpoint, translate })],
+    entries: [
+      ...ImplementationProps({ element, wineryEndpoint, translate })
+    ]
   };
 
   if (group.entries.length) {
@@ -147,7 +142,9 @@ function ImplementationGroup(element, injector, wineryEndpoint) {
  * @param element the QuantME element
  */
 function QuantMEProps(element) {
+
   switch (element.type) {
+
     case consts.QUANTUM_COMPUTATION_TASK:
       return QuantumComputationTaskProperties(element);
 
@@ -170,6 +167,8 @@ function QuantMEProps(element) {
       return HardwareSelectionSubprocessProperties(element);
     case consts.CIRCUIT_CUTTING_SUBPROCESS:
       return CircuitCuttingSubprocessEntries(element);
+    case consts.CIRCUIT_CUTTING_TASK:
+      return CircuitCuttingSubprocessEntries(element);
     case consts.RESULT_EVALUATION_TASK:
       return ResultEvaluationTaskEntries(element);
     case consts.PARAMETER_OPTIMIZATION_TASK:
@@ -178,8 +177,10 @@ function QuantMEProps(element) {
       return VariationalQuantumAlgorithmTaskEntries(element);
     case consts.WARM_STARTING_TASK:
       return WarmStartingTaskEntries(element);
+    case consts.CUTTING_RESULT_COMBINATION_TASK:
+      return CuttingResultCombinationTaskEntries(element);
     default:
-      console.log("Unsupported QuantME element of type: ", element.type);
+      console.log('Unsupported QuantME element of type: ', element.type);
   }
 }
 
@@ -193,14 +194,10 @@ function QuantMEProps(element) {
  * @return {{entries: (*), id: string, label}}
  */
 function createQuantMEDataGroup(element, injector, translate, configuration) {
+
   return {
-    id: "QuantMEDataGroupProperties",
-    label: translate(configuration.groupLabel || "Data Properties"),
-    entries: ConfigurationsProperties(
-      element,
-      injector,
-      translate,
-      configuration
-    ),
+    id: 'QuantMEDataGroupProperties',
+    label: translate(configuration.groupLabel || 'Data Properties'),
+    entries: ConfigurationsProperties(element, injector, translate, configuration)
   };
 }

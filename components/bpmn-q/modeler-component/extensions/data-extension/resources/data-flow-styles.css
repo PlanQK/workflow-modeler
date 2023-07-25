@@ -1,107 +1,163 @@
 .dataflow-transformation-task-icon:before {
-  content: "";
-  width: 20px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("../resources/icons/change-exchange-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 5px;
+    height: 5px;
+    background-size: contain;
+    background-image: url("../resources/icons/change-exchange-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-transformation-task-icon:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .dataflow-data-store-map-icon:before {
-  content: "";
-  width: 20px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("../resources/icons/data-store-map-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+    background-image: url("../resources/icons/data-store-map-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-data-store-map-icon:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .dataflow-data-map-object-icon:before {
-  content: "";
-  width: 20px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("../resources/icons/data-map-object-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-size: contain;
+    background-image: url("../resources/icons/data-map-object-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.dataflow-data-map-object-menu-icon:before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-size: contain;
+    background-image: url("../resources/icons/data-map-object-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.dataflow-data-map-object-icon:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .dataflow-transformation-task-palette-icon {
-  content: url("../resources/icons/transformation-task.svg");
-  padding: 11px 8px 11px 10px;
-  box-sizing: border-box;
-  margin: 0;
-  outline: none;
+    content: "";
+    width: 12px;
+    height: 12px;
+    background-size: contain;
+    background-image: url("../resources/icons/transformation-task.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    transform: scale(0.6);
+}
+
+.dataflow-transformation-task-palette-icon:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .dataflow-data-store-map-task-palette-icon {
-  content: url("../resources/icons/data-store-map-icon.svg");
-  padding: 10px;
-  box-sizing: border-box;
-  margin: 0;
-  outline: none;
+    content: "";
+    background-size: contain;
+    background-image: url("../resources/icons/data-store-map-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    transform: scale(0.6);
+}
+
+.dataflow-data-store-map-task-palette-icon:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .dataflow-data-map-object-palette-icon {
-  content: url("../resources/icons/data-map-object-icon.svg");
-  padding: 10px 13px 10px 14px;
-  box-sizing: border-box;
-  margin: 0;
-  outline: none;
+    content: "";
+    background-size: contain;
+    background-image: url("../resources/icons/data-map-object-icon.svg");
+    background-repeat: no-repeat;
+    transform: scale(0.8);
+}
+
+.dataflow-data-map-object-palette-icon:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .dataflow-transformation-association-icon:before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background-size: contain;
-  background-image: url("../resources/icons/transformation-association-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-image: url("../resources/icons/transformation-association-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .dataflow-data-association-icon:before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background-size: contain;
-  background-image: url("../resources/icons/data-association.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-image: url("../resources/icons/data-association.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .dataflow-plugin-icon:before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("./icons/structure-diagram-icon-or.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("./icons/structure-diagram-icon-or.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
 }
 
 .dataflow-update-transformation-task-configs:before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("./icons/update-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("./icons/update-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.dataflow-transformation-tasks-menu-icon:before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    background-size: contain;
+    background-image: url("../resources/icons/transformation-task.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.dataflow-transformation-task-menu-icon:before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    background-size: contain;
+    background-image: url("../resources/icons/change-exchange-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
 }

@@ -1,49 +1,63 @@
-.qwm-planqk-icon-palette-service-task {
-  content: url("../icons/service-task-palette-icon.svg");
-  padding: 11px 8px 11px 10px;
-  box-sizing: border-box;
-  margin: 0;
-  outline: none;
+.qwm-planqk-icon-service-task-palette:before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-size: contain;
+    background-image: url("../icons/service-task-palette-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 10px;
+    padding: 11px 8px 11px 10px;
+    outline: none;
 }
 
-.qwm-planqk-icon-palette-data-pool {
-  content: url("../icons/data-pool-palette-icon.svg");
-  padding: 10px;
-  box-sizing: border-box;
-  margin: 0;
-  outline: none;
+.qwm-planqk-icon-service-task-palette:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .qwm-planqk-icon-service-task:before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background-size: contain;
-  background-image: url("../icons/service-task-palette-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    width: 5px;
+    height: 5px;
+    background-size: contain;
+    background-image: url("../icons/service-task-palette-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    outline: none;
 }
 
-.qwm-planqk-icon-data-pool:before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background-size: contain;
-  background-image: url("../icons/data-pool-palette-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-  margin: 0 6px 0 0;
+.qwm-planqk-icon-data-pool-palette:before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-size: contain;
+    background-image: url("../icons/data-pool-palette-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 5px;
+    padding: 11px 8px 11px 10px;
+}
+
+.qwm-planqk-icon-data-pool-palette:hover {
+    filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
 }
 
 .qwm-planqk-logo:before {
-  content: "";
-  display: block;
-  background: url("../icons/planqk-icon.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+    content: "";
+    display: block;
+    background: url("../icons/planqk-icon.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin: 0 6px 0 0;
+}
+
+.qwm-planqk-icon-data-pool:before {
+    content: "";
+    width: 3px;
+    height: 3px;
+    background-size: contain;
+    background-image: url("../icons/data-pool-palette-icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
 }
