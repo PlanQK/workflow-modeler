@@ -18,9 +18,10 @@ export default function BPMNConfigTab() {
     const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] = useState(config.getQiskitRuntimeHandlerEndpoint());
     const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(config.getHybridRuntimeProvenance());
     const [awsRuntimeHandlerEndpoint, setAWSRuntimeHandlerEndpoint] = useState(config.getAWSRuntimeHandlerEndpoint());
+    const [transformationFrameworkEndpoint, setTransformationFrameworkEndpoint] = useState(config.getTransformationFrameworkEndpoint());
+    const [scriptSplitterEndpoint, setScriptSplitterEndpoint] = useState(config.getScriptSplitterEndpoint());
+    const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(config.getScriptSplitterThreshold());
     let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance;
-
-
 
     const modeler = getModeler();
 
@@ -52,8 +53,6 @@ export default function BPMNConfigTab() {
             }
         });
     }
-
-    // register editor action listener for changes in config entries
     if (!editorActions._actions.hasOwnProperty('opentoscaEndpointChanged')) {
         editorActions.register({
             opentoscaEndpointChanged: function (opentoscaEndpoint) {
@@ -69,8 +68,6 @@ export default function BPMNConfigTab() {
             }
         });
     }
-
-    // register editor action listener for changes in config entries
     if (!editorActions._actions.hasOwnProperty('nisqAnalyzerEndpointChanged')) {
         editorActions.register({
             nisqAnalyzerEndpointChanged: function (nisqAnalyzerEndpoint) {
@@ -78,13 +75,6 @@ export default function BPMNConfigTab() {
             }
         });
     }
-
-    const [transformationFrameworkEndpoint, setTransformationFrameworkEndpoint] = useState(config.getTransformationFrameworkEndpoint());
-    const [scriptSplitterEndpoint, setScriptSplitterEndpoint] = useState(config.getScriptSplitterEndpoint());
-    const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(config.getScriptSplitterThreshold());
-
-
-    // register editor action listener for changes in config entries
     if (!editorActions._actions.hasOwnProperty('transformationFrameworkEndpointChanged')) {
         editorActions.register({
             transformationFrameworkEndpointChanged: function (transformationFrameworkEndpoint) {
