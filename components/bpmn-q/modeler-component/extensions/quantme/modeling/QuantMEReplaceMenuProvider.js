@@ -132,7 +132,7 @@ export default class QuantMEReplaceMenuProvider {
                 'QuantME Data Objects',
                 popupMenu,
                 options,
-                'bpmn-icon-task-quantum-computation'
+                'quantme-tasks-icon'
             )
         };
     }

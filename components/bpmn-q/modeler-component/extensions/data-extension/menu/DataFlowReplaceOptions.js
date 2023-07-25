@@ -5,7 +5,7 @@ export const TASK = [
     {
         id: 'dataflow-transformation-task',
         label: 'Data Transformation Task',
-        className: 'dataflow-transformation-task-icon',
+        className: 'dataflow-transformation-task-menu-icon',
         target: {
             type: consts.TRANSFORMATION_TASK
         }
@@ -29,7 +29,7 @@ export const DATA_OBJECT = [
     {
         id: 'dataflow-data-map-object',
         label: 'Data Map Object',
-        className: 'dataflow-data-map-object-icon',
+        className: 'dataflow-data-map-object-menu-icon',
         target: {
             type: consts.DATA_MAP_OBJECT
         }
