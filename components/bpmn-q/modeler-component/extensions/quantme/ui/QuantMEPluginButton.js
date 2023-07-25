@@ -12,6 +12,12 @@ export default function QuantMEPluginButton() {
     // trigger initial QRM update
     updateQRMs().then(response => {
         console.log('Update of QRMs completed: ', response);
+        NotificationHandler.getInstance().displayNotification({
+            type: 'info',
+            title: 'Successfully updated QRMs',
+            content: 'Loaded ' + response.length + ' QRMs from configured repository!',
+            duration: 4000
+        });
     }).catch(e => {
         NotificationHandler.getInstance().displayNotification({
             type: 'warning',

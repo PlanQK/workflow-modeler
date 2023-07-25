@@ -165,8 +165,20 @@ export default class QuantMEController extends PureComponent {
     }
 
     updateQRMs() {
+        NotificationHandler.getInstance().displayNotification({
+            type: 'info',
+            title: 'QRMs update triggered',
+            content: 'Triggered QRM update from configured repository!',
+            duration: 4000
+        });
         updateQRMs().then(response => {
             console.log('Update of QRMs completed: ', response);
+            NotificationHandler.getInstance().displayNotification({
+                type: 'info',
+                title: 'Successfully updated QRMs',
+                content: 'Loaded ' + response.length + ' QRMs from configured repository!',
+                duration: 4000
+            });
         }).catch(e => {
             NotificationHandler.getInstance().displayNotification({
                 type: 'warning',
