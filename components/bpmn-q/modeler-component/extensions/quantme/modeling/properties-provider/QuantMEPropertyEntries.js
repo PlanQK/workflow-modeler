@@ -878,7 +878,7 @@ export function MaxNumberSubcircuitsEntry({ element }) {
 
     const setValue = function (newValue) {
         return modeling.updateProperties(element, {
-            mmaxNumSubCircuits: newValue
+            maxNumSubCircuits: newValue
         });
     };
 
