@@ -22,6 +22,8 @@ export const PARAMETER_OPTIMIZATION_TASK = 'quantme:ParameterOptimizationTask';
 export const RESULT_EVALUATION_TASK = 'quantme:ResultEvaluationTask';
 export const QUANTUM_HARDWARE_SELECTION_SUBPROCESS = 'quantme:QuantumHardwareSelectionSubprocess';
 export const CIRCUIT_CUTTING_SUBPROCESS = 'quantme:CircuitCuttingSubprocess';
+export const CIRCUIT_CUTTING_TASK = 'quantme:CircuitCuttingTask';
+export const CUTTING_RESULT_COMBINATION_TASK = 'quantme:CuttingResultCombinationTask';
 
 // Property names of the QuantME constructs
 export const ALGORITHM = 'algorithm';

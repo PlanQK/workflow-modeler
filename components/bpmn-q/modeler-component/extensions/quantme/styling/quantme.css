@@ -20,7 +20,6 @@
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
-    margin: 0 6px 0 0;
 }
 
 .qwm .qrm-reload:before {
@@ -274,4 +273,198 @@
 .qwm .rewrite-successful-button:disabled{
     background-color: #008000;
     color: #000000;
+}
+
+
+.qwm .quantme-tasks-icon-cutting:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingSubprocess_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+
+.qwm .quantme-tasks-icon-variational:before {
+    content: "";
+    width: 20px;
+    margin-right: 5px;
+    height: 15px;
+    margin-top: 3px;
+    background-size: contain;
+    background-image: url("../resources/Variationaldrawio.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.qwm .quantme-tasks-icon-warm:before {
+    content: "";
+    width: 20px;
+    margin-right: 5px;
+    margin-top: 1px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/WarmStartingTask_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.qwm .quantme-tasks-icon-result-evaluation:before {
+    content: "";
+    margin-right: 5px;
+    width: 20px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/EvaluationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-parameter-optimization:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/OptimizationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-readout-error:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/ReadoutErrorMitigationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-circuit-execution:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumCircuitExecution_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-oracle:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/OracleExpansionTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-data-preparation:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/DataPreparationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-circuit-loading:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumCircuitLoadingTask_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-circuit-execution:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumCircuitExecution_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-quantum-computation:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumComputationTask_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-hardware-selection:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumHardwareSelectionSubprocess_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .bpmn-quantme-tasks-icon-hardware-selection:before {
+    content: "";
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/QuantumHardwareSelectionSubprocess_Menu_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .bpmn-quantme-tasks-icon-cutting:before {
+    content: "";
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingSubprocess_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.qwm .quantme-tasks-icon-cutting-result-combination:before {
+    content: "";
+    width: 25px;
+    height: 15px;
+    background-size: contain;
+    background-image: url("../resources/CuttingResultCombinationTask_Icon.svg");
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.djs-popup-label {
+    margin-top: -2px;
+}
+
+.djs-popup-entry-name .qwm .quantme-tasks-icon-result-evaluation {
+    margin-top: 5px;
+}
+
+.djs-popup-results .djs-popup-group .entry[data-id="replace-with-hardware-selection-subprocess"] .djs-popup-label {
+    margin-left: 10px; /* Adjust the value as per your requirements */
+  }
+
+.djs-popup-results .djs-popup-group .entry[data-id="replace-by-more-options"] .djs-popup-label {
+    margin-top: -1px; /* Adjust the value as per your requirements */
 }
