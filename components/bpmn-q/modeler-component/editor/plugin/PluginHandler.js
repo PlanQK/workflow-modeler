@@ -198,7 +198,7 @@ export function getConfigTabs() {
         tabTitle: 'General',
         configTab: GeneralTab,
     }, {
-        tabId: 'QRMDataTab',
+        tabId: 'GitHubTab',
         tabTitle: 'GitHub',
         configTab: GitHubTab,
     }];

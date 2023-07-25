@@ -9,7 +9,7 @@ import * as config from "../framework-config/config-manager";
  * @return {JSX.Element} The tab as a React component
  * @constructor
  */
-export default function QrmDataTab() {
+export default function GitHubTab() {
 
     const [githubRepositoryName, setGithubRepositoryName] = useState(config.getQRMRepositoryName());
     const [githubUsername, setGithubUsername] = useState(config.getQRMRepositoryUserName());
@@ -83,9 +83,8 @@ export default function QrmDataTab() {
         });
     }
 
-
     // save changed config entries on close
-    QrmDataTab.prototype.onClose = () => {
+    GitHubTab.prototype.onClose = () => {
         modeler.config.githubRepositoryName = githubRepositoryName;
         modeler.config.githubUsername = githubUsername;
         modeler.config.githubRepositoryPath = githubRepositoryPath;
@@ -204,7 +203,7 @@ export default function QrmDataTab() {
     </>;
 }
 
-QrmDataTab.prototype.config = () => {
+GitHubTab.prototype.config = () => {
     const modeler = getModeler();
 
     modeler.config.githubRepositoryName = config.getQRMRepositoryName();
@@ -216,5 +215,4 @@ QrmDataTab.prototype.config = () => {
     modeler.config.uploadGithubRepositoryOwner = config.getUploadGithubRepositoryOwner();
     modeler.config.uploadFileName = config.getUploadFileName();
     modeler.config.uploadBranchName = config.getUploadBranchName();
-
 };
