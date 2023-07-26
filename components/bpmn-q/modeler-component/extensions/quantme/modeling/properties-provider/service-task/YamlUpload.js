@@ -12,6 +12,7 @@ import './yaml-modal.css';
 export function YamlUpload(props) {
     const { element } = props;
     const translate = useService('translate');
+    const commandStack = useService('commandStack');
 
     const onClick = () => {
         const yamlUploadDiv = document.querySelector("#yamlUploadDiv");
@@ -23,7 +24,7 @@ export function YamlUpload(props) {
         div.id = "yamlUploadDiv";
         document.getElementById('main-div').appendChild(div);
         const root = createRoot(document.getElementById("yamlUploadDiv"));
-        root.render(<YAMLModal element={element}/>);
+        root.render(<YAMLModal element={element} commandStack={commandStack}/>);
     };
 
     return HeaderButton({
@@ -39,16 +40,16 @@ export function YamlUpload(props) {
 
 function YAMLModal(props) {
     const [showModal, setShowModal] = useState(true);
-    const {element, wineryEndpoint} = props;
+    const {element, commandStack} = props;
 
-    function handleWizardClosed() {
+    function handleModalClosed() {
         setShowModal(false);
     }
 
     return (
         <div>
             {showModal && (
-                <YamlModal onClose={handleWizardClosed}  element={element} />
+                <YamlModal onClose={handleModalClosed} element={element} commandStack={commandStack}/>
             )}
         </div>
     );

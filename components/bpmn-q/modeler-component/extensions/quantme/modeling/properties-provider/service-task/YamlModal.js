@@ -30,7 +30,7 @@ const Footer = Modal.Footer;
 export default function YamlModal(props) {
     const [uploadFile, setUploadFile] = useState(null);
 
-    const { onClose, element, wineryEndpoint } = props;
+    const { onClose, element, commandStack } = props;
 
     const onSubmit = async () => {
         // Process the uploaded file or text input here
@@ -39,6 +39,13 @@ export default function YamlModal(props) {
         reader.onload = function () {
             var fileContent = reader.result;
             element.businessObject.yaml = fileContent;
+            commandStack.execute('element.updateModdleProperties', {
+                element,
+                moddleElement: element.businessObject,
+                properties: {
+                    'yaml': fileContent 
+                }
+            });
         };
         reader.readAsText(uploadFile);
 
