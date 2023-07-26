@@ -232,32 +232,24 @@ export function openInNewTab(workflowXml, fileName) {
     };
 }
 
-export function resetAutosaveTimeout(autosaveTimeout, hasChanges, autoSaveFileOption = editorConfig.getAutoSaveFileOption()) {
-    clearTimeout(autosaveTimeout);
-
+export function setAutoSaveInterval(autoSaveFileOption = editorConfig.getAutoSaveFileOption()) {
     if (autoSaveFileOption === autoSaveFile.INTERVAL) {
-        setTimeout(() => autosave(hasChanges), editorConfig.getAutoSaveIntervalSize());
+        getModeler().autosaveIntervalId = setInterval(() => { saveFile(); }, editorConfig.getAutoSaveIntervalSize());
     } else {
-        const timestamp = getTimestamp();
-        saveModelerAsLocalFile(getModeler(), `autosave_${timestamp}_${editorConfig.getFileName()}`, saveFileFormats.BPMN, false);
+       saveFile();
     }
 }
 
-function autosave(hasChanges) {
-    if (hasChanges) {
-        // extract the xml and save it to a file
-        getModeler().saveXML({ format: true }, function (err, xml) {
-            if (!err) {
-                // Save the XML
-                console.log('Autosaved:', xml);
-                const timestamp = getTimestamp();
-                saveXmlAsLocalFile(xml, `autosave_${timestamp}_${editorConfig.getFileName()}`);
-            }
-        });
-    }
-
-    // Reset the timer after the autosave is completed
-    resetAutosaveTimeout();
+export function saveFile() {
+    // extract the xml and save it to a file
+    getModeler().saveXML({ format: true }, function (err, xml) {
+        if (!err) {
+            // Save the XML
+            console.log('Autosaved:', xml);
+            const timestamp = getTimestamp();
+            saveXmlAsLocalFile(xml, `autosave_${timestamp}_${editorConfig.getFileName()}`);
+        }
+    });
 }
 
 function getTimestamp() {

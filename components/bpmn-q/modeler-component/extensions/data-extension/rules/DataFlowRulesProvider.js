@@ -5,9 +5,11 @@ import {
 } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import * as consts from '../Constants';
 import { isConnectedWith } from '../../../editor/util/ModellingUtilities';
-import { resetAutosaveTimeout } from '../../../editor/util/IoUtilities';
+import { saveFile, setAutoSaveInterval } from '../../../editor/util/IoUtilities';
 import { getModeler } from '../../../editor/ModelerHandler';
 import ace from 'ace-builds';
+import * as editorConfig from "../../../editor/config/EditorConfigManager";
+import { autoSaveFile } from '../../../editor/EditorConstants';
 
 /**
  * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
@@ -20,7 +22,6 @@ export default class CustomRulesProvider extends BpmnRules {
         const canConnectDataExtension = this.canConnectDataExtension;
         const canConnect = this.canConnect.bind(this);
         const canCreate = this.canCreate.bind(this);
-        let autosaveTimeout = 0;
 
         // persist into local storage whenever copy took place
         eventBus.on('copyPaste.elementsCopied', event => {
@@ -69,10 +70,20 @@ export default class CustomRulesProvider extends BpmnRules {
             );
         });
 
-        eventBus.on("commandStack.changed", function() {
-            
-            // Reset the timeout on any change event
-            resetAutosaveTimeout(autosaveTimeout, true);
+        // save every change when the autosave option is on action
+        eventBus.on("commandStack.changed", function () {
+            if (editorConfig.getAutoSaveFileOption() === autoSaveFile.ON_ACTION) {
+                saveFile();
+            }
+        });
+
+        // remove interval when autosave option is on action
+        eventBus.on("autoSaveOptionChanged", function (context) {
+            if (context.autoSaveFileOption === autoSaveFile.ON_ACTION) {
+                clearInterval(getModeler().autosaveIntervalId);
+            } else {
+                setAutoSaveInterval();
+            }
         });
 
         // update xml viewer on diagram change

@@ -49,6 +49,7 @@ export default function EditorTab() {
         editorConfig.setCamundaEndpoint(camundaEndpoint);
         editorConfig.setTransformedWorkflowHandler(workflowHandler);
         editorConfig.setAutoSaveFileOption(autoSaveFileOption);
+        modeler.get('eventBus').fire('autoSaveOptionChanged', { autoSaveFileOption });
         editorConfig.setFileName(fileName);
         editorConfig.setFileFormat(fileFormat);
         editorConfig.setAutoSaveIntervalSize(autoSaveIntervalSize);
