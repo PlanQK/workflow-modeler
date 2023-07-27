@@ -13,18 +13,12 @@
 import React from 'react';
 
 // polyfill upcoming structural components
-import Modal from "../../../../../editor/ui/modal/Modal";
+import Modal from './modal/Modal';
 
 const Title = Modal.Title || (({children}) => <h2>{children}</h2>);
-const Body = Modal.Body || (({children}) => <div>{children}</div>);
 const Footer = Modal.Footer || (({children}) => <div>{children}</div>);
 
-export default function ServiceDeploymentTransformationModal({onClose, initValues}) {
-
-    // close if no deployment required
-    if (!initValues || initValues.length === 0) {
-        onClose();
-    }
+export default function OnDemandDeploymentModal({onClose}) {
 
     const onOnDemand = (value) => onClose({
         onDemand: value,

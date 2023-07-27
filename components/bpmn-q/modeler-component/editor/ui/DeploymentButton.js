@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import NotificationHandler from './notifications/NotificationHandler';
 import {deployWorkflowToCamunda} from '../util/IoUtilities';
 import {getCamundaEndpoint} from '../config/EditorConfigManager';
 import {getRootProcess} from '../util/ModellingUtilities';
+import {getServiceTasksToDeploy} from '../../extensions/opentosca/deployment/DeploymentUtils';
+import { getModeler } from '../ModelerHandler';
+import OnDemandDeploymentModal from './OnDemandDeploymentModal';
+
+const defaultState = {
+    windowOpenOnDemandDeployment: false,
+};
 
 /**
  * React button for starting the deployment of the workflow.
@@ -12,8 +19,29 @@ import {getRootProcess} from '../util/ModellingUtilities';
  * @constructor
  */
 export default function DeploymentButton(props) {
+    const [windowOpenOnDemandDeployment, setWindowOpenOnDemandDeployment] = useState(false);
 
     const {modeler} = props;
+
+
+    /**
+     * Handle the result of a close operation on the tramfpr,atopm
+     *
+     * @param result the result from the close operation
+     */
+    async function handleOnDemandDeployment(result) {
+        console.log(result);
+        if (result && result.hasOwnProperty('onDemand')) {
+            if (result.onDemand === true) {
+                //TODO: Cooles Deployment
+            }
+            // deploy in any case
+            deploy();
+        }
+        // handle cancellation (don't deploy)
+        setWindowOpenOnDemandDeployment(false);
+        
+    }
 
     /**
      * Deploy the current workflow to the Camunda engine
@@ -56,12 +84,26 @@ export default function DeploymentButton(props) {
         }
     }
 
+    async function onClick() {
+        let csarsToDeploy = getServiceTasksToDeploy(getRootProcess(getModeler().getDefinitions()));
+        if (csarsToDeploy.length > 0) {
+            setWindowOpenOnDemandDeployment(true);
+        } else {
+            deploy();
+        }
+    }
+
     return (
-        <>
+        <Fragment>
             <button type="button" className="qwm-toolbar-btn" title="Deploy the current workflow to a workflow engine"
-                    onClick={() => deploy()}>
+                    onClick={() => onClick()}>
                 <span className="qwm-workflow-deployment-btn"><span className="qwm-indent">Deploy Workflow</span></span>
             </button>
-        </>
+            {windowOpenOnDemandDeployment && (
+                <OnDemandDeploymentModal
+                    onClose={(e) => handleOnDemandDeployment(e)}
+                />
+            )}
+        </Fragment>
     );
 }
