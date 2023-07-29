@@ -232,7 +232,7 @@ export default class DeploymentPlugin extends PureComponent {
                     // bind the service instance using the specified binding pattern
                     let bindingResponse = undefined;
                     if (csar.type === 'pull') {
-                        bindingResponse = bindUsingPull(csar.topicName, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
+                        bindingResponse = bindUsingPull(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     } else if (csar.type === 'push') {
                         bindingResponse = bindUsingPush(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'));
                     }

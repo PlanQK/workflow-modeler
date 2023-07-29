@@ -6,6 +6,7 @@ import {getRootProcess} from '../util/ModellingUtilities';
 import {getServiceTasksToDeploy} from '../../extensions/opentosca/deployment/DeploymentUtils';
 import { getModeler } from '../ModelerHandler';
 import OnDemandDeploymentModal from './OnDemandDeploymentModal';
+import {startOnDemandReplacementProcess} from "../../extensions/opentosca/replacement/OnDemandTransformator";
 
 const defaultState = {
     windowOpenOnDemandDeployment: false,
@@ -33,7 +34,9 @@ export default function DeploymentButton(props) {
         console.log(result);
         if (result && result.hasOwnProperty('onDemand')) {
             if (result.onDemand === true) {
-                //TODO: Cooles Deployment
+                const xml = (await modeler.saveXML({format: true})).xml;
+                console.log("Post Transfrom", await startOnDemandReplacementProcess(xml));
+
             }
             // deploy in any case
             deploy();

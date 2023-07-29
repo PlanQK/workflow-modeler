@@ -235,7 +235,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         const commands = [];
 
         if (shifts.right || shifts.left) {
-            const xPosition = (newBoundingBox.left + newBoundingBox.right) / 2
+            const xPosition = (newBoundingBox.left + newBoundingBox.right) / 2;
             for (const otherElement of allElements) {
                 let otherXPosition = element.x + NODE_WIDTH / 2;
                 const otherElementBoundingBox = this.currentlyShownDeploymentsModels.get(otherElement.id)?.boundingBox;
@@ -248,7 +248,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                 } else if (shifts.left && otherXPosition <= xPosition && otherElement.id !== element.id) {
                     xShift = -shifts.left - NODE_SHIFT_MARGIN
                 } else {
-                    continue
+                    continue;
                 }
                 // Can not move elements without parent
                 if(!otherElement.parent) continue;
