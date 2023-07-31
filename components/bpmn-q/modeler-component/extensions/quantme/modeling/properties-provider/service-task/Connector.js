@@ -47,7 +47,7 @@ export function Connector({ element, translate, urls }) {
         entry.$parent = map;
 
         const headersInputParameter = moddle.create("camunda:InputParameter", {
-            definition: map
+            definition: map, name: 'headers'
         });
         const methodInputParameter = moddle.create("camunda:InputParameter", {
             name: 'method', value: 'POST'
@@ -56,12 +56,12 @@ export function Connector({ element, translate, urls }) {
             name: 'url', value: ''
         });
 
-        let endpointParameters = determineInputParameters(element.businessObject.yaml);
+        let endpointParameters = determineInputParameters(element.businessObject.yaml, value);
         let scriptValue = constructScript(endpointParameters);
         const script = moddle.create("camunda:Script", { scriptFormat: 'Groovy', value: scriptValue, resource: 'Inline' });
 
         const payloadInputParameter = moddle.create("camunda:InputParameter", {
-            definition: script
+            definition: script, name: 'payload'
         });
         let inputParameters = [];
         inputParameters.push(headersInputParameter);
@@ -99,34 +99,40 @@ export function Connector({ element, translate, urls }) {
     </>;
 }
 
-function determineInputParameters(yamlData) {
+function determineInputParameters(yamlData, schemePath) {
     // Parse the YAML data
     const data = yaml.load(yamlData);
 
     // Initialize an object to store the input parameters
     const inputParameters = {};
+    let scheme = "";
 
     // Extract the request bodies and their parameters
     for (const [path, methods] of Object.entries(data.paths)) {
+        console.log(path)
+        if(path === schemePath) {
         for (const [method, details] of Object.entries(methods)) {
             if (details.requestBody) {
                 const requestBody = details.requestBody;
                 const content = requestBody.content;
                 for (const [contentType, contentDetails] of Object.entries(content)) {
                     if (contentDetails.schema) {
-                        const schema = contentDetails.schema;
-                        const properties = schema.properties || {};
+                        scheme = contentDetails.schema;
+                        const properties = scheme.properties || {};
                         inputParameters[path] = properties;
                     }
                 }
             }
         }
-    }
-
+    }}
+    console.log(scheme)
+    console.log(scheme.$ref)
     const document = yaml.load(yamlData);
+    scheme = String(scheme.$ref).replace('#/', '').replaceAll('/', '.');
+    console.log(scheme)
 
     // Access the dynamically determined schema
-    const schemaPath = 'components.schemas.GroverAlgorithmRequest';
+    const schemaPath = scheme;
     const schema = getObjectByPath(document, schemaPath);
 
     // Function to access an object property by path
