@@ -109,7 +109,6 @@ function determineInputParameters(yamlData, schemePath) {
 
     // Extract the request bodies and their parameters
     for (const [path, methods] of Object.entries(data.paths)) {
-        console.log(path)
         if(path === schemePath) {
         for (const [method, details] of Object.entries(methods)) {
             if (details.requestBody) {
@@ -125,11 +124,9 @@ function determineInputParameters(yamlData, schemePath) {
             }
         }
     }}
-    console.log(scheme)
-    console.log(scheme.$ref)
+
     const document = yaml.load(yamlData);
     scheme = String(scheme.$ref).replace('#/', '').replaceAll('/', '.');
-    console.log(scheme)
 
     // Access the dynamically determined schema
     const schemaPath = scheme;
