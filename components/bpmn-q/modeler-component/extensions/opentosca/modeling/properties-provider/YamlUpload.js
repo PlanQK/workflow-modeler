@@ -3,7 +3,6 @@ import { useService } from 'bpmn-js-properties-panel';
 import React from 'react';
 import YamlModal from './YamlModal';
 import { createRoot } from 'react-dom/client';
-import { useState } from 'react';
 import './yaml-modal.css';
 
 /**
@@ -15,16 +14,8 @@ export function YamlUpload(props) {
     const commandStack = useService('commandStack');
 
     const onClick = () => {
-        const yamlUploadDiv = document.querySelector("#yamlUploadDiv");
-
-        if (yamlUploadDiv) {
-            yamlUploadDiv.remove();
-        }
-        const div = document.createElement("div");
-        div.id = "yamlUploadDiv";
-        document.getElementById('main-div').appendChild(div);
-        const root = createRoot(document.getElementById("yamlUploadDiv"));
-        root.render(<YAMLModal element={element} commandStack={commandStack}/>);
+        const root = createRoot(document.getElementById("modal-container"));
+        root.render(<YamlModal onClose={() => root.unmount()} element={element} commandStack={commandStack}/>);
     };
 
     return HeaderButton({
@@ -36,21 +27,4 @@ export function YamlUpload(props) {
         children: 'Upload YAML',
         onClick,
     });
-}
-
-function YAMLModal(props) {
-    const [showModal, setShowModal] = useState(true);
-    const {element, commandStack} = props;
-
-    function handleModalClosed() {
-        setShowModal(false);
-    }
-
-    return (
-        <div>
-            {showModal && (
-                <YamlModal onClose={handleModalClosed} element={element} commandStack={commandStack}/>
-            )}
-        </div>
-    );
 }
