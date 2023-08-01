@@ -1,8 +1,8 @@
-import {createTempModelerFromXml} from '../ModelerHandler';
-import {getInputOutput} from './camunda-utils/InputOutputUtil';
-import {getExtension} from './camunda-utils/ExtensionElementsUtil';
-import {useService} from 'bpmn-js-properties-panel';
-import {is} from 'bpmn-js/lib/util/ModelUtil';
+import { createTempModelerFromXml } from '../ModelerHandler';
+import { getInputOutput } from './camunda-utils/InputOutputUtil';
+import { getExtension } from './camunda-utils/ExtensionElementsUtil';
+import { useService } from 'bpmn-js-properties-panel';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * Returns all start events of the workflow defined by the process businessObject
@@ -61,12 +61,12 @@ export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry
 
     // create the properties of the form field
     let formFieldData =
-        {
-            defaultValue: '',
-            id: name.replace(/\s+/g, '_'),
-            label: name,
-            type: 'string',
-        };
+    {
+        defaultValue: '',
+        id: name.replace(/\s+/g, '_'),
+        label: name,
+        type: 'string',
+    };
 
     // create the form field for the key value map
     addFormFieldDataForMap(elementID, formFieldData, keyValueMap, elementRegistry, moddle, modeling);
@@ -121,7 +121,7 @@ export function addFormField(elementID, formFieldData, elementRegistry, moddle, 
     // save from field
     pushFormField(form, formField);
     extensionElements.values = [form];
-    modeling.updateProperties(element, {extensionElements: extensionElements});
+    modeling.updateProperties(element, { extensionElements: extensionElements });
 }
 
 /**
@@ -474,7 +474,7 @@ export function addCamundaOutputMapParameter(businessObject, name, keyValueMap, 
 export function createCamundaMap(keyValueMap, bpmnFactory) {
 
     // create camunda entry elements for the key value entries
-    const mapEntries = keyValueMap.map(function ({name, value}) {
+    const mapEntries = keyValueMap.map(function ({ name, value }) {
         return bpmnFactory.create('camunda:Entry', {
             key: name,
             value: value,
@@ -504,7 +504,7 @@ export function createCamundaMap(keyValueMap, bpmnFactory) {
 export function createCamundaProperties(keyValueMap, moddle) {
 
     // create camunda property elements for each map entry
-    const mapEntries = keyValueMap.map(function ({name, value}) {
+    const mapEntries = keyValueMap.map(function ({ name, value }) {
         return moddle.create('camunda:Property', {
             id: name,
             value: value,
@@ -542,13 +542,16 @@ export function isFlowLikeElement(type) {
  */
 export function getFlowElementsRecursively(startElement) {
     let flowElements = [];
-    for (let i = 0; i < startElement.flowElements.length; i++) {
-        let flowElement = startElement.flowElements[i];
 
-        if (flowElement.$type === 'bpmn:SubProcess') {
-            flowElements = flowElements.concat(getFlowElementsRecursively(flowElement));
-        } else {
-            flowElements.push(flowElement);
+    if (startElement.flowElements !== undefined) {
+        for (let i = 0; i < startElement.flowElements.length; i++) {
+            let flowElement = startElement.flowElements[i];
+
+            if (flowElement.$type === 'bpmn:SubProcess') {
+                flowElements = flowElements.concat(getFlowElementsRecursively(flowElement));
+            } else {
+                flowElements.push(flowElement);
+            }
         }
     }
     return flowElements;
@@ -598,8 +601,8 @@ export function addEntry(businessObject, element, entry, bpmnFactory) {
 
     // if there is no extensionElements list, create one
     if (!extensionElements) {
-        extensionElements = createElement('bpmn:ExtensionElements', {values: [entry]}, businessObject, bpmnFactory);
-        return {extensionElements: extensionElements};
+        extensionElements = createElement('bpmn:ExtensionElements', { values: [entry] }, businessObject, bpmnFactory);
+        return { extensionElements: extensionElements };
     }
 
     // add extension element to list if it exists
@@ -607,7 +610,7 @@ export function addEntry(businessObject, element, entry, bpmnFactory) {
     let values = extensionElements.get('values');
     values.push(entry);
     extensionElements.set('values', values);
-    return {extensionElements: extensionElements};
+    return { extensionElements: extensionElements };
 }
 
 /**
@@ -667,7 +670,7 @@ export function replaceConnection(connectionElement, replacementType, modeling) 
     const targetElement = connectionElement.target;
 
     modeling.removeConnection(connectionElement);
-    modeling.connect(sourceElement, targetElement, {type: replacementType, waypoints: connectionElement.waypoints});
+    modeling.connect(sourceElement, targetElement, { type: replacementType, waypoints: connectionElement.waypoints });
 }
 
 /**

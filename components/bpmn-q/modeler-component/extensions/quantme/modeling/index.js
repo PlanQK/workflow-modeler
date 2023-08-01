@@ -15,7 +15,7 @@ import QuantMEPathMap from './QuantMEPathMap';
 import QuantMEPropertiesProvider from './properties-provider/QuantMEPropertiesProvider';
 import BpmnKeyboardBinding from './BpmnKeyboardBindings';
 import BpmnEditorActions from './BpmnEditorActions';
-import BpmnKeyboard from './BpmnKeyboard'
+import BpmnKeyboard from './BpmnKeyboard';
 
 export default {
   __init__: ['quantMERenderer', 'quantMEReplaceMenu', 'bpmnFactory', 'quantMEPathMap', 'propertiesProvider', 'keyboardBindings', 'editorActions', 'keyboard'],
