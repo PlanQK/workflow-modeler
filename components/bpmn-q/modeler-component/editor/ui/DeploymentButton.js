@@ -33,13 +33,15 @@ export default function DeploymentButton(props) {
     async function handleOnDemandDeployment(result) {
         console.log(result);
         if (result && result.hasOwnProperty('onDemand')) {
+            // get XML of the current workflow
+            let xml = (await modeler.saveXML({format: true})).xml;
+
             if (result.onDemand === true) {
-                const xml = (await modeler.saveXML({format: true})).xml;
-                console.log("Post Transfrom", await startOnDemandReplacementProcess(xml));
+                xml = await startOnDemandReplacementProcess(xml);
 
             }
             // deploy in any case
-            deploy();
+            deploy(xml);
         }
         // handle cancellation (don't deploy)
         setWindowOpenOnDemandDeployment(false);
@@ -49,7 +51,7 @@ export default function DeploymentButton(props) {
     /**
      * Deploy the current workflow to the Camunda engine
      */
-    async function deploy() {
+    async function deploy(xml) {
 
         NotificationHandler.getInstance().displayNotification({
             title: 'Deployment started',
@@ -58,7 +60,6 @@ export default function DeploymentButton(props) {
 
         // get XML of the current workflow
         const rootElement = getRootProcess(modeler.getDefinitions());
-        const xml = (await modeler.saveXML({format: true})).xml;
 
         // check if there are views defined for the modeler and include them in the deployment
         let viewsDict = {};
