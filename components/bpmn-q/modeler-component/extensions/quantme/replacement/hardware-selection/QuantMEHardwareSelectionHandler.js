@@ -48,7 +48,6 @@ export async function replaceHardwareSelectionSubprocess(subprocess, parent, mod
 
     // retrieve business object of the new element
     let bo = elementRegistry.get(element.id).businessObject;
-    bo.di.isExpanded = true;
 
     // extract workflow fragment within the QuantumHardwareSelectionSubprocess
     let hardwareSelectionFragment = await getHardwareSelectionFragment(bo);
@@ -187,7 +186,7 @@ export async function replaceHardwareSelectionSubprocess(subprocess, parent, mod
     modeling.connect(joiningGateway, invokeTransformedFragment, {type: 'bpmn:SequenceFlow'});
 
     // pass all variables between the caller and callee workflow
-    addExtensionElements(invokeTransformedFragmentBo, invokeTransformedFragmentBo, bpmnFactory.create('camunda:In'), bpmnFactory, commandStack);
+    addExtensionElements(invokeTransformedFragment, invokeTransformedFragmentBo, bpmnFactory.create('camunda:In'), bpmnFactory, commandStack);
     let extensionElements = getExtensionElements(invokeTransformedFragmentBo, moddle);
     let invokeTransformedFragmentIn = extensionElements.values[0];
     let invokeTransformedFragmentOut = bpmnFactory.create('camunda:Out');
