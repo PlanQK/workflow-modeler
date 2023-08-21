@@ -91,11 +91,12 @@ export default class CustomRulesProvider extends BpmnRules {
             let editor = document.getElementById('editor');
             let aceEditor = ace.edit(editor);
             let modeler = getModeler();
-            modeler.oldXml = getModeler().xml;
-            if(modeler.xml.xml !== undefined) {
-                modeler.oldXml = getModeler().xml.xml;
-            }
             if (modeler) {
+                if (modeler.xml !== undefined) {
+                    modeler.oldXml = getModeler().xml;
+                    if (getModeler().xml.xml !== undefined)
+                        modeler.oldXml = getModeler().xml.xml;
+                }
                 modeler.saveXML({ format: true }).then(function (result) {
                     if (result.xml !== undefined) {
                         result = result.xml;

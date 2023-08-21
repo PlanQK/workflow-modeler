@@ -245,8 +245,6 @@ export function saveFile() {
     getModeler().saveXML({ format: true }, function (err, xml) {
         if (!err) {
             let oldXml = getModeler().oldXml;
-            console.log(oldXml);
-            console.log(xml)
             if (oldXml !== xml && oldXml !== undefined) {
                 // Save the XML
                 console.log('Autosaved:', xml);
