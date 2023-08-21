@@ -236,7 +236,7 @@ export function setAutoSaveInterval(autoSaveFileOption = editorConfig.getAutoSav
     if (autoSaveFileOption === autoSaveFile.INTERVAL) {
         getModeler().autosaveIntervalId = setInterval(() => { saveFile(); }, editorConfig.getAutoSaveIntervalSize());
     } else {
-       saveFile();
+        saveFile();
     }
 }
 
@@ -244,10 +244,16 @@ export function saveFile() {
     // extract the xml and save it to a file
     getModeler().saveXML({ format: true }, function (err, xml) {
         if (!err) {
-            // Save the XML
-            console.log('Autosaved:', xml);
-            const timestamp = getTimestamp();
-            saveXmlAsLocalFile(xml, `autosave_${timestamp}_${editorConfig.getFileName()}`);
+            let oldXml = getModeler().oldXml;
+            console.log(oldXml);
+            console.log(xml)
+            if (oldXml !== xml && oldXml !== undefined) {
+                // Save the XML
+                console.log('Autosaved:', xml);
+                getModeler().oldXml = xml;
+                const timestamp = getTimestamp();
+                saveXmlAsLocalFile(xml, `autosave_${timestamp}_${editorConfig.getFileName()}`);
+            }
         }
     });
 }
