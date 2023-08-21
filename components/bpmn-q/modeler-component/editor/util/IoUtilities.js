@@ -1,11 +1,11 @@
-import { file } from 'jszip';
-import { transformedWorkflowHandlers, workflowEventTypes, saveFileFormats } from '../EditorConstants';
-import { dispatchWorkflowEvent } from '../events/EditorEventHandler';
+import { autoSaveFile, saveFileFormats, transformedWorkflowHandlers, workflowEventTypes } from "../EditorConstants";
+import { getModeler } from "../ModelerHandler";
+import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
+import fetch from "node-fetch";
 
 const editorConfig = require('../config/EditorConfigManager');
 
 let FormData = require('form-data');
-import fetch from 'node-fetch';
 
 // workflow with a start event to use as template for new workflows
 const NEW_DIAGRAM_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -47,18 +47,19 @@ export async function saveXmlAsLocalFile(xml, fileName = editorConfig.getFileNam
  * @param fileName The name of the file.
  * @returns {Promise<void>}
  */
-export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName(), fileFormat = editorConfig.getFileFormat()) {
+export async function saveModelerAsLocalFile(modeler, fileName = editorConfig.getFileName(), fileFormat = editorConfig.getFileFormat(), openWindow = true) {
     const xml = await getXml(modeler);
-
     if (fileFormat === saveFileFormats.BPMN || fileFormat === saveFileFormats.ALL) {
-        await openFileDialog(xml, fileName, saveFileFormats.BPMN);
+        if (openWindow) {
+            await openFileDialog(xml, fileName, saveFileFormats.BPMN);
+        } else {
+            await saveXmlAsLocalFile(xml, fileName);
+        }
     }
 
     if (fileFormat === saveFileFormats.ALL || fileFormat === saveFileFormats.SVG || fileFormat === saveFileFormats.PNG) {
         await saveWorkflowAsSVG(modeler, fileName, fileFormat);
     }
-
-    return;
 }
 
 /**
@@ -231,6 +232,36 @@ export function openInNewTab(workflowXml, fileName) {
     };
 }
 
+export function setAutoSaveInterval(autoSaveFileOption = editorConfig.getAutoSaveFileOption()) {
+    if (autoSaveFileOption === autoSaveFile.INTERVAL) {
+        getModeler().autosaveIntervalId = setInterval(() => { saveFile(); }, editorConfig.getAutoSaveIntervalSize());
+    } else {
+        saveFile();
+    }
+}
+
+export function saveFile() {
+    // extract the xml and save it to a file
+    getModeler().saveXML({ format: true }, function (err, xml) {
+        if (!err) {
+            let oldXml = getModeler().oldXml;
+            if (oldXml !== xml && oldXml !== undefined) {
+                // Save the XML
+                console.log('Autosaved:', xml);
+                getModeler().oldXml = xml;
+                const timestamp = getTimestamp();
+                const filename = `${editorConfig.getFileName().replace('.bpmn','')}_autosave_${timestamp}`;
+                saveXmlAsLocalFile(xml, filename);
+            }
+        }
+    });
+}
+
+function getTimestamp() {
+    const date = new Date();
+    return date.toISOString().replace(/:/g, '-');
+}
+
 export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
     modeler.saveSVG({ format: true }, function (error, svg) {
         if (error) {
@@ -269,8 +300,8 @@ function downloadPng(pngDataUrl, fileName, fileFormat) {
 async function openFileDialog(content, fileName, fileFormat) {
     let suggestedName = fileName;
     if (suggestedName.includes('.bpmn')) {
-        suggestedName = fileName.split('.bpmn')[0]; 
-    } 
+        suggestedName = fileName.split('.bpmn')[0];
+    }
     let fileHandle = await window.showSaveFilePicker({
         startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
             {
@@ -289,8 +320,8 @@ async function openFileDialog(content, fileName, fileFormat) {
 async function openFileUrlDialog(content, fileName, fileFormat) {
     let suggestedName = fileName;
     if (suggestedName.includes('.bpmn')) {
-        suggestedName = fileName.split('.bpmn')[0]; 
-    } 
+        suggestedName = fileName.split('.bpmn')[0];
+    }
     let fileHandle = await window.showSaveFilePicker({
         startIn: 'downloads', suggestedName: suggestedName + fileFormat, types: [
             {
