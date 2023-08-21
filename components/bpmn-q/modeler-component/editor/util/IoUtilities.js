@@ -250,7 +250,8 @@ export function saveFile() {
                 console.log('Autosaved:', xml);
                 getModeler().oldXml = xml;
                 const timestamp = getTimestamp();
-                saveXmlAsLocalFile(xml, `autosave_${timestamp}_${editorConfig.getFileName()}`);
+                const filename = `${editorConfig.getFileName().replace('.bpmn','')}_autosave_${timestamp}`;
+                saveXmlAsLocalFile(xml, filename);
             }
         }
     });
