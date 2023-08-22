@@ -16,7 +16,7 @@ import * as Constants from '../Constants';
 import { replaceHardwareSelectionSubprocess } from './hardware-selection/QuantMEHardwareSelectionHandler';
 import { replaceCuttingSubprocess } from './circuit-cutting/QuantMECuttingHandler';
 import { insertShape } from '../../../editor/util/TransformationUtilities';
-import { createTempModelerFromXml } from '../../../editor/ModelerHandler';
+import { createModelerFromXml } from '../../../editor/ModelerHandler';
 import {
     getCamundaInputOutput,
     getDefinitionsFromXml,
@@ -35,13 +35,13 @@ const xmlParser = require('xml-js');
  * @param endpointConfig endpoints of the services required for the dynamic hardware selection
  */
 export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointConfig) {
-    let modeler = await createTempModelerFromXml(xml);
+    let modeler = await createModelerFromXml(xml);
     let modeling = modeler.get('modeling');
     let elementRegistry = modeler.get('elementRegistry');
 
     // get root element of the current diagram
-    const definitions = modeler.getDefinitions();
-    const rootElement = getRootProcess(definitions);
+    let definitions = modeler.getDefinitions();
+    let rootElement = getRootProcess(definitions);
     console.log(rootElement);
     if (typeof rootElement === 'undefined') {
         console.log('Unable to retrieve root process element from definitions!');
@@ -113,7 +113,7 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
     }
 
     // layout diagram after successful transformation
-    layout(modeling, elementRegistry, rootElement);
+    //layout(modeling, elementRegistry, rootElement);
     let updated_xml = await getXml(modeler);
 
     // Parse the XML string into a JavaScript object
@@ -191,9 +191,18 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
         // Serialize the modified JavaScript object back to XML string
         modifiedXmlString = xmlParser.js2xml(xmlDoc, { compact: true });
     }
+    modeler = await createModelerFromXml(modifiedXmlString);
+    modeling = modeler.get('modeling');
+    elementRegistry = modeler.get('elementRegistry');
+
+    // get root element of the current diagram
+    definitions = modeler.getDefinitions();
+    rootElement = getRootProcess(definitions);
+    layout(modeling, elementRegistry, rootElement);
+    let updated_xml2 = await getXml(modeler);
 
 
-    return { status: 'transformed', xml: modifiedXmlString };
+    return { status: 'transformed', xml: updated_xml2 };
 }
 
 /**

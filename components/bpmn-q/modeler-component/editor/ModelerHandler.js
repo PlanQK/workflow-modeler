@@ -118,6 +118,28 @@ export async function createTempModelerFromXml(xml) {
 }
 
 /**
+ * Creates a modeler with all additional modules and extension moddles from all active plugins which is not
+ * saved in as the current modeler instance and load the given xml into it.
+ *
+ * @param xml the xml representing the BPMN diagram to load
+ *
+ * @returns the created modeler
+ */
+export async function createModelerFromXml(xml) {
+    // create new modeler with the custom QuantME extensions
+    const bpmnModeler = createModeler();
+
+    // import the xml containing the definitions
+    try {
+        await bpmnModeler.importXML(xml);
+        return bpmnModeler;
+    } catch (err) {
+        console.error(err);
+    }
+    return undefined;
+}
+
+/**
  * Returns the current modeler instance rendered into the UI of the Quantum Workflow Modeler
  */
 export function getModeler() {
