@@ -151,7 +151,7 @@ export async function startQuantmeReplacementProcess(xml, currentQRMs, endpointC
             let bpmnPlane = JSON.parse(JSON.stringify(bpmnDiagrams[i]));
             subprocessBpmnElement.push(bpmnPlane['bpmndi:BPMNPlane']['_attributes']['bpmnElement']);
         }
-       
+
         let shapes = JSON.parse(JSON.stringify(bpmnDiagrams[0]['bpmndi:BPMNPlane']))['bpmndi:BPMNShape'];
         for (let i = 0; i < shapes.length; i++) {
             let shape = shapes[i];
@@ -342,6 +342,13 @@ function isChildExpanded(element, bpmndiShapes) {
  * @returns the modified subprocess elements 
  */
 function removeIsExpandedAttribute(subprocessElements, bpmnPrefix, quantmePrefix) {
+
+    // remove top-level isExpanded attribute from shape
+    if (subprocessElements['_attributes'] !== undefined) {
+        let parentAttributes = subprocessElements['_attributes'];
+        delete parentAttributes.isExpanded;
+    }
+
     if (Array.isArray(subprocessElements)) {
         for (let i = 0; i < subprocessElements.length; i++) {
             let subprocess = subprocessElements[i];
