@@ -63,7 +63,7 @@ module.exports = {
         // use the default values if environment variable does not exist
         new webpack.EnvironmentPlugin({
             AWS_RUNTIME_HANDLER_ENDPOINT: 'http://localhost:8890',
-            CAMUNDA_ENDPOINT: 'http://localhost:8080/engine-rest',
+            CAMUNDA_ENDPOINT: 'http://localhost:8090/engine-rest',
             DATA_CONFIG: 'http://localhost:8100/data-objects',
             GITHUB_TOKEN: '',
             NISQ_ANALYZER_ENDPOINT: 'http://localhost:8098/nisq-analyzer',
