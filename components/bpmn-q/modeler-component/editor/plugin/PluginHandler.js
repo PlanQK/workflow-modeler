@@ -1,10 +1,10 @@
-import PlanQKPlugin from '../../extensions/planqk/PlanQKPlugin';
-import QuantMEPlugin from '../../extensions/quantme/QuantMEPlugin';
-import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
-import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
-import { getAllConfigs } from './PluginConfigHandler';
-import GeneralTab from '../config/GeneralTab';
-import GitHubTab from '../../extensions/quantme/configTabs/GitHubTab';
+import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
+import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
+import DataFlowPlugin from "../../extensions/data-extension/DataFlowPlugin";
+import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
+import { getAllConfigs } from "./PluginConfigHandler";
+import GeneralTab from "../config/GeneralTab";
+import GitHubTab from "../../extensions/quantme/configTabs/GitHubTab";
 
 /**
  * Handler for plugins of the modeler. Controls active plugins and the properties they define. Central access point to
@@ -16,20 +16,20 @@ import GitHubTab from '../../extensions/quantme/configTabs/GitHubTab';
 const PLUGINS = [
   {
     plugin: QuantMEPlugin,
-    dependencies: ['DataFlowPlugin']
+    dependencies: ["DataFlowPlugin"],
   },
   {
     plugin: DataFlowPlugin,
-    dependencies: []
+    dependencies: [],
   },
   {
     plugin: QHAnaPlugin,
-    dependencies: []
+    dependencies: [],
   },
   {
     plugin: PlanQKPlugin,
-    dependencies: []
-  }
+    dependencies: [],
+  },
 ];
 
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
@@ -44,8 +44,13 @@ export function getActivePlugins() {
     const loadPlugin = (plugin) => {
       if (!activePlugins.includes(plugin.plugin)) {
         for (const dependency of plugin.dependencies) {
-          const dependencyPlugin = PLUGINS.find((p) => p.plugin.name === dependency);
-          if (dependencyPlugin && !activePlugins.includes(dependencyPlugin.plugin)) {
+          const dependencyPlugin = PLUGINS.find(
+            (p) => p.plugin.name === dependency
+          );
+          if (
+            dependencyPlugin &&
+            !activePlugins.includes(dependencyPlugin.plugin)
+          ) {
             activePlugins.push(dependencyPlugin.plugin);
             loadPlugin(dependencyPlugin);
           }
@@ -56,7 +61,9 @@ export function getActivePlugins() {
 
     for (const pluginConfig of getAllConfigs()) {
       const plugin = PLUGINS.find(
-        (p) => p.plugin.name === pluginConfig.name && checkEnabledStatus(p.plugin.name)
+        (p) =>
+          p.plugin.name === pluginConfig.name &&
+          checkEnabledStatus(p.plugin.name)
       );
       if (plugin) {
         loadPlugin(plugin);
@@ -67,17 +74,15 @@ export function getActivePlugins() {
   }
 }
 
-
-
 export function checkEnabledStatus(pluginName) {
   switch (pluginName) {
-    case 'dataflow':
+    case "dataflow":
       return process.env.ENABLE_DATA_FLOW_PLUGIN;
-    case 'planqk':
+    case "planqk":
       return process.env.ENABLE_PLANQK_PLUGIN;
-    case 'qhana':
+    case "qhana":
       return process.env.ENABLE_QHANA_PLUGIN;
-    case 'quantme':
+    case "quantme":
       return process.env.ENABLE_QUANTME_PLUGIN;
   }
 }
@@ -88,7 +93,6 @@ export function checkEnabledStatus(pluginName) {
  * @returns {*[]} Array of additional modules defined by the active plugins.
  */
 export function getAdditionalModules() {
-
   const modules = [];
 
   // load all additional modules of the active plugins
@@ -98,7 +102,7 @@ export function getAdditionalModules() {
     }
   }
 
-  console.log('\n Get Additional Modules');
+  console.log("\n Get Additional Modules");
   console.log(modules);
   return modules;
 }
@@ -109,7 +113,6 @@ export function getAdditionalModules() {
  * @returns {*[]} Array of css style modules defined by the active plugins.
  */
 export function getStyles() {
-
   let styles = [];
 
   // load css styles of the active plugins
@@ -119,7 +122,7 @@ export function getStyles() {
     }
   }
 
-  console.log('\n Get Plugin Styling');
+  console.log("\n Get Plugin Styling");
   console.log(styles);
   return styles;
 }
@@ -140,7 +143,7 @@ export function getModdleExtension() {
     }
   }
 
-  console.log('\n Get Moddle Extensions: ');
+  console.log("\n Get Moddle Extensions: ");
   console.log(extensions);
   return extensions;
 }
@@ -160,7 +163,7 @@ export function getTransformationButtons() {
     }
   }
 
-  console.log('\n Got ' + transformationButtons.length + ' Transformations');
+  console.log("\n Got " + transformationButtons.length + " Transformations");
   return transformationButtons;
 }
 
@@ -178,7 +181,7 @@ export function getPluginButtons() {
     }
   }
 
-  console.log('\n Got ' + pluginButtons.length + ' Plugin Buttons');
+  console.log("\n Got " + pluginButtons.length + " Plugin Buttons");
   console.log(pluginButtons);
 
   return pluginButtons;
@@ -191,17 +194,19 @@ export function getPluginButtons() {
  * @returns {*[]} Array of config tabs defined by the active plugins.
  */
 export function getConfigTabs() {
-
   // add default editor tab to configure editor configs
-  let configTabs = [{
-    tabId: 'EditorTab',
-    tabTitle: 'General',
-    configTab: GeneralTab,
-  }, {
-    tabId: 'GitHubTab',
-    tabTitle: 'GitHub',
-    configTab: GitHubTab,
-  }];
+  let configTabs = [
+    {
+      tabId: "EditorTab",
+      tabTitle: "General",
+      configTab: GeneralTab,
+    },
+    {
+      tabId: "GitHubTab",
+      tabTitle: "GitHub",
+      configTab: GitHubTab,
+    },
+  ];
 
   // load the config tabs of the active plugins into one array
   for (let plugin of getActivePlugins()) {
@@ -210,7 +215,7 @@ export function getConfigTabs() {
     }
   }
 
-  console.log('\n Got ' + configTabs.length + ' Config Tabs');
+  console.log("\n Got " + configTabs.length + " Config Tabs");
   console.log(configTabs);
 
   return configTabs;

@@ -1,5 +1,9 @@
-import { getPluginConfig } from '../plugin/PluginConfigHandler';
-import { saveFileFormats, transformedWorkflowHandlers, autoSaveFile } from '../EditorConstants';
+import { getPluginConfig } from "../plugin/PluginConfigHandler";
+import {
+  saveFileFormats,
+  transformedWorkflowHandlers,
+  autoSaveFile,
+} from "../EditorConstants";
 
 // default configurations of the editor
 const defaultConfig = {
@@ -8,7 +12,7 @@ const defaultConfig = {
   transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
   autoSaveFileOption: autoSaveFile.INTERVAL,
   fileFormat: saveFileFormats.BPMN,
-  autoSaveIntervalSize: process.env.AUTOSAVE_INTERVAL
+  autoSaveIntervalSize: process.env.AUTOSAVE_INTERVAL,
 };
 
 let config = {};
@@ -20,7 +24,9 @@ let config = {};
  */
 export function getCamundaEndpoint() {
   if (config.camundaEndpoint === undefined) {
-    setCamundaEndpoint(getPluginConfig('editor').camundaEndpoint || defaultConfig.camundaEndpoint);
+    setCamundaEndpoint(
+      getPluginConfig("editor").camundaEndpoint || defaultConfig.camundaEndpoint
+    );
   }
   return config.camundaEndpoint;
 }
@@ -32,9 +38,8 @@ export function getCamundaEndpoint() {
  */
 export function setCamundaEndpoint(camundaEndpoint) {
   if (camundaEndpoint !== null && camundaEndpoint !== undefined) {
-
     // remove trailing slashes
-    config.camundaEndpoint = camundaEndpoint.replace(/\/$/, '');
+    config.camundaEndpoint = camundaEndpoint.replace(/\/$/, "");
   }
 }
 
@@ -45,7 +50,7 @@ export function setCamundaEndpoint(camundaEndpoint) {
  */
 export function getFileName() {
   if (config.fileName === undefined) {
-    setFileName(getPluginConfig('editor').fileName || defaultConfig.fileName);
+    setFileName(getPluginConfig("editor").fileName || defaultConfig.fileName);
   }
   return config.fileName;
 }
@@ -57,7 +62,6 @@ export function getFileName() {
  */
 export function setFileName(fileName) {
   if (fileName !== null && fileName !== undefined) {
-
     // remove trailing slashes
     config.fileName = fileName;
   }
@@ -70,8 +74,13 @@ export function setFileName(fileName) {
  */
 export function getTransformedWorkflowHandler() {
   if (config.transformedWorkflowHandler === undefined) {
-    const workflowHandler = transformedWorkflowHandlers[getPluginConfig('editor').transformedWorkflowHandler];
-    setTransformedWorkflowHandler(workflowHandler || defaultConfig.transformedWorkflowHandler);
+    const workflowHandler =
+      transformedWorkflowHandlers[
+        getPluginConfig("editor").transformedWorkflowHandler
+      ];
+    setTransformedWorkflowHandler(
+      workflowHandler || defaultConfig.transformedWorkflowHandler
+    );
   }
   return config.transformedWorkflowHandler;
 }
@@ -82,10 +91,14 @@ export function getTransformedWorkflowHandler() {
  * @param transformedWorkflowHandler the id of the transformed workflow handler
  */
 export function setTransformedWorkflowHandler(transformedWorkflowHandler) {
-  if (transformedWorkflowHandler !== null && transformedWorkflowHandler !== undefined
+  if (
+    transformedWorkflowHandler !== null &&
+    transformedWorkflowHandler !== undefined &&
     // check that the new value is a valid handler id
-    && Object.values(transformedWorkflowHandlers).includes(transformedWorkflowHandler)) {
-
+    Object.values(transformedWorkflowHandlers).includes(
+      transformedWorkflowHandler
+    )
+  ) {
     // remove trailing slashes
     config.transformedWorkflowHandler = transformedWorkflowHandler;
   }
@@ -98,8 +111,11 @@ export function setTransformedWorkflowHandler(transformedWorkflowHandler) {
  */
 export function getAutoSaveFileOption() {
   if (config.autoSaveFileOption === undefined) {
-    const autoSaveFileOption = autoSaveFile[getPluginConfig('editor').autoSaveFileOption];
-    setAutoSaveFileOption(autoSaveFileOption || defaultConfig.autoSaveFileOption);
+    const autoSaveFileOption =
+      autoSaveFile[getPluginConfig("editor").autoSaveFileOption];
+    setAutoSaveFileOption(
+      autoSaveFileOption || defaultConfig.autoSaveFileOption
+    );
   }
   return config.autoSaveFileOption;
 }
@@ -110,10 +126,12 @@ export function getAutoSaveFileOption() {
  * @param autoSaveFileOption the id of the transformed workflow handler
  */
 export function setAutoSaveFileOption(autoSaveFileOption) {
-  if (autoSaveFileOption !== null && autoSaveFileOption !== undefined
+  if (
+    autoSaveFileOption !== null &&
+    autoSaveFileOption !== undefined &&
     // check that the new value is a valid handler id
-    && Object.values(autoSaveFile).includes(autoSaveFileOption)) {
-
+    Object.values(autoSaveFile).includes(autoSaveFileOption)
+  ) {
     config.autoSaveFileOption = autoSaveFileOption;
   }
 }
@@ -125,7 +143,7 @@ export function setAutoSaveFileOption(autoSaveFileOption) {
  */
 export function getFileFormat() {
   if (config.fileFormat === undefined) {
-    const fileFormat = saveFileFormats[getPluginConfig('editor').fileFormat];
+    const fileFormat = saveFileFormats[getPluginConfig("editor").fileFormat];
     setFileFormat(fileFormat || defaultConfig.fileFormat);
   }
   return config.fileFormat;
@@ -137,10 +155,12 @@ export function getFileFormat() {
  * @param fileFormat the file format
  */
 export function setFileFormat(fileFormat) {
-  if (fileFormat !== null && fileFormat !== undefined
+  if (
+    fileFormat !== null &&
+    fileFormat !== undefined &&
     // check that the new value is a valid handler id
-    && Object.values(saveFileFormats).includes(fileFormat)) {
-
+    Object.values(saveFileFormats).includes(fileFormat)
+  ) {
     config.fileFormat = fileFormat;
   }
 }
@@ -152,7 +172,10 @@ export function setFileFormat(fileFormat) {
  */
 export function getAutoSaveIntervalSize() {
   if (config.autoSaveIntervalSize === undefined) {
-    setAutoSaveIntervalSize(getPluginConfig('editor').autoSaveIntervalSize || defaultConfig.autoSaveIntervalSize);
+    setAutoSaveIntervalSize(
+      getPluginConfig("editor").autoSaveIntervalSize ||
+        defaultConfig.autoSaveIntervalSize
+    );
   }
   return config.autoSaveIntervalSize;
 }
