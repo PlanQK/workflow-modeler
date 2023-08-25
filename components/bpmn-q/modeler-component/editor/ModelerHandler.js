@@ -85,17 +85,6 @@ export function createTempModeler() {
 }
 
 /**
- * Create a Modeler with only Camunda native extensions and no additional modules
- *
- * @returns the created bpmn-js modeler
- */
-export function createLightweightModeler() {
-    return new BpmnModeler({
-        moddleExtensions: getExtensions(),
-    });
-}
-
-/**
  * Creates a modeler with all additional modules and extension moddles from all active plugins which is not
  * saved in as the current modeler instance and load the given xml into it.
  *
@@ -118,8 +107,8 @@ export async function createTempModelerFromXml(xml) {
 }
 
 /**
- * Creates a modeler with all additional modules and extension moddles from all active plugins which is not
- * saved in as the current modeler instance and load the given xml into it.
+ * Creates a modeler with all additional modules and extension moddles from all active plugins which is
+ * saved as the current modeler instance and load the given xml into it.
  *
  * @param xml the xml representing the BPMN diagram to load
  *
