@@ -9,14 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
-import { isFlowLikeElement } from "../../../../editor/util/ModellingUtilities";
+import { getDi, is } from 'bpmn-js/lib/util/ModelUtil';
+import { isFlowLikeElement } from '../../../../editor/util/ModellingUtilities';
 
 // space between multiple boundary events of a task/subprocess
-let BOUNDARY_EVENT_MARGIN = "10";
+let BOUNDARY_EVENT_MARGIN = '10';
 
 // space between an edge and a corresponding label
-let LABEL_MARGIN = "10";
+let LABEL_MARGIN = '10';
 
 /**
  * Layout the given process
@@ -39,7 +39,7 @@ export function layout(modeling, elementRegistry, process) {
  * @param process the root element to start the layouting process
  */
 function layoutProcess(modeling, elementRegistry, process) {
-  console.log("Layout with root element: ", process);
+  console.log('Layout with root element: ', process);
 
   // required nodes and edges for the layout method
   let nodes = [];
@@ -52,48 +52,27 @@ function layoutProcess(modeling, elementRegistry, process) {
       if (isFlowLikeElement(flowElements[i].$type)) {
         edges.push(getEdgeFromFlowElement(elementRegistry, flowElements[i]));
       } else {
-        // layout elements in subprocess
-        if (
-          [
-            "bpmn:SubProcess",
-            "quantme:QuantumHardwareSelectionSubprocess",
-            "quantme:CircuitCuttingSubprocess",
-          ].includes(flowElements[i].$type)
-        ) {
-          console.log(
-            "Flow element is subprocess. Layouting contained elements..."
-          );
-          const flowElement = elementRegistry.get(flowElements[i].id);
-          let oldBounds = getDi(flowElement).bounds;
-          modeling.resizeShape(elementRegistry.get(flowElements[i].id), {
-            x: oldBounds.x,
-            y: oldBounds.y,
-            height: 10,
-            width: 10,
-          });
 
-          layoutProcess(
-            modeling,
-            elementRegistry,
-            elementRegistry.get(flowElements[i].id).businessObject
-          );
+        // layout elements in subprocess
+        if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(flowElements[i].$type)) {
+          console.log('Flow element is subprocess. Layouting contained elements...');
+          layoutProcess(modeling, elementRegistry, elementRegistry.get(flowElements[i].id).businessObject);
         }
 
         // boundary events are skipped here, as they are always attached to some task and only this task has to be layouted
-        if (flowElements[i].$type === "bpmn:BoundaryEvent") {
+        if (flowElements[i].$type === 'bpmn:BoundaryEvent') {
           continue;
         }
 
         let flowElement = elementRegistry.get(flowElements[i].id);
         if (flowElement) {
+
           // if (is(flowElement, 'bpmn:DataObjectReference')) {
           //     continue;
           // }
           nodes.push(flowElement);
         } else {
-          console.log(
-            `Flow element with id ${flowElements[i].id} is undefined.`
-          );
+          console.log(`Flow element with id ${flowElements[i].id} is undefined.`);
         }
       }
     }
@@ -105,24 +84,20 @@ function layoutProcess(modeling, elementRegistry, process) {
     for (let i = 0; i < artifacts.length; i++) {
       let artifact = artifacts[i];
 
-      console.log("Adding artifact as node for layouting: ", artifact);
+      console.log('Adding artifact as node for layouting: ', artifact);
       nodes.push(elementRegistry.get(artifact.id));
 
-      if (artifact.$type === "bpmn:Association") {
-        edges.push({
-          id: artifact.id,
-          sourceId: artifact.sourceRef.id,
-          targetId: artifact.targetRef.id,
-        });
+      if (artifact.$type === 'bpmn:Association') {
+        edges.push({ id: artifact.id, sourceId: artifact.sourceRef.id, targetId: artifact.targetRef.id });
       }
     }
   }
 
   // layout the diagram using the dagre graph library
-  layoutWithDagre(modeling, elementRegistry, require("dagre"), nodes, edges, {
-    rankdir: "LR",
-    align: "UL",
-    ranker: "longest-path",
+  layoutWithDagre(modeling, elementRegistry, require('dagre'), nodes, edges, {
+    rankdir: 'LR',
+    align: 'UL',
+    ranker: 'longest-path'
   });
 }
 
@@ -137,40 +112,30 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
 
   // add the boundary events to the new location of the tasks to which they are attached
   for (let boundaryEvent of elementRegistry.getAll()) {
-    if (boundaryEvent.type === "bpmn:BoundaryEvent") {
+    if (boundaryEvent.type === 'bpmn:BoundaryEvent') {
+
       // retrieve the required elements from the registry
       let boundaryEventShape = elementRegistry.get(boundaryEvent.id);
-      let attachedToElementShape = elementRegistry.get(
-        boundaryEventShape.businessObject.attachedToRef.id
-      );
+      let attachedToElementShape = elementRegistry.get(boundaryEventShape.businessObject.attachedToRef.id);
       let boundaryEventBounds = getDi(boundaryEventShape).bounds;
       let attachedToBounds = getDi(attachedToElementShape).bounds;
 
       // get all boundary events that were already attached to this element to move the current one beneath the last one
       let attachedToElementBoundaries = [];
       if (layoutedBoundaries[attachedToElementShape.id]) {
-        attachedToElementBoundaries =
-          layoutedBoundaries[attachedToElementShape.id];
+        attachedToElementBoundaries = layoutedBoundaries[attachedToElementShape.id];
       }
 
       // place the boundary events at the bottom right corner of the parent element
-      let bottomOfAttached =
-        attachedToBounds.x - boundaryEventBounds.x + attachedToBounds.width;
-      let offset =
-        (attachedToElementBoundaries.length + 1) *
-        (parseInt(boundaryEventBounds.width) + parseInt(BOUNDARY_EVENT_MARGIN));
+      let bottomOfAttached = attachedToBounds.x - boundaryEventBounds.x + attachedToBounds.width;
+      let offset = (attachedToElementBoundaries.length + 1) * (parseInt(boundaryEventBounds.width) + parseInt(BOUNDARY_EVENT_MARGIN));
       let to_move_x = bottomOfAttached - offset;
-      let to_move_y =
-        attachedToBounds.y -
-        boundaryEventBounds.y +
-        attachedToBounds.height -
-        boundaryEventBounds.height / 2;
+      let to_move_y = attachedToBounds.y - boundaryEventBounds.y + attachedToBounds.height - boundaryEventBounds.height / 2;
       modeling.moveShape(boundaryEventShape, { x: to_move_x, y: to_move_y });
 
       // update list for the next boundary event
       attachedToElementBoundaries.push(boundaryEventShape.id);
-      layoutedBoundaries[attachedToElementShape.id] =
-        attachedToElementBoundaries;
+      layoutedBoundaries[attachedToElementShape.id] = attachedToElementBoundaries;
 
       // layout the waypoints of the connections of the boundary events
       for (let outgoingConnection of boundaryEvent.outgoing) {
@@ -198,24 +163,15 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
  */
 function layoutWaypoints(modeling, elementRegistry) {
   for (let element of elementRegistry.getAll()) {
-    if (element.type === "bpmn:SequenceFlow") {
-      let sourceShape = elementRegistry.get(
-        element.businessObject.sourceRef.id
-      );
-      let targetShape = elementRegistry.get(
-        element.businessObject.targetRef.id
-      );
+    if (element.type === 'bpmn:SequenceFlow') {
+      let sourceShape = elementRegistry.get(element.businessObject.sourceRef.id);
+      let targetShape = elementRegistry.get(element.businessObject.targetRef.id);
 
       // fix invalid start/end waypoints for gateways
       adaptGatewayWaypoints(modeling, element, sourceShape, targetShape);
 
       // fix diagonal edges
-      layoutWaypointsOfSequenceFlow(
-        modeling,
-        element,
-        sourceShape,
-        targetShape
-      );
+      layoutWaypointsOfSequenceFlow(modeling, element, sourceShape, targetShape);
 
       // remove duplicate waypoints added by the graph layouting algorithm
       removeDuplicateWaypoints(modeling, element);
@@ -233,6 +189,7 @@ function layoutWaypoints(modeling, elementRegistry) {
  * @param connection the connection to remove the duplicate waypoints from
  */
 function removeDuplicateWaypoints(modeling, connection) {
+
   // remove waypoint if it has the same x and y coordinate as the following
   let newWaypoints = [];
   let oldWaypoints = connection.waypoints;
@@ -241,10 +198,7 @@ function removeDuplicateWaypoints(modeling, connection) {
     let secondWaypoint = oldWaypoints[i + 1];
 
     // only add waypoint if it is different from the following
-    if (
-      firstWaypoint.x !== secondWaypoint.x ||
-      firstWaypoint.y !== secondWaypoint.y
-    ) {
+    if (firstWaypoint.x !== secondWaypoint.x || firstWaypoint.y !== secondWaypoint.y) {
       newWaypoints.push(firstWaypoint);
     }
   }
@@ -267,13 +221,11 @@ function removeDuplicateWaypoints(modeling, connection) {
  */
 function adaptLabels(modeling, connection) {
   if (connection.labels && connection.labels.length === 1) {
+
     // place the first label of the given connection
     let firstLabel = connection.labels[0];
     let middle = getMiddleOfLocation(connection, firstLabel);
-    modeling.moveElements([firstLabel], {
-      x: middle.x - firstLabel.x,
-      y: middle.y - firstLabel.y,
-    });
+    modeling.moveElements([firstLabel], { x: middle.x - firstLabel.x, y: middle.y - firstLabel.y });
   }
 
   // TODO: handle cases with multiple labels defined for the connection
@@ -286,6 +238,7 @@ function adaptLabels(modeling, connection) {
  * @param label the label to relocate
  */
 function getMiddleOfLocation(connection, label) {
+
   // get the two waypoints from the middle of the connection
   let waypoints = connection.waypoints;
   let middleWaypointIndex = Math.round(waypoints.length / 2);
@@ -293,25 +246,16 @@ function getMiddleOfLocation(connection, label) {
   let middlePoint2 = waypoints[middleWaypointIndex];
 
   if (middlePoint1.x === middlePoint2.x) {
-    return {
-      x: middlePoint1.x - LABEL_MARGIN - parseInt(label.width),
-      y: (middlePoint1.y + middlePoint2.y) / 2,
-    };
+    return { x: middlePoint1.x - LABEL_MARGIN - parseInt(label.width), y: (middlePoint1.y + middlePoint2.y) / 2 };
   }
 
   if (middlePoint1.y === middlePoint2.y) {
-    return {
-      x: (middlePoint1.x + middlePoint2.x) / 2,
-      y: middlePoint1.y - LABEL_MARGIN - parseInt(label.height),
-    };
+    return { x: (middlePoint1.x + middlePoint2.x) / 2, y: middlePoint1.y - LABEL_MARGIN - parseInt(label.height) };
   }
 
   return {
     x: (middlePoint1.x + middlePoint2.x) / 2,
-    y:
-      (middlePoint1.y + middlePoint2.y) / 2 -
-      LABEL_MARGIN -
-      parseInt(label.height),
+    y: (middlePoint1.y + middlePoint2.y) / 2 - LABEL_MARGIN - parseInt(label.height)
   };
 }
 
@@ -324,20 +268,15 @@ function getMiddleOfLocation(connection, label) {
  * @param targetShape the target shape of the connection
  */
 function adaptGatewayWaypoints(modeling, connection, sourceShape, targetShape) {
+
   // move first waypoint of gateways to their center if not already there
-  if (is(sourceShape.businessObject, "bpmn:Gateway")) {
-    let firstWaypoint = moveToMiddleOfShape(
-      connection.waypoints.shift(),
-      sourceShape
-    );
+  if (is(sourceShape.businessObject, 'bpmn:Gateway')) {
+    let firstWaypoint = moveToMiddleOfShape(connection.waypoints.shift(), sourceShape);
     connection.waypoints.unshift(firstWaypoint);
   }
 
-  if (is(targetShape.businessObject, "bpmn:Gateway")) {
-    let lastWaypoint = moveToMiddleOfShape(
-      connection.waypoints.pop(),
-      targetShape
-    );
+  if (is(targetShape.businessObject, 'bpmn:Gateway')) {
+    let lastWaypoint = moveToMiddleOfShape(connection.waypoints.pop(), targetShape);
     connection.waypoints.push(lastWaypoint);
   }
 }
@@ -367,8 +306,10 @@ function moveToMiddleOfShape(waypoint, shape) {
  * @param target the target element of the connection
  */
 function layoutWaypointsOfSequenceFlow(modeling, connection, source, target) {
+
   let waypoints = connection.waypoints;
   if (waypoints.length === 2) {
+
     // no layouting required for a direct connection
     return;
   }
@@ -376,10 +317,12 @@ function layoutWaypointsOfSequenceFlow(modeling, connection, source, target) {
   // make connection cornered
   if (waypoints.length === 3) {
     if (target.y < source.y) {
+
       // edge goes upwards
       waypoints[1].x = waypoints[2].x;
       waypoints[1].y = waypoints[0].y;
     } else {
+
       // edge goes downwards
       waypoints[1].x = waypoints[0].x;
       waypoints[1].y = waypoints[2].y;
@@ -398,61 +341,43 @@ function layoutWaypointsOfSequenceFlow(modeling, connection, source, target) {
  * @return the edge for the dagre graph
  */
 function getEdgeFromFlowElement(elementRegistry, flowElement) {
-  let sourceElement = elementRegistry.get(
-    flowElement.sourceRef.id
-  ).businessObject;
-  if (sourceElement.$type === "bpmn:BoundaryEvent") {
-    console.log(
-      "Source element is BoundaryEvent. Adding attached task as source for the edge..."
-    );
+  let sourceElement = elementRegistry.get(flowElement.sourceRef.id).businessObject;
+  if (sourceElement.$type === 'bpmn:BoundaryEvent') {
+    console.log('Source element is BoundaryEvent. Adding attached task as source for the edge...');
     sourceElement = sourceElement.attachedToRef;
   }
 
-  return {
-    id: flowElement.id,
-    sourceId: sourceElement.id,
-    targetId: flowElement.targetRef.id,
-  };
+  return { id: flowElement.id, sourceId: sourceElement.id, targetId: flowElement.targetRef.id };
 }
 
 /**
  * Generate a basic layout of the current diagram using the dagre graph library
  */
-function layoutWithDagre(
-  modeling,
-  elementRegistry,
-  dagre,
-  tasks,
-  flows,
-  options
-) {
+function layoutWithDagre(modeling, elementRegistry, dagre, tasks, flows, options) {
+
   // create layouting graph
   let g = new dagre.graphlib.Graph();
   g.setGraph(options);
 
   // add tasks as nodes to the graph
-  console.log("Adding %i tasks to the graph for layouting: ", tasks.length);
+  console.log('Adding %i tasks to the graph for layouting: ', tasks.length);
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
-    g.setNode(task.id, {
-      label: task.id,
-      width: task.width,
-      height: task.height,
-    });
+    g.setNode(task.id, { label: task.id, width: task.width, height: task.height });
   }
 
   // add flows as edges to the graph
-  console.log("Adding %i flows to the graph for layouting: ", flows.length);
+  console.log('Adding %i flows to the graph for layouting: ', flows.length);
   for (let i = 0; i < flows.length; i++) {
     let flow = flows[i];
-    g.setEdge(flow["sourceId"], flow["targetId"], { label: flow["id"] });
+    g.setEdge(flow['sourceId'], flow['targetId'], { label: flow['id'] });
   }
 
   // layout the graph
   dagre.layout(g);
 
   // move all tasks to their new position
-  g.nodes().forEach((v) => {
+  g.nodes().forEach(v => {
     let node = g.node(v);
     let element = elementRegistry.get(v);
 
@@ -464,22 +389,25 @@ function layoutWithDagre(
   });
 
   // replace waypoints of edges if defined
-  g.edges().forEach((e) => {
+  g.edges().forEach(e => {
     let edge = g.edge(e);
     let points = edge.points;
     let element = elementRegistry.get(edge.label);
-    let waypoints = element.waypoints;
+    if (element !== undefined) {
+      let waypoints = element.waypoints;
 
-    while (waypoints.length > 0) {
-      waypoints.pop();
+      while (waypoints.length > 0) {
+        waypoints.pop();
+      }
+
+      for (let pointsIndex = 0; pointsIndex < points.length; pointsIndex++) {
+        let point;
+        point = { x: points[pointsIndex].x, y: points[pointsIndex].y };
+        waypoints.push(point);
+      }
+
+      element.waypoints = waypoints;
     }
-
-    for (let pointsIndex = 0; pointsIndex < points.length; pointsIndex++) {
-      let point;
-      point = { x: points[pointsIndex].x, y: points[pointsIndex].y };
-      waypoints.push(point);
-    }
-
-    element.waypoints = waypoints;
   });
+
 }

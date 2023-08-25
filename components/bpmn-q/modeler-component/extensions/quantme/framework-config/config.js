@@ -15,10 +15,10 @@ const defaultConfig = {
   quantmeDataConfigurationsEndpoint: process.env.DATA_CONFIG,
   opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
   wineryEndpoint: process.env.WINERY_ENDPOINT,
+  camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
   nisqAnalyzerEndpoint: process.env.NISQ_ANALYZER_ENDPOINT,
   githubToken: process.env.GITHUB_TOKEN,
-  transformationFrameworkEndpoint:
-    process.env.TRANSFORMATION_FRAMEWORK_ENDPOINT,
+  transformationFrameworkEndpoint: process.env.TRANSFORMATION_FRAMEWORK_ENDPOINT,
   qiskitRuntimeHandlerEndpoint: process.env.QISKIT_RUNTIME_HANDLER_ENDPOINT,
   awsRuntimeHandlerEndpoint: process.env.AWS_RUNTIME_HANDLER_ENDPOINT,
   scriptSplitterEndpoint: process.env.SCRIPT_SPLITTER_ENDPOINT,
@@ -30,6 +30,6 @@ const defaultConfig = {
   uploadGithubRepositoryName: process.env.UPLOAD_GITHUB_REPO,
   uploadGithubRepositoryOwner: process.env.UPLOAD_GITHUB_USER,
   uploadFileName: process.env.UPLOAD_FILE_NAME,
-  uploadBranchName: process.env.UPLOAD_BRANCH_NAME,
+  uploadBranchName: process.env.UPLOAD_BRANCH_NAME
 };
 export default defaultConfig;

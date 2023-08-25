@@ -3,20 +3,17 @@ import BpmnPalletteModule from "bpmn-js/lib/features/palette";
 import {
   BpmnPropertiesPanelModule,
   BpmnPropertiesProviderModule,
-  CamundaPlatformPropertiesProviderModule,
+  CamundaPlatformPropertiesProviderModule
 } from "bpmn-js-properties-panel";
-import CamundaExtensionModule from "camunda-bpmn-moddle/resources/camunda.json";
+import CamundaExtensionModule from 'camunda-bpmn-moddle/resources/camunda.json';
 import CustomPopupMenuModule from "./popup/";
-import {
-  getAdditionalModules,
-  getModdleExtension,
-} from "./plugin/PluginHandler";
+import { getAdditionalModules, getModdleExtension } from "./plugin/PluginHandler";
 import ModelerRulesModule from "./rules/";
-import LintModule from "bpmn-js-bpmnlint";
-import bpmnlintConfig from "../../.bpmnlintrc";
+import LintModule from 'bpmn-js-bpmnlint';
+import bpmnlintConfig from '../../.bpmnlintrc';
 
-import Clipboard from "diagram-js/lib/features/clipboard/Clipboard";
-let camundaModdleDescriptor = require("camunda-bpmn-moddle/resources/camunda.json");
+import Clipboard from 'diagram-js/lib/features/clipboard/Clipboard';
+let camundaModdleDescriptor = require('camunda-bpmn-moddle/resources/camunda.json');
 
 /**
  * Handler which manages the creation of bpmn-js modeler instances. It controls the access to the modeler instance currently
@@ -34,17 +31,18 @@ let modeler = undefined;
  * @returns {Modeler} The created bpmn-js modeler instance
  */
 export function createModeler(containerId, propertiesParentId) {
+
   modeler = new BpmnModeler({
     container: containerId,
     propertiesPanel: {
-      parent: propertiesParentId,
+      parent: propertiesParentId
     },
     additionalModules: getModules(),
     keyboard: {
-      bindTo: document,
+      bindTo: document
     },
     linting: {
-      bpmnlint: bpmnlintConfig,
+      bpmnlint: bpmnlintConfig
     },
     moddleExtensions: getExtensions(),
   });
@@ -58,9 +56,11 @@ export function createModeler(containerId, propertiesParentId) {
  */
 export function createPlainModeler() {
   return new BpmnModeler({
-    additionalModules: [CamundaExtensionModule],
+    additionalModules: [
+      CamundaExtensionModule,
+    ],
     keyboard: {
-      bindTo: document,
+      bindTo: document
     },
     moddleExtensions: {
       camunda: camundaModdleDescriptor,
@@ -78,7 +78,7 @@ export function createTempModeler() {
   return new BpmnModeler({
     additionalModules: getModules(),
     keyboard: {
-      bindTo: document,
+      bindTo: document
     },
     moddleExtensions: getExtensions(),
   });
@@ -130,7 +130,7 @@ export function getModeler() {
 function getModules() {
   const pluginModules = getAdditionalModules();
   var clipboardModule = {
-    clipboard: ["value", new Clipboard()],
+    'clipboard': [ 'value', new Clipboard() ]
   };
   let additionalModules = [
     BpmnPalletteModule,
@@ -141,10 +141,10 @@ function getModules() {
     CustomPopupMenuModule,
     LintModule,
     clipboardModule,
-    ModelerRulesModule,
+    ModelerRulesModule
   ].concat(pluginModules);
 
-  console.log("\n Additional modules of the modeler: ");
+  console.log('\n Additional modules of the modeler: ');
   console.log(additionalModules);
 
   return additionalModules;
@@ -154,14 +154,11 @@ function getModules() {
  * Returns all moddle extensions for the bpmn-js modeler necessary to use all modelling extensions of the active plugins.
  */
 function getExtensions() {
-  let moddleExtension = Object.assign(
-    {
-      camunda: camundaModdleDescriptor,
-    },
-    getModdleExtension()
-  );
+  let moddleExtension = Object.assign({
+    camunda: camundaModdleDescriptor,
+  }, getModdleExtension());
 
-  console.log("\n Moddle extensions of the modeler: ");
+  console.log('\n Moddle extensions of the modeler: ');
   console.log(moddleExtension);
 
   return moddleExtension;

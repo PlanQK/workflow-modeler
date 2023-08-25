@@ -1,6 +1,6 @@
 {
   "name": "@planqk/quantum-workflow-modeler",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
   "main": "index.js",
@@ -55,7 +55,9 @@
     "timers": "^0.1.1",
     "tiny-svg": "^3.0.0",
     "webpack": "^5.75.0",
-    "whatwg-fetch": "^3.6.2"
+    "whatwg-fetch": "^3.6.2",
+    "xml-js": "^1.6.11",
+    "xpath": "^0.0.32"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
