@@ -2,6 +2,7 @@
  * Class to fetch and store Configurations from an external repository. The used repository can be configured in the constructor.
  */
 export default class ConfigurationsEndpoint {
+
   // array containing the fetched configurations
   _configurations = [];
 
@@ -17,19 +18,13 @@ export default class ConfigurationsEndpoint {
    */
   fetchConfigurations() {
     fetch(this._endpointUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        this._configurations = data;
-        console.log("Received " + data.length + " configurations: ");
-        console.log(data);
+      .then(response => response.headers.get('content-type') === 'text/plain; charset=utf-8' ? response.text() : response.json())
+      .then(data => {
+        this._configurations = typeof data === "string" ? JSON.parse(data) : data;
+        console.log(this._configurations);
       })
-      .catch((error) => {
-        console.error(
-          "Error fetching configurations from " +
-            this._endpointUrl +
-            ": \n" +
-            error
-        );
+      .catch(error => {
+        console.error('Error fetching configurations from ' + this._endpointUrl + ': \n' + error);
       });
   }
 
@@ -40,6 +35,7 @@ export default class ConfigurationsEndpoint {
    * @returns {*[]} All configurations of this._configurations which apply to the given type.
    */
   getConfigurations(type) {
+
     // return all configurations which apply to the given type
     return this._configurations.filter(function (configuration) {
       return configuration.appliesTo === type;
@@ -53,6 +49,6 @@ export default class ConfigurationsEndpoint {
    * @returns {*} The configuration with the given id.
    */
   getConfiguration(id) {
-    return this._configurations.find((config) => config.id === id);
+    return this._configurations.find(config => config.id === id);
   }
 }

@@ -1,7 +1,8 @@
-import { createTempModelerFromXml } from "../ModelerHandler";
-import { getInputOutput } from "./camunda-utils/InputOutputUtil";
-import { getExtension } from "./camunda-utils/ExtensionElementsUtil";
-import { is } from "bpmn-js/lib/util/ModelUtil";
+import { createTempModelerFromXml } from '../ModelerHandler';
+import { getInputOutput } from './camunda-utils/InputOutputUtil';
+import { getExtension } from './camunda-utils/ExtensionElementsUtil';
+import { useService } from 'bpmn-js-properties-panel';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * Returns all start events of the workflow defined by the process businessObject
@@ -10,9 +11,7 @@ import { is } from "bpmn-js/lib/util/ModelUtil";
  * @returns {*[]} All found start event elements of the workflow.
  */
 export function getStartEvents(processBo) {
-  return processBo.flowElements.filter(
-    (element) => element.$type === "bpmn:StartEvent"
-  );
+  return processBo.flowElements.filter((element) => element.$type === 'bpmn:StartEvent');
 }
 
 /**
@@ -23,15 +22,11 @@ export function getStartEvents(processBo) {
  * @param processVariable The process variable which should be created through the executionn listener
  */
 export function addExecutionListener(element, moddle, processVariable) {
+
   // create the execution listener for the process variable
   const listener = {
-    event: "start",
-    expression:
-      '${execution.setVariable("' +
-      processVariable.name +
-      '", ' +
-      processVariable.value +
-      ")}",
+    event: 'start',
+    expression: '${execution.setVariable("' + processVariable.name + '", ' + processVariable.value + ')}',
   };
 
   const elementBo = element.businessObject;
@@ -39,7 +34,7 @@ export function addExecutionListener(element, moddle, processVariable) {
 
   // create new extension element if needed
   if (!extensionElements) {
-    extensionElements = moddle.create("bpmn:ExtensionElements");
+    extensionElements = moddle.create('bpmn:ExtensionElements');
   }
 
   if (!extensionElements.values) {
@@ -47,9 +42,7 @@ export function addExecutionListener(element, moddle, processVariable) {
   }
 
   // add execution listener to the extension element of the element
-  extensionElements.values.push(
-    moddle.create("camunda:ExecutionListener", listener)
-  );
+  extensionElements.values.push(moddle.create('camunda:ExecutionListener', listener));
   elementBo.extensionElements = extensionElements;
 }
 
@@ -64,31 +57,19 @@ export function addExecutionListener(element, moddle, processVariable) {
  * @param moddle The moddle module of the bpmn-js modeler
  * @param modeling The modeling module of the bpmn-js modeler
  */
-export function addFormFieldForMap(
-  elementID,
-  name,
-  keyValueMap,
-  elementRegistry,
-  moddle,
-  modeling
-) {
+export function addFormFieldForMap(elementID, name, keyValueMap, elementRegistry, moddle, modeling) {
+
   // create the properties of the form field
-  let formFieldData = {
-    defaultValue: "",
-    id: name.replace(/\s+/g, "_"),
-    label: name,
-    type: "string",
-  };
+  let formFieldData =
+    {
+      defaultValue: '',
+      id: name.replace(/\s+/g, '_'),
+      label: name,
+      type: 'string',
+    };
 
   // create the form field for the key value map
-  addFormFieldDataForMap(
-    elementID,
-    formFieldData,
-    keyValueMap,
-    elementRegistry,
-    moddle,
-    modeling
-  );
+  addFormFieldDataForMap(elementID, formFieldData, keyValueMap, elementRegistry, moddle, modeling);
 }
 
 /**
@@ -102,14 +83,8 @@ export function addFormFieldForMap(
  * @param moddle The moddle module of the bpmn-js modeler
  * @param modeling The modeling module of the bpmn-js modeler
  */
-export function addFormFieldDataForMap(
-  elementID,
-  formFieldData,
-  keyValueMap,
-  elementRegistry,
-  moddle,
-  modeling
-) {
+export function addFormFieldDataForMap(elementID, formFieldData, keyValueMap, elementRegistry, moddle, modeling) {
+
   // create camunda properties for each entry of the key value map
   formFieldData.properties = createCamundaProperties(keyValueMap, moddle);
 
@@ -126,30 +101,22 @@ export function addFormFieldDataForMap(
  * @param moddle The moddle module of the bpmn-js modeler
  * @param modeling The modeling module of the bpmn-js modeler
  */
-export function addFormField(
-  elementID,
-  formFieldData,
-  elementRegistry,
-  moddle,
-  modeling
-) {
+export function addFormField(elementID, formFieldData, elementRegistry, moddle, modeling) {
+
   const element = elementRegistry.get(elementID);
-  const extensionElements = getExtensionElements(
-    element.businessObject,
-    moddle
-  );
+  const extensionElements = getExtensionElements(element.businessObject, moddle);
 
   // get form data extension
-  let form = getExtension(element.businessObject, "camunda:FormData");
+  let form = getExtension(element.businessObject, 'camunda:FormData');
 
   console.log(`Found form data ${form}.`);
 
   if (!form) {
-    form = moddle.create("camunda:FormData");
+    form = moddle.create('camunda:FormData');
   }
 
   // create form field
-  const formField = moddle.create("camunda:FormField", formFieldData);
+  const formField = moddle.create('camunda:FormField', formFieldData);
 
   // save from field
   pushFormField(form, formField);
@@ -165,11 +132,11 @@ export function addFormField(
  * @returns {bpmn:ExtensionElements} The extension elements of the businessObject
  */
 export function getExtensionElements(businessObject, moddle) {
-  let extensionElements = businessObject.get("extensionElements");
+  let extensionElements = businessObject.get('extensionElements');
 
   // create extension elements if not already defined
   if (!extensionElements) {
-    extensionElements = moddle.create("bpmn:ExtensionElements");
+    extensionElements = moddle.create('bpmn:ExtensionElements');
   }
 
   // init values if undefined
@@ -187,18 +154,17 @@ export function getExtensionElements(businessObject, moddle) {
  * @param formField The given Camunda form field.
  */
 export function pushFormField(form, formField) {
+
   // get all fields of the form with the id of the given form field
-  const existingFieldsWithID = form.get("fields").filter(function (elem) {
+  const existingFieldsWithID = form.get('fields').filter(function (elem) {
     return elem.id === formField.id;
   });
 
   // update existing form fields
   for (let i = 0; i < existingFieldsWithID.length; i++) {
-    form
-      .get("fields")
-      .splice(form.get("fields").indexOf(existingFieldsWithID[i]));
+    form.get('fields').splice(form.get('fields').indexOf(existingFieldsWithID[i]));
   }
-  form.get("fields").push(formField);
+  form.get('fields').push(formField);
 }
 
 /**
@@ -209,7 +175,7 @@ export function pushFormField(form, formField) {
  */
 export function getRootProcess(definitions) {
   for (let i = 0; i < definitions.rootElements.length; i++) {
-    if (definitions.rootElements[i].$type === "bpmn:Process") {
+    if (definitions.rootElements[i].$type === 'bpmn:Process') {
       return definitions.rootElements[i];
     }
   }
@@ -235,10 +201,7 @@ export async function getDefinitionsFromXml(xml) {
 export function getSingleFlowElement(process) {
   let flowElements = process.flowElements;
   if (flowElements.length !== 1) {
-    console.log(
-      "Process contains %i flow elements but must contain exactly one!",
-      flowElements.length
-    );
+    console.log('Process contains %i flow elements but must contain exactly one!', flowElements.length);
     return undefined;
   }
   return flowElements[0];
@@ -254,12 +217,8 @@ export function getSingleFlowElement(process) {
  * @param elementRegistry The element registry containing the elements of the current workflow
  * @returns {boolean} True, if element1 is connected via sequence flows with element2, false else.
  */
-export function findSequenceFlowConnection(
-  element1,
-  element2,
-  visited,
-  elementRegistry
-) {
+export function findSequenceFlowConnection(element1, element2, visited, elementRegistry) {
+
   // exit condition of the recursion, element2 is reached
   if (element1 === element2) {
     return true;
@@ -272,23 +231,19 @@ export function findSequenceFlowConnection(
   const connections = element1.outgoing;
 
   for (let i = 0; i < connections.length; i++) {
+
     const connection = connections[i];
 
     // only search in elements connected via sequence flow
-    if (connection.type === "bpmn:SequenceFlow") {
+    if (connection.type === 'bpmn:SequenceFlow') {
+
       const nextElement = connection.target;
 
       // recursive call with new element
       if (!visited.has(nextElement)) {
+
         // return true if recursive call finds element2
-        if (
-          findSequenceFlowConnection(
-            nextElement,
-            element2,
-            visited,
-            elementRegistry
-          )
-        ) {
+        if (findSequenceFlowConnection(nextElement, element2, visited, elementRegistry)) {
           return true;
         }
       }
@@ -304,32 +259,30 @@ export function findSequenceFlowConnection(
  * @param bpmnFactory the BPMN factory to create new BPMN elements
  */
 export function getCamundaInputOutput(bo, bpmnFactory) {
+
   // retrieve InputOutput element if already defined
   let inputOutput = getInputOutput(bo);
 
   // create new InputOutput element if non existent
   if (!inputOutput || inputOutput.length === 0) {
-    const extensionEntry = addEntry(
-      bo,
-      bo,
-      bpmnFactory.create("camunda:InputOutput"),
-      bpmnFactory
-    );
 
-    if (extensionEntry["extensionElements"]) {
-      bo.extensionElements = extensionEntry["extensionElements"];
+    const extensionEntry = addEntry(bo, bo, bpmnFactory.create('camunda:InputOutput'), bpmnFactory);
+
+    if (extensionEntry['extensionElements']) {
+      bo.extensionElements = extensionEntry['extensionElements'];
     } else {
-      bo.extensionElements = extensionEntry["context"]["currentObject"];
+      bo.extensionElements = extensionEntry['context']['currentObject'];
     }
-    inputOutput = getExtension(bo, "camunda:InputOutput");
+    inputOutput = getExtension(bo, 'camunda:InputOutput');
 
     if (!inputOutput) {
-      let inout = bpmnFactory.create("camunda:InputOutput");
+      let inout = bpmnFactory.create('camunda:InputOutput');
       inout.inputParameters = [];
       inout.outputParameters = [];
       bo.extensionElements.values.push(inout);
       return inout;
     } else {
+
       // initialize parameters as empty arrays to avoid access errors
       inputOutput.inputParameters = [];
       inputOutput.outputParameters = [];
@@ -427,25 +380,16 @@ export function getOutputParameter(task, name, bpmnFactory) {
  * @param value Value of the input parameter.
  * @param bpmnFactory The bpmnFactory of the bpmn-js modeler.
  */
-export function addCamundaInputParameter(
-  businessObject,
-  name,
-  value,
-  bpmnFactory
-) {
+export function addCamundaInputParameter(businessObject, name, value, bpmnFactory) {
+
   // get camunda io extension element
-  const inputOutputExtensions = getCamundaInputOutput(
-    businessObject,
-    bpmnFactory
-  );
+  const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
 
   // add new input parameter
-  inputOutputExtensions.inputParameters.push(
-    bpmnFactory.create("camunda:InputParameter", {
-      name: name,
-      value: value,
-    })
-  );
+  inputOutputExtensions.inputParameters.push(bpmnFactory.create('camunda:InputParameter', {
+    name: name,
+    value: value,
+  }));
 }
 
 /**
@@ -456,25 +400,16 @@ export function addCamundaInputParameter(
  * @param value Value of the output parameter.
  * @param bpmnFactory The bpmnFactory of the bpmn-js modeler.
  */
-export function addCamundaOutputParameter(
-  businessObject,
-  name,
-  value,
-  bpmnFactory
-) {
+export function addCamundaOutputParameter(businessObject, name, value, bpmnFactory) {
+
   // get camunda io extension element
-  const inputOutputExtensions = getCamundaInputOutput(
-    businessObject,
-    bpmnFactory
-  );
+  const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
 
   // add new output parameter
-  inputOutputExtensions.outputParameters.push(
-    bpmnFactory.create("camunda:OutputParameter", {
-      name: name,
-      value: value,
-    })
-  );
+  inputOutputExtensions.outputParameters.push(bpmnFactory.create('camunda:OutputParameter', {
+    name: name,
+    value: value,
+  }));
 }
 
 /**
@@ -485,23 +420,16 @@ export function addCamundaOutputParameter(
  * @param keyValueMap key value map of the input parameter.
  * @param bpmnFactory The bpmnFactory of the bpmn-js modeler.
  */
-export function addCamundaInputMapParameter(
-  businessObject,
-  name,
-  keyValueMap,
-  bpmnFactory
-) {
+export function addCamundaInputMapParameter(businessObject, name, keyValueMap, bpmnFactory) {
+
   // get camunda io extension element
-  const inputOutputExtensions = getCamundaInputOutput(
-    businessObject,
-    bpmnFactory
-  );
+  const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
 
   // create a camunda map element for the key value map
   const map = createCamundaMap(keyValueMap, bpmnFactory);
 
   //  add the created map as new input parameter
-  const input = bpmnFactory.create("camunda:InputParameter", {
+  const input = bpmnFactory.create('camunda:InputParameter', {
     name: name,
     definition: map,
   });
@@ -518,23 +446,16 @@ export function addCamundaInputMapParameter(
  * @param keyValueMap key value map of the output parameter.
  * @param bpmnFactory The bpmnFactory of the bpmn-js modeler.
  */
-export function addCamundaOutputMapParameter(
-  businessObject,
-  name,
-  keyValueMap,
-  bpmnFactory
-) {
+export function addCamundaOutputMapParameter(businessObject, name, keyValueMap, bpmnFactory) {
+
   // get camunda io extension element
-  const inputOutputExtensions = getCamundaInputOutput(
-    businessObject,
-    bpmnFactory
-  );
+  const inputOutputExtensions = getCamundaInputOutput(businessObject, bpmnFactory);
 
   // create a camunda map element for the key value map
   const map = createCamundaMap(keyValueMap, bpmnFactory);
 
   //  add the created map as new output parameter
-  const output = bpmnFactory.create("camunda:OutputParameter", {
+  const output = bpmnFactory.create('camunda:OutputParameter', {
     name: name,
     definition: map,
   });
@@ -551,16 +472,17 @@ export function addCamundaOutputMapParameter(
  * @returns {camunda:Map} The created camunda map element
  */
 export function createCamundaMap(keyValueMap, bpmnFactory) {
+
   // create camunda entry elements for the key value entries
   const mapEntries = keyValueMap.map(function ({ name, value }) {
-    return bpmnFactory.create("camunda:Entry", {
+    return bpmnFactory.create('camunda:Entry', {
       key: name,
       value: value,
     });
   });
 
   // create the camunda map for the entries
-  const map = bpmnFactory.create("camunda:Map", {
+  const map = bpmnFactory.create('camunda:Map', {
     entries: mapEntries,
   });
 
@@ -580,16 +502,17 @@ export function createCamundaMap(keyValueMap, bpmnFactory) {
  * @returns {camunda:Properties} The camunda properties element
  */
 export function createCamundaProperties(keyValueMap, moddle) {
+
   // create camunda property elements for each map entry
   const mapEntries = keyValueMap.map(function ({ name, value }) {
-    return moddle.create("camunda:Property", {
+    return moddle.create('camunda:Property', {
       id: name,
       value: value,
     });
   });
 
   // create camunda properties element containing the created property elements
-  const map = moddle.create("camunda:Properties", {
+  const map = moddle.create('camunda:Properties', {
     values: mapEntries,
   });
 
@@ -608,7 +531,7 @@ export function createCamundaProperties(keyValueMap, moddle) {
  * @return true if the given element is a flow like element, false otherwise
  */
 export function isFlowLikeElement(type) {
-  return type === "bpmn:SequenceFlow" || type === "bpmn:Association";
+  return type === 'bpmn:SequenceFlow' || type === 'bpmn:Association';
 }
 
 /**
@@ -619,15 +542,16 @@ export function isFlowLikeElement(type) {
  */
 export function getFlowElementsRecursively(startElement) {
   let flowElements = [];
-  for (let i = 0; i < startElement.flowElements.length; i++) {
-    let flowElement = startElement.flowElements[i];
 
-    if (flowElement.$type === "bpmn:SubProcess") {
-      flowElements = flowElements.concat(
-        getFlowElementsRecursively(flowElement)
-      );
-    } else {
-      flowElements.push(flowElement);
+  if (startElement.flowElements !== undefined) {
+    for (let i = 0; i < startElement.flowElements.length; i++) {
+      let flowElement = startElement.flowElements[i];
+
+      if (flowElement.$type === 'bpmn:SubProcess') {
+        flowElements = flowElements.concat(getFlowElementsRecursively(flowElement));
+      } else {
+        flowElements.push(flowElement);
+      }
     }
   }
   return flowElements;
@@ -640,15 +564,14 @@ export function getFlowElementsRecursively(startElement) {
  * @returns {string} The documentation property as a string
  */
 export function getDocumentation(businessObject) {
+
   // get documentation
   const documentationArray = businessObject.documentation || [];
 
   // convert documentation to string
-  return documentationArray
-    .map(function (documentation) {
-      return documentation.text;
-    })
-    .join("\n");
+  return documentationArray.map(function (documentation) {
+    return documentation.text;
+  }).join('\n');
 }
 
 /**
@@ -659,11 +582,9 @@ export function getDocumentation(businessObject) {
  * @param bpmnFactory The bpmnFactory of the bpmn-js modeler
  */
 export function setDocumentation(element, newDocumentation, bpmnFactory) {
-  element.businessObject.documentation = [
-    bpmnFactory.create("bpmn:Documentation", {
-      text: newDocumentation,
-    }),
-  ];
+  element.businessObject.documentation = [bpmnFactory.create('bpmn:Documentation', {
+    text: newDocumentation,
+  })];
 }
 
 /**
@@ -676,24 +597,19 @@ export function setDocumentation(element, newDocumentation, bpmnFactory) {
  * @returns {{extensionElements: elementType}} The updated extension elements
  */
 export function addEntry(businessObject, element, entry, bpmnFactory) {
-  let extensionElements = businessObject.get("extensionElements");
+  let extensionElements = businessObject.get('extensionElements');
 
   // if there is no extensionElements list, create one
   if (!extensionElements) {
-    extensionElements = createElement(
-      "bpmn:ExtensionElements",
-      { values: [entry] },
-      businessObject,
-      bpmnFactory
-    );
+    extensionElements = createElement('bpmn:ExtensionElements', { values: [entry] }, businessObject, bpmnFactory);
     return { extensionElements: extensionElements };
   }
 
   // add extension element to list if it exists
   entry.$parent = extensionElements;
-  let values = extensionElements.get("values");
+  let values = extensionElements.get('values');
   values.push(entry);
-  extensionElements.set("values", values);
+  extensionElements.set('values', values);
   return { extensionElements: extensionElements };
 }
 
@@ -725,19 +641,12 @@ export function createElement(elementType, properties, parent, factory) {
  * @param autoPlace The create module of the bpmn-js modeler
  * @returns {Shape} The new created diagram element
  */
-export function appendElement(
-  type,
-  element,
-  event,
-  bpmnFactory,
-  elementFactory,
-  create,
-  autoPlace
-) {
+export function appendElement(type, element, event, bpmnFactory, elementFactory, create, autoPlace) {
+
   const businessObject = bpmnFactory.create(type);
   const shape = elementFactory.createShape({
     type: type,
-    businessObject: businessObject,
+    businessObject: businessObject
   });
 
   if (autoPlace) {
@@ -756,19 +665,12 @@ export function appendElement(
  * @param replacementType The type of the new connection.
  * @param modeling The modeling module of the bpmn-js modeler.
  */
-export function replaceConnection(
-  connectionElement,
-  replacementType,
-  modeling
-) {
+export function replaceConnection(connectionElement, replacementType, modeling) {
   const sourceElement = connectionElement.source;
   const targetElement = connectionElement.target;
 
   modeling.removeConnection(connectionElement);
-  modeling.connect(sourceElement, targetElement, {
-    type: replacementType,
-    waypoints: connectionElement.waypoints,
-  });
+  modeling.connect(sourceElement, targetElement, { type: replacementType, waypoints: connectionElement.waypoints });
 }
 
 /**
@@ -779,17 +681,13 @@ export function replaceConnection(
  * @returns {boolean} True if the given element is connected with an element of the given type, false else.
  */
 export function isConnectedWith(element, connectedElementType) {
+
   const outgoingConnections = element.outgoing || [];
   const incomingConnections = element.incoming || [];
 
   // check if a source or target of a connection is of the given type
-  for (let connectedElement of outgoingConnections.concat(
-    incomingConnections
-  )) {
-    if (
-      is(connectedElement.source, connectedElementType) ||
-      is(connectedElement.target, connectedElementType)
-    ) {
+  for (let connectedElement of outgoingConnections.concat(incomingConnections)) {
+    if (is(connectedElement.source, connectedElementType) || is(connectedElement.target, connectedElementType)) {
       return true;
     }
   }
