@@ -1,6 +1,6 @@
 {
   "name": "@planqk/quantum-workflow-modeler",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "",
   "package name": "@PlanQK/workflow-modeler",
   "main": "index.js",
@@ -39,6 +39,7 @@
     "form-data": "~2.3.2",
     "ids": "^1.0.0",
     "jquery": "^3.6.1",
+    "js-yaml": "^4.1.0",
     "jszip": "^3.10.1",
     "lz-string": "^1.4.4",
     "min-dash": "^4.0.0",

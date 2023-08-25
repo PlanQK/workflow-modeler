@@ -12,7 +12,7 @@ import './modeler.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
-import { createNewDiagram, loadDiagram } from "./editor/util/IoUtilities";
+import { createNewDiagram, loadDiagram, setAutoSaveInterval } from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import { createModeler, getModeler } from "./editor/ModelerHandler";
 import { getPluginButtons, getTransformationButtons } from "./editor/plugin/PluginHandler";
@@ -335,6 +335,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         // restart modeler to apply plugin config when shadow dom is rendered
         requestAnimationFrame(() => {
             this.startModeler();
+            setAutoSaveInterval();
         });
     }
 }

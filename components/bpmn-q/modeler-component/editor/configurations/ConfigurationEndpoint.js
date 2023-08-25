@@ -17,13 +17,11 @@ export default class ConfigurationsEndpoint {
      * Fetch the configured endpoint and store the result in this._configurations
      */
     fetchConfigurations() {
-
         fetch(this._endpointUrl)
-            .then(response => response.json())
+            .then(response => response.headers.get('content-type') === 'text/plain; charset=utf-8' ? response.text() : response.json())
             .then(data => {
-                this._configurations = data;
-                console.log('Received ' + data.length + ' configurations: ');
-                console.log(data);
+                this._configurations = typeof data === "string" ? JSON.parse(data) : data;
+                console.log(this._configurations);
             })
             .catch(error => {
                 console.error('Error fetching configurations from ' + this._endpointUrl + ': \n' + error);

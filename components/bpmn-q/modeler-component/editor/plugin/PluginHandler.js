@@ -1,9 +1,10 @@
-import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
-import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
+import PlanQKPlugin from '../../extensions/planqk/PlanQKPlugin';
+import QuantMEPlugin from '../../extensions/quantme/QuantMEPlugin';
 import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
 import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
-import {getAllConfigs} from "./PluginConfigHandler";
-import EditorTab from "../config/EditorTab";
+import { getAllConfigs } from './PluginConfigHandler';
+import GeneralTab from '../config/GeneralTab';
+import GitHubTab from '../../extensions/quantme/configTabs/GitHubTab';
 
 /**
  * Handler for plugins of the modeler. Controls active plugins and the properties they define. Central access point to
@@ -11,50 +12,65 @@ import EditorTab from "../config/EditorTab";
  */
 
 // list of plugins integrated in the modeler, register new plugins here
+// dependencies can be specified by the name of the corresponding plugins
 const PLUGINS = [
-    DataFlowPlugin,
-    QHAnaPlugin,
-    PlanQKPlugin,
-    QuantMEPlugin,
+    {
+        plugin: QuantMEPlugin,
+        dependencies: ['DataFlowPlugin']
+    },
+    {
+        plugin: DataFlowPlugin,
+        dependencies: []
+    },
+    {
+        plugin: QHAnaPlugin,
+        dependencies: []
+    },
+    {
+        plugin: PlanQKPlugin,
+        dependencies: []
+    }
 ];
 
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
 let activePlugins = [];
 
-/**
- * Returns these plugins of PLUGINS which have an entry in the current plugin configuration of the modeler.
- *
- * @returns {*[]} Array of active plugins.
- */
 export function getActivePlugins() {
-
-    // return saved active plugins array
     if (activePlugins.length > 0) {
         return activePlugins;
-
-    // determine active plugins
     } else {
-
         activePlugins = [];
-        
 
-        let plugin;
+        const loadPlugin = (plugin) => {
+            if (!activePlugins.includes(plugin.plugin)) {
+                for (const dependency of plugin.dependencies) {
+                    const dependencyPlugin = PLUGINS.find((p) => p.plugin.name === dependency);
+                    if (dependencyPlugin && !activePlugins.includes(dependencyPlugin.plugin)) {
+                        activePlugins.push(dependencyPlugin.plugin);
+                        loadPlugin(dependencyPlugin);
+                    }
+                }
+                activePlugins.push(plugin.plugin);
+            }
+        };
 
-        // add all plugins of PLUGINS to active plugins which have a config entry for them
-        for (let pluginConfig of getAllConfigs()) {
-
-            plugin = PLUGINS.find(plugin => plugin.name === pluginConfig.name && checkEnabledStatus(plugin.name));
-
+        for (const pluginConfig of getAllConfigs()) {
+            const plugin = PLUGINS.find(
+                (p) => p.plugin.name === pluginConfig.name && checkEnabledStatus(p.plugin.name)
+            );
             if (plugin) {
-                activePlugins.push(plugin);
+                loadPlugin(plugin);
             }
         }
+
         return activePlugins;
     }
 }
 
+
+
 export function checkEnabledStatus(pluginName) {
-    switch(pluginName) {
+    switch (pluginName) {
         case 'dataflow':
             return process.env.ENABLE_DATA_FLOW_PLUGIN;
         case 'planqk':
@@ -179,13 +195,17 @@ export function getConfigTabs() {
     // add default editor tab to configure editor configs
     let configTabs = [{
         tabId: 'EditorTab',
-        tabTitle: 'Editor',
-        configTab: EditorTab,
+        tabTitle: 'General',
+        configTab: GeneralTab,
+    }, {
+        tabId: 'GitHubTab',
+        tabTitle: 'GitHub',
+        configTab: GitHubTab,
     }];
 
     // load the config tabs of the active plugins into one array
     for (let plugin of getActivePlugins()) {
-        if (plugin.configTabs) {
+        if (plugin.configTabs && checkEnabledStatus(plugin.name)) {
             configTabs = configTabs.concat(plugin.configTabs);
         }
     }

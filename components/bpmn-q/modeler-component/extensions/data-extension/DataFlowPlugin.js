@@ -25,7 +25,7 @@ export default {
     configTabs: [
         {
             tabId: 'DataEndpointsTab',
-            tabTitle: 'Data Endpoints',
+            tabTitle: 'Data Flow Plugin',
             configTab: TransformationTaskConfigurationsTab,
         },
     ],
