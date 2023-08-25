@@ -38,7 +38,7 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
             let qrmsFirstTransformation = qrms.slice(0, 5).concat(qrms.slice(6)).concat(qrmMaxCut);
             let expectedExpandedAttributes = [];
             for (let i = 0; i < qrmsFirstTransformation.length; i++) {
-                let expandedAttributes = extractisExpandedAttribute(qrmsFirstTransformation[i].replacement);
+                let expandedAttributes = extractIsExpandedAttribute(qrmsFirstTransformation[i].replacement);
                 expectedExpandedAttributes = expectedExpandedAttributes.concat(expandedAttributes);
             }
             const result = await startQuantmeReplacementProcess(validQuantMESubprocessDiagram, qrmsFirstTransformation, {
@@ -48,14 +48,14 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
             });
 
             chai.expect(result.status).to.equal('transformed');
-            let expandedFirstTransformation = extractisExpandedAttribute(result.xml);
+            let expandedFirstTransformation = extractIsExpandedAttribute(result.xml);
             chai.expect(expandedFirstTransformation).to.deep.equal(expectedExpandedAttributes);
 
             chai.expect(result.status).to.equal('transformed');
             expectedExpandedAttributes = [];
             allQrms = allQrms.concat(qrms.slice(5, 6));
             for (let i = 0; i < allQrms.length; i++) {
-                let expandedAttributes = extractisExpandedAttribute(allQrms[i].replacement);
+                let expandedAttributes = extractIsExpandedAttribute(allQrms[i].replacement);
                 expectedExpandedAttributes = expectedExpandedAttributes.concat(expandedAttributes);
             }
 
@@ -66,7 +66,7 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
             });
 
             chai.expect(transformationResult.status).to.equal('transformed');
-            let expandedSecondTransformation = extractisExpandedAttribute(transformationResult.xml);
+            let expandedSecondTransformation = extractIsExpandedAttribute(transformationResult.xml);
             chai.expect(expandedSecondTransformation).to.deep.equal(expectedExpandedAttributes);
 
             // check that all extension elements are replaced
@@ -95,7 +95,7 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
     });
 });
 
-function extractisExpandedAttribute(xmlString) {
+function extractIsExpandedAttribute(xmlString) {
 
     // Create a DOMParser instance
     const parser = new DOMParser();
@@ -104,7 +104,6 @@ function extractisExpandedAttribute(xmlString) {
     const xmlDoc = parser.parseFromString(xmlString, "application/xml");
     const regexPattern = /\<\w+:subProcess[^>]*>/g;
     const matches = xmlString.match(regexPattern);
-
 
     let expanded = [];
 
