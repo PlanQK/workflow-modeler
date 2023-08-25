@@ -15,6 +15,7 @@ const defaultConfig = {
     quantmeDataConfigurationsEndpoint: process.env.DATA_CONFIG,
     opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
     wineryEndpoint: process.env.WINERY_ENDPOINT,
+    camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
     nisqAnalyzerEndpoint: process.env.NISQ_ANALYZER_ENDPOINT,
     githubToken: process.env.GITHUB_TOKEN,
     transformationFrameworkEndpoint: process.env.TRANSFORMATION_FRAMEWORK_ENDPOINT,
