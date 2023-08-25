@@ -62,7 +62,7 @@ module.exports = {
       AWS_RUNTIME_HANDLER_ENDPOINT: "http://localhost:8890",
       CAMUNDA_ENDPOINT: "http://localhost:8080/engine-rest",
       DATA_CONFIG:
-        "https://raw.githubusercontent.com/PlanQK/workflow-modeler/master/components/bpmn-q/modeler-component/extensions/quantme/configurations/quantmeDataObject.json",
+        "https://raw.githubusercontent.com/PlanQK/workflow-modeler/master/components/bpmn-q/modeler-component/extensions/quantme/configurations/quantmeDataObjects.json",
       DOWNLOAD_FILE_NAME: "quantum-workflow-model",
       ENABLE_DATA_FLOW_PLUGIN: true,
       ENABLE_PLANQK_PLUGIN: true,
