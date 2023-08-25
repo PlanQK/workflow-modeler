@@ -10,8 +10,13 @@ export const workflowEventTypes = {
     LOADED: 'quantum-workflow-loaded', // New Workflow loaded in modeler
     SAVED: 'quantum-workflow-saved', // Workflow saved
     TRANSFORMED: 'quantum-workflow-transformed', // Workflow transformed
-    DEPLOYED: 'quantum-workflow-deployed' // Workflow deployed to workflow engine
+    DEPLOYED: 'quantum-workflow-deployed', // Workflow deployed to workflow engine
 };
+
+export const autoSaveFile = {
+    INTERVAL: 'Interval',
+    ON_ACTION: 'On Action'
+}
 
 // supported save file options
 export const saveFileFormats = {

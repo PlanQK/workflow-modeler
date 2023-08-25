@@ -85,17 +85,6 @@ export function createTempModeler() {
 }
 
 /**
- * Create a Modeler with only Camunda native extensions and no additional modules
- *
- * @returns the created bpmn-js modeler
- */
-export function createLightweightModeler() {
-    return new BpmnModeler({
-        moddleExtensions: getExtensions(),
-    });
-}
-
-/**
  * Creates a modeler with all additional modules and extension moddles from all active plugins which is not
  * saved in as the current modeler instance and load the given xml into it.
  *
@@ -106,6 +95,28 @@ export function createLightweightModeler() {
 export async function createTempModelerFromXml(xml) {
     // create new modeler with the custom QuantME extensions
     const bpmnModeler = createTempModeler();
+
+    // import the xml containing the definitions
+    try {
+        await bpmnModeler.importXML(xml);
+        return bpmnModeler;
+    } catch (err) {
+        console.error(err);
+    }
+    return undefined;
+}
+
+/**
+ * Creates a modeler with all additional modules and extension moddles from all active plugins which is
+ * saved as the current modeler instance and load the given xml into it.
+ *
+ * @param xml the xml representing the BPMN diagram to load
+ *
+ * @returns the created modeler
+ */
+export async function createModelerFromXml(xml) {
+    // create new modeler with the custom QuantME extensions
+    const bpmnModeler = createModeler();
 
     // import the xml containing the definitions
     try {
