@@ -16,7 +16,7 @@ import GitHubTab from '../../extensions/quantme/configTabs/GitHubTab';
 const PLUGINS = [
     {
         plugin: QuantMEPlugin,
-        dependencies: []
+        dependencies: ['DataFlowPlugin']
     },
     {
         plugin: DataFlowPlugin,
