@@ -31,7 +31,7 @@ export function dispatchWorkflowEvent(type, workflowXml, workflowName) {
     },
     cancelable: true,
   });
-  return modelerComponent.dispatchEvent(newEvent);
+  return modelerComponent?.dispatchEvent?.(newEvent) ?? true;
 }
 
 /**
