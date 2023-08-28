@@ -27,9 +27,9 @@ export function dispatchWorkflowEvent(type, workflowXml, workflowName) {
   const newEvent = new CustomEvent(type, {
     detail: {
       workflowName: workflowName,
-      workflow: workflowXml
+      workflow: workflowXml,
     },
-    cancelable: true
+    cancelable: true,
   });
   return modelerComponent.dispatchEvent(newEvent);
 }
@@ -42,5 +42,9 @@ export function dispatchWorkflowEvent(type, workflowXml, workflowName) {
  * @param callBckFunction The function defining the action executed when the event occurs
  */
 export function addWorkflowEventListener(type, callBckFunction) {
-  modelerComponent.addEventListener(type, (event) => callBckFunction(event), false);
+  modelerComponent.addEventListener(
+    type,
+    (event) => callBckFunction(event),
+    false
+  );
 }
