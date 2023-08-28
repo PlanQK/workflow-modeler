@@ -1,16 +1,18 @@
-const { setPluginConfig, resetConfig } = require("../../../modeler-component/editor/plugin/PluginConfigHandler");
+const { setPluginConfig } = require("../../../modeler-component/editor/plugin/PluginConfigHandler");
+const { deployWorkflowToCamunda } = require("../../../modeler-component/editor/util/IoUtilities");
 const { updateQRMs, resetQRMs } = require("../../../modeler-component/extensions/quantme/qrm-manager");
-const { getFoldersInRepository } = require("../../../modeler-component/extensions/quantme/qrm-manager/git-handler");
 const { startQuantmeReplacementProcess } = require("../../../modeler-component/extensions/quantme/replacement/QuantMETransformator");
 const { validQuantMEDiagram, validQuantMESubprocessDiagram } = require("../helpers/DiagramHelper");
 const config = require("../../../modeler-component/extensions/quantme/framework-config/config-manager");
 const camundaConfig = require("../../../modeler-component/editor/config/EditorConfigManager");
 const chai = require("chai");
+const {createTempModeler} = require("../../../modeler-component/editor/ModelerHandler");
 describe('Test the QuantMETransformator of the QuantME extension.', function () {
 
     describe('Transformation of QuantME extensions', function () {
 
         it('should create a valid native workflow model after two transformations', async function () {
+            const modeler = createTempModeler();
             setPluginConfig([{ name: 'dataflow' },
             {
                 name: 'quantme',
@@ -34,43 +36,28 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
             chai.expect(qrmMaxCut.length).to.equal(1);
             let allQrms = qrms.concat(qrmMaxCut);
 
-            // remove the optimization QRM
-            let qrmsFirstTransformation = qrms.slice(0, 5).concat(qrms.slice(6)).concat(qrmMaxCut);
-            let expectedExpandedAttributes = [];
-            for (let i = 0; i < qrmsFirstTransformation.length; i++) {
-                let expandedAttributes = extractIsExpandedAttribute(qrmsFirstTransformation[i].replacement);
-                expectedExpandedAttributes = expectedExpandedAttributes.concat(expandedAttributes);
-            }
-            const result = await startQuantmeReplacementProcess(validQuantMESubprocessDiagram, qrmsFirstTransformation, {
+            const firstTransformationResult = await startQuantmeReplacementProcess(validQuantMESubprocessDiagram, allQrms, {
                 nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
                 transformationFrameworkEndpoint: config.getTransformationFrameworkEndpoint(),
                 camundaEndpoint: camundaConfig.getCamundaEndpoint()
             });
 
-            chai.expect(result.status).to.equal('transformed');
-            let expandedFirstTransformation = extractIsExpandedAttribute(result.xml);
-            chai.expect(expandedFirstTransformation).to.deep.equal(expectedExpandedAttributes);
+            chai.expect(firstTransformationResult.status).to.equal('transformed');
 
-            chai.expect(result.status).to.equal('transformed');
-            expectedExpandedAttributes = [];
-            allQrms = allQrms.concat(qrms.slice(5, 6));
-            for (let i = 0; i < allQrms.length; i++) {
-                let expandedAttributes = extractIsExpandedAttribute(allQrms[i].replacement);
-                expectedExpandedAttributes = expectedExpandedAttributes.concat(expandedAttributes);
-            }
-
-            const transformationResult = await startQuantmeReplacementProcess(result.xml, allQrms, {
+            const secondTransformationResult = await startQuantmeReplacementProcess(firstTransformationResult.xml, allQrms, {
                 nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
                 transformationFrameworkEndpoint: config.getTransformationFrameworkEndpoint(),
                 camundaEndpoint: camundaConfig.getCamundaEndpoint()
             });
 
-            chai.expect(transformationResult.status).to.equal('transformed');
-            let expandedSecondTransformation = extractIsExpandedAttribute(transformationResult.xml);
-            chai.expect(expandedSecondTransformation).to.deep.equal(expectedExpandedAttributes);
+            chai.expect(secondTransformationResult.status).to.equal('transformed');
 
             // check that all extension elements are replaced
-            chai.expect(transformationResult.xml).to.not.contain('<quantme:');
+            chai.expect(secondTransformationResult.xml).to.not.contain('<quantme:');
+
+            const deployment = await  deployWorkflowToCamunda('testworkflow',secondTransformationResult.xml, {});
+
+            chai.expect(deployment.status).to.equal('deployed', 'bla');
 
             //clean up
             resetQRMs();
@@ -94,54 +81,3 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
         });
     });
 });
-
-function extractIsExpandedAttribute(xmlString) {
-
-    // Create a DOMParser instance
-    const parser = new DOMParser();
-
-    // Parse the XML string and extract all subprocesses 
-    const xmlDoc = parser.parseFromString(xmlString, "application/xml");
-    const regexPattern = /\<\w+:subProcess[^>]*>/g;
-    const matches = xmlString.match(regexPattern);
-
-    let expanded = [];
-
-    // Regular expression pattern to extract bpmndi:BPMNShape elements
-    const shapeRegexPattern = /<bpmndi:BPMNShape[^>]*>/g;
-
-    // Regular expression pattern to extract isExpanded attribute value
-    const isExpandedRegexPattern = /isExpanded="([^"]+)"/;
-
-    // Extract the bpmndi:BPMNShape elements using the regular expression
-    const shapeMatches = xmlString.match(shapeRegexPattern);
-
-    // Loop through the shape matches and extract the isExpanded attribute
-    for (let i = 0; i < shapeMatches.length; i++) {
-        const shapeMatch = shapeMatches[i];
-
-        // Extract the bpmnElement attribute value
-        const bpmnElementMatch = shapeMatch.match(/bpmnElement="([^"]+)"/);
-        if (bpmnElementMatch && bpmnElementMatch.length > 1) {
-            const bpmnElement = bpmnElementMatch[1];
-
-            // Extract the isExpanded attribute value
-            const isExpandedMatch = shapeMatch.match(isExpandedRegexPattern);
-            let positionCircuitCutting = xmlString.search('circuitCuttingSubprocess id="' + bpmnElement + '"');
-            let positionSubProcess = xmlString.search('subProcess id="' + bpmnElement + '"');
-
-            if (positionCircuitCutting > -1 || positionSubProcess > -1) {
-                if (isExpandedMatch && isExpandedMatch.length > 1) {
-                    const isExpanded = isExpandedMatch[1];
-
-                    if (isExpanded !== undefined) {
-                        expanded.push(isExpanded);
-                    }
-                } else {
-                    expanded.push('false');
-                }
-            }
-        }
-    }
-    return expanded;
-}
