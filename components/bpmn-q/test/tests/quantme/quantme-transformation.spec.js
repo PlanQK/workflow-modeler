@@ -55,9 +55,9 @@ describe('Test the QuantMETransformator of the QuantME extension.', function () 
             // check that all extension elements are replaced
             chai.expect(secondTransformationResult.xml).to.not.contain('<quantme:');
 
-            const deployment = await  deployWorkflowToCamunda('testworkflow',secondTransformationResult.xml, {});
-
-            chai.expect(deployment.status).to.equal('deployed', 'bla');
+            const deployment = await  deployWorkflowToCamunda('testworkflow.bpmn',secondTransformationResult.xml, {});
+            console.log(deployment);
+            chai.expect(deployment.status).to.equal('deployed');
 
             //clean up
             resetQRMs();

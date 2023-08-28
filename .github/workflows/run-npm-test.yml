@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      communication-db:
+      workflow-test-engine:
         image: planqk/workflow-engine-test:latest
 
     steps:
