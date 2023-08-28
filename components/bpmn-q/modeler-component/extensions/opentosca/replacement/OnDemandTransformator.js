@@ -65,7 +65,7 @@ var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
 var buildPlanUrl = buildPlans.plans[0]._links.self.href
 
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify([]))
-execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", createInstanceResponse);`;
+execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
 
 /**
