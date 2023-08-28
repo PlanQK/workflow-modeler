@@ -1,10 +1,10 @@
-import React, { Fragment, useState } from 'react';
+import React, {Fragment, useState} from 'react';
 import NotificationHandler from './notifications/NotificationHandler';
 import {deployWorkflowToCamunda} from '../util/IoUtilities';
 import {getCamundaEndpoint} from '../config/EditorConfigManager';
 import {getRootProcess} from '../util/ModellingUtilities';
 import {getServiceTasksToDeploy} from '../../extensions/opentosca/deployment/DeploymentUtils';
-import { getModeler } from '../ModelerHandler';
+import {getModeler} from '../ModelerHandler';
 import OnDemandDeploymentModal from './OnDemandDeploymentModal';
 import {startOnDemandReplacementProcess} from "../../extensions/opentosca/replacement/OnDemandTransformator";
 
@@ -35,17 +35,16 @@ export default function DeploymentButton(props) {
         if (result && result.hasOwnProperty('onDemand')) {
             // get XML of the current workflow
             let xml = (await modeler.saveXML({format: true})).xml;
-
+            console.log("XML", xml)
             if (result.onDemand === true) {
                 xml = await startOnDemandReplacementProcess(xml);
-
             }
             // deploy in any case
             deploy(xml);
         }
         // handle cancellation (don't deploy)
         setWindowOpenOnDemandDeployment(false);
-        
+
     }
 
     /**
@@ -93,7 +92,7 @@ export default function DeploymentButton(props) {
         if (csarsToDeploy.length > 0) {
             setWindowOpenOnDemandDeployment(true);
         } else {
-            deploy();
+            deploy((await modeler.saveXML({format: true})).xml);
         }
     }
 

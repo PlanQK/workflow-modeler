@@ -17,6 +17,57 @@ import {getXml} from '../../../editor/util/IoUtilities';
 import {isDeployableServiceTask} from "../deployment/DeploymentUtils";
 import * as config from "../framework-config/config-manager";
 
+
+function createDeploymentScript(params) {
+    return `
+var params = ${JSON.stringify(params)};
+
+function fetch(method, url, body) {
+    var resourceURL = new java.net.URL(url);
+
+    var urlConnection = resourceURL.openConnection();
+    urlConnection.setRequestMethod(method);
+    if (body) {
+        urlConnection.setDoOutput(true);
+        urlConnection.setRequestProperty("Content-Type", "application/json");
+        var outputStream = urlConnection.getOutputStream()
+        var outputStreamWriter = new java.io.OutputStreamWriter(outputStream)
+        outputStreamWriter.write(body);
+        outputStreamWriter.flush();
+        outputStreamWriter.close();
+        outputStream.close();
+    }
+
+    var inputStream = new java.io.InputStreamReader(urlConnection
+        .getInputStream());
+    var bufferedReader = new java.io.BufferedReader(inputStream);
+    var inputLine = ""
+    var text = "";
+    var i = 5;
+    while ((inputLine = bufferedReader.readLine()) != null) {
+        text += inputLine
+    }
+    bufferedReader.close();
+    return text;
+}
+
+
+var createCsarResponse = fetch('POST', params.opentoscaEndpoint, JSON.stringify({
+    enrich: 'false',
+    name: params.csarName,
+    url: params.deploymentModelUrl
+}))
+
+
+var serviceTemplates = JSON.parse(fetch('GET', params.opentoscaEndpoint + "/" + params.csarName + ".csar/servicetemplates"))
+var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
+var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
+var buildPlanUrl = buildPlans.plans[0]._links.self.href
+
+var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify([]))
+execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", createInstanceResponse);`;
+}
+
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
  *
@@ -35,10 +86,6 @@ export async function startOnDemandReplacementProcess(xml) {
     const serviceTasks = elementRegistry.filter(({businessObject}) => isDeployableServiceTask(businessObject));
 
     for (const serviceTask of serviceTasks) {
-        const bounds = {
-            x: serviceTask.x,
-            y: serviceTask.y,
-        };
         let deploymentModelUrl = serviceTask.businessObject.get('opentosca:deploymentModelUrl');
         if (deploymentModelUrl.startsWith('{{ wineryEndpoint }}')) {
             deploymentModelUrl = deploymentModelUrl.replace('{{ wineryEndpoint }}', config.getWineryEndpoint());
@@ -54,17 +101,29 @@ export async function startOnDemandReplacementProcess(xml) {
 
 
         const serviceTask1 = modeling.appendShape(startEvent, {
-            type: 'bpmn:ServiceTask'
+            type: 'bpmn:ScriptTask',
         }, {x: 400, y: 200});
+        serviceTask1.businessObject.set("scriptFormat", "javascript");
+        serviceTask1.businessObject.set("script", createDeploymentScript(
+            {
+                opentoscaEndpoint: config.getOpenTOSCAEndpoint(),
+                csarName: "ondemand_" + (Math.random().toString().substring(3)),
+                deploymentModelUrl: deploymentModelUrl,
+                subprocessId: subProcess.id
+            }
+        ));
 
 
         const serviceTask2 = modeling.appendShape(serviceTask1, {
             type: 'bpmn:ServiceTask'
         }, {x: 600, y: 200}, subProcess);
+
+        serviceTask2.businessObject.set("camunda:type", "external");
+        serviceTask2.businessObject.set("camunda:topic", "fjhdhg");
     }
 
     // layout diagram after successful transformation
-    let updated_xml = await getXml(modeler);
-    console.log(updated_xml);
-    return {status: 'transformed', xml: updated_xml};
+    let updatedXml = await getXml(modeler);
+    console.log(updatedXml);
+    return updatedXml;
 }
