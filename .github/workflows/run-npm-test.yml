@@ -14,6 +14,8 @@ jobs:
     services:
       workflow-test-engine:
         image: planqk/workflow-engine-test:latest
+        ports:
+          - 8090:8090
 
     steps:
       - uses: actions/checkout@v3
