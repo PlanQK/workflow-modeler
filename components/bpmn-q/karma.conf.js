@@ -11,10 +11,7 @@ module.exports = function (config) {
     frameworks: ["mocha", "webpack"],
 
     // list of files / patterns to load in the browser
-    files: [
-      "test/**/*.spec.js",
-      "modeler-component/*.js",
-    ],
+    files: ["test/**/*.spec.js", "modeler-component/*.js"],
 
     // list of files / patterns to exclude
     exclude: [],
@@ -23,13 +20,17 @@ module.exports = function (config) {
     // available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
     preprocessors: {
       "test/**/*.spec.js": ["webpack"],
-      "modeler-component/*.js": ["babel","coverage"],
+      "modeler-component/*.js": ["babel", "coverage"],
     },
 
-    reporters: ['coverage'],
+    reporters: ["coverage"],
 
     plugins: [
-      'karma-babel-preprocessor', 'karma-chrome-launcher', 'karma-webpack', 'karma-coverage', 'karma-mocha'
+      "karma-babel-preprocessor",
+      "karma-chrome-launcher",
+      "karma-webpack",
+      "karma-coverage",
+      "karma-mocha",
     ],
 
     webpack: webpackConfig,
