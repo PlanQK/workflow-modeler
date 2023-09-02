@@ -1,5 +1,9 @@
 # Quantum Workflow Modeler
 
+[![GitHub license](https://img.shields.io/github/license/PlanQK/workflow-modeler)](https://github.com/PlanQK/workflow-modeler/blob/master/LICENSE)
+[![Tests](https://github.com/PlanQK/workflow-modeler/actions/workflows/run-npm-test.yml/badge.svg)](https://github.com/PlanQK/workflow-modeler/actions/workflows/run-npm-test.yml)
+[![Release](https://img.shields.io/github/v/release/PlanQK/workflow-modeler)](https://img.shields.io/github/v/release/PlanQK/workflow-modeler)
+
 A web-based modeling tool for modeling BPMN 2.0-based quantum workflows. 
 It uses and extends the [bpmn-js Modeler](https://github.com/bpmn-io/bpmn-js/) of Camunda which is embedded in the User Interface (UI) of the Quantum Workflow Modeler and handles the graphical modeling of workflows. 
 
