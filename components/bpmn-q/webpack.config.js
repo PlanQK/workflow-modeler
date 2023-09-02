@@ -30,7 +30,7 @@ module.exports = {
         use: "bpmnlint-loader",
       },
       {
-        test: /\.jsx?$/,
+        test: /\.(js|jsx)$/i,
         exclude: /node_modules/,
         use: [
           {
@@ -38,9 +38,12 @@ module.exports = {
             options: {
               cacheDirectory: true,
               cacheCompression: false,
+              presets: [
+                '@babel/preset-env',
+                '@babel/preset-react',
+              ],
             },
           },
-          // 'css-loader',
         ],
       },
       {
