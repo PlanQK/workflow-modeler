@@ -224,7 +224,7 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
 }
 
 
-function makeId(length) {
+export function makeId(length) {
     let result = '';
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let charactersLength = characters.length;

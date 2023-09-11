@@ -10,17 +10,17 @@
  */
 
 import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
-import {
-    getRootProcess,
-} from '../../../editor/util/ModellingUtilities';
 import {getXml} from '../../../editor/util/IoUtilities';
 import {isDeployableServiceTask} from "../deployment/DeploymentUtils";
 import * as config from "../framework-config/config-manager";
+import {makeId} from "../deployment/OpenTOSCAUtils";
+import {getCamundaEndpoint} from "../../../editor/config/EditorConfigManager";
 
 
 function createDeploymentScript(params) {
     return `
 var params = ${JSON.stringify(params)};
+params.csarName = "ondemand_" + (Math.random().toString().substring(3));
 
 function fetch(method, url, body) {
     var resourceURL = new java.net.URL(url);
@@ -63,8 +63,17 @@ var serviceTemplates = JSON.parse(fetch('GET', params.opentoscaEndpoint + "/" + 
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
 var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
 var buildPlanUrl = buildPlans.plans[0]._links.self.href
-
-var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify([]))
+var inputParameters = JSON.parse(fetch('GET', buildPlanUrl)).input_parameters
+for(var i = 0; i < inputParameters.length; i++) {
+    if(inputParameters[i].name === "camundaEndpoint") {
+        inputParameters[i].value = params.opentoscaEndpoint
+    } else if(inputParameters[i].name === "camundaTopic") {
+        inputParameters[i].value = params.camundaTopic
+    } else {
+        inputParameters[i].value = "null"
+    }
+}
+var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
 execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
 
@@ -99,7 +108,7 @@ export async function startOnDemandReplacementProcess(xml) {
             type: 'bpmn:StartEvent'
         }, {x: 200, y: 200}, subProcess);
 
-
+        let topicName = makeId(12);
         const serviceTask1 = modeling.appendShape(startEvent, {
             type: 'bpmn:ScriptTask',
         }, {x: 400, y: 200});
@@ -107,9 +116,10 @@ export async function startOnDemandReplacementProcess(xml) {
         serviceTask1.businessObject.set("script", createDeploymentScript(
             {
                 opentoscaEndpoint: config.getOpenTOSCAEndpoint(),
-                csarName: "ondemand_" + (Math.random().toString().substring(3)),
                 deploymentModelUrl: deploymentModelUrl,
-                subprocessId: subProcess.id
+                subprocessId: subProcess.id,
+                camundaTopic: topicName,
+                camundaEndpoint: getCamundaEndpoint()
             }
         ));
 
@@ -119,7 +129,7 @@ export async function startOnDemandReplacementProcess(xml) {
         }, {x: 600, y: 200}, subProcess);
 
         serviceTask2.businessObject.set("camunda:type", "external");
-        serviceTask2.businessObject.set("camunda:topic", "fjhdhg");
+        serviceTask2.businessObject.set("camunda:topic", topicName);
     }
 
     // layout diagram after successful transformation
