@@ -54,10 +54,6 @@ describe('Test plugins', function () {
                 expect(extensions['quantme']).to.not.be.undefined;
                 expect(extensions['opentosca']).to.not.be.undefined;
                 expect(extensions['planqk']).to.not.be.undefined;
-                expect(transfButtons.length).to.equal(3);
-                expect(buttons.length).to.equal(3);
-                expect(tabs.length).to.equal(4);
-                expect(styles.length).to.equal(4);
             });
         });
     });

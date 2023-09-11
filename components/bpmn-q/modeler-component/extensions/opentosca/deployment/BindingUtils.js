@@ -8,6 +8,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+import * as config from "../framework-config/config-manager";
 
 const QUANTME_NAMESPACE_PULL_ENCODED = encodeURIComponent(encodeURIComponent('http://quantil.org/quantme/pull'));
 const QUANTME_NAMESPACE_PUSH_ENCODED = encodeURIComponent(encodeURIComponent('http://quantil.org/quantme/push'));
@@ -48,9 +49,9 @@ export function getBindingType(serviceTask) {
  * @param modeling the modeling element to adapt properties of the workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export function bindUsingPull(topicName, serviceTaskId, elementRegistry, modeling) {
+export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
 
-    if (topicName === undefined || serviceTaskId === undefined || elementRegistry === undefined || modeling === undefined) {
+    if (csar.topicName === undefined || serviceTaskId === undefined || elementRegistry === undefined || modeling === undefined) {
         console.error('Topic name, service task id, element registry, and modeling required for binding using pull!');
         return { success: false };
     }
@@ -62,9 +63,20 @@ export function bindUsingPull(topicName, serviceTaskId, elementRegistry, modelin
         return { success: false };
     }
 
+    let deploymentModelUrl = serviceTask.businessObject.get('opentosca:deploymentModelUrl');
+    if (deploymentModelUrl.startsWith('{{ wineryEndpoint }}')) {
+        deploymentModelUrl = deploymentModelUrl.replace('{{ wineryEndpoint }}', config.getWineryEndpoint());
+    }
+
     // remove deployment model URL and set topic
-    modeling.updateProperties(serviceTask, { 'deploymentModelUrl': undefined, type: 'external', topic: topicName });
-    return { success: true };
+
+    modeling.updateProperties(serviceTask, {
+        'opentosca:deploymentModelUrl': deploymentModelUrl,
+        'opentosca:deploymentBuildPlanInstanceUrl': csar.buildPlanUrl,
+        type: 'external',
+        topic: csar.topicName
+    });
+    return {success: true};
 }
 
 /**

@@ -106,7 +106,7 @@ export default class DeploymentPlugin extends PureComponent {
                     this.setState({
                         windowOpenDeploymentOverview: false,
                         windowOpenDeploymentInput: false,
-                        windowOpenDeploymentBinding: false
+                        windowOpenDeploymentBinding: false,
                     });
                     return;
                 }
@@ -134,7 +134,7 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
         });
     }
 
@@ -179,7 +179,7 @@ export default class DeploymentPlugin extends PureComponent {
                     this.setState({
                         windowOpenDeploymentOverview: false,
                         windowOpenDeploymentInput: false,
-                        windowOpenDeploymentBinding: false
+                        windowOpenDeploymentBinding: false,
                     });
                     return;
                 }
@@ -199,7 +199,7 @@ export default class DeploymentPlugin extends PureComponent {
             this.setState({
                 windowOpenDeploymentOverview: false,
                 windowOpenDeploymentInput: false,
-                windowOpenDeploymentBinding: true
+                windowOpenDeploymentBinding: true,
             });
             return;
         }
@@ -208,7 +208,7 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
         });
     }
 
@@ -233,7 +233,7 @@ export default class DeploymentPlugin extends PureComponent {
                     // bind the service instance using the specified binding pattern
                     let bindingResponse = undefined;
                     if (csar.type === 'pull') {
-                        bindingResponse = bindUsingPull(csar.topicName, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
+                        bindingResponse = bindUsingPull(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     } else if (csar.type === 'push') {
                         bindingResponse = bindUsingPush(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     }
@@ -253,7 +253,7 @@ export default class DeploymentPlugin extends PureComponent {
                         this.setState({
                             windowOpenDeploymentOverview: false,
                             windowOpenDeploymentInput: false,
-                            windowOpenDeploymentBinding: false
+                            windowOpenDeploymentBinding: false,
                         });
                         return;
                     }
@@ -272,7 +272,7 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
         });
     }
 
@@ -326,7 +326,7 @@ export default class DeploymentPlugin extends PureComponent {
                         className="qwm-indent">Hide Deployment</span></span>
                     </button>,
                     <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
-                            onClick={() => this.setState({windowOpenDeploymentOverview: true})}>
+                            onClick={() => this.setState({windowOpenDeploymentDeploymentOverview: true})}>
                     <span className="app-icon-service-deployment"><span
                         className="qwm-indent">Service Deployment</span></span>
                     </button>]}/>
