@@ -7,12 +7,20 @@ import {
 } from 'diagram-js/lib/util/RenderUtil';
 
 import BpmnRenderer from 'bpmn-js/lib/draw/BpmnRenderer';
+import { getOrientation } from 'diagram-js/lib/layout/LayoutUtil';
+
 
 import buttonIcon from '../resources/show-deployment-button.svg?raw';
 import {drawTaskSVG} from '../../../editor/util/RenderUtilities';
 import NotificationHandler from '../../../editor/ui/notifications/NotificationHandler';
 import {append as svgAppend, attr as svgAttr, create as svgCreate, select, prepend as svgPrepend} from 'tiny-svg';
 import {query as domQuery} from 'min-dom';
+import {
+    isSnapped,
+    setSnapped,
+    topLeft,
+    bottomRight
+} from 'diagram-js/lib/features/snapping/SnapUtil';
 
 import {loadTopology} from "../deployment/WineryUtils";
 
@@ -39,6 +47,26 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         this.elementRegistry = elementRegistry;
         this.styles = styles;
         this.textRenderer = textRenderer;
+
+        // snap boundary events
+        eventBus.on([
+            'create.move',
+            'create.end',
+            'shape.move.move',
+            'shape.move.end'
+        ], 140000, function(event) {
+            var context = event.context,
+                canExecute = context.canExecute,
+                target = context.target;
+
+            var canAttach = canExecute && (canExecute === 'attach' || canExecute.attach);
+            const isRelevantEvent = context.shape.type === "bpmn:IntermediateThrowEvent" ||  context.shape.type === "bpmn:BoundaryEvent";
+
+            if (canAttach  && isRelevantEvent && context.target.businessObject.get('opentosca:deploymentModelUrl') && getOrientation(event, target, -30) === "bottom-right") {
+                // Prevent snapping on deployment visualisation toggle button
+                event.stopPropagation();
+            }
+        });
 
         this.openToscaHandlers = {
             [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
@@ -242,11 +270,11 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                 if (otherElementBoundingBox) {
                     otherXPosition = (otherElementBoundingBox.left + otherElementBoundingBox.right) / 2;
                 }
-                let xShift
+                let xShift;
                 if (shifts.right && otherXPosition >= xPosition && otherElement.id !== element.id) {
-                    xShift = shifts.right + NODE_SHIFT_MARGIN
+                    xShift = shifts.right + NODE_SHIFT_MARGIN;
                 } else if (shifts.left && otherXPosition <= xPosition && otherElement.id !== element.id) {
-                    xShift = -shifts.left - NODE_SHIFT_MARGIN
+                    xShift = -shifts.left - NODE_SHIFT_MARGIN;
                 } else {
                     continue;
                 }

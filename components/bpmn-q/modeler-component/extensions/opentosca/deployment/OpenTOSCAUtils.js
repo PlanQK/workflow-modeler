@@ -207,6 +207,7 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
 
     let state = 'CREATING';
     console.log('Polling for finished service instance at URL: %s', pollingUrl);
+    let properties = '';
     while (!(state === 'CREATED' || state === 'FAILED')) {
 
         // wait 5 seconds for next poll
@@ -215,11 +216,13 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
         let pollingResponse = await fetch(pollingUrl);
         let pollingResponseJson = await pollingResponse.json();
         console.log('Polling response: ', pollingResponseJson);
+        properties = pollingResponseJson._links.properties.href;
 
         state = pollingResponseJson.state;
     }
 
     result.success = true;
+    result.properties = properties;
     return result;
 }
 

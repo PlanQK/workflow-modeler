@@ -172,6 +172,7 @@ export default function ArtifactUploadModal({onClose, element, commandStack}) {
                         <div
                             className={`tab ${selectedTab === "docker" ? "active" : ""}`}
                             onClick={() => setSelectedTab("docker")}
+                            style={{display: "none"}}
                         >
                             Docker Image
                         </div>

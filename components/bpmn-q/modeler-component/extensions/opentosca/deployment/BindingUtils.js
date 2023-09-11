@@ -53,14 +53,14 @@ export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
 
     if (csar.topicName === undefined || serviceTaskId === undefined || elementRegistry === undefined || modeling === undefined) {
         console.error('Topic name, service task id, element registry, and modeling required for binding using pull!');
-        return {success: false};
+        return { success: false };
     }
 
     // retrieve service task to bind
     let serviceTask = elementRegistry.get(serviceTaskId);
     if (serviceTask === undefined) {
         console.error('Unable to retrieve corresponding task for id: %s', serviceTaskId);
-        return {success: false};
+        return { success: false };
     }
 
     let deploymentModelUrl = serviceTask.businessObject.get('opentosca:deploymentModelUrl');
@@ -69,6 +69,7 @@ export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
     }
 
     // remove deployment model URL and set topic
+
     modeling.updateProperties(serviceTask, {
         'opentosca:deploymentModelUrl': deploymentModelUrl,
         'opentosca:deploymentBuildPlanInstanceUrl': csar.buildPlanUrl,
@@ -86,20 +87,54 @@ export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
  * @param elementRegistry the element registry of the modeler to find workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export function bindUsingPush(csar, serviceTaskId, elementRegistry) {
+export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modeling) {
+    let url = await extractSelfserviceApplicationUrl(csar.properties);
+    let success = false;
 
     if (csar === undefined || serviceTaskId === undefined || elementRegistry === undefined) {
         console.error('CSAR details, service task id, and element registry required for binding using push!');
-        return {success: false};
+        return { success: false };
     }
 
     // retrieve service task to bind
     let serviceTask = elementRegistry.get(serviceTaskId);
     if (serviceTask === undefined) {
         console.error('Unable to retrieve corresponding task for id: %s', serviceTaskId);
-        return {success: false};
+        return { success: false };
     }
 
-    console.warn('Binding using push currently not supported!');
-    return {success: false};
+    let extensionElements = serviceTask.businessObject.extensionElements.values;
+    for (let i = 0; i < extensionElements.length; i++) {
+        let extensionElement = extensionElements[i];
+        if (extensionElement.$type === 'camunda:Connector') {
+            let inputParameters = extensionElement.inputOutput.inputParameters;
+            for (let j = 0; j < inputParameters.length; j++) {
+                let inputParameter = inputParameters[j];
+                if (inputParameter.name === 'url') {
+                    let connectorUrl = serviceTask.businessObject.connectorUrl;
+                    inputParameter.value = url + connectorUrl;
+                    success = true;
+                }
+            }
+        }
+    }
+    return { success: success };
+}
+
+async function extractSelfserviceApplicationUrl(propertiesUrl, csar) {
+
+    let properties = await fetchProperties(propertiesUrl);
+    let json = JSON.parse(properties);
+    const value = json.selfserviceApplicationUrl;
+    return value;
+}
+
+async function fetchProperties(url) {
+    const response = await fetch(url, {
+        headers: {
+            Accept: "application/json"
+        }
+    });
+    const json = await response.text();
+    return json;
 }

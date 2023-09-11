@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getDi, is} from 'bpmn-js/lib/util/ModelUtil';
-import {isFlowLikeElement} from '../../../../editor/util/ModellingUtilities';
+import { getDi, is } from 'bpmn-js/lib/util/ModelUtil';
+import { isFlowLikeElement } from '../../../../editor/util/ModellingUtilities';
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = '10';
@@ -56,15 +56,6 @@ function layoutProcess(modeling, elementRegistry, process) {
                 // layout elements in subprocess
                 if (['bpmn:SubProcess', 'quantme:QuantumHardwareSelectionSubprocess', 'quantme:CircuitCuttingSubprocess'].includes(flowElements[i].$type)) {
                     console.log('Flow element is subprocess. Layouting contained elements...');
-                    const flowElement = elementRegistry.get(flowElements[i].id);
-                    let oldBounds = getDi(flowElement).bounds;
-                    modeling.resizeShape(elementRegistry.get(flowElements[i].id), {
-                        x: oldBounds.x,
-                        y: oldBounds.y,
-                        height: 10,
-                        width: 10
-                    });
-
                     layoutProcess(modeling, elementRegistry, elementRegistry.get(flowElements[i].id).businessObject);
                 }
 
@@ -97,7 +88,7 @@ function layoutProcess(modeling, elementRegistry, process) {
             nodes.push(elementRegistry.get(artifact.id));
 
             if (artifact.$type === 'bpmn:Association') {
-                edges.push({id: artifact.id, sourceId: artifact.sourceRef.id, targetId: artifact.targetRef.id});
+                edges.push({ id: artifact.id, sourceId: artifact.sourceRef.id, targetId: artifact.targetRef.id });
             }
         }
     }
@@ -140,7 +131,7 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
             let offset = (attachedToElementBoundaries.length + 1) * (parseInt(boundaryEventBounds.width) + parseInt(BOUNDARY_EVENT_MARGIN));
             let to_move_x = bottomOfAttached - offset;
             let to_move_y = attachedToBounds.y - boundaryEventBounds.y + attachedToBounds.height - boundaryEventBounds.height / 2;
-            modeling.moveShape(boundaryEventShape, {x: to_move_x, y: to_move_y});
+            modeling.moveShape(boundaryEventShape, { x: to_move_x, y: to_move_y });
 
             // update list for the next boundary event
             attachedToElementBoundaries.push(boundaryEventShape.id);
@@ -155,7 +146,7 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
                 let sourceX = boundaryEventBounds.x + boundaryEventBounds.width / 2;
                 let sourceY = boundaryEventBounds.y + boundaryEventBounds.height;
                 waypoints.shift();
-                waypoints.unshift({x: sourceX, y: sourceY});
+                waypoints.unshift({ x: sourceX, y: sourceY });
 
                 // update diagram
                 modeling.updateWaypoints(connectionShape, waypoints);
@@ -234,7 +225,7 @@ function adaptLabels(modeling, connection) {
         // place the first label of the given connection
         let firstLabel = connection.labels[0];
         let middle = getMiddleOfLocation(connection, firstLabel);
-        modeling.moveElements([firstLabel], {x: middle.x - firstLabel.x, y: middle.y - firstLabel.y});
+        modeling.moveElements([firstLabel], { x: middle.x - firstLabel.x, y: middle.y - firstLabel.y });
     }
 
     // TODO: handle cases with multiple labels defined for the connection
@@ -255,11 +246,11 @@ function getMiddleOfLocation(connection, label) {
     let middlePoint2 = waypoints[middleWaypointIndex];
 
     if (middlePoint1.x === middlePoint2.x) {
-        return {x: middlePoint1.x - LABEL_MARGIN - parseInt(label.width), y: (middlePoint1.y + middlePoint2.y) / 2};
+        return { x: middlePoint1.x - LABEL_MARGIN - parseInt(label.width), y: (middlePoint1.y + middlePoint2.y) / 2 };
     }
 
     if (middlePoint1.y === middlePoint2.y) {
-        return {x: (middlePoint1.x + middlePoint2.x) / 2, y: middlePoint1.y - LABEL_MARGIN - parseInt(label.height)};
+        return { x: (middlePoint1.x + middlePoint2.x) / 2, y: middlePoint1.y - LABEL_MARGIN - parseInt(label.height) };
     }
 
     return {
@@ -356,7 +347,7 @@ function getEdgeFromFlowElement(elementRegistry, flowElement) {
         sourceElement = sourceElement.attachedToRef;
     }
 
-    return {id: flowElement.id, sourceId: sourceElement.id, targetId: flowElement.targetRef.id};
+    return { id: flowElement.id, sourceId: sourceElement.id, targetId: flowElement.targetRef.id };
 }
 
 /**
@@ -372,14 +363,14 @@ function layoutWithDagre(modeling, elementRegistry, dagre, tasks, flows, options
     console.log('Adding %i tasks to the graph for layouting: ', tasks.length);
     for (let i = 0; i < tasks.length; i++) {
         let task = tasks[i];
-        g.setNode(task.id, {label: task.id, width: task.width, height: task.height});
+        g.setNode(task.id, { label: task.id, width: task.width, height: task.height });
     }
 
     // add flows as edges to the graph
     console.log('Adding %i flows to the graph for layouting: ', flows.length);
     for (let i = 0; i < flows.length; i++) {
         let flow = flows[i];
-        g.setEdge(flow['sourceId'], flow['targetId'], {label: flow['id']});
+        g.setEdge(flow['sourceId'], flow['targetId'], { label: flow['id'] });
     }
 
     // layout the graph
@@ -393,7 +384,7 @@ function layoutWithDagre(modeling, elementRegistry, dagre, tasks, flows, options
         // determine new position of task and move it there
         let to_move_x = node.x - element.x - element.width / 2;
         let to_move_y = node.y - element.y - element.height / 2;
-        let delta_string = {x: to_move_x, y: to_move_y};
+        let delta_string = { x: to_move_x, y: to_move_y };
         modeling.moveElements([element], delta_string);
     });
 
@@ -402,18 +393,21 @@ function layoutWithDagre(modeling, elementRegistry, dagre, tasks, flows, options
         let edge = g.edge(e);
         let points = edge.points;
         let element = elementRegistry.get(edge.label);
-        let waypoints = element.waypoints;
+        if (element !== undefined) {
+            let waypoints = element.waypoints;
 
-        while (waypoints.length > 0) {
-            waypoints.pop();
+            while (waypoints.length > 0) {
+                waypoints.pop();
+            }
+
+            for (let pointsIndex = 0; pointsIndex < points.length; pointsIndex++) {
+                let point;
+                point = { x: points[pointsIndex].x, y: points[pointsIndex].y };
+                waypoints.push(point);
+            }
+
+            element.waypoints = waypoints;
         }
-
-        for (let pointsIndex = 0; pointsIndex < points.length; pointsIndex++) {
-            let point;
-            point = {x: points[pointsIndex].x, y: points[pointsIndex].y};
-            waypoints.push(point);
-        }
-
-        element.waypoints = waypoints;
     });
+
 }

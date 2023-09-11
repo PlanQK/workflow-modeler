@@ -23,7 +23,7 @@ export default {
     configTabs: [
         {
             tabId: 'QHAnaEndpointsTab',
-            tabTitle: 'QHAna Endpoints',
+            tabTitle: 'QHAna Plugin',
             configTab: QHAnaConfigurationsTab,
         },
     ],

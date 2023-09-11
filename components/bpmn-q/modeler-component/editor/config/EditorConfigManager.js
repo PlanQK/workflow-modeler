@@ -1,12 +1,14 @@
 import { getPluginConfig } from '../plugin/PluginConfigHandler';
-import { saveFileFormats, transformedWorkflowHandlers } from '../EditorConstants';
+import { saveFileFormats, transformedWorkflowHandlers, autoSaveFile } from '../EditorConstants';
 
 // default configurations of the editor
 const defaultConfig = {
     camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
     fileName: process.env.DOWNLOAD_FILE_NAME,
     transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
-    fileFormat: saveFileFormats.BPMN
+    autoSaveFileOption: autoSaveFile.INTERVAL,
+    fileFormat: saveFileFormats.BPMN,
+    autoSaveIntervalSize: process.env.AUTOSAVE_INTERVAL
 };
 
 let config = {};
@@ -90,6 +92,33 @@ export function setTransformedWorkflowHandler(transformedWorkflowHandler) {
 }
 
 /**
+ * Get the id of the handler to handle auto save of files.
+ *
+ * @return {string} the currently specified handler id
+ */
+export function getAutoSaveFileOption() {
+    if (config.autoSaveFileOption === undefined) {
+        const autoSaveFileOption = autoSaveFile[getPluginConfig('editor').autoSaveFileOption];
+        setAutoSaveFileOption(autoSaveFileOption || defaultConfig.autoSaveFileOption);
+    }
+    return config.autoSaveFileOption;
+}
+
+/**
+ * Set the id of the handler to handle auto save of files
+ *
+ * @param autoSaveFileOption the id of the transformed workflow handler
+ */
+export function setAutoSaveFileOption(autoSaveFileOption) {
+    if (autoSaveFileOption !== null && autoSaveFileOption !== undefined
+        // check that the new value is a valid handler id
+        && Object.values(autoSaveFile).includes(autoSaveFileOption)) {
+
+        config.autoSaveFileOption = autoSaveFileOption;
+        }
+}
+
+/** 
  * Get the file format
  *
  * @return {string} the currently specified handler id
@@ -113,6 +142,29 @@ export function setFileFormat(fileFormat) {
         && Object.values(saveFileFormats).includes(fileFormat)) {
 
         config.fileFormat = fileFormat;
+    }
+}
+
+/** 
+ * Get the autosave interval size
+ *
+ * @return {string} the current interval size
+ */
+export function getAutoSaveIntervalSize() {
+    if (config.autoSaveIntervalSize === undefined) {
+        setAutoSaveIntervalSize(getPluginConfig('editor').autoSaveIntervalSize || defaultConfig.autoSaveIntervalSize);
+    }
+    return config.autoSaveIntervalSize;
+}
+
+/**
+ * Set the interval size of the autosave function
+ *
+ * @param intervalSize the interval size 
+ */
+export function setAutoSaveIntervalSize(intervalSize) {
+    if (intervalSize !== null && intervalSize !== undefined) {
+        config.autoSaveIntervalSize = intervalSize;
     }
 }
 

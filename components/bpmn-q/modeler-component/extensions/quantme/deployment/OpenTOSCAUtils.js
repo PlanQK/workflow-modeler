@@ -12,7 +12,6 @@
 import {fetch} from 'whatwg-fetch';
 import {performAjax} from '../utilities/Utilities';
 
-
 /**
  * Create a new ArtifactTemplate of the given type and add the given blob as file
  *

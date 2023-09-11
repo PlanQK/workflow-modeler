@@ -164,6 +164,7 @@ export default class DeploymentPlugin extends PureComponent {
                 console.log('Creating service instance for CSAR: ', csar);
 
                 let instanceCreationResponse = await createServiceInstance(csar, this.modeler.config.camundaEndpoint);
+                csar.properties = instanceCreationResponse.properties;
                 if (instanceCreationResponse.success === false) {
 
                     // notify user about failed instance creation
@@ -234,7 +235,7 @@ export default class DeploymentPlugin extends PureComponent {
                     if (csar.type === 'pull') {
                         bindingResponse = bindUsingPull(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     } else if (csar.type === 'push') {
-                        bindingResponse = bindUsingPush(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'));
+                        bindingResponse = bindUsingPush(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     }
 
                     // abort if binding pattern is invalid or binding fails

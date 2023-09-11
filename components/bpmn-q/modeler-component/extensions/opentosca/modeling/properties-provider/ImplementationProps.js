@@ -1,15 +1,18 @@
-import {TextFieldEntry, isTextFieldEntryEdited} from '@bpmn-io/properties-panel';
-import {DmnImplementationProps} from './DmnImplementationProps';
-import {ImplementationTypeProps} from './ImplementationTypeProps';
-
-import {useService} from "bpmn-js-properties-panel";
+import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import { DmnImplementationProps } from './DmnImplementationProps';
+import { ImplementationTypeProps } from './ImplementationTypeProps';
+import { useService } from "bpmn-js-properties-panel";
+import { getImplementationType } from "../../../quantme/utilities/ImplementationTypeHelperExtension"
 import {
     getServiceTaskLikeBusinessObject,
 } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
-import {getExtensionElementsList} from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import {Deployment} from "./Deployment";
+import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import { Deployment } from "./Deployment";
+import { Connector } from './Connector';
+import { YamlUpload } from './YamlUpload';
 import { ArtifactUpload } from './ArtifactUpload';
-import {getImplementationType} from "../../../quantme/utilities/ImplementationTypeHelperExtension";
+const yaml = require('js-yaml');
+const QUANTME_NAMESPACE_PULL = 'http://quantil.org/quantme/pull';
 
 /**
  * Properties group for service tasks. Extends the original implementation by adding a new selection option to the
@@ -34,7 +37,7 @@ export function ImplementationProps(props) {
 
     // (1) display implementation type select
     const entries = [
-        ...ImplementationTypeProps({element})
+        ...ImplementationTypeProps({ element })
     ];
 
     // (2) display implementation properties based on type
@@ -66,7 +69,7 @@ export function ImplementationProps(props) {
             }
         );
     } else if (implementationType === 'dmn') {
-        entries.push(...DmnImplementationProps({element}));
+        entries.push(...DmnImplementationProps({ element }));
     } else if (implementationType === 'external') {
         entries.push(
             {
@@ -84,7 +87,7 @@ export function ImplementationProps(props) {
             }
         );
 
-    // custom extension
+        // custom extension
     } else if (implementationType === 'deploymentModel') {
         entries.push({
             id: 'deployment',
@@ -95,6 +98,23 @@ export function ImplementationProps(props) {
             isEdited: isTextFieldEntryEdited
         });
         entries.push({
+            id: 'yamlUpload',
+            component: YamlUpload,
+            isEdited: isTextFieldEntryEdited
+        })
+        console.log(!element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))))
+        if (!element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))) && element.businessObject.yaml !== undefined) {
+            const urls = extractUrlsFromYaml(element.businessObject.yaml);
+            entries.push({
+                id: 'connector',
+                element,
+                translate,
+                urls,
+                component: Connector,
+                isEdited: isTextFieldEntryEdited
+            })
+        }
+        entries.push({
             id: 'artifactUpload',
             element,
             translate,
@@ -103,7 +123,22 @@ export function ImplementationProps(props) {
         });
     }
 
-    return entries;
+
+return entries;
+}
+
+function extractUrlsFromYaml(content) {
+    const doc = yaml.load(content);
+
+    // Extract URLs from paths
+    const paths = Object.keys(doc.paths);
+    const urls = paths.map((path) => {
+        const method = Object.keys(doc.paths[path])[0];
+        const url = `${path}`;
+        return url;
+    });
+
+    return urls;
 }
 
 export function JavaClass(props) {
@@ -177,7 +212,7 @@ export function Expression(props) {
 }
 
 function ResultVariable(props) {
-    const {element} = props;
+    const { element } = props;
 
     const commandStack = useService('commandStack');
     const translate = useService('translate');
@@ -245,7 +280,7 @@ export function DelegateExpression(props) {
 }
 
 function Topic(props) {
-    const {element} = props;
+    const { element } = props;
 
     const commandStack = useService('commandStack');
     const translate = useService('translate');
@@ -278,7 +313,7 @@ function Topic(props) {
 }
 
 function ConnectorId(props) {
-    const {element} = props;
+    const { element } = props;
 
     const commandStack = useService('commandStack');
     const translate = useService('translate');

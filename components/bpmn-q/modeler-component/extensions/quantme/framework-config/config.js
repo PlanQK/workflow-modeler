@@ -9,9 +9,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// takes either the environment variables or the default values definded in webpack.config
+// takes either the environment variables or the default values defined in webpack.config
+// TODO: On change ALWAYS UPDATE corresponding doc: doc/quantum-workflow-modeler/modeler-configuration.md
 const defaultConfig = {
     quantmeDataConfigurationsEndpoint: process.env.DATA_CONFIG,
+    opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
+    wineryEndpoint: process.env.WINERY_ENDPOINT,
+    camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
     nisqAnalyzerEndpoint: process.env.NISQ_ANALYZER_ENDPOINT,
     githubToken: process.env.GITHUB_TOKEN,
     transformationFrameworkEndpoint: process.env.TRANSFORMATION_FRAMEWORK_ENDPOINT,
