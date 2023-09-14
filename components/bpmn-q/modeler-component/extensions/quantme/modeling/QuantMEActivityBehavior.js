@@ -7,7 +7,7 @@ import {
 import * as quantMEConstants from '../Constants';
 
 
-export default function QuantMEBehavior(
+export default function QuantMEActivityBehavior(
     simulator,
     scopeBehavior,
     transactionBehavior
@@ -17,7 +17,6 @@ export default function QuantMEBehavior(
     this._transactionBehavior = transactionBehavior;
 
     const elements = [
-        quantMEConstants.CIRCUIT_CUTTING_SUBPROCESS,
         quantMEConstants.CIRCUIT_CUTTING_TASK,
         quantMEConstants.CUTTING_RESULT_COMBINATION_TASK,
         quantMEConstants.QUANTUM_COMPUTATION_TASK,
@@ -29,8 +28,7 @@ export default function QuantMEBehavior(
         quantMEConstants.VARIATIONAL_QUANTUM_ALGORITHM_TASK,
         quantMEConstants.WARM_STARTING_TASK,
         quantMEConstants.PARAMETER_OPTIMIZATION_TASK,
-        quantMEConstants.RESULT_EVALUATION_TASK,
-        quantMEConstants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+        quantMEConstants.RESULT_EVALUATION_TASK
     ];
 
     for (const element of elements) {
@@ -38,13 +36,13 @@ export default function QuantMEBehavior(
     }
 }
 
-QuantMEBehavior.$inject = [
+QuantMEActivityBehavior.$inject = [
     'simulator',
     'scopeBehavior',
     'transactionBehavior'
 ];
 
-QuantMEBehavior.prototype.signal = function (context) {
+QuantMEActivityBehavior.prototype.signal = function (context) {
 
     // trigger messages that are pending send
     const event = this._triggerMessages(context);
@@ -56,7 +54,7 @@ QuantMEBehavior.prototype.signal = function (context) {
     this._simulator.exit(context);
 };
 
-QuantMEBehavior.prototype.enter = function (context) {
+QuantMEActivityBehavior.prototype.enter = function (context) {
 
     const {
         element
@@ -78,7 +76,7 @@ QuantMEBehavior.prototype.enter = function (context) {
     this._simulator.exit(context);
 };
 
-QuantMEBehavior.prototype.exit = function (context) {
+QuantMEActivityBehavior.prototype.exit = function (context) {
 
     const {
         element,
@@ -112,7 +110,7 @@ QuantMEBehavior.prototype.exit = function (context) {
     }
 };
 
-QuantMEBehavior.prototype.signalOnEvent = function (context, event) {
+QuantMEActivityBehavior.prototype.signalOnEvent = function (context, event) {
 
     const {
         scope,
@@ -138,7 +136,7 @@ QuantMEBehavior.prototype.signalOnEvent = function (context, event) {
  *
  * @return {Object|null} event
  */
-QuantMEBehavior.prototype.waitAtElement = function (element) {
+QuantMEActivityBehavior.prototype.waitAtElement = function (element) {
     const wait = this._simulator.getConfig(element).wait;
 
     return wait && {
@@ -149,7 +147,7 @@ QuantMEBehavior.prototype.waitAtElement = function (element) {
     };
 };
 
-QuantMEBehavior.prototype._getMessageContexts = function (element, after = null) {
+QuantMEActivityBehavior.prototype._getMessageContexts = function (element, after = null) {
 
     const filterAfter = after ? ctx => ctx.referencePoint.x > after.x : () => true;
     const sortByReference = (a, b) => a.referencePoint.x - b.referencePoint.x;
@@ -171,7 +169,7 @@ QuantMEBehavior.prototype._getMessageContexts = function (element, after = null)
  *
  * @return {Object} event to subscribe to proceed
  */
-QuantMEBehavior.prototype._triggerMessages = function (context) {
+QuantMEActivityBehavior.prototype._triggerMessages = function (context) {
 
     // check for the next message flows to either
     // trigger or wait for; this implements intuitive,
@@ -198,7 +196,7 @@ QuantMEBehavior.prototype._triggerMessages = function (context) {
         // user may manually advance and force send all outgoing
         // messages
         if (scope.expectedIncoming !== initiatingFlow) {
-            console.debug('Simulator :: QuantMEBehavior :: ignoring out-of-bounds message');
+            console.debug('Simulator :: QuantMEActivityBehavior :: ignoring out-of-bounds message');
 
             return;
         }
