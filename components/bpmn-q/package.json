@@ -32,6 +32,7 @@
     "bpmn-js": "^11.1.1",
     "bpmn-js-cli": "^2.3.0",
     "bpmn-js-properties-panel": "^1.17.2",
+    "bpmn-js-token-simulation": "^0.31.1",
     "camunda-bpmn-moddle": "^7.0.1",
     "classnames": "^2.3.2",
     "clsx": "^1.2.1",
