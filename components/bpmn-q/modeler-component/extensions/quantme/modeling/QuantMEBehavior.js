@@ -4,6 +4,8 @@ import {
     isSequenceFlow
 } from 'bpmn-js-token-simulation/lib/simulator/util/ModelUtil';
 
+import * as quantMEConstants from '../Constants';
+
 
 export default function QuantMEBehavior(
     simulator,
@@ -15,14 +17,20 @@ export default function QuantMEBehavior(
     this._transactionBehavior = transactionBehavior;
 
     const elements = [
-        'bpmn:BusinessRuleTask',
-        'bpmn:CallQuantME',
-        'bpmn:ManualTask',
-        'bpmn:ScriptTask',
-        'bpmn:ServiceTask',
-        'bpmn:Task',
-        'quantme:QuantumCircuitExecutionTask',
-        'quantme:QuantumComputationTask'
+        quantMEConstants.CIRCUIT_CUTTING_SUBPROCESS,
+        quantMEConstants.CIRCUIT_CUTTING_TASK,
+        quantMEConstants.CUTTING_RESULT_COMBINATION_TASK,
+        quantMEConstants.QUANTUM_COMPUTATION_TASK,
+        quantMEConstants.QUANTUM_CIRCUIT_LOADING_TASK,
+        quantMEConstants.DATA_PREPARATION_TASK,
+        quantMEConstants.ORACLE_EXPANSION_TASK,
+        quantMEConstants.QUANTUM_CIRCUIT_EXECUTION_TASK,
+        quantMEConstants.READOUT_ERROR_MITIGATION_TASK,
+        quantMEConstants.VARIATIONAL_QUANTUM_ALGORITHM_TASK,
+        quantMEConstants.WARM_STARTING_TASK,
+        quantMEConstants.PARAMETER_OPTIMIZATION_TASK,
+        quantMEConstants.RESULT_EVALUATION_TASK,
+        quantMEConstants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ];
 
     for (const element of elements) {
@@ -79,16 +87,8 @@ QuantMEBehavior.prototype.exit = function (context) {
 
     const parentScope = scope.parent;
 
-    // TODO(nikku): if a outgoing flow is conditional,
-    //              task has exclusive gateway semantics,
-    //              else, task has parallel gateway semantics
-
     const complete = !scope.failed;
 
-    // compensation is registered AFTER successful completion
-    // of normal scope activities (non event sub-processes).
-    //
-    // we must register it now, not earlier
     if (complete && !isEventSubProcess(element)) {
         this._transactionBehavior.registerCompensation(scope);
     }
