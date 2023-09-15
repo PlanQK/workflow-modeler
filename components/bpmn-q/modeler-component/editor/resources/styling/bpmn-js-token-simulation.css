@@ -53,7 +53,6 @@
 .bts-context-pad:not(.disabled):hover {
   background-color: var(--token-simulation-blue-base-44, #10D070);
   opacity: 1;
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .djs-overlays:not(.hover) .bts-context-pad:not(:hover).show-hover,
@@ -86,7 +85,7 @@
 }
 
 .bts-token-count {
-  background-color: #FAFAFA;
+
   border-radius: 100%;
   width: 25px;
   height: 25px;
@@ -111,7 +110,6 @@
 }
 
 .bts-token-count.waiting {
-  color: var(--token-simulation-white, #FFFFFF);
   font-family: 'Arial', sans-serif;
   background-color: var(--token-simulation-blue-base-44, #10D070);
 }
@@ -148,12 +146,10 @@
 
 .bts-notifications .bts-notification.success {
   background-color: var(--token-simulation-blue-base-44, #10D070);
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bts-notifications .bts-notification.warning {
   background-color: var(--token-simulation-red-base-62, #FF3D3D);
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bts-notifications .bts-notification > * {
@@ -217,17 +213,16 @@
 
 .bts-element-notification.success {
   background-color: var(--token-simulation-blue-base-44, #10D070);
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bts-element-notification.warning {
   background-color: var(--token-simulation-red-base-62, #FF3D3D);
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bts-toggle-mode {
   cursor: pointer;
   position: absolute;
+  font-family: Arial, serif;
   top: 20px;
   left: 20px;
   background-color: var(--token-simulation-silver-darken-94, #EFEFEF);
@@ -247,7 +242,6 @@
 .bjs-container.simulation .bts-toggle-mode,
 .bts-toggle-mode:hover {
   background-color: var(--token-simulation-blue-base-44, #10D070);
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bjs-container .djs-palette {
@@ -297,12 +291,10 @@
 }
 
 .bts-palette .bts-entry:not(.disabled):hover {
-  color: var(--token-simulation-white, #FFFFFF);
   background-color: var(--token-simulation-blue-base-44, #10D070);
 }
 
 .bts-palette .bts-entry.active {
-  color: var(--token-simulation-white, #FFFFFF);
   background-color: var(--token-simulation-blue-base-44, #10D070);
 }
 
@@ -332,7 +324,6 @@
 .bts-log .bts-header {
   background-color: var(--token-simulation-blue-base-44, #10D070);
   padding: 6px 8px;
-  color: var(--token-simulation-white, #FFFFFF);
   height: 30px;
   box-sizing: border-box;
   font-size: 16px;
@@ -345,7 +336,6 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bts-log .bts-log-icon {
@@ -380,7 +370,6 @@
   font-size: 16px;
   margin: 0 0 6px 0;
   padding: 6px;
-  background: var(--token-simulation-white, #FFFFFF);
   border-radius: 2px;
   display: flex;
   align-items: stretch;
@@ -393,12 +382,10 @@
 
 .bts-log .bts-entry.success {
   background-color: var(--token-simulation-blue-base-44, #10D070);
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bts-log .bts-entry.warning {
-  background-color: var(--token-simulation-red-base-62, #FF3D3D);
-  color: var(--token-simulation-white, #FFFFFF);
+  background-color: var(--token-simulation-red-base-62, #FF3D3D);;
 }
 
 .bts-log .bts-entry:last-child {
@@ -469,14 +456,11 @@
   opacity: .25;
 }
 
-.djs-container.highlight {
-  background-color: var(--token-simulation-silver-base-97, #F8F8F8);
-}
 
 .bts-set-animation-speed {
   position: absolute;
   bottom: 20px;
-  left: 25%;
+  left: 75%;
   transform: translate(-50%, 0);
   font-size: 16px;
   text-align: center;
@@ -511,7 +495,6 @@
 .bts-set-animation-speed .bts-animation-speed-button.active,
 .bts-set-animation-speed .bts-animation-speed-button:hover {
   background-color: var(--token-simulation-blue-base-44, #10D070);
-  color: var(--token-simulation-white, #FFFFFF);
 }
 
 .bts-icon {
