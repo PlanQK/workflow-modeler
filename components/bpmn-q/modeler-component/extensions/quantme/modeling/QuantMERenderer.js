@@ -87,7 +87,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.5)",
           strokeWidth: 1.5,
-          fill: getFillColor(element, defaultFillColor),
+          fill: 'white',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -98,7 +98,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.5)",
           strokeWidth: 1.5,
-          fill: getFillColor(element, "#000000"),
+          fill: 'black',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -149,7 +149,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, defaultStrokeColor),
+          fill: 'white',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -158,7 +158,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, "#000000"),
+          fill: 'black',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -171,7 +171,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, defaultFillColor),
+          fill: 'white',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -182,7 +182,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, "#000000"),
+          fill: 'black',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -225,7 +225,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, defaultFillColor),
+          fill: 'white',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -236,7 +236,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, "#000000"),
+          fill: 'black',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -245,8 +245,8 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, "#000000"),
-          stroke: getStrokeColor(element, "#FFF"),
+          fill: 'black',
+          stroke: 'white',
         });
 
         // create arrow
@@ -271,7 +271,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, defaultFillColor),
+          fill: 'white',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
@@ -279,7 +279,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawPath(parentGfx, pathData, {
           transform: "scale(0.3)",
           strokeWidth: 2.5,
-          fill: getFillColor(element, "#000000"),
+          fill: 'black',
           stroke: getStrokeColor(element, defaultStrokeColor),
         });
 
