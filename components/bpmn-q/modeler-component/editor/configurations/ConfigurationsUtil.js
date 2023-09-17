@@ -65,7 +65,7 @@ export function createConfigurationsEntries(
     // create popup menu entry
     menuEntries[config.id] = {
       label: config.name,
-      className: className,
+      className: config.icon.className,
       action: updateAction,
     };
   });
