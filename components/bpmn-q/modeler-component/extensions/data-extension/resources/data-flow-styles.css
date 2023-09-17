@@ -161,3 +161,53 @@
   background-repeat: no-repeat;
   display: inline-block;
 }
+
+.dataflow-quantum-circuit-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/icons/quantum-circuit-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.dataflow-result-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/icons/result-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.dataflow-evaluation-result-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/icons/evaluation-result-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.dataflow-parametrization-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/icons/parametrization-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.dataflow-initial-state-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/icons/initial-state-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
