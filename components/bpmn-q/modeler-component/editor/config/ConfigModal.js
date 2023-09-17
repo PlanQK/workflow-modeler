@@ -10,7 +10,7 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "../ui/modal/Modal";
 import "./config-modal.css";
 
@@ -54,13 +54,34 @@ export default function ConfigModal({ onClose, configTabs }) {
     elements[id].hidden = false;
   }
 
+  const updateModalSize = () => {
+    const modalDialog = document.querySelector(".qwm-modal-dialog");
+    const desiredWidth = window.innerWidth * 0.45;
+    const desiredHeight = window.innerHeight * 0.5;
+    modalDialog.style.width = `${desiredWidth}px`;
+    modalDialog.style.height = `${desiredHeight}px`;
+  };
+
+  // Call the function when the component mounts
+  useEffect(() => {
+    updateModalSize();
+
+    // Attach an event listener to recalculate size when the window is resized
+    window.addEventListener("resize", updateModalSize);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", updateModalSize);
+    };
+  }, []);
+
   return (
     <Modal onClose={onClose} openTab={openTab}>
       <Title>Modeler Configuration</Title>
 
       <Body>
         <form id="configForm" onSubmit={onSubmit}>
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <div id="configButtons" className="qwm-tabButtonsContainer">
               {React.Children.toArray(
                 configTabs.map((tab, index) => (
@@ -96,7 +117,7 @@ export default function ConfigModal({ onClose, configTabs }) {
         <div id="configFormButtons">
           <button
             type="submit"
-            className="qwm-btn qwm-btn-primary"
+            className="qwm-btn qwm-btn-save"
             form="configForm"
           >
             Save
