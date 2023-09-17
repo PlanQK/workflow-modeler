@@ -39,7 +39,7 @@ export default function BPMNConfigTab() {
   const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(
     config.getScriptSplitterThreshold()
   );
-  let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance;
+  let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance === "false" ? false : Boolean(hybridRuntimeProvenance);
 
   const modeler = getModeler();
 
