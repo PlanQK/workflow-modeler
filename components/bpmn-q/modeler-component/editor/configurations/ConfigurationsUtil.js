@@ -62,10 +62,13 @@ export function createConfigurationsEntries(
       };
     }
 
+    if (config.icon !== undefined) {
+      className = config.icon.className;
+    }
     // create popup menu entry
     menuEntries[config.id] = {
       label: config.name,
-      className: config.icon.className,
+      className: className,
       action: updateAction,
     };
   });
