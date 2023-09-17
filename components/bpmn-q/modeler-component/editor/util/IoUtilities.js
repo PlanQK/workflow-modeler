@@ -399,7 +399,10 @@ async function openFileDialog(modeler, content, fileName, fileFormat) {
     ],
   });
   writeFile(fileHandle, content);
-  if (fileFormat === saveFileFormats.BPMN || fileFormat === saveFileFormats.ALL) {
+  if (
+    fileFormat === saveFileFormats.BPMN ||
+    fileFormat === saveFileFormats.ALL
+  ) {
     modeler.oldXml = content;
   }
 }
