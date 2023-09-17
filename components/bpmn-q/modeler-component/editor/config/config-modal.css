@@ -1,8 +1,6 @@
 .qwm-innerConfig {
   min-width: 100px;
-  max-width: 100px;
-  min-height: auto;
-  height: auto;
+  max-width: 500px;
   border-radius: 3px;
   font-size: 13px;
   font-weight: bold;
@@ -12,6 +10,7 @@
   letter-spacing: normal;
   text-align: center;
   padding: 5px;
+  margin: 5px;
 }
 
 .qwm-innerConfig + .qwm-innerConfig {
@@ -44,10 +43,9 @@
 
 .qwm-tabButtonsContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
   overflow: auto;
   min-width: 120px;
   max-height: 263px;
-  direction: rtl;
 }
