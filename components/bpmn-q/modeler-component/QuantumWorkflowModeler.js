@@ -30,7 +30,8 @@ import {
 import * as editorConfig from "./editor/config/EditorConfigManager";
 import { initEditorEventHandler } from "./editor/events/EditorEventHandler";
 import $ from "jquery";
-import { edit } from "ace-builds";
+
+/* global ace */
 
 /**
  * The Quantum Workflow modeler HTML web component which contains the bpmn-js modeler to model BPMN diagrams, an editor
@@ -199,7 +200,13 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
     let editor = document.getElementById("editor");
     let dragging = false;
-    let aceEditor = edit(editor);
+    let aceEditor = ace.edit(editor);
+    aceEditor.setOptions({
+      scrollPastEnd: false,
+      vScrollBarAlwaysVisible: true,
+      minLines: 10,
+      maxLines: 10,
+    });
 
     $("#editor_dragbar").mousedown(function (e) {
       e.preventDefault();
@@ -230,7 +237,12 @@ export class QuantumWorkflowModeler extends HTMLElement {
           editor_wrap.css("height", newHeight + "px");
           editorElement.css("height", editorHeight + "px");
           dragbar.css("top", newTop - dragbar.height() + "px");
-          aceEditor.resize();
+          aceEditor.setOptions({
+            minLines: editorHeight / 28 + 2,
+            maxLines: editorHeight / 28 + 2,
+          });
+          editorElement.css("height", editorHeight + "px");
+          aceEditor.resize(true);
         }
       });
     });
