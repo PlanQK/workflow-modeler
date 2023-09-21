@@ -102,7 +102,6 @@ export function ImplementationProps(props) {
             component: YamlUpload,
             isEdited: isTextFieldEntryEdited
         })
-        console.log(!element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))))
         if (!element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))) && element.businessObject.yaml !== undefined) {
             const urls = extractUrlsFromYaml(element.businessObject.yaml);
             entries.push({

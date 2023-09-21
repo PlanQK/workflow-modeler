@@ -15,41 +15,51 @@ import {isDeployableServiceTask} from "../deployment/DeploymentUtils";
 import * as config from "../framework-config/config-manager";
 import {makeId} from "../deployment/OpenTOSCAUtils";
 import {getCamundaEndpoint} from "../../../editor/config/EditorConfigManager";
+import {createElement} from "../../../editor/util/camunda-utils/ElementUtil";
+import {useService} from "bpmn-js-properties-panel";
 
+
+const fetchMethod = `
+function fetch(method, url, body) {
+    try {
+        var resourceURL = new java.net.URL(url);
+    
+        var urlConnection = resourceURL.openConnection();
+        urlConnection.setRequestMethod(method);
+        if (body) {
+            urlConnection.setDoOutput(true);
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            var outputStream = urlConnection.getOutputStream()
+            var outputStreamWriter = new java.io.OutputStreamWriter(outputStream)
+            outputStreamWriter.write(body);
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+            outputStream.close();
+        }
+    
+        var inputStream = new java.io.InputStreamReader(urlConnection
+            .getInputStream());
+        var bufferedReader = new java.io.BufferedReader(inputStream);
+        var inputLine = ""
+        var text = "";
+        var i = 5;
+        while ((inputLine = bufferedReader.readLine()) != null) {
+            text += inputLine
+        }
+        bufferedReader.close();
+        return text;
+    } catch (e) {
+        java.lang.System.err.println(e);
+        return e;
+    }
+}`;
 
 function createDeploymentScript(params) {
     return `
 var params = ${JSON.stringify(params)};
 params.csarName = "ondemand_" + (Math.random().toString().substring(3));
 
-function fetch(method, url, body) {
-    var resourceURL = new java.net.URL(url);
-
-    var urlConnection = resourceURL.openConnection();
-    urlConnection.setRequestMethod(method);
-    if (body) {
-        urlConnection.setDoOutput(true);
-        urlConnection.setRequestProperty("Content-Type", "application/json");
-        var outputStream = urlConnection.getOutputStream()
-        var outputStreamWriter = new java.io.OutputStreamWriter(outputStream)
-        outputStreamWriter.write(body);
-        outputStreamWriter.flush();
-        outputStreamWriter.close();
-        outputStream.close();
-    }
-
-    var inputStream = new java.io.InputStreamReader(urlConnection
-        .getInputStream());
-    var bufferedReader = new java.io.BufferedReader(inputStream);
-    var inputLine = ""
-    var text = "";
-    var i = 5;
-    while ((inputLine = bufferedReader.readLine()) != null) {
-        text += inputLine
-    }
-    bufferedReader.close();
-    return text;
-}
+${fetchMethod}
 
 
 var createCsarResponse = fetch('POST', params.opentoscaEndpoint, JSON.stringify({
@@ -77,6 +87,35 @@ var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.str
 execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
 
+function createWaitScript(params) {
+    return `
+var params = ${JSON.stringify(params)};
+
+${fetchMethod}
+var buildPlanInstanceUrl = execution.getVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl");
+var instanceUrl = buildPlanInstanceUrl.replace(/buildplans.+/, "instances")
+
+java.lang.System.out.println(instanceUrl);
+
+while(true) {
+    var createInstanceResponse = fetch('GET', instanceUrl);
+    var instances = JSON.parse(createInstanceResponse).service_template_instances;
+    if (instances && instances.length > 0 && instances[0].state === "CREATED") {
+        break;
+    }
+    java.lang.Thread.sleep(2000);
+}
+
+var outputs = JSON.parse(fetch('GET', buildPlanInstanceUrl)).outputs;
+for(var i = 0; i < outputs.length; i++) {
+ if(outputs[i].name === "selfserviceApplicationUrl") {
+    execution.setVariable("selfserviceApplicationUrl", outputs[i].value);
+    break;
+ }
+}
+`;
+}
+
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
  *
@@ -90,6 +129,7 @@ export async function startOnDemandReplacementProcess(xml) {
     const elementRegistry = modeler.get('elementRegistry');
     const bpmnReplace = modeler.get('bpmnReplace');
     const bpmnAutoResizeProvider = modeler.get('bpmnAutoResizeProvider');
+    const bpmnFactory = modeler.get('bpmnFactory');
     bpmnAutoResizeProvider.canResize = () => false;
 
     const serviceTasks = elementRegistry.filter(({businessObject}) => isDeployableServiceTask(businessObject));
@@ -99,6 +139,10 @@ export async function startOnDemandReplacementProcess(xml) {
         if (deploymentModelUrl.startsWith('{{ wineryEndpoint }}')) {
             deploymentModelUrl = deploymentModelUrl.replace('{{ wineryEndpoint }}', config.getWineryEndpoint());
         }
+
+        const extensionElements = serviceTask.businessObject.extensionElements;
+
+        console.log("SVCTSK", serviceTask)
         let subProcess = bpmnReplace.replaceElement(serviceTask, {type: 'bpmn:SubProcess'});
 
         subProcess.businessObject.set("opentosca:onDemandDeployment", true);
@@ -123,17 +167,53 @@ export async function startOnDemandReplacementProcess(xml) {
             }
         ));
 
-
         const serviceTask2 = modeling.appendShape(serviceTask1, {
-            type: 'bpmn:ServiceTask'
-        }, {x: 600, y: 200}, subProcess);
+            type: 'bpmn:ScriptTask',
+        }, {x: 600, y: 200});
+        serviceTask2.businessObject.set("scriptFormat", "javascript");
+        serviceTask2.businessObject.set("script", createWaitScript(
+            {subprocessId: subProcess.id}
+        ));
 
-        serviceTask2.businessObject.set("camunda:type", "external");
-        serviceTask2.businessObject.set("camunda:topic", topicName);
+
+        const serviceTask3 = modeling.appendShape(serviceTask2, {
+            type: 'bpmn:ServiceTask'
+        }, {x: 800, y: 200});
+
+        if (!extensionElements) {
+            serviceTask3.businessObject.set("camunda:type", "external");
+            serviceTask3.businessObject.set("camunda:topic", topicName);
+
+        } else {
+            const values = extensionElements.values;
+            for (let value of values) {
+                if (value.inputOutput === undefined) continue;
+                for (let param of value.inputOutput.inputParameters) {
+                    if (param.name === "url") {
+                        param.value = `\${selfserviceApplicationUrl + ${JSON.stringify(param.value || "")}}`;
+                        break;
+                    }
+                }
+            }
+
+            const newExtensionElements = createElement(
+                'bpmn:ExtensionElements',
+                {values},
+                serviceTask2.businessObject,
+                bpmnFactory
+            );
+            subProcess.businessObject.set("extensionElements", undefined);
+            serviceTask3.businessObject.set("extensionElements", newExtensionElements);
+        }
+        const endTask = modeling.appendShape(serviceTask3, {
+            type: 'bpmn:EndEvent'
+        }, {x: 1000, y: 200}, subProcess);
+
     }
 
     // layout diagram after successful transformation
     let updatedXml = await getXml(modeler);
     console.log(updatedXml);
+
     return updatedXml;
 }
