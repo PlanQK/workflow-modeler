@@ -46,7 +46,7 @@ export default function ConfirmationModal({ onClose, onConfirm }) {
             className="qwm-btn qwm-btn-secondary"
             onClick={() => onClose()}
           >
-            No
+            Abort
           </button>
         </div>
       </Footer>
