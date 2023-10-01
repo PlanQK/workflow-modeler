@@ -19,7 +19,10 @@ import {
     createServiceTemplateWithNodeAndArtifact,
     getNodeTypeQName,
     getArtifactTemplateInfo,
-    insertTopNodeTag
+    insertTopNodeTag,
+    serviceTemplateExists,
+    addNodeWithArtifactToServiceTemplateByName,
+    deleteArtifactTemplate
 } from '../../deployment/WineryUtils';
 import NotificationHandler from '../../../../editor/ui/notifications/NotificationHandler';
 import {getWineryEndpoint} from "../../framework-config/config-manager";
@@ -78,14 +81,22 @@ export default function ArtifactUploadModal({onClose, element, commandStack}) {
         try {
             const namePrefix = element.businessObject.name ?? "";
             const artifactTemplateName = `${namePrefix}ArtifactTemplate-${element.id}`;
+            await deleteArtifactTemplate(artifactTemplateName);
             const artifactTemplateAddress = await createArtifactTemplateWithFile(artifactTemplateName, selectedOption, uploadFile);
             const artifactTemplateInfo = await getArtifactTemplateInfo(artifactTemplateAddress);
             const artifactTemplateQName = artifactTemplateInfo.serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].type;
             const nodeTypeQName = getNodeTypeQName(selectedOption);
             const serviceTemplateName = `${namePrefix}ServiceTemplate-${element.id}`;
-            serviceTemplateAddress = await createServiceTemplateWithNodeAndArtifact(serviceTemplateName, nodeTypeQName,
-                `${namePrefix}Node-${element.id}`, artifactTemplateQName,
-                `${namePrefix}Artifact-${element.id}`, selectedOption);
+            const doesExist = await serviceTemplateExists(serviceTemplateName);
+            if(doesExist) {
+                serviceTemplateAddress = await addNodeWithArtifactToServiceTemplateByName(serviceTemplateName, nodeTypeQName,
+                    `${namePrefix}Node-${element.id}`, artifactTemplateQName,
+                    `${namePrefix}Artifact-${element.id}`, selectedOption);
+            } else {
+                serviceTemplateAddress = await createServiceTemplateWithNodeAndArtifact(serviceTemplateName, nodeTypeQName,
+                    `${namePrefix}Node-${element.id}`, artifactTemplateQName,
+                    `${namePrefix}Artifact-${element.id}`, selectedOption);
+            }
             await insertTopNodeTag(serviceTemplateAddress, nodeTypeQName);
         } catch (e) {
             setTimeout(closeNotification, 1);
@@ -106,10 +117,11 @@ export default function ArtifactUploadModal({onClose, element, commandStack}) {
             }
         });
         setTimeout(closeNotification, 1);
+        const content = doesExist ? 'updated' : 'created';
         NotificationHandler.getInstance().displayNotification({
             type: 'info',
-            title: 'Service Template Created',
-            content: 'Service Template including Nodetype with attached Deployment Artifact of chosen type was successfully created.',
+            title: 'Service Template ' + content.charAt(0).toUpperCase() + content.slice(1),
+            content: 'Service Template including Nodetype with attached Deployment Artifact of chosen type was successfully ' + content + '.',
             duration: 4000
         });
     }

@@ -1,6 +1,6 @@
 import PlanQKPlugin from '../../extensions/planqk/PlanQKPlugin';
 import QuantMEPlugin from '../../extensions/quantme/QuantMEPlugin';
-import OpenToscaPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
+import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
 import DataFlowPlugin from '../../extensions/data-extension/DataFlowPlugin';
 import QHAnaPlugin from '../../extensions/qhana/QHAnaPlugin';
 import { getAllConfigs } from './PluginConfigHandler';
@@ -32,7 +32,7 @@ const PLUGINS = [
         dependencies: []
     },
     {
-        plugin: OpenToscaPlugin,
+        plugin: OpenTOSCAPlugin,
         dependencies: []
     }
 ];

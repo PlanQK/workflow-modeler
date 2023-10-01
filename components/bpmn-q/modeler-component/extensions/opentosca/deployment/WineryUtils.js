@@ -67,6 +67,30 @@ export async function createServiceTemplate(name) {
     return response.text();
 }
 
+export async function deleteArtifactTemplate(artifactTemplateName) {
+    // /artifacttemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpush%252Fartifacttemplates/ArtifactTemplate-Activity_01b3qkz/
+    const response = await fetch(`${getWineryEndpoint()}/artifacttemplates/${encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PUSH + '/'))}artifacttemplates/${encodeURIComponent(encodeURIComponent(artifactTemplateName))}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json'
+        },
+    });
+    return response.status === 204;
+}
+
+export async function serviceTemplateExists(serviceTemplateName) {
+    const response = await fetch(`${getWineryEndpoint()}/servicetemplates/${encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PUSH))}/${encodeURIComponent(encodeURIComponent(serviceTemplateName))}`, {
+        method: 'GET',
+    });
+    return response.status === 200;
+}
+
+export async function addNodeWithArtifactToServiceTemplateByName(serviceTemplateName, nodeTypeQName, name, artifactTemplateQName, artifactName, artifactTypeQName) {
+    const serviceTemplateAddress = encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PUSH)) + '/' + encodeURIComponent(encodeURIComponent(serviceTemplateName)) + '/';
+    await addNodeWithArtifactToServiceTemplate(serviceTemplateAddress, nodeTypeQName, name, artifactTemplateQName, artifactName, artifactTypeQName);
+    return serviceTemplateAddress;
+}
+
 export async function addNodeToServiceTemplate(serviceTemplateAddress, nodeTypeQName, name) {
     const nodeTemplate = {
         "documentation": [],

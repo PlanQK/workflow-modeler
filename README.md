@@ -41,7 +41,7 @@ to start the modeler in a simple html website which runs on localhost:8080.
 ## Execution in Docker
 To serve the application from a Docker container execute:
 ```
-docker run --name workflow-modeler -p 8080:8080 ghcr.io/sequenc-consortium/workflow-modeler
+docker run --name workflow-modeler -p 8080:8080 planqk/workflow-modeler
 ```
 Afterwards the application is available in a browser on localhost:8080 
 

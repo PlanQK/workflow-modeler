@@ -2,19 +2,19 @@ import {setPluginConfig} from '../../../modeler-component/editor/plugin/PluginCo
 import {expect} from 'chai';
 import * as opentoscaConfig from '../../../modeler-component/extensions/opentosca/framework-config/config-manager';
 
-describe('Test OpenTosca ConfigManager', function () {
+describe('Test OpenTOSCA ConfigManager', function () {
 
-    describe('Test OpenTosca endpoint', function () {
+    describe('Test OpenTOSCA endpoint', function () {
 
-        before('Reset OpenTosca configuration', function () {
+        before('Reset OpenTOSCA configuration', function () {
             opentoscaConfig.resetConfig();
         });
 
-        afterEach('Reset OpenTosca configuration', function () {
+        afterEach('Reset OpenTOSCA configuration', function () {
             opentoscaConfig.resetConfig();
         });
 
-        it('Should configure OpenTosca endpoints', function () {
+        it('Should configure OpenTOSCA endpoints', function () {
             setPluginConfig([
                 {
                     name: 'opentosca',
