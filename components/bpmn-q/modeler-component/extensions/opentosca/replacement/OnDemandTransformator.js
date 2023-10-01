@@ -26,6 +26,7 @@ function fetch(method, url, body) {
     
         var urlConnection = resourceURL.openConnection();
         urlConnection.setRequestMethod(method);
+        urlConnection.setRequestProperty("Accept", "application/json");
         if (body) {
             urlConnection.setDoOutput(true);
             urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -47,10 +48,11 @@ function fetch(method, url, body) {
             text += inputLine
         }
         bufferedReader.close();
+        java.lang.System.out.println("Response from " + url + ": " + text);
         return text;
     } catch (e) {
         java.lang.System.err.println(e);
-        return e;
+        throw e;
     }
 }`;
 
@@ -93,26 +95,33 @@ var params = ${JSON.stringify(params)};
 
 ${fetchMethod}
 var buildPlanInstanceUrl = execution.getVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl");
-var instanceUrl = buildPlanInstanceUrl.replace(/buildplans.+/, "instances")
-
-java.lang.System.out.println(instanceUrl);
-
-while(true) {
-    var createInstanceResponse = fetch('GET', instanceUrl);
-    var instances = JSON.parse(createInstanceResponse).service_template_instances;
-    if (instances && instances.length > 0 && instances[0].state === "CREATED") {
-        break;
-    }
-    java.lang.Thread.sleep(2000);
+var instanceUrl;
+for(var i = 0; i < 30; i++) {
+    try {
+        instanceUrl = JSON.parse(fetch('GET', buildPlanInstanceUrl))._links.service_template_instance.href; 
+        if (instanceUrl) break;
+     } catch (e) {
+     }
+     java.lang.Thread.sleep(2000);
 }
 
-var outputs = JSON.parse(fetch('GET', buildPlanInstanceUrl)).outputs;
-for(var i = 0; i < outputs.length; i++) {
- if(outputs[i].name === "selfserviceApplicationUrl") {
-    execution.setVariable("selfserviceApplicationUrl", outputs[i].value);
-    break;
- }
+java.lang.System.out.println("InstanceUrl: " + instanceUrl);
+
+for(var i = 0; i < 30; i++) {
+    try {
+        var createInstanceResponse = fetch('GET', instanceUrl);
+        var instance = JSON.parse(createInstanceResponse).service_template_instances;
+        if (instance && instance.state === "CREATED") {
+            break;
+        }
+     } catch (e) {
+     }
+     java.lang.Thread.sleep(2000);
 }
+
+var properties = JSON.parse(fetch('GET', instanceUrl + "/properties"));
+ 
+execution.setVariable("selfserviceApplicationUrl", properties.selfserviceApplicationUrl);
 `;
 }
 
@@ -190,7 +199,7 @@ export async function startOnDemandReplacementProcess(xml) {
                 if (value.inputOutput === undefined) continue;
                 for (let param of value.inputOutput.inputParameters) {
                     if (param.name === "url") {
-                        param.value = `\${selfserviceApplicationUrl + ${JSON.stringify(param.value || "")}}`;
+                        param.value = `\${selfserviceApplicationUrl.concat(${JSON.stringify(param.value || "")})}`;
                         break;
                     }
                 }
