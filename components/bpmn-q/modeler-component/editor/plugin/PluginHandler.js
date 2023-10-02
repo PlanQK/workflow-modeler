@@ -77,13 +77,13 @@ export function getActivePlugins() {
 export function checkEnabledStatus(pluginName) {
   switch (pluginName) {
     case "dataflow":
-      return process.env.ENABLE_DATA_FLOW_PLUGIN;
+      return process.env.ENABLE_DATA_FLOW_PLUGIN !== "false";
     case "planqk":
-      return process.env.ENABLE_PLANQK_PLUGIN;
+      return process.env.ENABLE_PLANQK_PLUGIN !== "false";
     case "qhana":
-      return process.env.ENABLE_QHANA_PLUGIN;
+      return process.env.ENABLE_QHANA_PLUGIN !== "false";
     case "quantme":
-      return process.env.ENABLE_QUANTME_PLUGIN;
+      return process.env.ENABLE_QUANTME_PLUGIN !== "false";
   }
 }
 /**
