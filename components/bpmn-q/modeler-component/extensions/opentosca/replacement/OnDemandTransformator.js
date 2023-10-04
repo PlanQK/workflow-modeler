@@ -107,7 +107,7 @@ for(var i = 0; i < 30; i++) {
 
 java.lang.System.out.println("InstanceUrl: " + instanceUrl);
 
-for(var i = 0; i < 30; i++) {
+for(var i = 0; i < 30 * 8; i++) {
     try {
         var createInstanceResponse = fetch('GET', instanceUrl);
         var instance = JSON.parse(createInstanceResponse).service_template_instances;
@@ -122,6 +122,7 @@ for(var i = 0; i < 30; i++) {
 var properties = JSON.parse(fetch('GET', instanceUrl + "/properties"));
  
 execution.setVariable("selfserviceApplicationUrl", properties.selfserviceApplicationUrl);
+java.lang.Thread.sleep(12000);
 `;
 }
 
@@ -151,7 +152,6 @@ export async function startOnDemandReplacementProcess(xml) {
 
         const extensionElements = serviceTask.businessObject.extensionElements;
 
-        console.log("SVCTSK", serviceTask)
         let subProcess = bpmnReplace.replaceElement(serviceTask, {type: 'bpmn:SubProcess'});
 
         subProcess.businessObject.set("opentosca:onDemandDeployment", true);
@@ -163,7 +163,7 @@ export async function startOnDemandReplacementProcess(xml) {
 
         let topicName = makeId(12);
         const serviceTask1 = modeling.appendShape(startEvent, {
-            type: 'bpmn:ScriptTask',
+            type: 'bpmn:ScriptTask'
         }, {x: 400, y: 200});
         serviceTask1.businessObject.set("scriptFormat", "javascript");
         serviceTask1.businessObject.set("script", createDeploymentScript(
@@ -175,6 +175,7 @@ export async function startOnDemandReplacementProcess(xml) {
                 camundaEndpoint: getCamundaEndpoint()
             }
         ));
+        serviceTask1.businessObject.set("name", "Create deployment");
 
         const serviceTask2 = modeling.appendShape(serviceTask1, {
             type: 'bpmn:ScriptTask',
@@ -183,12 +184,13 @@ export async function startOnDemandReplacementProcess(xml) {
         serviceTask2.businessObject.set("script", createWaitScript(
             {subprocessId: subProcess.id}
         ));
-
+        serviceTask2.businessObject.set("name", "Wait for deployment");
 
         const serviceTask3 = modeling.appendShape(serviceTask2, {
-            type: 'bpmn:ServiceTask'
+            type: 'bpmn:ServiceTask',
         }, {x: 800, y: 200});
 
+        serviceTask3.businessObject.set("name", "Call service");
         if (!extensionElements) {
             serviceTask3.businessObject.set("camunda:type", "external");
             serviceTask3.businessObject.set("camunda:topic", topicName);
