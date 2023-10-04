@@ -26,13 +26,13 @@ export default function XMLViewerButton() {
     if (!enabledXMLView) {
       modelerContainer.style.height = "93vh";
       editor.style.display = "block";
-      let height = parseInt(editor.style.height);
+      const minLines = aceEditor.getOption("minLines");
+      const maxLines = aceEditor.getOption("maxLines");
       editor.style.height = "93vh";
       aceEditor.setOptions({
-        scrollPastEnd: false,
         vScrollBarAlwaysVisible: true,
-        minLines: height / 14,
-        maxLines: height / 14,
+        minLines: minLines,
+        maxLines: maxLines,
       });
       aceEditor.resize(true);
       panel.style.display = "none";
