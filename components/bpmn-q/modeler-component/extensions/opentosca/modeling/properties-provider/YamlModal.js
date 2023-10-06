@@ -48,7 +48,6 @@ export default function YamlModal(props) {
             });
         };
         reader.readAsText(uploadFile);
-
         // Call close callback
         onClose();
     };
@@ -66,7 +65,7 @@ export default function YamlModal(props) {
                                 <input className="file-input-container"
                                     type="file" accept=".yml"
                                     id="fileUpload"
-                                    onChange={(e) => { setUploadFile(e.target.files[0]) }}
+                                    onChange={(e) => { setUploadFile(e.target.files[0]); }}
                                 />
                             </td>
                         </tr>
