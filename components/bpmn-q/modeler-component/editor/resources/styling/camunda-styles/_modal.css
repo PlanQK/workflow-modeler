@@ -168,3 +168,19 @@ body,
   margin-right: 10px; /* Add spacing between buttons */
   /* Add any other styles you want for buttons */
 }
+
+/* Add this CSS to your component's stylesheet or CSS file */
+.dynamic-buttons-container {
+  display: flex; /* Use flexbox to display buttons horizontally */
+  flex-wrap: nowrap; /* Prevent buttons from wrapping to the next line */
+  overflow-x: auto; /* Enable horizontal scrolling if buttons don't fit */
+}
+
+.dynamic-buttons-container > div {
+  margin-right: 10px; /* Add spacing between buttons */
+}
+
+/* Optionally, you can style the buttons within the container */
+.dynamic-buttons-container button {
+  /* Add your button styling here */
+}
