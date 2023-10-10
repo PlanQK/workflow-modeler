@@ -6,12 +6,15 @@ const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function AdaptationModal({ onClose, responseData }) {
-  console.log(responseData);
 
   const [currentView, setCurrentView] = useState("algorithmic");
-  const [dynamicButtons, setDynamicButtons] = useState([{ label: "Default Button", viewType: "default" }, { label: "Algorithmic Patterns", viewType: "algorithmic" }]);
+  const [dynamicButtons, setDynamicButtons] = useState([
+    { label: "Default Button", viewType: "default" },
+    { label: "Algorithmic Patterns", viewType: "algorithmic" }
+  ]);
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
   const [patternsToDisplay, setPatternsToDisplay] = useState([]);
+  const [selectedButton, setSelectedButton] = useState(null); // Track the selected button
 
   const addDynamicButton = () => {
     const newButtonLabel = `Button ${dynamicButtons.length + 1}`;
@@ -19,8 +22,24 @@ export default function AdaptationModal({ onClose, responseData }) {
     setButtonSelectedPatterns({ ...buttonSelectedPatterns, [newButtonLabel]: [] });
   };
 
-  const switchView = (viewType) => {
+  const removeDynamicButton = (index) => {
+    const updatedButtons = [...dynamicButtons];
+    updatedButtons.splice(index, 1);
+    setDynamicButtons(updatedButtons);
+
+    // Remove the selected patterns for the removed button
+    const updatedSelectedPatterns = { ...buttonSelectedPatterns };
+    delete updatedSelectedPatterns[dynamicButtons[index].label];
+    setButtonSelectedPatterns(updatedSelectedPatterns);
+
+    // Reset the selected button
+    setSelectedButton(null);
+  };
+
+  const switchView = (viewType, buttonLabel) => {
     setCurrentView(viewType);
+    // Set the selected button
+    setSelectedButton(buttonLabel);
   };
 
   const togglePatternSelection = (pattern, buttonLabel) => {
@@ -36,6 +55,7 @@ export default function AdaptationModal({ onClose, responseData }) {
     }
 
     setButtonSelectedPatterns(updatedSelectedPatterns);
+
   };
 
   const handleButtonDrag = (dragIndex, hoverIndex) => {
@@ -61,6 +81,7 @@ export default function AdaptationModal({ onClose, responseData }) {
       <Title>Pattern Selection</Title>
 
       <Body>
+        <h3>Selected Algorithmic Patterns <button onClick={addDynamicButton}>+</button></h3>
         <div className="pattern-type-buttons">
           <div className="dynamic-buttons-container">
             {dynamicButtons.map((button, index) => (
@@ -78,11 +99,18 @@ export default function AdaptationModal({ onClose, responseData }) {
                   handleButtonDrag(dragIndex, hoverIndex);
                 }}
               >
-                <button onClick={() => switchView(button.viewType)}>{button.label}</button>
+                <button
+                  onClick={() => switchView(button.viewType, button.label)}
+                  className={selectedButton === button.label ? "selected-button" : ""}
+                >
+                  {button.label}
+                </button>
+                {button.viewType === "dynamic" && (
+                  <button onClick={() => removeDynamicButton(index)}>Remove</button>
+                )}
               </div>
             ))}
           </div>
-          <button onClick={addDynamicButton}>+</button>
         </div>
         <div className="image-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
           {patternsToDisplay.map((pattern, index) => {
@@ -94,7 +122,7 @@ export default function AdaptationModal({ onClose, responseData }) {
                 onClick={() => togglePatternSelection(pattern, currentView)}
               >
                 <h4>{pattern.name}</h4>
-                <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "25%", height: "auto" }} className="centered-image" />
+                <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "15%", height: "auto" }} className="centered-image" />
               </div>
             );
           })}

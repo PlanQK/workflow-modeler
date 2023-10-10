@@ -150,37 +150,40 @@ body,
 }
 
 .centered-image {
-  max-width: 100%; /* Ensure the image doesn't exceed the wrapper's width */
-  max-height: 100%; /* Ensure the image doesn't exceed the wrapper's height */
+  max-width: 100%; 
+  max-height: 100%;
   display: block;
 }
 
-/* Style for selected patterns */
 .pattern-card.selected {
-  background-color: #007bff; /* Change this to your desired background color */
-  color: #fff; /* Change text color for better visibility */
-  border: 2px solid #007bff; /* Add a border for selected patterns */
-  /* Add any other styles you want for selected patterns */
+  background-color: hsl(205, 100%, 50%);
+  color: #fff;
 }
 
-/* Style for buttons in the button group */
 .pattern-type-buttons button {
-  margin-right: 10px; /* Add spacing between buttons */
-  /* Add any other styles you want for buttons */
+  margin-right: 10px;
 }
 
-/* Add this CSS to your component's stylesheet or CSS file */
 .dynamic-buttons-container {
-  display: flex; /* Use flexbox to display buttons horizontally */
-  flex-wrap: nowrap; /* Prevent buttons from wrapping to the next line */
-  overflow-x: auto; /* Enable horizontal scrolling if buttons don't fit */
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .dynamic-buttons-container > div {
-  margin-right: 10px; /* Add spacing between buttons */
+  margin-right: 10px;
 }
 
-/* Optionally, you can style the buttons within the container */
 .dynamic-buttons-container button {
-  /* Add your button styling here */
+}
+
+.selected-button {
+  background-color: hsl(205, 100%, 50%);;
+  color: #fff;
+}
+
+button {
+  background-color: #f0f0f0;
+  color: #000;
+  outline: none;
 }

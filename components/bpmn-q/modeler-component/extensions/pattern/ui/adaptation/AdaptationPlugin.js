@@ -23,7 +23,8 @@ export default class AdaptationPlugin extends PureComponent {
   async componentDidMount() {
     try {
       // Make the API request when the component mounts
-      const response = await fetchDataFromEndpoint(); // Replace with your API function
+      console.log(this.modeler.config)
+      const response = await fetchDataFromEndpoint(this.modeler.config.patternAtlasEndpoint); // Replace with your API function
       console.log(response);
 
 

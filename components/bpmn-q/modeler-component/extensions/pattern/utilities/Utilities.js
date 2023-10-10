@@ -52,22 +52,21 @@ export function performAjax(targetUrl, dataToSend) {
   });
 }
 
-export async function fetchDataFromEndpoint() {
-  const endpointUrl = "http://localhost:1977/patternatlas/patternLanguages/af7780d5-1f97-4536-8da7-4194b093ab1d/patterns"; // Replace with your API endpoint URL
-
+/**
+ * Retrieves the pattern from the pattern atlas endpoint.
+ * @param patternEndpoint 
+ * @returns 
+ */
+export async function fetchDataFromEndpoint(patternEndpoint) {
+  const endpointUrl = patternEndpoint + "/patterns";
   try {
     const response = await fetch(endpointUrl);
-
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    // Parse the response data as JSON
     const data = await response.json();
-
     return data;
   } catch (error) {
-    // Handle errors, e.g., log the error and return an empty object
     console.error('Error fetching data:', error);
     return {};
   }
