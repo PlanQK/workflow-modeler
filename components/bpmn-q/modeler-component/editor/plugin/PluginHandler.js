@@ -2,6 +2,7 @@ import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import DataFlowPlugin from "../../extensions/data-extension/DataFlowPlugin";
 import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
+import PatternPlugin from "../../extensions/pattern/PatternPlugin";
 import { getAllConfigs } from "./PluginConfigHandler";
 import GeneralTab from "../config/GeneralTab";
 import GitHubTab from "../../extensions/quantme/configTabs/GitHubTab";
@@ -30,6 +31,10 @@ const PLUGINS = [
     plugin: PlanQKPlugin,
     dependencies: [],
   },
+  {
+    plugin: PatternPlugin,
+    dependencies: [],
+  }
 ];
 
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
@@ -44,6 +49,7 @@ export function getActivePlugins() {
     const loadPlugin = (plugin) => {
       if (!activePlugins.includes(plugin.plugin)) {
         for (const dependency of plugin.dependencies) {
+          console.log(dependency)
           const dependencyPlugin = PLUGINS.find(
             (p) => p.plugin.name === dependency
           );
@@ -75,6 +81,7 @@ export function getActivePlugins() {
 }
 
 export function checkEnabledStatus(pluginName) {
+  console.log(pluginName);
   switch (pluginName) {
     case "dataflow":
       return process.env.ENABLE_DATA_FLOW_PLUGIN !== "false";
@@ -84,6 +91,8 @@ export function checkEnabledStatus(pluginName) {
       return process.env.ENABLE_QHANA_PLUGIN !== "false";
     case "quantme":
       return process.env.ENABLE_QUANTME_PLUGIN !== "false";
+    case "pattern":
+      return process.env.ENABLE_PATTERN_PLUGIN !== "false"; 
   }
 }
 /**

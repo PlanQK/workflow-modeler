@@ -1,0 +1,11 @@
+{
+  "name": "QuantumComputingPattern",
+  "uri": "https://www.quantumcomputingpatterns.org",
+  "prefix": "pattern",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [],
+  "enumerations": [],
+  "associations": []
+}
