@@ -9,7 +9,7 @@ export default function AdaptationModal({ onClose, responseData }) {
   console.log(responseData);
 
   const [currentView, setCurrentView] = useState("algorithmic");
-  const [dynamicButtons, setDynamicButtons] = useState([{ label: "Default Button", viewType: "default" }]);
+  const [dynamicButtons, setDynamicButtons] = useState([{ label: "Default Button", viewType: "default" }, { label: "Algorithmic Patterns", viewType: "algorithmic" }]);
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({}); // State to store selected patterns for each button
   const [patternsToDisplay, setPatternsToDisplay] = useState([]); // State to store the patterns to display for all buttons
 
@@ -38,6 +38,14 @@ export default function AdaptationModal({ onClose, responseData }) {
     setButtonSelectedPatterns(updatedSelectedPatterns);
   };
 
+  const handleButtonDrag = (dragIndex, hoverIndex) => {
+    const draggedButton = dynamicButtons[dragIndex];
+    const updatedButtons = [...dynamicButtons];
+    updatedButtons.splice(dragIndex, 1); // Remove the dragged button
+    updatedButtons.splice(hoverIndex, 0, draggedButton); // Insert the dragged button at the new position
+    setDynamicButtons(updatedButtons);
+  };
+
   useEffect(() => {
     // Determine which patterns to display based on the current view
     if (currentView === "algorithmic") {
@@ -55,13 +63,23 @@ export default function AdaptationModal({ onClose, responseData }) {
 
       <Body>
         <div className="pattern-type-buttons">
-          <button onClick={() => switchView("algorithmic")}>Algorithmic Patterns</button>
-          <button onClick={() => switchView("behavior")}>Behavior Patterns</button>
-          <button onClick={() => switchView("more")}>Augmentation Patterns</button>
           {dynamicButtons.map((button, index) => (
-            <button key={index} onClick={() => switchView(button.viewType)}>
-              {button.label}
-            </button>
+            <div
+              key={index}
+              draggable={true}
+              onDragStart={(e) => {
+                e.dataTransfer.setData("index", index);
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const dragIndex = e.dataTransfer.getData("index");
+                const hoverIndex = index;
+                handleButtonDrag(dragIndex, hoverIndex);
+              }}
+            >
+              <button onClick={() => switchView(button.viewType)}>{button.label}</button>
+            </div>
           ))}
           <button onClick={addDynamicButton}>+</button>
         </div>
