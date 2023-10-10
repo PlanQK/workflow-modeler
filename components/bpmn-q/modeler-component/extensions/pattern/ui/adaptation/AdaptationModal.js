@@ -71,8 +71,8 @@ export default function AdaptationModal({ onClose, responseData }) {
             return (
               <div
                 key={index}
-                className={`pattern-card ${buttonSelectedPatterns[buttonLabel]?.includes(pattern) ? "selected" : ""}`}
-                onClick={() => togglePatternSelection(pattern, buttonLabel)}
+                className={`pattern-card ${buttonSelectedPatterns[currentView]?.includes(pattern) ? "selected" : ""}`}
+                onClick={() => togglePatternSelection(pattern, currentView)}
               >
                 <h4>{pattern.name}</h4>
                 <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "25%", height: "auto" }} className="centered-image" />
