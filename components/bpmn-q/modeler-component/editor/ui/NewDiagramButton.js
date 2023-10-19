@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { createNewDiagram } from "../util/IoUtilities";
 import { getModeler } from "../ModelerHandler";
 import ConfirmationModal from "./ConfirmationModal";
@@ -7,14 +7,6 @@ export default function NewDiagramButton(props) {
   const { modeler } = props;
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-
-  useEffect(() => {
-    if (unsavedChanges) {
-      setShowConfirmationModal(true);
-    } else {
-      createNewDiagram(modeler);
-    }
-  }, [unsavedChanges, modeler]);
 
   const checkUnsavedChanges = () => {
     getModeler().saveXML({ format: true }, function (err, xml) {
