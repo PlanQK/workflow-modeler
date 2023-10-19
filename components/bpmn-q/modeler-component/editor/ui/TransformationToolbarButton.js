@@ -73,7 +73,7 @@ export default function TransformationToolbarButton(props) {
           if (tmp && tmp.status === "transformed") {
             xml = tmp.xml;
           } else {
-            // break process if one transformation failes
+            // break process if one transformation fails
             const cause =
               tmp.cause ||
               "Transformation failed because of an unexpected error.";
@@ -84,13 +84,13 @@ export default function TransformationToolbarButton(props) {
               content: cause,
               duration: 10000,
             });
+            return;
           }
         }
       }
-      if (xml) {
-        // handle transformed workflow (open in new tab, save to file storage etc.)
-        await handleTransformedWorkflow(xml);
-      }
+      // handle transformed workflow (open in new tab, save to file storage etc.)
+      await handleTransformedWorkflow(xml);
+
     } catch (error) {
       NotificationHandler.getInstance().displayNotification({
         type: "warning",
