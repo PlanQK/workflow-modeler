@@ -9,7 +9,7 @@ import * as config from '../framework-config/config-manager';
  * @return {JSX.Element} The tab as a React component
  * @constructor
  */
-export default function BPMNConfigTab() {
+export default function QuantMETab() {
     const [dataConfigurationsEndpoint, setDataConfigurationsEndpoint] = useState(config.getQuantMEDataConfigurationsEndpoint());
 
     const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(config.getNisqAnalyzerEndpoint());
@@ -82,7 +82,7 @@ export default function BPMNConfigTab() {
     }
 
     // save changed config entries on close
-    BPMNConfigTab.prototype.onClose = () => {
+    QuantMETab.prototype.onClose = () => {
         modeler.config.dataConfigurationsEndpoint = dataConfigurationsEndpoint;
         modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
         modeler.config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
@@ -218,7 +218,7 @@ export default function BPMNConfigTab() {
     </>;
 }
 
-BPMNConfigTab.prototype.config = () => {
+QuantMETab.prototype.config = () => {
     const modeler = getModeler();
 
     modeler.config.transformationFrameworkEndpoint = config.getTransformationFrameworkEndpoint();
