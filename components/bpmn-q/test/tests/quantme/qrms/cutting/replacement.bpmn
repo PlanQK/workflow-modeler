@@ -1,0 +1,133 @@
+?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_00v8ddm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="QuantME Modeler" exporterVersion="4.5.0-nightly.20221215">
+  <bpmn:process id="Process_0frghgx" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow_1h1q60o" sourceRef="Task_14ryfsm" targetRef="Task_1ffvrj7" />
+    <bpmn:serviceTask id="Task_1ffvrj7" name="Combine Results" camunda:asyncAfter="true" camunda:exclusive="false">
+      <bpmn:incoming>SequenceFlow_1h1q60o</bpmn:incoming>
+       <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="url">http://quokka-gateway:6474/quokka/circuit-cutting/combineResultsQuokka</camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="groovy">import groovy.json.JsonBuilder
+println("Combining circuits");
+def counts = execution.getVariable("counts");
+println("Counts: " + counts.toString());
+def cuttingMetaData = execution.getVariable("cuttingMetaData");
+println("CuttingMetaData: " + cuttingMetaData.toString());
+def circuit = execution.getVariable("circuit")[0];
+
+def request = [:];
+request.put("circuit", circuit);
+request.put("subcircuit_results", counts);
+request.put("cuts", cuttingMetaData);
+request.put("unnormalized_results", "True");
+request.put("shot_scaling_factor", 1000);
+request.put("circuit_format", "qiskit");
+requeststring = new JsonBuilder(request).toPrettyString()
+println(requeststring);
+return requeststring;</camunda:script>
+              </camunda:inputParameter>
+              <camunda:outputParameter name="counts">
+                <camunda:script scriptFormat="groovy">def resp = connector.getVariable("response");
+resp = new groovy.json.JsonSlurperClassic().parseText(resp);
+println("Response with counts: " + resp.toString());
+def result = [resp.get("result")];
+println("Final result: " + result.toString());
+return result;</camunda:script>
+              </camunda:outputParameter>
+            </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_14ryfsm" name="Cut Circuits" camunda:asyncAfter="true" camunda:exclusive="false">
+      <bpmn:outgoing>SequenceFlow_1h1q60o</bpmn:outgoing>
+             <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="url">http://quokka-gateway:6474/quokka/circuit-cutting/cutCircuits</camunda:inputParameter>
+            <camunda:inputParameter name="payload">
+              <camunda:script scriptFormat="groovy">import groovy.json.JsonBuilder
+println("Cutting circuits");
+def circuit = execution.getVariable("circuit")[0];
+def cuttingMethod = execution.getVariable("cuttingMethod");
+def maxSubCircuitWidth = execution.getVariable("maxSubCircuitWidth");
+if (maxSubCircuitWidth == null) {
+  maxSubCircuitWidth = 2;
+}
+maxSubCircuitWidth = maxSubCircuitWidth.toInteger();
+def maxNumberOfCuts = execution.getVariable("maxNumberOfCuts");
+if (maxNumberOfCuts == null) {
+  maxNumberOfCuts = 2;
+}
+maxNumberOfCuts = maxNumberOfCuts.toInteger();
+def maxNumSubCircuits = execution.getVariable("maxNumSubCircuits");
+if (maxNumSubCircuits == null) {
+  maxNumSubCircuits = 2;
+}
+maxNumSubCircuits = maxNumSubCircuits.toInteger();
+println("Building request...");
+
+def request = [:];
+request.put("circuit", circuit);
+request.put("method", "automatic");
+request.put("max_subcircuit_width", maxSubCircuitWidth);
+request.put("max_cuts", maxNumberOfCuts);
+request.put("max_num_subcircuits", maxNumSubCircuits);
+request.put("circuit_format", "qiskit");
+requeststring = new JsonBuilder(request).toPrettyString()
+println(requeststring);
+return requeststring;</camunda:script>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="cuttingMetaData">
+              <camunda:script scriptFormat="groovy">def resp = connector.getVariable("response");
+resp = new groovy.json.JsonSlurperClassic().parseText(resp)
+println("Response with cuttingMetaData: " + resp.toString());
+return resp;</camunda:script>
+            </camunda:outputParameter>
+            <camunda:outputParameter name="subCircuits">
+              <camunda:script scriptFormat="groovy">def resp = connector.getVariable("response");
+resp = new groovy.json.JsonSlurperClassic().parseText(resp)
+println("Response with subCircuits: " + resp.toString());
+def result = [:];
+result.put("subCircuits", resp.get("individual_subcircuits"));
+println("Final result: " + result.toString());
+return result;</camunda:script>
+            </camunda:outputParameter>
+            
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0frghgx">
+      <bpmndi:BPMNEdge id="SequenceFlow_1h1q60o_di" bpmnElement="SequenceFlow_1h1q60o">
+        <di:waypoint x="260" y="120" />
+        <di:waypoint x="320" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_05zk3jf_di" bpmnElement="Task_1ffvrj7">
+        <dc:Bounds x="320" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0338onn_di" bpmnElement="Task_14ryfsm">
+        <dc:Bounds x="160" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

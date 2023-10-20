@@ -175,11 +175,11 @@ export async function deployWorkflowToCamunda(workflowName, workflowXml, viewMap
             };
         } else {
             console.error('Deployment of workflow returned invalid status code: %s', response.status);
-            return { status: 'failed' };
+            return { status: 'failed', message: 'Deployment of workflow returned invalid response: ' + response  };
         }
     } catch (error) {
         console.error('Error while executing post to deploy workflow: ' + error);
-        return { status: 'failed' };
+        return { status: 'failed', message: 'Error while executing post to deploy workflow: ' + error };
     }
 }
 
