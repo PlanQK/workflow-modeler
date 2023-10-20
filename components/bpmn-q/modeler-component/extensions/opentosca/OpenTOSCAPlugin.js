@@ -16,7 +16,7 @@ export default {
     configTabs: [
         {
             tabId: 'OpenTOSCAEndpointTab',
-            tabTitle: 'OpenTOSCA',
+            tabTitle: 'OpenTOSCA Plugin',
             configTab: OpenTOSCATab,
         }
     ],

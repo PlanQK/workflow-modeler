@@ -26,12 +26,11 @@ export default function DeploymentButton(props) {
 
 
     /**
-     * Handle the result of a close operation on the tramfpr,atopm
+     * Handle result of the on demand deployment dialog
      *
-     * @param result the result from the close operation
+     * @param result the result from the dialog
      */
     async function handleOnDemandDeployment(result) {
-        console.log(result);
         if (result && result.hasOwnProperty('onDemand')) {
             // get XML of the current workflow
             let xml = (await modeler.saveXML({format: true})).xml;

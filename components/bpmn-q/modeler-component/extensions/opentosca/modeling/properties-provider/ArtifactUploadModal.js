@@ -78,6 +78,7 @@ export default function ArtifactUploadModal({onClose, element, commandStack}) {
             duration: 1000 * 60 * 60 // very long time out because this notification gets closed after the API calls are finished
         });
         let serviceTemplateAddress;
+        let doesExist = false;
         try {
             const namePrefix = element.businessObject.name ?? "";
             const artifactTemplateName = `${namePrefix}ArtifactTemplate-${element.id}`;

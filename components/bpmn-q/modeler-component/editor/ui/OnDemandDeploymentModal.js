@@ -16,6 +16,7 @@ import React from 'react';
 import Modal from './modal/Modal';
 
 const Title = Modal.Title || (({children}) => <h2>{children}</h2>);
+const Body = Modal.Body || (({children}) => <div>{children}</div>);
 const Footer = Modal.Footer || (({children}) => <div>{children}</div>);
 
 export default function OnDemandDeploymentModal({onClose}) {
@@ -27,8 +28,12 @@ export default function OnDemandDeploymentModal({onClose}) {
     return <Modal onClose={onClose}>
 
         <Title>
-            Enable On Demand Service Deployment?
+            Workflow Deployment
         </Title>
+        <Body>
+            The current workflow contains service task with attached deployment models which support on-demand service deployment.
+            Would you like to use on-demand service deployment?
+        </Body>
         <Footer>
             <div id="deploymentButtons">
                 <button type="button" className="qwm-btn qwm-btn-primary" onClick={() => onOnDemand(true)}>Yes</button>
