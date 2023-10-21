@@ -1,44 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
+import AlgorithmicPatternSelectionModal from "./AlgorithmicPatternSelectionModal";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function AdaptationModal({ onClose, responseData }) {
-
   const [currentView, setCurrentView] = useState("algorithmic");
+  const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
+  const [patternsToDisplay, setPatternsToDisplay] = useState([]);
+  const [selectedButton, setSelectedButton] = useState(null);
   const [dynamicButtons, setDynamicButtons] = useState([
     { label: "Default Button", viewType: "default" },
     { label: "Algorithmic Patterns", viewType: "algorithmic" }
   ]);
-  const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
-  const [patternsToDisplay, setPatternsToDisplay] = useState([]);
-  const [selectedButton, setSelectedButton] = useState(null); // Track the selected button
 
-  const addDynamicButton = () => {
-    const newButtonLabel = `Button ${dynamicButtons.length + 1}`;
-    setDynamicButtons([...dynamicButtons, { label: newButtonLabel, viewType: "dynamic" }]);
-    setButtonSelectedPatterns({ ...buttonSelectedPatterns, [newButtonLabel]: [] });
+  const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] = useState(false);
+
+  const openAlgorithmicPatternModal = () => {
+    setAlgorithmicPatternModalOpen(true);
   };
+
+  const closeAlgorithmicPatternModal = () => {
+    setAlgorithmicPatternModalOpen(false);
+  };
+
+  const selectAlgorithmicPattern = useCallback((selectedPattern) => {
+    const newButtonLabel = selectedPattern.name;
+    const newDynamicButton = { label: newButtonLabel, viewType: "dynamic" };
+
+    setDynamicButtons([...dynamicButtons, newDynamicButton]);
+    setButtonSelectedPatterns({ ...buttonSelectedPatterns, [newButtonLabel]: [] });
+    switchView("algorithmic", "dynamic");
+
+    closeAlgorithmicPatternModal();
+  }, [dynamicButtons, buttonSelectedPatterns]);
 
   const removeDynamicButton = (index) => {
     const updatedButtons = [...dynamicButtons];
     updatedButtons.splice(index, 1);
     setDynamicButtons(updatedButtons);
-
-    // Remove the selected patterns for the removed button
     const updatedSelectedPatterns = { ...buttonSelectedPatterns };
     delete updatedSelectedPatterns[dynamicButtons[index].label];
     setButtonSelectedPatterns(updatedSelectedPatterns);
-
-    // Reset the selected button
     setSelectedButton(null);
   };
 
   const switchView = (viewType, buttonLabel) => {
     setCurrentView(viewType);
-    // Set the selected button
     setSelectedButton(buttonLabel);
   };
 
@@ -55,7 +65,6 @@ export default function AdaptationModal({ onClose, responseData }) {
     }
 
     setButtonSelectedPatterns(updatedSelectedPatterns);
-
   };
 
   const handleButtonDrag = (dragIndex, hoverIndex) => {
@@ -68,11 +77,15 @@ export default function AdaptationModal({ onClose, responseData }) {
 
   useEffect(() => {
     if (currentView === "algorithmic") {
-      setPatternsToDisplay(responseData);
-    } else if (currentView === "behavior") {
-      setPatternsToDisplay(responseData);
-    } else if (currentView === "more") {
-      setPatternsToDisplay(responseData);
+      const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('algorithm'));
+      setPatternsToDisplay(filteredPatterns);
+    } else if (currentView === "behavioral") {
+      const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('behavioral'));
+      const filteredAPatterns = responseData.filter(pattern => pattern.tags.includes('augmentation'));
+      setPatternsToDisplay(filteredPatterns.concat(filteredAPatterns));
+    } else if (currentView === "augmentation") {
+      const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('augmentation'));
+      setPatternsToDisplay(filteredPatterns);
     }
   }, [currentView, responseData]);
 
@@ -81,7 +94,14 @@ export default function AdaptationModal({ onClose, responseData }) {
       <Title>Pattern Selection</Title>
 
       <Body>
-        <h3>Selected Algorithmic Patterns <button onClick={addDynamicButton}>+</button></h3>
+        <h3>Selected Algorithmic Patterns <button onClick={openAlgorithmicPatternModal}>+</button></h3>
+        {isAlgorithmicPatternModalOpen && (
+          <AlgorithmicPatternSelectionModal
+            patterns={patternsToDisplay}
+            onSelectPattern={selectAlgorithmicPattern}
+            onClose={closeAlgorithmicPatternModal}
+          />
+        )}
         <div className="pattern-type-buttons">
           <div className="dynamic-buttons-container">
             {dynamicButtons.map((button, index) => (
@@ -100,7 +120,7 @@ export default function AdaptationModal({ onClose, responseData }) {
                 }}
               >
                 <button
-                  onClick={() => switchView(button.viewType, button.label)}
+                  onClick={() => switchView("behavioral", button.label)}
                   className={selectedButton === button.label ? "selected-button" : ""}
                 >
                   {button.label}
