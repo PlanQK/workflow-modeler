@@ -52,18 +52,21 @@ export default function AdaptationModal({ onClose, responseData }) {
     setSelectedButton(buttonLabel);
   };
 
-  const togglePatternSelection = (pattern, buttonLabel) => {
-    const isSelected = buttonSelectedPatterns[buttonLabel]?.includes(pattern) || false;
+  const togglePatternSelection = (pattern, view) => {
+    console.log(selectedButton)
+    
+    const isSelected = buttonSelectedPatterns[selectedButton]?.includes(pattern) || false;
     const updatedSelectedPatterns = { ...buttonSelectedPatterns };
 
     if (isSelected) {
-      updatedSelectedPatterns[buttonLabel] = (updatedSelectedPatterns[buttonLabel] || []).filter(
+      updatedSelectedPatterns[selectedButton] = (updatedSelectedPatterns[selectedButton] || []).filter(
         (selectedPattern) => selectedPattern !== pattern
       );
     } else {
-      updatedSelectedPatterns[buttonLabel] = [...(updatedSelectedPatterns[buttonLabel] || []), pattern];
+      updatedSelectedPatterns[selectedButton] = [...(updatedSelectedPatterns[selectedButton] || []), pattern];
+      console.log(updatedSelectedPatterns)
     }
-
+    console.log(updatedSelectedPatterns)
     setButtonSelectedPatterns(updatedSelectedPatterns);
   };
 
@@ -134,11 +137,13 @@ export default function AdaptationModal({ onClose, responseData }) {
         </div>
         <div className="image-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
           {patternsToDisplay.map((pattern, index) => {
+            console.log(dynamicButtons)
+            console.log(index)
             const buttonLabel = dynamicButtons[index]?.label || "";
             return (
               <div
                 key={index}
-                className={`pattern-card ${buttonSelectedPatterns[currentView]?.includes(pattern) ? "selected" : ""}`}
+                className={`pattern-card ${buttonSelectedPatterns[selectedButton]?.includes(pattern) ? "selected" : ""}`}
                 onClick={() => togglePatternSelection(pattern, currentView)}
               >
                 <h4>{pattern.name}</h4>
