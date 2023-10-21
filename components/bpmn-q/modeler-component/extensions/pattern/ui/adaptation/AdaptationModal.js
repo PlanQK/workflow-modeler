@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
 import AlgorithmicPatternSelectionModal from "./AlgorithmicPatternSelectionModal";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -79,6 +80,8 @@ export default function AdaptationModal({ onClose, responseData }) {
   };
 
   useEffect(() => {
+    console.log(responseData)
+    if(responseData != undefined) {
     if (currentView === "algorithmic") {
       const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('algorithm'));
       setPatternsToDisplay(filteredPatterns);
@@ -90,7 +93,15 @@ export default function AdaptationModal({ onClose, responseData }) {
       const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('augmentation'));
       setPatternsToDisplay(filteredPatterns);
     }
-  }, [currentView, responseData]);
+  }else {
+    NotificationHandler.getInstance().displayNotification({
+      type: "info",
+      title: "Pattern Selection Unsuccessful!",
+      content: "The specified pattern atlas endpoint is not available.",
+      duration: 7000,
+    }) 
+    onClose();
+  }}, [currentView, responseData]);
 
   return (
     <Modal onClose={onClose}>
@@ -157,7 +168,7 @@ export default function AdaptationModal({ onClose, responseData }) {
       <Footer>
         <div id="hybridLoopAdaptationFormButtons">
           <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>
-            Cancel
+            Done
           </button>
         </div>
       </Footer>
