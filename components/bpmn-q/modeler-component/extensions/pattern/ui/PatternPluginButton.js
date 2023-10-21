@@ -1,6 +1,5 @@
 import React from "react";
 import AdaptationPlugin from "./adaptation/AdaptationPlugin";
-import QuantMEController from "./control/QuantMEController";
 import ExtensibleButton from "../../../editor/ui/ExtensibleButton";
 
 export default function PatternPluginButton() {
@@ -9,10 +8,9 @@ export default function PatternPluginButton() {
     <ExtensibleButton
       subButtons={[
         <AdaptationPlugin />,
-        <QuantMEController />
       ]}
       title="Pattern"
-      styleClass="quantme-logo"
+      styleClass="pattern-logo"
       description="Show buttons of the Pattern plugin"
     />
   );
