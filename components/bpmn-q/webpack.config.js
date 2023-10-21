@@ -72,6 +72,7 @@ module.exports = {
       GITHUB_TOKEN: "",
       OPENTOSCA_ENDPOINT: "http://localhost:1337/csars",
       NISQ_ANALYZER_ENDPOINT: "http://localhost:8098/nisq-analyzer",
+      PATTERN_ATLAS_ENDPOINT: "",
       PROVENANCE_COLLECTION: "false",
       QHANA_GET_PLUGIN_URL: "http://localhost:5006/api/plugins/",
       QHANA_LIST_PLUGINS_URL:
