@@ -16,6 +16,7 @@ export default function AdaptationModal({ onClose, responseData }) {
     { label: "Default Button", viewType: "default" },
     { label: "Algorithmic Patterns", viewType: "algorithmic" }
   ]);
+  const [algorithmicPatterns, setAlgorithmicPatterns] = useState([])
 
   const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] = useState(false);
 
@@ -85,6 +86,7 @@ export default function AdaptationModal({ onClose, responseData }) {
     if (currentView === "algorithmic") {
       const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('algorithm'));
       setPatternsToDisplay(filteredPatterns);
+      setAlgorithmicPatterns(filteredPatterns);
     } else if (currentView === "behavioral") {
       const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('behavioral'));
       const filteredAPatterns = responseData.filter(pattern => pattern.tags.includes('augmentation'));
@@ -111,7 +113,7 @@ export default function AdaptationModal({ onClose, responseData }) {
         <h3>Selected Algorithmic Patterns <button onClick={openAlgorithmicPatternModal}>+</button></h3>
         {isAlgorithmicPatternModalOpen && (
           <AlgorithmicPatternSelectionModal
-            patterns={patternsToDisplay}
+            patterns={algorithmicPatterns}
             onSelectPattern={selectAlgorithmicPattern}
             onClose={closeAlgorithmicPatternModal}
           />
@@ -146,7 +148,8 @@ export default function AdaptationModal({ onClose, responseData }) {
             ))}
           </div>
         </div>
-        <div className="image-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
+        <div className="image-container">
+        <h3>Behavioral Pattern</h3>
           {patternsToDisplay.map((pattern, index) => {
             console.log(dynamicButtons)
             console.log(index)
@@ -158,7 +161,23 @@ export default function AdaptationModal({ onClose, responseData }) {
                 onClick={() => togglePatternSelection(pattern, currentView)}
               >
                 <h4>{pattern.name}</h4>
-                <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "15%", height: "auto" }} className="centered-image" />
+                <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "120px", height: "auto" }} className="centered-image" />
+              </div>
+            );
+          })}
+        <h3>Augmentation Pattern</h3>
+          {patternsToDisplay.map((pattern, index) => {
+            console.log(dynamicButtons)
+            console.log(index)
+            const buttonLabel = dynamicButtons[index]?.label || "";
+            return (
+              <div
+                key={index}
+                className={`pattern-card ${buttonSelectedPatterns[selectedButton]?.includes(pattern) ? "selected" : ""}`}
+                onClick={() => togglePatternSelection(pattern, currentView)}
+              >
+                <h4>{pattern.name}</h4>
+                <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "150px", height: "auto" }} className="centered-image" />
               </div>
             );
           })}
