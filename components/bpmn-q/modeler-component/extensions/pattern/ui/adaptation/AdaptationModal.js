@@ -40,8 +40,8 @@ export default function AdaptationModal({ onClose, responseData }) {
       console.log(updatedRows);
       setDynamicRows(updatedRows);
       setEditRow(null);
+      setEditRowData(null);
     } else {
-      console.log(selectedPattern)
       const newButtonLabel = selectedPattern.name;
       const algorithmPattern = selectedPattern.algorithm.name;
       const behavioralPattern = selectedPattern.behavioral;
@@ -112,11 +112,9 @@ export default function AdaptationModal({ onClose, responseData }) {
             <table>
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Behavioral Pattern Name</th>
-                  <th>Augmentation Pattern Name</th>
-                  <th>Move Up</th>
-                  <th>Move Down</th>
+                  <th>Algorithm Pattern</th>
+                  <th>Behavioral Pattern</th>
+                  <th>Augmentation Pattern</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -131,7 +129,7 @@ export default function AdaptationModal({ onClose, responseData }) {
                           src={behavioralItem.iconUrl}
                           title={behavioralItem.name}
                           alt={`Behavioral Icon ${index}`}
-                          style={{ width: '120px', height: 'auto' }}
+                          style={{ width: '15%', height: 'auto' }}
                         />
                       ))}
                     </td>
@@ -141,18 +139,26 @@ export default function AdaptationModal({ onClose, responseData }) {
                           src={augmentationItem.iconUrl}
                           title={augmentationItem.name}
                           alt={`Augmentation Icon ${index}`}
-                          style={{ width: '120px', height: 'auto' }}
+                          style={{ width: '15%', height: 'auto' }}
                         />
                       ))}</td>
-                    <td>
-                      <button onClick={() => moveRowUp(index)}>↑</button>
-                    </td>
-                    <td>
-                      <button onClick={() => moveRowDown(index)}>↓</button>
-                    </td>
-                    <td>
-                      <button onClick={() => openEditRow(index)}>Edit</button>
-                      <button onClick={() => deleteRow(index)}>Delete</button>
+                    <td className="actions-column">
+                    <button
+                      className={`qwm-btn-primary${index === 0 ? ' disabled' : ''}`}
+                      onClick={() => moveRowUp(index)}
+                      disabled={index === 0}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      className={`qwm-btn-primary${index === dynamicRows.length - 1 ? ' disabled' : ''}`}
+                      onClick={() => moveRowDown(index)}
+                      disabled={index === dynamicRows.length - 1}
+                    >
+                      ↓
+                    </button>
+                    <button class="qwm-btn-primary" onClick={() => openEditRow(index)}><i className="fa fa-edit"></i></button>
+                    <button class="qwm-btn-primary" onClick={() => deleteRow(index)}><i className="fa fa-close"></i></button>
                     </td>
                   </tr>
                 ))}

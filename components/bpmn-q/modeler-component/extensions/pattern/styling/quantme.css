@@ -480,3 +480,9 @@
   .djs-popup-label {
   margin-top: -1px; /* Adjust the value as per your requirements */
 }
+
+.actions-column {
+  justify-content: space-between;
+  align-items: center;
+  max-width: 5%;
+}
