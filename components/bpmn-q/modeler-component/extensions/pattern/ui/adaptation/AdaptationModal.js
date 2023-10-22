@@ -13,6 +13,7 @@ export default function AdaptationModal({ onClose, responseData }) {
   const [algorithmicPatterns, setAlgorithmicPatterns] = useState([]);
   const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] = useState(false);
   const [dynamicRows, setDynamicRows] = useState([]);
+  const [index, setIndex] = useState(0)
 
   const openAlgorithmicPatternModal = () => {
     setAlgorithmicPatternModalOpen(true);
@@ -23,15 +24,14 @@ export default function AdaptationModal({ onClose, responseData }) {
   };
 
   const selectAlgorithmicPattern = useCallback((selectedPattern) => {
-    console.log("hier")
-
     const newButtonLabel = selectedPattern.name;
-    const newRowData = { algorithmicPattern: selectedPattern.name, behavioralPattern: "", augmentationPattern: "" };
+    setIndex(index +1);
+    let string = "" + index;
+    const newRowData = { algorithmicPattern: selectedPattern.name + string, behavioralPattern: "", augmentationPattern: "" };
     setDynamicRows([...dynamicRows, newRowData]);
-
     setButtonSelectedPatterns({ ...buttonSelectedPatterns, [newButtonLabel]: [] });
     closeAlgorithmicPatternModal();
-  }, [buttonSelectedPatterns]);
+  }, [buttonSelectedPatterns, dynamicRows]);
 
   const switchView = (viewType, buttonLabel) => {
     setCurrentView(viewType);
@@ -39,9 +39,28 @@ export default function AdaptationModal({ onClose, responseData }) {
   };
 
   const handleAddDynamicRow = () => {
-    // Create a new row data object and add it to the dynamicRows state.
     const newRowData = { algorithmicPattern: "", behavioralPattern: "", augmentationPattern: "" };
     setDynamicRows([...dynamicRows, newRowData]);
+  };
+
+  const moveRowUp = (index) => {
+    if (index > 0) {
+      const updatedRows = [...dynamicRows];
+      const temp = updatedRows[index - 1];
+      updatedRows[index - 1] = updatedRows[index];
+      updatedRows[index] = temp;
+      setDynamicRows(updatedRows);
+    }
+  };
+
+  const moveRowDown = (index) => {
+    if (index < dynamicRows.length - 1) {
+      const updatedRows = [...dynamicRows];
+      const temp = updatedRows[index + 1];
+      updatedRows[index + 1] = updatedRows[index];
+      updatedRows[index] = temp;
+      setDynamicRows(updatedRows);
+    }
   };
 
   return (
@@ -56,16 +75,17 @@ export default function AdaptationModal({ onClose, responseData }) {
             onSelectPattern={selectAlgorithmicPattern}
             onClose={closeAlgorithmicPatternModal}
           />
-        )
-        }
+        )}
         <div className="pattern-type-buttons">
           <div className="dynamic-buttons-container">
             <table>
               <thead>
                 <tr>
-                  <th>Algorithmic Pattern Name</th>
+                  <th>Name</th>
                   <th>Behavioral Pattern Name</th>
                   <th>Augmentation Pattern Name</th>
+                  <th>Move Up</th>
+                  <th>Move Down</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,6 +94,12 @@ export default function AdaptationModal({ onClose, responseData }) {
                     <td>{row.algorithmicPattern}</td>
                     <td>{row.behavioralPattern}</td>
                     <td>{row.augmentationPattern}</td>
+                    <td>
+                      <button onClick={() => moveRowUp(index)}>↑</button>
+                    </td>
+                    <td>
+                      <button onClick={() => moveRowDown(index)}>↓</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -7,33 +7,42 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPattern, onClose }) {
   const [selectedAlgorithmicPattern, setSelectedAlgorithmicPattern] = useState(null);
-  const [selectedBehavioralPattern, setSelectedBehavioralPattern] = useState(null);
-  const [selectedAugmentationPattern, setSelectedAugmentationPattern] = useState(null);
+  const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState([]);
+  const [selectedAugmentationPatterns, setSelectedAugmentationPatterns] = useState([]);
 
   const handlePatternSelection = (pattern, category) => {
-    // Check which category is being selected and update the corresponding state
-    if (category === "algorithm") {
+    if (category === "algorithmic") {
       setSelectedAlgorithmicPattern(pattern);
     } else if (category === "behavioral") {
-      setSelectedBehavioralPattern(pattern);
+      setSelectedBehavioralPatterns((prevSelected) => {
+        if (prevSelected.includes(pattern)) {
+          return prevSelected.filter((selected) => selected !== pattern);
+        } else {
+          return [...prevSelected, pattern];
+        }
+      });
     } else if (category === "augmentation") {
-      setSelectedAugmentationPattern(pattern);
+      setSelectedAugmentationPatterns((prevSelected) => {
+        if (prevSelected.includes(pattern)) {
+          return prevSelected.filter((selected) => selected !== pattern);
+        } else {
+          return [...prevSelected, pattern];
+        }
+      });
     }
   };
 
   const handleConfirmSelection = () => {
     const selectedPatterns = [];
+
     if (selectedAlgorithmicPattern) {
       selectedPatterns.push(selectedAlgorithmicPattern);
     }
-    if (selectedBehavioralPattern) {
-      selectedPatterns.push(selectedBehavioralPattern);
-    }
-    if (selectedAugmentationPattern) {
-      selectedPatterns.push(selectedAugmentationPattern);
-    }
 
-    onSelectPattern(selectedPatterns); // Pass the selected patterns to the parent component
+    selectedPatterns.push(...selectedBehavioralPatterns);
+    selectedPatterns.push(...selectedAugmentationPatterns);
+
+    onSelectPattern(selectedPatterns);
     onClose();
   };
 
@@ -58,16 +67,17 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
             </thead>
             <tbody>
               {algorithmicPatterns.map((pattern) => (
-                <tr key={pattern.id} onClick={() => handlePatternSelection(pattern, "algorithm")}>
+                <tr key={pattern.id}>
                   <td>{pattern.name}</td>
                   <td>
                     <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "15%", height: "auto" }} />
                   </td>
                   <td>
                     <input
-                      type="checkbox"
+                      type="radio"
+                      name="algorithmic-pattern"
                       checked={selectedAlgorithmicPattern === pattern}
-                      onChange={() => handlePatternSelection(pattern, "algorithm")}
+                      onChange={() => handlePatternSelection(pattern, "algorithmic")}
                     />
                   </td>
                 </tr>
@@ -87,7 +97,7 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
             </thead>
             <tbody>
               {behavioralPatterns.map((pattern) => (
-                <tr key={pattern.id} onClick={() => handlePatternSelection(pattern, "behavioral")}>
+                <tr key={pattern.id}>
                   <td>{pattern.name}</td>
                   <td>
                     <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "15%", height: "auto" }} />
@@ -95,7 +105,7 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
                   <td>
                     <input
                       type="checkbox"
-                      checked={selectedBehavioralPattern === pattern}
+                      checked={selectedBehavioralPatterns.includes(pattern)}
                       onChange={() => handlePatternSelection(pattern, "behavioral")}
                     />
                   </td>
@@ -116,7 +126,7 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
             </thead>
             <tbody>
               {augmentationPatterns.map((pattern) => (
-                <tr key={pattern.id} onClick={() => handlePatternSelection(pattern, "augmentation")}>
+                <tr key={pattern.id}>
                   <td>{pattern.name}</td>
                   <td>
                     <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "15%", height: "auto" }} />
@@ -124,7 +134,7 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
                   <td>
                     <input
                       type="checkbox"
-                      checked={selectedAugmentationPattern === pattern}
+                      checked={selectedAugmentationPatterns.includes(pattern)}
                       onChange={() => handlePatternSelection(pattern, "augmentation")}
                     />
                   </td>
