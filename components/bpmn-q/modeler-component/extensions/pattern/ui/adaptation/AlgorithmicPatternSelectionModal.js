@@ -9,6 +9,7 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
   const [selectedAlgorithmicPattern, setSelectedAlgorithmicPattern] = useState(null);
   const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState([]);
   const [selectedAugmentationPatterns, setSelectedAugmentationPatterns] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handlePatternSelection = (pattern, category) => {
     if (category === "algorithmic") {
@@ -33,19 +34,22 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
   };
 
   const handleConfirmSelection = () => {
-    const selectedPatterns = [];
-
     if (selectedAlgorithmicPattern) {
-      selectedPatterns.push(selectedAlgorithmicPattern);
+      const selectedPatterns = [selectedAlgorithmicPattern];
+      selectedPatterns.push(...selectedBehavioralPatterns);
+      selectedPatterns.push(...selectedAugmentationPatterns)
+      onSelectPattern(selectedPatterns);
+      onClose(); // Close the modal only if an algorithmic pattern is selected
+      clearErrorMessage();
+    } else {
+      // Set an error message if no algorithmic pattern is selected
+      setErrorMessage("Please select an algorithmic pattern before confirming.");
     }
-
-    selectedPatterns.push(...selectedBehavioralPatterns);
-    selectedPatterns.push(...selectedAugmentationPatterns);
-
-    onSelectPattern(selectedPatterns);
-    onClose();
   };
 
+  const clearErrorMessage = () => {
+    setErrorMessage(""); // Clear the error message
+  };
   // Filter patterns with specific tags for each category
   const algorithmicPatterns = patterns.filter((pattern) => pattern.tags.includes("algorithm"));
   const behavioralPatterns = patterns.filter((pattern) => pattern.tags.includes("behavioral"));
@@ -55,6 +59,8 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
     <Modal onClose={onClose}>
       <Title>Algorithmic Patterns</Title>
       <Body>
+      {errorMessage}
+
         <div>
           <h5>Algorithmic Patterns</h5>
           <table>
