@@ -13,7 +13,6 @@ export default function AdaptationModal({ onClose, responseData }) {
   const [algorithmicPatterns, setAlgorithmicPatterns] = useState([]);
   const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] = useState(false);
   const [dynamicRows, setDynamicRows] = useState([]);
-  const [index, setIndex] = useState(0)
 
   const openAlgorithmicPatternModal = () => {
     setAlgorithmicPatternModalOpen(true);
@@ -25,9 +24,7 @@ export default function AdaptationModal({ onClose, responseData }) {
 
   const selectAlgorithmicPattern = useCallback((selectedPattern) => {
     const newButtonLabel = selectedPattern.name;
-    setIndex(index +1);
-    let string = "" + index;
-    const newRowData = { algorithmicPattern: selectedPattern.name + string, behavioralPattern: "", augmentationPattern: "" };
+    const newRowData = { algorithmicPattern: selectedPattern.name, behavioralPattern: "", augmentationPattern: "" };
     setDynamicRows([...dynamicRows, newRowData]);
     setButtonSelectedPatterns({ ...buttonSelectedPatterns, [newButtonLabel]: [] });
     closeAlgorithmicPatternModal();
@@ -63,6 +60,12 @@ export default function AdaptationModal({ onClose, responseData }) {
     }
   };
 
+  const deleteRow = (index) => {
+    const updatedRows = [...dynamicRows];
+    updatedRows.splice(index, 1);
+    setDynamicRows(updatedRows);
+  };
+
   return (
     <Modal onClose={onClose}>
       <Title>Pattern Selection</Title>
@@ -86,6 +89,7 @@ export default function AdaptationModal({ onClose, responseData }) {
                   <th>Augmentation Pattern Name</th>
                   <th>Move Up</th>
                   <th>Move Down</th>
+                  <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -99,6 +103,9 @@ export default function AdaptationModal({ onClose, responseData }) {
                     </td>
                     <td>
                       <button onClick={() => moveRowDown(index)}>↓</button>
+                    </td>
+                    <td>
+                      <button onClick={() => deleteRow(index)}>Delete</button>
                     </td>
                   </tr>
                 ))}
