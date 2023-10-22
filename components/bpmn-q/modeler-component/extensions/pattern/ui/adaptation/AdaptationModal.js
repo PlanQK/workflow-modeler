@@ -10,15 +10,9 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 export default function AdaptationModal({ onClose, responseData }) {
   const [currentView, setCurrentView] = useState("algorithmic");
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
-  const [patternsToDisplay, setPatternsToDisplay] = useState([]);
-  const [selectedButton, setSelectedButton] = useState(null);
-  const [dynamicButtons, setDynamicButtons] = useState([
-    { label: "Default Button", viewType: "default" },
-    { label: "Algorithmic Patterns", viewType: "algorithmic" }
-  ]);
-  const [algorithmicPatterns, setAlgorithmicPatterns] = useState([])
-
+  const [algorithmicPatterns, setAlgorithmicPatterns] = useState([]);
   const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] = useState(false);
+  const [dynamicRows, setDynamicRows] = useState([]);
 
   const openAlgorithmicPatternModal = () => {
     setAlgorithmicPatternModalOpen(true);
@@ -29,158 +23,62 @@ export default function AdaptationModal({ onClose, responseData }) {
   };
 
   const selectAlgorithmicPattern = useCallback((selectedPattern) => {
+    console.log("hier")
+
     const newButtonLabel = selectedPattern.name;
-    const newDynamicButton = { label: newButtonLabel, viewType: "dynamic" };
+    const newRowData = { algorithmicPattern: selectedPattern.name, behavioralPattern: "", augmentationPattern: "" };
+    setDynamicRows([...dynamicRows, newRowData]);
 
-    setDynamicButtons([...dynamicButtons, newDynamicButton]);
     setButtonSelectedPatterns({ ...buttonSelectedPatterns, [newButtonLabel]: [] });
-    switchView("algorithmic", "dynamic");
-
     closeAlgorithmicPatternModal();
-  }, [dynamicButtons, buttonSelectedPatterns]);
-
-  const removeDynamicButton = (index) => {
-    const updatedButtons = [...dynamicButtons];
-    updatedButtons.splice(index, 1);
-    setDynamicButtons(updatedButtons);
-    const updatedSelectedPatterns = { ...buttonSelectedPatterns };
-    delete updatedSelectedPatterns[dynamicButtons[index].label];
-    setButtonSelectedPatterns(updatedSelectedPatterns);
-    setSelectedButton(null);
-  };
+  }, [buttonSelectedPatterns]);
 
   const switchView = (viewType, buttonLabel) => {
     setCurrentView(viewType);
     setSelectedButton(buttonLabel);
   };
 
-  const togglePatternSelection = (pattern, view) => {
-    console.log(selectedButton)
-    
-    const isSelected = buttonSelectedPatterns[selectedButton]?.includes(pattern) || false;
-    const updatedSelectedPatterns = { ...buttonSelectedPatterns };
-
-    if (isSelected) {
-      updatedSelectedPatterns[selectedButton] = (updatedSelectedPatterns[selectedButton] || []).filter(
-        (selectedPattern) => selectedPattern !== pattern
-      );
-    } else {
-      updatedSelectedPatterns[selectedButton] = [...(updatedSelectedPatterns[selectedButton] || []), pattern];
-      console.log(updatedSelectedPatterns)
-    }
-    console.log(updatedSelectedPatterns)
-    setButtonSelectedPatterns(updatedSelectedPatterns);
+  const handleAddDynamicRow = () => {
+    // Create a new row data object and add it to the dynamicRows state.
+    const newRowData = { algorithmicPattern: "", behavioralPattern: "", augmentationPattern: "" };
+    setDynamicRows([...dynamicRows, newRowData]);
   };
-
-  const handleButtonDrag = (dragIndex, hoverIndex) => {
-    const draggedButton = dynamicButtons[dragIndex];
-    const updatedButtons = [...dynamicButtons];
-    updatedButtons.splice(dragIndex, 1);
-    updatedButtons.splice(hoverIndex, 0, draggedButton);
-    setDynamicButtons(updatedButtons);
-  };
-
-  useEffect(() => {
-    console.log(responseData)
-    if(responseData != undefined) {
-    if (currentView === "algorithmic") {
-      const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('algorithm'));
-      setPatternsToDisplay(filteredPatterns);
-      setAlgorithmicPatterns(filteredPatterns);
-    } else if (currentView === "behavioral") {
-      const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('behavioral'));
-      const filteredAPatterns = responseData.filter(pattern => pattern.tags.includes('augmentation'));
-      setPatternsToDisplay(filteredPatterns.concat(filteredAPatterns));
-    } else if (currentView === "augmentation") {
-      const filteredPatterns = responseData.filter(pattern => pattern.tags.includes('augmentation'));
-      setPatternsToDisplay(filteredPatterns);
-    }
-  }else {
-    NotificationHandler.getInstance().displayNotification({
-      type: "info",
-      title: "Pattern Selection Unsuccessful!",
-      content: "The specified pattern atlas endpoint is not available.",
-      duration: 7000,
-    }) 
-    onClose();
-  }}, [currentView, responseData]);
 
   return (
     <Modal onClose={onClose}>
       <Title>Pattern Selection</Title>
 
       <Body>
-        <h3>Selected Algorithmic Patterns <button onClick={openAlgorithmicPatternModal}>+</button></h3>
+        <h3>Selected Algorithmic Patterns<button onClick={openAlgorithmicPatternModal}>+</button></h3>
         {isAlgorithmicPatternModalOpen && (
           <AlgorithmicPatternSelectionModal
-            patterns={algorithmicPatterns}
+            patterns={responseData}
             onSelectPattern={selectAlgorithmicPattern}
             onClose={closeAlgorithmicPatternModal}
           />
-        )}
+        )
+        }
         <div className="pattern-type-buttons">
           <div className="dynamic-buttons-container">
-            {dynamicButtons.map((button, index) => (
-              <div
-                key={index}
-                draggable={true}
-                onDragStart={(e) => {
-                  e.dataTransfer.setData("index", index);
-                }}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const dragIndex = e.dataTransfer.getData("index");
-                  const hoverIndex = index;
-                  handleButtonDrag(dragIndex, hoverIndex);
-                }}
-              >
-                <button
-                  onClick={() => switchView("behavioral", button.label)}
-                  className={selectedButton === button.label ? "selected-button" : ""}
-                >
-                  {button.label}
-                </button>
-                {button.viewType === "dynamic" && (
-                  <button onClick={() => removeDynamicButton(index)}>Remove</button>
-                )}
-              </div>
-            ))}
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithmic Pattern Name</th>
+                  <th>Behavioral Pattern Name</th>
+                  <th>Augmentation Pattern Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dynamicRows.map((row, index) => (
+                  <tr key={index}>
+                    <td>{row.algorithmicPattern}</td>
+                    <td>{row.behavioralPattern}</td>
+                    <td>{row.augmentationPattern}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-        <div className="image-container">
-        <h3>Behavioral Pattern</h3>
-          {patternsToDisplay.map((pattern, index) => {
-            console.log(dynamicButtons)
-            console.log(index)
-            const buttonLabel = dynamicButtons[index]?.label || "";
-            return (
-              <div
-                key={index}
-                className={`pattern-card ${buttonSelectedPatterns[selectedButton]?.includes(pattern) ? "selected" : ""}`}
-                onClick={() => togglePatternSelection(pattern, currentView)}
-              >
-                <h4>{pattern.name}</h4>
-                <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "120px", height: "auto" }} className="centered-image" />
-              </div>
-            );
-          })}
-        <h3>Augmentation Pattern</h3>
-          {patternsToDisplay.map((pattern, index) => {
-            console.log(dynamicButtons)
-            console.log(index)
-            const buttonLabel = dynamicButtons[index]?.label || "";
-            return (
-              <div
-                key={index}
-                className={`pattern-card ${buttonSelectedPatterns[selectedButton]?.includes(pattern) ? "selected" : ""}`}
-                onClick={() => togglePatternSelection(pattern, currentView)}
-              >
-                <h4>{pattern.name}</h4>
-                <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "150px", height: "auto" }} className="centered-image" />
-              </div>
-            );
-          })}
         </div>
       </Body>
 
@@ -189,6 +87,7 @@ export default function AdaptationModal({ onClose, responseData }) {
           <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>
             Done
           </button>
+          <button type="button" onClick={handleAddDynamicRow}>+</button>
         </div>
       </Footer>
     </Modal>
