@@ -1,18 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPattern, onClose }) {
+export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPattern, onClose, initialSelectedPattern }) {
   const [selectedAlgorithmicPattern, setSelectedAlgorithmicPattern] = useState(null);
   const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState([]);
   const [selectedAugmentationPatterns, setSelectedAugmentationPatterns] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    if (initialSelectedPattern) {
+      console.log(initialSelectedPattern)
+      const algorithmicPatterns = patterns.filter((pattern) => pattern.name === initialSelectedPattern.algorithmPattern);
+      setSelectedAlgorithmicPattern(algorithmicPatterns[0]);
+      setSelectedBehavioralPatterns(initialSelectedPattern.behavioralPattern);
+      setSelectedAugmentationPatterns(initialSelectedPattern.augmentationPattern);
+    }
+  }, [initialSelectedPattern]);
+
   const handlePatternSelection = (pattern, category) => {
-    if (category === "algorithmic") {
+    if (category === "algorithm") {
       setSelectedAlgorithmicPattern(pattern);
     } else if (category === "behavioral") {
       setSelectedBehavioralPatterns((prevSelected) => {
@@ -35,15 +45,17 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
 
   const handleConfirmSelection = () => {
     if (selectedAlgorithmicPattern) {
-      const selectedPatterns = [selectedAlgorithmicPattern];
-      selectedPatterns.push(...selectedBehavioralPatterns);
-      selectedPatterns.push(...selectedAugmentationPatterns)
+      const selectedPatterns = {
+        algorithm: selectedAlgorithmicPattern,
+        behavioral: selectedBehavioralPatterns,
+        augmentation: selectedAugmentationPatterns,
+      };
       onSelectPattern(selectedPatterns);
       onClose(); // Close the modal only if an algorithmic pattern is selected
       clearErrorMessage();
     } else {
       // Set an error message if no algorithmic pattern is selected
-      setErrorMessage("Please select an algorithmic pattern before confirming.");
+      setErrorMessage("Please select an algorithm pattern before confirming.");
     }
   };
 
@@ -83,7 +95,7 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
                       type="radio"
                       name="algorithmic-pattern"
                       checked={selectedAlgorithmicPattern === pattern}
-                      onChange={() => handlePatternSelection(pattern, "algorithmic")}
+                      onChange={() => handlePatternSelection(pattern, "algorithm")}
                     />
                   </td>
                 </tr>
