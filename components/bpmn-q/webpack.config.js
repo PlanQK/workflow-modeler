@@ -10,11 +10,14 @@ module.exports = {
     filename: "index.js",
     path: path.resolve(__dirname, "public"),
   },
-
+  devServer: {
+    allowedHosts: "all",
+  },
   module: {
     rules: [
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        resourceQuery: { not: [/raw/] },
         type: "asset/inline",
       },
       {
@@ -47,6 +50,10 @@ module.exports = {
         test: /\.bpmn$/,
         type: "asset/source",
       },
+      {
+        resourceQuery: /raw/,
+        type: "asset/source",
+      },
     ],
   },
   resolve: {
@@ -64,16 +71,16 @@ module.exports = {
       DATA_CONFIG:
         "https://raw.githubusercontent.com/PlanQK/workflow-modeler/master/components/bpmn-q/modeler-component/extensions/quantme/configurations/quantmeDataObjects.json",
       DOWNLOAD_FILE_NAME: "quantum-workflow-model",
-      ENABLE_DATA_FLOW_PLUGIN: "true",
-      ENABLE_PLANQK_PLUGIN: "true",
-      ENABLE_QHANA_PLUGIN: "true",
-      ENABLE_QUANTME_PLUGIN: "true",
-      ENABLE_PATTERN_PLUGIN: "true",
+      ENABLE_DATA_FLOW_PLUGIN: true,
+      ENABLE_PATTERN_PLUGIN: true,
+      ENABLE_PLANQK_PLUGIN: false,
+      ENABLE_QHANA_PLUGIN: false,
+      ENABLE_QUANTME_PLUGIN: true,
+      ENABLE_OPENTOSCA_PLUGIN: true,
       GITHUB_TOKEN: "",
       OPENTOSCA_ENDPOINT: "http://localhost:1337/csars",
       NISQ_ANALYZER_ENDPOINT: "http://localhost:8098/nisq-analyzer",
-      PATTERN_ATLAS_ENDPOINT: "",
-      PROVENANCE_COLLECTION: "false",
+      PROVENANCE_COLLECTION: false,
       QHANA_GET_PLUGIN_URL: "http://localhost:5006/api/plugins/",
       QHANA_LIST_PLUGINS_URL:
         "http://localhost:5006/api/plugins/?item-count=100",
@@ -89,7 +96,7 @@ module.exports = {
       UPLOAD_FILE_NAME: "workflow",
       UPLOAD_GITHUB_REPO: "",
       UPLOAD_GITHUB_USER: "",
-      WINERY_ENDPOINT: "http://localhost:8081/winery",
+      WINERY_ENDPOINT: "http://localhost:8080/winery",
     }),
   ],
   mode: "development",

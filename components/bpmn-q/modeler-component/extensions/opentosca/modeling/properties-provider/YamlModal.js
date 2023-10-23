@@ -11,9 +11,9 @@
 
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import Modal from "../../../../../editor/ui/modal/Modal";
+import Modal from "../../../../editor/ui/modal/Modal";
 import "./yaml-modal.css";
-import "../../../../../editor/config/config-modal.css";
+import "../../../../editor/config/config-modal.css";
 
 // polyfill upcoming structural components
 const Title = Modal.Title;
@@ -48,7 +48,6 @@ export default function YamlModal(props) {
       });
     };
     reader.readAsText(uploadFile);
-
     // Call close callback
     onClose();
   };

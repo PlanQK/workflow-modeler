@@ -3,6 +3,7 @@ import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import DataFlowPlugin from "../../extensions/data-extension/DataFlowPlugin";
 import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
 import PatternPlugin from "../../extensions/pattern/PatternPlugin";
+import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
 import { getAllConfigs } from "./PluginConfigHandler";
 import GeneralTab from "../config/GeneralTab";
 import GitHubTab from "../../extensions/quantme/configTabs/GitHubTab";
@@ -34,7 +35,11 @@ const PLUGINS = [
   {
     plugin: PatternPlugin,
     dependencies: [],
-  }
+  },
+  {
+    plugin: OpenTOSCAPlugin,
+    dependencies: [],
+  },
 ];
 
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
@@ -93,6 +98,8 @@ export function checkEnabledStatus(pluginName) {
       return process.env.ENABLE_QUANTME_PLUGIN !== "false";
     case "pattern":
       return process.env.ENABLE_PATTERN_PLUGIN !== "false"; 
+    case "opentosca":
+      return process.env.ENABLE_OPENTOSCA_PLUGIN !== "false";
   }
 }
 /**

@@ -66,7 +66,7 @@ export function getImplementationType(element) {
     return "delegateExpression";
   }
 
-  const deploymentModelUrl = businessObject.get("quantme:deploymentModelUrl");
+  const deploymentModelUrl = businessObject.get("opentosca:deploymentModelUrl");
   if (typeof deploymentModelUrl !== "undefined") {
     return "deploymentModel";
   }

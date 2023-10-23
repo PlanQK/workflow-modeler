@@ -10,5 +10,4 @@ because the Data Object Configurations are applied to DataMapObjects.
 - [QuantME Transformation Function](../../../../components/bpmn-q/modeler-component/extensions/quantme/replacement/QuantMETransformator.js)
 - [QRM Manager](../../../../components/bpmn-q/modeler-component/extensions/quantme/qrm-manager/qrm-handler.js)
 - [Hybrid Loop Detection and Rewrite](../../../../components/bpmn-q/modeler-component/extensions/quantme/ui/adaptation)
-- [Service Deployment to OpenTOSCA](../../../../components/bpmn-q/modeler-component/extensions/quantme/ui/deployment)
 - [Utilities](../../../../components/bpmn-q/modeler-component/extensions/quantme/utilities)
