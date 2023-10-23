@@ -8,13 +8,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+import * as config from "../framework-config/config-manager";
 
-const QUANTME_NAMESPACE_PULL_ENCODED = encodeURIComponent(
-  encodeURIComponent("http://quantil.org/quantme/pull")
-);
-const QUANTME_NAMESPACE_PUSH_ENCODED = encodeURIComponent(
-  encodeURIComponent("http://quantil.org/quantme/push")
-);
+const QUANTME_NAMESPACE_PULL_ENCODED = encodeURIComponent(encodeURIComponent('http://quantil.org/quantme/pull'));
+const QUANTME_NAMESPACE_PUSH_ENCODED = encodeURIComponent(encodeURIComponent('http://quantil.org/quantme/push'));
 
 /**
  * Check whether the given ServiceTask has an attached deployment model that should be bound using pull or push mode
@@ -25,22 +22,19 @@ const QUANTME_NAMESPACE_PUSH_ENCODED = encodeURIComponent(
  * or undefined if unable to determine pull or push
  */
 export function getBindingType(serviceTask) {
-  let urlSplit = serviceTask.deploymentModelUrl.split("servicetemplates/");
+  let urlSplit = serviceTask.deploymentModelUrl.split('servicetemplates/');
   if (urlSplit.length !== 2) {
-    console.warn(
-      "Deployment model url is invalid: %s",
-      serviceTask.deploymentModelUrl
-    );
+    console.warn('Deployment model url is invalid: %s', serviceTask.deploymentModelUrl);
     return undefined;
   }
   let namespace = urlSplit[1];
 
   if (namespace.startsWith(QUANTME_NAMESPACE_PUSH_ENCODED)) {
-    return "push";
+    return 'push';
   }
 
   if (namespace.startsWith(QUANTME_NAMESPACE_PULL_ENCODED)) {
-    return "pull";
+    return 'pull';
   }
 
   return undefined;
@@ -55,41 +49,34 @@ export function getBindingType(serviceTask) {
  * @param modeling the modeling element to adapt properties of the workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export function bindUsingPull(
-  topicName,
-  serviceTaskId,
-  elementRegistry,
-  modeling
-) {
-  if (
-    topicName === undefined ||
-    serviceTaskId === undefined ||
-    elementRegistry === undefined ||
-    modeling === undefined
-  ) {
-    console.error(
-      "Topic name, service task id, element registry, and modeling required for binding using pull!"
-    );
+export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
+
+  if (csar.topicName === undefined || serviceTaskId === undefined || elementRegistry === undefined || modeling === undefined) {
+    console.error('Topic name, service task id, element registry, and modeling required for binding using pull!');
     return { success: false };
   }
 
   // retrieve service task to bind
   let serviceTask = elementRegistry.get(serviceTaskId);
   if (serviceTask === undefined) {
-    console.error(
-      "Unable to retrieve corresponding task for id: %s",
-      serviceTaskId
-    );
+    console.error('Unable to retrieve corresponding task for id: %s', serviceTaskId);
     return { success: false };
   }
 
+  let deploymentModelUrl = serviceTask.businessObject.get('opentosca:deploymentModelUrl');
+  if (deploymentModelUrl.startsWith('{{ wineryEndpoint }}')) {
+    deploymentModelUrl = deploymentModelUrl.replace('{{ wineryEndpoint }}', config.getWineryEndpoint());
+  }
+
   // remove deployment model URL and set topic
+
   modeling.updateProperties(serviceTask, {
-    deploymentModelUrl: undefined,
-    type: "external",
-    topic: topicName,
+    'opentosca:deploymentModelUrl': deploymentModelUrl,
+    'opentosca:deploymentBuildPlanInstanceUrl': csar.buildPlanUrl,
+    type: 'external',
+    topic: csar.topicName
   });
-  return { success: true };
+  return {success: true};
 }
 
 /**
@@ -100,39 +87,30 @@ export function bindUsingPull(
  * @param elementRegistry the element registry of the modeler to find workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
+export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modeling) {
   let url = await extractSelfserviceApplicationUrl(csar.properties);
   let success = false;
 
-  if (
-    csar === undefined ||
-    serviceTaskId === undefined ||
-    elementRegistry === undefined
-  ) {
-    console.error(
-      "CSAR details, service task id, and element registry required for binding using push!"
-    );
+  if (csar === undefined || serviceTaskId === undefined || elementRegistry === undefined) {
+    console.error('CSAR details, service task id, and element registry required for binding using push!');
     return { success: false };
   }
 
   // retrieve service task to bind
   let serviceTask = elementRegistry.get(serviceTaskId);
   if (serviceTask === undefined) {
-    console.error(
-      "Unable to retrieve corresponding task for id: %s",
-      serviceTaskId
-    );
+    console.error('Unable to retrieve corresponding task for id: %s', serviceTaskId);
     return { success: false };
   }
 
   let extensionElements = serviceTask.businessObject.extensionElements.values;
   for (let i = 0; i < extensionElements.length; i++) {
     let extensionElement = extensionElements[i];
-    if (extensionElement.$type === "camunda:Connector") {
+    if (extensionElement.$type === 'camunda:Connector') {
       let inputParameters = extensionElement.inputOutput.inputParameters;
       for (let j = 0; j < inputParameters.length; j++) {
         let inputParameter = inputParameters[j];
-        if (inputParameter.name === "url") {
+        if (inputParameter.name === 'url') {
           let connectorUrl = serviceTask.businessObject.connectorUrl;
           inputParameter.value = url + connectorUrl;
           success = true;
@@ -143,17 +121,19 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
   return { success: success };
 }
 
-async function extractSelfserviceApplicationUrl(propertiesUrl) {
+async function extractSelfserviceApplicationUrl(propertiesUrl, csar) {
+
   let properties = await fetchProperties(propertiesUrl);
   let json = JSON.parse(properties);
-  return json.selfserviceApplicationUrl;
+  const value = json.selfserviceApplicationUrl;
+  return value;
 }
 
 async function fetchProperties(url) {
   const response = await fetch(url, {
     headers: {
-      Accept: "application/json",
-    },
+      Accept: "application/json"
+    }
   });
   const json = await response.text();
   return json;

@@ -1,7 +1,7 @@
 import React from "react";
 import Notifications from "./Notifications";
 
-export const NOTIFICATION_TYPES = ["info", "success", "error", "warning"];
+export const NOTIFICATION_TYPES = ['info', 'success', 'error', 'warning'];
 
 /**
  * Handler to manage notifications displayed to the user. Use getInstance() to get the current instance of the handler.
@@ -9,6 +9,7 @@ export const NOTIFICATION_TYPES = ["info", "success", "error", "warning"];
  * Implements the Singleton pattern.
  */
 export default class NotificationHandler {
+
   static instance = undefined;
 
   static getInstance() {
@@ -37,13 +38,8 @@ export default class NotificationHandler {
     if (notifications) {
       this.notifications = notifications;
     }
-    return (
-      <Notifications
-        ref={this.notificationRef}
-        notifications={this.notifications}
-        container={notificationsContainer}
-      />
-    );
+    return <Notifications ref={this.notificationRef} notifications={this.notifications}
+                          container={notificationsContainer}/>;
   }
 
   /**
@@ -54,13 +50,14 @@ export default class NotificationHandler {
    * @param title The title of the notification.
    * @param content The text displayed by the notification.
    * @param duration The duration in milliseconds.
+   * @returns {{update: update, close: close}}
    */
-  displayNotification({ type = "info", title, content, duration = 4000 }) {
-    this.notificationRef.current.displayNotification({
+  displayNotification({type = 'info', title, content, duration = 4000}) {
+    return this.notificationRef.current.displayNotification({
       type: type,
       title: title,
       content: content,
-      duration: duration,
+      duration: duration
     });
   }
 
