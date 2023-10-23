@@ -71,7 +71,8 @@ export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPat
     <Modal onClose={onClose}>
       <Title>Algorithmic Patterns</Title>
       <Body>
-      {errorMessage}
+      {errorMessage && (
+  <p className="error-message">{errorMessage}</p>)}
 
         <div>
           <h5>Algorithmic Patterns</h5>

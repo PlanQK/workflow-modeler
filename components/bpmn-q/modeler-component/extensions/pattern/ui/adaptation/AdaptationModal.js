@@ -157,8 +157,8 @@ export default function AdaptationModal({ onClose, responseData }) {
                     >
                       ↓
                     </button>
-                    <button class="qwm-btn-primary" onClick={() => openEditRow(index)}><i className="fa fa-edit"></i></button>
-                    <button class="qwm-btn-primary" onClick={() => deleteRow(index)}><i className="fa fa-close"></i></button>
+                    <button className="qwm-btn-primary" onClick={() => openEditRow(index)}><i className="fa fa-edit"></i></button>
+                    <button className="qwm-btn-primary" onClick={() => deleteRow(index)}><i className="fa fa-close"></i></button>
                     </td>
                   </tr>
                 ))}

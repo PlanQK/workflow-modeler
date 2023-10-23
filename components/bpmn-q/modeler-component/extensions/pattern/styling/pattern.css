@@ -1,0 +1,22 @@
+@import url("~bpmn-font/dist/css/bpmn-embedded.css");
+
+.qwm .pattern-logo:before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/pattern-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+}
+
+.actions-column {
+  justify-content: space-between;
+  align-items: center;
+  max-width: 5%;
+}
+
+.qwm .error-message {
+  color: red;
+}

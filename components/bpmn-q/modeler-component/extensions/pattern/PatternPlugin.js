@@ -1,10 +1,10 @@
 import React from "react";
 
-import PatternAtlasConfigTab from "./configTabs/PatternAtlasConfigTab";
-import quantMEStyles from "./styling/quantme.css";
+import PatternConfigTab from "./configTabs/PatternConfigTab";
+import patternStyles from "./styling/pattern.css";
 import PatternPluginButton from "./ui/PatternPluginButton";
 
-let quantMEModdleExtension = require("./resources/quantum4bpmn.json");
+let patternModdleExtension = require("./resources/pattern.json");
 
 /**
  * Plugin Object of the QuantME extension. Used to register the plugin in the plugin handler of the modeler.
@@ -15,11 +15,11 @@ export default {
     {
       tabId: "PatternTab",
       tabTitle: "Pattern Plugin",
-      configTab: PatternAtlasConfigTab,
+      configTab: PatternConfigTab,
     },
   ],
   name: "pattern",
   extensionModule: [],
-  moddleDescription: quantMEModdleExtension,
-  styling: [quantMEStyles]
+  moddleDescription: patternModdleExtension,
+  styling: [patternStyles]
 };
