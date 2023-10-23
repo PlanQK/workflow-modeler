@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
-import AlgorithmicPatternSelectionModal from "./AlgorithmicPatternSelectionModal";
-import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+import PatternSelectionModal from "./PatternSelectionModal";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function AdaptationModal({ onClose, responseData }) {
-  const [currentView, setCurrentView] = useState("algorithmic");
+export default function PatternOverviewModal({ onClose, responseData }) {
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
-  const [algorithmPatterns, setAlgorithmPatterns] = useState([]);
   const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] = useState(false);
   const [dynamicRows, setDynamicRows] = useState([]);
   const [editRow, setEditRow] = useState(null); // State to store the row being edited
@@ -52,11 +49,6 @@ export default function AdaptationModal({ onClose, responseData }) {
     }
     closeAlgorithmicPatternModal();
   }, [buttonSelectedPatterns, dynamicRows, editRow]);
-
-  const switchView = (viewType, buttonLabel) => {
-    setCurrentView(viewType);
-    setSelectedButton(buttonLabel);
-  };
 
   const moveRowUp = (index) => {
     if (index > 0) {
@@ -100,7 +92,7 @@ export default function AdaptationModal({ onClose, responseData }) {
       <Body>
         <h3>Selected Algorithmic Patterns<button onClick={openAlgorithmicPatternModal}>+</button></h3>
         {isAlgorithmicPatternModalOpen && (
-          <AlgorithmicPatternSelectionModal
+          <PatternSelectionModal
             patterns={responseData}
             onSelectPattern={selectAlgorithmicPattern}
             onClose={closeAlgorithmicPatternModal}

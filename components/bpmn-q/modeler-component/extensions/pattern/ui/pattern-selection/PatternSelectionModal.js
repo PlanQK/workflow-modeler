@@ -5,7 +5,7 @@ const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function AlgorithmicPatternSelectionModal({ patterns, onSelectPattern, onClose, initialSelectedPattern }) {
+export default function PatternSelectionModal({ patterns, onSelectPattern, onClose, initialSelectedPattern }) {
   const [selectedAlgorithmicPattern, setSelectedAlgorithmicPattern] = useState(null);
   const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState([]);
   const [selectedAugmentationPatterns, setSelectedAugmentationPatterns] = useState([]);

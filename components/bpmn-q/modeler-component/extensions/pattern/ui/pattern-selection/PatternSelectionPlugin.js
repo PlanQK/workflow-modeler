@@ -1,17 +1,16 @@
-import AdaptationModal from "./AdaptationModal";
+import PatternOverviewModal from "./PatternOverviewModal";
 import PatternModal from "./PatternModal";
 import React, { PureComponent } from "react";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import { fetchDataFromEndpoint } from "../../utilities/Utilities"; // Import your API function
-import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 const defaultState = {
-  adaptationOpen: false,
+  patternOverviewOpen: false,
   patternOpen: false,
   responseData: null, // Store the response data from the API
 };
 
-export default class AdaptationPlugin extends PureComponent {
+export default class PatternSelectionPlugin extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -54,12 +53,12 @@ export default class AdaptationPlugin extends PureComponent {
         </div>
         {this.state.patternOpen && (
           <PatternModal
-            onClose={() => this.setState({ adaptationOpen: true })} // Pass the response data as a prop
+            onClose={() => this.setState({ patternOverviewOpen: true })} // Pass the response data as a prop
           />
         )}
-        {this.state.adaptationOpen && (
-          <AdaptationModal
-            onClose={() => this.setState({ adaptationOpen: false, patternOpen: false })}
+        {this.state.patternOverviewOpen && (
+          <PatternOverviewModal
+            onClose={() => this.setState({ patternOverviewOpen: false, patternOpen: false })}
             responseData={this.state.responseData} // Pass the response data as a prop
           />
         )}

@@ -1,5 +1,5 @@
 import React from "react";
-import AdaptationPlugin from "./adaptation/AdaptationPlugin";
+import PatternSelectionPlugin from "./pattern-selection/PatternSelectionPlugin";
 import ExtensibleButton from "../../../editor/ui/ExtensibleButton";
 
 export default function PatternPluginButton() {
@@ -7,7 +7,7 @@ export default function PatternPluginButton() {
   return (
     <ExtensibleButton
       subButtons={[
-        <AdaptationPlugin />,
+        <PatternSelectionPlugin />,
       ]}
       title="Pattern"
       styleClass="pattern-logo"
