@@ -79,7 +79,6 @@
     "browserify-css": "^0.15.0",
     "canvg-browser": "^1.0.0",
     "chai": "^4.3.7",
-    "chai-xml": "^0.4.0",
     "clean-webpack-plugin": "^4.0.0",
     "client": "file:client",
     "copy-webpack-plugin": "^4.6.0",

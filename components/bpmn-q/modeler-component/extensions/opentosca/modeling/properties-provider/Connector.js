@@ -1,7 +1,7 @@
 import { SelectEntry } from "@bpmn-io/properties-panel";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import { useService } from "bpmn-js-properties-panel";
-import { getModeler } from "../../../../../editor/ModelerHandler";
+import { getModeler } from "../../../../editor/ModelerHandler";
 
 /**
  * Copyright (c) 2023 Institute of Architecture of Application Systems -
@@ -125,13 +125,14 @@ function determineInputParameters(yamlData, schemePath) {
         }
     }}
 
-    const document = yaml.load(yamlData);
-    scheme = String(scheme.$ref).replace('#/', '').replaceAll('/', '.');
+    if (scheme.$ref) {
+        const document = yaml.load(yamlData);
+        scheme = String(scheme.$ref).replace('#/', '').replaceAll('/', '.');
 
-    // Access the dynamically determined schema
-    const schemaPath = scheme;
-    const schema = getObjectByPath(document, schemaPath);
-
+        // Access the dynamically determined schema
+        const schemaPath = scheme;
+        scheme = getObjectByPath(document, schemaPath);
+    }
     // Function to access an object property by path
     function getObjectByPath(obj, path) {
         const parts = path.split('.');
@@ -146,7 +147,7 @@ function determineInputParameters(yamlData, schemePath) {
     }
 
     // Access the properties of the schema
-    const properties = Object.keys(schema.properties);
+    const properties = Object.keys(scheme.properties);
     return properties;
 }
 
@@ -165,10 +166,11 @@ function determineOutputParameters(yamlData) {
                 // Access the properties of the schema
                 // Access the schema referenced by "200"
                 const statusCode = "200";
-                const schemaRef = response[statusCode].content["application/json"].schema.$ref;
-                const schemaPath = schemaRef.replace("#/", "").replaceAll("/", ".");
-                const schema = getObjectByPath2(data, schemaPath);
-
+                let schema = response[statusCode].content["application/json"].schema;
+                if(schema.$ref) {
+                    const schemaPath = schema.$ref.replace("#/", "").replaceAll("/", ".");
+                    schema = getObjectByPath2(data, schemaPath);
+                }
                 // Function to access an object property by path
                 function getObjectByPath2(obj, path) {
                     const parts = path.split('.');

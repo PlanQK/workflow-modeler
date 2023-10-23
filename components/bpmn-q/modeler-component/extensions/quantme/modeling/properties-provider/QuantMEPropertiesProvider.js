@@ -16,9 +16,6 @@ import {
     WarmStartingTaskEntries,
     CuttingResultCombinationTaskEntries
 } from "./QuantMETaskProperties";
-import { ImplementationProps } from "./service-task/ImplementationProps";
-import { Group } from "@bpmn-io/properties-panel";
-import { getWineryEndpoint } from '../../framework-config/config-manager';
 import * as configConsts from '../../../../editor/configurations/Constants';
 import { instance as dataObjectConfigs } from '../../configurations/DataObjectConfigurations';
 import ConfigurationsProperties from '../../../../editor/configurations/ConfigurationsProperties';
@@ -35,7 +32,6 @@ const LOW_PRIORITY = 500;
  * @param bpmnFactory
  */
 export default function QuantMEPropertiesProvider(propertiesPanel, injector, translate, eventBus, bpmnFactory) {
-
     // subscribe to config updates to retrieve the currently defined Winery endpoint
     const self = this;
     let wineryEndpoint;
@@ -65,11 +61,6 @@ export default function QuantMEPropertiesProvider(propertiesPanel, injector, tra
             // add properties of QuantME tasks to panel
             if (element.type && element.type.startsWith('quantme:')) {
                 groups.unshift(createQuantMEGroup(element, translate));
-            }
-
-            // update ServiceTasks with the deployment extension
-            if (element.type && element.type === 'bpmn:ServiceTask') {
-                groups[2] = ImplementationGroup(element, injector, getWineryEndpoint());
             }
 
             // add properties group for displaying the properties defined by the configurations if a configuration
@@ -106,34 +97,6 @@ function createQuantMEGroup(element, translate) {
         label: translate('Details'),
         entries: QuantMEProps(element)
     };
-}
-
-/**
- * Properties group to show customized implementation options entry for service tasks.
- *
- * @param element The element to show the properties for.
- * @param injector The injector of the bpmn-js modeler
- * @param wineryEndpoint The winery endpoint of the QuantME plugin
- * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
- * @constructor
- */
-function ImplementationGroup(element, injector, wineryEndpoint) {
-    const translate = injector.get('translate');
-
-    const group = {
-        label: translate('Implementation'),
-        id: 'CamundaPlatform__Implementation',
-        component: Group,
-        entries: [
-            ...ImplementationProps({ element, wineryEndpoint, translate })
-        ]
-    };
-
-    if (group.entries.length) {
-        return group;
-    }
-
-    return null;
 }
 
 /**

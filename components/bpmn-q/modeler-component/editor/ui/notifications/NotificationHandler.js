@@ -50,9 +50,10 @@ export default class NotificationHandler {
      * @param title The title of the notification.
      * @param content The text displayed by the notification.
      * @param duration The duration in milliseconds.
+     * @returns {{update: update, close: close}}
      */
     displayNotification({type = 'info', title, content, duration = 4000}) {
-        this.notificationRef.current.displayNotification({
+        return this.notificationRef.current.displayNotification({
             type: type,
             title: title,
             content: content,

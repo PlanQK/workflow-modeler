@@ -9,11 +9,9 @@ import * as config from '../framework-config/config-manager';
  * @return {JSX.Element} The tab as a React component
  * @constructor
  */
-export default function BPMNConfigTab() {
+export default function QuantMETab() {
     const [dataConfigurationsEndpoint, setDataConfigurationsEndpoint] = useState(config.getQuantMEDataConfigurationsEndpoint());
 
-    const [opentoscaEndpoint, setOpentoscaEndpoint] = useState(config.getOpenTOSCAEndpoint());
-    const [wineryEndpoint, setWineryEndpoint] = useState(config.getWineryEndpoint());
     const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(config.getNisqAnalyzerEndpoint());
     const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] = useState(config.getQiskitRuntimeHandlerEndpoint());
     const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(config.getHybridRuntimeProvenance());
@@ -53,21 +51,6 @@ export default function BPMNConfigTab() {
             }
         });
     }
-    if (!editorActions._actions.hasOwnProperty('opentoscaEndpointChanged')) {
-        editorActions.register({
-            opentoscaEndpointChanged: function (opentoscaEndpoint) {
-                self.modeler.config.opentoscaEndpoint = opentoscaEndpoint;
-            }
-        });
-    }
-    if (!editorActions._actions.hasOwnProperty('wineryEndpointChanged')) {
-        editorActions.register({
-            wineryEndpointChanged: function (wineryEndpoint) {
-                self.modeler.config.wineryEndpoint = wineryEndpoint;
-                eventBus.fire('config.updated', self.modeler.config);
-            }
-        });
-    }
     if (!editorActions._actions.hasOwnProperty('nisqAnalyzerEndpointChanged')) {
         editorActions.register({
             nisqAnalyzerEndpointChanged: function (nisqAnalyzerEndpoint) {
@@ -99,10 +82,8 @@ export default function BPMNConfigTab() {
     }
 
     // save changed config entries on close
-    BPMNConfigTab.prototype.onClose = () => {
+    QuantMETab.prototype.onClose = () => {
         modeler.config.dataConfigurationsEndpoint = dataConfigurationsEndpoint;
-        modeler.config.opentoscaEndpoint = opentoscaEndpoint;
-        modeler.config.wineryEndpoint = wineryEndpoint;
         modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
         modeler.config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
         modeler.config.scriptSplitterEndpoint = scriptSplitterEndpoint;
@@ -111,8 +92,6 @@ export default function BPMNConfigTab() {
         modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
         modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
         config.setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint);
-        config.setOpenTOSCAEndpoint(opentoscaEndpoint);
-        config.setWineryEndpoint(wineryEndpoint);
         config.setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint);
         config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
         config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
@@ -134,31 +113,6 @@ export default function BPMNConfigTab() {
                             name="dataConfigurationsEndpoint"
                             value={dataConfigurationsEndpoint}
                             onChange={event => setDataConfigurationsEndpoint(event.target.value)} />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <h3>OpenTOSCA</h3>
-        <table>
-            <tbody>
-                <tr className="spaceUnder">
-                    <td align="right">OpenTOSCA Endpoint:</td>
-                    <td align="left">
-                        <input
-                            type="string"
-                            name="opentoscaEndpoint"
-                            value={opentoscaEndpoint}
-                            onChange={event => setOpentoscaEndpoint(event.target.value)} />
-                    </td>
-                </tr>
-                <tr className="spaceUnder">
-                    <td align="right">Winery Endpoint:</td>
-                    <td align="left">
-                        <input
-                            type="string"
-                            name="wineryEndpoint"
-                            value={wineryEndpoint}
-                            onChange={event => setWineryEndpoint(event.target.value)} />
                     </td>
                 </tr>
             </tbody>
@@ -264,7 +218,7 @@ export default function BPMNConfigTab() {
     </>;
 }
 
-BPMNConfigTab.prototype.config = () => {
+QuantMETab.prototype.config = () => {
     const modeler = getModeler();
 
     modeler.config.transformationFrameworkEndpoint = config.getTransformationFrameworkEndpoint();

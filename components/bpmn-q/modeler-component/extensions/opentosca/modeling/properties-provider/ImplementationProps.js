@@ -1,16 +1,16 @@
 import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { DmnImplementationProps } from './DmnImplementationProps';
 import { ImplementationTypeProps } from './ImplementationTypeProps';
-
 import { useService } from "bpmn-js-properties-panel";
-import { getImplementationType } from "../../../utilities/ImplementationTypeHelperExtension";
+import { getImplementationType } from "../../../quantme/utilities/ImplementationTypeHelperExtension"
 import {
     getServiceTaskLikeBusinessObject,
-} from "../../../../../editor/util/camunda-utils/ImplementationTypeUtils";
-import { getExtensionElementsList } from "../../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+} from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
+import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import { Deployment } from "./Deployment";
 import { Connector } from './Connector';
 import { YamlUpload } from './YamlUpload';
+import { ArtifactUpload } from './ArtifactUpload';
 const yaml = require('js-yaml');
 const QUANTME_NAMESPACE_PULL = 'http://quantil.org/quantme/pull';
 
@@ -97,13 +97,11 @@ export function ImplementationProps(props) {
             component: Deployment,
             isEdited: isTextFieldEntryEdited
         });
-
         entries.push({
             id: 'yamlUpload',
             component: YamlUpload,
             isEdited: isTextFieldEntryEdited
         })
-        console.log(!element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))))
         if (!element.businessObject.deploymentModelUrl.includes(encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))) && element.businessObject.yaml !== undefined) {
             const urls = extractUrlsFromYaml(element.businessObject.yaml);
             entries.push({
@@ -115,8 +113,17 @@ export function ImplementationProps(props) {
                 isEdited: isTextFieldEntryEdited
             })
         }
+        entries.push({
+            id: 'artifactUpload',
+            element,
+            translate,
+            component: ArtifactUpload,
+            isEdited: isTextFieldEntryEdited
+        });
     }
-    return entries;
+
+
+return entries;
 }
 
 function extractUrlsFromYaml(content) {

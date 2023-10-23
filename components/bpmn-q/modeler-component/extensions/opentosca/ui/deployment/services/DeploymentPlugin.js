@@ -22,6 +22,7 @@ import {getServiceTasksToDeploy} from '../../../deployment/DeploymentUtils';
 import {getModeler} from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import {getRootProcess} from '../../../../../editor/util/ModellingUtilities';
+import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 
 const defaultState = {
     windowOpenDeploymentOverview: false,
@@ -42,8 +43,8 @@ export default class DeploymentPlugin extends PureComponent {
     }
 
     componentDidMount() {
-
         this.modeler = getModeler();
+        this.commandStack = this.modeler.get("commandStack");
     }
 
     /**
@@ -105,7 +106,7 @@ export default class DeploymentPlugin extends PureComponent {
                     this.setState({
                         windowOpenDeploymentOverview: false,
                         windowOpenDeploymentInput: false,
-                        windowOpenDeploymentBinding: false
+                        windowOpenDeploymentBinding: false,
                     });
                     return;
                 }
@@ -133,7 +134,7 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
         });
     }
 
@@ -178,7 +179,7 @@ export default class DeploymentPlugin extends PureComponent {
                     this.setState({
                         windowOpenDeploymentOverview: false,
                         windowOpenDeploymentInput: false,
-                        windowOpenDeploymentBinding: false
+                        windowOpenDeploymentBinding: false,
                     });
                     return;
                 }
@@ -198,7 +199,7 @@ export default class DeploymentPlugin extends PureComponent {
             this.setState({
                 windowOpenDeploymentOverview: false,
                 windowOpenDeploymentInput: false,
-                windowOpenDeploymentBinding: true
+                windowOpenDeploymentBinding: true,
             });
             return;
         }
@@ -207,7 +208,7 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
         });
     }
 
@@ -232,7 +233,7 @@ export default class DeploymentPlugin extends PureComponent {
                     // bind the service instance using the specified binding pattern
                     let bindingResponse = undefined;
                     if (csar.type === 'pull') {
-                        bindingResponse = bindUsingPull(csar.topicName, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
+                        bindingResponse = bindUsingPull(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     } else if (csar.type === 'push') {
                         bindingResponse = bindUsingPush(csar, serviceTaskIds[j], this.modeler.get('elementRegistry'), this.modeler.get('modeling'));
                     }
@@ -252,7 +253,7 @@ export default class DeploymentPlugin extends PureComponent {
                         this.setState({
                             windowOpenDeploymentOverview: false,
                             windowOpenDeploymentInput: false,
-                            windowOpenDeploymentBinding: false
+                            windowOpenDeploymentBinding: false,
                         });
                         return;
                     }
@@ -271,7 +272,7 @@ export default class DeploymentPlugin extends PureComponent {
         this.setState({
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false
+            windowOpenDeploymentBinding: false,
         });
     }
 
@@ -300,17 +301,35 @@ export default class DeploymentPlugin extends PureComponent {
         return csarsToDeploy;
     }
 
-    render() {
+    showDeployment(show) {
+        this.commandStack.execute("deploymentModel.showAll", {
+            showDeploymentModel: show
+        });
+    }
 
+    render() {
         // render deployment button and pop-up menu
         return (<Fragment>
-            <div style={{display: 'flex'}} slot="toolbar">
-                <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
-                        onClick={() => this.setState({windowOpenDeploymentOverview: true})}>
+            <ExtensibleButton
+                title="OpenTOSCA"
+                styleClass="app-icon-opentosca"
+                description="Show buttons of the OpenTOSCA plugin"
+                subButtons={[
+                    <button type="button" className="qwm-toolbar-btn" title="Show Deployment"
+                            onClick={() => this.showDeployment(true)}>
+                    <span className="show-icon"><span
+                        className="qwm-indent">Show Deployment</span></span>
+                    </button>,
+                    <button type="button" className="qwm-toolbar-btn" title="Hide Deployment"
+                            onClick={() => this.showDeployment(false)}>
+                    <span className="hide-icon"><span
+                        className="qwm-indent">Hide Deployment</span></span>
+                    </button>,
+                    <button type="button" className="qwm-toolbar-btn" title="Open service deployment menu"
+                            onClick={() => this.setState({windowOpenDeploymentDeploymentOverview: true})}>
                     <span className="app-icon-service-deployment"><span
                         className="qwm-indent">Service Deployment</span></span>
-                </button>
-            </div>
+                    </button>]}/>
             {this.state.windowOpenDeploymentOverview && (
                 <ServiceDeploymentOverviewModal
                     onClose={this.handleDeploymentOverviewClosed}
