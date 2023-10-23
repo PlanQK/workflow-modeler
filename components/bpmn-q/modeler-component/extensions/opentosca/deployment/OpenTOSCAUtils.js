@@ -24,7 +24,7 @@ export async function uploadCSARToContainer(
   opentoscaEndpoint,
   csarName,
   url,
-  wineryEndpoint
+  wineryEndpoint,
 ) {
   if (opentoscaEndpoint === undefined) {
     console.error("OpenTOSCA endpoint is undefined. Unable to upload CSARs...");
@@ -37,7 +37,7 @@ export async function uploadCSARToContainer(
     }
     console.log(
       "Checking if CSAR at following URL is already uploaded to the OpenTOSCA Container: ",
-      url
+      url,
     );
 
     // check if CSAR is already uploaded
@@ -132,7 +132,7 @@ async function getBuildPlanUrl(csarUrl) {
   ) {
     console.error(
       "Unable to find service template in CSAR at URL: %s",
-      csarUrl
+      csarUrl,
     );
     return { success: false };
   }
@@ -164,16 +164,16 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
   if (csar.type === "pull") {
     // get special parameters that are required to bind services using external tasks / the pulling pattern
     let camundaTopicParam = inputParameters.find(
-      (param) => param.name === "camundaTopic"
+      (param) => param.name === "camundaTopic",
     );
     let camundaEndpointParam = inputParameters.find(
-      (param) => param.name === "camundaEndpoint"
+      (param) => param.name === "camundaEndpoint",
     );
 
     // abort if parameters are not available
     if (camundaTopicParam === undefined || camundaEndpointParam === undefined) {
       console.error(
-        "Unable to pass topic to poll to service instance creation. Service binding will fail!"
+        "Unable to pass topic to poll to service instance creation. Service binding will fail!",
       );
       return result;
     }
@@ -199,7 +199,7 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
 
   // get service template instance to poll for completness
   let buildPlanResponse = await fetch(
-    csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
+    csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson,
   );
   let buildPlanResponseJson = await buildPlanResponse.json();
 
@@ -215,7 +215,7 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
     console.log("Retry fetching build plan");
 
     buildPlanResponse = await fetch(
-      csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
+      csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson,
     );
     buildPlanResponseJson = await buildPlanResponse.json();
   }
@@ -225,7 +225,7 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
       "Unable to fetch build plans for " +
         csar.buildPlanUrl +
         "/instances/" +
-        instanceCreationResponseJson
+        instanceCreationResponseJson,
     );
     result.success = false;
     return result;
@@ -264,7 +264,6 @@ export function makeId(length) {
   return result;
 }
 
-
 /**
  * Create a new ArtifactTemplate of the given type and add the given blob as file
  *
@@ -282,7 +281,7 @@ export async function createNewArtifactTemplate(
   namespace,
   type,
   blob,
-  fileName
+  fileName,
 ) {
   console.log("Creating new ArtifactTemplate of type: ", type);
 
@@ -296,7 +295,7 @@ export async function createNewArtifactTemplate(
   let artifactTemplateLocalName = localNamePrefix;
   if (
     getArtifactsResultJson.some(
-      (e) => e.id === artifactTemplateLocalName && e.namespace === namespace
+      (e) => e.id === artifactTemplateLocalName && e.namespace === namespace,
     )
   ) {
     let nameOccupied = true;
@@ -304,7 +303,8 @@ export async function createNewArtifactTemplate(
     while (nameOccupied) {
       if (
         !getArtifactsResultJson.some(
-          (e) => e.id === artifactTemplateLocalName && e.namespace === namespace
+          (e) =>
+            e.id === artifactTemplateLocalName && e.namespace === namespace,
         )
       ) {
         nameOccupied = false;
@@ -315,7 +315,7 @@ export async function createNewArtifactTemplate(
   }
   console.log(
     "Creating ArtifactTemplate with name: ",
-    artifactTemplateLocalName
+    artifactTemplateLocalName,
   );
 
   // create ArtifactTemplate
@@ -332,7 +332,7 @@ export async function createNewArtifactTemplate(
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-    }
+    },
   );
   let artifactCreationResponseText = await artifactCreationResponse.text();
 
@@ -362,12 +362,12 @@ export async function createNewArtifactTemplate(
 export async function createNewServiceTemplateVersion(
   wineryEndpoint,
   serviceTemplateId,
-  serviceTemplateNamespace
+  serviceTemplateNamespace,
 ) {
   console.log(
     "Creating new version of Service Template with ID %s and namespace %s",
     serviceTemplateId,
-    serviceTemplateNamespace
+    serviceTemplateNamespace,
   );
 
   // retrieve the currently available ServiceTemplates
@@ -378,11 +378,11 @@ export async function createNewServiceTemplateVersion(
   if (
     !getTemplatesResultJson.some(
       (e) =>
-        e.id === serviceTemplateId && e.namespace === serviceTemplateNamespace
+        e.id === serviceTemplateId && e.namespace === serviceTemplateNamespace,
     )
   ) {
     console.log(
-      "Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!"
+      "Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!",
     );
     return {
       error:
@@ -398,7 +398,7 @@ export async function createNewServiceTemplateVersion(
       !getTemplatesResultJson.some(
         (e) =>
           e.id === serviceTemplateId + "_" + version + "-w1-wip1" &&
-          e.namespace === serviceTemplateNamespace
+          e.namespace === serviceTemplateNamespace,
       )
     ) {
       nameOccupied = false;
