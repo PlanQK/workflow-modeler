@@ -17,9 +17,6 @@ export default class PatternSelectionPlugin extends PureComponent {
     this.modeler = getModeler();
 
     this.state = defaultState;
-
-    // get QuantME component from the backend, e.g., to retrieve current QRMs
-    this.quantME = "";
   }
 
 
@@ -53,7 +50,7 @@ export default class PatternSelectionPlugin extends PureComponent {
         </div>
         {this.state.patternOpen && (
           <PatternModal
-            onClose={() => this.setState({ patternOverviewOpen: true })} // Pass the response data as a prop
+            onClose={() => this.setState({ patternOverviewOpen: true, patternOpen: false })} // Pass the response data as a prop
           />
         )}
         {this.state.patternOverviewOpen && (

@@ -20,3 +20,71 @@
 .qwm .error-message {
   color: red;
 }
+
+.qwm-select-column {
+  width: 10%; /* Adjust the width as needed */
+  text-align: center; /* Center content horizontally */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.qwm-select-column input[type="checkbox"] {
+  margin: 0;
+}
+.qwm-icon-column {
+  width: 50%; /* Adjust the width as needed */
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qwm td input[type="checkbox"] {
+  float: left;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.qwm td input[type="radio"] {
+  float: left;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.qwm td input[type="image"] {
+  float: left;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.qwm-action {
+  min-width: 10px;
+  height: 35px;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.qwm-action-add {
+  min-width: 10px;
+  height: 35px;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  position: absolute;
+  right: 50px;
+}
