@@ -23,6 +23,7 @@ import {
   serviceTemplateExists,
   addNodeWithArtifactToServiceTemplateByName,
   deleteArtifactTemplate,
+  deleteTopNodeTag,
 } from "../../deployment/WineryUtils";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import { getWineryEndpoint } from "../../framework-config/config-manager";
@@ -105,6 +106,7 @@ export default function ArtifactUploadModal({
       const nodeTypeQName = getNodeTypeQName(selectedOption);
       const serviceTemplateName = `${namePrefix}ServiceTemplate-${element.id}`;
       const doesExist = await serviceTemplateExists(serviceTemplateName);
+      console.log("doesExist", doesExist);
       if (doesExist) {
         serviceTemplateAddress =
           await addNodeWithArtifactToServiceTemplateByName(
@@ -115,6 +117,7 @@ export default function ArtifactUploadModal({
             `${namePrefix}Artifact-${element.id}`,
             selectedOption
           );
+        await deleteTopNodeTag(serviceTemplateAddress);
       } else {
         serviceTemplateAddress = await createServiceTemplateWithNodeAndArtifact(
           serviceTemplateName,
