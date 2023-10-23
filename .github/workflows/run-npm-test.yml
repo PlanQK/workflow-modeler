@@ -1,4 +1,4 @@
-name: Run all test of the Quantum Workflow Modeler
+name: Run Tests
 
 on:
   pull_request:

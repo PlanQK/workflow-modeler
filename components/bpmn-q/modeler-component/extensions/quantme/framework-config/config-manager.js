@@ -10,7 +10,7 @@
  */
 
 import defaultConfig from "./config";
-import { getPluginConfig } from '../../../editor/plugin/PluginConfigHandler';
+import { getPluginConfig } from "../../../editor/plugin/PluginConfigHandler";
 
 let config = {};
 
@@ -18,63 +18,76 @@ let config = {};
  * Get the endpoint for Data Object Configurations
  */
 export function getQuantMEDataConfigurationsEndpoint() {
-    if (config.quantmeDataConfigurationsEndpoint === undefined) {
-        setQuantMEDataConfigurationsEndpoint(
-          getPluginConfig('quantme').quantmeDataConfigurationsEndpoint
-          || defaultConfig.quantmeDataConfigurationsEndpoint);
-    }
-    return config.quantmeDataConfigurationsEndpoint;
+  if (config.quantmeDataConfigurationsEndpoint === undefined) {
+    setQuantMEDataConfigurationsEndpoint(
+      getPluginConfig("quantme").quantmeDataConfigurationsEndpoint ||
+        defaultConfig.quantmeDataConfigurationsEndpoint
+    );
+  }
+  return config.quantmeDataConfigurationsEndpoint;
 }
 
 /**
  * Set the endpoint for Data Object Configurations
  */
-export function setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint) {
-    if (dataConfigurationsEndpoint !== null && dataConfigurationsEndpoint !== undefined) {
-        config.quantmeDataConfigurationsEndpoint = dataConfigurationsEndpoint;
-    }
+export function setQuantMEDataConfigurationsEndpoint(
+  dataConfigurationsEndpoint
+) {
+  if (
+    dataConfigurationsEndpoint !== null &&
+    dataConfigurationsEndpoint !== undefined
+  ) {
+    config.quantmeDataConfigurationsEndpoint = dataConfigurationsEndpoint;
+  }
 }
 
 /**
  * Get the NISQ Analyzer endpoint
  */
 export function getNisqAnalyzerEndpoint() {
-    if (config.nisqAnalyzerEndpoint === undefined) {
-        setNisqAnalyzerEndpoint(
-          getPluginConfig('quantme').nisqAnalyzerEndpoint
-          || defaultConfig.nisqAnalyzerEndpoint);
-    }
-    return config.nisqAnalyzerEndpoint;
+  if (config.nisqAnalyzerEndpoint === undefined) {
+    setNisqAnalyzerEndpoint(
+      getPluginConfig("quantme").nisqAnalyzerEndpoint ||
+        defaultConfig.nisqAnalyzerEndpoint
+    );
+  }
+  return config.nisqAnalyzerEndpoint;
 }
 
 /**
  * Set the NISQ Analyzer endpoint
  */
 export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
-    if (nisqAnalyzerEndpoint !== null && nisqAnalyzerEndpoint !== undefined) {
-        config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
-    }
+  if (nisqAnalyzerEndpoint !== null && nisqAnalyzerEndpoint !== undefined) {
+    config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
+  }
 }
 
 /**
  * Get the Transformation Framework endpoint
  */
 export function getTransformationFrameworkEndpoint() {
-    if (config.transformationFrameworkEndpoint === undefined) {
-        setTransformationFrameworkEndpoint(
-          getPluginConfig('quantme').transformationFrameworkEndpoint
-          || defaultConfig.transformationFrameworkEndpoint);
-    }
-    return config.transformationFrameworkEndpoint;
+  if (config.transformationFrameworkEndpoint === undefined) {
+    setTransformationFrameworkEndpoint(
+      getPluginConfig("quantme").transformationFrameworkEndpoint ||
+        defaultConfig.transformationFrameworkEndpoint
+    );
+  }
+  return config.transformationFrameworkEndpoint;
 }
 
 /**
  * Set the Transformation Framework endpoint
  */
-export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoint) {
-    if (transformationFrameworkEndpoint !== null && transformationFrameworkEndpoint !== undefined) {
-        config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
-    }
+export function setTransformationFrameworkEndpoint(
+  transformationFrameworkEndpoint
+) {
+  if (
+    transformationFrameworkEndpoint !== null &&
+    transformationFrameworkEndpoint !== undefined
+  ) {
+    config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
+  }
 }
 
 /**
@@ -83,12 +96,13 @@ export function setTransformationFrameworkEndpoint(transformationFrameworkEndpoi
  * @return {string} the specified repository path
  */
 export function getQRMRepositoryPath() {
-    if (config.githubRepositoryPath === undefined) {
-        setQRMRepositoryPath(
-          getPluginConfig('quantme').githubRepositoryPath
-          || defaultConfig.githubRepositoryPath);
-    }
-    return config.githubRepositoryPath;
+  if (config.githubRepositoryPath === undefined) {
+    setQRMRepositoryPath(
+      getPluginConfig("quantme").githubRepositoryPath ||
+        defaultConfig.githubRepositoryPath
+    );
+  }
+  return config.githubRepositoryPath;
 }
 
 /**
@@ -97,9 +111,9 @@ export function getQRMRepositoryPath() {
  * @param repositoryPath the repository path
  */
 export function setQRMRepositoryPath(repositoryPath) {
-    if (repositoryPath !== null && repositoryPath !== undefined) {
-        config.githubRepositoryPath = repositoryPath;
-    }
+  if (repositoryPath !== null && repositoryPath !== undefined) {
+    config.githubRepositoryPath = repositoryPath;
+  }
 }
 
 /**
@@ -108,12 +122,13 @@ export function setQRMRepositoryPath(repositoryPath) {
  * @return {string} the specified repository name
  */
 export function getQRMRepositoryName() {
-    if (config.githubRepositoryName === undefined) {
-        setQRMRepositoryName(
-          getPluginConfig('quantme').githubRepositoryName
-          || defaultConfig.githubRepositoryName);
-    }
-    return config.githubRepositoryName;
+  if (config.githubRepositoryName === undefined) {
+    setQRMRepositoryName(
+      getPluginConfig("quantme").githubRepositoryName ||
+        defaultConfig.githubRepositoryName
+    );
+  }
+  return config.githubRepositoryName;
 }
 
 /**
@@ -122,9 +137,9 @@ export function getQRMRepositoryName() {
  * @param repositoryName the repository name
  */
 export function setQRMRepositoryName(repositoryName) {
-    if (repositoryName !== null && repositoryName !== undefined) {
-        config.githubRepositoryName = repositoryName;
-    }
+  if (repositoryName !== null && repositoryName !== undefined) {
+    config.githubRepositoryName = repositoryName;
+  }
 }
 
 /**
@@ -133,12 +148,12 @@ export function setQRMRepositoryName(repositoryName) {
  * @return {string} the specified username
  */
 export function getQRMRepositoryUserName() {
-    if (config.githubUsername === undefined) {
-        setQRMUserName(
-          getPluginConfig('quantme').githubUsername
-          || defaultConfig.githubUsername);
-    }
-    return config.githubUsername;
+  if (config.githubUsername === undefined) {
+    setQRMUserName(
+      getPluginConfig("quantme").githubUsername || defaultConfig.githubUsername
+    );
+  }
+  return config.githubUsername;
 }
 
 /**
@@ -147,9 +162,9 @@ export function getQRMRepositoryUserName() {
  * @param userName the username
  */
 export function setQRMUserName(userName) {
-    if (userName !== null && userName !== undefined) {
-        config.githubUsername = userName;
-    }
+  if (userName !== null && userName !== undefined) {
+    config.githubUsername = userName;
+  }
 }
 
 /**
@@ -158,12 +173,12 @@ export function setQRMUserName(userName) {
  * @return {string} the specified username
  */
 export function getGitHubToken() {
-    if (config.githubToken === undefined) {
-        setGitHubToken(
-          getPluginConfig('quantme').githubToken
-          || defaultConfig.githubToken);
-    }
-    return config.githubToken;
+  if (config.githubToken === undefined) {
+    setGitHubToken(
+      getPluginConfig("quantme").githubToken || defaultConfig.githubToken
+    );
+  }
+  return config.githubToken;
 }
 
 /**
@@ -172,9 +187,9 @@ export function getGitHubToken() {
  * @param githubToken the username
  */
 export function setGitHubToken(githubToken) {
-    if (githubToken !== null && githubToken !== undefined) {
-        config.githubToken = githubToken;
-    }
+  if (githubToken !== null && githubToken !== undefined) {
+    config.githubToken = githubToken;
+  }
 }
 
 /**
@@ -183,12 +198,13 @@ export function setGitHubToken(githubToken) {
  * @return {string} the specified endpoint
  */
 export function getQiskitRuntimeHandlerEndpoint() {
-    if (config.qiskitRuntimeHandlerEndpoint === undefined) {
-        setQiskitRuntimeHandlerEndpoint(
-          getPluginConfig('quantme').qiskitRuntimeHandlerEndpoint
-          || defaultConfig.qiskitRuntimeHandlerEndpoint);
-    }
-    return config.qiskitRuntimeHandlerEndpoint;
+  if (config.qiskitRuntimeHandlerEndpoint === undefined) {
+    setQiskitRuntimeHandlerEndpoint(
+      getPluginConfig("quantme").qiskitRuntimeHandlerEndpoint ||
+        defaultConfig.qiskitRuntimeHandlerEndpoint
+    );
+  }
+  return config.qiskitRuntimeHandlerEndpoint;
 }
 
 /**
@@ -197,9 +213,9 @@ export function getQiskitRuntimeHandlerEndpoint() {
  * @param endpoint the endpoint
  */
 export function setQiskitRuntimeHandlerEndpoint(endpoint) {
-    if (endpoint !== null && endpoint !== undefined) {
-        config.qiskitRuntimeHandlerEndpoint = endpoint;
-    }
+  if (endpoint !== null && endpoint !== undefined) {
+    config.qiskitRuntimeHandlerEndpoint = endpoint;
+  }
 }
 
 /**
@@ -208,12 +224,13 @@ export function setQiskitRuntimeHandlerEndpoint(endpoint) {
  * @return {string} the specified endpoint
  */
 export function getScriptSplitterEndpoint() {
-    if (config.scriptSplitterEndpoint === undefined) {
-        setScriptSplitterEndpoint(
-          getPluginConfig('quantme').scriptSplitterEndpoint
-          || defaultConfig.scriptSplitterEndpoint);
-    }
-    return config.scriptSplitterEndpoint;
+  if (config.scriptSplitterEndpoint === undefined) {
+    setScriptSplitterEndpoint(
+      getPluginConfig("quantme").scriptSplitterEndpoint ||
+        defaultConfig.scriptSplitterEndpoint
+    );
+  }
+  return config.scriptSplitterEndpoint;
 }
 
 /**
@@ -222,9 +239,9 @@ export function getScriptSplitterEndpoint() {
  * @param endpoint the endpoint
  */
 export function setScriptSplitterEndpoint(endpoint) {
-    if (endpoint !== null && endpoint !== undefined) {
-        config.scriptSplitterEndpoint = endpoint;
-    }
+  if (endpoint !== null && endpoint !== undefined) {
+    config.scriptSplitterEndpoint = endpoint;
+  }
 }
 
 /**
@@ -233,12 +250,13 @@ export function setScriptSplitterEndpoint(endpoint) {
  * @return {int} the specified threshold
  */
 export function getScriptSplitterThreshold() {
-    if (config.scriptSplitterThreshold === undefined) {
-        setScriptSplitterThreshold(
-          getPluginConfig('quantme').scriptSplitterThreshold
-          || defaultConfig.scriptSplitterThreshold);
-    }
-    return config.scriptSplitterThreshold;
+  if (config.scriptSplitterThreshold === undefined) {
+    setScriptSplitterThreshold(
+      getPluginConfig("quantme").scriptSplitterThreshold ||
+        defaultConfig.scriptSplitterThreshold
+    );
+  }
+  return config.scriptSplitterThreshold;
 }
 
 /**
@@ -247,9 +265,9 @@ export function getScriptSplitterThreshold() {
  * @param threshold the threshold
  */
 export function setScriptSplitterThreshold(threshold) {
-    if (threshold !== null && threshold !== undefined) {
-        config.scriptSplitterThreshold = threshold;
-    }
+  if (threshold !== null && threshold !== undefined) {
+    config.scriptSplitterThreshold = threshold;
+  }
 }
 
 /**
@@ -258,12 +276,13 @@ export function setScriptSplitterThreshold(threshold) {
  * @return {boolean} the current value of the hybrid runtime provenance flag
  */
 export function getHybridRuntimeProvenance() {
-    if (config.hybridRuntimeProvenance === undefined) {
-        setHybridRuntimeProvenance(
-          getPluginConfig('quantme').hybridRuntimeProvenance
-          || defaultConfig.hybridRuntimeProvenance);
-    }
-    return config.hybridRuntimeProvenance;
+  if (config.hybridRuntimeProvenance === undefined) {
+    setHybridRuntimeProvenance(
+      getPluginConfig("quantme").hybridRuntimeProvenance ||
+        defaultConfig.hybridRuntimeProvenance
+    );
+  }
+  return config.hybridRuntimeProvenance;
 }
 
 /**
@@ -272,9 +291,12 @@ export function getHybridRuntimeProvenance() {
  * @param hybridRuntimeProvenance the new value of the hybrid runtime provenance flag
  */
 export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
-    if (hybridRuntimeProvenance !== null && hybridRuntimeProvenance !== undefined) {
-        config.hybridRuntimeProvenance = hybridRuntimeProvenance;
-    }
+  if (
+    hybridRuntimeProvenance !== null &&
+    hybridRuntimeProvenance !== undefined
+  ) {
+    config.hybridRuntimeProvenance = hybridRuntimeProvenance;
+  }
 }
 
 /**
@@ -283,12 +305,13 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
  * @return {string} the specified endpoint
  */
 export function getAWSRuntimeHandlerEndpoint() {
-    if (config.awsRuntimeHandlerEndpoint === undefined) {
-        setAWSRuntimeHandlerEndpoint(
-          getPluginConfig('quantme').awsRuntimeHandlerEndpoint
-          || defaultConfig.awsRuntimeHandlerEndpoint);
-    }
-    return config.awsRuntimeHandlerEndpoint;
+  if (config.awsRuntimeHandlerEndpoint === undefined) {
+    setAWSRuntimeHandlerEndpoint(
+      getPluginConfig("quantme").awsRuntimeHandlerEndpoint ||
+        defaultConfig.awsRuntimeHandlerEndpoint
+    );
+  }
+  return config.awsRuntimeHandlerEndpoint;
 }
 
 /**
@@ -297,85 +320,91 @@ export function getAWSRuntimeHandlerEndpoint() {
  * @param endpoint the endpoint
  */
 export function setAWSRuntimeHandlerEndpoint(endpoint) {
-    if (endpoint !== null && endpoint !== undefined) {
-        config.awsRuntimeHandlerEndpoint = endpoint;
-    }
+  if (endpoint !== null && endpoint !== undefined) {
+    config.awsRuntimeHandlerEndpoint = endpoint;
+  }
 }
 
 /**
  * Get the upload Github Repository Name
  */
 export function getUploadGithubRepositoryName() {
-    if (config.uploadGithubRepositoryName === undefined) {
-        setUploadGithubRepositoryName(defaultConfig.uploadGithubRepositoryName);
-    }
-    return config.uploadGithubRepositoryName;
+  if (config.uploadGithubRepositoryName === undefined) {
+    setUploadGithubRepositoryName(defaultConfig.uploadGithubRepositoryName);
+  }
+  return config.uploadGithubRepositoryName;
 }
 
 /**
  * Set the upload Github Repositoryname
  */
 export function setUploadGithubRepositoryName(uploadGithubRepositoryName) {
-    if (uploadGithubRepositoryName !== null && uploadGithubRepositoryName !== undefined) {
-        config.uploadGithubRepositoryName = uploadGithubRepositoryName;
-    }
+  if (
+    uploadGithubRepositoryName !== null &&
+    uploadGithubRepositoryName !== undefined
+  ) {
+    config.uploadGithubRepositoryName = uploadGithubRepositoryName;
+  }
 }
 
 /**
  * Get the Upload Github Reposítory Owner
  */
 export function getUploadGithubRepositoryOwner() {
-    if (config.uploadGithubRepositoryOwner === undefined) {
-        setUploadGithubRepositoryOwner(defaultConfig.uploadGithubRepositoryOwner);
-    }
-    return config.uploadGithubRepositoryOwner;
+  if (config.uploadGithubRepositoryOwner === undefined) {
+    setUploadGithubRepositoryOwner(defaultConfig.uploadGithubRepositoryOwner);
+  }
+  return config.uploadGithubRepositoryOwner;
 }
 
 /**
  * Set the Upload Github Repository User
  */
 export function setUploadGithubRepositoryOwner(uploadGithubRepositoryOwner) {
-    if (uploadGithubRepositoryOwner !== null && uploadGithubRepositoryOwner !== undefined) {
-        config.uploadGithubRepositoryOwner = uploadGithubRepositoryOwner;
-    }
+  if (
+    uploadGithubRepositoryOwner !== null &&
+    uploadGithubRepositoryOwner !== undefined
+  ) {
+    config.uploadGithubRepositoryOwner = uploadGithubRepositoryOwner;
+  }
 }
 
 /**
  * Get the Upload File Name
  */
 export function getUploadFileName() {
-    if (config.uploadFileName === undefined) {
-        setUploadFileName(defaultConfig.uploadFileName);
-    }
-    return config.uploadFileName;
+  if (config.uploadFileName === undefined) {
+    setUploadFileName(defaultConfig.uploadFileName);
+  }
+  return config.uploadFileName;
 }
 
 /**
  * Set the Upload File Name
  */
 export function setUploadFileName(uploadFileName) {
-    if (uploadFileName !== null && uploadFileName !== undefined) {
-        config.uploadFileName = uploadFileName;
-    }
+  if (uploadFileName !== null && uploadFileName !== undefined) {
+    config.uploadFileName = uploadFileName;
+  }
 }
 
 /**
  * Get the Upload Branch Name
  */
 export function getUploadBranchName() {
-    if (config.uploadBranchName === undefined) {
-        setUploadBranchName(defaultConfig.uploadBranchName);
-    }
-    return config.uploadBranchName;
+  if (config.uploadBranchName === undefined) {
+    setUploadBranchName(defaultConfig.uploadBranchName);
+  }
+  return config.uploadBranchName;
 }
 
 /**
  * Set the Upload Branch Name
  */
 export function setUploadBranchName(uploadBranchName) {
-    if (uploadBranchName !== null && uploadBranchName !== undefined) {
-        config.uploadBranchName = uploadBranchName;
-    }
+  if (uploadBranchName !== null && uploadBranchName !== undefined) {
+    config.uploadBranchName = uploadBranchName;
+  }
 }
 
 /**
@@ -383,5 +412,5 @@ export function setUploadBranchName(uploadBranchName) {
  * by setting this.comfig to an empty js object.
  */
 export function resetConfig() {
-    config = {};
+  config = {};
 }

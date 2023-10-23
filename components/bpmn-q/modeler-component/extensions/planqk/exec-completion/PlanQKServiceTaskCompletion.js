@@ -1,23 +1,21 @@
 import * as consts from "../utilities/Constants";
 import { getXml } from "../../../editor/util/IoUtilities";
 import {
-    setInputParameter,
-    getDefinitionsFromXml,
-    getRootProcess,
-    getSingleFlowElement,
-    addCamundaInputParameter,
-    setOutputParameter,
-    getCamundaInputOutput,
-
+  setInputParameter,
+  getDefinitionsFromXml,
+  getRootProcess,
+  getSingleFlowElement,
+  setOutputParameter,
+  getCamundaInputOutput,
 } from "../../../editor/util/ModellingUtilities";
-import { createTempModelerFromXml } from '../../../editor/ModelerHandler';
+import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import { insertShape } from "../../../editor/util/TransformationUtilities";
-import * as dataConsts from '../../data-extension/Constants';
+import * as dataConsts from "../../data-extension/Constants";
 import {
-    createProcessContextVariablesTask,
-    transformDataStoreMap
-} from '../../data-extension/transformation/TransformationManager';
-import { layout } from '../../quantme/replacement/layouter/Layouter';
+  createProcessContextVariablesTask,
+  transformDataStoreMap,
+} from "../../data-extension/transformation/TransformationManager";
+import { layout } from "../../quantme/replacement/layouter/Layouter";
 
 /**
  * Replace custom PlanQK extensions with camunda bpmn elements
@@ -26,87 +24,134 @@ import { layout } from '../../quantme/replacement/layouter/Layouter';
  * @returns {Promise<{xml: *, status: string}|{cause: string, status: string}>}
  */
 export async function startPlanqkReplacementProcess(xml) {
-    let modeler = await createTempModelerFromXml(xml);
-    let elementRegistry = modeler.get('elementRegistry');
-    let modeling = modeler.get('modeling');
+  let modeler = await createTempModelerFromXml(xml);
+  let elementRegistry = modeler.get("elementRegistry");
+  let modeling = modeler.get("modeling");
 
-    // get root element of the current diagram
-    const definitions = modeler.getDefinitions();
-    const rootProcess = getRootProcess(definitions);
+  // get root element of the current diagram
+  const definitions = modeler.getDefinitions();
+  const rootProcess = getRootProcess(definitions);
 
-    console.log(rootProcess);
+  console.log(rootProcess);
 
-    if (typeof rootProcess === 'undefined') {
-        console.log('Unable to retrieve root process element from definitions!');
-        return { status: 'failed', cause: 'Unable to retrieve root process element from definitions!' };
+  if (typeof rootProcess === "undefined") {
+    console.log("Unable to retrieve root process element from definitions!");
+    return {
+      status: "failed",
+      cause: "Unable to retrieve root process element from definitions!",
+    };
+  }
+
+  // Mark process as executable
+  rootProcess.isExecutable = true;
+
+  // get all PlanQK Service Tasks from the process
+  const planqkServiceTasks = getPlanqkServiceTasks(
+    rootProcess,
+    elementRegistry
+  );
+  console.log(
+    "Process contains " +
+      planqkServiceTasks.length +
+      " Planqk service tasks to replace..."
+  );
+  let isTransformed = !planqkServiceTasks || !planqkServiceTasks.length;
+
+  // replace each PlanQK Service Task with the subprocess that implements service interaction to retrieve standard-compliant BPMN
+  for (let planqkServiceTask of planqkServiceTasks) {
+    let replacementSuccess = false;
+    console.log(
+      "Replacing task with id %s with PlanQK service interaction subprocess ",
+      planqkServiceTask.task.id
+    );
+    const replacementSubprocess = require("../resources/workflows/planqk_service_call_subprocess.bpmn");
+
+    // replace PlanQK Service Task with replacementSubprocess
+    replacementSuccess = await replaceByInteractionSubprocess(
+      definitions,
+      planqkServiceTask.task,
+      planqkServiceTask.parent,
+      replacementSubprocess,
+      modeler
+    );
+
+    if (!replacementSuccess) {
+      console.log(
+        "Replacement of service task with id " +
+          planqkServiceTask.task.id +
+          " failed. Aborting process!"
+      );
+      return {
+        status: "failed",
+        cause:
+          "Replacement of service task with id " +
+          planqkServiceTask.task.id +
+          " failed. Aborting process!",
+      };
     }
+  }
 
-    // Mark process as executable
-    rootProcess.isExecutable = true;
+  // get all PlanQK data pools
+  const planqkDataPools = getPlanqkDataPools(rootProcess, elementRegistry);
+  console.log(
+    "Process contains " +
+      planqkDataPools.length +
+      " Planqk data pools to replace..."
+  );
+  isTransformed =
+    isTransformed && (!planqkDataPools || !planqkDataPools.length);
 
-    // get all PlanQK Service Tasks from the process
-    const planqkServiceTasks = getPlanqkServiceTasks(rootProcess, elementRegistry);
-    console.log('Process contains ' + planqkServiceTasks.length + ' Planqk service tasks to replace...');
-    let isTransformed = !planqkServiceTasks || !planqkServiceTasks.length;
+  // check if transformation is necessary
+  if (isTransformed) {
+    return { status: "transformed", xml: xml };
+  }
 
-    // replace each PlanQK Service Task with the subprocess that implements service interaction to retrieve standard-compliant BPMN
-    for (let planqkServiceTask of planqkServiceTasks) {
+  const processContextVariables = {};
 
-        let replacementSuccess = false;
-        console.log('Replacing task with id %s with PlanQK service interaction subprocess ', planqkServiceTask.task.id);
-        const replacementSubprocess = require('../resources/workflows/planqk_service_call_subprocess.bpmn');
+  // replace each PlanQK data pool with a bpmn:dataStore and a process variable
+  for (let dataPool of planqkDataPools) {
+    let replacementSuccess = false;
+    console.log("Replacing data pool with id %s ", dataPool.pool.id);
 
-        // replace PlanQK Service Task with replacementSubprocess
-        replacementSuccess = await replaceByInteractionSubprocess(definitions, planqkServiceTask.task, planqkServiceTask.parent, replacementSubprocess, modeler);
+    // replace data pool by data store
+    replacementSuccess = await replaceByDataStore(
+      definitions,
+      dataPool.pool,
+      dataPool.parent,
+      processContextVariables,
+      modeler
+    );
 
-        if (!replacementSuccess) {
-            console.log('Replacement of service task with id ' + planqkServiceTask.task.id + ' failed. Aborting process!');
-            return {
-                status: 'failed',
-                cause: 'Replacement of service task with id ' + planqkServiceTask.task.id + ' failed. Aborting process!'
-            };
-        }
+    if (!replacementSuccess) {
+      console.log(
+        "Replacement of data pool with id " +
+          dataPool.pool.id +
+          " failed. Aborting process!"
+      );
+      return {
+        status: "failed",
+        cause:
+          "Replacement of data pool with id " +
+          dataPool.pool.id +
+          " failed. Aborting process!",
+      };
     }
+  }
 
-    // get all PlanQK data pools
-    const planqkDataPools = getPlanqkDataPools(rootProcess, elementRegistry);
-    console.log('Process contains ' + planqkDataPools.length + ' Planqk data pools to replace...');
-    isTransformed = isTransformed && (!planqkDataPools || !planqkDataPools.length);
+  // create task to publish process variables in process context
+  if (Object.entries(processContextVariables).length > 0) {
+    createProcessContextVariablesTask(
+      processContextVariables,
+      rootProcess,
+      definitions,
+      modeler
+    );
+  }
 
-    // check if transformation is necessary
-    if (isTransformed) {
-        return { status: 'transformed', xml: xml };
-    }
+  layout(modeling, elementRegistry, rootProcess);
 
-    const processContextVariables = {};
-
-    // replace each PlanQK data pool with a bpmn:dataStore and a process variable
-    for (let dataPool of planqkDataPools) {
-
-        let replacementSuccess = false;
-        console.log('Replacing data pool with id %s ', dataPool.pool.id);
-
-        // replace data pool by data store
-        replacementSuccess = await replaceByDataStore(definitions, dataPool.pool, dataPool.parent, processContextVariables, modeler);
-
-        if (!replacementSuccess) {
-            console.log('Replacement of data pool with id ' + dataPool.pool.id + ' failed. Aborting process!');
-            return {
-                status: 'failed',
-                cause: 'Replacement of data pool with id ' + dataPool.pool.id + ' failed. Aborting process!'
-            };
-        }
-    }
-
-    // create task to publish process variables in process context
-    if (Object.entries(processContextVariables).length > 0) {
-        createProcessContextVariablesTask(processContextVariables, rootProcess, definitions, modeler);
-    }
-
-    layout(modeling, elementRegistry, rootProcess);
-
-    const transformedXml = await getXml(modeler);
-    return { status: 'transformed', xml: transformedXml };
+  const transformedXml = await getXml(modeler);
+  return { status: "transformed", xml: transformedXml };
 }
 
 /**
@@ -119,35 +164,63 @@ export async function startPlanqkReplacementProcess(xml) {
  * @param modeler The current modeler
  * @return {Promise<boolean>} True if replacement was successful, False else
  */
-async function replaceByInteractionSubprocess(definitions, task, parent, replacement, modeler) {
+async function replaceByInteractionSubprocess(
+  definitions,
+  task,
+  parent,
+  replacement,
+  modeler
+) {
+  if (!replacement) {
+    console.log(
+      "Replacement interaction subprocess is undefined. Aborting replacement!"
+    );
+    return false;
+  }
 
-    if (!replacement) {
-        console.log('Replacement interaction subprocess is undefined. Aborting replacement!');
-        return false;
-    }
+  // get the root process of the replacement fragment
+  let replacementProcess = getRootProcess(
+    await getDefinitionsFromXml(replacement)
+  );
+  let replacementIASubprocess = getSingleFlowElement(replacementProcess);
+  if (
+    replacementIASubprocess === null ||
+    replacementIASubprocess === undefined
+  ) {
+    console.log("Unable to retrieve replacement subprocess: ", replacement);
+    return false;
+  }
 
-    // get the root process of the replacement fragment
-    let replacementProcess = getRootProcess(await getDefinitionsFromXml(replacement));
-    let replacementIASubprocess = getSingleFlowElement(replacementProcess);
-    if (replacementIASubprocess === null || replacementIASubprocess === undefined) {
-        console.log('Unable to retrieve replacement subprocess: ', replacement);
-        return false;
-    }
+  console.log("Replacement interaction subprocess: ", replacementIASubprocess);
 
-    console.log('Replacement interaction subprocess: ', replacementIASubprocess);
+  // replace task by replacementIASubprocess
+  let result = insertShape(
+    definitions,
+    parent,
+    replacementIASubprocess,
+    {},
+    true,
+    modeler,
+    task
+  );
+  const subprocessShape = result["element"];
+  subprocessShape.collapsed = false;
+  subprocessShape.isExpanded = true;
 
-    // replace task by replacementIASubprocess
-    let result = insertShape(definitions, parent, replacementIASubprocess, {}, true, modeler, task);
-    const subprocessShape = result['element'];
-    subprocessShape.collapsed = false;
-    subprocessShape.isExpanded = true;
+  // create inputs and outputs for the subprocess
+  const bpmnFactory = modeler.get("bpmnFactory");
+  applyTaskInput2Subprocess(
+    task,
+    result["element"].businessObject,
+    bpmnFactory
+  );
+  applyTaskOutput2Subprocess(
+    task,
+    result["element"].businessObject,
+    bpmnFactory
+  );
 
-    // create inputs and outputs for the subprocess
-    const bpmnFactory = modeler.get('bpmnFactory');
-    applyTaskInput2Subprocess(task, result['element'].businessObject, bpmnFactory);
-    applyTaskOutput2Subprocess(task, result['element'].businessObject, bpmnFactory);
-
-    return result['success'];
+  return result["success"];
 }
 
 /**
@@ -158,18 +231,37 @@ async function replaceByInteractionSubprocess(definitions, task, parent, replace
  * @param bpmnFactory
  */
 function applyTaskInput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
+  const taskIo = getCamundaInputOutput(taskBO, bpmnFactory);
+  const subProcessIo = getCamundaInputOutput(subprocessBO, bpmnFactory);
 
-    const taskIo = getCamundaInputOutput(taskBO, bpmnFactory);
-    const subProcessIo = getCamundaInputOutput(subprocessBO, bpmnFactory);
+  subProcessIo.inputParameters.push(...taskIo.inputParameters);
 
-    subProcessIo.inputParameters.push(...taskIo.inputParameters);
-
-    setInputParameter(subprocessBO, "params", taskBO.params, bpmnFactory);
-    setInputParameter(subprocessBO, "data", taskBO.data, bpmnFactory);
-    setInputParameter(subprocessBO, "serviceEndpoint", taskBO.serviceEndpoint, bpmnFactory);
-    setInputParameter(subprocessBO, "tokenEndpoint", taskBO.tokenEndpoint, bpmnFactory);
-    setInputParameter(subprocessBO, "consumerSecret", taskBO.consumerSecret, bpmnFactory);
-    setInputParameter(subprocessBO, "consumerKey", taskBO.consumerKey, bpmnFactory);
+  setInputParameter(subprocessBO, "params", taskBO.params, bpmnFactory);
+  setInputParameter(subprocessBO, "data", taskBO.data, bpmnFactory);
+  setInputParameter(
+    subprocessBO,
+    "serviceEndpoint",
+    taskBO.serviceEndpoint,
+    bpmnFactory
+  );
+  setInputParameter(
+    subprocessBO,
+    "tokenEndpoint",
+    taskBO.tokenEndpoint,
+    bpmnFactory
+  );
+  setInputParameter(
+    subprocessBO,
+    "consumerSecret",
+    taskBO.consumerSecret,
+    bpmnFactory
+  );
+  setInputParameter(
+    subprocessBO,
+    "consumerKey",
+    taskBO.consumerKey,
+    bpmnFactory
+  );
 }
 
 /**
@@ -180,13 +272,12 @@ function applyTaskInput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
  * @param bpmnFactory
  */
 function applyTaskOutput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
+  const taskIo = getCamundaInputOutput(taskBO, bpmnFactory);
+  const subProcessIo = getCamundaInputOutput(subprocessBO, bpmnFactory);
 
-    const taskIo = getCamundaInputOutput(taskBO, bpmnFactory);
-    const subProcessIo = getCamundaInputOutput(subprocessBO, bpmnFactory);
+  subProcessIo.outputParameters.push(...taskIo.outputParameters);
 
-    subProcessIo.outputParameters.push(...taskIo.outputParameters);
-
-    setOutputParameter(subprocessBO, "result", taskBO.params, bpmnFactory);
+  setOutputParameter(subprocessBO, "result", taskBO.params, bpmnFactory);
 }
 
 /**
@@ -200,19 +291,33 @@ function applyTaskOutput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
  * @param modeler The current modeler the workflow is opened in.
  * @return {Promise<boolean>} True if replacement was successful, False else.
  */
-async function replaceByDataStore(definitions, dataPool, parentProcess, processContextVariables, modeler) {
+async function replaceByDataStore(
+  definitions,
+  dataPool,
+  parentProcess,
+  processContextVariables,
+  modeler
+) {
+  const bpmnFactory = modeler.get("bpmnFactory");
 
-    const bpmnFactory = modeler.get('bpmnFactory');
+  // add data pool link to details attribute of data pool
+  const parameters = dataPool.get(dataConsts.DETAILS) || [];
+  const linkParam = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, {
+    name: consts.DATA_POOL_LINK,
+    value: dataPool.get(consts.DATA_POOL_LINK),
+  });
+  parameters.push(linkParam);
 
-    // add data pool link to details attribute of data pool
-    const parameters = dataPool.get(dataConsts.DETAILS) || [];
-    const linkParam = bpmnFactory.create(dataConsts.KEY_VALUE_ENTRY, { name: consts.DATA_POOL_LINK, value: dataPool.get(consts.DATA_POOL_LINK) });
-    parameters.push(linkParam);
+  // transform data pool like data store map
+  const result = transformDataStoreMap(
+    dataPool,
+    parentProcess,
+    definitions,
+    processContextVariables,
+    modeler
+  );
 
-    // transform data pool like data store map
-    const result = transformDataStoreMap(dataPool, parentProcess, definitions, processContextVariables, modeler);
-
-    return result.success;
+  return result.success;
 }
 
 /**
@@ -223,24 +328,26 @@ async function replaceByDataStore(definitions, dataPool, parentProcess, processC
  * @return {*[]} Array of {task: flowElement, parent: processBo} for each PlanQK service task
  */
 export function getPlanqkServiceTasks(process, elementRegistry) {
+  // retrieve parent object for later replacement
+  const processBo = elementRegistry.get(process.id);
 
-    // retrieve parent object for later replacement
-    const processBo = elementRegistry.get(process.id);
-
-    const planqkServiceTasks = [];
-    const flowElements = process.flowElements;
-    for (let i = 0; i < flowElements.length; i++) {
-        let flowElement = flowElements[i];
-        if (flowElement.$type && flowElement.$type === consts.PLANQK_SERVICE_TASK) {
-            planqkServiceTasks.push({ task: flowElement, parent: processBo });
-        }
-
-        // recursively retrieve service tasks if subprocess is found
-        if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
-            Array.prototype.push.apply(planqkServiceTasks, getPlanqkServiceTasks(flowElement, elementRegistry));
-        }
+  const planqkServiceTasks = [];
+  const flowElements = process.flowElements;
+  for (let i = 0; i < flowElements.length; i++) {
+    let flowElement = flowElements[i];
+    if (flowElement.$type && flowElement.$type === consts.PLANQK_SERVICE_TASK) {
+      planqkServiceTasks.push({ task: flowElement, parent: processBo });
     }
-    return planqkServiceTasks;
+
+    // recursively retrieve service tasks if subprocess is found
+    if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
+      Array.prototype.push.apply(
+        planqkServiceTasks,
+        getPlanqkServiceTasks(flowElement, elementRegistry)
+      );
+    }
+  }
+  return planqkServiceTasks;
 }
 
 /**
@@ -251,22 +358,24 @@ export function getPlanqkServiceTasks(process, elementRegistry) {
  * @return {*[]} Array of {task: flowElement, parent: processBo} for each PlanQK service task
  */
 export function getPlanqkDataPools(process, elementRegistry) {
+  // retrieve parent object for later replacement
+  const processBo = elementRegistry.get(process.id);
 
-    // retrieve parent object for later replacement
-    const processBo = elementRegistry.get(process.id);
-
-    const planqkDataPools = [];
-    const flowElements = process.flowElements;
-    for (let i = 0; i < flowElements.length; i++) {
-        let flowElement = flowElements[i];
-        if (flowElement.$type && flowElement.$type === consts.PLANQK_DATA_POOL) {
-            planqkDataPools.push({ pool: flowElement, parent: processBo });
-        }
-
-        // recursively retrieve service tasks if subprocess is found
-        if (flowElement.$type && flowElement.$type === 'bpmn:SubProcess') {
-            Array.prototype.push.apply(planqkDataPools, getPlanqkDataPools(flowElement, elementRegistry));
-        }
+  const planqkDataPools = [];
+  const flowElements = process.flowElements;
+  for (let i = 0; i < flowElements.length; i++) {
+    let flowElement = flowElements[i];
+    if (flowElement.$type && flowElement.$type === consts.PLANQK_DATA_POOL) {
+      planqkDataPools.push({ pool: flowElement, parent: processBo });
     }
-    return planqkDataPools;
+
+    // recursively retrieve service tasks if subprocess is found
+    if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
+      Array.prototype.push.apply(
+        planqkDataPools,
+        getPlanqkDataPools(flowElement, elementRegistry)
+      );
+    }
+  }
+  return planqkDataPools;
 }

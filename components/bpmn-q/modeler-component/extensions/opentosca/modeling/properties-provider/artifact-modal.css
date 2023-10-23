@@ -1,110 +1,108 @@
 .tab {
-    flex: 1;
-    padding: 10px;
-    border-radius: 3px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: #fdfdfe;
-    margin: 1px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-    border: solid 1px var(--blue-darken-62);
-    background-color: var(--blue-base-65);
+  flex: 1;
+  padding: 10px;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fdfdfe;
+  margin: 1px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+  border: solid 1px var(--blue-darken-62);
+  background-color: var(--blue-base-65);
 }
 
 .tab.active {
-    background-color: var(--blue-darken-55);
+  background-color: var(--blue-darken-55);
 }
 
 .tab:hover {
-    border: solid 1px var(--blue-darken-55);
-    background-color: var(--blue-darken-62);
+  border: solid 1px var(--blue-darken-55);
+  background-color: var(--blue-darken-62);
 }
 
 .tab-buttons-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    overflow: auto;
-    min-width: 120px;
-    max-height: 263px;
-    direction: ltr;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: auto;
+  min-width: 120px;
+  max-height: 263px;
+  direction: ltr;
 }
 
-
 .qwm-artifact-upload-btn {
-    outline: none;
-    background-color: var(--color-grey-225-10-97);
-    border: 1px solid var(--color-grey-225-10-75);
-    border-radius: 4px;
-    margin: 2px 32px 6px 12px;
-    padding: 2px 6px 2px 6px;
-    fill: var(--add-entry-fill-color);
+  outline: none;
+  background-color: var(--color-grey-225-10-97);
+  border: 1px solid var(--color-grey-225-10-75);
+  border-radius: 4px;
+  margin: 2px 32px 6px 12px;
+  padding: 2px 6px 2px 6px;
+  fill: var(--add-entry-fill-color);
 }
 
 .qwm-artifact-upload-btn:hover {
-    color: white;
-    border: 1px solid white;
-    background-color: var(--color-blue-205-100-50);
-    fill: var(--add-entry-hover-fill-color);
+  color: white;
+  border: 1px solid white;
+  background-color: var(--color-blue-205-100-50);
+  fill: var(--add-entry-hover-fill-color);
 }
 
 .upload-tab-content {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-    padding: 3px 6px 2px;
-    column-gap: 10px;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 6px 2px;
+  column-gap: 10px;
 }
 
 .dockerimage-input {
-    flex-grow: 2;
+  flex-grow: 2;
 }
 
 .upload-properties-panel-input {
-    padding: 3px 6px 2px;
-    border: 1px solid hsl(225, 10%, 75%);
-    border-radius: 2px;
-    background-color: rgb(247, 247, 248);
-    font-size: 14px;
-    font-family: inherit;
+  padding: 3px 6px 2px;
+  border: 1px solid hsl(225, 10%, 75%);
+  border-radius: 2px;
+  background-color: rgb(247, 247, 248);
+  font-size: 14px;
+  font-family: inherit;
 }
 
 .upload-properties-panel-label {
-    display: block;
-    font-size: var(--text-size-small);
-    margin: 2px 0 1px;
+  display: block;
+  font-size: var(--text-size-small);
+  margin: 2px 0 1px;
 }
 
 .upload-artifact-tab {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 3px 6px 2px;
-    font-size: 14px;
-    font-family: inherit;
-    width: 100%
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 3px 6px 2px;
+  font-size: 14px;
+  font-family: inherit;
+  width: 100%;
 }
 
 .upload-artifact-selector {
-    flex: 1;
-    max-width: 282px;
+  flex: 1;
+  max-width: 282px;
 }
 
 .upload-file-upload {
-    flex: 1;
-    max-width: 282px;
-    overflow: clip;
-    text-overflow: ellipsis;
+  flex: 1;
+  max-width: 282px;
+  overflow: clip;
+  text-overflow: ellipsis;
 }
 
 .upload-file-upload-button {
-    overflow: hidden;
-    text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-

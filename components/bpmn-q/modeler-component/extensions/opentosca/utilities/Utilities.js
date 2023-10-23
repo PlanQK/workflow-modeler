@@ -9,25 +9,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import $ from 'jquery';
-
+import $ from "jquery";
 
 export function performAjax(targetUrl, dataToSend) {
-    return new Promise(function (resolve, reject) {
-        $.ajax({
-            type: 'POST',
-            url: targetUrl,
-            data: dataToSend,
-            processData: false,
-            contentType: false,
-            beforeSend: function () {
-            },
-            success: function (data) {
-                resolve(data);
-            },
-            error: function (err) {
-                reject(err);
-            }
-        });
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      type: "POST",
+      url: targetUrl,
+      data: dataToSend,
+      processData: false,
+      contentType: false,
+      beforeSend: function () {},
+      success: function (data) {
+        resolve(data);
+      },
+      error: function (err) {
+        reject(err);
+      },
     });
+  });
 }

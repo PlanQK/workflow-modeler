@@ -8,11 +8,11 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-import ServiceTaskPropertiesProvider from './properties-provider/ServiceTaskPropertiesProvider'
-import OpenTOSCARenderer from './OpenTOSCARenderer';
+import ServiceTaskPropertiesProvider from "./properties-provider/ServiceTaskPropertiesProvider";
+import OpenTOSCARenderer from "./OpenTOSCARenderer";
 
 export default {
-  __init__: ['openToscaRenderer', 'serviceTaskPropertyProvider'],
-  openToscaRenderer: ['type', OpenTOSCARenderer],
-  serviceTaskPropertyProvider: ['type', ServiceTaskPropertiesProvider],
+  __init__: ["openToscaRenderer", "serviceTaskPropertyProvider"],
+  openToscaRenderer: ["type", OpenTOSCARenderer],
+  serviceTaskPropertyProvider: ["type", ServiceTaskPropertiesProvider],
 };

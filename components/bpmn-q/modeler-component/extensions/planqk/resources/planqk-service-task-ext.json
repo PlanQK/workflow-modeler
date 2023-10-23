@@ -1,6 +1,6 @@
 {
   "name": "ServiceTask",
-  "superClass": [ "bpmn:Task" ],
+  "superClass": ["bpmn:Task"],
   "uri": "https://platform.planqk.de",
   "prefix": "planqk",
   "xml": {
@@ -9,9 +9,7 @@
   "types": [
     {
       "name": "ServiceTask",
-      "superClass": [
-        "bpmn:Task"
-      ],
+      "superClass": ["bpmn:Task"],
       "properties": [
         {
           "name": "subscriptionId",
@@ -67,7 +65,7 @@
     },
     {
       "name": "DataPool",
-      "superClass": [ "dataflow:DataStoreMap" ],
+      "superClass": ["dataflow:DataStoreMap"],
       "properties": [
         {
           "name": "dataPoolName",

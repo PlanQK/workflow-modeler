@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {QUANTME_ATTRIBUTES} from '../Constants';
-import {getPropertiesToCopy} from '../../../editor/util/TransformationUtilities';
+import { QUANTME_ATTRIBUTES } from "../Constants";
+import { getPropertiesToCopy } from "../../../editor/util/TransformationUtilities";
 
 /**
  * Add attributes of a replaced QuantME task to the replacing workflow fragment to enable its configuration based of the attribute values.
@@ -19,24 +19,30 @@ import {getPropertiesToCopy} from '../../../editor/util/TransformationUtilities'
  * @param inputOutputExtension the input/output element of the root element from the replacement fragment
  * @param bpmnFactory the BPMN factory to create new elements for the diagram
  */
-export function addQuantMEInputParameters(task, inputOutputExtension, bpmnFactory) {
-    console.log('Adding QuantME attributes to replacing workflow fragment: ', task);
+export function addQuantMEInputParameters(
+  task,
+  inputOutputExtension,
+  bpmnFactory
+) {
+  console.log(
+    "Adding QuantME attributes to replacing workflow fragment: ",
+    task
+  );
 
-    let propertiesToCopy = getPropertiesToCopy(task);
-    for (let name in propertiesToCopy) {
-
-        // skip non QuantME attributes
-        if (!QUANTME_ATTRIBUTES.includes(name)) {
-            continue;
-        }
-
-        // create the input parameter with the QuantME attribute name and the value of the replaced task
-        inputOutputExtension.inputParameters.push(
-            bpmnFactory.create('camunda:InputParameter', {
-                name: name,
-                value: propertiesToCopy[name]
-            })
-        );
+  let propertiesToCopy = getPropertiesToCopy(task);
+  for (let name in propertiesToCopy) {
+    // skip non QuantME attributes
+    if (!QUANTME_ATTRIBUTES.includes(name)) {
+      continue;
     }
-    return inputOutputExtension;
+
+    // create the input parameter with the QuantME attribute name and the value of the replaced task
+    inputOutputExtension.inputParameters.push(
+      bpmnFactory.create("camunda:InputParameter", {
+        name: name,
+        value: propertiesToCopy[name],
+      })
+    );
+  }
+  return inputOutputExtension;
 }

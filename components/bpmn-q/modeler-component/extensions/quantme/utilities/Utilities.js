@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import $ from 'jquery';
+import $ from "jquery";
 
 /**
  * Check if the given task is a QuantME task
@@ -18,7 +18,7 @@ import $ from 'jquery';
  * @returns true if the passed task is a QuantME task, false otherwise
  */
 export function isQuantMETask(task) {
-    return task.$type.startsWith('quantme:');
+  return task.$type.startsWith("quantme:");
 }
 
 /**
@@ -28,25 +28,26 @@ export function isQuantMETask(task) {
  * @return the list of contained QuantumCircuitExecutionTasks
  */
 export function getQuantumCircuitExecutionTasks(modelingElements) {
-    return modelingElements.filter(element => element.$type === 'quantme:QuantumCircuitExecutionTask');
+  return modelingElements.filter(
+    (element) => element.$type === "quantme:QuantumCircuitExecutionTask"
+  );
 }
 
 export function performAjax(targetUrl, dataToSend) {
-    return new Promise(function (resolve, reject) {
-        $.ajax({
-            type: 'POST',
-            url: targetUrl,
-            data: dataToSend,
-            processData: false,
-            contentType: false,
-            beforeSend: function () {
-            },
-            success: function (data) {
-                resolve(data);
-            },
-            error: function (err) {
-                reject(err);
-            }
-        });
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      type: "POST",
+      url: targetUrl,
+      data: dataToSend,
+      processData: false,
+      contentType: false,
+      beforeSend: function () {},
+      success: function (data) {
+        resolve(data);
+      },
+      error: function (err) {
+        reject(err);
+      },
     });
+  });
 }

@@ -25,9 +25,9 @@ let pluginConfigList = [];
  * @param pluginConfig List of plugin configurations.
  */
 export function setPluginConfig(pluginConfig) {
-    pluginConfigList = pluginConfig || [];
-    console.log('New plugin config set: ');
-    console.log(pluginConfig);
+  pluginConfigList = pluginConfig || [];
+  console.log("New plugin config set: ");
+  console.log(pluginConfig);
 }
 
 /**
@@ -38,8 +38,9 @@ export function setPluginConfig(pluginConfig) {
  *                  was defined for the plugin.
  */
 export function getPluginConfig(pluginName) {
-    const plugin = pluginConfigList.find(element => element.name === pluginName) || {};
-    return plugin.config || {};
+  const plugin =
+    pluginConfigList.find((element) => element.name === pluginName) || {};
+  return plugin.config || {};
 }
 
 /**
@@ -48,5 +49,5 @@ export function getPluginConfig(pluginName) {
  * @returns {*[]} The plugin configurations as an array.
  */
 export function getAllConfigs() {
-    return pluginConfigList;
+  return pluginConfigList;
 }

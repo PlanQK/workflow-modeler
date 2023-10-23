@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 /**
  * React button which contains a transformation function to transform the workflow. The button contains a button and a
@@ -9,34 +9,40 @@ import React, {useState} from "react";
  * @constructor
  */
 export default function TransformationButton(props) {
+  const {
+    title,
+    name,
+    className,
+    selectedCallback, // callback for propagating changes of the checkbox
+    isChecked, // initial value for the checkbox
+  } = props;
 
-    const {
-        transformWorkflow, // transformation function of this component
-        title,
-        name,
-        className,
-        selectedCallback, // callback for propagating changes of the checkbox
-        isChecked, // initial value for the checkbox
-    } = props;
+  const [checked, setChecked] = useState(isChecked);
 
-    const [checked, setChecked] = useState(isChecked);
+  // call selectedCallback if the checkbox changes
+  const handleCheckboxChange = () => {
+    setChecked(!checked);
+    selectedCallback(!checked, name);
+  };
 
-    // call selectedCallback if the checkbox changes
-    const handleCheckboxChange = () => {
-        setChecked(!checked);
-        selectedCallback(!checked, name);
-    };
-
-    return (
-        <div style={{display: 'flex'}} className="qwm-toolbar-btn">
-            <input type="checkbox" style={{margin: '0 0 0 5px'}} onChange={handleCheckboxChange} checked={checked}/>
-            <button type="button" className="qwm-toolbar-btn" style={{margin: '0 0 0 0'}}
-                    title={title || "Transform the current workflow"}>
-                <span className={className || "qwm-workflow-transformation-btn"}>
-                    <span className="qwm-indent">{name || 'Transformation'}</span>
-                </span>
-            </button>
-
-        </div>
-    );
+  return (
+    <div style={{ display: "flex" }} className="qwm-toolbar-btn">
+      <input
+        type="checkbox"
+        style={{ margin: "0 0 0 5px" }}
+        onChange={handleCheckboxChange}
+        checked={checked}
+      />
+      <button
+        type="button"
+        className="qwm-toolbar-btn"
+        style={{ margin: "0 0 0 0" }}
+        title={title || "Transform the current workflow"}
+      >
+        <span className={className || "qwm-workflow-transformation-btn"}>
+          <span className="qwm-indent">{name || "Transformation"}</span>
+        </span>
+      </button>
+    </div>
+  );
 }

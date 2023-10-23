@@ -1,10 +1,8 @@
-import {
-    getBusinessObject
-} from 'bpmn-js/lib/util/ModelUtil';
-import KeyValueEntry from './KeyValueEntry';
-import {without} from 'min-dash';
-import * as consts from '../Constants';
-import {nextId} from '../../../editor/util/camunda-utils/ElementUtil';
+import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
+import KeyValueEntry from "./KeyValueEntry";
+import { without } from "min-dash";
+import * as consts from "../Constants";
+import { nextId } from "../../../editor/util/camunda-utils/ElementUtil";
 
 /**
  *  Entry of the properties panel which displays a key value map. Entries can be added or removed over the UI of the
@@ -17,36 +15,39 @@ import {nextId} from '../../../editor/util/camunda-utils/ElementUtil';
  * @returns {{add: ((function(*): void)|*), items: {entries: [{component: function(*): preact.VNode<any>, parameter: *, idPrefix: *, id: string},{component: function(*): preact.VNode<any>, parameter: *, idPrefix: *, id: string}], autoFocusEntry: string, id: string, label, remove: function(*): void}[]}}
  * @constructor
  */
-export default function KeyValueMap({element, injector, attributeName}) {
+export default function KeyValueMap({ element, injector, attributeName }) {
+  const bpmnFactory = injector.get("bpmnFactory"),
+    commandStack = injector.get("commandStack");
 
-    const bpmnFactory = injector.get('bpmnFactory'),
-        commandStack = injector.get('commandStack');
+  // load key value map property
+  const keyValueMap = element.businessObject.get(attributeName) || [];
 
-    // load key value map property
-    const keyValueMap = element.businessObject.get(attributeName) || [];
-
-    // create a KeyValueEntry for each entry of keyValueMap
-    const keyValueEntires = keyValueMap.map((keyValueEntry, index) => {
-
-        const id = element.id + '-parameter-' + index;
-
-        return {
-            id,
-            label: keyValueEntry.get('name') || '',
-            entries: KeyValueEntry({
-                idPrefix: id,
-                element,
-                parameter: keyValueEntry
-            }),
-            autoFocusEntry: id + '-name',
-            remove: removeFactory({commandStack, element, parameter: keyValueEntry, attributeName})
-        };
-    });
+  // create a KeyValueEntry for each entry of keyValueMap
+  const keyValueEntires = keyValueMap.map((keyValueEntry, index) => {
+    const id = element.id + "-parameter-" + index;
 
     return {
-        items: keyValueEntires,
-        add: addFactory({element, bpmnFactory, commandStack, attributeName})
+      id,
+      label: keyValueEntry.get("name") || "",
+      entries: KeyValueEntry({
+        idPrefix: id,
+        element,
+        parameter: keyValueEntry,
+      }),
+      autoFocusEntry: id + "-name",
+      remove: removeFactory({
+        commandStack,
+        element,
+        parameter: keyValueEntry,
+        attributeName,
+      }),
     };
+  });
+
+  return {
+    items: keyValueEntires,
+    add: addFactory({ element, bpmnFactory, commandStack, attributeName }),
+  };
 }
 
 /**
@@ -59,23 +60,28 @@ export default function KeyValueMap({element, injector, attributeName}) {
  * @param attributeName The attributeName defining the property with the key value map in it.
  * @returns {(function(*): void)|*}
  */
-function removeFactory({commandStack, element, keyValueEntry, attributeName}) {
-    return function (event) {
-        event.stopPropagation();
+function removeFactory({
+  commandStack,
+  element,
+  keyValueEntry,
+  attributeName,
+}) {
+  return function (event) {
+    event.stopPropagation();
 
-        // get key value map
-        let keyValueMap = element.businessObject.get(attributeName) || [];
+    // get key value map
+    let keyValueMap = element.businessObject.get(attributeName) || [];
 
-        // remove the given key value entry
-        keyValueMap = without(keyValueMap, keyValueEntry);
+    // remove the given key value entry
+    keyValueMap = without(keyValueMap, keyValueEntry);
 
-        // save updated key value map in the element
-        commandStack.execute('element.updateModdleProperties', {
-            element,
-            moddleElement: element.businessObject,
-            properties: {[attributeName]: keyValueMap},
-        });
-    };
+    // save updated key value map in the element
+    commandStack.execute("element.updateModdleProperties", {
+      element,
+      moddleElement: element.businessObject,
+      properties: { [attributeName]: keyValueMap },
+    });
+  };
 }
 
 /**
@@ -88,21 +94,24 @@ function removeFactory({commandStack, element, keyValueEntry, attributeName}) {
  * @param attributeName The name of the property the key value map is saved in.
  * @returns {(function(*): void)|*}
  */
-function addFactory({element, bpmnFactory, commandStack, attributeName}) {
-    return function (event) {
-        event.stopPropagation();
+function addFactory({ element, bpmnFactory, commandStack, attributeName }) {
+  return function (event) {
+    event.stopPropagation();
 
-        const businessObject = getBusinessObject(element);
-        const keyValueMap = businessObject.get(attributeName);
+    const businessObject = getBusinessObject(element);
+    const keyValueMap = businessObject.get(attributeName);
 
-        // create a new key value entry
-        const param = bpmnFactory.create(consts.KEY_VALUE_ENTRY, {name: nextId('Entry_'), value: ''});
+    // create a new key value entry
+    const param = bpmnFactory.create(consts.KEY_VALUE_ENTRY, {
+      name: nextId("Entry_"),
+      value: "",
+    });
 
-        // update key value map
-        commandStack.execute('element.updateModdleProperties', {
-            element,
-            moddleElement: businessObject,
-            properties: {[attributeName]: keyValueMap.concat(param)},
-        });
-    };
+    // update key value map
+    commandStack.execute("element.updateModdleProperties", {
+      element,
+      moddleElement: businessObject,
+      properties: { [attributeName]: keyValueMap.concat(param) },
+    });
+  };
 }

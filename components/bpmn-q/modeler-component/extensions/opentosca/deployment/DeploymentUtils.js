@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getBindingType} from './BindingUtils';
-import {getFlowElementsRecursively} from '../../../editor/util/ModellingUtilities';
+import { getBindingType } from "./BindingUtils";
+import { getFlowElementsRecursively } from "../../../editor/util/ModellingUtilities";
 
 /**
  * Get the ServiceTasks of the current workflow that have an attached deployment model to deploy the corresponding service starting from the given root element
@@ -19,39 +19,40 @@ import {getFlowElementsRecursively} from '../../../editor/util/ModellingUtilitie
  * @return the list of ServiceTasks with attached deployment models to deploy the required services
  */
 export function getServiceTasksToDeploy(startElement) {
-    let csarsToDeploy = [];
+  let csarsToDeploy = [];
 
-    if (startElement === undefined) {
-        console.warn('Element to start is undefined!');
-        return csarsToDeploy;
-    }
-
-    // search for service tasks with assigned deployment model
-    let flowElements = getFlowElementsRecursively(startElement);
-    for (let i = 0; i < flowElements.length; i++) {
-        let flowElement = flowElements[i];
-
-        if (isDeployableServiceTask(flowElement)) {
-            console.log('Found deployable service task: ', flowElement);
-
-            // check if CSAR was already added for another service task
-            let csarEntry = csarsToDeploy.find(serviceTask => flowElement.deploymentModelUrl === serviceTask.url);
-            if (csarEntry !== undefined) {
-                console.log('Adding to existing CSAR entry...');
-                csarEntry.serviceTaskIds.push(flowElement.id);
-            } else {
-                csarsToDeploy.push(
-                    {
-                        serviceTaskIds: [flowElement.id],
-                        url: flowElement.deploymentModelUrl,
-                        type: getBindingType(flowElement),
-                        csarName: getCSARName(flowElement)
-                    });
-            }
-        }
-    }
-
+  if (startElement === undefined) {
+    console.warn("Element to start is undefined!");
     return csarsToDeploy;
+  }
+
+  // search for service tasks with assigned deployment model
+  let flowElements = getFlowElementsRecursively(startElement);
+  for (let i = 0; i < flowElements.length; i++) {
+    let flowElement = flowElements[i];
+
+    if (isDeployableServiceTask(flowElement)) {
+      console.log("Found deployable service task: ", flowElement);
+
+      // check if CSAR was already added for another service task
+      let csarEntry = csarsToDeploy.find(
+        (serviceTask) => flowElement.deploymentModelUrl === serviceTask.url
+      );
+      if (csarEntry !== undefined) {
+        console.log("Adding to existing CSAR entry...");
+        csarEntry.serviceTaskIds.push(flowElement.id);
+      } else {
+        csarsToDeploy.push({
+          serviceTaskIds: [flowElement.id],
+          url: flowElement.deploymentModelUrl,
+          type: getBindingType(flowElement),
+          csarName: getCSARName(flowElement),
+        });
+      }
+    }
+  }
+
+  return csarsToDeploy;
 }
 
 /**
@@ -61,9 +62,9 @@ export function getServiceTasksToDeploy(startElement) {
  * @return {*} the CSAR name
  */
 function getCSARName(serviceTask) {
-    let url = serviceTask.deploymentModelUrl.split('/?csar')[0];
-    let urlSplit = url.split('/');
-    return urlSplit[urlSplit.length - 1] + '.csar';
+  let url = serviceTask.deploymentModelUrl.split("/?csar")[0];
+  let urlSplit = url.split("/");
+  return urlSplit[urlSplit.length - 1] + ".csar";
 }
 
 /**
@@ -73,5 +74,10 @@ function getCSARName(serviceTask) {
  * @return {*|boolean} true if the element is a ServiceTask and has an assigned deployment model, false otherwise
  */
 export function isDeployableServiceTask(element) {
-    return element.$type && element.$type === 'bpmn:ServiceTask' && element.deploymentModelUrl && getBindingType(element) !== undefined;
+  return (
+    element.$type &&
+    element.$type === "bpmn:ServiceTask" &&
+    element.deploymentModelUrl &&
+    getBindingType(element) !== undefined
+  );
 }

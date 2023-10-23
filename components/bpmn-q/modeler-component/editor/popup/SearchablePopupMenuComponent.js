@@ -1,22 +1,19 @@
 import {
-    useEffect,
-    useRef,
-    useState,
-    useLayoutEffect,
-    useMemo,
-    useCallback,
-    html
-} from 'diagram-js/lib/ui';
+  useEffect,
+  useRef,
+  useState,
+  useLayoutEffect,
+  useMemo,
+  useCallback,
+  html,
+} from "diagram-js/lib/ui";
 
-import {
-    closest as domClosest,
-    matches as domMatches
-} from 'min-dom';
+import { closest as domClosest, matches as domMatches } from "min-dom";
 
-import PopupMenuList from 'diagram-js/lib/features/popup-menu/PopupMenuList';
-import classNames from 'clsx';
-import {isDefined} from 'min-dash';
-import {getMoreOptions} from "../util/PopupMenuUtilities";
+import PopupMenuList from "diagram-js/lib/features/popup-menu/PopupMenuList";
+import classNames from "clsx";
+import { isDefined } from "min-dash";
+import { getMoreOptions } from "../util/PopupMenuUtilities";
 
 /**
  * A component that renders the popup menus with a search bar that allows to search MoreOptionsEntries.
@@ -25,161 +22,177 @@ import {getMoreOptions} from "../util/PopupMenuUtilities";
  *
  */
 export default function SearchablePopupMenuComponent(props) {
-    const {
-        onClose,
-        onSelect,
-        className,
-        headerEntries,
-        position,
-        title,
-        width,
-        scale,
-        search,
-        entries: originalEntries,
-        onOpened,
-        onClosed
-    } = props;
+  const {
+    onClose,
+    onSelect,
+    className,
+    headerEntries,
+    position,
+    title,
+    width,
+    scale,
+    search,
+    entries: originalEntries,
+    onOpened,
+    onClosed,
+  } = props;
 
-    const searchable = useMemo(() => {
-        if (!isDefined(search)) {
-            return false;
+  const searchable = useMemo(() => {
+    if (!isDefined(search)) {
+      return false;
+    }
+
+    return originalEntries.length > 5;
+  }, [search, originalEntries]);
+
+  const inputRef = useRef();
+
+  const [value, setValue] = useState("");
+
+  // collect MoreOptionEntries
+  const extendedOptionsEntries = originalEntries.flatMap(function (entry) {
+    return getMoreOptions(entry);
+  });
+
+  // filter menu entries based on the value
+  const filterEntries = useCallback(
+    (entriesToFilter, value) => {
+      if (!searchable || !value || value === "") {
+        return originalEntries;
+      }
+
+      const filter = (entry) => {
+        if (!value) {
+          return (entry.rank || 0) >= 0;
         }
 
-        return originalEntries.length > 5;
-    }, [search, originalEntries]);
+        const search = [
+          entry.description || "",
+          entry.label || "",
+          entry.search || "",
+        ]
+          .join("---")
+          .toLowerCase();
 
-    const inputRef = useRef();
+        return value
+          .toLowerCase()
+          .split(/\s/g)
+          .every((term) => search.includes(term));
+      };
 
-    const [value, setValue] = useState('');
+      return entriesToFilter.filter(filter);
+    },
+    [searchable]
+  );
 
-    // collect MoreOptionEntries
-    const extendedOptionsEntries = originalEntries.flatMap(function (entry) {
-        return getMoreOptions(entry);
-    });
+  const [entries, setEntries] = useState(filterEntries(originalEntries, value));
+  const [selectedEntry, setSelectedEntry] = useState(entries[0]);
 
-    // filter menu entries based on the value
-    const filterEntries = useCallback((entriesToFilter, value) => {
+  const updateEntries = useCallback(
+    (newEntries) => {
+      // select first entry if non is selected
+      if (!selectedEntry || !newEntries.includes(selectedEntry)) {
+        setSelectedEntry(newEntries[0]);
+      }
 
-        if (!searchable || !value || value === '') {
-            return originalEntries;
-        }
+      setEntries(newEntries);
+    },
+    [selectedEntry, setEntries, setSelectedEntry]
+  );
 
-        const filter = entry => {
-            if (!value) {
-                return (entry.rank || 0) >= 0;
-            }
+  // filter entries on value change
+  useEffect(() => {
+    updateEntries(filterEntries(extendedOptionsEntries, value));
+  }, [value, originalEntries]);
 
-            const search = [
-                entry.description || '',
-                entry.label || '',
-                entry.search || ''
-            ]
-                .join('---')
-                .toLowerCase();
+  // register global <Escape> handler
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
 
-            return value
-                .toLowerCase()
-                .split(/\s/g)
-                .every(term => search.includes(term));
-        };
+        return onClose();
+      }
+    };
 
-        return entriesToFilter.filter(filter);
-    }, [searchable]);
+    document.documentElement.addEventListener("keydown", handleKeyDown);
 
-    const [entries, setEntries] = useState(filterEntries(originalEntries, value));
-    const [selectedEntry, setSelectedEntry] = useState(entries[0]);
+    return () => {
+      document.documentElement.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
-    const updateEntries = useCallback((newEntries) => {
+  // focus input on initial mount
+  useLayoutEffect(() => {
+    inputRef.current && inputRef.current.focus();
+  }, []);
 
-        // select first entry if non is selected
-        if (!selectedEntry || !newEntries.includes(selectedEntry)) {
-            setSelectedEntry(newEntries[0]);
-        }
+  // handle keyboard selection
+  const keyboardSelect = useCallback(
+    (direction) => {
+      const idx = entries.indexOf(selectedEntry);
 
-        setEntries(newEntries);
-    }, [selectedEntry, setEntries, setSelectedEntry]);
+      let nextIdx = idx + direction;
 
-    // filter entries on value change
-    useEffect(() => {
-        updateEntries(filterEntries(extendedOptionsEntries, value));
-    }, [value, originalEntries]);
+      if (nextIdx < 0) {
+        nextIdx = entries.length - 1;
+      }
 
-    // register global <Escape> handler
-    useEffect(() => {
-        const handleKeyDown = event => {
-            if (event.key === 'Escape') {
-                event.preventDefault();
+      if (nextIdx >= entries.length) {
+        nextIdx = 0;
+      }
 
-                return onClose();
-            }
-        };
+      setSelectedEntry(entries[nextIdx]);
+    },
+    [entries, selectedEntry, setSelectedEntry]
+  );
 
-        document.documentElement.addEventListener('keydown', handleKeyDown);
+  const handleKeyDown = useCallback(
+    (event) => {
+      if (event.key === "Enter" && selectedEntry) {
+        return onSelect(event, selectedEntry);
+      }
 
-        return () => {
-            document.documentElement.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
+      // ARROW_UP or SHIFT + TAB navigation
+      if (event.key === "ArrowUp" || (event.key === "Tab" && event.shiftKey)) {
+        keyboardSelect(-1);
 
-    // focus input on initial mount
-    useLayoutEffect(() => {
-        inputRef.current && inputRef.current.focus();
-    }, []);
+        return event.preventDefault();
+      }
 
-    // handle keyboard selection
-    const keyboardSelect = useCallback(direction => {
-        const idx = entries.indexOf(selectedEntry);
+      // ARROW_DOWN or TAB navigation
+      if (event.key === "ArrowDown" || event.key === "Tab") {
+        keyboardSelect(1);
 
-        let nextIdx = idx + direction;
+        return event.preventDefault();
+      }
+    },
+    [onSelect, onClose, selectedEntry, keyboardSelect]
+  );
 
-        if (nextIdx < 0) {
-            nextIdx = entries.length - 1;
-        }
+  const handleKey = useCallback(
+    (event) => {
+      if (domMatches(event.target, "input")) {
+        setValue(() => event.target.value);
+      }
+    },
+    [setValue]
+  );
 
-        if (nextIdx >= entries.length) {
-            nextIdx = 0;
-        }
+  useEffect(() => {
+    onOpened();
 
-        setSelectedEntry(entries[nextIdx]);
-    }, [entries, selectedEntry, setSelectedEntry]);
+    return () => {
+      onClosed();
+    };
+  }, []);
 
-    const handleKeyDown = useCallback(event => {
-        if (event.key === 'Enter' && selectedEntry) {
-            return onSelect(event, selectedEntry);
-        }
+  const displayHeader = useMemo(
+    () => title || headerEntries.length > 0,
+    [title, headerEntries]
+  );
 
-        // ARROW_UP or SHIFT + TAB navigation
-        if (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
-            keyboardSelect(-1);
-
-            return event.preventDefault();
-        }
-
-        // ARROW_DOWN or TAB navigation
-        if (event.key === 'ArrowDown' || event.key === 'Tab') {
-            keyboardSelect(1);
-
-            return event.preventDefault();
-        }
-    }, [onSelect, onClose, selectedEntry, keyboardSelect]);
-
-    const handleKey = useCallback(event => {
-        if (domMatches(event.target, 'input')) {
-            setValue(() => event.target.value);
-        }
-    }, [setValue]);
-
-    useEffect(() => {
-        onOpened();
-
-        return () => {
-            onClosed();
-        };
-    }, []);
-
-    const displayHeader = useMemo(() => title || headerEntries.length > 0, [title, headerEntries]);
-
-    return html`
+  return html`
         <${PopupMenuWrapper}
                 onClose=${onClose}
                 onKeyup=${handleKey}
@@ -189,58 +202,87 @@ export default function SearchablePopupMenuComponent(props) {
                 width=${width}
                 scale=${scale}
         >
-            ${displayHeader && html`
+            ${
+              displayHeader &&
+              html`
                 <div class="djs-popup-header">
-                    <h3 class="djs-popup-title" title=${title}>${title}</h3>
-                    ${headerEntries.map(entry => html`
-                        <span
-                                class=${getHeaderClasses(entry, entry === selectedEntry)}
-                                onClick=${event => onSelect(event, entry)}
-                                title=${entry.title || entry.label}
-                                data-id=${entry.id}
-                                onMouseEnter=${() => setSelectedEntry(entry)}
-                                onMouseLeave=${() => setSelectedEntry(null)}
-                        >
-              ${entry.imageUrl ? html`
-                  <img class="djs-popup-entry-icon" src=${entry.imageUrl} alt=""/>
-              ` : null}
-
-              ${entry.label ? html`
-                  <span class="djs-popup-label">${entry.label}</span>
-              ` : null}
-            </span>
-                    `)}
+                  <h3 class="djs-popup-title" title=${title}>${title}</h3>
+                  ${headerEntries.map(
+                    (entry) => html`
+                      <span
+                        class=${getHeaderClasses(
+                          entry,
+                          entry === selectedEntry
+                        )}
+                        onClick=${(event) => onSelect(event, entry)}
+                        title=${entry.title || entry.label}
+                        data-id=${entry.id}
+                        onMouseEnter=${() => setSelectedEntry(entry)}
+                        onMouseLeave=${() => setSelectedEntry(null)}
+                      >
+                        ${entry.imageUrl
+                          ? html`
+                              <img
+                                class="djs-popup-entry-icon"
+                                src=${entry.imageUrl}
+                                alt=""
+                              />
+                            `
+                          : null}
+                        ${entry.label
+                          ? html`
+                              <span class="djs-popup-label"
+                                >${entry.label}</span
+                              >
+                            `
+                          : null}
+                      </span>
+                    `
+                  )}
                 </div>
-            `}
-            ${originalEntries.length > 0 && html`
+              `
+            }
+            ${
+              originalEntries.length > 0 &&
+              html`
                 <div class="djs-popup-body">
+                  ${searchable &&
+                  html`
+                    <div class="djs-popup-search">
+                      <svg
+                        class="djs-popup-search-icon"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M9.0325 8.5H9.625L13.3675 12.25L12.25 13.3675L8.5 9.625V9.0325L8.2975 8.8225C7.4425 9.5575 6.3325 10 5.125 10C2.4325 10 0.25 7.8175 0.25 5.125C0.25 2.4325 2.4325 0.25 5.125 0.25C7.8175 0.25 10 2.4325 10 5.125C10 6.3325 9.5575 7.4425 8.8225 8.2975L9.0325 8.5ZM1.75 5.125C1.75 6.9925 3.2575 8.5 5.125 8.5C6.9925 8.5 8.5 6.9925 8.5 5.125C8.5 3.2575 6.9925 1.75 5.125 1.75C3.2575 1.75 1.75 3.2575 1.75 5.125Z"
+                          fill="#22242A"
+                        />
+                      </svg>
+                      <input ref=${inputRef} type="text" />
+                    </div>
+                  `}
 
-                    ${searchable && html`
-                        <div class="djs-popup-search">
-                            <svg class="djs-popup-search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                      d="M9.0325 8.5H9.625L13.3675 12.25L12.25 13.3675L8.5 9.625V9.0325L8.2975 8.8225C7.4425 9.5575 6.3325 10 5.125 10C2.4325 10 0.25 7.8175 0.25 5.125C0.25 2.4325 2.4325 0.25 5.125 0.25C7.8175 0.25 10 2.4325 10 5.125C10 6.3325 9.5575 7.4425 8.8225 8.2975L9.0325 8.5ZM1.75 5.125C1.75 6.9925 3.2575 8.5 5.125 8.5C6.9925 8.5 8.5 6.9925 8.5 5.125C8.5 3.2575 6.9925 1.75 5.125 1.75C3.2575 1.75 1.75 3.2575 1.75 5.125Z"
-                                      fill="#22242A"/>
-                            </svg>
-                            <input
-                                    ref=${inputRef}
-                                    type="text"
-                            />
-                        </div>
-                    `}
-
-                    <${PopupMenuList}
-                            entries=${entries}
-                            selectedEntry=${selectedEntry}
-                            setSelectedEntry=${setSelectedEntry}
-                            onAction=${onSelect}
-                    />
+                  <${PopupMenuList}
+                    entries=${entries}
+                    selectedEntry=${selectedEntry}
+                    setSelectedEntry=${setSelectedEntry}
+                    onAction=${onSelect}
+                  />
                 </div>
-                ${entries.length === 0 && html`
-                    <div class="djs-popup-no-results">No matching entries found.</div>
+                ${entries.length === 0 &&
+                html`
+                  <div class="djs-popup-no-results">
+                    No matching entries found.
+                  </div>
                 `}
-            `}
+              `
+            }
         </${PopupMenuWrapper}>
     `;
 }
@@ -251,79 +293,78 @@ export default function SearchablePopupMenuComponent(props) {
  * @param {*} props
  */
 function PopupMenuWrapper(props) {
-    const {
-        onClose,
-        onKeydown,
-        onKeyup,
-        className,
-        children,
-        position: positionGetter
-    } = props;
+  const {
+    onClose,
+    onKeydown,
+    onKeyup,
+    className,
+    children,
+    position: positionGetter,
+  } = props;
 
-    const popupRef = useRef();
+  const popupRef = useRef();
 
-    const checkClose = useCallback((event) => {
+  const checkClose = useCallback(
+    (event) => {
+      const popup = domClosest(event.target, ".djs-popup", true);
 
-        const popup = domClosest(event.target, '.djs-popup', true);
+      if (popup) {
+        return;
+      }
 
-        if (popup) {
-            return;
-        }
+      onClose();
+    },
+    [onClose]
+  );
 
-        onClose();
-    }, [onClose]);
+  useLayoutEffect(() => {
+    if (typeof positionGetter !== "function") {
+      return;
+    }
 
-    useLayoutEffect(() => {
-        if (typeof positionGetter !== 'function') {
-            return;
-        }
+    const popupEl = popupRef.current;
+    const position = positionGetter(popupEl);
 
-        const popupEl = popupRef.current;
-        const position = positionGetter(popupEl);
+    popupEl.style.left = `${position.x}px`;
+    popupEl.style.top = `${position.y}px`;
+  }, [popupRef.current, positionGetter]);
 
-        popupEl.style.left = `${position.x}px`;
-        popupEl.style.top = `${position.y}px`;
-    }, [popupRef.current, positionGetter]);
+  // focus popup initially, on mount
+  useLayoutEffect(() => {
+    popupRef.current && popupRef.current.focus();
+  }, []);
 
-    // focus popup initially, on mount
-    useLayoutEffect(() => {
-        popupRef.current && popupRef.current.focus();
-    }, []);
-
-    return html`
-        <div
-                class="djs-popup-backdrop"
-                onClick=${checkClose}
-        >
-            <div
-                    class=${classNames('djs-popup', className)}
-                    style=${getPopupStyle(props)}
-                    onKeydown=${onKeydown}
-                    onKeyup=${onKeyup}
-                    ref=${popupRef}
-                    tabIndex="-1"
-            >
-                ${children}
-            </div>
-        </div>
-    `;
+  return html`
+    <div class="djs-popup-backdrop" onClick=${checkClose}>
+      <div
+        class=${classNames("djs-popup", className)}
+        style=${getPopupStyle(props)}
+        onKeydown=${onKeydown}
+        onKeyup=${onKeyup}
+        ref=${popupRef}
+        tabindex="-1"
+      >
+        ${children}
+      </div>
+    </div>
+  `;
 }
 
 // helpers //////////////////////
 
 function getPopupStyle(props) {
-    return {
-        transform: `scale(${props.scale})`,
-        width: `${props.width}px`
-    };
+  return {
+    transform: `scale(${props.scale})`,
+    width: `${props.width}px`,
+  };
 }
 
 function getHeaderClasses(entry, selected) {
-    return classNames(
-        'entry',
-        entry.className,
-        entry.active ? 'active' : '',
-        entry.disabled ? 'disabled' : '',
-        selected ? 'selected' : ''
-    );
+  return classNames(
+    "entry",
+    entry.className,
+    entry.active ? "active" : "",
+    entry.disabled ? "disabled" : "",
+    selected ? "selected" : ""
+  );
 }

@@ -1,147 +1,150 @@
 .qwm-modal {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10000;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
 }
 .qwm-modal:before {
-    content: '';
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    background: var(--grey-base-40);
-    opacity: .2;
-    z-index: 1001;
+  content: "";
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: var(--grey-base-40);
+  opacity: 0.2;
+  z-index: 1001;
 }
 
 .qwm-modal ul {
-    padding-left: 20px;
+  padding-left: 20px;
 }
 
 .qwm-modal table {
-    table-layout: fixed;
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
+  table-layout: fixed;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
 }
 
-.qwm-modal td, .qwm-modal th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+.qwm-modal td,
+.qwm-modal th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .qwm-modal tr:nth-child(even) {
-    background-color: #dddddd;
+  background-color: #dddddd;
 }
 
 .qwm-modal #progress {
-    width: 100%;
-    background-color: #ddd;
+  width: 100%;
+  background-color: #ddd;
 }
 
 .qwm-modal #bar {
-    width: 1%;
-    height: 30px;
-    background-color: #4CAF50;
+  width: 1%;
+  height: 30px;
+  background-color: #4caf50;
 }
 
-.qwm-modal tr.spaceUnder>td {
+.qwm-modal tr.spaceUnder > td {
 }
 
-.qwm-modal html, body, #container {
-    height: 100%;
+.qwm-modal html,
+body,
+#container {
+  height: 100%;
 }
 
 .qwm-modal-dialog {
-    position: fixed;
-    left: 0;
-    right: 0;
-    width: 638px;
-    margin: 10vh auto 6vh;
-    padding: 0;
-    z-index: 1001;
-    overflow: hidden;
-    border: solid 1px var(--silver-darken-87);
-    border-radius: 3px;
-    box-shadow: 0 1px 4px var(--color-000000-opacity-30);
-    background-color: var(--silver-lighten-99);
-    color: var(--grey-darken-33);
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 638px;
+  margin: 10vh auto 6vh;
+  padding: 0;
+  z-index: 1001;
+  overflow: hidden;
+  border: solid 1px var(--silver-darken-87);
+  border-radius: 3px;
+  box-shadow: 0 1px 4px var(--color-000000-opacity-30);
+  background-color: var(--silver-lighten-99);
+  color: var(--grey-darken-33);
 }
 .qwm-modal-content,
 .qwm-modal-content > form {
-    display: flex;
-    flex: auto;
-    flex-direction: column;
-    max-height: 84vh;
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  max-height: 84vh;
 }
 .qwm-modal-header {
-    padding: 20px 60px 20px 20px;
-    background-color: var(--silver-base-97);
-    font-size: 16px;
-    border-bottom: solid 1px var(--silver-darken-87);
+  padding: 20px 60px 20px 20px;
+  background-color: var(--silver-base-97);
+  font-size: 16px;
+  border-bottom: solid 1px var(--silver-darken-87);
 }
 .qwm-modal-title {
-    margin: 0;
-    font-size: 16px;
-    font-weight: bold;
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
 }
 .qwm-modal-body {
-    padding: 16px 20px 20px 20px;
-    overflow-y: auto;
-    font-size: 14px;
-    background-color: var(--silver-lighten-99);
+  padding: 16px 20px 20px 20px;
+  overflow-y: auto;
+  font-size: 14px;
+  background-color: var(--silver-lighten-99);
 }
 .qwm-modal-body legend {
-    font-size: 14px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: var(--grey-darken-33);
-    margin-bottom: 23px;
+  font-size: 14px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: var(--grey-darken-33);
+  margin-bottom: 23px;
 }
 .qwm-modal-body fieldset {
-    border-style: none;
-    margin: 20px auto;
-    padding-left: 0;
-    padding-right: 0;
+  border-style: none;
+  margin: 20px auto;
+  padding-left: 0;
+  padding-right: 0;
 }
 .qwm-modal-body form {
-    font-size: 1.1em;
+  font-size: 1.1em;
 }
 .qwm-modal-body .qwm-fields {
-    display: grid;
-    grid-row-gap: 15px;
+  display: grid;
+  grid-row-gap: 15px;
 }
 .qwm-modal-footer {
-    padding: 15px 20px;
-    border-top: solid 1px var(--silver-darken-87);
-    text-align: right;
+  padding: 15px 20px;
+  border-top: solid 1px var(--silver-darken-87);
+  text-align: right;
 }
 .qwm-modal-dialog .qwm-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border: none;
-    border-radius: 3px;
-    background-color: transparent;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background-color: transparent;
 }
 .qwm-modal-dialog .close:hover {
-    background-color: var(--silver-darken-94);
+  background-color: var(--silver-darken-94);
 }
 .qwm-modal-dialog .close:focus {
-    background-color: var(--silver-darken-87);
+  background-color: var(--silver-darken-87);
 }

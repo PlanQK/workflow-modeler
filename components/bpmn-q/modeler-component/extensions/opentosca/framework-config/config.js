@@ -11,7 +11,7 @@
 
 // takes either the environment variables or the default values definded in webpack.config
 const defaultConfig = {
-    opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
-    wineryEndpoint: process.env.WINERY_ENDPOINT,
+  opentoscaEndpoint: process.env.OPENTOSCA_ENDPOINT,
+  wineryEndpoint: process.env.WINERY_ENDPOINT,
 };
 export default defaultConfig;

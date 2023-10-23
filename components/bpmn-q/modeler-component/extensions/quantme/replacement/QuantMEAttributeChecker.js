@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as consts from '../Constants';
-let ModelUtil = require('bpmn-js/lib/util/ModelUtil');
+import * as consts from "../Constants";
+let ModelUtil = require("bpmn-js/lib/util/ModelUtil");
 
 /**
  * Check whether the given QuantME task has all required elements set
@@ -19,7 +19,6 @@ let ModelUtil = require('bpmn-js/lib/util/ModelUtil');
  * @returns {boolean} true if attributes are available, otherwise false
  */
 export function requiredAttributesAvailable(element) {
-
   // return false if business object can not be retrieved
   let bo = ModelUtil.getBusinessObject(element);
   if (!bo) {
@@ -28,95 +27,101 @@ export function requiredAttributesAvailable(element) {
 
   // check for attributes of the different modeling constructs
   switch (element.$type) {
-  case consts.QUANTUM_COMPUTATION_TASK:
-    return checkQuantumComputationTask(bo);
-  case consts.QUANTUM_CIRCUIT_LOADING_TASK:
-    return checkQuantumCircuitLoadingTask(bo);
-  case consts.DATA_PREPARATION_TASK:
-    return checkDataPreparationTask(bo);
-  case consts.ORACLE_EXPANSION_TASK:
-    return checkOracleExpansionTask(bo);
-  case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
-    return checkQuantumCircuitExecutionTask(bo);
-  case consts.READOUT_ERROR_MITIGATION_TASK:
-    return checkReadoutErrorMitigationTask(bo);
-  case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
-    return checkHardwareSelectionSubprocess(bo);
-  case consts.PARAMETER_OPTIMIZATION_TASK:
-    return checkParameterOptimizationTask(bo);
-  case consts.WARM_STARTING_TASK:
-    return checkWarmStartingTask(bo);
-  case consts.RESULT_EVALUATION_TASK:
-    return checkResultEvaluationTask(bo);
-  case consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK:
-    return checkVariationalQuantumAlgorithmTask(bo);
-  case consts.CIRCUIT_CUTTING_SUBPROCESS:
-    return checkCircuitCuttingSubprocess(bo);
-  default:
-    console.log('Unsupported QuantME element of type: ', element.$type);
-    return false;
+    case consts.QUANTUM_COMPUTATION_TASK:
+      return checkQuantumComputationTask(bo);
+    case consts.QUANTUM_CIRCUIT_LOADING_TASK:
+      return checkQuantumCircuitLoadingTask(bo);
+    case consts.DATA_PREPARATION_TASK:
+      return checkDataPreparationTask(bo);
+    case consts.ORACLE_EXPANSION_TASK:
+      return checkOracleExpansionTask(bo);
+    case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
+      return checkQuantumCircuitExecutionTask();
+    case consts.READOUT_ERROR_MITIGATION_TASK:
+      return checkReadoutErrorMitigationTask(bo);
+    case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
+      return checkHardwareSelectionSubprocess(bo);
+    case consts.PARAMETER_OPTIMIZATION_TASK:
+      return checkParameterOptimizationTask();
+    case consts.WARM_STARTING_TASK:
+      return checkWarmStartingTask();
+    case consts.RESULT_EVALUATION_TASK:
+      return checkResultEvaluationTask();
+    case consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK:
+      return checkVariationalQuantumAlgorithmTask();
+    case consts.CIRCUIT_CUTTING_SUBPROCESS:
+      return checkCircuitCuttingSubprocess();
+    default:
+      console.log("Unsupported QuantME element of type: ", element.$type);
+      return false;
   }
 }
 
-function checkParameterOptimizationTask(bo) {
+function checkParameterOptimizationTask() {
   return true;
 }
 
-function checkWarmStartingTask(bo) {
+function checkWarmStartingTask() {
   return true;
 }
 
-function checkResultEvaluationTask(bo) {
+function checkResultEvaluationTask() {
   return true;
 }
 
-function checkVariationalQuantumAlgorithmTask(bo) {
+function checkVariationalQuantumAlgorithmTask() {
   return true;
 }
 
-function checkCircuitCuttingSubprocess(bo) {
+function checkCircuitCuttingSubprocess() {
   return true;
 }
 
 function checkHardwareSelectionSubprocess(bo) {
-
   // check if simulatorsAllowed is defined
-  return !(typeof bo.simulatorsAllowed === 'undefined');
+  return !(typeof bo.simulatorsAllowed === "undefined");
 }
 
 function checkQuantumComputationTask(bo) {
-
   // check if algorithm is defined
-  return !(typeof bo.algorithm === 'undefined');
+  return !(typeof bo.algorithm === "undefined");
 }
 
 function checkQuantumCircuitLoadingTask(bo) {
-
   // check if either a circuit or an URL is defined
-  return !(typeof bo.quantumCircuit === 'undefined' && typeof bo.url === 'undefined');
+  return !(
+    typeof bo.quantumCircuit === "undefined" && typeof bo.url === "undefined"
+  );
 }
 
 function checkDataPreparationTask(bo) {
-
   // check if encodingSchema and programmingLanguage are defined
-  return !(typeof bo.encodingSchema === 'undefined' || typeof bo.programmingLanguage === 'undefined');
+  return !(
+    typeof bo.encodingSchema === "undefined" ||
+    typeof bo.programmingLanguage === "undefined"
+  );
 }
 
 function checkOracleExpansionTask(bo) {
-
   // check if oracleId and programmingLanguage, as well as one of oracleCircuit and oracleFunction are defined
-  return !(typeof bo.oracleId === 'undefined' || typeof bo.programmingLanguage === 'undefined'
-    || (typeof bo.oracleCircuit === 'undefined' && typeof bo.oracleURL === 'undefined'));
+  return !(
+    typeof bo.oracleId === "undefined" ||
+    typeof bo.programmingLanguage === "undefined" ||
+    (typeof bo.oracleCircuit === "undefined" &&
+      typeof bo.oracleURL === "undefined")
+  );
 }
 
-function checkQuantumCircuitExecutionTask(bo) {
-
+function checkQuantumCircuitExecutionTask() {
   // all attributes are optional
   return true;
 }
 
 function checkReadoutErrorMitigationTask(bo) {
-
   // check if unfoldingTechnique, provider, and qpu are defined
-  return !(typeof bo.mitigationMethod === 'undefined'|| typeof bo.provider === 'undefined' || typeof bo.qpu === 'undefined');
+  return !(
+    typeof bo.mitigationMethod === "undefined" ||
+    typeof bo.provider === "undefined" ||
+    typeof bo.qpu === "undefined"
+  );
 }

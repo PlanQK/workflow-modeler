@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -9,14 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { registerBpmnJSPlugin } from 'camunda-modeler-plugin-helpers';
+import { registerBpmnJSPlugin } from "camunda-modeler-plugin-helpers";
 
-import customLinterConfig from '../.bpmnlintrc';
+import customLinterConfig from "../.bpmnlintrc";
 
 registerBpmnJSPlugin({
   __init__: [
-    function(linting) {
+    function (linting) {
       linting.setLinterConfig(customLinterConfig);
-    }
-  ]
+    },
+  ],
 });

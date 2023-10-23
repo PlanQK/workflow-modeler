@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {fetch} from 'whatwg-fetch';
-import {performAjax} from '../utilities/Utilities';
+import { fetch } from "whatwg-fetch";
+import { performAjax } from "../utilities/Utilities";
 
 /**
  * Create a new ArtifactTemplate of the given type and add the given blob as file
@@ -23,47 +23,79 @@ import {performAjax} from '../utilities/Utilities';
  * @param fileName the name of the file to upload as blob
  * @return the final name of the created ArtifactTemplate
  */
-export async function createNewArtifactTemplate(wineryEndpoint, localNamePrefix, namespace, type, blob, fileName) {
-    console.log('Creating new ArtifactTemplate of type: ', type);
+export async function createNewArtifactTemplate(
+  wineryEndpoint,
+  localNamePrefix,
+  namespace,
+  type,
+  blob,
+  fileName
+) {
+  console.log("Creating new ArtifactTemplate of type: ", type);
 
-    // retrieve the currently available ArtifactTemplates
-    let getArtifactsResult = await fetch(wineryEndpoint + '/artifacttemplates/');
-    let getArtifactsResultJson = await getArtifactsResult.json();
+  // retrieve the currently available ArtifactTemplates
+  let getArtifactsResult = await fetch(wineryEndpoint + "/artifacttemplates/");
+  let getArtifactsResultJson = await getArtifactsResult.json();
 
-    console.log(getArtifactsResultJson);
+  console.log(getArtifactsResultJson);
 
-    // get unique name for the ArtifactTemplate
-    let artifactTemplateLocalName = localNamePrefix;
-    if (getArtifactsResultJson.some(e => e.id === artifactTemplateLocalName && e.namespace === namespace)) {
-        let nameOccupied = true;
-        artifactTemplateLocalName += '-' + makeId(1);
-        while (nameOccupied) {
-            if (!getArtifactsResultJson.some(e => e.id === artifactTemplateLocalName && e.namespace === namespace)) {
-                nameOccupied = false;
-            } else {
-                artifactTemplateLocalName += makeId(1);
-            }
-        }
+  // get unique name for the ArtifactTemplate
+  let artifactTemplateLocalName = localNamePrefix;
+  if (
+    getArtifactsResultJson.some(
+      (e) => e.id === artifactTemplateLocalName && e.namespace === namespace
+    )
+  ) {
+    let nameOccupied = true;
+    artifactTemplateLocalName += "-" + makeId(1);
+    while (nameOccupied) {
+      if (
+        !getArtifactsResultJson.some(
+          (e) => e.id === artifactTemplateLocalName && e.namespace === namespace
+        )
+      ) {
+        nameOccupied = false;
+      } else {
+        artifactTemplateLocalName += makeId(1);
+      }
     }
-    console.log('Creating ArtifactTemplate with name: ', artifactTemplateLocalName);
+  }
+  console.log(
+    "Creating ArtifactTemplate with name: ",
+    artifactTemplateLocalName
+  );
 
-    // create ArtifactTemplate
-    let artifactCreationResponse = await fetch(wineryEndpoint + '/artifacttemplates/', {
-        method: 'POST',
-        body: JSON.stringify({localname: artifactTemplateLocalName, namespace: namespace, type: type}),
-        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
-    });
-    let artifactCreationResponseText = await artifactCreationResponse.text();
+  // create ArtifactTemplate
+  let artifactCreationResponse = await fetch(
+    wineryEndpoint + "/artifacttemplates/",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        localname: artifactTemplateLocalName,
+        namespace: namespace,
+        type: type,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }
+  );
+  let artifactCreationResponseText = await artifactCreationResponse.text();
 
-    // get URL for the file upload to the ArtifactTemplate
-    let fileUrl = wineryEndpoint + '/artifacttemplates/' + artifactCreationResponseText + 'files';
+  // get URL for the file upload to the ArtifactTemplate
+  let fileUrl =
+    wineryEndpoint +
+    "/artifacttemplates/" +
+    artifactCreationResponseText +
+    "files";
 
-    // upload the blob
-    const fd = new FormData();
-    fd.append('file', blob, fileName);
-    await performAjax(fileUrl, fd);
+  // upload the blob
+  const fd = new FormData();
+  fd.append("file", blob, fileName);
+  await performAjax(fileUrl, fd);
 
-    return artifactTemplateLocalName;
+  return artifactTemplateLocalName;
 }
 
 /**
@@ -74,56 +106,91 @@ export async function createNewArtifactTemplate(wineryEndpoint, localNamePrefix,
  * @param serviceTemplateNamespace the namespace of the ServiceTemplate to create a new version from
  * @return the URL to the new version, or an error if the base ServiceTemplate is not available at the given Winery endpoint
  */
-export async function createNewServiceTemplateVersion(wineryEndpoint, serviceTemplateId, serviceTemplateNamespace) {
-    console.log('Creating new version of Service Template with ID %s and namespace %s', serviceTemplateId, serviceTemplateNamespace);
+export async function createNewServiceTemplateVersion(
+  wineryEndpoint,
+  serviceTemplateId,
+  serviceTemplateNamespace
+) {
+  console.log(
+    "Creating new version of Service Template with ID %s and namespace %s",
+    serviceTemplateId,
+    serviceTemplateNamespace
+  );
 
-    // retrieve the currently available ServiceTemplates
-    let getTemplatesResult = await fetch(wineryEndpoint + '/servicetemplates/');
-    let getTemplatesResultJson = await getTemplatesResult.json();
+  // retrieve the currently available ServiceTemplates
+  let getTemplatesResult = await fetch(wineryEndpoint + "/servicetemplates/");
+  let getTemplatesResultJson = await getTemplatesResult.json();
 
-    // abort if base service template is not available
-    if (!getTemplatesResultJson.some(e => e.id === serviceTemplateId && e.namespace === serviceTemplateNamespace)) {
-        console.log('Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!');
-        return {error: 'Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!'};
+  // abort if base service template is not available
+  if (
+    !getTemplatesResultJson.some(
+      (e) =>
+        e.id === serviceTemplateId && e.namespace === serviceTemplateNamespace
+    )
+  ) {
+    console.log(
+      "Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!"
+    );
+    return {
+      error:
+        "Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!",
+    };
+  }
+
+  // get unique name for the new version
+  let version = makeId(5);
+  let nameOccupied = true;
+  while (nameOccupied) {
+    if (
+      !getTemplatesResultJson.some(
+        (e) =>
+          e.id === serviceTemplateId + "_" + version + "-w1-wip1" &&
+          e.namespace === serviceTemplateNamespace
+      )
+    ) {
+      nameOccupied = false;
+    } else {
+      version += makeId(1);
     }
+  }
+  console.log("Using component version: ", version);
 
-    // get unique name for the new version
-    let version = makeId(5);
-    let nameOccupied = true;
-    while (nameOccupied) {
-        if (!getTemplatesResultJson.some(e => e.id === serviceTemplateId + '_' + version + '-w1-wip1' && e.namespace === serviceTemplateNamespace)) {
-            nameOccupied = false;
-        } else {
-            version += makeId(1);
-        }
-    }
-    console.log('Using component version: ', version);
+  // create ServiceTemplate version
+  let versionUrl =
+    wineryEndpoint +
+    "/servicetemplates/" +
+    encodeURIComponent(encodeURIComponent(serviceTemplateNamespace)) +
+    "/" +
+    serviceTemplateId;
+  console.log("Creating new version under URL:", versionUrl);
+  let versionCreationResponse = await fetch(versionUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      version: {
+        componentVersion: version,
+        currentVersion: false,
+        editable: true,
+        latestVersion: false,
+        releasable: false,
+        wineryVersion: 1,
+        workInProgressVersion: 1,
+      },
+    }),
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+  });
 
-    // create ServiceTemplate version
-    let versionUrl = wineryEndpoint + '/servicetemplates/' + encodeURIComponent(encodeURIComponent(serviceTemplateNamespace)) + '/' + serviceTemplateId;
-    console.log('Creating new version under URL:', versionUrl);
-    let versionCreationResponse = await fetch(versionUrl, {
-        method: 'POST',
-        body: JSON.stringify({
-            version: {
-                componentVersion: version, currentVersion: false, editable: true, latestVersion: false,
-                releasable: false, wineryVersion: 1, workInProgressVersion: 1
-            }
-        }),
-        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
-    });
-
-    // assemble URL to the created ServiceTemplate version
-    let versionCreationResponseText = await versionCreationResponse.text();
-    return wineryEndpoint + '/servicetemplates/' + versionCreationResponseText;
+  // assemble URL to the created ServiceTemplate version
+  let versionCreationResponseText = await versionCreationResponse.text();
+  return wineryEndpoint + "/servicetemplates/" + versionCreationResponseText;
 }
 
 function makeId(length) {
-    let result = '';
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  let result = "";
+  let characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }

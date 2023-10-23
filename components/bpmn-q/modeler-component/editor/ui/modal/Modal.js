@@ -7,72 +7,70 @@
  * Camunda licenses this file to you under the MIT; you may not use this file
  * except in compliance with the MIT License.
  */
-import React, {PureComponent} from 'react';
-import ReactDOM from 'react-dom';
+import React, { PureComponent } from "react";
+import ReactDOM from "react-dom";
 
-import classNames from 'classnames';
+import classNames from "classnames";
 
-import FocusTrap from './FocusTrap';
-import EscapeTrap from './EscapeTrap';
-import KeyboardInteractionTrap from './KeyboardInteractionTrap';
+import FocusTrap from "./FocusTrap";
+import EscapeTrap from "./EscapeTrap";
+import KeyboardInteractionTrap from "./KeyboardInteractionTrap";
 
 /**
  * React component to display a modal.
  */
 export default class Modal extends PureComponent {
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
-        super(props);
+    this.modalRef = React.createRef();
 
-        this.modalRef = React.createRef();
+    this.focusTrap = FocusTrap(() => {
+      return this.modalRef.current;
+    });
 
-        this.focusTrap = FocusTrap(() => {
-            return this.modalRef.current;
-        });
+    this.escapeTrap = EscapeTrap(() => {
+      this.close();
+    });
+  }
 
-        this.escapeTrap = EscapeTrap(() => {
-            this.close();
-        });
+  close = () => {
+    if (this.props.onClose) {
+      return this.props.onClose();
     }
+  };
 
-    close = () => {
-        if (this.props.onClose) {
-            return this.props.onClose();
-        }
-    };
+  componentDidMount() {
+    this.focusTrap.mount();
+    this.escapeTrap.mount();
+  }
 
-    componentDidMount() {
-        this.focusTrap.mount();
-        this.escapeTrap.mount();
-    }
+  componentWillUnmount() {
+    this.focusTrap.unmount();
+    this.escapeTrap.unmount();
+  }
 
-    componentWillUnmount() {
-        this.focusTrap.unmount();
-        this.escapeTrap.unmount();
-    }
+  render() {
+    const { className, children, onClose } = this.props;
 
-    render() {
-
-        const {
-            className,
-            children,
-            onClose
-        } = this.props;
-
-        return ReactDOM.createPortal(
-            <KeyboardInteractionTrap>
-                <div className="qwm qwm-modal" tabIndex="-1" role="dialog">
-                    <div className={classNames('qwm-modal-dialog', className)} ref={this.modalRef} role="document">
-                        <div className="qwm-modal-content">
-                            {children}
-                            {onClose && (<Close onClick={this.close}/>)}
-                        </div>
-                    </div>
-                </div>
-            </KeyboardInteractionTrap>,
-            document.body
-        );
-    }
+    return ReactDOM.createPortal(
+      <KeyboardInteractionTrap>
+        <div className="qwm qwm-modal" tabIndex="-1" role="dialog">
+          <div
+            className={classNames("qwm-modal-dialog", className)}
+            ref={this.modalRef}
+            role="document"
+          >
+            <div className="qwm-modal-content">
+              {children}
+              {onClose && <Close onClick={this.close} />}
+            </div>
+          </div>
+        </div>
+      </KeyboardInteractionTrap>,
+      document.body
+    );
+  }
 }
 
 Modal.Body = Body;
@@ -83,65 +81,55 @@ Modal.Close = Close;
 
 Modal.Footer = Footer;
 
-
 function Title(props) {
-    const {
-        children,
-        className,
-        ...rest
-    } = props;
+  const { children, className, ...rest } = props;
 
-    return (
-        <div className={classNames('qwm-modal-header', className)} {...rest}>
-            <h2 className="qwm-modal-title">
-                {children}
-            </h2>
-        </div>
-    );
+  return (
+    <div className={classNames("qwm-modal-header", className)} {...rest}>
+      <h2 className="qwm-modal-title">{children}</h2>
+    </div>
+  );
 }
 
 function Close(props) {
-    const {
-        onClick
-    } = props;
+  const { onClick } = props;
 
-    return (
-        <button className="qwm-close" onClick={onClick} aria-label="Close">
-            {/*<CloseIcon/>*/}
-            {/*<img src={CloseIcon} aria-hidden="true" />*/}
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                <path fillRule="evenodd"
-                      d="M12.6666667,11.3333333 L20,11.3333333 L20,12.6666667 L12.6666667,12.6666667 L12.6666667,20 L11.3333333,20 L11.3333333,12.6666667 L4,12.6666667 L4,11.3333333 L11.3333333,11.3333333 L11.3333333,4 L12.6666667,4 L12.6666667,11.3333333 Z"
-                      transform="rotate(45 13.414 8.586)"/>
-            </svg>
-        </button>
-    );
+  return (
+    <button className="qwm-close" onClick={onClick} aria-label="Close">
+      {/*<CloseIcon/>*/}
+      {/*<img src={CloseIcon} aria-hidden="true" />*/}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+      >
+        <path
+          fillRule="evenodd"
+          d="M12.6666667,11.3333333 L20,11.3333333 L20,12.6666667 L12.6666667,12.6666667 L12.6666667,20 L11.3333333,20 L11.3333333,12.6666667 L4,12.6666667 L4,11.3333333 L11.3333333,11.3333333 L11.3333333,4 L12.6666667,4 L12.6666667,11.3333333 Z"
+          transform="rotate(45 13.414 8.586)"
+        />
+      </svg>
+    </button>
+  );
 }
 
 function Body(props) {
-    const {
-        children,
-        className,
-        ...rest
-    } = props;
+  const { children, className, ...rest } = props;
 
-    return (
-        <div className={classNames('qwm-modal-body', className)} {...rest}>
-            {children}
-        </div>
-    );
+  return (
+    <div className={classNames("qwm-modal-body", className)} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 function Footer(props) {
-    const {
-        children,
-        className,
-        ...rest
-    } = props;
+  const { className, ...rest } = props;
 
-    return (
-        <div className={classNames('qwm-modal-footer', className)} {...rest}>
-            {props.children}
-        </div>
-    );
+  return (
+    <div className={classNames("qwm-modal-footer", className)} {...rest}>
+      {props.children}
+    </div>
+  );
 }

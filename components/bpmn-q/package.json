@@ -13,7 +13,9 @@
     "test:watch": "npm test -- --auto-watch --no-single-run",
     "build": "webpack",
     "dev": "webpack-dev-server",
-    "dev-open": "webpack-dev-server --open"
+    "dev-open": "webpack-dev-server --open",
+    "lint": "eslint --ext .js . && prettier --check .",
+    "lint-fix": "eslint --fix --ext .js . && prettier --write ."
   },
   "author": "",
   "license": "Apache-2.0",
@@ -106,6 +108,7 @@
     "postcss-loader": "^7.0.2",
     "postcss-prefix-selector": "^1.16.0",
     "postcss-prefix-webpack": "^1.0.3",
+    "prettier": "2.8.8",
     "raw-loader": "^4.0.2",
     "react-url-loader": "^0.0.4",
     "resolve-url-loader": "^5.0.0",

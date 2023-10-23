@@ -8,9 +8,9 @@
  * except in compliance with the MIT License.
  */
 
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from "react";
 
-export const NOTIFICATION_TYPES = ['info', 'success', 'error', 'warning'];
+export const NOTIFICATION_TYPES = ["info", "success", "error", "warning"];
 
 /**
  * React component to display notifications
@@ -18,65 +18,61 @@ export const NOTIFICATION_TYPES = ['info', 'success', 'error', 'warning'];
  * @type {string[]}
  */
 export default class Notification extends PureComponent {
-    static getDerivedStateFromError() {
-        return {error: true};
+  static getDerivedStateFromError() {
+    return { error: true };
+  }
+
+  state = {
+    error: false,
+  };
+
+  componentDidMount() {
+    const { duration } = this.props;
+
+    if (duration) {
+      this.setupTimeout(duration);
     }
+  }
 
-    state = {
-        error: false
-    };
+  componentDidUpdate(previousProps) {
+    const currentDuration = this.props.duration;
 
-    componentDidMount() {
-        const {duration} = this.props;
+    const { duration: previousDuration } = previousProps;
 
-        if (duration) {
-            this.setupTimeout(duration);
-        }
+    if (currentDuration !== previousDuration) {
+      this.resetTimeout();
+
+      currentDuration && this.setupTimeout(currentDuration);
     }
+  }
 
-    componentDidUpdate(previousProps) {
-        const currentDuration = this.props.duration;
+  componentWillUnmount() {
+    this.resetTimeout();
+  }
 
-        const {duration: previousDuration} = previousProps;
+  setupTimeout(duration) {
+    this.timeout = setTimeout(() => {
+      this.props.close();
+    }, duration);
+  }
 
-        if (currentDuration !== previousDuration) {
-            this.resetTimeout();
+  resetTimeout() {
+    this.timeout && clearTimeout(this.timeout);
+  }
 
-            currentDuration && this.setupTimeout(currentDuration);
-        }
-    }
+  componentDidCatch() {
+    this.props.close();
+  }
 
-    componentWillUnmount() {
-        this.resetTimeout();
-    }
+  render() {
+    const { close, content, title } = this.props;
 
-    setupTimeout(duration) {
-        this.timeout = setTimeout(() => {
-            this.props.close();
-        }, duration);
-    }
-
-    resetTimeout() {
-        this.timeout && clearTimeout(this.timeout);
-    }
-
-    componentDidCatch() {
-        this.props.close();
-    }
-
-    render() {
-        const {
-            close,
-            content,
-            title,
-        } = this.props;
-
-        return this.state.error ? null : <div className="qwm-Notification">
-            <span className="qwm-close" onClick={close}/>
-            <h2>
-                {title}
-            </h2>
-            {content && <div className="qwm-content">{content}</div>}
-        </div>;
-    }
+    return this.state.error ? null : (
+      <div className="qwm-Notification">
+        <span className="qwm-close" onClick={close} />
+        <h2>{title}</h2>
+        {content && <div className="qwm-content">{content}</div>}
+      </div>
+    );
+  }
 }

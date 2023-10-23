@@ -1,9 +1,9 @@
-import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
+import { getPluginConfig } from "../../../editor/plugin/PluginConfigHandler";
 
 // default config entries used if no value is specified in the initial plugin config
 const defaultConfig = {
-    qhanaListPluginsURL: process.env.QHANA_LIST_PLUGINS_URL,
-    qhanqGetPluginURL: process.env.QHANA_GET_PLUGIN_URL,
+  qhanaListPluginsURL: process.env.QHANA_LIST_PLUGINS_URL,
+  qhanqGetPluginURL: process.env.QHANA_GET_PLUGIN_URL,
 };
 
 const config = {};
@@ -14,10 +14,13 @@ const config = {};
  * @return {string} the url
  */
 export function getListPluginsURL() {
-    if (config.qhanaListPluginsURL === undefined) {
-        setListPluginsURL(getPluginConfig('qhana').qhanaListPluginsURL || defaultConfig.qhanaListPluginsURL);
-    }
-    return config.qhanaListPluginsURL;
+  if (config.qhanaListPluginsURL === undefined) {
+    setListPluginsURL(
+      getPluginConfig("qhana").qhanaListPluginsURL ||
+        defaultConfig.qhanaListPluginsURL
+    );
+  }
+  return config.qhanaListPluginsURL;
 }
 
 /**
@@ -26,11 +29,10 @@ export function getListPluginsURL() {
  * @return {string} the url
  */
 export function setListPluginsURL(url) {
-    if (url !== null && url !== undefined) {
-
-        // remove trailing slashes
-        config.qhanaListPluginsURL = url.replace(/\/$/, '');
-    }
+  if (url !== null && url !== undefined) {
+    // remove trailing slashes
+    config.qhanaListPluginsURL = url.replace(/\/$/, "");
+  }
 }
 
 /**
@@ -39,10 +41,13 @@ export function setListPluginsURL(url) {
  * @return {string} the url
  */
 export function getGetPluginsURL() {
-    if (config.qhanqGetPluginURL === undefined) {
-        setGetPluginsURL(getPluginConfig('qhana').qhanqGetPluginURL || defaultConfig.qhanqGetPluginURL);
-    }
-    return config.qhanqGetPluginURL;
+  if (config.qhanqGetPluginURL === undefined) {
+    setGetPluginsURL(
+      getPluginConfig("qhana").qhanqGetPluginURL ||
+        defaultConfig.qhanqGetPluginURL
+    );
+  }
+  return config.qhanqGetPluginURL;
 }
 
 /**
@@ -51,9 +56,8 @@ export function getGetPluginsURL() {
  * @return {string} the url
  */
 export function setGetPluginsURL(url) {
-    if (url !== null && url !== undefined) {
-
-        // remove trailing slashes
-        config.qhanqGetPluginURL = url;
-    }
+  if (url !== null && url !== undefined) {
+    // remove trailing slashes
+    config.qhanqGetPluginURL = url;
+  }
 }

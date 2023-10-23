@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {fetch} from 'whatwg-fetch';
+import { fetch } from "whatwg-fetch";
 
 /**
  * Upload the CSAR located at the given URL to the connected OpenTOSCA Container and return the corresponding URL and required input parameters
@@ -19,56 +19,67 @@ import {fetch} from 'whatwg-fetch';
  * @param url the URL pointing to the CSAR
  * @param wineryEndpoint the endpoint of the Winery containing the CSAR to upload
  */
-export async function uploadCSARToContainer(opentoscaEndpoint, csarName, url, wineryEndpoint) {
+export async function uploadCSARToContainer(
+  opentoscaEndpoint,
+  csarName,
+  url,
+  wineryEndpoint
+) {
+  if (opentoscaEndpoint === undefined) {
+    console.error("OpenTOSCA endpoint is undefined. Unable to upload CSARs...");
+    return { success: false };
+  }
 
-    if (opentoscaEndpoint === undefined) {
-        console.error('OpenTOSCA endpoint is undefined. Unable to upload CSARs...');
-        return {success: false};
+  try {
+    if (url.startsWith("{{ wineryEndpoint }}")) {
+      url = url.replace("{{ wineryEndpoint }}", wineryEndpoint);
+    }
+    console.log(
+      "Checking if CSAR at following URL is already uploaded to the OpenTOSCA Container: ",
+      url
+    );
+
+    // check if CSAR is already uploaded
+    let getCSARResult = await getBuildPlanForCSAR(opentoscaEndpoint, csarName);
+
+    if (!getCSARResult.success) {
+      console.log("CSAR is not yet uploaded. Uploading...");
+
+      let body = {
+        enrich: "false",
+        name: csarName,
+        url: url,
+      };
+
+      // upload the CSAR
+      await fetch(opentoscaEndpoint, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      // check successful upload and retrieve corresponding url
+      getCSARResult = await getBuildPlanForCSAR(opentoscaEndpoint, csarName);
     }
 
-    try {
-        if (url.startsWith('{{ wineryEndpoint }}')) {
-            url = url.replace('{{ wineryEndpoint }}', wineryEndpoint);
-        }
-        console.log('Checking if CSAR at following URL is already uploaded to the OpenTOSCA Container: ', url);
-
-        // check if CSAR is already uploaded
-        let getCSARResult = await getBuildPlanForCSAR(opentoscaEndpoint, csarName);
-
-        if (!getCSARResult.success) {
-            console.log('CSAR is not yet uploaded. Uploading...');
-
-            let body = {
-                enrich: 'false',
-                name: csarName,
-                url: url
-            };
-
-            // upload the CSAR
-            await fetch(opentoscaEndpoint, {
-                method: 'POST',
-                body: JSON.stringify(body),
-                headers: {'Content-Type': 'application/json'}
-            });
-
-            // check successful upload and retrieve corresponding url
-            getCSARResult = await getBuildPlanForCSAR(opentoscaEndpoint, csarName);
-        }
-
-        if (!getCSARResult.success) {
-            console.error('Uploading CSAR failed!');
-            return {success: false};
-        }
-
-        // retrieve input parameters for the build plan
-        let buildPlanResult = await fetch(getCSARResult.url);
-        let buildPlanResultJson = await buildPlanResult.json();
-
-        return {success: true, url: getCSARResult.url, inputParameters: buildPlanResultJson.input_parameters};
-    } catch (e) {
-        console.error('Error while uploading CSAR: ' + e);
-        return {success: false};
+    if (!getCSARResult.success) {
+      console.error("Uploading CSAR failed!");
+      return { success: false };
     }
+
+    // retrieve input parameters for the build plan
+    let buildPlanResult = await fetch(getCSARResult.url);
+    let buildPlanResultJson = await buildPlanResult.json();
+
+    return {
+      success: true,
+      url: getCSARResult.url,
+      inputParameters: buildPlanResultJson.input_parameters,
+    };
+  } catch (e) {
+    console.error("Error while uploading CSAR: " + e);
+    return { success: false };
+  }
 }
 
 /**
@@ -79,31 +90,29 @@ export async function uploadCSARToContainer(opentoscaEndpoint, csarName, url, wi
  * @return the status whether the given CSAR is uploaded and the corresponding build plan link if available
  */
 async function getBuildPlanForCSAR(opentoscaEndpoint, csarName) {
+  // get all currently deployed CSARs
+  let response = await fetch(opentoscaEndpoint);
+  let responseJson = await response.json();
 
-    // get all currently deployed CSARs
-    let response = await fetch(opentoscaEndpoint);
-    let responseJson = await response.json();
+  let deployedCSARs = responseJson.csars;
+  if (deployedCSARs === undefined) {
+    // no CSARs available
+    return { success: false };
+  }
 
-    let deployedCSARs = responseJson.csars;
-    if (deployedCSARs === undefined) {
+  for (let i = 0; i < deployedCSARs.length; i++) {
+    let deployedCSAR = deployedCSARs[i];
+    if (deployedCSAR.id === csarName) {
+      console.log("Found uploaded CSAR with id: %s", csarName);
+      let url = deployedCSAR._links.self.href;
 
-        // no CSARs available
-        return {success: false};
+      // retrieve the URl to the build plan required to get the input parameters and to instantiate the CSAR
+      return getBuildPlanUrl(url);
     }
+  }
 
-    for (let i = 0; i < deployedCSARs.length; i++) {
-        let deployedCSAR = deployedCSARs[i];
-        if (deployedCSAR.id === csarName) {
-            console.log('Found uploaded CSAR with id: %s', csarName);
-            let url = deployedCSAR._links.self.href;
-
-            // retrieve the URl to the build plan required to get the input parameters and to instantiate the CSAR
-            return getBuildPlanUrl(url);
-        }
-    }
-
-    // unable to find CSAR
-    return {success: false};
+  // unable to find CSAR
+  return { success: false };
 }
 
 /**
@@ -113,25 +122,31 @@ async function getBuildPlanForCSAR(opentoscaEndpoint, csarName) {
  * @return the URL to the build plan for the given CSAR
  */
 async function getBuildPlanUrl(csarUrl) {
+  let response = await fetch(csarUrl + "/servicetemplates");
+  let responseJson = await response.json();
 
-    let response = await fetch(csarUrl + '/servicetemplates');
-    let responseJson = await response.json();
+  if (
+    !responseJson.service_templates ||
+    responseJson.service_templates.length !== 1
+  ) {
+    console.error(
+      "Unable to find service template in CSAR at URL: %s",
+      csarUrl
+    );
+    return { success: false };
+  }
 
-    if (!responseJson.service_templates || responseJson.service_templates.length !== 1) {
-        console.error('Unable to find service template in CSAR at URL: %s', csarUrl);
-        return {success: false};
-    }
+  let buildPlansUrl =
+    responseJson.service_templates[0]._links.self.href + "/buildplans";
+  response = await fetch(buildPlansUrl);
+  responseJson = await response.json();
 
-    let buildPlansUrl = responseJson.service_templates[0]._links.self.href + '/buildplans';
-    response = await fetch(buildPlansUrl);
-    responseJson = await response.json();
+  if (!responseJson.plans || responseJson.plans.length !== 1) {
+    console.error("Unable to find build plan at URL: %s", buildPlansUrl);
+    return { success: false };
+  }
 
-    if (!responseJson.plans || responseJson.plans.length !== 1) {
-        console.error('Unable to find build plan at URL: %s', buildPlansUrl);
-        return {success: false};
-    }
-
-    return {success: true, url: responseJson.plans[0]._links.self.href};
+  return { success: true, url: responseJson.plans[0]._links.self.href };
 }
 
 /**
@@ -142,97 +157,108 @@ async function getBuildPlanUrl(csarUrl) {
  * @return the result of the instance creation (success, endpoint, topic on which the service listens, ...)
  */
 export async function createServiceInstance(csar, camundaEngineEndpoint) {
+  let result = { success: false };
 
-    let result = {success: false};
+  let inputParameters = csar.inputParameters;
+  if (csar.type === "pull") {
+    // get special parameters that are required to bind services using external tasks / the pulling pattern
+    let camundaTopicParam = inputParameters.find(
+      (param) => param.name === "camundaTopic"
+    );
+    let camundaEndpointParam = inputParameters.find(
+      (param) => param.name === "camundaEndpoint"
+    );
 
-    let inputParameters = csar.inputParameters;
-    if (csar.type === 'pull') {
-
-        // get special parameters that are required to bind services using external tasks / the pulling pattern
-        let camundaTopicParam = inputParameters.find((param) => param.name === 'camundaTopic');
-        let camundaEndpointParam = inputParameters.find((param) => param.name === 'camundaEndpoint');
-
-        // abort if parameters are not available
-        if (camundaTopicParam === undefined || camundaEndpointParam === undefined) {
-            console.error('Unable to pass topic to poll to service instance creation. Service binding will fail!');
-            return result;
-        }
-
-        // generate topic for the binding
-        let topicName = makeId(12);
-
-        camundaTopicParam.value = topicName;
-        camundaEndpointParam.value = camundaEngineEndpoint;
-        result.topicName = topicName;
+    // abort if parameters are not available
+    if (camundaTopicParam === undefined || camundaEndpointParam === undefined) {
+      console.error(
+        "Unable to pass topic to poll to service instance creation. Service binding will fail!"
+      );
+      return result;
     }
 
-    // trigger instance creation
-    let instanceCreationResponse = await fetch(csar.buildPlanUrl + '/instances', {
-        method: 'POST',
-        body: JSON.stringify(inputParameters),
-        headers: {'Content-Type': 'application/json'}
-    });
-    let instanceCreationResponseJson = await instanceCreationResponse.json();
+    // generate topic for the binding
+    let topicName = makeId(12);
 
-    // wait for the service instance to be created
-    await new Promise(r => setTimeout(r, 5000));
+    camundaTopicParam.value = topicName;
+    camundaEndpointParam.value = camundaEngineEndpoint;
+    result.topicName = topicName;
+  }
 
-    // get service template instance to poll for completness
-    let buildPlanResponse = await fetch(csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson);
-    let buildPlanResponseJson = await buildPlanResponse.json();
+  // trigger instance creation
+  let instanceCreationResponse = await fetch(csar.buildPlanUrl + "/instances", {
+    method: "POST",
+    body: JSON.stringify(inputParameters),
+    headers: { "Content-Type": "application/json" },
+  });
+  let instanceCreationResponseJson = await instanceCreationResponse.json();
 
-    // retry polling 10 times, creation of the build time takes some time
-    for (let retry = 0; retry < 10; retry++) {
+  // wait for the service instance to be created
+  await new Promise((r) => setTimeout(r, 5000));
 
-        // stop retries in case of correct response
-        if (buildPlanResponseJson._links) {
-            break;
-        }
+  // get service template instance to poll for completness
+  let buildPlanResponse = await fetch(
+    csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
+  );
+  let buildPlanResponseJson = await buildPlanResponse.json();
 
-        await new Promise(r => setTimeout(r, 5000));
-
-        console.log('Retry fetching build plan');
-
-        buildPlanResponse = await fetch(csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson);
-        buildPlanResponseJson = await buildPlanResponse.json();
+  // retry polling 10 times, creation of the build time takes some time
+  for (let retry = 0; retry < 10; retry++) {
+    // stop retries in case of correct response
+    if (buildPlanResponseJson._links) {
+      break;
     }
 
-    if (!buildPlanResponseJson._links) {
-        console.log('Unable to fetch build plans for ' + csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson);
-        result.success = false;
-        return result;
-    }
+    await new Promise((r) => setTimeout(r, 5000));
 
-    let pollingUrl = buildPlanResponseJson._links.service_template_instance.href;
+    console.log("Retry fetching build plan");
 
-    let state = 'CREATING';
-    console.log('Polling for finished service instance at URL: %s', pollingUrl);
-    let properties = '';
-    while (!(state === 'CREATED' || state === 'FAILED')) {
+    buildPlanResponse = await fetch(
+      csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
+    );
+    buildPlanResponseJson = await buildPlanResponse.json();
+  }
 
-        // wait 5 seconds for next poll
-        await new Promise(r => setTimeout(r, 5000));
-        // poll for current state
-        let pollingResponse = await fetch(pollingUrl);
-        let pollingResponseJson = await pollingResponse.json();
-        console.log('Polling response: ', pollingResponseJson);
-        properties = pollingResponseJson._links.properties.href;
-
-        state = pollingResponseJson.state;
-    }
-
-    result.success = true;
-    result.properties = properties;
+  if (!buildPlanResponseJson._links) {
+    console.log(
+      "Unable to fetch build plans for " +
+        csar.buildPlanUrl +
+        "/instances/" +
+        instanceCreationResponseJson
+    );
+    result.success = false;
     return result;
+  }
+
+  let pollingUrl = buildPlanResponseJson._links.service_template_instance.href;
+
+  let state = "CREATING";
+  console.log("Polling for finished service instance at URL: %s", pollingUrl);
+  let properties = "";
+  while (!(state === "CREATED" || state === "FAILED")) {
+    // wait 5 seconds for next poll
+    await new Promise((r) => setTimeout(r, 5000));
+    // poll for current state
+    let pollingResponse = await fetch(pollingUrl);
+    let pollingResponseJson = await pollingResponse.json();
+    console.log("Polling response: ", pollingResponseJson);
+    properties = pollingResponseJson._links.properties.href;
+
+    state = pollingResponseJson.state;
+  }
+
+  result.success = true;
+  result.properties = properties;
+  return result;
 }
 
-
 export function makeId(length) {
-    let result = '';
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  let result = "";
+  let characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }

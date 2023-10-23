@@ -11,7 +11,7 @@ let modelerComponent;
  * @param newModelerComponent The quantum workflow modeler component.
  */
 export function initEditorEventHandler(newModelerComponent) {
-    modelerComponent = newModelerComponent;
+  modelerComponent = newModelerComponent;
 }
 
 /**
@@ -24,14 +24,14 @@ export function initEditorEventHandler(newModelerComponent) {
  *                          not invoked, and false otherwise.
  */
 export function dispatchWorkflowEvent(type, workflowXml, workflowName) {
-    const newEvent = new CustomEvent(type, {
-        detail: {
-            workflowName: workflowName,
-            workflow: workflowXml
-        },
-        cancelable: true
-    });
-    return modelerComponent?.dispatchEvent?.(newEvent)??true;
+  const newEvent = new CustomEvent(type, {
+    detail: {
+      workflowName: workflowName,
+      workflow: workflowXml,
+    },
+    cancelable: true,
+  });
+  return modelerComponent?.dispatchEvent?.(newEvent) ?? true;
 }
 
 /**
@@ -42,5 +42,9 @@ export function dispatchWorkflowEvent(type, workflowXml, workflowName) {
  * @param callBckFunction The function defining the action executed when the event occurs
  */
 export function addWorkflowEventListener(type, callBckFunction) {
-    modelerComponent.addEventListener(type, (event) => callBckFunction(event), false);
+  modelerComponent.addEventListener(
+    type,
+    (event) => callBckFunction(event),
+    false
+  );
 }
