@@ -1,4 +1,4 @@
-@import url('~bpmn-font/dist/css/bpmn-embedded.css');
+@import url("~bpmn-font/dist/css/bpmn-embedded.css");
 
 .qwm .quantme-logo:before {
   content: "";
@@ -38,7 +38,8 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background: url("../resources/hybrid-loop-adapation-icon.png") no-repeat center center;
+  background: url("../resources/hybrid-loop-adapation-icon.png") no-repeat
+    center center;
   float: left;
 }
 
@@ -48,7 +49,8 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background: url("../resources/worklow-transformation-icon.png") no-repeat center center;
+  background: url("../resources/worklow-transformation-icon.png") no-repeat
+    center center;
   float: left;
 }
 
@@ -58,7 +60,8 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background: url("../resources/workflow-deployment-icon.png") no-repeat center center;
+  background: url("../resources/workflow-deployment-icon.png") no-repeat center
+    center;
   float: left;
 }
 
@@ -93,13 +96,14 @@
 }
 
 .qwm .djs-label {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 .qwm .bpmn-icon-hardware-selection-subprocess:before {
   content: "";
   display: block;
-  background: url("../resources/menu-icon-hardware-selection-subprocess.png") no-repeat;
+  background: url("../resources/menu-icon-hardware-selection-subprocess.png")
+    no-repeat;
   width: 20px;
   height: 20px;
   float: left;
@@ -109,7 +113,8 @@
 .qwm .bpmn-icon-task-quantum-computation:before {
   content: "";
   display: block;
-  background: url("../resources/menu-icon-quantum-computation-task.png") no-repeat;
+  background: url("../resources/menu-icon-quantum-computation-task.png")
+    no-repeat;
   width: 20px;
   height: 20px;
   float: left;
@@ -119,7 +124,8 @@
 .qwm .bpmn-icon-circuit-loading:before {
   content: "";
   display: block;
-  background: url("../resources/menu-icon-quantum-circuit-loading-task.png") no-repeat;
+  background: url("../resources/menu-icon-quantum-circuit-loading-task.png")
+    no-repeat;
   width: 20px;
   height: 20px;
   float: left;
@@ -169,7 +175,8 @@
 .qwm .bpmn-icon-parameter-optimization:before {
   content: "";
   display: block;
-  background: url("../resources/menu-icon-parameter-optimization-task.png") no-repeat;
+  background: url("../resources/menu-icon-parameter-optimization-task.png")
+    no-repeat;
   width: 20px;
   height: 20px;
   float: left;
@@ -189,7 +196,8 @@
 .qwm .bpmn-icon-variational-quantum-algorithm:before {
   content: "";
   display: block;
-  background: url("../resources/menu-icon-variational-quantum-algorithm-task.png") no-repeat;
+  background: url("../resources/menu-icon-variational-quantum-algorithm-task.png")
+    no-repeat;
   width: 20px;
   height: 20px;
   float: left;
@@ -254,16 +262,15 @@
   padding-left: 20px;
 }
 
-.qwm .rewrite-failed-button:disabled{
+.qwm .rewrite-failed-button:disabled {
   background-color: #f44336;
   color: #000000;
 }
 
-.qwm .rewrite-successful-button:disabled{
+.qwm .rewrite-successful-button:disabled {
   background-color: #008000;
   color: #000000;
 }
-
 
 .qwm .quantme-tasks-icon-cutting:before {
   content: "";
@@ -274,7 +281,6 @@
   background-repeat: no-repeat;
   display: inline-block;
 }
-
 
 .qwm .quantme-tasks-icon-variational:before {
   content: "";
@@ -450,10 +456,16 @@
   margin-top: 5px;
 }
 
-.djs-popup-results .djs-popup-group .entry[data-id="replace-with-hardware-selection-subprocess"] .djs-popup-label {
+.djs-popup-results
+  .djs-popup-group
+  .entry[data-id="replace-with-hardware-selection-subprocess"]
+  .djs-popup-label {
   margin-left: 10px; /* Adjust the value as per your requirements */
 }
 
-.djs-popup-results .djs-popup-group .entry[data-id="replace-by-more-options"] .djs-popup-label {
+.djs-popup-results
+  .djs-popup-group
+  .entry[data-id="replace-by-more-options"]
+  .djs-popup-label {
   margin-top: -1px; /* Adjust the value as per your requirements */
 }

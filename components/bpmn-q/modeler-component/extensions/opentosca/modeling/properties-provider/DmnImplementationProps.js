@@ -1,83 +1,78 @@
-import {
-  getBusinessObject
-} from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 
 import {
   TextFieldEntry,
   isTextFieldEntryEdited,
   SelectEntry,
-  isSelectEntryEdited
-} from '@bpmn-io/properties-panel';
-import {useService} from "bpmn-js-properties-panel";
-import {getImplementationType} from "../../../quantme/utilities/ImplementationTypeHelperExtension";
+  isSelectEntryEdited,
+} from "@bpmn-io/properties-panel";
+import { useService } from "bpmn-js-properties-panel";
+import { getImplementationType } from "../../../quantme/utilities/ImplementationTypeHelperExtension";
 
 export function DmnImplementationProps(props) {
-  const {
-    element
-  } = props;
+  const { element } = props;
 
   const entries = [];
 
   const implementationType = getImplementationType(element);
   const bindingType = getDecisionRefBinding(element);
 
-  if (implementationType !== 'dmn') {
+  if (implementationType !== "dmn") {
     return entries;
   }
 
   // (1) decisionRef
   entries.push({
-    id: 'decisionRef',
+    id: "decisionRef",
     component: DecisionRef,
-    isEdited: isTextFieldEntryEdited
+    isEdited: isTextFieldEntryEdited,
   });
-
 
   // (2) binding
   entries.push({
-    id: 'decisionRefBinding',
+    id: "decisionRefBinding",
     component: Binding,
-    isEdited: isSelectEntryEdited
+    isEdited: isSelectEntryEdited,
   });
 
   // (3) version
-  if (bindingType === 'version') {
+  if (bindingType === "version") {
     entries.push({
-      id: 'decisionRefVersion',
+      id: "decisionRefVersion",
       component: Version,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isTextFieldEntryEdited,
     });
   }
 
   // (4) versionTag
-  if (bindingType === 'versionTag') {
+  if (bindingType === "versionTag") {
     entries.push({
-      id: 'decisionRefVersionTag',
+      id: "decisionRefVersionTag",
       component: VersionTag,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isTextFieldEntryEdited,
     });
   }
 
   // (5) tenantId
   entries.push({
-    id: 'decisionRefTenantId',
+    id: "decisionRefTenantId",
     component: TenantId,
-    isEdited: isTextFieldEntryEdited
+    isEdited: isTextFieldEntryEdited,
   });
 
   // (6) resultVariable
   entries.push({
-    id: 'decisionRefResultVariable',
+    id: "decisionRefResultVariable",
     component: ResultVariable,
-    isEdited: isTextFieldEntryEdited
+    isEdited: isTextFieldEntryEdited,
   });
 
   // (7) mapDecisionResult
   if (getResultVariable(element)) {
     entries.push({
-      id: 'mapDecisionResult',
+      id: "mapDecisionResult",
       component: MapDecisionResult,
-      isEdited: isSelectEntryEdited
+      isEdited: isSelectEntryEdited,
     });
   }
 
@@ -85,43 +80,43 @@ export function DmnImplementationProps(props) {
 }
 
 function DecisionRef(props) {
-  const {element} = props;
+  const { element } = props;
 
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const commandStack = useService("commandStack");
+  const translate = useService("translate");
+  const debounce = useService("debounceInput");
 
   const businessObject = getBusinessObject(element);
 
   const getValue = () => {
-    return businessObject.get('camunda:decisionRef');
+    return businessObject.get("camunda:decisionRef");
   };
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
+    commandStack.execute("element.updateModdleProperties", {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:decisionRef': value || ''
-      }
+        "camunda:decisionRef": value || "",
+      },
     });
   };
 
   return TextFieldEntry({
     element,
-    id: 'decisionRef',
-    label: translate('Decision reference'),
+    id: "decisionRef",
+    label: translate("Decision reference"),
     getValue,
     setValue,
-    debounce
+    debounce,
   });
 }
 
 function Binding(props) {
-  const {element} = props;
+  const { element } = props;
 
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
+  const commandStack = useService("commandStack");
+  const translate = useService("translate");
 
   const getValue = () => {
     return getDecisionRefBinding(element);
@@ -132,27 +127,26 @@ function Binding(props) {
 
     // reset version properties on binding type change
     const updatedProperties = {
-      'camunda:decisionRefVersion': undefined,
-      'camunda:decisionRefVersionTag': undefined,
-      'camunda:decisionRefBinding': value
+      "camunda:decisionRefVersion": undefined,
+      "camunda:decisionRefVersionTag": undefined,
+      "camunda:decisionRefBinding": value,
     };
 
-    commandStack.execute('element.updateModdleProperties', {
+    commandStack.execute("element.updateModdleProperties", {
       element,
       moddleElement: businessObject,
-      properties: updatedProperties
+      properties: updatedProperties,
     });
   };
 
   // Note: default is "latest",
   // cf. https://docs.camunda.org/manual/latest/reference/bpmn20/custom-extensions/extension-attributes/#decisionrefbinding
   const getOptions = () => {
-
     const options = [
-      {value: 'deployment', label: translate('deployment')},
-      {value: 'latest', label: translate('latest')},
-      {value: 'version', label: translate('version')},
-      {value: 'versionTag', label: translate('versionTag')}
+      { value: "deployment", label: translate("deployment") },
+      { value: "latest", label: translate("latest") },
+      { value: "version", label: translate("version") },
+      { value: "versionTag", label: translate("versionTag") },
     ];
 
     return options;
@@ -160,119 +154,119 @@ function Binding(props) {
 
   return SelectEntry({
     element,
-    id: 'decisionRefBinding',
-    label: translate('Binding'),
+    id: "decisionRefBinding",
+    label: translate("Binding"),
     getValue,
     setValue,
-    getOptions
+    getOptions,
   });
 }
 
 function Version(props) {
-  const {element} = props;
+  const { element } = props;
 
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const commandStack = useService("commandStack");
+  const translate = useService("translate");
+  const debounce = useService("debounceInput");
 
   const businessObject = getBusinessObject(element);
 
   const getValue = () => {
-    return businessObject.get('camunda:decisionRefVersion');
+    return businessObject.get("camunda:decisionRefVersion");
   };
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
+    commandStack.execute("element.updateModdleProperties", {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:decisionRefVersion': value
-      }
+        "camunda:decisionRefVersion": value,
+      },
     });
   };
 
   return TextFieldEntry({
     element,
-    id: 'decisionRefVersion',
-    label: translate('Version'),
+    id: "decisionRefVersion",
+    label: translate("Version"),
     getValue,
     setValue,
-    debounce
+    debounce,
   });
 }
 
 function VersionTag(props) {
-  const {element} = props;
+  const { element } = props;
 
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const commandStack = useService("commandStack");
+  const translate = useService("translate");
+  const debounce = useService("debounceInput");
 
   const businessObject = getBusinessObject(element);
 
   const getValue = () => {
-    return businessObject.get('camunda:decisionRefVersionTag');
+    return businessObject.get("camunda:decisionRefVersionTag");
   };
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
+    commandStack.execute("element.updateModdleProperties", {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:decisionRefVersionTag': value
-      }
+        "camunda:decisionRefVersionTag": value,
+      },
     });
   };
 
   return TextFieldEntry({
     element,
-    id: 'decisionRefVersionTag',
-    label: translate('Version tag'),
+    id: "decisionRefVersionTag",
+    label: translate("Version tag"),
     getValue,
     setValue,
-    debounce
+    debounce,
   });
 }
 
 function TenantId(props) {
-  const {element} = props;
+  const { element } = props;
 
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const commandStack = useService("commandStack");
+  const translate = useService("translate");
+  const debounce = useService("debounceInput");
 
   const businessObject = getBusinessObject(element);
 
   const getValue = () => {
-    return businessObject.get('camunda:decisionRefTenantId');
+    return businessObject.get("camunda:decisionRefTenantId");
   };
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
+    commandStack.execute("element.updateModdleProperties", {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:decisionRefTenantId': value
-      }
+        "camunda:decisionRefTenantId": value,
+      },
     });
   };
 
   return TextFieldEntry({
     element,
-    id: 'decisionRefTenantId',
-    label: translate('Tenant ID'),
+    id: "decisionRefTenantId",
+    label: translate("Tenant ID"),
     getValue,
     setValue,
-    debounce
+    debounce,
   });
 }
 
 function ResultVariable(props) {
-  const {element} = props;
+  const { element } = props;
 
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const commandStack = useService("commandStack");
+  const translate = useService("translate");
+  const debounce = useService("debounceInput");
 
   const businessObject = getBusinessObject(element);
 
@@ -283,44 +277,44 @@ function ResultVariable(props) {
   // Note: camunda:mapDecisionResult got cleaned up in modeling behavior
   // cf. https://github.com/camunda/camunda-bpmn-js/blob/main/lib/camunda-platform/features/modeling/behavior/UpdateResultVariableBehavior.js
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
+    commandStack.execute("element.updateModdleProperties", {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:resultVariable': value
-      }
+        "camunda:resultVariable": value,
+      },
     });
   };
 
   return TextFieldEntry({
     element,
-    id: 'decisionRefResultVariable',
-    label: translate('Result variable'),
+    id: "decisionRefResultVariable",
+    label: translate("Result variable"),
     getValue,
     setValue,
-    debounce
+    debounce,
   });
 }
 
 function MapDecisionResult(props) {
-  const {element} = props;
+  const { element } = props;
 
-  const commandStack = useService('commandStack');
-  const translate = useService('translate');
+  const commandStack = useService("commandStack");
+  const translate = useService("translate");
 
   const businessObject = getBusinessObject(element);
 
   const getValue = () => {
-    return businessObject.get('camunda:mapDecisionResult') || 'resultList';
+    return businessObject.get("camunda:mapDecisionResult") || "resultList";
   };
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
+    commandStack.execute("element.updateModdleProperties", {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:mapDecisionResult': value
-      }
+        "camunda:mapDecisionResult": value,
+      },
     });
   };
 
@@ -328,10 +322,19 @@ function MapDecisionResult(props) {
   // cf. https://docs.camunda.org/manual/latest/reference/bpmn20/custom-extensions/extension-attributes/#mapdecisionresult
   const getOptions = () => {
     const options = [
-      {value: 'collectEntries', label: translate('collectEntries (List<Object>)')},
-      {value: 'resultList', label: translate('resultList (List<Map<String, Object>>)')},
-      {value: 'singleEntry', label: translate('singleEntry (TypedValue)')},
-      {value: 'singleResult', label: translate('singleResult (Map<String, Object>)')}
+      {
+        value: "collectEntries",
+        label: translate("collectEntries (List<Object>)"),
+      },
+      {
+        value: "resultList",
+        label: translate("resultList (List<Map<String, Object>>)"),
+      },
+      { value: "singleEntry", label: translate("singleEntry (TypedValue)") },
+      {
+        value: "singleResult",
+        label: translate("singleResult (Map<String, Object>)"),
+      },
     ];
 
     return options;
@@ -339,23 +342,22 @@ function MapDecisionResult(props) {
 
   return SelectEntry({
     element,
-    id: 'mapDecisionResult',
-    label: translate('Map decision result'),
+    id: "mapDecisionResult",
+    label: translate("Map decision result"),
     getValue,
     setValue,
-    getOptions
+    getOptions,
   });
 }
-
 
 // helper ////////////////////
 
 function getDecisionRefBinding(element) {
   const businessObject = getBusinessObject(element);
-  return businessObject.get('camunda:decisionRefBinding') || 'latest';
+  return businessObject.get("camunda:decisionRefBinding") || "latest";
 }
 
 function getResultVariable(element) {
   const businessObject = getBusinessObject(element);
-  return businessObject.get('camunda:resultVariable');
+  return businessObject.get("camunda:resultVariable");
 }

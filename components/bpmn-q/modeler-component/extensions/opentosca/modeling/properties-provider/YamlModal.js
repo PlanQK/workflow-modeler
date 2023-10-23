@@ -10,10 +10,10 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import Modal from '../../../../editor/ui/modal/Modal';
-import './yaml-modal.css';
-import '../../../../editor/config/config-modal.css';
+import React, { useState } from "react";
+import Modal from "../../../../editor/ui/modal/Modal";
+import "./yaml-modal.css";
+import "../../../../editor/config/config-modal.css";
 
 // polyfill upcoming structural components
 const Title = Modal.Title;
@@ -34,17 +34,17 @@ export default function YamlModal(props) {
 
   const onSubmit = async () => {
     // Process the uploaded file or text input here
-    console.log('Uploaded file:', uploadFile);
+    console.log("Uploaded file:", uploadFile);
     var reader = new FileReader();
     reader.onload = function () {
       var fileContent = reader.result;
       element.businessObject.yaml = fileContent;
-      commandStack.execute('element.updateModdleProperties', {
+      commandStack.execute("element.updateModdleProperties", {
         element,
         moddleElement: element.businessObject,
         properties: {
-          'yaml': fileContent
-        }
+          yaml: fileContent,
+        },
       });
     };
     reader.readAsText(uploadFile);
@@ -59,27 +59,39 @@ export default function YamlModal(props) {
       <Body>
         <table>
           <tbody>
-          <tr className="spaceUnder">
-            <td align="right">File</td>
-            <td align="left">
-              <input className="file-input-container"
-                     type="file" accept=".yml"
-                     id="fileUpload"
-                     onChange={(e) => { setUploadFile(e.target.files[0]); }}
-              />
-            </td>
-          </tr>
+            <tr className="spaceUnder">
+              <td align="right">File</td>
+              <td align="left">
+                <input
+                  className="file-input-container"
+                  type="file"
+                  accept=".yml"
+                  id="fileUpload"
+                  onChange={(e) => {
+                    setUploadFile(e.target.files[0]);
+                  }}
+                />
+              </td>
+            </tr>
           </tbody>
         </table>
-
       </Body>
 
       <Footer>
         <div id="wizardFormButtons">
-          <button type="button" className="qwm-btn qwm-btn-primary" form="configForm" onClick={onSubmit}>
+          <button
+            type="button"
+            className="qwm-btn qwm-btn-primary"
+            form="configForm"
+            onClick={onSubmit}
+          >
             Create
           </button>
-          <button type="button" className="qwm-btn qwm-btn-secondary" onClick={onClose}>
+          <button
+            type="button"
+            className="qwm-btn qwm-btn-secondary"
+            onClick={onClose}
+          >
             Cancel
           </button>
         </div>

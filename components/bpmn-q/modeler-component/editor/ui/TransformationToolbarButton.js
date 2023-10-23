@@ -90,7 +90,6 @@ export default function TransformationToolbarButton(props) {
       }
       // handle transformed workflow (open in new tab, save to file storage etc.)
       await handleTransformedWorkflow(xml);
-
     } catch (error) {
       NotificationHandler.getInstance().displayNotification({
         type: "warning",

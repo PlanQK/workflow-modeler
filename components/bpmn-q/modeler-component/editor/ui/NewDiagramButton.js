@@ -5,7 +5,7 @@ import ConfirmationModal from "./ConfirmationModal";
 
 export default function NewDiagramButton(props) {
   const { modeler } = props;
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [, setUnsavedChanges] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const checkUnsavedChanges = () => {

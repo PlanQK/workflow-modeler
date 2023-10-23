@@ -10,7 +10,7 @@
  */
 
 import defaultConfig from "./config";
-import {getPluginConfig} from '../../../editor/plugin/PluginConfigHandler';
+import { getPluginConfig } from "../../../editor/plugin/PluginConfigHandler";
 
 let config = {};
 
@@ -20,12 +20,13 @@ let config = {};
  * @return {string} the currently specified endpoint of the OpenTOSCA container
  */
 export function getOpenTOSCAEndpoint() {
-    if (config.opentoscaEndpoint === undefined) {
-        setOpenTOSCAEndpoint(
-            getPluginConfig('opentosca').opentoscaEndpoint
-            || defaultConfig.opentoscaEndpoint);
-    }
-    return config.opentoscaEndpoint;
+  if (config.opentoscaEndpoint === undefined) {
+    setOpenTOSCAEndpoint(
+      getPluginConfig("opentosca").opentoscaEndpoint ||
+        defaultConfig.opentoscaEndpoint
+    );
+  }
+  return config.opentoscaEndpoint;
 }
 
 /**
@@ -34,9 +35,9 @@ export function getOpenTOSCAEndpoint() {
  * @param opentoscaEndpoint the endpoint of the OpenTOSCA container
  */
 export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
-    if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
-        config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, '');
-    }
+  if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
+    config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, "");
+  }
 }
 
 /**
@@ -45,12 +46,13 @@ export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
  * @return {string} the currently specified endpoint of the Winery
  */
 export function getWineryEndpoint() {
-    if (config.wineryEndpoint === undefined) {
-        setWineryEndpoint(
-            getPluginConfig('opentosca').wineryEndpoint
-            || defaultConfig.wineryEndpoint);
-    }
-    return config.wineryEndpoint;
+  if (config.wineryEndpoint === undefined) {
+    setWineryEndpoint(
+      getPluginConfig("opentosca").wineryEndpoint ||
+        defaultConfig.wineryEndpoint
+    );
+  }
+  return config.wineryEndpoint;
 }
 
 /**
@@ -59,9 +61,9 @@ export function getWineryEndpoint() {
  * @param wineryEndpoint the endpoint of the Winery
  */
 export function setWineryEndpoint(wineryEndpoint) {
-    if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
-        config.wineryEndpoint = wineryEndpoint.replace(/\/$/, '');
-    }
+  if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
+    config.wineryEndpoint = wineryEndpoint.replace(/\/$/, "");
+  }
 }
 
 /**
@@ -69,5 +71,5 @@ export function setWineryEndpoint(wineryEndpoint) {
  * by setting this.comfig to an empty js object.
  */
 export function resetConfig() {
-    config = {};
+  config = {};
 }

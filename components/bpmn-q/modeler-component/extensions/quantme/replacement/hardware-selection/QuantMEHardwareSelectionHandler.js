@@ -395,19 +395,14 @@ function addSelectionStrategyTask(
 ) {
   console.log("Adding task for selection strategy: %s", selectionStrategy);
 
-  if ( selectionStrategy === undefined ) {
-    return addShortestQueueSelectionStrategy(
-        parent,
-        elementRegistry,
-        modeling
-    );
-  }
-  else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
+  if (selectionStrategy === undefined) {
+    return addShortestQueueSelectionStrategy(parent, elementRegistry, modeling);
+  } else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
     NotificationHandler.getInstance().displayNotification({
       type: "info",
       title: "Transformation Unsuccessful!",
       content:
-          "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
+        "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
       duration: 7000,
     });
     return undefined;
