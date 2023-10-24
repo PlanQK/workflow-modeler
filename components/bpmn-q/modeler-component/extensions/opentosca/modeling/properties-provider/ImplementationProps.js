@@ -87,7 +87,7 @@ export function ImplementationProps(props) {
     });
 
     if (
-      element.businessObject.deploymentModelUrl ||
+      !element.businessObject.deploymentModelUrl ||
       !element.businessObject.deploymentModelUrl.includes(
         encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))
       )
