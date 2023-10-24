@@ -1,5 +1,5 @@
 # Documentation
-This is the documentation for the Quantum Workflow Modeler. It provides all the necessary information to understand, install, and extend this project.
+This is the documentation for the Quantum Workflow Modeler. It provides all necessary information to understand, install, and extend this project.
 
 ## Table of Contents
 This documentation contains the following sections:
@@ -31,7 +31,7 @@ Documentation of the Quantum Workflow Modeler. It contains information about the
    4. [QHAna Plugin](quantum-workflow-modeler/extensions/qhana-plugin/qhana-plugin.md)
 
 ### bpmn-js Documentation
-Useful information and documentation on how to use and extend the bpmn-js modeler and its components. The content is based on personal experience, the [bpmn-js Walkthrough](https://bpmn.io/toolkit/bpmn-js/walkthrough), and the source code of the [bpmn-js Modeler](https://github.com/bpmn-io/bpmn-js). This documentation may help you extend the bpmn-js modeler to write your own custom modeling extensions. It consists of the following sections:
+Useful information and documentation on how to use and extend the bpmn-js modeler and its components. The content is based on personal experience, the [bpmn-js walkthrough](https://bpmn.io/toolkit/bpmn-js/walkthrough), and the source code of the [bpmn-js Modeler](https://github.com/bpmn-io/bpmn-js). This documentation may help you extend the bpmn-js modeler to write your own custom modeling extensions. It consists of the following sections:
 - [General Notices](extend-bpmn-js/extension-general/general-extension-hints.md)
 - [Context Pad](extend-bpmn-js/context-pad/custom-context-pad.md)
 - [Menu Entries](extend-bpmn-js/menu-entries/custom-replace-entries.md)

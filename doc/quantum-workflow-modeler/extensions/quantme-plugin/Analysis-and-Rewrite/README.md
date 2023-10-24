@@ -57,7 +57,7 @@ However, the integration of an automated serialization of multiple contained pat
 
 ### Hybrid Programs and Source Programs
 
-Qiskit Runtime currently does not support including custom dependencies into the executable hybrid programs (see [here](https://qiskit.org/documentation/partners/qiskit_runtime/tutorials/sample_vqe_program/qiskit_runtime_vqe_program.html)).
+Qiskit Runtime currently does not support the utilization of custom dependencies within hybrid programs (see [here](https://qiskit.org/documentation/partners/qiskit_runtime/tutorials/sample_vqe_program/qiskit_runtime_vqe_program.html)).
 Instead, they only support a small set of pre-installed dependencies, e.g., the Qiskit or mthree libraries.
 Therefore, the quantum and classical programs of the hybrid loop are currently also restricted to these dependencies.
 
