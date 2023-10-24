@@ -242,7 +242,6 @@ export class QuantumWorkflowModeler extends HTMLElement {
             maxLines: editorHeight / 28 + 7,
           });
 
-          //editorElement.css("height", editorHeight + "px");
           aceEditor.resize(true);
         }
       });
