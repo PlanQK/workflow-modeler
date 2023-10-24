@@ -60,7 +60,7 @@ describe("Test DataObjectConfigurations", function () {
     fetchStub = sinon
       .stub(dataObjectConfigurationsEndpoint(), "fetchConfigurations")
       .callsFake(() => {
-        dataObjectConfigurationsEndpoint()._configurations =
+        dataObjectConfigurationsEndpoint().configurations =
           QUANTME_DATA_OBJECTS;
       });
 

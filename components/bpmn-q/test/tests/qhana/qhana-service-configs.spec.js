@@ -17,10 +17,11 @@ describe("Test QHAnaConfigurations", function () {
       fetchStub = sinon
         .stub(qhanaConfigurationsEndpoint(), "fetchConfigurations")
         .callsFake(() => {
-          qhanaConfigurationsEndpoint()._configurations =
-            QHANA_SERVICE_DATA.map(function (serviceData) {
+          qhanaConfigurationsEndpoint().configurations = QHANA_SERVICE_DATA.map(
+            function (serviceData) {
               return createConfigurationForServiceData(serviceData.data);
-            });
+            }
+          );
         });
 
       qhanaConfigurationsEndpoint().updateQHAnaServiceConfigurations();

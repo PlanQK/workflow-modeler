@@ -4,14 +4,41 @@
 export default class ConfigurationsEndpoint {
   // array containing the fetched configurations
   configurations = [];
+  endpointUrl;
 
-  constructor() {
+  constructor(endpointUrl) {
+    this.endpointUrl = endpointUrl;
     // initial fetch for configurations
-    this.fetchConfigurations();
+    this.fetchConfiguration();
   }
 
   /**
    * Fetch the configured endpoint and store the result in the configurations
+   */
+  fetchConfiguration() {
+    fetch(this.endpointUrl)
+      .then((response) =>
+        response.headers.get("content-type") === "text/plain; charset=utf-8"
+          ? response.text()
+          : response.json()
+      )
+      .then((data) => {
+        this.configurations =
+          typeof data === "string" ? JSON.parse(data) : data;
+      })
+      .catch((error) => {
+        console.error(
+          "Error fetching configurations from " +
+            this.endpointUrl +
+            ": \n" +
+            error
+        );
+        this.configurations = [];
+      });
+  }
+
+  /**
+   * Fetch the endpoint and store the result in the configurations
    */
   fetchConfigurations(endpoint) {
     fetch(endpoint)
