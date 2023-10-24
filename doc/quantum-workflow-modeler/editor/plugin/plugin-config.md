@@ -1,4 +1,4 @@
-# Configurat your plugin
+# Configurate your plugin
 You can hand custom config data to each plugin. The config data is defined in the code which integrated the modeler and 
 handed to the integrated modeler instance. You can define the structure of the config data as you need it.
 
@@ -18,7 +18,7 @@ modelerComponent.pluginConfigs = [
 ];
 ```
 
-To access the config in your plugin code, you simply call 'getPluginConfig()' and pass the id of your plugin as a parameter to the function. This will return the 'config' attribute and you can access your custom entries.
+To access the config in your plugin code, you simply call 'getPluginConfig()' and pass the id of your plugin as a parameter to the function. This will return the `config` attribute and you can access your custom entries.
 ```javascript
 const x = getPluginConfig('myplugin').importantConfig;
 ```

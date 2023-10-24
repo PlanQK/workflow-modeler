@@ -9,7 +9,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* eslint-disable no-unused-vars */
 import React from "react";
 import Modal from "../ui/modal/Modal";
 import "./config-modal.css";
@@ -60,7 +59,7 @@ export default function ConfigModal({ onClose, configTabs }) {
 
       <Body>
         <form id="configForm" onSubmit={onSubmit}>
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <div id="configButtons" className="qwm-tabButtonsContainer">
               {React.Children.toArray(
                 configTabs.map((tab, index) => (
@@ -96,7 +95,7 @@ export default function ConfigModal({ onClose, configTabs }) {
         <div id="configFormButtons">
           <button
             type="submit"
-            className="qwm-btn qwm-btn-primary"
+            className="qwm-btn qwm-btn-save"
             form="configForm"
           >
             Save

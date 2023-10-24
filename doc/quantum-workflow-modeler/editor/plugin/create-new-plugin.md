@@ -23,4 +23,4 @@ Create a PluginObject which contains all the extensions of your plugin. It is us
 Workflow Modeler. The Structure of the Plugin Object is described [here](plugin-integration.md)
 
 ## Register your plugin and activate it
-Register your Plugin and activate its usage through the initial plugin config of the modeler as described by [this guide](plugin-integration.md)
+Register your Plugin and activate its usage through the initial plugin config of the modeler as described by [this guide](plugin-integration.md).

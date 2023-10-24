@@ -1,3 +1,14 @@
+/**
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
+ * University of Stuttgart
+ *
+ * This program and the accompanying materials are made available under the
+ * terms the Apache Software License 2.0
+ * which is available at https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { sortBy, without } from "min-dash";
 
 import { SelectEntry, isSelectEntryEdited } from "@bpmn-io/properties-panel";
@@ -5,7 +16,6 @@ import { useService } from "bpmn-js-properties-panel";
 import { createElement } from "../../../../editor/util/camunda-utils/ElementUtil";
 import {
   getServiceTaskLikeBusinessObject,
-  isDeploymentCapable,
   isDmnCapable,
   isExternalCapable,
   isServiceTaskLike,
@@ -39,8 +49,7 @@ const IMPLEMENTATION_TYPE_NONE_LABEL = "<none>",
   IMPLEMENTATION_TYPE_DELEGATE_LABEL = "Delegate expression",
   IMPLEMENTATION_TYPE_DMN_LABEL = "DMN",
   IMPLEMENTATION_TYPE_EXTERNAL_LABEL = "External",
-  IMPLEMENTATION_TYPE_CONNECTOR_LABEL = "Connector",
-  IMPLEMENTATION_TYPE_DEPLOYMENT_LABEL = "Deployment Model";
+  IMPLEMENTATION_TYPE_CONNECTOR_LABEL = "Connector";
 
 export function ImplementationTypeProps() {
   return [
@@ -172,21 +181,6 @@ function ImplementationType(props) {
       }
     }
 
-    // (5) deployment
-    if (isDeploymentCapable(businessObject)) {
-      updatedProperties = {
-        ...updatedProperties,
-        "opentosca:deploymentModelUrl": undefined,
-      };
-
-      if (value === "deploymentModel") {
-        updatedProperties = {
-          ...updatedProperties,
-          "opentosca:deploymentModelUrl": "",
-        };
-      }
-    }
-
     // (5) collect all property updates
     commands.push(
       UpdateModdlePropertiesCommand(element, businessObject, updatedProperties)
@@ -230,14 +224,6 @@ function ImplementationType(props) {
       options.push({
         value: "connector",
         label: translate(IMPLEMENTATION_TYPE_CONNECTOR_LABEL),
-      });
-    }
-
-    // add deployment
-    if (isDeploymentCapable(businessObject)) {
-      options.push({
-        value: "deploymentModel",
-        label: translate(IMPLEMENTATION_TYPE_DEPLOYMENT_LABEL),
       });
     }
 

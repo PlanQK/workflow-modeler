@@ -1,8 +1,3 @@
-import { SelectEntry } from "@bpmn-io/properties-panel";
-import React from "@bpmn-io/properties-panel/preact/compat";
-import { useService } from "bpmn-js-properties-panel";
-import { getImplementationType } from "../../../quantme/utilities/ImplementationTypeHelperExtension";
-
 /**
  * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
@@ -13,6 +8,10 @@ import { getImplementationType } from "../../../quantme/utilities/Implementation
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+
+import { SelectEntry } from "@bpmn-io/properties-panel";
+import React from "@bpmn-io/properties-panel/preact/compat";
+import { useService } from "bpmn-js-properties-panel";
 
 const jquery = require("jquery");
 
@@ -28,7 +27,7 @@ export function Deployment({ element, translate, wineryEndpoint }) {
   const debounce = useService("debounceInput");
 
   const selectOptions = function () {
-    const arrValues = [];
+    const arrValues = [{ label: "No CSAR", value: undefined }];
     jquery.ajax({
       url: wineryEndpoint + "/servicetemplates/?grouped",
       method: "GET",
@@ -53,9 +52,6 @@ export function Deployment({ element, translate, wineryEndpoint }) {
       },
       async: false,
     });
-    if (arrValues.length === 0) {
-      arrValues.push({ label: "No CSARs available", value: "" });
-    }
     return arrValues;
   };
 
@@ -65,20 +61,16 @@ export function Deployment({ element, translate, wineryEndpoint }) {
 
   const setValue = function (value) {
     return modeling.updateProperties(element, {
-      deploymentModelUrl: value || "",
+      deploymentModelUrl: value,
     });
   };
 
-  const validate = function (values) {
-    return values === undefined || values === ""
-      ? translate("Must provide a CSAR")
-      : "";
+  const validate = function () {
+    return "";
   };
 
   const hidden = function () {
-    const implType = getImplementationType(element);
-    console.log("getImplementationType returns " + implType);
-    return !(implType === "deploymentModel");
+    return false;
   };
 
   return (

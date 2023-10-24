@@ -2,6 +2,10 @@
 The PlanQK plugin adds the DataPool and PlanQKServiceTask modelling elements. It depends on the DataFlow plugin because
 the DataPool extends the DataStoreMap. To use the PlanQK plugin, the DataFlow plugin must also be active.
 
+## Overview
+An overview of all modeling elements:
+![PlanQK Overview](PlanQK-Overview.png)
+
 ## Structure
 - [PlanQK Plugin Object](../../../../components/bpmn-q/modeler-component/extensions/planqk/PlanQKPlugin.js)
 - [PlanQK Transformation Function](../../../../components/bpmn-q/modeler-component/extensions/planqk/exec-completion/PlanQKServiceTaskCompletion.js)

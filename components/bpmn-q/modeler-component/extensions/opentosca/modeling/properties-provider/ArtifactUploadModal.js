@@ -74,7 +74,7 @@ export default function ArtifactUploadModal({
   }
 
   const allowedFileTypes = {
-    zip: ".tar.gz",
+    zip: ".tar.gz, .zip",
     war: ".war",
   };
 
