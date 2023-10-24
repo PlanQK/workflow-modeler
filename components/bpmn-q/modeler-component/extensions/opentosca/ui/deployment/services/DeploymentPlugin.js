@@ -370,7 +370,7 @@ export default class DeploymentPlugin extends PureComponent {
               className="qwm-toolbar-btn"
               title="Open service deployment menu"
               onClick={() =>
-                this.setState({ windowOpenDeploymentDeploymentOverview: true })
+                this.setState({ windowOpenDeploymentOverview: true })
               }
             >
               <span className="app-icon-service-deployment">
