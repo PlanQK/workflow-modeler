@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { fetch } from 'whatwg-fetch';
-import { performAjax } from '../utilities/Utilities';
+import { fetch } from "whatwg-fetch";
+import { performAjax } from "../utilities/Utilities";
 
 /**
  * Upload the CSAR located at the given URL to the connected OpenTOSCA Container and return the corresponding URL and required input parameters
@@ -20,23 +20,23 @@ import { performAjax } from '../utilities/Utilities';
  * @param url the URL pointing to the CSAR
  * @param wineryEndpoint the endpoint of the Winery containing the CSAR to upload
  */
-export async function uploadCSARToContainer (
+export async function uploadCSARToContainer(
   opentoscaEndpoint,
   csarName,
   url,
   wineryEndpoint
 ) {
   if (opentoscaEndpoint === undefined) {
-    console.error('OpenTOSCA endpoint is undefined. Unable to upload CSARs...');
+    console.error("OpenTOSCA endpoint is undefined. Unable to upload CSARs...");
     return { success: false };
   }
 
   try {
-    if (url.startsWith('{{ wineryEndpoint }}')) {
-      url = url.replace('{{ wineryEndpoint }}', wineryEndpoint);
+    if (url.startsWith("{{ wineryEndpoint }}")) {
+      url = url.replace("{{ wineryEndpoint }}", wineryEndpoint);
     }
     console.log(
-      'Checking if CSAR at following URL is already uploaded to the OpenTOSCA Container: ',
+      "Checking if CSAR at following URL is already uploaded to the OpenTOSCA Container: ",
       url
     );
 
@@ -44,19 +44,19 @@ export async function uploadCSARToContainer (
     let getCSARResult = await getBuildPlanForCSAR(opentoscaEndpoint, csarName);
 
     if (!getCSARResult.success) {
-      console.log('CSAR is not yet uploaded. Uploading...');
+      console.log("CSAR is not yet uploaded. Uploading...");
 
       const body = {
-        enrich: 'false',
+        enrich: "false",
         name: csarName,
-        url
+        url,
       };
 
       // upload the CSAR
       await fetch(opentoscaEndpoint, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
 
       // check successful upload and retrieve corresponding url
@@ -64,7 +64,7 @@ export async function uploadCSARToContainer (
     }
 
     if (!getCSARResult.success) {
-      console.error('Uploading CSAR failed!');
+      console.error("Uploading CSAR failed!");
       return { success: false };
     }
 
@@ -75,10 +75,10 @@ export async function uploadCSARToContainer (
     return {
       success: true,
       url: getCSARResult.url,
-      inputParameters: buildPlanResultJson.input_parameters
+      inputParameters: buildPlanResultJson.input_parameters,
     };
   } catch (e) {
-    console.error('Error while uploading CSAR: ' + e);
+    console.error("Error while uploading CSAR: " + e);
     return { success: false };
   }
 }
@@ -90,7 +90,7 @@ export async function uploadCSARToContainer (
  * @param csarName the name of the csar
  * @return the status whether the given CSAR is uploaded and the corresponding build plan link if available
  */
-async function getBuildPlanForCSAR (opentoscaEndpoint, csarName) {
+async function getBuildPlanForCSAR(opentoscaEndpoint, csarName) {
   // get all currently deployed CSARs
   const response = await fetch(opentoscaEndpoint);
   const responseJson = await response.json();
@@ -104,7 +104,7 @@ async function getBuildPlanForCSAR (opentoscaEndpoint, csarName) {
   for (let i = 0; i < deployedCSARs.length; i++) {
     const deployedCSAR = deployedCSARs[i];
     if (deployedCSAR.id === csarName) {
-      console.log('Found uploaded CSAR with id: %s', csarName);
+      console.log("Found uploaded CSAR with id: %s", csarName);
       const url = deployedCSAR._links.self.href;
 
       // retrieve the URl to the build plan required to get the input parameters and to instantiate the CSAR
@@ -122,8 +122,8 @@ async function getBuildPlanForCSAR (opentoscaEndpoint, csarName) {
  * @param csarUrl the URL to a CSAR
  * @return the URL to the build plan for the given CSAR
  */
-async function getBuildPlanUrl (csarUrl) {
-  let response = await fetch(csarUrl + '/servicetemplates');
+async function getBuildPlanUrl(csarUrl) {
+  let response = await fetch(csarUrl + "/servicetemplates");
   let responseJson = await response.json();
 
   if (
@@ -131,19 +131,19 @@ async function getBuildPlanUrl (csarUrl) {
     responseJson.service_templates.length !== 1
   ) {
     console.error(
-      'Unable to find service template in CSAR at URL: %s',
+      "Unable to find service template in CSAR at URL: %s",
       csarUrl
     );
     return { success: false };
   }
 
   const buildPlansUrl =
-    responseJson.service_templates[0]._links.self.href + '/buildplans';
+    responseJson.service_templates[0]._links.self.href + "/buildplans";
   response = await fetch(buildPlansUrl);
   responseJson = await response.json();
 
   if (!responseJson.plans || responseJson.plans.length !== 1) {
-    console.error('Unable to find build plan at URL: %s', buildPlansUrl);
+    console.error("Unable to find build plan at URL: %s", buildPlansUrl);
     return { success: false };
   }
 
@@ -157,23 +157,23 @@ async function getBuildPlanUrl (csarUrl) {
  * @param camundaEngineEndpoint the endpoint of the Camunda engine to bind services using the pulling pattern
  * @return the result of the instance creation (success, endpoint, topic on which the service listens, ...)
  */
-export async function createServiceInstance (csar, camundaEngineEndpoint) {
+export async function createServiceInstance(csar, camundaEngineEndpoint) {
   const result = { success: false };
 
   const inputParameters = csar.inputParameters;
-  if (csar.type === 'pull') {
+  if (csar.type === "pull") {
     // get special parameters that are required to bind services using external tasks / the pulling pattern
     const camundaTopicParam = inputParameters.find(
-      (param) => param.name === 'camundaTopic'
+      (param) => param.name === "camundaTopic"
     );
     const camundaEndpointParam = inputParameters.find(
-      (param) => param.name === 'camundaEndpoint'
+      (param) => param.name === "camundaEndpoint"
     );
 
     // abort if parameters are not available
     if (camundaTopicParam === undefined || camundaEndpointParam === undefined) {
       console.error(
-        'Unable to pass topic to poll to service instance creation. Service binding will fail!'
+        "Unable to pass topic to poll to service instance creation. Service binding will fail!"
       );
       return result;
     }
@@ -187,11 +187,14 @@ export async function createServiceInstance (csar, camundaEngineEndpoint) {
   }
 
   // trigger instance creation
-  const instanceCreationResponse = await fetch(csar.buildPlanUrl + '/instances', {
-    method: 'POST',
-    body: JSON.stringify(inputParameters),
-    headers: { 'Content-Type': 'application/json' }
-  });
+  const instanceCreationResponse = await fetch(
+    csar.buildPlanUrl + "/instances",
+    {
+      method: "POST",
+      body: JSON.stringify(inputParameters),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
   const instanceCreationResponseJson = await instanceCreationResponse.json();
 
   // wait for the service instance to be created
@@ -199,7 +202,7 @@ export async function createServiceInstance (csar, camundaEngineEndpoint) {
 
   // get service template instance to poll for completness
   let buildPlanResponse = await fetch(
-    csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson
+    csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
   );
   let buildPlanResponseJson = await buildPlanResponse.json();
 
@@ -212,37 +215,38 @@ export async function createServiceInstance (csar, camundaEngineEndpoint) {
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    console.log('Retry fetching build plan');
+    console.log("Retry fetching build plan");
 
     buildPlanResponse = await fetch(
-      csar.buildPlanUrl + '/instances/' + instanceCreationResponseJson
+      csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
     );
     buildPlanResponseJson = await buildPlanResponse.json();
   }
 
   if (!buildPlanResponseJson._links) {
     console.log(
-      'Unable to fetch build plans for ' +
+      "Unable to fetch build plans for " +
         csar.buildPlanUrl +
-        '/instances/' +
+        "/instances/" +
         instanceCreationResponseJson
     );
     result.success = false;
     return result;
   }
 
-  const pollingUrl = buildPlanResponseJson._links.service_template_instance.href;
+  const pollingUrl =
+    buildPlanResponseJson._links.service_template_instance.href;
 
-  let state = 'CREATING';
-  console.log('Polling for finished service instance at URL: %s', pollingUrl);
-  let properties = '';
-  while (!(state === 'CREATED' || state === 'FAILED')) {
+  let state = "CREATING";
+  console.log("Polling for finished service instance at URL: %s", pollingUrl);
+  let properties = "";
+  while (!(state === "CREATED" || state === "FAILED")) {
     // wait 5 seconds for next poll
     await new Promise((resolve) => setTimeout(resolve, 5000));
     // poll for current state
     const pollingResponse = await fetch(pollingUrl);
     const pollingResponseJson = await pollingResponse.json();
-    console.log('Polling response: ', pollingResponseJson);
+    console.log("Polling response: ", pollingResponseJson);
     properties = pollingResponseJson._links.properties.href;
 
     state = pollingResponseJson.state;
@@ -253,10 +257,10 @@ export async function createServiceInstance (csar, camundaEngineEndpoint) {
   return result;
 }
 
-export function makeId (length) {
-  let result = '';
+export function makeId(length) {
+  let result = "";
   const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -275,7 +279,7 @@ export function makeId (length) {
  * @param fileName the name of the file to upload as blob
  * @return the final name of the created ArtifactTemplate
  */
-export async function createNewArtifactTemplate (
+export async function createNewArtifactTemplate(
   wineryEndpoint,
   localNamePrefix,
   namespace,
@@ -283,10 +287,12 @@ export async function createNewArtifactTemplate (
   blob,
   fileName
 ) {
-  console.log('Creating new ArtifactTemplate of type: ', type);
+  console.log("Creating new ArtifactTemplate of type: ", type);
 
   // retrieve the currently available ArtifactTemplates
-  const getArtifactsResult = await fetch(wineryEndpoint + '/artifacttemplates/');
+  const getArtifactsResult = await fetch(
+    wineryEndpoint + "/artifacttemplates/"
+  );
   const getArtifactsResultJson = await getArtifactsResult.json();
 
   console.log(getArtifactsResultJson);
@@ -299,12 +305,11 @@ export async function createNewArtifactTemplate (
     )
   ) {
     let nameOccupied = true;
-    artifactTemplateLocalName += '-' + makeId(1);
+    artifactTemplateLocalName += "-" + makeId(1);
     while (nameOccupied) {
       if (
         !getArtifactsResultJson.some(
-          (e) =>
-            e.id === artifactTemplateLocalName && e.namespace === namespace
+          (e) => e.id === artifactTemplateLocalName && e.namespace === namespace
         )
       ) {
         nameOccupied = false;
@@ -314,24 +319,24 @@ export async function createNewArtifactTemplate (
     }
   }
   console.log(
-    'Creating ArtifactTemplate with name: ',
+    "Creating ArtifactTemplate with name: ",
     artifactTemplateLocalName
   );
 
   // create ArtifactTemplate
   const artifactCreationResponse = await fetch(
-    wineryEndpoint + '/artifacttemplates/',
+    wineryEndpoint + "/artifacttemplates/",
     {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         localname: artifactTemplateLocalName,
         namespace,
-        type
+        type,
       }),
       headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     }
   );
   const artifactCreationResponseText = await artifactCreationResponse.text();
@@ -339,13 +344,13 @@ export async function createNewArtifactTemplate (
   // get URL for the file upload to the ArtifactTemplate
   const fileUrl =
     wineryEndpoint +
-    '/artifacttemplates/' +
+    "/artifacttemplates/" +
     artifactCreationResponseText +
-    'files';
+    "files";
 
   // upload the blob
   const fd = new FormData();
-  fd.append('file', blob, fileName);
+  fd.append("file", blob, fileName);
   await performAjax(fileUrl, fd);
 
   return artifactTemplateLocalName;
@@ -359,19 +364,19 @@ export async function createNewArtifactTemplate (
  * @param serviceTemplateNamespace the namespace of the ServiceTemplate to create a new version from
  * @return the URL to the new version, or an error if the base ServiceTemplate is not available at the given Winery endpoint
  */
-export async function createNewServiceTemplateVersion (
+export async function createNewServiceTemplateVersion(
   wineryEndpoint,
   serviceTemplateId,
   serviceTemplateNamespace
 ) {
   console.log(
-    'Creating new version of Service Template with ID %s and namespace %s',
+    "Creating new version of Service Template with ID %s and namespace %s",
     serviceTemplateId,
     serviceTemplateNamespace
   );
 
   // retrieve the currently available ServiceTemplates
-  const getTemplatesResult = await fetch(wineryEndpoint + '/servicetemplates/');
+  const getTemplatesResult = await fetch(wineryEndpoint + "/servicetemplates/");
   const getTemplatesResultJson = await getTemplatesResult.json();
 
   // abort if base service template is not available
@@ -382,11 +387,11 @@ export async function createNewServiceTemplateVersion (
     )
   ) {
     console.log(
-      'Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!'
+      "Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!"
     );
     return {
       error:
-        'Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!'
+        "Required base ServiceTemplate for deploying Qiskit Runtime programs not available in Winery!",
     };
   }
 
@@ -397,7 +402,7 @@ export async function createNewServiceTemplateVersion (
     if (
       !getTemplatesResultJson.some(
         (e) =>
-          e.id === serviceTemplateId + '_' + version + '-w1-wip1' &&
+          e.id === serviceTemplateId + "_" + version + "-w1-wip1" &&
           e.namespace === serviceTemplateNamespace
       )
     ) {
@@ -406,18 +411,18 @@ export async function createNewServiceTemplateVersion (
       version += makeId(1);
     }
   }
-  console.log('Using component version: ', version);
+  console.log("Using component version: ", version);
 
   // create ServiceTemplate version
   const versionUrl =
     wineryEndpoint +
-    '/servicetemplates/' +
+    "/servicetemplates/" +
     encodeURIComponent(encodeURIComponent(serviceTemplateNamespace)) +
-    '/' +
+    "/" +
     serviceTemplateId;
-  console.log('Creating new version under URL:', versionUrl);
+  console.log("Creating new version under URL:", versionUrl);
   const versionCreationResponse = await fetch(versionUrl, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify({
       version: {
         componentVersion: version,
@@ -426,13 +431,13 @@ export async function createNewServiceTemplateVersion (
         latestVersion: false,
         releasable: false,
         wineryVersion: 1,
-        workInProgressVersion: 1
-      }
+        workInProgressVersion: 1,
+      },
     }),
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
 
   // assemble URL to the created ServiceTemplate version
   const versionCreationResponseText = await versionCreationResponse.text();
-  return wineryEndpoint + '/servicetemplates/' + versionCreationResponseText;
+  return wineryEndpoint + "/servicetemplates/" + versionCreationResponseText;
 }
