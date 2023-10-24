@@ -10,6 +10,13 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+
+    services:
+      workflow-test-engine:
+        image: planqk/workflow-engine-test:latest
+        ports:
+          - 8090:8090
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
