@@ -73,7 +73,7 @@ function getCSARName(serviceTask) {
  * @param element the element to check
  * @return {*|boolean} true if the element is a ServiceTask and has an assigned deployment model, false otherwise
  */
-function isDeployableServiceTask(element) {
+export function isDeployableServiceTask(element) {
   return (
     element.$type &&
     element.$type === "bpmn:ServiceTask" &&

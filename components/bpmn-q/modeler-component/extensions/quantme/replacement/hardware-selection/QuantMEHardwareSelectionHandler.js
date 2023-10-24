@@ -22,7 +22,7 @@ import * as consts from "../../Constants";
 import { addExtensionElements } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import {
   createTempModelerFromXml,
-  createModeler,
+  createTempModeler,
 } from "../../../../editor/ModelerHandler";
 import {
   getPropertiesToCopy,
@@ -34,6 +34,7 @@ import {
   getRootProcess,
 } from "../../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../../editor/util/IoUtilities";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
@@ -394,11 +395,16 @@ function addSelectionStrategyTask(
 ) {
   console.log("Adding task for selection strategy: %s", selectionStrategy);
 
-  if (
-    selectionStrategy === undefined ||
-    !consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)
-  ) {
-    console.log("Selection strategy not supported. Aborting!");
+  if (selectionStrategy === undefined) {
+    return addShortestQueueSelectionStrategy(parent, elementRegistry, modeling);
+  } else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
+    NotificationHandler.getInstance().displayNotification({
+      type: "info",
+      title: "Transformation Unsuccessful!",
+      content:
+        "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
+      duration: 7000,
+    });
     return undefined;
   }
 
@@ -436,7 +442,7 @@ async function getHardwareSelectionFragment(subprocess) {
   console.log("Extracting workflow fragment from subprocess: ", subprocess);
 
   // create new modeler to extract the XML of the workflow fragment
-  let modeler = createModeler();
+  let modeler = createTempModeler();
   let elementRegistry = modeler.get("elementRegistry");
   let bpmnReplace = modeler.get("bpmnReplace");
   let modeling = modeler.get("modeling");

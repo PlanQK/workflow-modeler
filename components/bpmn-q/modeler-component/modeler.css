@@ -1,14 +1,7 @@
-.resize {
+.qwm .resize {
   position: absolute;
   bottom: 45px;
   right: 0;
-}
-
-.xml-viewer-button {
-  position: absolute;
-  bottom: 45px;
-  left: 20px;
-  z-index: 2;
 }
 
 .ace_editor.ace-tm {
@@ -31,13 +24,13 @@
   cursor: w-resize;
 }
 
-body {
-  overflow-y: hidden;
-}
-
 #editor_wrap {
   position: relative;
   border-bottom: 1px solid #222222;
+}
+
+.qwm-body {
+  overflow-y: hidden;
 }
 
 #editor_dragbar {
