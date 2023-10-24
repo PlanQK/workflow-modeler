@@ -8,6 +8,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+import * as config from "../framework-config/config-manager";
 
 const QUANTME_NAMESPACE_PULL_ENCODED = encodeURIComponent(
   encodeURIComponent("http://quantil.org/quantme/pull")
@@ -55,14 +56,9 @@ export function getBindingType(serviceTask) {
  * @param modeling the modeling element to adapt properties of the workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export function bindUsingPull(
-  topicName,
-  serviceTaskId,
-  elementRegistry,
-  modeling
-) {
+export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
   if (
-    topicName === undefined ||
+    csar.topicName === undefined ||
     serviceTaskId === undefined ||
     elementRegistry === undefined ||
     modeling === undefined
@@ -83,11 +79,23 @@ export function bindUsingPull(
     return { success: false };
   }
 
+  let deploymentModelUrl = serviceTask.businessObject.get(
+    "opentosca:deploymentModelUrl"
+  );
+  if (deploymentModelUrl.startsWith("{{ wineryEndpoint }}")) {
+    deploymentModelUrl = deploymentModelUrl.replace(
+      "{{ wineryEndpoint }}",
+      config.getWineryEndpoint()
+    );
+  }
+
   // remove deployment model URL and set topic
+
   modeling.updateProperties(serviceTask, {
-    deploymentModelUrl: undefined,
+    "opentosca:deploymentModelUrl": deploymentModelUrl,
+    "opentosca:deploymentBuildPlanInstanceUrl": csar.buildPlanUrl,
     type: "external",
-    topic: topicName,
+    topic: csar.topicName,
   });
   return { success: true };
 }
