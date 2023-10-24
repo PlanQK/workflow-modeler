@@ -20,6 +20,10 @@ import { getImplementationType } from "../../../quantme/utilities/Implementation
 import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import { YamlUpload } from "./YamlUpload";
+import { Connector } from "./Connector";
+import yaml from "js-yaml";
+
+const QUANTME_NAMESPACE_PULL = "http://quantil.org/quantme/pull";
 
 /**
  * Properties group for implementations of service tasks.
@@ -28,8 +32,9 @@ import { YamlUpload } from "./YamlUpload";
  * @return {{component: function(*): preact.VNode<any>, isEdited: function(*): *, id: string}[]|*[]}
  * @constructor
  */
-export function ImplementationProps(element) {
+export function ImplementationProps(props) {
   console.log("Rendering implementation properties for ServiceTask!");
+  const { element, translate } = props;
 
   if (!getServiceTaskLikeBusinessObject(element)) {
     return [];
@@ -81,6 +86,24 @@ export function ImplementationProps(element) {
       isEdited: isTextFieldEntryEdited,
     });
 
+    if (
+      element.businessObject.deploymentModelUrl &&
+      !element.businessObject.deploymentModelUrl.includes(
+        encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))
+      ) &&
+      element.businessObject.yaml !== undefined
+    ) {
+      const urls = extractUrlsFromYaml(element.businessObject.yaml);
+      entries.push({
+        id: "connector",
+        element,
+        translate,
+        urls,
+        component: Connector,
+        isEdited: isTextFieldEntryEdited,
+      });
+    }
+
     // field to upload an OpenAPI spec for automated connector generation
     entries.push({
       id: "yamlUpload",
@@ -90,6 +113,16 @@ export function ImplementationProps(element) {
   }
 
   return entries;
+}
+
+function extractUrlsFromYaml(content) {
+  const doc = yaml.load(content);
+
+  // Extract URLs from paths
+  const paths = Object.keys(doc.paths);
+  return paths.map((path) => {
+    return `${path}`;
+  });
 }
 
 export function JavaClass(props) {

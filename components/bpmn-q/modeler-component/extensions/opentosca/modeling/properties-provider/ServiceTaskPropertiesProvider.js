@@ -81,7 +81,7 @@ function ImplementationGroup(element, injector) {
     label: translate("Implementation"),
     id: "CamundaPlatform__Implementation",
     component: Group,
-    entries: [...ImplementationProps(element)],
+    entries: [...ImplementationProps({ element, translate })],
   };
 
   if (group.entries.length) {
