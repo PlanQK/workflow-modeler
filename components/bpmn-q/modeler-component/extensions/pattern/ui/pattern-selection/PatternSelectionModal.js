@@ -5,19 +5,28 @@ const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function PatternSelectionModal({ patterns, onSelectPattern, onClose, initialSelectedPattern }) {
-  const [selectedAlgorithmicPattern, setSelectedAlgorithmicPattern] = useState(null);
-  const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState([]);
-  const [selectedAugmentationPatterns, setSelectedAugmentationPatterns] = useState([]);
+export default function PatternSelectionModal({
+  patterns,
+  onSelectPattern,
+  onClose,
+  initialSelectedPattern,
+}) {
+  const [selectedAlgorithmicPattern, setSelectedAlgorithmicPattern] =
+    useState(null);
+  const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState(
+    []
+  );
+  const [selectedAugmentationPatterns, setSelectedAugmentationPatterns] =
+    useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (initialSelectedPattern) {
-      console.log(initialSelectedPattern)
-      //const algorithmicPatterns = patterns.filter((pattern) => pattern.name === initialSelectedPattern.algorithmPattern);
       setSelectedAlgorithmicPattern(initialSelectedPattern.algorithmPattern);
       setSelectedBehavioralPatterns(initialSelectedPattern.behavioralPattern);
-      setSelectedAugmentationPatterns(initialSelectedPattern.augmentationPattern);
+      setSelectedAugmentationPatterns(
+        initialSelectedPattern.augmentationPattern
+      );
     }
   }, [initialSelectedPattern]);
 
@@ -63,25 +72,30 @@ export default function PatternSelectionModal({ patterns, onSelectPattern, onClo
     setErrorMessage(""); // Clear the error message
   };
   // Filter patterns with specific tags for each category
-  const algorithmicPatterns = patterns.filter((pattern) => pattern.tags.includes("algorithm"));
-  const behavioralPatterns = patterns.filter((pattern) => pattern.tags.includes("behavioral"));
-  const augmentationPatterns = patterns.filter((pattern) => pattern.tags.includes("augmentation"));
+  const algorithmicPatterns = patterns.filter((pattern) =>
+    pattern.tags.includes("algorithm")
+  );
+  const behavioralPatterns = patterns.filter((pattern) =>
+    pattern.tags.includes("behavioral")
+  );
+  const augmentationPatterns = patterns.filter((pattern) =>
+    pattern.tags.includes("augmentation")
+  );
 
   return (
     <Modal onClose={onClose}>
       <Title>Patterns</Title>
       <Body>
-      {errorMessage && (
-  <p className="error-message">{errorMessage}</p>)}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
         <div>
           <h3>Algorithmic Patterns</h3>
           <table>
-          <colgroup>
-            <col span="1" style={{width: "30%"}}/>
-            <col span="1" style={{width: "15%"}}/>
-            <col span="1" style={{width: "7%"}}/>
-          </colgroup>
+            <colgroup>
+              <col span="1" style={{ width: "30%" }} />
+              <col span="1" style={{ width: "15%" }} />
+              <col span="1" style={{ width: "7%" }} />
+            </colgroup>
             <thead>
               <tr>
                 <th>Name</th>
@@ -94,14 +108,20 @@ export default function PatternSelectionModal({ patterns, onSelectPattern, onClo
                 <tr key={pattern.id}>
                   <td>{pattern.name}</td>
                   <td>
-                    <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "30%", height: "auto" }} />
+                    <img
+                      src={pattern.iconUrl}
+                      alt={pattern.name}
+                      style={{ width: "30%", height: "auto" }}
+                    />
                   </td>
                   <td>
                     <input
                       type="radio"
                       name="algorithmic-pattern"
                       checked={selectedAlgorithmicPattern === pattern}
-                      onChange={() => handlePatternSelection(pattern, "algorithm")}
+                      onChange={() =>
+                        handlePatternSelection(pattern, "algorithm")
+                      }
                     />
                   </td>
                 </tr>
@@ -112,11 +132,11 @@ export default function PatternSelectionModal({ patterns, onSelectPattern, onClo
         <div>
           <h3>Behavioral Patterns</h3>
           <table>
-          <colgroup>
-            <col span="1" style={{width: "30%"}}/>
-            <col span="1" style={{width: "15%"}}/>
-            <col span="1" style={{width: "7%"}}/>
-          </colgroup>
+            <colgroup>
+              <col span="1" style={{ width: "30%" }} />
+              <col span="1" style={{ width: "15%" }} />
+              <col span="1" style={{ width: "7%" }} />
+            </colgroup>
             <thead>
               <tr>
                 <th>Name</th>
@@ -129,13 +149,19 @@ export default function PatternSelectionModal({ patterns, onSelectPattern, onClo
                 <tr key={pattern.id}>
                   <td>{pattern.name}</td>
                   <td>
-                    <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "30%", height: "auto" }} />
+                    <img
+                      src={pattern.iconUrl}
+                      alt={pattern.name}
+                      style={{ width: "30%", height: "auto" }}
+                    />
                   </td>
                   <td>
                     <input
                       type="checkbox"
                       checked={selectedBehavioralPatterns.includes(pattern)}
-                      onChange={() => handlePatternSelection(pattern, "behavioral")}
+                      onChange={() =>
+                        handlePatternSelection(pattern, "behavioral")
+                      }
                     />
                   </td>
                 </tr>
@@ -146,11 +172,11 @@ export default function PatternSelectionModal({ patterns, onSelectPattern, onClo
         <div>
           <h3>Augmentation Patterns</h3>
           <table>
-          <colgroup>
-            <col span="1" style={{width: "30%"}}/>
-            <col span="1" style={{width: "15%"}}/>
-            <col span="1" style={{width: "7%"}}/>
-          </colgroup>
+            <colgroup>
+              <col span="1" style={{ width: "30%" }} />
+              <col span="1" style={{ width: "15%" }} />
+              <col span="1" style={{ width: "7%" }} />
+            </colgroup>
             <thead>
               <tr>
                 <th>Name</th>
@@ -163,13 +189,19 @@ export default function PatternSelectionModal({ patterns, onSelectPattern, onClo
                 <tr key={pattern.id}>
                   <td>{pattern.name}</td>
                   <td>
-                    <img src={pattern.iconUrl} alt={pattern.name} style={{ width: "30%", height: "auto" }} />
+                    <img
+                      src={pattern.iconUrl}
+                      alt={pattern.name}
+                      style={{ width: "30%", height: "auto" }}
+                    />
                   </td>
                   <td>
                     <input
                       type="checkbox"
                       checked={selectedAugmentationPatterns.includes(pattern)}
-                      onChange={() => handlePatternSelection(pattern, "augmentation")}
+                      onChange={() =>
+                        handlePatternSelection(pattern, "augmentation")
+                      }
                     />
                   </td>
                 </tr>
@@ -178,18 +210,23 @@ export default function PatternSelectionModal({ patterns, onSelectPattern, onClo
           </table>
         </div>
         <Footer>
-        <div id="configFormButtons">
-        <button className="qwm-btn qwm-btn-primary" onClick={handleConfirmSelection}>Confirm Selection</button>
-          
-          <button
-            type="button"
-            className="qwm-btn qwm-btn-secondary"
-            onClick={() => onClose()}
-          >
-            Cancel
-          </button>
-        </div>
-      </Footer>
+          <div id="configFormButtons">
+            <button
+              className="qwm-btn qwm-btn-primary"
+              onClick={handleConfirmSelection}
+            >
+              Confirm Selection
+            </button>
+
+            <button
+              type="button"
+              className="qwm-btn qwm-btn-secondary"
+              onClick={() => onClose()}
+            >
+              Cancel
+            </button>
+          </div>
+        </Footer>
       </Body>
     </Modal>
   );

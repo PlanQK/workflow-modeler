@@ -6,9 +6,7 @@ export default function PatternPluginButton() {
   // trigger initial QRM update
   return (
     <ExtensibleButton
-      subButtons={[
-        <PatternSelectionPlugin />,
-      ]}
+      subButtons={[<PatternSelectionPlugin />]}
       title="Pattern"
       styleClass="pattern-logo"
       description="Show buttons of the Pattern plugin"

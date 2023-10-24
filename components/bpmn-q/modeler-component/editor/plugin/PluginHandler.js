@@ -54,7 +54,6 @@ export function getActivePlugins() {
     const loadPlugin = (plugin) => {
       if (!activePlugins.includes(plugin.plugin)) {
         for (const dependency of plugin.dependencies) {
-          console.log(dependency)
           const dependencyPlugin = PLUGINS.find(
             (p) => p.plugin.name === dependency
           );
@@ -86,7 +85,6 @@ export function getActivePlugins() {
 }
 
 export function checkEnabledStatus(pluginName) {
-  console.log(pluginName);
   switch (pluginName) {
     case "dataflow":
       return process.env.ENABLE_DATA_FLOW_PLUGIN !== "false";
@@ -97,7 +95,7 @@ export function checkEnabledStatus(pluginName) {
     case "quantme":
       return process.env.ENABLE_QUANTME_PLUGIN !== "false";
     case "pattern":
-      return process.env.ENABLE_PATTERN_PLUGIN !== "false"; 
+      return process.env.ENABLE_PATTERN_PLUGIN !== "false";
     case "opentosca":
       return process.env.ENABLE_OPENTOSCA_PLUGIN !== "false";
   }

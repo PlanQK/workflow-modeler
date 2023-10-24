@@ -54,8 +54,8 @@ export function performAjax(targetUrl, dataToSend) {
 
 /**
  * Retrieves the pattern from the pattern atlas endpoint.
- * @param patternEndpoint 
- * @returns 
+ * @param patternEndpoint
+ * @returns
  */
 export async function fetchDataFromEndpoint(patternEndpoint) {
   const endpointUrl = patternEndpoint + "/patterns";
@@ -67,8 +67,7 @@ export async function fetchDataFromEndpoint(patternEndpoint) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error("Error fetching data:", error);
     return {};
   }
 }
-

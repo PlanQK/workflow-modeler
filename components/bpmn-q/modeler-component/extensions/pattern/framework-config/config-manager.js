@@ -30,13 +30,8 @@ export function getPatternAtlasEndpoint() {
 /**
  * Set the endpoint for Data Object Configurations
  */
-export function setPatternAtlasEndpoint(
-  patternAtlasEndpoint
-) {
-  if (
-    patternAtlasEndpoint !== null &&
-    patternAtlasEndpoint !== undefined
-  ) {
+export function setPatternAtlasEndpoint(patternAtlasEndpoint) {
+  if (patternAtlasEndpoint !== null && patternAtlasEndpoint !== undefined) {
     config.patternAtlasEndpoint = patternAtlasEndpoint;
   }
 }

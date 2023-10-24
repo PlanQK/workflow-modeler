@@ -8,7 +8,8 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function PatternOverviewModal({ onClose, responseData }) {
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
-  const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] = useState(false);
+  const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] =
+    useState(false);
   const [dynamicRows, setDynamicRows] = useState([]);
   const [editRow, setEditRow] = useState(null); // State to store the row being edited
   const [editRowData, setEditRowData] = useState(null);
@@ -21,34 +22,40 @@ export default function PatternOverviewModal({ onClose, responseData }) {
     setAlgorithmicPatternModalOpen(false);
   };
 
-  const selectAlgorithmicPattern = useCallback((selectedPattern) => {
-    console.log(editRow);
-    if (editRow !== null) {
-      console.log(selectedPattern)
-      console.log(dynamicRows)
-      const updatedRows = [...dynamicRows];
-      updatedRows[editRow].algorithmPattern = selectedPattern.algorithm;
-      let behavioralPattern = selectedPattern.behavioral;
-      
-      updatedRows[editRow].behavioralPattern = behavioralPattern;
-      let augmentationPattern = selectedPattern.augmentation;
-      
-      updatedRows[editRow].augmentationPattern = augmentationPattern;
-      console.log(updatedRows);
-      setDynamicRows(updatedRows);
-      setEditRow(null);
-      setEditRowData(null);
-    } else {
-      const newButtonLabel = selectedPattern.name;
-      const algorithmPattern = selectedPattern.algorithm;
-      const behavioralPattern = selectedPattern.behavioral;
-      const augmentationPattern = selectedPattern.augmentation;
-      const newRowData = { algorithmPattern: algorithmPattern, behavioralPattern: behavioralPattern, augmentationPattern: augmentationPattern };
-      setDynamicRows([...dynamicRows, newRowData]);
-      setButtonSelectedPatterns({ ...buttonSelectedPatterns, [newButtonLabel]: [] });
-    }
-    closeAlgorithmicPatternModal();
-  }, [buttonSelectedPatterns, dynamicRows, editRow]);
+  const selectAlgorithmicPattern = useCallback(
+    (selectedPattern) => {
+      if (editRow !== null) {
+        const updatedRows = [...dynamicRows];
+        updatedRows[editRow].algorithmPattern = selectedPattern.algorithm;
+        let behavioralPattern = selectedPattern.behavioral;
+
+        updatedRows[editRow].behavioralPattern = behavioralPattern;
+        let augmentationPattern = selectedPattern.augmentation;
+
+        updatedRows[editRow].augmentationPattern = augmentationPattern;
+        setDynamicRows(updatedRows);
+        setEditRow(null);
+        setEditRowData(null);
+      } else {
+        const newButtonLabel = selectedPattern.name;
+        const algorithmPattern = selectedPattern.algorithm;
+        const behavioralPattern = selectedPattern.behavioral;
+        const augmentationPattern = selectedPattern.augmentation;
+        const newRowData = {
+          algorithmPattern: algorithmPattern,
+          behavioralPattern: behavioralPattern,
+          augmentationPattern: augmentationPattern,
+        };
+        setDynamicRows([...dynamicRows, newRowData]);
+        setButtonSelectedPatterns({
+          ...buttonSelectedPatterns,
+          [newButtonLabel]: [],
+        });
+      }
+      closeAlgorithmicPatternModal();
+    },
+    [buttonSelectedPatterns, dynamicRows, editRow]
+  );
 
   const moveRowUp = (index) => {
     if (index > 0) {
@@ -77,8 +84,6 @@ export default function PatternOverviewModal({ onClose, responseData }) {
   };
 
   const openEditRow = (index) => {
-    console.log(index);
-    // Get the data of the row being edited
     const rowToEdit = dynamicRows[index];
     setEditRowData(rowToEdit);
     setEditRow(index);
@@ -90,7 +95,15 @@ export default function PatternOverviewModal({ onClose, responseData }) {
       <Title>Pattern Selection</Title>
 
       <Body>
-        <h3>Selected Patterns <button className="qwm-action-add qwm-btn-primary" onClick={openAlgorithmicPatternModal}>+</button></h3>
+        <h3>
+          Selected Patterns{" "}
+          <button
+            className="qwm-action-add qwm-btn-primary"
+            onClick={openAlgorithmicPatternModal}
+          >
+            +
+          </button>
+        </h3>
         {isAlgorithmicPatternModalOpen && (
           <PatternSelectionModal
             patterns={responseData}
@@ -113,12 +126,14 @@ export default function PatternOverviewModal({ onClose, responseData }) {
               <tbody>
                 {dynamicRows.map((row, index) => (
                   <tr key={index}>
-                    <td><img
-                          src={row.algorithmPattern.iconUrl}
-                          title={row.algorithmPattern.name}
-                          alt={`Algorithm Pattern`}
-                          style={{ width: '30%', height: 'auto' }}
-                        /></td>
+                    <td>
+                      <img
+                        src={row.algorithmPattern.iconUrl}
+                        title={row.algorithmPattern.name}
+                        alt={`Algorithm Pattern`}
+                        style={{ width: "30%", height: "auto" }}
+                      />
+                    </td>
                     <td>
                       {row.behavioralPattern.map((behavioralItem, index) => (
                         <img
@@ -126,36 +141,54 @@ export default function PatternOverviewModal({ onClose, responseData }) {
                           src={behavioralItem.iconUrl}
                           title={behavioralItem.name}
                           alt={`Behavioral Pattern ${index}`}
-                          style={{ width: '30%', height: 'auto' }}
+                          style={{ width: "30%", height: "auto" }}
                         />
                       ))}
                     </td>
-                    <td>{row.augmentationPattern.map((augmentationItem, index) => (
-                        <img
-                          key={index}
-                          src={augmentationItem.iconUrl}
-                          title={augmentationItem.name}
-                          alt={`Augmentation Pattern ${index}`}
-                          style={{ width: '30%', height: 'auto' }}
-                        />
-                      ))}</td>
+                    <td>
+                      {row.augmentationPattern.map(
+                        (augmentationItem, index) => (
+                          <img
+                            key={index}
+                            src={augmentationItem.iconUrl}
+                            title={augmentationItem.name}
+                            alt={`Augmentation Pattern ${index}`}
+                            style={{ width: "30%", height: "auto" }}
+                          />
+                        )
+                      )}
+                    </td>
                     <td className="actions-column">
-                    <button
-                      className={`qwm-action qwm-btn-primary${index === 0 ? ' disabled' : ''}`}
-                      onClick={() => moveRowUp(index)}
-                      disabled={index === 0}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      className={`qwm-action qwm-btn-primary${index === dynamicRows.length - 1 ? ' disabled' : ''}`}
-                      onClick={() => moveRowDown(index)}
-                      disabled={index === dynamicRows.length - 1}
-                    >
-                      ↓
-                    </button>
-                    <button className="qwm-action qwm-btn-primary" onClick={() => openEditRow(index)}><i className="fa fa-edit"></i></button>
-                    <button className="qwm-action qwm-btn-primary" onClick={() => deleteRow(index)}><i className="fa fa-close"></i></button>
+                      <button
+                        className={`qwm-action qwm-btn-primary${
+                          index === 0 ? " disabled" : ""
+                        }`}
+                        onClick={() => moveRowUp(index)}
+                        disabled={index === 0}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        className={`qwm-action qwm-btn-primary${
+                          index === dynamicRows.length - 1 ? " disabled" : ""
+                        }`}
+                        onClick={() => moveRowDown(index)}
+                        disabled={index === dynamicRows.length - 1}
+                      >
+                        ↓
+                      </button>
+                      <button
+                        className="qwm-action qwm-btn-primary"
+                        onClick={() => openEditRow(index)}
+                      >
+                        <i className="fa fa-edit"></i>
+                      </button>
+                      <button
+                        className="qwm-action qwm-btn-primary"
+                        onClick={() => deleteRow(index)}
+                      >
+                        <i className="fa fa-close"></i>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -167,7 +200,11 @@ export default function PatternOverviewModal({ onClose, responseData }) {
 
       <Footer>
         <div id="hybridLoopAdaptationFormButtons">
-          <button type="button" className="qwm-btn qwm-btn-secondary" onClick={() => onClose()}>
+          <button
+            type="button"
+            className="qwm-btn qwm-btn-secondary"
+            onClick={() => onClose()}
+          >
             Done
           </button>
         </div>

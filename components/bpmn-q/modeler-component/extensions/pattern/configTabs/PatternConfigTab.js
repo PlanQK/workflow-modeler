@@ -19,22 +19,14 @@ export default function PatternAtlasConfigTab() {
   const eventBus = modeler.get("eventBus");
 
   // register editor action listener for changes in config entries
-  if (
-    !editorActions._actions.hasOwnProperty(
-      "patternAtlasEndpointChanged"
-    )
-  ) {
+  if (!editorActions._actions.hasOwnProperty("patternAtlasEndpointChanged")) {
     editorActions.register({
-      patternAtlasEndpointChanged: function (
-        patternAtlasEndpoint
-      ) {
-        self.modeler.config.patternAtlasEndpoint =
-          patternAtlasEndpoint;
+      patternAtlasEndpointChanged: function (patternAtlasEndpoint) {
+        self.modeler.config.patternAtlasEndpoint = patternAtlasEndpoint;
         eventBus.fire("config.updated", self.modeler.config);
       },
     });
   }
-  
 
   // save changed config entries on close
   PatternAtlasConfigTab.prototype.onClose = () => {
@@ -69,6 +61,5 @@ export default function PatternAtlasConfigTab() {
 PatternAtlasConfigTab.prototype.config = () => {
   const modeler = getModeler();
 
-  modeler.config.patternAtlasEndpoint =
-    config.getPatternAtlasEndpoint();
+  modeler.config.patternAtlasEndpoint = config.getPatternAtlasEndpoint();
 };

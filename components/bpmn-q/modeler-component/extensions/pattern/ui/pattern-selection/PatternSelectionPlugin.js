@@ -19,14 +19,15 @@ export default class PatternSelectionPlugin extends PureComponent {
     this.state = defaultState;
   }
 
-
   async fetchData() {
     try {
       console.log(this.modeler.config);
-      const response = await fetchDataFromEndpoint(this.modeler.config.patternAtlasEndpoint);
+      const response = await fetchDataFromEndpoint(
+        this.modeler.config.patternAtlasEndpoint
+      );
       console.log(response);
 
-      this.setState({ responseData: response['_embedded']['patternModels'] });
+      this.setState({ responseData: response["_embedded"]["patternModels"] });
     } catch (error) {
       console.error("Error fetching data from the endpoint:", error);
     }
@@ -41,7 +42,10 @@ export default class PatternSelectionPlugin extends PureComponent {
             type="button"
             className="qwm-toolbar-btn"
             title="Open Pattern Selection"
-            onClick={() => {this.setState({ patternOpen: true }); this.fetchData()}}
+            onClick={() => {
+              this.setState({ patternOpen: true });
+              this.fetchData();
+            }}
           >
             <span className="hybrid-loop-adaptation">
               <span className="qwm-indent">Open Pattern Selection</span>
@@ -50,12 +54,16 @@ export default class PatternSelectionPlugin extends PureComponent {
         </div>
         {this.state.patternOpen && (
           <PatternModal
-            onClose={() => this.setState({ patternOverviewOpen: true, patternOpen: false })} // Pass the response data as a prop
+            onClose={() =>
+              this.setState({ patternOverviewOpen: true, patternOpen: false })
+            } // Pass the response data as a prop
           />
         )}
         {this.state.patternOverviewOpen && (
           <PatternOverviewModal
-            onClose={() => this.setState({ patternOverviewOpen: false, patternOpen: false })}
+            onClose={() =>
+              this.setState({ patternOverviewOpen: false, patternOpen: false })
+            }
             responseData={this.state.responseData} // Pass the response data as a prop
           />
         )}
