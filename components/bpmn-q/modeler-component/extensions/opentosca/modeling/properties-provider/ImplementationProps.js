@@ -87,29 +87,31 @@ export function ImplementationProps(props) {
     });
 
     if (
-      element.businessObject.deploymentModelUrl &&
+      element.businessObject.deploymentModelUrl ||
       !element.businessObject.deploymentModelUrl.includes(
         encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))
-      ) &&
-      element.businessObject.yaml !== undefined
+      )
     ) {
-      const urls = extractUrlsFromYaml(element.businessObject.yaml);
+      // field to upload an OpenAPI spec for automated connector generation
       entries.push({
-        id: "connector",
-        element,
-        translate,
-        urls,
-        component: Connector,
+        id: "yamlUpload",
+        component: YamlUpload,
         isEdited: isTextFieldEntryEdited,
       });
-    }
 
-    // field to upload an OpenAPI spec for automated connector generation
-    entries.push({
-      id: "yamlUpload",
-      component: YamlUpload,
-      isEdited: isTextFieldEntryEdited,
-    });
+      // drop down to select endpoint from OpenAPI spec
+      if (element.businessObject.yaml !== undefined) {
+        const urls = extractUrlsFromYaml(element.businessObject.yaml);
+        entries.push({
+          id: "connector",
+          element,
+          translate,
+          urls,
+          component: Connector,
+          isEdited: isTextFieldEntryEdited,
+        });
+      }
+    }
   }
 
   return entries;
