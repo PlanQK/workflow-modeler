@@ -32,7 +32,9 @@ class DataObjectConfigurations extends ConfigurationsEndpoint {
    * Updates the saved configurations by fetching again all plugins from the QuantME endpoint
    */
   updateQuantMEDataConfigurations() {
-    this.fetchConfigurations();
+    this.fetchConfigurations(
+      configManager.getQuantMEDataConfigurationsEndpoint()
+    );
   }
 }
 

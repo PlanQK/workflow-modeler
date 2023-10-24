@@ -14,8 +14,8 @@ export default function UpdateDataObjectConfigurationsButton() {
         type="button"
         className="qwm-toolbar-btn"
         title="Update QuantME data configurations from repository"
-        onClick={() =>
-          quantmeDataObjectConfigs().updateQuantMEDataConfigurations()
+        onClick={async () =>
+          await quantmeDataObjectConfigs().updateQuantMEDataConfigurations()
         }
       >
         <span className="qrm-reload">

@@ -33,7 +33,6 @@ export default function QuantMETab() {
   const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(
     config.getScriptSplitterThreshold()
   );
-  let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance;
 
   const modeler = getModeler();
 
@@ -41,6 +40,17 @@ export default function QuantMETab() {
   const eventBus = modeler.get("eventBus");
 
   // register editor action listener for changes in config entries
+  if (
+    !editorActions._actions.hasOwnProperty("dataConfigurationsEndpointChanged")
+  ) {
+    editorActions.register({
+      dataConfigurationsEndpointChanged: function (dataConfigurationsEndpoint) {
+        self.modeler.config.dataConfigurationsEndpoint =
+          dataConfigurationsEndpoint;
+        eventBus.fire("config.updated", self.modeler.config);
+      },
+    });
+  }
   if (
     !editorActions._actions.hasOwnProperty(
       "qiskitRuntimeHandlerEndpointChanged"
@@ -264,11 +274,9 @@ export default function QuantMETab() {
               <input
                 type="checkbox"
                 name="hybridRuntimeProvenance"
-                checked={hybridRuntimeProvenanceBoolean}
+                checked={hybridRuntimeProvenance}
                 onChange={() => {
-                  hybridRuntimeProvenanceBoolean =
-                    !hybridRuntimeProvenanceBoolean;
-                  setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);
+                  setHybridRuntimeProvenance(!hybridRuntimeProvenance);
                 }}
               />
             </td>
