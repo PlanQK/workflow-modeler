@@ -13,7 +13,6 @@ import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camund
 import { ArtifactUpload } from "./ArtifactUpload";
 import { isTextFieldEntryEdited } from "@bpmn-io/properties-panel";
 import { Deployment } from "./Deployment";
-import { YamlUpload } from "./YamlUpload";
 import { Connector } from "./Connector";
 import yaml from "js-yaml";
 
@@ -48,12 +47,6 @@ export function DeploymentModelProps(props) {
     isEdited: isTextFieldEntryEdited,
   });
 
-  // field to upload an OpenAPI spec for automated connector generation
-  entries.push({
-    id: "yamlUpload",
-    component: YamlUpload,
-    isEdited: isTextFieldEntryEdited,
-  });
   if (
     element.businessObject.deploymentModelUrl &&
     !element.businessObject.deploymentModelUrl.includes(

@@ -19,6 +19,7 @@ import { useService } from "bpmn-js-properties-panel";
 import { getImplementationType } from "../../../quantme/utilities/ImplementationTypeHelperExtension";
 import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import { YamlUpload } from "./YamlUpload";
 
 /**
  * Properties group for implementations of service tasks.
@@ -77,6 +78,13 @@ export function ImplementationProps(element) {
     entries.push({
       id: "connectorId",
       component: ConnectorId,
+      isEdited: isTextFieldEntryEdited,
+    });
+
+    // field to upload an OpenAPI spec for automated connector generation
+    entries.push({
+      id: "yamlUpload",
+      component: YamlUpload,
       isEdited: isTextFieldEntryEdited,
     });
   }
