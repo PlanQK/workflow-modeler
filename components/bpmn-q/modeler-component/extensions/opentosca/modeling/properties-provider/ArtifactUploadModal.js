@@ -63,12 +63,12 @@ export default function ArtifactUploadModal({
         headers: {
           Accept: "application/json",
         },
-      }
+      },
     ).then((res) => res.json());
 
     const artifactTypes = response.filter(
       (option) =>
-        option.name.includes("WAR") || option.name.includes("PythonArchive")
+        option.name.includes("WAR") || option.name.includes("PythonArchive"),
     );
     setArtifactTypes(artifactTypes);
   }
@@ -95,10 +95,10 @@ export default function ArtifactUploadModal({
       const artifactTemplateAddress = await createArtifactTemplateWithFile(
         artifactTemplateName,
         selectedOption,
-        uploadFile
+        uploadFile,
       );
       const artifactTemplateInfo = await getArtifactTemplateInfo(
-        artifactTemplateAddress
+        artifactTemplateAddress,
       );
       const artifactTemplateQName =
         artifactTemplateInfo
@@ -115,7 +115,7 @@ export default function ArtifactUploadModal({
             `${namePrefix}Node-${element.id}`,
             artifactTemplateQName,
             `${namePrefix}Artifact-${element.id}`,
-            selectedOption
+            selectedOption,
           );
         await deleteTopNodeTag(serviceTemplateAddress);
       } else {
@@ -125,7 +125,7 @@ export default function ArtifactUploadModal({
           `${namePrefix}Node-${element.id}`,
           artifactTemplateQName,
           `${namePrefix}Artifact-${element.id}`,
-          selectedOption
+          selectedOption,
         );
       }
       await insertTopNodeTag(serviceTemplateAddress, nodeTypeQName);
@@ -294,7 +294,7 @@ export default function ArtifactUploadModal({
         <div id="upload-form-buttons">
           <button
             type="button"
-            className="qwm-btn qwm-btn-primary"
+            className="qwm-btn qwm-btn-modal"
             form="upload-form"
             onClick={onSubmit}
           >

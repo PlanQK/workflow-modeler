@@ -53,6 +53,13 @@
   background-color: var(--silver-base-97);
 }
 
+.qwm-btn-modal {
+  color: #fdfdfe;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+  border: solid 1px var(--blue-darken-62);
+  background-color: var(--blue-base-65);
+}
+
 .qwm-btn-save {
   color: #fdfdfe;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
