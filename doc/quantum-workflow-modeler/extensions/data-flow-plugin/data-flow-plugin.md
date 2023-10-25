@@ -1,6 +1,10 @@
 # Data Flow Plugin
 Plugin which adds modelling elements to allow the explicit and executable modelling of the data flow.
 
+## Overview
+An overview of all modeling elements:
+![DataFlow Overview](DataFlow-Overview.png)
+
 ## Structure
 - [DataFlow Plugin Object](../../../../components/bpmn-q/modeler-component/extensions/data-extension/DataFlowPlugin.js)
 - [DataFlow Plugin Config](../../../../components/bpmn-q/modeler-component/extensions/data-extension/config/DataConfigManager.js)

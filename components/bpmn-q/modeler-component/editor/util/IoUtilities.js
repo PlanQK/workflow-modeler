@@ -277,6 +277,9 @@ export async function handleTransformedWorkflow(workflowXml) {
       case transformedWorkflowHandlers.SAVE_AS_FILE: // save workflow to local file system
         await saveXmlAsLocalFile(workflowXml, fileName);
         break;
+      case transformedWorkflowHandlers.INLINE:
+        await loadDiagram(workflowXml, getModeler());
+        break;
       default:
         console.log(`Invalid transformed workflow handler ID ${handlerId}`);
     }

@@ -98,9 +98,47 @@ export async function serviceTemplateExists(serviceTemplateName) {
     )}/${encodeURIComponent(encodeURIComponent(serviceTemplateName))}`,
     {
       method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
     }
   );
   return response.status === 200;
+}
+
+export async function deleteTagByID(serviceTemplateAddress, tagID) {
+  const response = await fetch(
+    `${getWineryEndpoint()}/servicetemplates/${serviceTemplateAddress}tags/${tagID}`,
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+  return response.status === 204;
+}
+
+export async function getTags(serviceTemplateAddress) {
+  const response = await fetch(
+    `${getWineryEndpoint()}/servicetemplates/${serviceTemplateAddress}tags/`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+  return response.json();
+}
+
+export async function deleteTopNodeTag(serviceTemplateAddress) {
+  const tags = await getTags(serviceTemplateAddress);
+  const topNodeTag = tags.find((tag) => tag.name === "top-node");
+  if (topNodeTag) {
+    return deleteTagByID(serviceTemplateAddress, topNodeTag.id);
+  }
+  return true;
 }
 
 export async function addNodeWithArtifactToServiceTemplateByName(
@@ -325,11 +363,11 @@ const nodeTypeQNameMapping = new Map([
     "{http://opentosca.org/nodetypes}TomcatApplication_WAR-w1",
   ],
   [
-    "{http://opentosca.org/artifacttypes}WAR17",
+    "{http://opentosca.org/artifacttypes}WAR-Java17",
     "{http://opentosca.org/nodetypes}TomcatApplication_WAR-w1",
   ],
   [
-    "{http://opentosca.org/artifacttypes}WAR8",
+    "{http://opentosca.org/artifacttypes}WAR-Java8",
     "{http://opentosca.org/nodetypes}TomcatApplication_WAR-w1",
   ],
   [
@@ -352,7 +390,13 @@ export async function loadTopology(deploymentModelUrl) {
   let tags;
   try {
     topology = await fetch(
-      deploymentModelUrl.replace("?csar", "topologytemplate")
+      deploymentModelUrl.replace("?csar", "topologytemplate"),
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
     ).then((res) => res.json());
     tags = await fetch(deploymentModelUrl.replace("?csar", "tags")).then(
       (res) => res.json()

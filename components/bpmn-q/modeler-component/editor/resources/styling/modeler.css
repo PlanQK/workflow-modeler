@@ -147,3 +147,9 @@
   position: relative;
   top: 10px;
 }
+
+.qwm input,
+.qwm select {
+  width: 100%;
+  box-sizing: border-box;
+}
