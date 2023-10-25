@@ -390,7 +390,13 @@ export async function loadTopology(deploymentModelUrl) {
   let tags;
   try {
     topology = await fetch(
-      deploymentModelUrl.replace("?csar", "topologytemplate")
+      deploymentModelUrl.replace("?csar", "topologytemplate"),
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
     ).then((res) => res.json());
     tags = await fetch(deploymentModelUrl.replace("?csar", "tags")).then(
       (res) => res.json()
