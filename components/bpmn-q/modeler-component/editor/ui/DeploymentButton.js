@@ -6,6 +6,7 @@ import { getRootProcess } from "../util/ModellingUtilities";
 import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
 import { getModeler } from "../ModelerHandler";
 import OnDemandDeploymentModal from "./OnDemandDeploymentModal";
+import DeploymentSelectionModal from "./DeploymentSelectionModal";
 import { startOnDemandReplacementProcess } from "../../extensions/opentosca/replacement/OnDemandTransformator";
 
 // eslint-disable-next-line no-unused-vars
@@ -23,6 +24,10 @@ const defaultState = {
 export default function DeploymentButton(props) {
   const [windowOpenOnDemandDeployment, setWindowOpenOnDemandDeployment] =
     useState(false);
+
+  const [windowOpenDeploymentSelection, setWindowOpenDemandSelection] =
+    useState(false);
+
 
   const { modeler } = props;
 
@@ -44,6 +49,31 @@ export default function DeploymentButton(props) {
     }
     // handle cancellation (don't deploy)
     setWindowOpenOnDemandDeployment(false);
+  }
+
+   /**
+   * Handle result of the deployment selection dialog
+   *
+   * @param result the result from the dialog
+   */
+   async function handleDeploymentSelection(result) {
+    if (result && result.hasOwnProperty("deploymentLocation")) {
+      // get XML of the current workflow
+      let xml = (await modeler.saveXML({ format: true })).xml;
+      console.log("XML", xml);
+      if (result.deploymentLocation === "planqk") {
+
+        // add the call to the transformation here
+        // xml = await startOnDemandReplacementProcess(xml);
+
+        // then deploy it to planqk 
+      }
+      if (result.deploymentLocation === "camunda") {
+        deploy(xml);
+      }
+    }
+    // handle cancellation (don't deploy)
+    setWindowOpenDemandSelection(false);
   }
 
   /**
@@ -98,7 +128,7 @@ export default function DeploymentButton(props) {
     if (csarsToDeploy.length > 0) {
       setWindowOpenOnDemandDeployment(true);
     } else {
-      deploy((await modeler.saveXML({ format: true })).xml);
+      setWindowOpenDemandSelection(true);
     }
   }
 
@@ -116,6 +146,9 @@ export default function DeploymentButton(props) {
       </button>
       {windowOpenOnDemandDeployment && (
         <OnDemandDeploymentModal onClose={(e) => handleOnDemandDeployment(e)} />
+      )}
+      {windowOpenDeploymentSelection && (
+        <DeploymentSelectionModal onClose={(e) => handleDeploymentSelection(e)} />
       )}
     </Fragment>
   );
