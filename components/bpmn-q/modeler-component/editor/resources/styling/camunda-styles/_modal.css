@@ -68,16 +68,18 @@ body,
   position: fixed;
   left: 0;
   right: 0;
-  width: 638px;
+  width: 40%;
+  max-width: 750px;
+  min-width: 591px;
   margin: 10vh auto 6vh;
   padding: 0;
   z-index: 1001;
-  overflow: hidden;
   border: solid 1px var(--silver-darken-87);
   border-radius: 3px;
   box-shadow: 0 1px 4px var(--color-000000-opacity-30);
   background-color: var(--silver-lighten-99);
   color: var(--grey-darken-33);
+  overflow-y: scroll;
 }
 .qwm-modal-content,
 .qwm-modal-content > form {
@@ -99,7 +101,6 @@ body,
 }
 .qwm-modal-body {
   padding: 16px 20px 20px 20px;
-  overflow-y: auto;
   font-size: 14px;
   background-color: var(--silver-lighten-99);
 }

@@ -1,8 +1,3 @@
-import { SelectEntry } from "@bpmn-io/properties-panel";
-import React from "@bpmn-io/properties-panel/preact/compat";
-import { useService } from "bpmn-js-properties-panel";
-import { getModeler } from "../../../../editor/ModelerHandler";
-
 /**
  * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
@@ -13,6 +8,12 @@ import { getModeler } from "../../../../editor/ModelerHandler";
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+
+import { SelectEntry } from "@bpmn-io/properties-panel";
+import React from "@bpmn-io/properties-panel/preact/compat";
+import { useService } from "bpmn-js-properties-panel";
+import { getModeler } from "../../../../editor/ModelerHandler";
+
 const yaml = require("js-yaml");
 /**
  * Entry to display the endpoints of the uploaded openapi specification for BPMN service task.

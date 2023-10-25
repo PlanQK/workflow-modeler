@@ -11,6 +11,12 @@ import { loadDiagram } from "../util/IoUtilities";
  */
 export default function XMLViewerButton() {
   const [enabledXMLView, setEnabledXMLView] = useState(false);
+
+  function update(aceEditor) {
+    let xml = aceEditor.getSession().getValue();
+    loadDiagram(xml, getModeler());
+  }
+
   function enableXMLViewer(enabledXMLView) {
     let modelerContainer = document.getElementById("modeler-container");
     let editor = document.getElementById("editor");
@@ -20,7 +26,15 @@ export default function XMLViewerButton() {
     if (!enabledXMLView) {
       modelerContainer.style.height = "93vh";
       editor.style.display = "block";
+      const minLines = aceEditor.getOption("minLines");
+      const maxLines = aceEditor.getOption("maxLines");
       editor.style.height = "93vh";
+      aceEditor.setOptions({
+        vScrollBarAlwaysVisible: true,
+        minLines: minLines,
+        maxLines: maxLines,
+      });
+      aceEditor.resize(true);
       panel.style.display = "none";
       editorWrap.style.display = "block";
 
@@ -37,14 +51,8 @@ export default function XMLViewerButton() {
       editorWrap.style.display = "none";
 
       aceEditor.getSession().on("change", function () {
-        update();
+        update(aceEditor);
       });
-
-      // eslint-disable-next-line no-inner-declarations
-      function update() {
-        let xml = aceEditor.getSession().getValue();
-        loadDiagram(xml, getModeler());
-      }
     }
 
     setEnabledXMLView(!enabledXMLView);

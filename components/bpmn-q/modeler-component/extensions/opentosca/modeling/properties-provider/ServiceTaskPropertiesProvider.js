@@ -1,6 +1,18 @@
+/**
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
+ * University of Stuttgart
+ *
+ * This program and the accompanying materials are made available under the
+ * terms the Apache Software License 2.0
+ * which is available at https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { ImplementationProps } from "./ImplementationProps";
 import { Group } from "@bpmn-io/properties-panel";
 import { getWineryEndpoint } from "../../framework-config/config-manager";
+import { DeploymentModelProps } from "./DeploymentModelProps";
 
 const LOW_PRIORITY = 500;
 
@@ -33,7 +45,12 @@ export default function ServiceTaskPropertiesProvider(
     return function (groups) {
       // update ServiceTasks with the deployment extension
       if (element.type && element.type === "bpmn:ServiceTask") {
-        groups[2] = ImplementationGroup(element, injector, getWineryEndpoint());
+        groups[2] = ImplementationGroup(element, injector);
+        groups[3] = DeploymentModelGroup(
+          element,
+          injector,
+          getWineryEndpoint()
+        );
       }
       return groups;
     };
@@ -54,18 +71,43 @@ ServiceTaskPropertiesProvider.$inject = [
  *
  * @param element The element to show the properties for.
  * @param injector The injector of the bpmn-js modeler
- * @param wineryEndpoint The winery endpoint of the QuantME plugin
  * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
  * @constructor
  */
-function ImplementationGroup(element, injector, wineryEndpoint) {
+function ImplementationGroup(element, injector) {
   const translate = injector.get("translate");
 
   const group = {
     label: translate("Implementation"),
     id: "CamundaPlatform__Implementation",
     component: Group,
-    entries: [...ImplementationProps({ element, wineryEndpoint, translate })],
+    entries: [...ImplementationProps({ element, translate })],
+  };
+
+  if (group.entries.length) {
+    return group;
+  }
+
+  return null;
+}
+
+/**
+ * Properties group showing options to define deployment models for service tasks.
+ *
+ * @param element The element to show the properties for.
+ * @param injector The injector of the bpmn-js modeler
+ * @param wineryEndpoint The winery endpoint of the QuantME plugin
+ * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
+ * @constructor
+ */
+function DeploymentModelGroup(element, injector, wineryEndpoint) {
+  const translate = injector.get("translate");
+
+  const group = {
+    label: translate("Deployment Models"),
+    id: "CamundaPlatform__DeploymentModels",
+    component: Group,
+    entries: [...DeploymentModelProps({ element, wineryEndpoint, translate })],
   };
 
   if (group.entries.length) {
