@@ -56,6 +56,7 @@ export default function OpenTOSCATab() {
             <td align="right">OpenTOSCA Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="opentoscaEndpoint"
                 value={opentoscaEndpoint}
@@ -67,6 +68,7 @@ export default function OpenTOSCATab() {
             <td align="right">Winery Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="wineryEndpoint"
                 value={wineryEndpoint}
