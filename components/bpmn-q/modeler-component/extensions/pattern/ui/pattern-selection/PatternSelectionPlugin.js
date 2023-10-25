@@ -15,6 +15,7 @@ export default class PatternSelectionPlugin extends PureComponent {
     super(props);
 
     this.modeler = getModeler();
+    this.handlePatternOverviewClosed = this.handlePatternOverviewClosed.bind(this);
 
     this.state = defaultState;
   }
@@ -31,6 +32,11 @@ export default class PatternSelectionPlugin extends PureComponent {
     } catch (error) {
       console.error("Error fetching data from the endpoint:", error);
     }
+  }
+
+  async handlePatternOverviewClosed(result) {
+    this.setState({ patternOverviewOpen: false, patternOpen: false });
+    console.log(result);
   }
 
   render() {
@@ -56,15 +62,13 @@ export default class PatternSelectionPlugin extends PureComponent {
           <PatternModal
             onClose={() =>
               this.setState({ patternOverviewOpen: true, patternOpen: false })
-            } // Pass the response data as a prop
+            }
           />
         )}
         {this.state.patternOverviewOpen && (
           <PatternOverviewModal
-            onClose={() =>
-              this.setState({ patternOverviewOpen: false, patternOpen: false })
-            }
-            responseData={this.state.responseData} // Pass the response data as a prop
+            onClose={this.handlePatternOverviewClosed}
+            responseData={this.state.responseData}
           />
         )}
       </>

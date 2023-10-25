@@ -203,7 +203,7 @@ export default function PatternOverviewModal({ onClose, responseData }) {
           <button
             type="button"
             className="qwm-btn qwm-btn-secondary"
-            onClick={() => onClose()}
+            onClick={() => onClose(dynamicRows)}
           >
             Done
           </button>
