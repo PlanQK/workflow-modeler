@@ -37,7 +37,7 @@ const NEW_DIAGRAM_XML =
  */
 export async function saveXmlAsLocalFile(
   xml,
-  fileName = editorConfig.getFileName(),
+  fileName = editorConfig.getFileName()
 ) {
   const bpmnFile = await new File([xml], fileName, { type: "text/xml" });
 
@@ -49,7 +49,7 @@ export async function saveXmlAsLocalFile(
   dispatchWorkflowEvent(
     workflowEventTypes.SAVED,
     xml,
-    editorConfig.getFileName(),
+    editorConfig.getFileName()
   );
 }
 
@@ -64,7 +64,7 @@ export async function saveModelerAsLocalFile(
   modeler,
   fileName = editorConfig.getFileName(),
   fileFormat = editorConfig.getFileFormat(),
-  openWindow = true,
+  openWindow = true
 ) {
   const xml = await getXml(modeler);
   if (
@@ -117,7 +117,7 @@ export async function loadDiagram(xml, modeler, dispatchEvent = true) {
         dispatchWorkflowEvent(
           workflowEventTypes.LOADED,
           xml,
-          editorConfig.getFileName(),
+          editorConfig.getFileName()
         );
       }
 
@@ -150,11 +150,11 @@ export function createNewDiagram(modeler) {
 export async function deployWorkflowToCamunda(
   workflowName,
   workflowXml,
-  viewMap,
+  viewMap
 ) {
   console.log(
     "Deploying workflow to Camunda Engine at endpoint: %s",
-    editorConfig.getCamundaEndpoint(),
+    editorConfig.getCamundaEndpoint()
   );
 
   // add required form data fields
@@ -191,7 +191,7 @@ export async function deployWorkflowToCamunda(
       {
         method: "POST",
         body: form,
-      },
+      }
     );
 
     if (response.ok) {
@@ -200,7 +200,7 @@ export async function deployWorkflowToCamunda(
       console.info("Deployment provides result: ", result);
       console.info(
         "Deployment successful with deployment id: %s",
-        result["id"],
+        result["id"]
       );
 
       // abort if there is not exactly one deployed process definition
@@ -209,7 +209,7 @@ export async function deployWorkflowToCamunda(
       ) {
         console.error(
           "Invalid size of deployed process definitions list: " +
-            Object.values(result["deployedProcessDefinitions"] || {}).length,
+            Object.values(result["deployedProcessDefinitions"] || {}).length
         );
         return { status: "failed" };
       }
@@ -217,19 +217,19 @@ export async function deployWorkflowToCamunda(
       dispatchWorkflowEvent(
         workflowEventTypes.DEPLOYED,
         workflowXml,
-        workflowName,
+        workflowName
       );
 
       return {
         status: "deployed",
         deployedProcessDefinition: Object.values(
-          result["deployedProcessDefinitions"] || {},
+          result["deployedProcessDefinitions"] || {}
         )[0],
       };
     } else {
       console.error(
         "Deployment of workflow returned invalid status code: %s",
-        response.status,
+        response.status
       );
       return {
         status: "failed",
@@ -261,7 +261,7 @@ export async function handleTransformedWorkflow(workflowXml) {
   const eventNotCaught = dispatchWorkflowEvent(
     workflowEventTypes.TRANSFORMED,
     workflowXml,
-    fileName,
+    fileName
   );
 
   console.log(`Transformed Workflow Event caught? - ${eventNotCaught}`);
@@ -299,13 +299,13 @@ export function openInNewTab(workflowXml, fileName) {
     // Pass the XML string to the new window using postMessage
     newWindow.postMessage(
       { workflow: workflowXml, name: fileName },
-      window.location.href,
+      window.location.href
     );
   };
 }
 
 export function setAutoSaveInterval(
-  autoSaveFileOption = editorConfig.getAutoSaveFileOption(),
+  autoSaveFileOption = editorConfig.getAutoSaveFileOption()
 ) {
   if (autoSaveFileOption === autoSaveFile.INTERVAL) {
     getModeler().autosaveIntervalId = setInterval(() => {
