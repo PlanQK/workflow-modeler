@@ -81,7 +81,7 @@ export default function YamlModal(props) {
         <div id="wizardFormButtons">
           <button
             type="button"
-            className="qwm-btn qwm-btn-primary"
+            className="qwm-btn qwm-btn-modal"
             form="configForm"
             onClick={onSubmit}
           >
