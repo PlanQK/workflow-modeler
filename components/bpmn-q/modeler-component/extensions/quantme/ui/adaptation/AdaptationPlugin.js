@@ -9,20 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* eslint-disable no-unused-vars*/
-import { findOptimizationCandidates } from "./CandidateDetector";
-import { getQiskitRuntimeProgramDeploymentModel } from "./runtimes/QiskitRuntimeHandler";
-import { getAWSRuntimeProgramDeploymentModel } from "./runtimes/AwsRuntimeHandler";
-import { rewriteWorkflow } from "./WorkflowRewriter";
+import {
+  findOptimizationCandidates,
+  generateCandidateGroup,
+  visualizeCandidateGroup,
+} from "./CandidateDetector";
 import React, { PureComponent } from "react";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
-import { getQRMs } from "../../qrm-manager";
-import config from "../../framework-config/config";
-
-const defaultState = {
-  adaptationOpen: false,
-};
 
 /**
  * React component which contains a button which opens the adaption modal when clicked.
@@ -32,8 +26,6 @@ export default class AdaptationPlugin extends PureComponent {
     super(props);
 
     this.modeler = getModeler();
-
-    this.state = defaultState;
   }
 
   async detectHybridSpheres() {
@@ -59,9 +51,11 @@ export default class AdaptationPlugin extends PureComponent {
         optimizationCandidates.length
       );
 
-      this.candidateList = optimizationCandidates;
-
-      // TODO: visualize candidates
+      // draw hybrid spheres
+      for (let candidate of optimizationCandidates) {
+        candidate = await visualizeCandidateGroup(candidate, this.modeler);
+        await generateCandidateGroup(candidate.groupBox, this.modeler);
+      }
     }
   }
 

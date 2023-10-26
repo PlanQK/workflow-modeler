@@ -10,9 +10,8 @@
  */
 
 import lodash from "lodash";
-import generateImage from "../../../../editor/util/camunda-utils/generateImage";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
-import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
+import * as Constans from "../../Constants";
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
@@ -28,9 +27,6 @@ export async function findOptimizationCandidates(modeler) {
     "Searching optimization candidates for workflow with root element: ",
     rootElement
   );
-
-  // export xml of the current workflow model to enable a later image creation
-  let workflowXml = await modeler.get("bpmnjs").saveXML();
 
   // get all potential entry points for a hybrid loop
   let entryPoints = findEntryPoints(rootElement);
@@ -58,12 +54,6 @@ export async function findOptimizationCandidates(modeler) {
       containsQuantumCircuitExecutionTask(optimizationCandidate) &&
       containsClassicalTask(optimizationCandidate)
     ) {
-      // generate visual representation of the candidate using base64
-      optimizationCandidate = await visualizeCandidate(
-        optimizationCandidate,
-        workflowXml.xml
-      );
-
       console.log(
         "Found valid optimization candidate: ",
         optimizationCandidate
@@ -82,91 +72,13 @@ export async function findOptimizationCandidates(modeler) {
 }
 
 /**
- * Generate an image representing the candidate encoded using base64
+ * Compute Viewbox of Optimization Candidate
  *
- * @param optimizationCandidate the candidate to visualize
- * @param workflowXml the XML of the workflow the candidate belongs to
- * @return the string containing the base64 encoded image
+ * @param optimizationCandidate
+ * @param elementRegistry
+ * @returns {{}}
  */
-async function visualizeCandidate(optimizationCandidate, workflowXml) {
-  console.log("Visualizing optimization candidate: ", optimizationCandidate);
-
-  // create new modeler for the visualization
-  let modeler = await createTempModelerFromXml(workflowXml);
-  let modeling = modeler.get("modeling");
-  let elementRegistry = modeler.get("elementRegistry");
-  let rootElement = getRootProcess(modeler.getDefinitions());
-
-  // remove all flows that are not part of the candidate
-  const flowElements = lodash.cloneDeep(rootElement.flowElements);
-  console.log("Workflow contains %d elements!", flowElements.length);
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    if (
-      !optimizationCandidate.containedElements.some(
-        (e) => e.id === flowElement.id
-      ) &&
-      flowElement.$type === "bpmn:SequenceFlow"
-    ) {
-      // remove connection from the modeler
-      let element = elementRegistry.get(flowElement.id);
-      modeling.removeConnection(element);
-    }
-  }
-  console.log(
-    "%d elements after filtering sequence flow!",
-    rootElement.flowElements.length
-  );
-
-  // remove all shapes that are not part of the candidate
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    if (
-      !optimizationCandidate.containedElements.some(
-        (e) => e.id === flowElement.id
-      ) &&
-      flowElement.$type !== "bpmn:SequenceFlow"
-    ) {
-      // remove shape from the modeler
-      let element = elementRegistry.get(flowElement.id);
-      modeling.removeShape(element);
-    }
-  }
-  console.log(
-    "Remaining workflow contains %d elements and candidate %d!",
-    rootElement.flowElements.length,
-    optimizationCandidate.containedElements.length
-  );
-
-  // export the candidate as svg
-  function saveSvgWrapper() {
-    return new Promise((resolve) => {
-      modeler.saveSVG((err, successResponse) => {
-        resolve(successResponse);
-      });
-    });
-  }
-
-  let svg = await saveSvgWrapper();
-
-  // calculate view box for the SVG
-  svg = calculateViewBox(optimizationCandidate, svg, elementRegistry);
-
-  // generate png from svg
-  optimizationCandidate.candidateImage = generateImage("png", svg);
-  optimizationCandidate.modeler = modeler;
-  return optimizationCandidate;
-}
-
-/**
- * Calculate the view box for the svg to visualize only the current candidate
- *
- * @param optimizationCandidate the optimization candidate to calculate the view box for
- * @param svg the svg to update the view box to visualize the optimization candidate
- * @param elementRegistry element registry of the modeler containing the complete workflow to access all contained elements
- * @return the updated svg with the calculated view box
- */
-function calculateViewBox(optimizationCandidate, svg, elementRegistry) {
+function calculateViewBox(optimizationCandidate, elementRegistry) {
   // search for the modeling elements with the minimal and maximal x and y values
   let result = {};
   for (let i = 0; i < optimizationCandidate.containedElements.length; i++) {
@@ -209,52 +121,7 @@ function calculateViewBox(optimizationCandidate, svg, elementRegistry) {
       }
     }
   }
-
-  console.log("Minimum x value for candidate: ", result.minX);
-  console.log("Minimum y value for candidate: ", result.minY);
-  console.log("Maximum x value for candidate: ", result.maxX);
-  console.log("Maximum y value for candidate: ", result.maxY);
-
-  let width, height, x, y;
-  if (
-    result.minX === undefined ||
-    result.minY === undefined ||
-    result.maxX === undefined ||
-    result.maxY === undefined
-  ) {
-    console.log(
-      "Error: unable to find modeling element with minimum and maximum x and y values!"
-    );
-
-    // default values in case an error occurred
-    width = 1000;
-    height = 1000;
-    x = 0;
-    y = 0;
-  } else {
-    // calculate view box and add a margin of 10 to the min/max values
-    x = result.minX - 10;
-    y = result.minY - 10;
-    width = result.maxX - result.minX + 20;
-    height = result.maxY - result.minY + 20;
-  }
-
-  return svg.replace(
-    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="0" height="0" viewBox="0 0 0 0" version="1.1">',
-    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' +
-      width +
-      '" height="' +
-      height +
-      '" viewBox="' +
-      x +
-      " " +
-      y +
-      " " +
-      width +
-      " " +
-      height +
-      '" version="1.1">'
-  );
+  return result;
 }
 
 /**
@@ -478,4 +345,52 @@ function containsClassicalTask(candidate) {
 
   console.log("No classical task found. Candidate invalid: ", candidate);
   return false;
+}
+
+/**
+ * Generate Group Element for hybrid sphere
+ *
+ * @param groupBox
+ * @param modeler
+ */
+export async function generateCandidateGroup(groupBox, modeler) {
+  let definitions = modeler.getDefinitions();
+  let rootElement = getRootProcess(definitions);
+  const elementRegistry = modeler.get("elementRegistry");
+  let rootElementBo = elementRegistry.get(rootElement.id);
+  let modeling = modeler.get("modeling");
+  return modeling.createShape(
+    { type: Constans.HYBRID_SPHERE },
+    {
+      x: groupBox.x,
+      y: groupBox.y,
+      width: groupBox.width,
+      height: groupBox.height,
+    },
+    rootElementBo,
+    {}
+  );
+}
+
+/**
+ * Add Groupbox for HybridRuntime Candidate
+ *
+ * @param optimizationCandidate the candidate to visualize
+ * @param modeler of the WF
+ * @return the string containing the base64 encoded image
+ */
+export async function visualizeCandidateGroup(optimizationCandidate, modeler) {
+  let elementRegistry = modeler.get("elementRegistry");
+
+  const viewBox = calculateViewBox(optimizationCandidate, elementRegistry);
+  let groupBox = {};
+  groupBox.x = viewBox.minX - 25;
+  groupBox.y = viewBox.minY - 30;
+  groupBox.width = viewBox.maxX - viewBox.minX + 45;
+  groupBox.height = viewBox.maxY - viewBox.minY + 45;
+
+  // generate png from svg
+  optimizationCandidate.modeler = modeler;
+  optimizationCandidate.groupBox = groupBox;
+  return optimizationCandidate;
 }
