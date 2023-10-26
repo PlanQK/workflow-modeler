@@ -65,7 +65,7 @@ export default function ConfigModal({ onClose, configTabs }) {
                 configTabs.map((tab, index) => (
                   <button
                     type="button"
-                    className="qwm-innerConfig qwm-btn-primary"
+                    className="qwm-innerConfig qwm-btn-config-primary"
                     onClick={() => openTab(tab.tabId, index)}
                   >
                     {tab.tabTitle}

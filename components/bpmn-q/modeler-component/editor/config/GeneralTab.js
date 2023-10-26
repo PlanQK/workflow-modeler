@@ -77,6 +77,7 @@ export default function EditorTab() {
             <td align="right">Camunda Engine Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="camundaEndpoint"
                 value={camundaEndpoint}
@@ -93,6 +94,7 @@ export default function EditorTab() {
             <td align="right">Transformed Workflow Handler</td>
             <td align="left">
               <select
+                className="qwm-select"
                 name="workflowHandler"
                 value={workflowHandler}
                 onChange={(event) => setWorkflowHandler(event.target.value)}
@@ -114,6 +116,7 @@ export default function EditorTab() {
             <td align="right">Download file name</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="fileName"
                 value={fileName}
@@ -125,6 +128,7 @@ export default function EditorTab() {
             <td align="right">Download file format</td>
             <td align="left">
               <select
+                className="qwm-select"
                 name="fileFormat"
                 value={fileFormat}
                 onChange={(event) => setFileFormat(event.target.value)}
@@ -146,6 +150,7 @@ export default function EditorTab() {
             <td align="right">Auto save file option:</td>
             <td align="left">
               <select
+                className="qwm-select"
                 name="autoSaveFileOption"
                 value={autoSaveFileOption}
                 onChange={(event) => setAutoSaveFileOption(event.target.value)}
@@ -163,6 +168,7 @@ export default function EditorTab() {
               <td align="right">Auto save interval size:</td>
               <td align="left">
                 <input
+                  className="qwm-input"
                   type="number"
                   name="autoSaveIntervalSize"
                   value={autoSaveIntervalSize}
