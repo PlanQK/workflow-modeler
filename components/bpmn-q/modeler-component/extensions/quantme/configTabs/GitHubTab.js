@@ -134,6 +134,7 @@ export default function GitHubTab() {
             <td align="right">QRM Repository User:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="qrmUserName"
                 value={githubUsername}
@@ -145,6 +146,7 @@ export default function GitHubTab() {
             <td align="right">QRM Repository Name:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="qrmRepoName"
                 value={githubRepositoryName}
@@ -158,6 +160,7 @@ export default function GitHubTab() {
             <td align="right">QRM Repository Path:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="qrmRepoPath"
                 value={githubRepositoryPath}
@@ -183,6 +186,7 @@ export default function GitHubTab() {
             </td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="githubToken"
                 value={githubToken}
@@ -199,6 +203,7 @@ export default function GitHubTab() {
             <td align="right">GitHub Repository Owner:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="uploadGithubOwner"
                 value={uploadGithubOwner}
@@ -210,6 +215,7 @@ export default function GitHubTab() {
             <td align="right">GitHub Repository Name:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="uploadGithubRepositoryName"
                 value={uploadGithubRepositoryName}
@@ -223,6 +229,7 @@ export default function GitHubTab() {
             <td align="right">GitHub Repository Branch:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="uploadBranchName"
                 value={uploadBranchName}
@@ -234,6 +241,7 @@ export default function GitHubTab() {
             <td align="right">Workflow File Name:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="uploadFileName"
                 value={uploadFileName}

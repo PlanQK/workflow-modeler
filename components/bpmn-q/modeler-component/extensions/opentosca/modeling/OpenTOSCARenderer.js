@@ -38,6 +38,8 @@ const DEPLOYMENT_REL_MARKER_ID = "deployment-rel";
 const NODE_WIDTH = 100;
 const NODE_HEIGHT = 60;
 const NODE_SHIFT_MARGIN = 10;
+const LABEL_WIDTH = 90;
+const LABEL_HEIGHT = 20;
 const STROKE_STYLE = {
   strokeLinecap: "round",
   strokeLinejoin: "round",
@@ -242,7 +244,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       }
     }
     const groupDef = svgCreate("g", { id: DEPLOYMENT_GROUP_ID });
-    parentGfx.append(groupDef);
+    parentGfx.prepend(groupDef);
 
     const { nodeTemplates, relationshipTemplates, topNode } =
       element.deploymentModelTopology;
@@ -289,12 +291,21 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     for (let relationshipTemplate of relationshipTemplates) {
       const start = positions.get(relationshipTemplate.sourceElement.ref);
       const end = positions.get(relationshipTemplate.targetElement.ref);
+      const namePattern = /_(.*)_/g;
+      var nameMatches = namePattern.exec(relationshipTemplate.id);
+      var relationshipName;
+      if (nameMatches === null && nameMatches.length < 1) {
+        relationshipName = relationshipTemplate.id;
+      } else {
+        relationshipName = nameMatches[1];
+      }
       this.drawRelationship(
         groupDef,
         start,
         relationshipTemplate.sourceElement.ref === topNode.id,
         end,
-        relationshipTemplate.targetElement.ref === topNode.id
+        relationshipTemplate.targetElement.ref === topNode.id,
+        relationshipName
       );
     }
   }
@@ -393,7 +404,14 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     }
   }
 
-  drawRelationship(parentGfx, start, startIsToplevel, end, endIsToplevel) {
+  drawRelationship(
+    parentGfx,
+    start,
+    startIsToplevel,
+    end,
+    endIsToplevel,
+    lineLabel
+  ) {
     const line = createLine(
       connectRectangles(
         {
@@ -413,6 +431,32 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       }),
       5
     );
+    const labelGroup = svgCreate("g");
+
+    const pathLength = line.getTotalLength();
+    const middlePoint = line.getPointAtLength(pathLength / 2);
+    svgAttr(labelGroup, {
+      transform: `matrix(1, 0, 0, 1, ${(
+        middlePoint.x -
+        LABEL_WIDTH / 2
+      ).toFixed(2)}, ${(middlePoint.y - LABEL_HEIGHT / 2).toFixed(2)})`,
+    });
+    const backgroundRect = svgCreate("rect", {
+      width: LABEL_WIDTH,
+      height: LABEL_HEIGHT,
+      fill: "#EEEEEE",
+      fillOpacity: 1,
+    });
+    svgAppend(labelGroup, backgroundRect);
+    const text = this.textRenderer.createText(lineLabel, {
+      box: {
+        width: LABEL_WIDTH,
+        height: LABEL_HEIGHT,
+      },
+      align: "center-middle",
+    });
+    svgAppend(labelGroup, text);
+    parentGfx.prepend(labelGroup);
     parentGfx.prepend(line);
   }
 
@@ -435,12 +479,44 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     const text = this.textRenderer.createText(nodeTemplate.name, {
       box: {
         width: NODE_WIDTH,
-        height: NODE_HEIGHT,
+        height: NODE_HEIGHT / 2,
       },
       align: "center-middle",
     });
+
     svgAppend(groupDef, text);
+
+    const groupDef2 = svgCreate("g");
+    svgAttr(groupDef2, {
+      transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(2)}, ${(
+        position.y +
+        NODE_HEIGHT / 2
+      ).toFixed(2)})`,
+    });
+
+    const namePattern = /\}(.*)/g;
+    var typeMatches = namePattern.exec(nodeTemplate.type);
+    var typeName;
+    if (typeMatches === null && typeMatches.length < 1) {
+      typeName = nodeTemplate.type;
+    } else {
+      typeName = typeMatches[1];
+    }
+
+    const typeText = this.textRenderer.createText("(" + typeName + ")", {
+      box: {
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT / 2,
+      },
+      align: "center-middle",
+      style: {
+        fill: "#777777",
+      },
+    });
+
+    svgAppend(groupDef2, typeText);
     parentGfx.append(groupDef);
+    parentGfx.append(groupDef2);
   }
 
   renderer(type) {
