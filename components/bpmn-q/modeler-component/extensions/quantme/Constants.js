@@ -70,6 +70,7 @@ export const CUTTING_METHOD = "cuttingMethod";
 export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
+export const AUTOMATED_SELECTION = "automatedSelection";
 
 // endpoint paths of connected services
 export const NISQ_ANALYZER_QPU_SELECTION_PATH = "qpu-selection";

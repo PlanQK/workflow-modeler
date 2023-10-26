@@ -3,7 +3,7 @@ import {
   isTextFieldEntryEdited,
   isSelectEntryEdited,
 } from "@bpmn-io/properties-panel";
-import { AlgorithmEntry, AlphaEntry } from "./QuantMEPropertyEntries.js";
+import { AlgorithmEntry, AlphaEntry, AutomatedSelectionEntry } from "./QuantMEPropertyEntries.js";
 import {
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,
@@ -260,6 +260,12 @@ export function HardwareSelectionSubprocessProperties(element) {
       id: consts.SELECTION_STRATEGY,
       element,
       component: SelectionStrategyEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.AUTOMATED_SELECTION,
+      element,
+      component: AutomatedSelectionEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];
