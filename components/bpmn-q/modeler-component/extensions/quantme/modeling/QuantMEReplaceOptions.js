@@ -180,7 +180,7 @@ export var SUBPROCESS = [
 export var GROUP = [
   {
     label: "Hybrid Sphere",
-    actionName: "replace-with-hybrid-runtime-service-task",
+    actionName: "replace-with-hybrid-sphere",
     className: "qwm bpmn-icon-hybrid-sphere",
     target: {
       type: consts.HYBRID_SPHERE,

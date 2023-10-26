@@ -92,7 +92,17 @@ export default class QuantMEReplaceMenuProvider {
 
       // add additional elements to replace groups
       if (is(element, "bpmn:Group")) {
-        return Object.assign(quantmeReplaceOptions.GROUP, entries);
+        let filteredOptions = filter(
+          quantmeReplaceOptions.GROUP,
+          isDifferentType(element)
+        );
+        const groupEntries = createMenuEntries(
+          element,
+          filteredOptions,
+          self.translate,
+          self.bpmnReplace.replaceElement
+        );
+        return Object.assign(groupEntries, entries);
       }
 
       return entries;
