@@ -33,8 +33,8 @@ describe("Test plugins", function () {
 
         expect(plugins.length).to.equal(4);
         expect(plugins[0].name).to.equal("dataflow");
-        expect(plugins[1].name).to.equal("quantme");
-        expect(plugins[2].name).to.equal("opentosca");
+        expect(plugins[1].name).to.equal("opentosca");
+        expect(plugins[2].name).to.equal("quantme");
         expect(plugins[3].name).to.equal("planqk");
       });
     });
