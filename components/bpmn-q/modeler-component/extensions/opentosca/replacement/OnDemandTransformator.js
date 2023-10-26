@@ -107,7 +107,7 @@ for(var i = 0; i < 30; i++) {
 
 java.lang.System.out.println("InstanceUrl: " + instanceUrl);
 
-for(var i = 0; i < 30 * 8; i++) {
+for(var i = 0; i < 30 * 3; i++) {
     try {
         var createInstanceResponse = fetch('GET', instanceUrl);
         var instance = JSON.parse(createInstanceResponse).service_template_instances;

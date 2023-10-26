@@ -1,5 +1,5 @@
 import {
-    connectRectangles
+    connectPoints
 } from 'diagram-js/lib/layout/ManhattanLayout';
 
 import {
@@ -7,7 +7,7 @@ import {
 } from 'diagram-js/lib/util/RenderUtil';
 
 import BpmnRenderer from 'bpmn-js/lib/draw/BpmnRenderer';
-import { getOrientation } from 'diagram-js/lib/layout/LayoutUtil';
+import {getOrientation} from 'diagram-js/lib/layout/LayoutUtil';
 
 
 import buttonIcon from '../resources/show-deployment-button.svg?raw';
@@ -54,15 +54,15 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             'create.end',
             'shape.move.move',
             'shape.move.end'
-        ], 140000, function(event) {
+        ], 140000, function (event) {
             var context = event.context,
                 canExecute = context.canExecute,
                 target = context.target;
 
             var canAttach = canExecute && (canExecute === 'attach' || canExecute.attach);
-            const isRelevantEvent = context.shape.type === "bpmn:IntermediateThrowEvent" ||  context.shape.type === "bpmn:BoundaryEvent";
+            const isRelevantEvent = context.shape.type === "bpmn:IntermediateThrowEvent" || context.shape.type === "bpmn:BoundaryEvent";
 
-            if (canAttach  && isRelevantEvent && context.target.businessObject.get('opentosca:deploymentModelUrl') && getOrientation(event, target, -30) === "bottom-right") {
+            if (canAttach && isRelevantEvent && context.target.businessObject.get('opentosca:deploymentModelUrl') && getOrientation(event, target, -30) === "bottom-right") {
                 // Prevent snapping on deployment visualisation toggle button
                 event.stopPropagation();
             }
@@ -72,12 +72,117 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
                 const task = self.renderer('bpmn:ServiceTask')(parentGfx, element);
                 self.maybeAddShowDeploymentModelButton(parentGfx, element);
+                self.addSubprocessView(parentGfx, element);
                 return task;
             }
         };
         this.addMarkerDefinition(canvas);
         this.registerShowDeploymentModelHandler();
         this.currentlyShownDeploymentsModels = new Map();
+    }
+
+    addSubprocessView(parentGfx, element) {
+        let deploymentModelUrl = element.businessObject.get('opentosca:deploymentModelUrl');
+        if (!deploymentModelUrl) return;
+
+        let groupDef = svgCreate('g');
+        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${-238}, ${-78})`});
+        this.renderer('bpmn:StartEvent')(groupDef, {
+            ...element,
+            type: 'bpmn:StartEvent',
+            height: 36,
+            width: 36,
+            businessObject: {
+                isInterrupting: true
+            }
+        });
+        svgAppend(parentGfx, groupDef);
+
+        groupDef = svgCreate('g');
+        this.renderer("bpmn:SequenceFlow")(parentGfx, {
+            ...element,
+            type: 'bpmn:SequenceFlow',
+            businessObject: {},
+            waypoints: [
+                {x: -200, y: -60},
+                {x: -150, y: -60},
+            ]
+        });
+
+        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${-150}, ${-100})`});
+        this.renderer('bpmn:ScriptTask')(groupDef, {
+            ...element,
+            businessObject: {
+                "name": "Create deployment"
+            }
+        });
+        svgAppend(parentGfx, groupDef);
+
+        this.renderer("bpmn:SequenceFlow")(parentGfx, {
+            ...element,
+            businessObject: {},
+            waypoints: [
+                {x: -50, y: -60},
+                {x: 0, y: -60},
+            ]
+        });
+
+        groupDef = svgCreate('g');
+        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${0}, ${-100})`});
+        this.renderer('bpmn:ScriptTask')(groupDef, {
+            ...element,
+            businessObject: {
+                "name": "Wait for deployment"
+            }
+        });
+        svgAppend(parentGfx, groupDef);
+
+        this.renderer("bpmn:SequenceFlow")(parentGfx, {
+            ...element,
+            businessObject: {},
+            waypoints: [
+                {x: 100, y: -60},
+                {x: 150, y: -60},
+            ]
+        });
+
+        groupDef = svgCreate('g');
+        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${150}, ${-100})`});
+        this.renderer('bpmn:ServiceTask')(groupDef, {
+            ...element,
+            businessObject: {
+                "name": "Call service"
+            }
+        });
+
+        this.renderer("bpmn:SequenceFlow")(parentGfx, {
+            ...element,
+            type: 'bpmn:SequenceFlow',
+            businessObject: {},
+            waypoints: [
+                {x: 250, y: -60},
+                {x: 300, y: -60},
+            ]
+        });
+        svgAppend(parentGfx, groupDef);
+
+        groupDef = svgCreate('g');
+        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${301}, ${-78})`});
+        this.renderer('bpmn:EndEvent')(groupDef, {
+            ...element,
+            height: 36,
+            width: 36,
+            type: 'bpmn:EndEvent',
+            businessObject: {}
+        });
+        svgAppend(parentGfx, groupDef);
+
+        svgAppend(parentGfx, svgCreate("path", {
+            d: "M -300 -110 L 400 -110 L 400 -10   L 55 -10   L 50 -5  L 45 -10  L -300 -10 Z",
+            fill: "none",
+            stroke: "#777777",
+            "pointer-events": "all"
+        }));
     }
 
     registerShowDeploymentModelHandler() {
@@ -229,12 +334,125 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             boundingBox
         });
 
+
+        this.drawNodeConnections(parentGfx, topNode, relationshipTemplates, positions);
+    }
+
+    drawNodeConnections(parentGfx, topNode, relationshipTemplates, nodePositions) {
+        const connectionCountAtNodeLocation = new Map();
+        const connections = [];
+
+        const addToPort = (nodeRef, location) => {
+            const key = nodeRef + "-" + location;
+            let position;
+            if (connectionCountAtNodeLocation.has(key)) {
+                position = connectionCountAtNodeLocation.get(key) + 1;
+            } else {
+                position = 1;
+            }
+            connectionCountAtNodeLocation.set(key, position);
+            return position;
+        };
+
+        const addConnection = (sourceNode, sourceLocation, target, targetLocation) => {
+            connections.push({
+                source: sourceNode,
+                target,
+                sourceLocation,
+                targetLocation,
+                sourcePortIndex: addToPort(sourceNode.ref, sourceLocation),
+                targetPortIndex: addToPort(target.ref, targetLocation),
+            });
+        };
+
         for (let relationshipTemplate of relationshipTemplates) {
-            const start = positions.get(relationshipTemplate.sourceElement.ref);
-            const end = positions.get(relationshipTemplate.targetElement.ref);
-            this.drawRelationship(groupDef,
-                start, relationshipTemplate.sourceElement.ref === topNode.id,
-                end, relationshipTemplate.targetElement.ref === topNode.id);
+            const sourceRef = relationshipTemplate.sourceElement.ref;
+            const targetRef = relationshipTemplate.targetElement.ref;
+
+            const source = {
+                width: NODE_WIDTH,
+                height: sourceRef === topNode.id ? 80 : NODE_HEIGHT,
+                ref: sourceRef,
+                ...nodePositions.get(sourceRef)
+            };
+            const target = {
+                width: NODE_WIDTH,
+                height: sourceRef === topNode.id ? 80 : NODE_HEIGHT,
+                ref: targetRef,
+                ...nodePositions.get(targetRef)
+            };
+            const orientation = getOrientation(source, target, 0);
+
+            switch (orientation) {
+                case 'intersect':
+                case 'bottom':
+                    addConnection(source, 'north', target, 'south');
+                    break;
+                case 'top':
+                    addConnection(source, 'south', target, 'north');
+                    break;
+                case 'right':
+                    addConnection(source, 'east', target, 'west');
+                    break;
+                case 'left':
+                    addConnection(source, 'west', target, 'east');
+                    break;
+                case 'top-left':
+                    addConnection(source, 'south', target, 'east');
+                    break;
+                case 'top-right':
+                    addConnection(source, 'south', target, 'west');
+                    break;
+                case 'bottom-left':
+                    addConnection(source, 'north', target, 'east');
+                    break;
+                case 'bottom-right':
+                    addConnection(source, 'north', target, 'west');
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        for (const connection of connections) {
+            const getPortPoint = (element, location, locationIndex) => {
+                const portCount = connectionCountAtNodeLocation.get(element.ref + "-" + location);
+                if (location === 'north') {
+                    return {
+                        x: element.x + (element.width / (portCount + 1)) * locationIndex,
+                        y: element.y
+                    };
+                } else if (location === 'south') {
+                    return {
+                        x: element.x + (element.width / (portCount + 1)) * locationIndex,
+                        y: element.y + element.height
+                    };
+                } else if (location === 'east') {
+                    return {
+                        x: element.x,
+                        y: element.y + (element.height / (portCount + 1)) * locationIndex
+                    };
+                } else if (location === 'west') {
+                    return {
+                        x: element.x + element.width,
+                        y: element.y + (element.height / (portCount + 1)) * locationIndex
+                    };
+                }
+            };
+
+            const getSimpleDirection = direction => direction === 'north' || direction === 'south' ? 'v' : 'h';
+
+            const points = connectPoints(
+                getPortPoint(connection.source, connection.sourceLocation, connection.sourcePortIndex),
+                getPortPoint(connection.target, connection.targetLocation, connection.targetPortIndex),
+                getSimpleDirection(connection.sourceLocation) + ":" + getSimpleDirection(connection.targetLocation)
+            );
+
+            const line = createLine(points, this.styles.computeStyle({}, ['no-fill'], {
+                ...STROKE_STYLE,
+                markerEnd: `url(#${DEPLOYMENT_REL_MARKER_ID})`
+            }), 5);
+            parentGfx.prepend(line);
         }
     }
 
@@ -279,7 +497,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                     continue;
                 }
                 // Can not move elements without parent
-                if(!otherElement.parent) continue;
+                if (!otherElement.parent) continue;
                 commands.push({
                     cmd: 'shape.move',
                     context: {
@@ -306,22 +524,6 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         if (group) {
             group.remove();
         }
-    }
-
-    drawRelationship(parentGfx, start, startIsToplevel, end, endIsToplevel) {
-        const line = createLine(connectRectangles({
-            width: NODE_WIDTH,
-            height: startIsToplevel ? 80 : NODE_HEIGHT,
-            ...start
-        }, {
-            width: NODE_WIDTH,
-            height: endIsToplevel ? 80 : NODE_HEIGHT,
-            ...end
-        }), this.styles.computeStyle({}, ['no-fill'], {
-            ...STROKE_STYLE,
-            markerEnd: `url(#${DEPLOYMENT_REL_MARKER_ID})`
-        }), 5);
-        parentGfx.prepend(line);
     }
 
     drawNodeTemplate(parentGfx, nodeTemplate, position) {
