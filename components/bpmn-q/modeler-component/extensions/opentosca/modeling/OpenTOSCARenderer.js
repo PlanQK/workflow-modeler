@@ -244,7 +244,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       }
     }
     const groupDef = svgCreate("g", { id: DEPLOYMENT_GROUP_ID });
-    parentGfx.append(groupDef);
+    parentGfx.prepend(groupDef);
 
     const { nodeTemplates, relationshipTemplates, topNode } =
       element.deploymentModelTopology;
