@@ -585,6 +585,17 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "HybridRuntimeGroup",
+      "superClass": ["bpmn:Group"],
+      "properties": [
+        {
+          "name": "runtimeProvider",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "enumerations": [],
