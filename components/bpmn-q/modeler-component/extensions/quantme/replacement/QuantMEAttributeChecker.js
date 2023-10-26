@@ -51,7 +51,7 @@ export function requiredAttributesAvailable(element) {
       return checkVariationalQuantumAlgorithmTask();
     case consts.CIRCUIT_CUTTING_SUBPROCESS:
       return checkCircuitCuttingSubprocess();
-    case consts.HYBRID_RUNTIME_GROUP:
+    case consts.HYBRID_SPHERE:
       return checkHybridRuntimeGroup(bo);
     default:
       console.log("Unsupported QuantME element of type: ", element.$type);

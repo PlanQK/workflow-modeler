@@ -19,6 +19,7 @@ import {
 import * as configConsts from "../../../../editor/configurations/Constants";
 import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
 import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
+import { RuntimeProviderEntry } from "./QuantMEPropertyEntries";
 
 const LOW_PRIORITY = 500;
 
@@ -133,20 +134,31 @@ function QuantMEProps(element) {
 
     case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
       return HardwareSelectionSubprocessProperties(element);
+
     case consts.CIRCUIT_CUTTING_SUBPROCESS:
       return CircuitCuttingSubprocessEntries(element);
+
     case consts.CIRCUIT_CUTTING_TASK:
       return CircuitCuttingSubprocessEntries(element);
+
     case consts.RESULT_EVALUATION_TASK:
       return ResultEvaluationTaskEntries(element);
+
     case consts.PARAMETER_OPTIMIZATION_TASK:
       return ParameterOptimizationTaskEntries(element);
+
     case consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK:
       return VariationalQuantumAlgorithmTaskEntries(element);
+
     case consts.WARM_STARTING_TASK:
       return WarmStartingTaskEntries(element);
+
     case consts.CUTTING_RESULT_COMBINATION_TASK:
       return CuttingResultCombinationTaskEntries(element);
+
+    case consts.HYBRID_SPHERE:
+      return RuntimeProviderEntry(element);
+
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }

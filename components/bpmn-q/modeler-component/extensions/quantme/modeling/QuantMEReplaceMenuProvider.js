@@ -90,6 +90,11 @@ export default class QuantMEReplaceMenuProvider {
         return Object.assign(subprocessEntries, entries);
       }
 
+      // add additional elements to replace groups
+      if (is(element, "bpmn:Group")) {
+        return Object.assign(quantmeReplaceOptions.GROUP, entries);
+      }
+
       return entries;
     };
   }

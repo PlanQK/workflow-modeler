@@ -323,6 +323,20 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "TASK_TYPE_VQA");
         return task;
       },
+      [consts.HYBRID_SPHERE]: function (self, parentGfx, element) {
+        var group = self.renderer("bpmn:Group")(parentGfx, element);
+
+        var pathData = quantMEPathMap.getPath("GROUP_HYBRID_SPHERE");
+
+        drawPath(self, parentGfx, pathData, {
+          transform: "scale(0.2)",
+          strokeWidth: 0.5,
+          fill: getFillColor(element, "#FFFFFF"),
+          stroke: getStrokeColor(element, defaultStrokeColor),
+        });
+
+        return group;
+      },
     };
 
     setTimeout(function () {

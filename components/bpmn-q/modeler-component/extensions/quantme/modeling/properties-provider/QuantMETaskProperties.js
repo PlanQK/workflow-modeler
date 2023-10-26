@@ -454,3 +454,14 @@ export function CuttingResultCombinationTaskEntries(element) {
     },
   ];
 }
+
+export function HybridSphereEntries(element) {
+  return [
+    {
+      id: consts.CUTTING_METHOD,
+      element,
+      component: CuttingMethodEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}

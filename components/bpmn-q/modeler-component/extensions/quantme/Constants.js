@@ -29,7 +29,7 @@ export const CIRCUIT_CUTTING_SUBPROCESS = "quantme:CircuitCuttingSubprocess";
 export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
-export const HYBRID_RUNTIME_GROUP = "quantme:HybridRuntimeGroup";
+export const HYBRID_SPHERE = "quantme:HybridSphere";
 
 // Property names of the QuantME constructs
 export const ALGORITHM = "algorithm";

@@ -176,3 +176,14 @@ export var SUBPROCESS = [
     },
   },
 ];
+
+export var GROUP = [
+  {
+    label: "Hybrid Sphere",
+    actionName: "replace-with-hybrid-runtime-service-task",
+    className: "qwm bpmn-icon-hybrid-sphere",
+    target: {
+      type: consts.HYBRID_SPHERE,
+    },
+  },
+];
