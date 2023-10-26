@@ -587,7 +587,7 @@
       ]
     },
     {
-      "name": "HybridRuntimeGroup",
+      "name": "HybridSphere",
       "superClass": ["bpmn:Group"],
       "properties": [
         {
