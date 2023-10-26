@@ -328,7 +328,7 @@ export default class QuantMERenderer extends BpmnRenderer {
 
         var pathData = quantMEPathMap.getPath("GROUP_HYBRID_SPHERE");
 
-        drawPath(self, parentGfx, pathData, {
+        drawPath(parentGfx, pathData, {
           transform: "scale(0.2)",
           strokeWidth: 0.5,
           fill: getFillColor(element, "#FFFFFF"),

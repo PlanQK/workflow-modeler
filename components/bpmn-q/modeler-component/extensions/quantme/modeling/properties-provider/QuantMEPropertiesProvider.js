@@ -14,12 +14,12 @@ import {
   ParameterOptimizationTaskEntries,
   VariationalQuantumAlgorithmTaskEntries,
   WarmStartingTaskEntries,
-  CuttingResultCombinationTaskEntries, HybridSphereEntries
+  CuttingResultCombinationTaskEntries,
+  HybridSphereEntries,
 } from "./QuantMETaskProperties";
 import * as configConsts from "../../../../editor/configurations/Constants";
 import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
 import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
-import { RuntimeProviderEntry } from "./QuantMEPropertyEntries";
 
 const LOW_PRIORITY = 500;
 
