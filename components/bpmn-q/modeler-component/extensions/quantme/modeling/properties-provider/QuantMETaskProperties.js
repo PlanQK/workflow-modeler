@@ -3,7 +3,7 @@ import {
   isTextFieldEntryEdited,
   isSelectEntryEdited,
 } from "@bpmn-io/properties-panel";
-import { AlgorithmEntry, AlphaEntry } from "./QuantMEPropertyEntries.js";
+import { AlgorithmEntry, AlphaEntry, RuntimeProviderEntry } from "./QuantMEPropertyEntries.js";
 import {
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,
@@ -44,6 +44,7 @@ import {
   RepetitionsEntry,
   OptimizationEntry,
 } from "./QuantMEPropertyEntries";
+import { RUNTIME_PROVIDER } from "../../Constants";
 
 /**
  * This file contains all properties of the QuantME task types and the entries they define.
@@ -458,9 +459,9 @@ export function CuttingResultCombinationTaskEntries(element) {
 export function HybridSphereEntries(element) {
   return [
     {
-      id: consts.CUTTING_METHOD,
+      id: consts.RUNTIME_PROVIDER,
       element,
-      component: CuttingMethodEntry,
+      component: RuntimeProviderEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

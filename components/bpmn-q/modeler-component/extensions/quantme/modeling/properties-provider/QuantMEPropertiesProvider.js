@@ -14,7 +14,7 @@ import {
   ParameterOptimizationTaskEntries,
   VariationalQuantumAlgorithmTaskEntries,
   WarmStartingTaskEntries,
-  CuttingResultCombinationTaskEntries,
+  CuttingResultCombinationTaskEntries, HybridSphereEntries
 } from "./QuantMETaskProperties";
 import * as configConsts from "../../../../editor/configurations/Constants";
 import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
@@ -157,7 +157,7 @@ function QuantMEProps(element) {
       return CuttingResultCombinationTaskEntries(element);
 
     case consts.HYBRID_SPHERE:
-      return RuntimeProviderEntry(element);
+      return HybridSphereEntries(element);
 
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
