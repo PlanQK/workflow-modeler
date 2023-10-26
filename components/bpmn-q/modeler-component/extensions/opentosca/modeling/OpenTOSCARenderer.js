@@ -434,9 +434,9 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       )}, ${(middlePoint.y-LABEL_HEIGHT/2).toFixed(2)})`,
     });
     const backgroundRect = svgCreate('rect', {
-      width: LABEL_WIDTH, // Adjust the width and height as needed
+      width: LABEL_WIDTH,
       height: LABEL_HEIGHT,
-      fill: "#DDDDDD",
+      fill: "#EEEEEE",
       fillOpacity: 1,
     });
     svgAppend(labelGroup, backgroundRect);
@@ -447,11 +447,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       },
       align: "center-middle",
     });
-    svgAppend(labelGroup, text);
-  
-    // Set the text content for the label
-
-    
+    svgAppend(labelGroup, text);   
     parentGfx.prepend(labelGroup);
     parentGfx.prepend(line);
   }
@@ -475,12 +471,44 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     const text = this.textRenderer.createText(nodeTemplate.name, {
       box: {
         width: NODE_WIDTH,
-        height: NODE_HEIGHT,
+        height: NODE_HEIGHT/2,
       },
       align: "center-middle",
     });
+
     svgAppend(groupDef, text);
+
+
+    const groupDef2 = svgCreate("g");
+    svgAttr(groupDef2, {
+      transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(
+        2
+      )}, ${(position.y+NODE_HEIGHT/2).toFixed(2)})`,
+    });
+
+    const namePattern = /\}(.*)/g;
+    var typeMatches = namePattern.exec(nodeTemplate.type);
+    var typeName;
+    if (typeMatches === null && typeMatches.length < 1) {
+      typeName = nodeTemplate.type;
+    } else {
+      typeName = typeMatches[1];
+    }
+
+    const typeText = this.textRenderer.createText(("(" + typeName + ")"), {
+      box: {
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT/2,
+      },
+      align: "center-middle",
+      style: {
+        fill: "#777777"
+      }
+    });
+
+    svgAppend(groupDef2, typeText);
     parentGfx.append(groupDef);
+    parentGfx.append(groupDef2);
   }
 
   renderer(type) {
