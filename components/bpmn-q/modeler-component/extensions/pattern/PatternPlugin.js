@@ -21,5 +21,5 @@ export default {
   name: "pattern",
   extensionModule: [],
   moddleDescription: patternModdleExtension,
-  styling: [patternStyles]
+  styling: [patternStyles],
 };

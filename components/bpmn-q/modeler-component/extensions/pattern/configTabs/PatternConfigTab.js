@@ -43,6 +43,7 @@ export default function PatternAtlasConfigTab() {
             <td align="right">Pattern Atlas Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="patternAtlasEndpoint"
                 value={patternAtlasEndpoint}

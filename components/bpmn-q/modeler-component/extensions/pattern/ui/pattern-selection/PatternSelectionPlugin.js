@@ -15,7 +15,8 @@ export default class PatternSelectionPlugin extends PureComponent {
     super(props);
 
     this.modeler = getModeler();
-    this.handlePatternOverviewClosed = this.handlePatternOverviewClosed.bind(this);
+    this.handlePatternOverviewClosed =
+      this.handlePatternOverviewClosed.bind(this);
 
     this.state = defaultState;
   }

@@ -346,7 +346,9 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
     hybridRuntimeProvenance !== null &&
     hybridRuntimeProvenance !== undefined
   ) {
-    config.hybridRuntimeProvenance = hybridRuntimeProvenance;
+    let hybridRuntimeProvenanceBoolean =
+      hybridRuntimeProvenance === "true" ? true : false;
+    config.hybridRuntimeProvenance = hybridRuntimeProvenanceBoolean;
   }
 }
 
