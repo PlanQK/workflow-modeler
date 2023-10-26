@@ -404,7 +404,14 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     }
   }
 
-  drawRelationship(parentGfx, start, startIsToplevel, end, endIsToplevel, lineLabel) {
+  drawRelationship(
+    parentGfx,
+    start,
+    startIsToplevel,
+    end,
+    endIsToplevel,
+    lineLabel
+  ) {
     const line = createLine(
       connectRectangles(
         {
@@ -424,16 +431,17 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       }),
       5
     );
-    const labelGroup = svgCreate('g');
+    const labelGroup = svgCreate("g");
 
     const pathLength = line.getTotalLength();
     const middlePoint = line.getPointAtLength(pathLength / 2);
     svgAttr(labelGroup, {
-      transform: `matrix(1, 0, 0, 1, ${(middlePoint.x-LABEL_WIDTH/2).toFixed(
-        2
-      )}, ${(middlePoint.y-LABEL_HEIGHT/2).toFixed(2)})`,
+      transform: `matrix(1, 0, 0, 1, ${(
+        middlePoint.x -
+        LABEL_WIDTH / 2
+      ).toFixed(2)}, ${(middlePoint.y - LABEL_HEIGHT / 2).toFixed(2)})`,
     });
-    const backgroundRect = svgCreate('rect', {
+    const backgroundRect = svgCreate("rect", {
       width: LABEL_WIDTH,
       height: LABEL_HEIGHT,
       fill: "#EEEEEE",
@@ -447,7 +455,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       },
       align: "center-middle",
     });
-    svgAppend(labelGroup, text);   
+    svgAppend(labelGroup, text);
     parentGfx.prepend(labelGroup);
     parentGfx.prepend(line);
   }
@@ -471,19 +479,19 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     const text = this.textRenderer.createText(nodeTemplate.name, {
       box: {
         width: NODE_WIDTH,
-        height: NODE_HEIGHT/2,
+        height: NODE_HEIGHT / 2,
       },
       align: "center-middle",
     });
 
     svgAppend(groupDef, text);
 
-
     const groupDef2 = svgCreate("g");
     svgAttr(groupDef2, {
-      transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(
-        2
-      )}, ${(position.y+NODE_HEIGHT/2).toFixed(2)})`,
+      transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(2)}, ${(
+        position.y +
+        NODE_HEIGHT / 2
+      ).toFixed(2)})`,
     });
 
     const namePattern = /\}(.*)/g;
@@ -495,15 +503,15 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       typeName = typeMatches[1];
     }
 
-    const typeText = this.textRenderer.createText(("(" + typeName + ")"), {
+    const typeText = this.textRenderer.createText("(" + typeName + ")", {
       box: {
         width: NODE_WIDTH,
-        height: NODE_HEIGHT/2,
+        height: NODE_HEIGHT / 2,
       },
       align: "center-middle",
       style: {
-        fill: "#777777"
-      }
+        fill: "#777777",
+      },
     });
 
     svgAppend(groupDef2, typeText);
