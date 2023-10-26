@@ -11,7 +11,7 @@
 
 import lodash from "lodash";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
-import * as Constans from "../../Constants";
+import * as Constants from "../../Constants";
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
@@ -360,7 +360,7 @@ export async function generateCandidateGroup(groupBox, modeler) {
   let rootElementBo = elementRegistry.get(rootElement.id);
   let modeling = modeler.get("modeling");
   return modeling.createShape(
-    { type: Constans.HYBRID_SPHERE },
+    { type: Constants.HYBRID_SPHERE },
     {
       x: groupBox.x,
       y: groupBox.y,

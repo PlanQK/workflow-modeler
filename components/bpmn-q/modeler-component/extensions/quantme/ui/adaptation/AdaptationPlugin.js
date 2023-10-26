@@ -17,6 +17,8 @@ import {
 import React, { PureComponent } from "react";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
+import { HYBRID_SPHERE } from "../../Constants";
 
 /**
  * React component which contains a button which opens the adaption modal when clicked.
@@ -29,6 +31,24 @@ export default class AdaptationPlugin extends PureComponent {
   }
 
   async detectHybridSpheres() {
+    // check if hybrid spheres are already visualized
+    const definitions = this.modeler.getDefinitions();
+    const artifacts = getRootProcess(definitions).artifacts;
+    if (
+      artifacts &&
+      artifacts.filter((e) => e.$type === HYBRID_SPHERE).length > 0
+    ) {
+      NotificationHandler.getInstance().displayNotification({
+        type: "info",
+        title: "Workflow already contains Hybrid Spheres",
+        content:
+          "Workflow already contains hybrid spheres. Please delete them to start the automatic detection!",
+        duration: 20000,
+      });
+      return;
+    }
+
+    // search for suitable optimization candidates within workflow model
     const optimizationCandidates = await findOptimizationCandidates(
       this.modeler
     );
