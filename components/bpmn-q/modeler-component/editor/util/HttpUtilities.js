@@ -10,14 +10,14 @@
  */
 
 /**
- * Retrieves the pattern from the pattern atlas endpoint.
- * @param patternEndpoint
+ * Retrieves the Json data from the given endpoint.
+ *
+ * @param endpoint the endpoint to retrieve the data form
  * @returns
  */
-export async function fetchDataFromEndpoint(patternEndpoint) {
-  const endpointUrl = patternEndpoint + "/patterns";
+export async function fetchDataFromEndpoint(endpoint) {
   try {
-    const response = await fetch(endpointUrl);
+    const response = await fetch(endpoint);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }

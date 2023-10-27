@@ -2,7 +2,7 @@ import PatternOverviewModal from "./PatternOverviewModal";
 import PatternModal from "./PatternModal";
 import React, { PureComponent } from "react";
 import { getModeler } from "../../../../editor/ModelerHandler";
-import { fetchDataFromEndpoint } from "../../utilities/Utilities"; // Import your API function
+import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -25,7 +25,7 @@ export default class PatternSelectionPlugin extends PureComponent {
     try {
       console.log(this.modeler.config);
       const response = await fetchDataFromEndpoint(
-        this.modeler.config.patternAtlasEndpoint
+        this.modeler.config.patternAtlasEndpoint + "/patterns"
       );
       console.log(response);
 
