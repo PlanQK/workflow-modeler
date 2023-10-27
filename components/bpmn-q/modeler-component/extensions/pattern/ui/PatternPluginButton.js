@@ -3,7 +3,6 @@ import PatternSelectionPlugin from "./pattern-selection/PatternSelectionPlugin";
 import ExtensibleButton from "../../../editor/ui/ExtensibleButton";
 
 export default function PatternPluginButton() {
-  // trigger initial QRM update
   return (
     <ExtensibleButton
       subButtons={[<PatternSelectionPlugin />]}
