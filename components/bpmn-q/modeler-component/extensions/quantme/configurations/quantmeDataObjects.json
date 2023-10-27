@@ -3,7 +3,7 @@
     "name": "Quantum Circuit Object",
     "id": "Quantum-Circuit-Object",
     "description": "data object for storing and transferring all relevant data about a quantum circuit",
-    "appliesTo": "dataflow:DataMapObject",
+    "appliesTo": "bpmn:DataObjectReference",
     "groupLabel": "Quantum Circuit Info",
     "icon": {
       "className": "dataflow-quantum-circuit-object-icon",
@@ -37,7 +37,7 @@
     "name": "Result Object",
     "id": "Result-Object",
     "description": "data object to transfer the results of quantum computations",
-    "appliesTo": "dataflow:DataMapObject",
+    "appliesTo": "bpmn:DataObjectReference",
     "groupLabel": "Result",
     "icon": {
       "className": "dataflow-result-object-icon",
@@ -60,7 +60,7 @@
     "name": "Evaluation Result Object",
     "id": "Evaluation-Result-Object",
     "description": "data object to transfer the evaluated results of quantum computations",
-    "appliesTo": "dataflow:DataMapObject",
+    "appliesTo": "bpmn:DataObjectReference",
     "groupLabel": "Evaluation Result",
     "icon": {
       "className": "dataflow-evaluation-result-object-icon",
@@ -83,7 +83,7 @@
     "name": "Parameterization Object",
     "id": "Parameterization-Object",
     "description": "data object to transfer optimization parameters, e.g., in variational quantum algorithms",
-    "appliesTo": "dataflow:DataMapObject",
+    "appliesTo": "bpmn:DataObjectReference",
     "groupLabel": "Parameterization",
     "icon": {
       "className": "dataflow-parametrization-object-icon",
@@ -106,7 +106,7 @@
     "name": "Initial State Object",
     "id": "Initial-State-Object",
     "description": "data object to transfer the initial state use d to warm-start a quantum computations",
-    "appliesTo": "dataflow:DataMapObject",
+    "appliesTo": "bpmn:DataObjectReference",
     "groupLabel": "Initial State",
     "icon": {
       "className": "dataflow-initial-state-object-icon",
