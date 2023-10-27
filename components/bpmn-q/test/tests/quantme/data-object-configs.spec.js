@@ -8,7 +8,7 @@ const QUANTME_DATA_OBJECTS = [
     id: "Quantum-Circuit-Object",
     description:
       "data object for storing and transferring all relevant data about a quantum circuit",
-    appliesTo: "dataflow:DataMapObject",
+    appliesTo: "bpmn:DataObjectReference",
     groupLabel: "Quantum Circuit Info",
     attributes: [
       {
@@ -17,8 +17,7 @@ const QUANTME_DATA_OBJECTS = [
         type: "string",
         value: "",
         bindTo: {
-          name: "content",
-          type: "KeyValueMap",
+          name: "content"
         },
       },
       {
@@ -27,8 +26,7 @@ const QUANTME_DATA_OBJECTS = [
         type: "string",
         value: "",
         bindTo: {
-          name: "content",
-          type: "KeyValueMap",
+          name: "content"
         },
       },
     ],
@@ -37,7 +35,7 @@ const QUANTME_DATA_OBJECTS = [
     name: "Result Object",
     id: "Result-Object",
     description: "data object to transfer the results of quantum computations",
-    appliesTo: "dataflow:DataMapObject",
+    appliesTo: "bpmn:DataObjectReference",
     groupLabel: "Result",
     attributes: [
       {
@@ -45,8 +43,7 @@ const QUANTME_DATA_OBJECTS = [
         label: "Execution Result",
         type: "string",
         bindTo: {
-          name: "content",
-          type: "KeyValueMap",
+          name: "content"
         },
       },
     ],
