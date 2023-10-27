@@ -142,9 +142,6 @@ export default class QuantMEReplaceMenuProvider {
     const replaceElement = this.replaceElement;
     const commandStack = this.commandStack;
 
-    console.log("TEST");
-    console.log(dataObjectConfigs());
-
     // create menu entries to replace the current element by the configuration represented by the menu entry
     let options = createConfigurationsEntries(
       element,

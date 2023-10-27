@@ -475,7 +475,7 @@
   width: 10px;
   height: 10px;
   background-size: contain;
-  background-image: url("../resources/quantum-circuit-object.svg");
+  background-image: url("../resources/quantum-circuit-data-object.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }
