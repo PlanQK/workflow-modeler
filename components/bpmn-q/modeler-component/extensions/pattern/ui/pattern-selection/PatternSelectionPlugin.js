@@ -64,7 +64,7 @@ export default class PatternSelectionPlugin extends PureComponent {
               this.fetchData();
             }}
           >
-            <span className="hybrid-loop-adaptation">
+            <span className="open-pattern-selection">
               <span className="qwm-indent">Open Pattern Selection</span>
             </span>
           </button>

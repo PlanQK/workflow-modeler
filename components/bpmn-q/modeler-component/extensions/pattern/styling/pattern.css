@@ -88,3 +88,14 @@
   right: 50px;
   top: 80px;
 }
+
+.qwm .open-pattern-selection:before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/select_icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+}
