@@ -35,7 +35,7 @@ export default function PatternModal({ onClose }) {
           strategy for the chosen algorithms, e.g., by using a hybrid runtime.
           The augmentation patterns enable the enhancement of the quantum
           workflow by incorporating additional features or elements, such as
-          warm-starting or circuit cutting. Further information, about usable
+          warm-starting or circuit cutting. Further information about usable
           patterns can be found on this{" "}
           <a href="https://www.quantumcomputingpatterns.org">website</a>.
         </div>
