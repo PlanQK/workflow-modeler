@@ -100,6 +100,7 @@ export default function PatternOverviewModal({ onClose, responseData }) {
           <button
             className="qwm-action-add qwm-btn-primary"
             onClick={openAlgorithmicPatternModal}
+            disabled={responseData === null}
           >
             +
           </button>
