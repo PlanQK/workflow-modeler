@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
 import PatternSelectionModal from "./PatternSelectionModal";
 
@@ -38,12 +38,9 @@ export default function PatternOverviewModal({ onClose, responseData }) {
       if (editRow !== null) {
         const updatedRows = [...dynamicRows];
         updatedRows[editRow].algorithmPattern = selectedPattern.algorithm;
-        let behavioralPattern = selectedPattern.behavioral;
+        updatedRows[editRow].behavioralPattern = selectedPattern.behavioral;
+        updatedRows[editRow].augmentationPattern = selectedPattern.augmentation;
 
-        updatedRows[editRow].behavioralPattern = behavioralPattern;
-        let augmentationPattern = selectedPattern.augmentation;
-
-        updatedRows[editRow].augmentationPattern = augmentationPattern;
         setDynamicRows(updatedRows);
         setEditRow(null);
         setEditRowData(null);
