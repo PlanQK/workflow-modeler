@@ -15,13 +15,6 @@ import {drawTaskSVG} from '../../../editor/util/RenderUtilities';
 import NotificationHandler from '../../../editor/ui/notifications/NotificationHandler';
 import {append as svgAppend, attr as svgAttr, create as svgCreate, select, prepend as svgPrepend} from 'tiny-svg';
 import {query as domQuery} from 'min-dom';
-import {
-    isSnapped,
-    setSnapped,
-    topLeft,
-    bottomRight
-} from 'diagram-js/lib/features/snapping/SnapUtil';
-
 import {loadTopology} from "../deployment/WineryUtils";
 
 const HIGH_PRIORITY = 14001;
