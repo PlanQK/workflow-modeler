@@ -11,6 +11,11 @@
 
 import React, { useState, useEffect } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
+import {
+  PATTERN_BEHAVIORAL,
+  PATTERN_ALGORITHM,
+  PATTERN_AUGMENTATION,
+} from "../../Constants";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -42,9 +47,9 @@ export default function PatternSelectionModal({
   }, [initialSelectedPattern]);
 
   const handlePatternSelection = (pattern, category) => {
-    if (category === "algorithm") {
+    if (category === PATTERN_ALGORITHM) {
       setSelectedAlgorithmPattern(pattern);
-    } else if (category === "behavioral") {
+    } else if (category === PATTERN_BEHAVIORAL) {
       setSelectedBehavioralPatterns((prevSelected) => {
         if (prevSelected.includes(pattern)) {
           return prevSelected.filter((selected) => selected !== pattern);
@@ -52,7 +57,7 @@ export default function PatternSelectionModal({
           return [...prevSelected, pattern];
         }
       });
-    } else if (category === "augmentation") {
+    } else if (category === PATTERN_AUGMENTATION) {
       setSelectedAugmentationPatterns((prevSelected) => {
         if (prevSelected.includes(pattern)) {
           return prevSelected.filter((selected) => selected !== pattern);
@@ -83,13 +88,13 @@ export default function PatternSelectionModal({
   };
 
   const algorithmPatterns = patterns.filter((pattern) =>
-    pattern.tags.includes("algorithm")
+    pattern.tags.includes(PATTERN_ALGORITHM)
   );
   const behavioralPatterns = patterns.filter((pattern) =>
-    pattern.tags.includes("behavioral")
+    pattern.tags.includes(PATTERN_BEHAVIORAL)
   );
   const augmentationPatterns = patterns.filter((pattern) =>
-    pattern.tags.includes("augmentation")
+    pattern.tags.includes(PATTERN_AUGMENTATION)
   );
 
   return (
@@ -130,7 +135,7 @@ export default function PatternSelectionModal({
                       name="algorithm-pattern"
                       checked={selectedAlgorithmPattern === pattern}
                       onChange={() =>
-                        handlePatternSelection(pattern, "algorithm")
+                        handlePatternSelection(pattern, PATTERN_ALGORITHM)
                       }
                     />
                   </td>
@@ -170,7 +175,7 @@ export default function PatternSelectionModal({
                       type="checkbox"
                       checked={selectedBehavioralPatterns.includes(pattern)}
                       onChange={() =>
-                        handlePatternSelection(pattern, "behavioral")
+                        handlePatternSelection(pattern, PATTERN_BEHAVIORAL)
                       }
                     />
                   </td>
@@ -210,7 +215,7 @@ export default function PatternSelectionModal({
                       type="checkbox"
                       checked={selectedAugmentationPatterns.includes(pattern)}
                       onChange={() =>
-                        handlePatternSelection(pattern, "augmentation")
+                        handlePatternSelection(pattern, PATTERN_AUGMENTATION)
                       }
                     />
                   </td>
