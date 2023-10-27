@@ -3,8 +3,8 @@ import { getModeler } from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
 
 /**
- * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change workflow
- * related configuration entries of the QuantME configs.
+ * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change
+ * configuration entries for the pattern plugin.
  *
  * @return {JSX.Element} The tab as a React component
  * @constructor
