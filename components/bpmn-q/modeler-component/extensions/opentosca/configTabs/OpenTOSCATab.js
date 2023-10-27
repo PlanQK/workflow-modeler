@@ -11,10 +11,10 @@ import * as config from "../framework-config/config-manager";
  */
 export default function OpenTOSCATab() {
   const [opentoscaEndpoint, setOpentoscaEndpoint] = useState(
-    config.getOpenTOSCAEndpoint(),
+    config.getOpenTOSCAEndpoint()
   );
   const [wineryEndpoint, setWineryEndpoint] = useState(
-    config.getWineryEndpoint(),
+    config.getWineryEndpoint()
   );
 
   const modeler = getModeler();
