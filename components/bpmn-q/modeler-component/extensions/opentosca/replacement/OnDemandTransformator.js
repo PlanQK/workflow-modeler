@@ -16,7 +16,6 @@ import * as config from "../framework-config/config-manager";
 import {makeId} from "../deployment/OpenTOSCAUtils";
 import {getCamundaEndpoint} from "../../../editor/config/EditorConfigManager";
 import {createElement} from "../../../editor/util/camunda-utils/ElementUtil";
-import {useService} from "bpmn-js-properties-panel";
 
 
 const fetchMethod = `

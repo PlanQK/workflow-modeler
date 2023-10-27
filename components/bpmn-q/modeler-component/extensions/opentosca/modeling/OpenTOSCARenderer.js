@@ -29,6 +29,8 @@ const SERVICE_TASK_TYPE = 'bpmn:ServiceTask';
 const DEPLOYMENT_GROUP_ID = 'deployment';
 const DEPLOYMENT_REL_MARKER_ID = 'deployment-rel';
 
+const LABEL_WIDTH =65;
+const LABEL_HEIGHT = 15;
 const NODE_WIDTH = 100;
 const NODE_HEIGHT = 60;
 const NODE_SHIFT_MARGIN = 10;
@@ -354,7 +356,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             return position;
         };
 
-        const addConnection = (sourceNode, sourceLocation, target, targetLocation) => {
+        const addConnection = (sourceNode, sourceLocation, target, targetLocation, connectionName) => {
             connections.push({
                 source: sourceNode,
                 target,
@@ -362,13 +364,15 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                 targetLocation,
                 sourcePortIndex: addToPort(sourceNode.ref, sourceLocation),
                 targetPortIndex: addToPort(target.ref, targetLocation),
+                connectionName,
             });
         };
+
 
         for (let relationshipTemplate of relationshipTemplates) {
             const sourceRef = relationshipTemplate.sourceElement.ref;
             const targetRef = relationshipTemplate.targetElement.ref;
-
+            console.log(relationshipTemplate);
             const source = {
                 width: NODE_WIDTH,
                 height: sourceRef === topNode.id ? 80 : NODE_HEIGHT,
@@ -386,28 +390,28 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             switch (orientation) {
                 case 'intersect':
                 case 'bottom':
-                    addConnection(source, 'north', target, 'south');
+                    addConnection(source, 'north', target, 'south', relationshipTemplate.name);
                     break;
                 case 'top':
-                    addConnection(source, 'south', target, 'north');
+                    addConnection(source, 'south', target, 'north', relationshipTemplate.name);
                     break;
                 case 'right':
-                    addConnection(source, 'east', target, 'west');
+                    addConnection(source, 'east', target, 'west', relationshipTemplate.name);
                     break;
                 case 'left':
-                    addConnection(source, 'west', target, 'east');
+                    addConnection(source, 'west', target, 'east', relationshipTemplate.name);
                     break;
                 case 'top-left':
-                    addConnection(source, 'south', target, 'east');
+                    addConnection(source, 'south', target, 'east', relationshipTemplate.name);
                     break;
                 case 'top-right':
-                    addConnection(source, 'south', target, 'west');
+                    addConnection(source, 'south', target, 'west', relationshipTemplate.name);
                     break;
                 case 'bottom-left':
-                    addConnection(source, 'north', target, 'east');
+                    addConnection(source, 'north', target, 'east', relationshipTemplate.name);
                     break;
                 case 'bottom-right':
-                    addConnection(source, 'north', target, 'west');
+                    addConnection(source, 'north', target, 'west', relationshipTemplate.name);
                     break;
                 default:
                     return;
@@ -452,6 +456,37 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                 ...STROKE_STYLE,
                 markerEnd: `url(#${DEPLOYMENT_REL_MARKER_ID})`
             }), 5);
+
+            const labelGroup = svgCreate("g");
+            console.log(connection);
+
+            const pathLength = line.getTotalLength();
+            const middlePoint = line.getPointAtLength(pathLength / 2);
+            svgAttr(labelGroup, {
+            transform: `matrix(1, 0, 0, 1, ${(
+                middlePoint.x -
+                LABEL_WIDTH / 2
+            ).toFixed(2)}, ${(middlePoint.y - LABEL_HEIGHT / 2).toFixed(2)})`,
+            });
+            const backgroundRect = svgCreate("rect", {
+                width: LABEL_WIDTH,
+                height: LABEL_HEIGHT,
+                fill: "#EEEEEE",
+                fillOpacity: 0.75,
+            });
+            svgAppend(labelGroup, backgroundRect);
+            const text = this.textRenderer.createText(connection.connectionName, {
+                box: {
+                    width: LABEL_WIDTH,
+                    height: LABEL_HEIGHT,
+                },
+                align: "center-middle",
+                style: {
+                    fontSize: 10,
+                },
+            });
+            svgAppend(labelGroup, text);
+            parentGfx.prepend(labelGroup);
             parentGfx.prepend(line);
         }
     }
@@ -527,27 +562,63 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     }
 
     drawNodeTemplate(parentGfx, nodeTemplate, position) {
-        const groupDef = svgCreate('g');
-        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(2)}, ${position.y.toFixed(2)})`});
-        const rect = svgCreate('rect', {
-            width: NODE_WIDTH,
-            height: NODE_HEIGHT,
-            fill: '#DDDDDD',
-            ...STROKE_STYLE
+        const groupDef = svgCreate("g");
+        svgAttr(groupDef, {
+          transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(
+            2
+          )}, ${position.y.toFixed(2)})`,
+        });
+        const rect = svgCreate("rect", {
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+          fill: "#DDDDDD",
+          ...STROKE_STYLE,
         });
 
         svgAppend(groupDef, rect);
 
         const text = this.textRenderer.createText(nodeTemplate.name, {
-            box: {
-                width: NODE_WIDTH,
-                height: NODE_HEIGHT,
-            },
-            align: 'center-middle'
+          box: {
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT / 2,
+          },
+          align: "center-middle",
         });
+
         svgAppend(groupDef, text);
+
+        const groupDef2 = svgCreate("g");
+        svgAttr(groupDef2, {
+          transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(2)}, ${(
+            position.y +
+            NODE_HEIGHT / 2
+          ).toFixed(2)})`,
+        });
+
+        const namePattern = /\}(.*)/g;
+        var typeMatches = namePattern.exec(nodeTemplate.type);
+        var typeName;
+        if (typeMatches === null && typeMatches.length < 1) {
+          typeName = nodeTemplate.type;
+        } else {
+          typeName = typeMatches[1];
+        }
+
+        const typeText = this.textRenderer.createText("(" + typeName + ")", {
+          box: {
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT / 2,
+          },
+          align: "center-middle",
+          style: {
+            fill: "#777777",
+          },
+        });
+
+        svgAppend(groupDef2, typeText);
         parentGfx.append(groupDef);
-    }
+        parentGfx.append(groupDef2);
+      }
 
     renderer(type) {
         return this.handlers[type];
