@@ -38,7 +38,7 @@ export default function PatternModal({ onClose }) {
         <div id="hybridLoopAdaptationFormButtons">
           <button
             type="button"
-            className="qwm-btn qwm-btn-secondary"
+            className="qwm-btn qwm-btn-primary"
             onClick={() => onClose()}
           >
             Select Patterns
