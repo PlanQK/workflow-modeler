@@ -17,7 +17,7 @@ const QUANTME_DATA_OBJECTS = [
         type: "string",
         value: "",
         bindTo: {
-          name: "content"
+          name: "content",
         },
       },
       {
@@ -26,7 +26,7 @@ const QUANTME_DATA_OBJECTS = [
         type: "string",
         value: "",
         bindTo: {
-          name: "content"
+          name: "content",
         },
       },
     ],
@@ -43,7 +43,7 @@ const QUANTME_DATA_OBJECTS = [
         label: "Execution Result",
         type: "string",
         bindTo: {
-          name: "content"
+          name: "content",
         },
       },
     ],
