@@ -9,14 +9,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {createTempModelerFromXml} from '../../../editor/ModelerHandler';
-import {getXml} from '../../../editor/util/IoUtilities';
-import {isDeployableServiceTask} from "../deployment/DeploymentUtils";
+import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
+import { getXml } from "../../../editor/util/IoUtilities";
+import { isDeployableServiceTask } from "../deployment/DeploymentUtils";
 import * as config from "../framework-config/config-manager";
-import {makeId} from "../deployment/OpenTOSCAUtils";
-import {getCamundaEndpoint} from "../../../editor/config/EditorConfigManager";
-import {createElement} from "../../../editor/util/camunda-utils/ElementUtil";
-
+import { makeId } from "../deployment/OpenTOSCAUtils";
+import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
+import { createElement } from "../../../editor/util/camunda-utils/ElementUtil";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -56,7 +55,7 @@ function fetch(method, url, body) {
 }`;
 
 function createDeploymentScript(params) {
-    return `
+  return `
 var params = ${JSON.stringify(params)};
 params.csarName = "ondemand_" + (Math.random().toString().substring(3));
 
@@ -89,7 +88,7 @@ execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", b
 }
 
 function createWaitScript(params) {
-    return `
+  return `
 var params = ${JSON.stringify(params)};
 
 ${fetchMethod}
@@ -142,17 +141,17 @@ export async function startOnDemandReplacementProcess(xml) {
   bpmnAutoResizeProvider.canResize = () => false;
 
   const serviceTasks = elementRegistry.filter(({ businessObject }) =>
-    isDeployableServiceTask(businessObject)
+    isDeployableServiceTask(businessObject),
   );
 
   for (const serviceTask of serviceTasks) {
     let deploymentModelUrl = serviceTask.businessObject.get(
-      "opentosca:deploymentModelUrl"
+      "opentosca:deploymentModelUrl",
     );
     if (deploymentModelUrl.startsWith("{{ wineryEndpoint }}")) {
       deploymentModelUrl = deploymentModelUrl.replace(
         "{{ wineryEndpoint }}",
-        config.getWineryEndpoint()
+        config.getWineryEndpoint(),
       );
     }
 
@@ -165,7 +164,7 @@ export async function startOnDemandReplacementProcess(xml) {
     subProcess.businessObject.set("opentosca:onDemandDeployment", true);
     subProcess.businessObject.set(
       "opentosca:deploymentModelUrl",
-      deploymentModelUrl
+      deploymentModelUrl,
     );
 
     const startEvent = modeling.createShape(
@@ -173,7 +172,7 @@ export async function startOnDemandReplacementProcess(xml) {
         type: "bpmn:StartEvent",
       },
       { x: 200, y: 200 },
-      subProcess
+      subProcess,
     );
 
     let topicName = makeId(12);
@@ -182,7 +181,7 @@ export async function startOnDemandReplacementProcess(xml) {
       {
         type: "bpmn:ScriptTask",
       },
-      { x: 400, y: 200 }
+      { x: 400, y: 200 },
     );
     serviceTask1.businessObject.set("scriptFormat", "javascript");
     serviceTask1.businessObject.set(
@@ -193,7 +192,7 @@ export async function startOnDemandReplacementProcess(xml) {
         subprocessId: subProcess.id,
         camundaTopic: topicName,
         camundaEndpoint: getCamundaEndpoint(),
-      })
+      }),
     );
     serviceTask1.businessObject.set("name", "Create deployment");
 
@@ -202,12 +201,12 @@ export async function startOnDemandReplacementProcess(xml) {
       {
         type: "bpmn:ScriptTask",
       },
-      { x: 600, y: 200 }
+      { x: 600, y: 200 },
     );
     serviceTask2.businessObject.set("scriptFormat", "javascript");
     serviceTask2.businessObject.set(
       "script",
-      createWaitScript({ subprocessId: subProcess.id })
+      createWaitScript({ subprocessId: subProcess.id }),
     );
     serviceTask2.businessObject.set("name", "Wait for deployment");
 
@@ -216,7 +215,7 @@ export async function startOnDemandReplacementProcess(xml) {
       {
         type: "bpmn:ServiceTask",
       },
-      { x: 800, y: 200 }
+      { x: 800, y: 200 },
     );
 
     serviceTask3.businessObject.set("name", "Call service");
@@ -230,7 +229,7 @@ export async function startOnDemandReplacementProcess(xml) {
         for (let param of value.inputOutput.inputParameters) {
           if (param.name === "url") {
             param.value = `\${selfserviceApplicationUrl.concat(${JSON.stringify(
-              param.value || ""
+              param.value || "",
             )})}`;
             break;
           }
@@ -241,12 +240,12 @@ export async function startOnDemandReplacementProcess(xml) {
         "bpmn:ExtensionElements",
         { values },
         serviceTask2.businessObject,
-        bpmnFactory
+        bpmnFactory,
       );
       subProcess.businessObject.set("extensionElements", undefined);
       serviceTask3.businessObject.set(
         "extensionElements",
-        newExtensionElements
+        newExtensionElements,
       );
     }
     const endTask = modeling.appendShape(
@@ -255,7 +254,7 @@ export async function startOnDemandReplacementProcess(xml) {
         type: "bpmn:EndEvent",
       },
       { x: 1000, y: 200 },
-      subProcess
+      subProcess,
     );
 
     console.log(endTask);

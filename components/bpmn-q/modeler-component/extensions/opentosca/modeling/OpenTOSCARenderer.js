@@ -1,154 +1,181 @@
+import { connectPoints } from "diagram-js/lib/layout/ManhattanLayout";
+
+import { createLine } from "diagram-js/lib/util/RenderUtil";
+
+import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
+import { getOrientation } from "diagram-js/lib/layout/LayoutUtil";
+
+import buttonIcon from "../resources/show-deployment-button.svg?raw";
+import { drawTaskSVG } from "../../../editor/util/RenderUtilities";
+import NotificationHandler from "../../../editor/ui/notifications/NotificationHandler";
 import {
-    connectPoints
-} from 'diagram-js/lib/layout/ManhattanLayout';
-
-import {
-    createLine,
-} from 'diagram-js/lib/util/RenderUtil';
-
-import BpmnRenderer from 'bpmn-js/lib/draw/BpmnRenderer';
-import {getOrientation} from 'diagram-js/lib/layout/LayoutUtil';
-
-
-import buttonIcon from '../resources/show-deployment-button.svg?raw';
-import {drawTaskSVG} from '../../../editor/util/RenderUtilities';
-import NotificationHandler from '../../../editor/ui/notifications/NotificationHandler';
-import {append as svgAppend, attr as svgAttr, create as svgCreate, select, prepend as svgPrepend} from 'tiny-svg';
-import {query as domQuery} from 'min-dom';
-import {loadTopology} from "../deployment/WineryUtils";
+  append as svgAppend,
+  attr as svgAttr,
+  create as svgCreate,
+  select,
+  prepend as svgPrepend,
+} from "tiny-svg";
+import { query as domQuery } from "min-dom";
+import { loadTopology } from "../deployment/WineryUtils";
 
 const HIGH_PRIORITY = 14001;
-const SERVICE_TASK_TYPE = 'bpmn:ServiceTask';
-const DEPLOYMENT_GROUP_ID = 'deployment';
-const DEPLOYMENT_REL_MARKER_ID = 'deployment-rel';
+const SERVICE_TASK_TYPE = "bpmn:ServiceTask";
+const DEPLOYMENT_GROUP_ID = "deployment";
+const DEPLOYMENT_REL_MARKER_ID = "deployment-rel";
 
-const LABEL_WIDTH =65;
+const LABEL_WIDTH = 65;
 const LABEL_HEIGHT = 15;
 const NODE_WIDTH = 100;
 const NODE_HEIGHT = 60;
 const NODE_SHIFT_MARGIN = 10;
 const STROKE_STYLE = {
-    strokeLinecap: 'round',
-    strokeLinejoin: 'round',
-    stroke: '#777777',
-    strokeWidth: 2,
-    strokeDasharray: 4,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  stroke: "#777777",
+  strokeWidth: 2,
+  strokeDasharray: 4,
 };
 
 export default class OpenTOSCARenderer extends BpmnRenderer {
-    constructor(config, eventBus, styles, pathMap, canvas, textRenderer, commandStack, elementRegistry) {
-        super(config, eventBus, styles, pathMap, canvas, textRenderer, HIGH_PRIORITY);
-        this.commandStack = commandStack;
-        this.elementRegistry = elementRegistry;
-        this.styles = styles;
-        this.textRenderer = textRenderer;
+  constructor(
+    config,
+    eventBus,
+    styles,
+    pathMap,
+    canvas,
+    textRenderer,
+    commandStack,
+    elementRegistry,
+  ) {
+    super(
+      config,
+      eventBus,
+      styles,
+      pathMap,
+      canvas,
+      textRenderer,
+      HIGH_PRIORITY,
+    );
+    this.commandStack = commandStack;
+    this.elementRegistry = elementRegistry;
+    this.styles = styles;
+    this.textRenderer = textRenderer;
 
-        // snap boundary events
-        eventBus.on([
-            'create.move',
-            'create.end',
-            'shape.move.move',
-            'shape.move.end'
-        ], 140000, function (event) {
-            var context = event.context,
-                canExecute = context.canExecute,
-                target = context.target;
+    // snap boundary events
+    eventBus.on(
+      ["create.move", "create.end", "shape.move.move", "shape.move.end"],
+      140000,
+      function (event) {
+        var context = event.context,
+          canExecute = context.canExecute,
+          target = context.target;
 
-            var canAttach = canExecute && (canExecute === 'attach' || canExecute.attach);
-            const isRelevantEvent = context.shape.type === "bpmn:IntermediateThrowEvent" || context.shape.type === "bpmn:BoundaryEvent";
+        var canAttach =
+          canExecute && (canExecute === "attach" || canExecute.attach);
+        const isRelevantEvent =
+          context.shape.type === "bpmn:IntermediateThrowEvent" ||
+          context.shape.type === "bpmn:BoundaryEvent";
 
-            if (canAttach && isRelevantEvent && context.target.businessObject.get('opentosca:deploymentModelUrl') && getOrientation(event, target, -30) === "bottom-right") {
-                // Prevent snapping on deployment visualisation toggle button
-                event.stopPropagation();
-            }
-        });
+        if (
+          canAttach &&
+          isRelevantEvent &&
+          context.target.businessObject.get("opentosca:deploymentModelUrl") &&
+          getOrientation(event, target, -30) === "bottom-right"
+        ) {
+          // Prevent snapping on deployment visualisation toggle button
+          event.stopPropagation();
+        }
+      },
+    );
 
-        this.openToscaHandlers = {
-            [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
-                const task = self.renderer('bpmn:ServiceTask')(parentGfx, element);
-                self.maybeAddShowDeploymentModelButton(parentGfx, element);
-                self.addSubprocessView(parentGfx, element);
-                return task;
-            }
-        };
-        this.addMarkerDefinition(canvas);
-        this.registerShowDeploymentModelHandler();
-        this.currentlyShownDeploymentsModels = new Map();
-    }
+    this.openToscaHandlers = {
+      [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:ServiceTask")(parentGfx, element);
+        self.maybeAddShowDeploymentModelButton(parentGfx, element);
+        self.addSubprocessView(parentGfx, element);
+        return task;
+      },
+    };
+    this.addMarkerDefinition(canvas);
+    this.registerShowDeploymentModelHandler();
+    this.currentlyShownDeploymentsModels = new Map();
+  }
 
-    addSubprocessView(parentGfx, element) {
-        let deploymentModelUrl = element.businessObject.get('opentosca:deploymentModelUrl');
-        if (!deploymentModelUrl) return;
+  addSubprocessView(parentGfx, element) {
+    let deploymentModelUrl = element.businessObject.get(
+      "opentosca:deploymentModelUrl",
+    );
+    if (!deploymentModelUrl) return;
 
-        let groupDef = svgCreate('g');
-        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${-238}, ${-78})`});
-        this.renderer('bpmn:StartEvent')(groupDef, {
-            ...element,
-            type: 'bpmn:StartEvent',
-            height: 36,
-            width: 36,
-            businessObject: {
-                isInterrupting: true
-            }
-        });
-        svgAppend(parentGfx, groupDef);
+    let groupDef = svgCreate("g");
+    svgAttr(groupDef, { transform: `matrix(1, 0, 0, 1, ${-238}, ${-78})` });
+    this.renderer("bpmn:StartEvent")(groupDef, {
+      ...element,
+      type: "bpmn:StartEvent",
+      height: 36,
+      width: 36,
+      businessObject: {
+        isInterrupting: true,
+      },
+    });
+    svgAppend(parentGfx, groupDef);
 
-        groupDef = svgCreate('g');
-        this.renderer("bpmn:SequenceFlow")(parentGfx, {
-            ...element,
-            type: 'bpmn:SequenceFlow',
-            businessObject: {},
-            waypoints: [
-                {x: -200, y: -60},
-                {x: -150, y: -60},
-            ]
-        });
+    groupDef = svgCreate("g");
+    this.renderer("bpmn:SequenceFlow")(parentGfx, {
+      ...element,
+      type: "bpmn:SequenceFlow",
+      businessObject: {},
+      waypoints: [
+        { x: -200, y: -60 },
+        { x: -150, y: -60 },
+      ],
+    });
 
-        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${-150}, ${-100})`});
-        this.renderer('bpmn:ScriptTask')(groupDef, {
-            ...element,
-            businessObject: {
-                "name": "Create deployment"
-            }
-        });
-        svgAppend(parentGfx, groupDef);
+    svgAttr(groupDef, { transform: `matrix(1, 0, 0, 1, ${-150}, ${-100})` });
+    this.renderer("bpmn:ScriptTask")(groupDef, {
+      ...element,
+      businessObject: {
+        name: "Create deployment",
+      },
+    });
+    svgAppend(parentGfx, groupDef);
 
-        this.renderer("bpmn:SequenceFlow")(parentGfx, {
-            ...element,
-            businessObject: {},
-            waypoints: [
-                {x: -50, y: -60},
-                {x: 0, y: -60},
-            ]
-        });
+    this.renderer("bpmn:SequenceFlow")(parentGfx, {
+      ...element,
+      businessObject: {},
+      waypoints: [
+        { x: -50, y: -60 },
+        { x: 0, y: -60 },
+      ],
+    });
 
-        groupDef = svgCreate('g');
-        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${0}, ${-100})`});
-        this.renderer('bpmn:ScriptTask')(groupDef, {
-            ...element,
-            businessObject: {
-                "name": "Wait for deployment"
-            }
-        });
-        svgAppend(parentGfx, groupDef);
+    groupDef = svgCreate("g");
+    svgAttr(groupDef, { transform: `matrix(1, 0, 0, 1, ${0}, ${-100})` });
+    this.renderer("bpmn:ScriptTask")(groupDef, {
+      ...element,
+      businessObject: {
+        name: "Wait for deployment",
+      },
+    });
+    svgAppend(parentGfx, groupDef);
 
-        this.renderer("bpmn:SequenceFlow")(parentGfx, {
-            ...element,
-            businessObject: {},
-            waypoints: [
-                {x: 100, y: -60},
-                {x: 150, y: -60},
-            ]
-        });
+    this.renderer("bpmn:SequenceFlow")(parentGfx, {
+      ...element,
+      businessObject: {},
+      waypoints: [
+        { x: 100, y: -60 },
+        { x: 150, y: -60 },
+      ],
+    });
 
-        groupDef = svgCreate('g');
-        svgAttr(groupDef, {transform: `matrix(1, 0, 0, 1, ${150}, ${-100})`});
-        this.renderer('bpmn:ServiceTask')(groupDef, {
-            ...element,
-            businessObject: {
-                "name": "Call service"
-            }
-        });
+    groupDef = svgCreate("g");
+    svgAttr(groupDef, { transform: `matrix(1, 0, 0, 1, ${150}, ${-100})` });
+    this.renderer("bpmn:ServiceTask")(groupDef, {
+      ...element,
+      businessObject: {
+        name: "Call service",
+      },
+    });
 
     this.renderer("bpmn:SequenceFlow")(parentGfx, {
       ...element,
@@ -179,7 +206,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         fill: "none",
         stroke: "#777777",
         "pointer-events": "all",
-      })
+      }),
     );
   }
 
@@ -188,7 +215,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       execute: ({ showDeploymentModel }) => {
         const elementsWithDeploymentModel = this.elementRegistry.filter(
           (element) =>
-            element.businessObject.get("opentosca:deploymentModelUrl")
+            element.businessObject.get("opentosca:deploymentModelUrl"),
         );
         const changed = [];
         for (const element of elementsWithDeploymentModel) {
@@ -246,7 +273,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           strokeWidth: 1,
           strokeDasharray: 2,
         }),
-      })
+      }),
     );
 
     let defs = domQuery("defs", canvas._svg);
@@ -260,7 +287,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
 
   maybeAddShowDeploymentModelButton(parentGfx, element) {
     let deploymentModelUrl = element.businessObject.get(
-      "opentosca:deploymentModelUrl"
+      "opentosca:deploymentModelUrl",
     );
     if (!deploymentModelUrl) return;
 
@@ -271,7 +298,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         svg: buttonIcon,
       },
       null,
-      true
+      true,
     );
     button.style["pointer-events"] = "all";
     button.style["cursor"] = "pointer";
@@ -349,7 +376,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     };
 
     const previousBoundingBox = this.currentlyShownDeploymentsModels.get(
-      element.id
+      element.id,
     )?.boundingBox;
     if (JSON.stringify(previousBoundingBox) !== JSON.stringify(boundingBox)) {
       this.mayBeMoveNeighborNodes(boundingBox, element);
@@ -363,7 +390,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       parentGfx,
       topNode,
       relationshipTemplates,
-      positions
+      positions,
     );
   }
 
@@ -371,7 +398,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     parentGfx,
     topNode,
     relationshipTemplates,
-    nodePositions
+    nodePositions,
   ) {
     const connectionCountAtNodeLocation = new Map();
     const connections = [];
@@ -393,7 +420,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       sourceLocation,
       target,
       targetLocation,
-      connectionName
+      connectionName,
     ) => {
       connections.push({
         source: sourceNode,
@@ -431,7 +458,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "north",
             target,
             "south",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "top":
@@ -440,7 +467,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "south",
             target,
             "north",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "right":
@@ -449,7 +476,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "east",
             target,
             "west",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "left":
@@ -458,7 +485,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "west",
             target,
             "east",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "top-left":
@@ -467,7 +494,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "south",
             target,
             "east",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "top-right":
@@ -476,7 +503,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "south",
             target,
             "west",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "bottom-left":
@@ -485,7 +512,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "north",
             target,
             "east",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "bottom-right":
@@ -494,7 +521,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "north",
             target,
             "west",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         default:
@@ -505,7 +532,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     for (const connection of connections) {
       const getPortPoint = (element, location, locationIndex) => {
         const portCount = connectionCountAtNodeLocation.get(
-          element.ref + "-" + location
+          element.ref + "-" + location,
         );
         if (location === "north") {
           return {
@@ -537,16 +564,16 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         getPortPoint(
           connection.source,
           connection.sourceLocation,
-          connection.sourcePortIndex
+          connection.sourcePortIndex,
         ),
         getPortPoint(
           connection.target,
           connection.targetLocation,
-          connection.targetPortIndex
+          connection.targetPortIndex,
         ),
         getSimpleDirection(connection.sourceLocation) +
           ":" +
-          getSimpleDirection(connection.targetLocation)
+          getSimpleDirection(connection.targetLocation),
       );
 
       const line = createLine(
@@ -555,7 +582,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           ...STROKE_STYLE,
           markerEnd: `url(#${DEPLOYMENT_REL_MARKER_ID})`,
         }),
-        5
+        5,
       );
 
       const labelGroup = svgCreate("g");
@@ -630,7 +657,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         let otherXPosition = element.x + NODE_WIDTH / 2;
         const otherElementBoundingBox =
           this.currentlyShownDeploymentsModels.get(
-            otherElement.id
+            otherElement.id,
           )?.boundingBox;
         if (otherElementBoundingBox) {
           otherXPosition =
@@ -672,7 +699,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     if (commands.length > 0) {
       this.commandStack.execute(
         "properties-panel.multi-command-executor",
-        commands
+        commands,
       );
     }
   }
@@ -689,7 +716,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     const groupDef = svgCreate("g");
     svgAttr(groupDef, {
       transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(
-        2
+        2,
       )}, ${position.y.toFixed(2)})`,
     });
     const rect = svgCreate("rect", {
