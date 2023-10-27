@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getQuantMETasks } from "../QuantMETransformator";
+import {getQuantMETasks} from "../QuantMETransformator";
 import {
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
@@ -19,22 +19,26 @@ import {
   SELECT_ON_QUEUE_SIZE_SCRIPT,
 } from "./HardwareSelectionScripts";
 import * as consts from "../../Constants";
-import { addExtensionElements } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import {
-  createTempModelerFromXml,
-  createTempModeler,
-} from "../../../../editor/ModelerHandler";
-import {
-  getPropertiesToCopy,
-  insertShape,
-} from "../../../../editor/util/TransformationUtilities";
-import {
-  getCamundaInputOutput,
-  getExtensionElements,
-  getRootProcess,
-} from "../../../../editor/util/ModellingUtilities";
-import { getXml } from "../../../../editor/util/IoUtilities";
+import {addExtensionElements} from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import {createTempModeler, createTempModelerFromXml,} from "../../../../editor/ModelerHandler";
+import {getPropertiesToCopy, insertShape,} from "../../../../editor/util/TransformationUtilities";
+import {getCamundaInputOutput, getExtensionElements, getRootProcess,} from "../../../../editor/util/ModellingUtilities";
+import {getXml} from "../../../../editor/util/IoUtilities";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+
+
+async function getTopology(url) {
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": 'application/json, text/plain, */*'
+    },
+    credentials: "same-origin"
+  });
+  const topology = await response.json();
+  console.log(topology);
+}
+
 
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
@@ -53,6 +57,26 @@ export async function replaceHardwareSelectionSubprocess(
   let elementRegistry = modeler.get("elementRegistry");
   let commandStack = modeler.get("commandStack");
   let moddle = modeler.get("moddle");
+
+  const url = 'http://localhost:8093/winery/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpush/QuokkaCircuitGeneratorService_w1/topologytemplate';
+  getTopology(url);
+  // fetch(url, {
+  //   mode: 'no-cors',
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     "Accept": 'application/json, text/plain, */*'
+  //   },
+  //   credentials: "same-origin"
+  // }).then(function(response) {
+  //   console.log(response.body)
+  //   console.log(response.json)
+  //   console.log(response)
+  //   return response.json;
+  // }).then(function(data) {
+  //   console.log(data);
+  // }).catch(function(err) {
+  //   console.log('Fetch Error :-S', err);
+  // });
 
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {
@@ -395,14 +419,19 @@ function addSelectionStrategyTask(
 ) {
   console.log("Adding task for selection strategy: %s", selectionStrategy);
 
-  if (selectionStrategy === undefined) {
-    return addShortestQueueSelectionStrategy(parent, elementRegistry, modeling);
-  } else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
+  if ( selectionStrategy === undefined ) {
+    return addShortestQueueSelectionStrategy(
+        parent,
+        elementRegistry,
+        modeling
+    );
+  }
+  else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
     NotificationHandler.getInstance().displayNotification({
       type: "info",
       title: "Transformation Unsuccessful!",
       content:
-        "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
+          "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
       duration: 7000,
     });
     return undefined;
