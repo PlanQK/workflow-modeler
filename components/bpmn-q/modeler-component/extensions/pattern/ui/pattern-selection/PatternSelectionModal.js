@@ -11,7 +11,7 @@ export default function PatternSelectionModal({
   onClose,
   initialSelectedPattern,
 }) {
-  const [selectedAlgorithmicPattern, setSelectedAlgorithmicPattern] =
+  const [selectedAlgorithmPattern, setSelectedAlgorithmPattern] =
     useState(null);
   const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState(
     []
@@ -22,7 +22,7 @@ export default function PatternSelectionModal({
 
   useEffect(() => {
     if (initialSelectedPattern) {
-      setSelectedAlgorithmicPattern(initialSelectedPattern.algorithmPattern);
+      setSelectedAlgorithmPattern(initialSelectedPattern.algorithmPattern);
       setSelectedBehavioralPatterns(initialSelectedPattern.behavioralPattern);
       setSelectedAugmentationPatterns(
         initialSelectedPattern.augmentationPattern
@@ -32,7 +32,7 @@ export default function PatternSelectionModal({
 
   const handlePatternSelection = (pattern, category) => {
     if (category === "algorithm") {
-      setSelectedAlgorithmicPattern(pattern);
+      setSelectedAlgorithmPattern(pattern);
     } else if (category === "behavioral") {
       setSelectedBehavioralPatterns((prevSelected) => {
         if (prevSelected.includes(pattern)) {
@@ -53,26 +53,25 @@ export default function PatternSelectionModal({
   };
 
   const handleConfirmSelection = () => {
-    if (selectedAlgorithmicPattern) {
+    if (selectedAlgorithmPattern) {
       const selectedPatterns = {
-        algorithm: selectedAlgorithmicPattern,
+        algorithm: selectedAlgorithmPattern,
         behavioral: selectedBehavioralPatterns,
         augmentation: selectedAugmentationPatterns,
       };
       onSelectPattern(selectedPatterns);
-      onClose(); // Close the modal only if an algorithmic pattern is selected
+      onClose();
       clearErrorMessage();
     } else {
-      // Set an error message if no algorithmic pattern is selected
       setErrorMessage("Please select an algorithm pattern before confirming.");
     }
   };
 
   const clearErrorMessage = () => {
-    setErrorMessage(""); // Clear the error message
+    setErrorMessage("");
   };
-  // Filter patterns with specific tags for each category
-  const algorithmicPatterns = patterns.filter((pattern) =>
+
+  const algorithmPatterns = patterns.filter((pattern) =>
     pattern.tags.includes("algorithm")
   );
   const behavioralPatterns = patterns.filter((pattern) =>
@@ -89,7 +88,7 @@ export default function PatternSelectionModal({
         {errorMessage && <p className="error-message">{errorMessage}</p>}
 
         <div>
-          <h3>Algorithmic Patterns</h3>
+          <h3>Algorithm Patterns</h3>
           <table>
             <colgroup>
               <col span="1" style={{ width: "30%" }} />
@@ -104,7 +103,7 @@ export default function PatternSelectionModal({
               </tr>
             </thead>
             <tbody>
-              {algorithmicPatterns.map((pattern) => (
+              {algorithmPatterns.map((pattern) => (
                 <tr key={pattern.id}>
                   <td>{pattern.name}</td>
                   <td>
@@ -117,8 +116,8 @@ export default function PatternSelectionModal({
                   <td>
                     <input
                       type="radio"
-                      name="algorithmic-pattern"
-                      checked={selectedAlgorithmicPattern === pattern}
+                      name="algorithm-pattern"
+                      checked={selectedAlgorithmPattern === pattern}
                       onChange={() =>
                         handlePatternSelection(pattern, "algorithm")
                       }
