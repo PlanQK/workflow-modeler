@@ -208,7 +208,7 @@ export default function PatternOverviewModal({ onClose, responseData }) {
       </Body>
 
       <Footer>
-        <div id="hybridLoopAdaptationFormButtons">
+        <div id="patternFormButtons">
           <button
             type="button"
             className="qwm-btn qwm-btn-secondary"
