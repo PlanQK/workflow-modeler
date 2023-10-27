@@ -156,6 +156,7 @@ export default function QuantMETab() {
             <td align="right">Data Configurations Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="dataConfigurationsEndpoint"
                 value={dataConfigurationsEndpoint}
@@ -174,6 +175,7 @@ export default function QuantMETab() {
             <td align="right">QuantME Framework Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="transformationFrameworkEndpoint"
                 value={transformationFrameworkEndpoint}
@@ -192,6 +194,7 @@ export default function QuantMETab() {
             <td align="right">NISQ Analyzer Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="nisqAnalyzerEndpoint"
                 value={nisqAnalyzerEndpoint}
@@ -210,6 +213,7 @@ export default function QuantMETab() {
             <td align="right">Script Splitter Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="scriptSplitterEndpoint"
                 value={scriptSplitterEndpoint}
@@ -223,6 +227,7 @@ export default function QuantMETab() {
             <td align="right">Script Splitter Threshold</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="int"
                 name="scriptSplitterThreshold"
                 value={scriptSplitterThreshold}
@@ -241,6 +246,7 @@ export default function QuantMETab() {
             <td align="right">Qiskit Runtime Handler Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="qiskitRuntimeHandlerEndpoint"
                 value={qiskitRuntimeHandlerEndpoint}
@@ -254,6 +260,7 @@ export default function QuantMETab() {
             <td align="right">AWS Runtime Handler Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="awsRuntimeHandlerEndpoint"
                 value={awsRuntimeHandlerEndpoint}
@@ -272,6 +279,7 @@ export default function QuantMETab() {
             <td align="right">Retrieve Intermediate Results:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="checkbox"
                 name="hybridRuntimeProvenance"
                 checked={hybridRuntimeProvenance}
