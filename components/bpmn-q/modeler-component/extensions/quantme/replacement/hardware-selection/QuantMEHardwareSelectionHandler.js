@@ -130,7 +130,7 @@ export async function replaceHardwareSelectionSubprocess(
   );
   invokeHardwareSelectionInOut.inputParameters.push(
     bpmnFactory.create("camunda:InputParameter", {
-      name: "nisq_analyzer_endpoint",
+      name: "nisq_analyzer_endpoint_qpu_selection",
       value: nisqAnalyzerEndpoint + consts.NISQ_ANALYZER_QPU_SELECTION_PATH,
     })
   );

@@ -11,67 +11,57 @@
 
 // script to invoke the hardware selection by the NISQ Analyzer based on the circuit created in the workflow
 export var INVOKE_NISQ_ANALYZER_SCRIPT =
-  "import groovy.json.*\n" +
-  "\n" +
-  'def nisqAnalyzerEndpoint = execution.getVariable("nisq_analyzer_endpoint");\n' +
-  'def circuitLanguage = execution.getVariable("circuit_language");\n' +
-  'def quantumCircuit = execution.getVariable("quantum_circuit");\n' +
-  "\n" +
-  "if(nisqAnalyzerEndpoint == null || circuitLanguage == null || quantumCircuit == null){\n" +
-  '   throw new org.camunda.bpm.engine.delegate.BpmnError("Nisq Analyzer endpoint, quantum circuit, and circuit language must be set!");\n' +
-  "}\n" +
-  "\n" +
-  'def simulatorsAllowed = execution.getVariable("simulators_allowed");\n' +
-  "if(simulatorsAllowed == null){\n" +
-  '   simulatorsAllowed = "false";\n' +
-  "}\n" +
-  "\n" +
-  "def allowedProvidersList = [];\n" +
-  'if(execution.getVariable("providers") != null){\n' +
-  '   allowedProvidersList = execution.getVariable("providers").split(",");\n' +
-  "}\n" +
-  "\n" +
-  "def tokens = [:];\n" +
-  "for (Object item : execution.getVariables().entrySet() ){\n" +
-  "   def key = item.getKey();\n" +
-  '   if(key.startsWith("token_")) {\n' +
-  '       def provider = key.split("_")[1];\n' +
-  "       tokens.putAt(provider, item.getValue());\n" +
-  "   }\n" +
-  "}\n" +
-  "\n" +
-  'def circuitUrl = execution.getVariable("camunda_endpoint");\n' +
-  'circuitUrl = circuitUrl.endsWith("/") ? circuitUrl : circuitUrl + "/";\n' +
-  'circuitUrl += "process-instance/" + execution.getProcessInstanceId() + "/variables/quantum_circuit/data";\n' +
-  'def message = JsonOutput.toJson(["circuitUrl": circuitUrl, "simulatorsAllowed": simulatorsAllowed, "circuitLanguage": circuitLanguage, "tokens": tokens, "allowedProviders": allowedProvidersList]);\n' +
-  'println "Sending message: " + message;\n' +
-  "\n" +
-  "try {\n" +
-  "   def post = new URL(nisqAnalyzerEndpoint).openConnection();\n" +
-  '   post.setRequestMethod("POST");\n' +
-  "   post.setDoOutput(true);\n" +
-  '   post.setRequestProperty("Content-Type", "application/json");\n' +
-  '   post.setRequestProperty("accept", "application/json");\n' +
-  '   post.getOutputStream().write(message.getBytes("UTF-8"));\n' +
-  "\n" +
-  "   def status = post.getResponseCode();\n" +
-  "   if(status == 200){\n" +
-  "       def resultText = post.getInputStream().getText();\n" +
-  "       def slurper = new JsonSlurper();\n" +
-  "       def json = slurper.parseText(resultText);\n" +
-  '       def jobUrl = json.get("_links").get("self").get("href");\n' +
-  '       println "NISQ Analyzer invocation resulted in the following job URL: " + jobUrl;\n' +
-  '       execution.setVariable("nisq_analyzer_job_url", jobUrl);\n' +
-  "   }else{\n" +
-  '       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while invoking NISQ Analyzer!");\n' +
-  "   }\n" +
-  "} catch(org.camunda.bpm.engine.delegate.BpmnError e) {\n" +
-  "   println e.errorCode;\n" +
-  "   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);\n" +
-  "} catch(Exception e) {\n" +
-  "   println e;\n" +
-  '   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + nisqAnalyzerEndpoint);\n' +
-  "}";
+  `import groovy.json.*
+import org.camunda.bpm.engine.variable.value.FileValue
+
+def transformationUrl = execution.getVariable("transformation_framework_endpoint");
+transformationUrl = transformationUrl.endsWith("/") ? transformationUrl : transformationUrl + "/";
+transformationUrl += "transform-workflow-hwselect";
+println "Posting for transformation using the following URL: " + transformationUrl
+
+def circuitUrl = execution.getVariable("camunda_endpoint");
+circuitUrl = circuitUrl.endsWith("/") ? circuitUrl : circuitUrl + "/";
+circuitUrl += "process-instance/" + execution.getProcessInstanceId() + "/variables/quantum_circuit/data";
+println "Circuit accessible through URL: " + circuitUrl
+
+FileValue fileVariable = execution.getVariableTyped("hardware_selection_fragment");
+def fragment = fileVariable.getValue().getText("UTF-8");
+def circuitLanguage = execution.getVariable("circuit_language");
+def providerName = execution.getVariable("selected_provider");
+def qpuName = execution.getVariable("selected_qpu");
+def message = JsonOutput.toJson(["xml": fragment, "circuitLanguage": circuitLanguage, "provider": providerName, "qpu": qpuName]);
+println "Sending message: " + message;
+
+def pollingUrl = "";
+try {
+   def post = new URL(transformationUrl).openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("accept", "application/json");
+   post.getOutputStream().write(message.getBytes("UTF-8"));
+
+   def status = post.getResponseCode();
+   if(status == 200){
+       def resultText = post.getInputStream().getText();
+       def slurper = new JsonSlurper();
+       def json = slurper.parseText(resultText);
+//        pollingUrl = transformationUrl + "/" + json.get("id");
+//        println "Transformation Framework returned job with URL: " + pollingUrl;
+//        execution.setVariable("transformation_framework_job_url", pollingUrl);
+       transformedWF = json.get("xml");
+       execution.setVariable("transformedHWSelectionWF", transformedWF);
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while invoking Transformation Framework!");
+   }
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + transformationUrl);
+}
+`;
 
 // script to select one of the suitable QPUs provided by the NISQ Analyzer based on their current queue size
 export var SELECT_ON_QUEUE_SIZE_SCRIPT =
