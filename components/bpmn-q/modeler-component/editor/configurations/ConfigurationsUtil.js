@@ -39,6 +39,7 @@ export function createConfigurationsEntries(
   console.log(configurations);
 
   configurations.map(function (config) {
+    console.log(config);
     // define action for the entry
     if (action) {
       updateAction = function (event) {
@@ -49,6 +50,7 @@ export function createConfigurationsEntries(
         // replace element with configuration type if types mismatch
         let newElement;
         if (element.type !== config.appliesTo) {
+          console.log("Element type:", element.type);
           newElement = replaceElement(element, { type: config.appliesTo });
         }
 
