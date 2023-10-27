@@ -27,21 +27,17 @@ export default function PatternModal({ onClose }) {
           automatically generate quantum workflows.
         </h3>
         <div className="spaceUnder">
-          The pattern selection enable to automatically generate quantum
-          workflows.Thereby, three different types of pattern exists: The
-          algorithmic pattern specifies which algorithm should be used, loaded,
-          or adapted within the quantum workflow. It involves selecting the
-          algorithm that is best suited to solving the given problem. The
-          behavioral pattern determines the execution strategy for the chosen
-          algorithm. It dictates how the algorithm should be run to optimize the
-          utilization of quantum resources and enhance performance. The
-          augmentation pattern allows for the enhancement of the quantum
-          workflow by incorporating additional features or elements. These
-          features are selected to improve the execution of the algorithm,
-          further optimizing its performance and utility in solving the problem.
-          Further information, as well as current restrictions, can be found in
-          the{" "}
-          <a href="https://www.quantumcomputingpatterns.org">documentation</a>
+          The pattern selection enables to automatically generate quantum
+          workflows based on implementations connected to the selected patterns.
+          Thereby, three different types of pattern exist: The algorithm
+          patterns specify which algorithms should be executed within the
+          quantum workflow. The behavioral patterns determine the execution
+          strategy for the chosen algorithms, e.g., by using a hybrid runtime.
+          The augmentation patterns enable the enhancement of the quantum
+          workflow by incorporating additional features or elements, such as
+          warm-starting or circuit cutting. Further information, about usable
+          patterns can be found on this{" "}
+          <a href="https://www.quantumcomputingpatterns.org">website</a>.
         </div>
       </Body>
 
