@@ -15,7 +15,7 @@ import { getPluginConfig } from "../../../editor/plugin/PluginConfigHandler";
 let config = {};
 
 /**
- * Get the endpoint for Data Object Configurations
+ * Get the endpoint of the connected Pattern Atlas
  */
 export function getPatternAtlasEndpoint() {
   if (config.patternAtlasEndpoint === undefined) {
@@ -28,7 +28,7 @@ export function getPatternAtlasEndpoint() {
 }
 
 /**
- * Set the endpoint for Data Object Configurations
+ * Set the endpoint of the connected Pattern Atlas
  */
 export function setPatternAtlasEndpoint(patternAtlasEndpoint) {
   if (patternAtlasEndpoint !== null && patternAtlasEndpoint !== undefined) {
