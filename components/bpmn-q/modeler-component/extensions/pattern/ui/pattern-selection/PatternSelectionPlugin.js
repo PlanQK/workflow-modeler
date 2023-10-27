@@ -52,7 +52,6 @@ export default class PatternSelectionPlugin extends PureComponent {
   }
 
   render() {
-    // Render loop analysis button and pop-up menu
     return (
       <>
         <div style={{ display: "flex" }}>
