@@ -179,11 +179,19 @@ export var SUBPROCESS = [
 
 export var POLICY = [
   {
+    label: 'Deployment Policy',
+    actionName: 'replace-with-deployment-policy',
+    className: 'qwm bpmn-icon-deployment-policy',
+    target: {
+      type: consts.DEPLOYMENT_POLICY
+    }
+  },
+  {
     label: 'Privacy Policy',
     actionName: 'replace-with-privacy-policy',
-    className: 'bpmn-icon-privacy',
+    className: 'qwm bpmn-icon-privacy-policy',
     target: {
       type: consts.PRIVACY_POLICY
     }
-  }
+  },
 ];

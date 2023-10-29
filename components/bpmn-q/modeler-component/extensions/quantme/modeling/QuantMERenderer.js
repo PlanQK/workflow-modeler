@@ -325,7 +325,7 @@ export default class QuantMERenderer extends BpmnRenderer {
       },
       [consts.PRIVACY_POLICY]: function(self, parentGfx, element) {
         var attrs = {
-          fill: 'none',
+          fill: 'white',
           stroke: 'none'
         };
 

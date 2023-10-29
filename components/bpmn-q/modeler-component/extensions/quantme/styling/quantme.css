@@ -469,3 +469,27 @@
   .djs-popup-label {
   margin-top: -1px; /* Adjust the value as per your requirements */
 }
+
+.bpmn-icon-privacy-policy:before {
+  content: "";
+  width: 20px;
+  margin-right: 5px;
+  height: 15px;
+  margin-top: 3px;
+  background-size: contain;
+  background-image: url("../resources/PrivacyPolicy_Icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.bpmn-icon-deployment-policy:before {
+  content: "";
+  width: 20px;
+  margin-right: 5px;
+  height: 15px;
+  margin-top: 3px;
+  background-size: contain;
+  background-image: url("../resources/DeploymentPolicy_Icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
