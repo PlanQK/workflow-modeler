@@ -16,6 +16,11 @@
           "type": "String"
         },
         {
+          "name": "deploymentStrategy",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "connectorUrl",
           "isAttr": true,
           "type": "String"
