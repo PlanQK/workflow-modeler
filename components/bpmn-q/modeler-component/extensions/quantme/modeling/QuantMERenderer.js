@@ -323,6 +323,69 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "TASK_TYPE_VQA");
         return task;
       },
+      [consts.PRIVACY_POLICY]: function(self, parentGfx, element) {
+        var attrs = {
+          fill: 'none',
+          stroke: 'none'
+        };
+
+        var task = self.renderer('bpmn:Event')(parentGfx, element, attrs);
+
+
+        var pathData = quantMEPathMap.getPath('TASK_TYPE_MONEY_FILLNONESTROKE');
+        drawPath(parentGfx, pathData, {
+          transform:'scale(0.25)',
+          strokeWidth: 2.5,
+          fill: 'none',
+          stroke: 'none'
+        });
+
+        /**
+         * 
+         
+        var pathData2 = quantMEPathMap.getPath('TASK_TYPE_MONEY_WHITE');
+        drawPath(parentGfx, pathData2, {
+          transform:'scale(0.25)',
+          strokeWidth: 0,
+          fill: '#FFFFFF',
+          stroke: 'none'
+        });*/
+        
+        var pathData3 = quantMEPathMap.getPath('TASK_TYPE_MONEY_FILL');
+        drawPath(parentGfx, pathData3, {
+          transform:'scale(0.25)',
+          strokeWidth: 2.5,
+          fill: '#FFFFFF',
+          stroke: '#000000'
+        });
+        
+        var pathData4 = quantMEPathMap.getPath('TASK_TYPE_PRIVACY_3');
+        drawPath(parentGfx, pathData4, {
+          transform:'scale(0.25)',
+          strokeWidth: 5,
+          fill: '#ffffff',
+          stroke: '#000000'
+        });
+
+        var pathData5 = quantMEPathMap.getPath('TASK_TYPE_PRIVACY');
+        drawPath(parentGfx, pathData5, {
+          transform:'scale(0.25)',
+          strokeWidth: 2,
+          fill: '#000000',
+          stroke: '#000000'
+        });
+
+
+        var pathData6 = quantMEPathMap.getPath('TASK_TYPE_PRIVACY_2');
+        drawPath(parentGfx, pathData6, {
+          transform:'scale(0.25)',
+          strokeWidth: 2,
+          fill: '#ffffff',
+          stroke: '#ffffff'
+        });
+
+        return task;
+      },
     };
 
     setTimeout(function () {

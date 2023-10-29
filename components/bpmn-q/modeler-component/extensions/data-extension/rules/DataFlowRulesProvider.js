@@ -57,7 +57,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a new shape for an element is created
      */
-    this.addRule("shape.create", 200000000000, function (context) {
+    this.addRule("shape.create", 200, function (context) {
       return canCreate(
         context.shape,
         context.target,

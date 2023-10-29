@@ -29,6 +29,8 @@ export const CIRCUIT_CUTTING_SUBPROCESS = "quantme:CircuitCuttingSubprocess";
 export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
+export const PRIVACY_POLICY = "quantme:PrivacyPolicy";
+export const DEPLOYMENT_POLICY = "quantme:DeploymentPolicy";
 
 // Property names of the QuantME constructs
 export const ALGORITHM = "algorithm";
@@ -70,6 +72,10 @@ export const CUTTING_METHOD = "cuttingMethod";
 export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
+
+export const DEPLOYMENT_STRATEGY = "deploymentStrategy"
+export const COMPONENT_SHARING = "componentSharing";
+export const CLOUD_TYPE = "cloudType";
 
 // endpoint paths of connected services
 export const NISQ_ANALYZER_QPU_SELECTION_PATH = "qpu-selection";

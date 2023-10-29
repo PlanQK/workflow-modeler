@@ -15,6 +15,8 @@ import {
   VariationalQuantumAlgorithmTaskEntries,
   WarmStartingTaskEntries,
   CuttingResultCombinationTaskEntries,
+  PrivacyPolicyTaskEntries,
+  DeploymentPolicyTaskEntries,
 } from "./QuantMETaskProperties";
 import * as configConsts from "../../../../editor/configurations/Constants";
 import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
@@ -147,6 +149,10 @@ function QuantMEProps(element) {
       return WarmStartingTaskEntries(element);
     case consts.CUTTING_RESULT_COMBINATION_TASK:
       return CuttingResultCombinationTaskEntries(element);
+    case consts.PRIVACY_POLICY:
+      return PrivacyPolicyTaskEntries(element);
+    case consts.PRIVACY_POLICY:
+      return DeploymentPolicyTaskEntries(element);
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }

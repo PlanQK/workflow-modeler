@@ -176,3 +176,14 @@ export var SUBPROCESS = [
     },
   },
 ];
+
+export var POLICY = [
+  {
+    label: 'Privacy Policy',
+    actionName: 'replace-with-privacy-policy',
+    className: 'bpmn-icon-privacy',
+    target: {
+      type: consts.PRIVACY_POLICY
+    }
+  }
+];

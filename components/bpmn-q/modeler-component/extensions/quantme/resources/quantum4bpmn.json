@@ -585,6 +585,33 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "PrivacyPolicy",
+      "superClass": [ "bpmn:Event" ],
+      "properties": [
+        {
+          "name": "componentSharing",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "cloudType",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "DeploymentPolicy",
+      "superClass": [ "bpmn:Event" ],
+      "properties": [
+        {
+          "name": "deploymentStrategy",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "enumerations": [],

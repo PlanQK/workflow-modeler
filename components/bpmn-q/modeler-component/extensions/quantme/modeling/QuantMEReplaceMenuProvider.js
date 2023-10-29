@@ -89,6 +89,11 @@ export default class QuantMEReplaceMenuProvider {
         );
         return Object.assign(subprocessEntries, entries);
       }
+      // add additional elements to replace policies
+      if ((element.type.includes('quantme') && element.type.includes('Policy'))) {
+        const policyEntries = createMenuEntries(element, quantmeReplaceOptions.POLICY, self.translate, self.bpmnReplace.replaceElement);
+        return Object.assign(policyEntries, entries);
+    }
 
       return entries;
     };

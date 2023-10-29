@@ -1468,3 +1468,124 @@ export function OptimizationEntry({ element }) {
     />
   );
 }
+
+export function CloudTypeEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.cloudType;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      cloudType: newValue,
+    });
+  };
+
+  const selectOptions = [
+    { value: "public", label: "Public" },
+    { value: "private", label: "Private" },
+  ];
+
+  const getOptions = function () {
+    return selectOptions;
+  };
+
+  return (
+    <SelectEntry
+      id={consts.CLOUD_TYPE}
+      label={translate("Cloud Type")}
+      getValue={getValue}
+      setValue={setValue}
+      getOptions={getOptions}
+      debounce={debounce}
+    />
+  );
+}
+
+export function DeploymentStrategyEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.deploymentStrategy;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      deploymentStrategy: newValue,
+    });
+  };
+
+  const selectOptions = [
+    { value: "ondemand", label: "On-demand" },
+    { value: "alwayson", label: "Always-on" },
+  ];
+
+  const getOptions = function () {
+    return selectOptions;
+  };
+
+  return (
+    <SelectEntry
+      id={consts.DEPLOYMENT_STRATEGY}
+      label={translate("Deployment Strategy")}
+      getValue={getValue}
+      setValue={setValue}
+      getOptions={getOptions}
+      debounce={debounce}
+    />
+  );
+}
+
+export function ComponentSharingEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.componentSharing;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      componentSharing: newValue,
+    });
+  };
+
+  const selectOptions = [
+    { value: "dedicated", label: "Dedicated Component" },
+    { value: "shared", label: "Shared Component" },
+    { value: "tenantIsolated", label: "Tenant-isolated Component" },
+  ];
+
+  const getOptions = function () {
+    return selectOptions;
+  };
+
+  return (
+    <SelectEntry
+      id={consts.COMPONENT_SHARING}
+      label={translate("Component Sharing")}
+      getValue={getValue}
+      setValue={setValue}
+      getOptions={getOptions}
+      debounce={debounce}
+    />
+  );
+}
