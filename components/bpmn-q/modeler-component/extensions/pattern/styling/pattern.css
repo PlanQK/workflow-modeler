@@ -9,6 +9,8 @@
   background-repeat: no-repeat;
   display: inline-block;
   float: left;
+  padding: 4px 6px;
+  margin-top: -1px;
 }
 
 .actions-column {
@@ -98,4 +100,42 @@
   background-repeat: no-repeat;
   display: inline-block;
   float: left;
+}
+
+.qwm .bpmn-pattern-orchestrated-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/orchestrated-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-pre-deployed-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/pre-deployed-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-prioritized-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/priortized-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm-popup-menu-more-options .pattern-logo .djs-popup-entry-name {
+  margin-top: 20px; /* Adjust the margin value as needed */
+}
+
+.djs-popup-results
+  .djs-popup-group
+  .entry[title="Patterns"]
+  .djs-popup-label {
+  margin-top: 1px; /* Adjust the value as per your requirements */
 }

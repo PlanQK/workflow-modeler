@@ -1,0 +1,17 @@
+{
+  "name": "Pattern",
+  "uri": "https://github.com/UST-QuAntiL/Pattern",
+  "prefix": "pattern",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "GateErrorMitigation",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}

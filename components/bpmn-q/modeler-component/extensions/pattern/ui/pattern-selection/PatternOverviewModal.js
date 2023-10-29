@@ -17,7 +17,7 @@ const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function PatternOverviewModal({ onClose, responseData }) {
+export default function PatternOverviewModal({ onClose, element, commandStack, responseData }) {
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
   const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] =
     useState(false);
@@ -33,6 +33,12 @@ export default function PatternOverviewModal({ onClose, responseData }) {
     setAlgorithmicPatternModalOpen(false);
   };
 
+  const setPatterns = () => {
+    if(element !== undefined){
+      console.log(dynamicRows);
+
+    }
+  }
   const selectAlgorithmicPattern = useCallback(
     (selectedPattern) => {
       if (editRow !== null) {
@@ -98,6 +104,19 @@ export default function PatternOverviewModal({ onClose, responseData }) {
     openAlgorithmicPatternModal();
   };
 
+  const disableButton = () =>{
+    if(element !== undefined){
+      console.log(element)
+      if(element.algorithmPattern !== undefined){
+        return true;
+      }
+      return false;
+  }
+    if(responseData === null){
+      return true;
+    } 
+  return false;
+}
   return (
     <Modal onClose={onClose}>
       <Title>Pattern Selection</Title>
@@ -108,7 +127,7 @@ export default function PatternOverviewModal({ onClose, responseData }) {
           <button
             className="qwm-action-add qwm-btn-primary"
             onClick={openAlgorithmicPatternModal}
-            disabled={responseData === null}
+            disabled={disableButton()}
           >
             +
           </button>
@@ -212,7 +231,7 @@ export default function PatternOverviewModal({ onClose, responseData }) {
           <button
             type="button"
             className="qwm-btn qwm-btn-secondary"
-            onClick={() => onClose(dynamicRows)}
+            onClick={() => {setPatterns();onClose(dynamicRows);}}
           >
             Done
           </button>
