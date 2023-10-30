@@ -3,7 +3,13 @@ import {
   isTextFieldEntryEdited,
   isSelectEntryEdited,
 } from "@bpmn-io/properties-panel";
-import { AlgorithmEntry, AlphaEntry, CloudTypeEntry, ComponentSharingEntry, DeploymentStrategyEntry } from "./QuantMEPropertyEntries.js";
+import {
+  AlgorithmEntry,
+  AlphaEntry,
+  CloudTypeEntry,
+  ComponentSharingEntry,
+  DeploymentStrategyEntry,
+} from "./QuantMEPropertyEntries.js";
 import {
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,

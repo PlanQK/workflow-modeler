@@ -151,7 +151,7 @@ function QuantMEProps(element) {
       return CuttingResultCombinationTaskEntries(element);
     case consts.PRIVACY_POLICY:
       return PrivacyPolicyTaskEntries(element);
-    case consts.PRIVACY_POLICY:
+    case consts.DEPLOYMENT_POLICY:
       return DeploymentPolicyTaskEntries(element);
     default:
       console.log("Unsupported QuantME element of type: ", element.type);

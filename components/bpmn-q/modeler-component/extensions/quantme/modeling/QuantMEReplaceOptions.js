@@ -179,19 +179,19 @@ export var SUBPROCESS = [
 
 export var POLICY = [
   {
-    label: 'Deployment Policy',
-    actionName: 'replace-with-deployment-policy',
-    className: 'qwm bpmn-icon-deployment-policy',
+    label: "Deployment Policy",
+    actionName: "replace-with-deployment-policy",
+    className: "qwm bpmn-icon-deployment-policy",
     target: {
-      type: consts.DEPLOYMENT_POLICY
-    }
+      type: consts.DEPLOYMENT_POLICY,
+    },
   },
   {
-    label: 'Privacy Policy',
-    actionName: 'replace-with-privacy-policy',
-    className: 'qwm bpmn-icon-privacy-policy',
+    label: "Privacy Policy",
+    actionName: "replace-with-privacy-policy",
+    className: "qwm bpmn-icon-privacy-policy",
     target: {
-      type: consts.PRIVACY_POLICY
-    }
+      type: consts.PRIVACY_POLICY,
+    },
   },
 ];

@@ -9,20 +9,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import RuleProvider from 'diagram-js/lib/features/rules/RuleProvider';
-import * as consts from '../Constants';
+import RuleProvider from "diagram-js/lib/features/rules/RuleProvider";
+import * as consts from "../Constants";
 
 export default class QuantMERules extends RuleProvider {
   constructor(eventBus, modeling) {
     super(eventBus);
     this.modeling = modeling;
 
-    this.addRule('shape.create', 10000, function(context) {
+    this.addRule("shape.create", 10000, function (context) {
       var shape = context.shape,
-          target = context.target;
-          console.log(shape.type)
+        target = context.target;
 
-      if (shape.type.includes('Policy') && target.type !== 'bpmn:ServiceTask') {
+      if (shape.type.includes("Policy") && target.type !== "bpmn:ServiceTask") {
         return false;
       }
     });
@@ -31,44 +30,54 @@ export default class QuantMERules extends RuleProvider {
       var target = context.target;
 
       if (target != undefined) {
-        if (context.shapes[0].type.includes('Policy')) {
+        if (context.shapes[0].type.includes("Policy")) {
           return false;
         }
       }
     }
 
-
-    this.addRule('elements.move', 4000, function(context) {
+    this.addRule("elements.move", 4000, function (context) {
       return canMove(context);
     });
 
-    this.addRule('shape.replace', function(context) {
-      if (context.element.type.includes('Policy')) {
+    this.addRule("shape.replace", function (context) {
+      if (context.element.type.includes("Policy")) {
         return false;
       }
     });
 
-    this.addRule('shape.attach', 4000, function(context) {
+    this.addRule("shape.attach", 4000, function (context) {
       let shapeToAttach = context.shape;
       let target = context.target;
 
-      if (shapeToAttach.type.includes('Policy') && target.type !== 'bpmn:ServiceTask') {
+      if (
+        shapeToAttach.type.includes("Policy") &&
+        target.type !== "bpmn:ServiceTask"
+      ) {
         return false;
       }
 
-      if (shapeToAttach.type.includes('Policy') && target.type === 'bpmn:ServiceTask') {
+      if (
+        shapeToAttach.type.includes("Policy") &&
+        target.type === "bpmn:ServiceTask"
+      ) {
         console.log(target.attachers);
         for (let i = 0; i < target.attachers.length; i++) {
           let boundaryElement = target.attachers[i];
 
-          if (boundaryElement.type === consts.PRIVACY_POLICY && shapeToAttach.type === consts.PRIVACY_POLICY) {
+          if (
+            boundaryElement.type === consts.PRIVACY_POLICY &&
+            shapeToAttach.type === consts.PRIVACY_POLICY
+          ) {
             return false;
           }
 
-          if (boundaryElement.type === consts.DEPLOYMENT_POLICY && shapeToAttach.type === consts.DEPLOYMENT_POLICY) {
+          if (
+            boundaryElement.type === consts.DEPLOYMENT_POLICY &&
+            shapeToAttach.type === consts.DEPLOYMENT_POLICY
+          ) {
             return false;
           }
-
         }
         return true;
       }
@@ -76,4 +85,4 @@ export default class QuantMERules extends RuleProvider {
   }
 }
 
-QuantMERules.$inject = [ 'eventBus'];
+QuantMERules.$inject = ["eventBus"];

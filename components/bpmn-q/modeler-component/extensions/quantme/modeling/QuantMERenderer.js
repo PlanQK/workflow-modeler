@@ -323,67 +323,147 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "TASK_TYPE_VQA");
         return task;
       },
-      [consts.PRIVACY_POLICY]: function(self, parentGfx, element) {
+      [consts.PRIVACY_POLICY]: function (self, parentGfx, element) {
         var attrs = {
-          fill: 'white',
-          stroke: 'none'
+          fill: "white",
+          stroke: "none",
         };
 
-        var task = self.renderer('bpmn:Event')(parentGfx, element, attrs);
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
 
-
-        var pathData = quantMEPathMap.getPath('TASK_TYPE_MONEY_FILLNONESTROKE');
+        var pathData = quantMEPathMap.getPath("PRIVACY_POLICY995");
         drawPath(parentGfx, pathData, {
-          transform:'scale(0.25)',
+          transform:
+            "scale(0.25) translate(-26.183594,-7.1191406) matrix(0.99158553,0,0,1.0261969,0.6937967,0.91310951)",
           strokeWidth: 2.5,
-          fill: 'none',
-          stroke: 'none'
+          fill: "white",
+          stroke: "white",
         });
 
-        /**
-         * 
-         
-        var pathData2 = quantMEPathMap.getPath('TASK_TYPE_MONEY_WHITE');
+        var pathData2 = quantMEPathMap.getPath("PRIVACY_POLICY10");
         drawPath(parentGfx, pathData2, {
-          transform:'scale(0.25)',
-          strokeWidth: 0,
-          fill: '#FFFFFF',
-          stroke: 'none'
-        });*/
-        
-        var pathData3 = quantMEPathMap.getPath('TASK_TYPE_MONEY_FILL');
-        drawPath(parentGfx, pathData3, {
-          transform:'scale(0.25)',
+          transform: "scale(0.25)",
           strokeWidth: 2.5,
-          fill: '#FFFFFF',
-          stroke: '#000000'
+          fill: "white",
+          stroke: "black",
         });
-        
-        var pathData4 = quantMEPathMap.getPath('TASK_TYPE_PRIVACY_3');
+
+        var pathData3 = quantMEPathMap.getPath("PRIVACY_POLICY35");
+        drawPath(parentGfx, pathData3, {
+          transform:
+            "scale(0.25) matrix(0.98629911,0,0,0.99551149,1.7022668,0.1533458)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "white",
+        });
+
+        var pathData4 = quantMEPathMap.getPath("PRIVACY_POLICY106");
         drawPath(parentGfx, pathData4, {
-          transform:'scale(0.25)',
-          strokeWidth: 5,
-          fill: '#ffffff',
-          stroke: '#000000'
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "black",
         });
 
-        var pathData5 = quantMEPathMap.getPath('TASK_TYPE_PRIVACY');
+        var pathData5 = quantMEPathMap.getPath("PRIVACY_POLICYPATHS");
         drawPath(parentGfx, pathData5, {
-          transform:'scale(0.25)',
-          strokeWidth: 2,
-          fill: '#000000',
-          stroke: '#000000'
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "black",
         });
 
-
-        var pathData6 = quantMEPathMap.getPath('TASK_TYPE_PRIVACY_2');
+        var pathData6 = quantMEPathMap.getPath("PRIVACY_RECT");
         drawPath(parentGfx, pathData6, {
-          transform:'scale(0.25)',
-          strokeWidth: 2,
-          fill: '#ffffff',
-          stroke: '#ffffff'
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "black",
+          stroke: "black",
         });
 
+        var pathData7 = quantMEPathMap.getPath("PRIVACY_RECT2");
+        drawPath(parentGfx, pathData7, {
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "none",
+          stroke: "black",
+        });
+        var pathData8 = quantMEPathMap.getPath("PRIVACY_RECT3");
+        drawPath(parentGfx, pathData8, {
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "none",
+        });
+
+        return task;
+      },
+      [consts.DEPLOYMENT_POLICY]: function (self, parentGfx, element) {
+        var attrs = {
+          fill: "none",
+          stroke: "none",
+        };
+
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+
+        var pathData = quantMEPathMap.getPath("DEPLOYMENT_POLICY1");
+        drawPath(parentGfx, pathData, {
+          transform:
+            "scale(0.25) matrix(1.0089025,0,0,1.0261969,0.24037653,0.91310951)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "white",
+        });
+
+        var pathData4 = quantMEPathMap.getPath("DEPLOYMENT_POLICY106");
+        drawPath(parentGfx, pathData4, {
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "black",
+        });
+
+        var pathData2 = quantMEPathMap.getPath("DEPLOYMENT_POLICYRECT10");
+        drawPath(parentGfx, pathData2, {
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "black",
+        });
+
+        var pathData3 = quantMEPathMap.getPath("DEPLOYMENT_POLICY11");
+        drawPath(parentGfx, pathData3, {
+          transform:
+            "scale(0.25) matrix(0.98629911,0,0,0.99551149,1.7022668,0.1533458)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "none",
+        });
+
+        var pathData5 = quantMEPathMap.getPath("DEPLOYMENT_POLICYPATHS");
+        drawPath(parentGfx, pathData5, {
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "white",
+          stroke: "black",
+        });
+
+        var pathData7 = quantMEPathMap.getPath("DEPLOYMENT_POLICYG11");
+        drawPath(parentGfx, pathData7, {
+          transform:
+            "scale(0.25) matrix(0.35859938,0,0,0.32976637,87.39665,30.725713) matrix(1.24167,0,0,1,39,102)",
+          strokeWidth: 2.5,
+          fill: "black",
+          stroke: "black",
+        });
+
+        var pathData8 = quantMEPathMap.getPath("DEPLOYMENT_POLICYLAST");
+        drawPath(parentGfx, pathData8, {
+          transform: "scale(0.25)",
+          strokeWidth: 2.5,
+          fill: "black",
+          stroke: "black",
+        });
         return task;
       },
     };
