@@ -7,7 +7,67 @@
   },
   "types": [
     {
+      "name": "QuantumKernelEstimator",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "AlternatingOperatorAnsatz",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "QuantumApproximateOptimizationAlgorithm",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "QuantumPhaseEstimation",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "VariationalQuantumAlgorithm",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "VariationalQuantumEigensolver",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "OrchestratedExecution",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "PredeployedExecution",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "PrioritizedExecution",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "ErrorCorrection",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
       "name": "GateErrorMitigation",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "ReadoutErrorMitigation",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "WarmStart",
       "superClass": ["bpmn:Event"],
       "properties": []
     }

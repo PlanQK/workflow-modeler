@@ -12,6 +12,7 @@
 import React, { useCallback, useState } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
 import PatternSelectionModal from "./PatternSelectionModal";
+import { getModeler } from "../../../../editor/ModelerHandler";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -36,6 +37,22 @@ export default function PatternOverviewModal({ onClose, element, commandStack, r
   const setPatterns = () => {
     if(element !== undefined){
       console.log(dynamicRows);
+      let modeling = getModeler().get("modeling");
+      
+      const businessObject = getModeler().get("bpmnFactory").create("pattern:GateErrorMitigation");
+      let shape = getModeler().get("elementFactory").createShape({
+        type: "pattern:GateErrorMitigation",
+        businessObject: businessObject,
+      });
+      let replace = getModeler().get('replace');
+      let elementRegistry = getModeler().get("elementRegistry")
+
+       // replace QuantumHardwareSelectionSubprocess with traditional subprocess
+      let replaceElement = replace.replaceElement(elementRegistry.get(element.id), {
+        type: "pattern:GateErrorMitigation",
+      });
+   
+     //replace.replaceElement(element, shape);
 
     }
   }
