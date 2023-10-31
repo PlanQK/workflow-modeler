@@ -248,7 +248,7 @@ export async function startOnDemandReplacementProcess(xml) {
         newExtensionElements
       );
     }
-    const endTask = modeling.appendShape(
+    modeling.appendShape(
       serviceTask3,
       {
         type: "bpmn:EndEvent",
@@ -256,8 +256,6 @@ export async function startOnDemandReplacementProcess(xml) {
       { x: 1000, y: 200 },
       subProcess
     );
-
-    console.log(endTask);
   }
 
   // layout diagram after successful transformation
