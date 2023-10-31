@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { connectRectangles } from "diagram-js/lib/layout/ManhattanLayout";
+import { connectPoints } from "diagram-js/lib/layout/ManhattanLayout";
 
 import { createLine } from "diagram-js/lib/util/RenderUtil";
 
@@ -27,7 +27,6 @@ import {
   prepend as svgPrepend,
 } from "tiny-svg";
 import { query as domQuery } from "min-dom";
-
 import { loadTopology } from "../deployment/WineryUtils";
 
 const HIGH_PRIORITY = 14001;
@@ -35,11 +34,11 @@ const SERVICE_TASK_TYPE = "bpmn:ServiceTask";
 const DEPLOYMENT_GROUP_ID = "deployment";
 const DEPLOYMENT_REL_MARKER_ID = "deployment-rel";
 
+const LABEL_WIDTH = 65;
+const LABEL_HEIGHT = 15;
 const NODE_WIDTH = 100;
 const NODE_HEIGHT = 60;
 const NODE_SHIFT_MARGIN = 10;
-const LABEL_WIDTH = 90;
-const LABEL_HEIGHT = 20;
 const STROKE_STYLE = {
   strokeLinecap: "round",
   strokeLinejoin: "round",
@@ -103,7 +102,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     this.openToscaHandlers = {
       [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
         const task = self.renderer("bpmn:ServiceTask")(parentGfx, element);
-        self.maybeAddShowDeploymentModelButton(parentGfx, element);
+        self.showDeploymentModelButton(parentGfx, element);
         return task;
       },
     };
@@ -187,7 +186,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     svgAppend(defs, marker);
   }
 
-  maybeAddShowDeploymentModelButton(parentGfx, element) {
+  showDeploymentModelButton(parentGfx, element) {
     let deploymentModelUrl = element.businessObject.get(
       "opentosca:deploymentModelUrl"
     );
@@ -244,7 +243,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       }
     }
     const groupDef = svgCreate("g", { id: DEPLOYMENT_GROUP_ID });
-    parentGfx.prepend(groupDef);
+    parentGfx.append(groupDef);
 
     const { nodeTemplates, relationshipTemplates, topNode } =
       element.deploymentModelTopology;
@@ -281,36 +280,254 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       element.id
     )?.boundingBox;
     if (JSON.stringify(previousBoundingBox) !== JSON.stringify(boundingBox)) {
-      this.mayBeMoveNeighborNodes(boundingBox, element);
+      this.moveNeighborNodes(boundingBox, element);
     }
 
     this.currentlyShownDeploymentsModels.set(element.id, {
       boundingBox,
     });
 
-    for (let relationshipTemplate of relationshipTemplates) {
-      const start = positions.get(relationshipTemplate.sourceElement.ref);
-      const end = positions.get(relationshipTemplate.targetElement.ref);
-      const namePattern = /_(.*)_/g;
-      var nameMatches = namePattern.exec(relationshipTemplate.id);
-      var relationshipName;
-      if (nameMatches === null && nameMatches.length < 1) {
-        relationshipName = relationshipTemplate.id;
-      } else {
-        relationshipName = nameMatches[1];
+    this.drawNodeConnections(
+      parentGfx,
+      topNode,
+      relationshipTemplates,
+      positions
+    );
+  }
+
+  drawNodeConnections(
+    parentGfx,
+    topNode,
+    relationshipTemplates,
+    nodePositions
+  ) {
+    const connectionsAtNodeLocations = new Map();
+    const connections = [];
+
+    const addToPort = (node, location, otherNode) => {
+      const key = node.ref + "-" + location;
+      let nodesAtPort = connectionsAtNodeLocations.get(key);
+      if (!nodesAtPort) {
+        nodesAtPort = [];
+        connectionsAtNodeLocations.set(key, nodesAtPort);
       }
-      this.drawRelationship(
-        groupDef,
-        start,
-        relationshipTemplate.sourceElement.ref === topNode.id,
-        end,
-        relationshipTemplate.targetElement.ref === topNode.id,
-        relationshipName
+      nodesAtPort.push(otherNode);
+    };
+
+    const addConnection = (
+      source,
+      sourceLocation,
+      target,
+      targetLocation,
+      connectionName
+    ) => {
+      addToPort(source, sourceLocation, target);
+      addToPort(target, targetLocation, source);
+      connections.push({
+        source,
+        target,
+        sourceLocation,
+        targetLocation,
+        connectionName,
+      });
+    };
+
+    for (let relationshipTemplate of relationshipTemplates) {
+      const sourceRef = relationshipTemplate.sourceElement.ref;
+      const targetRef = relationshipTemplate.targetElement.ref;
+      const source = {
+        width: NODE_WIDTH,
+        height: sourceRef === topNode.id ? 80 : NODE_HEIGHT,
+        ref: sourceRef,
+        ...nodePositions.get(sourceRef),
+      };
+      const target = {
+        width: NODE_WIDTH,
+        height: sourceRef === topNode.id ? 80 : NODE_HEIGHT,
+        ref: targetRef,
+        ...nodePositions.get(targetRef),
+      };
+      const orientation = getOrientation(source, target, 0);
+
+      switch (orientation) {
+        case "intersect":
+        case "bottom":
+          addConnection(
+            source,
+            "north",
+            target,
+            "south",
+            relationshipTemplate.name
+          );
+          break;
+        case "top":
+          addConnection(
+            source,
+            "south",
+            target,
+            "north",
+            relationshipTemplate.name
+          );
+          break;
+        case "right":
+          addConnection(
+            source,
+            "east",
+            target,
+            "west",
+            relationshipTemplate.name
+          );
+          break;
+        case "left":
+          addConnection(
+            source,
+            "west",
+            target,
+            "east",
+            relationshipTemplate.name
+          );
+          break;
+        case "top-left":
+          addConnection(
+            source,
+            "south",
+            target,
+            "east",
+            relationshipTemplate.name
+          );
+          break;
+        case "top-right":
+          addConnection(
+            source,
+            "south",
+            target,
+            "west",
+            relationshipTemplate.name
+          );
+          break;
+        case "bottom-left":
+          addConnection(
+            source,
+            "north",
+            target,
+            "east",
+            relationshipTemplate.name
+          );
+          break;
+        case "bottom-right":
+          addConnection(
+            source,
+            "north",
+            target,
+            "west",
+            relationshipTemplate.name
+          );
+          break;
+        default:
+          return;
+      }
+    }
+
+    for (const connection of connections) {
+      const getPortPoint = (element, location, otherNode) => {
+        const connectionsAtNodeLocation = connectionsAtNodeLocations.get(
+          element.ref + "-" + location
+        );
+        const locationIndex = connectionsAtNodeLocation.indexOf(otherNode) + 1;
+        const portCount = connectionsAtNodeLocation.length;
+        if (location === "north") {
+          return {
+            x: element.x + (element.width / (portCount + 1)) * locationIndex,
+            y: element.y,
+          };
+        } else if (location === "south") {
+          return {
+            x: element.x + (element.width / (portCount + 1)) * locationIndex,
+            y: element.y + element.height,
+          };
+        } else if (location === "east") {
+          return {
+            x: element.x,
+            y: element.y + (element.height / (portCount + 1)) * locationIndex,
+          };
+        } else if (location === "west") {
+          return {
+            x: element.x + element.width,
+            y: element.y + (element.height / (portCount + 1)) * locationIndex,
+          };
+        }
+      };
+
+      const getSimpleDirection = (direction) =>
+        direction === "north" || direction === "south" ? "v" : "h";
+
+      connectionsAtNodeLocations.forEach((value) => {
+        if (value.length > 1) {
+          value.sort((a, b) => {
+            return a.y - b.y;
+          });
+        }
+      });
+
+      const points = connectPoints(
+        getPortPoint(
+          connection.source,
+          connection.sourceLocation,
+          connection.target
+        ),
+        getPortPoint(
+          connection.target,
+          connection.targetLocation,
+          connection.source
+        ),
+        getSimpleDirection(connection.sourceLocation) +
+          ":" +
+          getSimpleDirection(connection.targetLocation)
       );
+
+      const line = createLine(
+        points,
+        this.styles.computeStyle({}, ["no-fill"], {
+          ...STROKE_STYLE,
+          markerEnd: `url(#${DEPLOYMENT_REL_MARKER_ID})`,
+        }),
+        5
+      );
+
+      const labelGroup = svgCreate("g");
+
+      const pathLength = line.getTotalLength();
+      const middlePoint = line.getPointAtLength(pathLength / 2);
+      svgAttr(labelGroup, {
+        transform: `matrix(1, 0, 0, 1, ${(
+          middlePoint.x -
+          LABEL_WIDTH / 2
+        ).toFixed(2)}, ${(middlePoint.y - LABEL_HEIGHT / 2).toFixed(2)})`,
+      });
+      const backgroundRect = svgCreate("rect", {
+        width: LABEL_WIDTH,
+        height: LABEL_HEIGHT,
+        fill: "#EEEEEE",
+        fillOpacity: 0.75,
+      });
+      svgAppend(labelGroup, backgroundRect);
+      const text = this.textRenderer.createText(connection.connectionName, {
+        box: {
+          width: LABEL_WIDTH,
+          height: LABEL_HEIGHT,
+        },
+        align: "center-middle",
+        style: {
+          fontSize: 10,
+        },
+      });
+      svgAppend(labelGroup, text);
+      parentGfx.prepend(labelGroup);
+      parentGfx.prepend(line);
     }
   }
 
-  mayBeMoveNeighborNodes(newBoundingBox, element) {
+  moveNeighborNodes(newBoundingBox, element) {
     let shifts = {
       right: 0,
       left: 0,
@@ -404,62 +621,6 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     }
   }
 
-  drawRelationship(
-    parentGfx,
-    start,
-    startIsToplevel,
-    end,
-    endIsToplevel,
-    lineLabel
-  ) {
-    const line = createLine(
-      connectRectangles(
-        {
-          width: NODE_WIDTH,
-          height: startIsToplevel ? 80 : NODE_HEIGHT,
-          ...start,
-        },
-        {
-          width: NODE_WIDTH,
-          height: endIsToplevel ? 80 : NODE_HEIGHT,
-          ...end,
-        }
-      ),
-      this.styles.computeStyle({}, ["no-fill"], {
-        ...STROKE_STYLE,
-        markerEnd: `url(#${DEPLOYMENT_REL_MARKER_ID})`,
-      }),
-      5
-    );
-    const labelGroup = svgCreate("g");
-
-    const pathLength = line.getTotalLength();
-    const middlePoint = line.getPointAtLength(pathLength / 2);
-    svgAttr(labelGroup, {
-      transform: `matrix(1, 0, 0, 1, ${(
-        middlePoint.x -
-        LABEL_WIDTH / 2
-      ).toFixed(2)}, ${(middlePoint.y - LABEL_HEIGHT / 2).toFixed(2)})`,
-    });
-    const backgroundRect = svgCreate("rect", {
-      width: LABEL_WIDTH,
-      height: LABEL_HEIGHT,
-      fill: "#EEEEEE",
-      fillOpacity: 1,
-    });
-    svgAppend(labelGroup, backgroundRect);
-    const text = this.textRenderer.createText(lineLabel, {
-      box: {
-        width: LABEL_WIDTH,
-        height: LABEL_HEIGHT,
-      },
-      align: "center-middle",
-    });
-    svgAppend(labelGroup, text);
-    parentGfx.prepend(labelGroup);
-    parentGfx.prepend(line);
-  }
-
   drawNodeTemplate(parentGfx, nodeTemplate, position) {
     const groupDef = svgCreate("g");
     svgAttr(groupDef, {
@@ -495,9 +656,9 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     });
 
     const namePattern = /\}(.*)/g;
-    var typeMatches = namePattern.exec(nodeTemplate.type);
-    var typeName;
-    if (typeMatches === null && typeMatches.length < 1) {
+    const typeMatches = namePattern.exec(nodeTemplate.type);
+    let typeName;
+    if (typeMatches === null || typeMatches.length === 0) {
       typeName = nodeTemplate.type;
     } else {
       typeName = typeMatches[1];
