@@ -301,35 +301,33 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     relationshipTemplates,
     nodePositions
   ) {
-    const connectionCountAtNodeLocation = new Map();
+    const connectionsAtNodeLocations = new Map();
     const connections = [];
 
-    const addToPort = (nodeRef, location) => {
-      const key = nodeRef + "-" + location;
-      let position;
-      if (connectionCountAtNodeLocation.has(key)) {
-        position = connectionCountAtNodeLocation.get(key) + 1;
-      } else {
-        position = 1;
+    const addToPort = (node, location, otherNode) => {
+      const key = node.ref + "-" + location;
+      let nodesAtPort = connectionsAtNodeLocations.get(key);
+      if(!nodesAtPort) {
+        nodesAtPort = [];
+        connectionsAtNodeLocations.set(key, nodesAtPort);
       }
-      connectionCountAtNodeLocation.set(key, position);
-      return position;
+      nodesAtPort.push(otherNode);
     };
 
     const addConnection = (
-      sourceNode,
+      source,
       sourceLocation,
       target,
       targetLocation,
       connectionName
     ) => {
+      addToPort(source, sourceLocation, target);
+      addToPort(target, targetLocation, source);
       connections.push({
-        source: sourceNode,
+        source,
         target,
         sourceLocation,
         targetLocation,
-        sourcePortIndex: addToPort(sourceNode.ref, sourceLocation),
-        targetPortIndex: addToPort(target.ref, targetLocation),
         connectionName,
       });
     };
@@ -431,10 +429,11 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     }
 
     for (const connection of connections) {
-      const getPortPoint = (element, location, locationIndex) => {
-        const portCount = connectionCountAtNodeLocation.get(
-          element.ref + "-" + location
-        );
+      const getPortPoint = (element, location, otherNode) => {
+        const connectionsAtNodeLocation = connectionsAtNodeLocations.get(element.ref + "-" + location);
+        const locationIndex = connectionsAtNodeLocation
+            .indexOf(otherNode) + 1;
+        const portCount = connectionsAtNodeLocation.length;
         if (location === "north") {
           return {
             x: element.x + (element.width / (portCount + 1)) * locationIndex,
@@ -461,16 +460,24 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       const getSimpleDirection = (direction) =>
         direction === "north" || direction === "south" ? "v" : "h";
 
+      connectionsAtNodeLocations.forEach((value) => {
+        if(value.length > 1) {
+          value.sort((a, b) => {
+            return a.y - b.y;
+          });
+        }
+      });
+
       const points = connectPoints(
         getPortPoint(
           connection.source,
           connection.sourceLocation,
-          connection.sourcePortIndex
+          connection.target
         ),
         getPortPoint(
           connection.target,
           connection.targetLocation,
-          connection.targetPortIndex
+          connection.source
         ),
         getSimpleDirection(connection.sourceLocation) +
           ":" +
@@ -648,9 +655,9 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     });
 
     const namePattern = /\}(.*)/g;
-    var typeMatches = namePattern.exec(nodeTemplate.type);
-    var typeName;
-    if (typeMatches === null && typeMatches.length < 1) {
+    const typeMatches = namePattern.exec(nodeTemplate.type);
+    let typeName;
+    if (typeMatches === null || typeMatches.length === 0) {
       typeName = nodeTemplate.type;
     } else {
       typeName = typeMatches[1];
