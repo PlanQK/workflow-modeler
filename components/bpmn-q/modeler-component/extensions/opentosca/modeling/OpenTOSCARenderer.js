@@ -307,7 +307,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     const addToPort = (node, location, otherNode) => {
       const key = node.ref + "-" + location;
       let nodesAtPort = connectionsAtNodeLocations.get(key);
-      if(!nodesAtPort) {
+      if (!nodesAtPort) {
         nodesAtPort = [];
         connectionsAtNodeLocations.set(key, nodesAtPort);
       }
@@ -430,9 +430,10 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
 
     for (const connection of connections) {
       const getPortPoint = (element, location, otherNode) => {
-        const connectionsAtNodeLocation = connectionsAtNodeLocations.get(element.ref + "-" + location);
-        const locationIndex = connectionsAtNodeLocation
-            .indexOf(otherNode) + 1;
+        const connectionsAtNodeLocation = connectionsAtNodeLocations.get(
+          element.ref + "-" + location
+        );
+        const locationIndex = connectionsAtNodeLocation.indexOf(otherNode) + 1;
         const portCount = connectionsAtNodeLocation.length;
         if (location === "north") {
           return {
@@ -461,7 +462,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         direction === "north" || direction === "south" ? "v" : "h";
 
       connectionsAtNodeLocations.forEach((value) => {
-        if(value.length > 1) {
+        if (value.length > 1) {
           value.sort((a, b) => {
             return a.y - b.y;
           });
