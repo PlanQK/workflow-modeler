@@ -10,8 +10,7 @@
  */
 
 // script to invoke the hardware selection by the NISQ Analyzer based on the circuit created in the workflow
-export var INVOKE_NISQ_ANALYZER_SCRIPT =
-  `import groovy.json.*
+export var INVOKE_NISQ_ANALYZER_SCRIPT = `import groovy.json.*
 
 def nisqAnalyzerEndpoint = execution.getVariable("nisq_analyzer_endpoint_qpu_selection");
 def circuitLanguage = execution.getVariable("circuit_language");
@@ -174,8 +173,7 @@ export var RETRIEVE_FRAGMENT_SCRIPT_SUFFIX =
   'execution.setVariable("hardware_selection_fragment", typedFileValue);\n';
 
 // script to invoke the transformation of the workflow fragment within the QuantumHardwareSelectionSubprocess depending on the hardware selection
-export var INVOKE_TRANSFORMATION_SCRIPT =
-    `import groovy.json.*
+export var INVOKE_TRANSFORMATION_SCRIPT = `import groovy.json.*
 import org.camunda.bpm.engine.variable.value.FileValue
 
 def transformationUrl = execution.getVariable("transformation_framework_endpoint");
@@ -223,4 +221,3 @@ try {
    throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + transformationUrl);
 }
 `;
-
