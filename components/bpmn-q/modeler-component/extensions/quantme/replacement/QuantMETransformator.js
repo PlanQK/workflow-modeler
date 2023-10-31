@@ -24,6 +24,7 @@ import {
   getSingleFlowElement,
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
+import { rewriteWorkflow } from "./WorkflowRewriter";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -44,7 +45,7 @@ export async function startQuantmeReplacementProcess(
   // get root element of the current diagram
   const definitions = modeler.getDefinitions();
   const rootElement = getRootProcess(definitions);
-  console.log(rootElement);
+  console.log("Root element for QuantME transformation: ", rootElement);
   if (typeof rootElement === "undefined") {
     console.log("Unable to retrieve root process element from definitions!");
     return {
@@ -53,8 +54,9 @@ export async function startQuantmeReplacementProcess(
     };
   }
 
-  // TODO: perform rewriting
-  console.log("Rewriting...");
+  // rewrite hybrid spheres before replacing remaining QuantME modeling constructs
+  console.log("Starting rewrite for hybrid spheres...");
+  await rewriteWorkflow(modeler, elementRegistry, rootElement);
 
   // get all QuantME modeling constructs from the process
   let replacementConstructs = getQuantMETasks(rootElement, elementRegistry);

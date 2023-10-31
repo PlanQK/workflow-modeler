@@ -11,6 +11,41 @@
 
 import { getXml } from "../../../editor/util/IoUtilities";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
+import { HYBRID_SPHERE } from "../Constants";
+
+/**
+ * Rewrite all hybrid spheres within the given workflow to use hybrid runtimes
+ *
+ * @param modeler the modeler containing the workflow to rewrite
+ * @param elementRegistry the element registry of the given modeler
+ * @param rootElement the root element of the workflow contained in the given modeler
+ */
+export async function rewriteWorkflow(modeler, elementRegistry, rootElement) {
+  // rewriting if no hybrid sphere object can be found for the given workflow
+  if (
+    !rootElement.artifacts ||
+    rootElement.artifacts.filter((e) => e.$type === HYBRID_SPHERE).length === 0
+  ) {
+    console.log(
+      "Workflow contains now hybrid spheres, skipping workflow rewrite!"
+    );
+    return;
+  }
+
+  // extract hybrid spheres from given workflow
+  const hybridSpheres = rootElement.artifacts.filter(
+    (e) => e.$type === HYBRID_SPHERE
+  );
+  console.log("Rewriting %i hybrid spheres...", hybridSpheres.length);
+
+  for (let hybridSphere of hybridSpheres) {
+    console.log("Rewriting hybrid sphere: ", hybridSphere);
+
+    // TODO: rewrite workflow
+  }
+
+  console.log("Finished rewriting workflow!");
+}
 
 /**
  * Rewrite the workflow available within the given modeler using the given optimization candidate
@@ -21,7 +56,7 @@ import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
  * @param hybridProgramId the Id of the hybrid program that is used instead of orchestrating the tasks of the candidate
  * @return an error message if the rewriting failed
  */
-export async function rewriteWorkflow(
+export async function rewriteCandidate(
   modeler,
   candidate,
   provenanceCollectionEnabled,
