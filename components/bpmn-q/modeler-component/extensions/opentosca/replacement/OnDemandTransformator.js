@@ -61,13 +61,11 @@ params.csarName = "ondemand_" + (Math.random().toString().substring(3));
 
 ${fetchMethod}
 
-
 var createCsarResponse = fetch('POST', params.opentoscaEndpoint, JSON.stringify({
     enrich: 'false',
     name: params.csarName,
     url: params.deploymentModelUrl
 }))
-
 
 var serviceTemplates = JSON.parse(fetch('GET', params.opentoscaEndpoint + "/" + params.csarName + ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
@@ -114,7 +112,7 @@ for(var i = 0; i < 30 * 8; i++) {
         }
      } catch (e) {
      }
-     java.lang.Thread.sleep(2000);
+     java.lang.Thread.sleep(30000);
 }
 
 var properties = JSON.parse(fetch('GET', instanceUrl + "/properties"));
@@ -125,11 +123,9 @@ java.lang.Thread.sleep(12000);
 }
 
 /**
- * Initiate the replacement process for the QuantME tasks that are contained in the current process model
+ * Initiate the replacement process for the ServiceTasks requiring on-demand deployment in the current process model
  *
  * @param xml the BPMN diagram in XML format
- * @param currentQRMs the set of currently in the framework available QRMs
- * @param endpointConfig endpoints of the services required for the dynamic hardware selection
  */
 export async function startOnDemandReplacementProcess(xml) {
   const modeler = await createTempModelerFromXml(xml);
