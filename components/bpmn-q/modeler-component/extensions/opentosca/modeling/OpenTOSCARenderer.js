@@ -27,6 +27,7 @@ import {
   prepend as svgPrepend,
 } from "tiny-svg";
 import { query as domQuery } from "min-dom";
+
 import { loadTopology } from "../deployment/WineryUtils";
 
 const HIGH_PRIORITY = 14001;
@@ -276,6 +277,25 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         element.y,
     };
 
+    const event = {
+      context: {
+        shape: {
+          ...element,
+          parent: element.parent,
+          x: boundingBox.left,
+          y: boundingBox.top,
+          width: boundingBox.right - boundingBox.left,
+          height: boundingBox.bottom - boundingBox.top,
+        },
+        hints: {},
+      },
+    };
+    if(!element.executingResize) {
+      element.executingResize = true;
+      this.eventBus.fire("commandStack.shape.resize.preExecute", event);
+      this.eventBus.fire("commandStack.shape.resize.postExecuted", event);
+      element.executingResize = undefined;
+    }
     const previousBoundingBox = this.currentlyShownDeploymentsModels.get(
       element.id
     )?.boundingBox;
