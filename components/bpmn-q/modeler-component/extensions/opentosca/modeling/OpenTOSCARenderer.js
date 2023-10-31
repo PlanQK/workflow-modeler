@@ -290,7 +290,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         hints: {},
       },
     };
-    if(!element.executingResize) {
+    if (!element.executingResize) {
       element.executingResize = true;
       this.eventBus.fire("commandStack.shape.resize.preExecute", event);
       this.eventBus.fire("commandStack.shape.resize.postExecuted", event);
