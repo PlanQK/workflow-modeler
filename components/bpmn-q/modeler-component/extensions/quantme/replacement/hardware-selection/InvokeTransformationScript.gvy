@@ -19,7 +19,7 @@ def qpuName = execution.getVariable("selected_qpu");
 def message = JsonOutput.toJson(["xml": fragment, "circuitLanguage": circuitLanguage, "provider": providerName, "qpu": qpuName]);
 println "Sending message: " + message;
 
-def pollingUrl = "";
+
 try {
    def post = new URL(transformationUrl).openConnection();
    post.setRequestMethod("POST");
@@ -33,11 +33,8 @@ try {
        def resultText = post.getInputStream().getText();
        def slurper = new JsonSlurper();
        def json = slurper.parseText(resultText);
-//        pollingUrl = transformationUrl + "/" + json.get("id");
-//        println "Transformation Framework returned job with URL: " + pollingUrl;
-//        execution.setVariable("transformation_framework_job_url", pollingUrl);
-       transformedWF = json.get("xml");
-       execution.setVariable("transformedHWSelectionWF", transformedWF);
+       deploymentKey = json.get("deploymentKey");
+       execution.setVariable("fragment_endpoint", deploymentKey);
    }else{
        throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while invoking Transformation Framework!");
    }

@@ -198,64 +198,29 @@ println "Sending message: " + message;
 
 def pollingUrl = "";
 try {
-    def post = new URL(transformationUrl).openConnection();
-    post.setRequestMethod("POST");
-    post.setDoOutput(true);
-    post.setRequestProperty("Content-Type", "application/json");
-    post.setRequestProperty("accept", "application/json");
-    post.getOutputStream().write(message.getBytes("UTF-8"));
+   def post = new URL(transformationUrl).openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("accept", "application/json");
+   post.getOutputStream().write(message.getBytes("UTF-8"));
 
-    def status = post.getResponseCode();
-    if(status == 200){
-        def resultText = post.getInputStream().getText();
-        def slurper = new JsonSlurper();
-        def json = slurper.parseText(resultText);
-//        pollingUrl = transformationUrl + "/" + json.get("id");
-//        println "Transformation Framework returned job with URL: " + pollingUrl;
-//        execution.setVariable("transformation_framework_job_url", pollingUrl);
-        transformedWF = json.get("xml");
-        execution.setVariable("transformedHWSelectionWF", transformedWF);
-    }else{
-        throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while invoking Transformation Framework!");
-    }
+   def status = post.getResponseCode();
+   if(status == 200){
+       def resultText = post.getInputStream().getText();
+       def slurper = new JsonSlurper();
+       def json = slurper.parseText(resultText);
+       deploymentKey = json.get("deploymentKey");
+       execution.setVariable("fragment_endpoint", deploymentKey);
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while invoking Transformation Framework!");
+   }
 } catch(org.camunda.bpm.engine.delegate.BpmnError e) {
-    println e.errorCode;
-    throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
 } catch(Exception e) {
-    println e;
-    throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + transformationUrl);
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + transformationUrl);
 }
 `;
 
-// script to poll for the result of the transformation and deployment
-export var POLL_FOR_TRANSFORMATION_SCRIPT =
-  "import groovy.json.*\n" +
-  'def pollingUrl = execution.getVariable("transformation_framework_job_url");\n' +
-  'println "Polling for successful transformation at: " + pollingUrl;\n' +
-  "\n" +
-  "def transformationStatus = false;\n" +
-  "def result = [];\n" +
-  'while(transformationStatus != "deployed") {\n' +
-  '   println "Waiting 10 seconds for next polling request to the Transformation Framework at URL: " + pollingUrl\n' +
-  "   sleep(10000)\n" +
-  "   def get = new URL(pollingUrl).openConnection();\n" +
-  '   get.setRequestMethod("GET");\n' +
-  "   get.setDoOutput(true);\n" +
-  "\n" +
-  "   if(get.getResponseCode() != 200){\n" +
-  '       throw new org.camunda.bpm.engine.delegate.BpmnError("Received invalid status code during polling: " + get.getResponseCode());\n' +
-  "   }\n" +
-  "   def resultText = get.getInputStream().getText();\n" +
-  "   def slurper = new JsonSlurper();\n" +
-  "   def json = slurper.parseText(resultText);\n" +
-  '   def workflow = json.get("workflow");\n' +
-  '   transformationStatus = workflow.get("status");\n' +
-  '   if(transformationStatus == "deployed"){\n' +
-  '       def deployedProcessDefinition = workflow.get("deployedProcessDefinition");\n' +
-  '       println "Resulting definition of deployed process: " + deployedProcessDefinition\n' +
-  '       execution.setVariable("fragment_endpoint", deployedProcessDefinition.key);\n' +
-  "   }\n" +
-  '   if(transformationStatus == "failed"){\n' +
-  '       throw new org.camunda.bpm.engine.delegate.BpmnError("Transformation of workflow failed!");\n' +
-  "   }\n" +
-  "}";

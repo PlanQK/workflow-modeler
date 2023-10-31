@@ -13,7 +13,6 @@ import {getQuantMETasks} from "../QuantMETransformator";
 import {
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
-  POLL_FOR_TRANSFORMATION_SCRIPT,
   RETRIEVE_FRAGMENT_SCRIPT_PREFIX,
   RETRIEVE_FRAGMENT_SCRIPT_SUFFIX,
   SELECT_ON_QUEUE_SIZE_SCRIPT,
@@ -262,7 +261,7 @@ export async function replaceHardwareSelectionSubprocess(
   );
 
   // add task to poll for the results of the transformation and deployment
-  let pollForTransformation = modeling.createShape(
+/*  let pollForTransformation = modeling.createShape(
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     element,
@@ -277,7 +276,7 @@ export async function replaceHardwareSelectionSubprocess(
   pollForTransformationBo.asyncBefore = true;
   modeling.connect(invokeTransformation, pollForTransformation, {
     type: "bpmn:SequenceFlow",
-  });
+  });*/
 
   // join control flow
   let joiningGateway = modeling.createShape(
@@ -286,7 +285,7 @@ export async function replaceHardwareSelectionSubprocess(
     element,
     {}
   );
-  modeling.connect(pollForTransformation, joiningGateway, {
+  modeling.connect(invokeTransformation, joiningGateway, {
     type: "bpmn:SequenceFlow",
   });
 
