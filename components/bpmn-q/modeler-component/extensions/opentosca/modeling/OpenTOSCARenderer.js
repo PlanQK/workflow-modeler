@@ -102,7 +102,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     this.openToscaHandlers = {
       [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
         const task = self.renderer("bpmn:ServiceTask")(parentGfx, element);
-        self.maybeAddShowDeploymentModelButton(parentGfx, element);
+        self.showDeploymentModelButton(parentGfx, element);
         return task;
       },
     };
@@ -186,7 +186,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     svgAppend(defs, marker);
   }
 
-  maybeAddShowDeploymentModelButton(parentGfx, element) {
+  showDeploymentModelButton(parentGfx, element) {
     let deploymentModelUrl = element.businessObject.get(
       "opentosca:deploymentModelUrl"
     );
@@ -280,7 +280,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       element.id
     )?.boundingBox;
     if (JSON.stringify(previousBoundingBox) !== JSON.stringify(boundingBox)) {
-      this.mayBeMoveNeighborNodes(boundingBox, element);
+      this.moveNeighborNodes(boundingBox, element);
     }
 
     this.currentlyShownDeploymentsModels.set(element.id, {
@@ -519,7 +519,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     }
   }
 
-  mayBeMoveNeighborNodes(newBoundingBox, element) {
+  moveNeighborNodes(newBoundingBox, element) {
     let shifts = {
       right: 0,
       left: 0,
