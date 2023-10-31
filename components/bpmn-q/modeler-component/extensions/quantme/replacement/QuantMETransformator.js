@@ -54,7 +54,7 @@ export async function startQuantmeReplacementProcess(
   }
 
   // TODO: perform rewriting
-  console.log("Rewriting...")
+  console.log("Rewriting...");
 
   // get all QuantME modeling constructs from the process
   let replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
