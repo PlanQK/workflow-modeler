@@ -103,7 +103,6 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
         const task = self.renderer("bpmn:ServiceTask")(parentGfx, element);
         self.maybeAddShowDeploymentModelButton(parentGfx, element);
-        self.addSubprocessView(parentGfx, element);
         return task;
       },
     };
