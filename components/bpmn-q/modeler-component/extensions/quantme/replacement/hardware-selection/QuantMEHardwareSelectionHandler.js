@@ -35,18 +35,6 @@ import {
 import { getXml } from "../../../../editor/util/IoUtilities";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
-async function getTopology(url) {
-  const response = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json, text/plain, */*",
-    },
-    credentials: "same-origin",
-  });
-  const topology = await response.json();
-  console.log(topology);
-}
-
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
  */
@@ -64,27 +52,6 @@ export async function replaceHardwareSelectionSubprocess(
   let elementRegistry = modeler.get("elementRegistry");
   let commandStack = modeler.get("commandStack");
   let moddle = modeler.get("moddle");
-
-  const url =
-    "http://localhost:8093/winery/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpush/QuokkaCircuitGeneratorService_w1/topologytemplate";
-  getTopology(url);
-  // fetch(url, {
-  //   mode: 'no-cors',
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //     "Accept": 'application/json, text/plain, */*'
-  //   },
-  //   credentials: "same-origin"
-  // }).then(function(response) {
-  //   console.log(response.body)
-  //   console.log(response.json)
-  //   console.log(response)
-  //   return response.json;
-  // }).then(function(data) {
-  //   console.log(data);
-  // }).catch(function(err) {
-  //   console.log('Fetch Error :-S', err);
-  // });
 
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {
@@ -268,24 +235,6 @@ export async function replaceHardwareSelectionSubprocess(
       value: camundaEndpoint,
     })
   );
-
-  // add task to poll for the results of the transformation and deployment
-  /*  let pollForTransformation = modeling.createShape(
-    { type: "bpmn:ScriptTask" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let pollForTransformationBo = elementRegistry.get(
-    pollForTransformation.id
-  ).businessObject;
-  pollForTransformationBo.name = "Poll for Transformation and Deployment";
-  pollForTransformationBo.scriptFormat = "groovy";
-  pollForTransformationBo.script = POLL_FOR_TRANSFORMATION_SCRIPT;
-  pollForTransformationBo.asyncBefore = true;
-  modeling.connect(invokeTransformation, pollForTransformation, {
-    type: "bpmn:SequenceFlow",
-  });*/
 
   // join control flow
   let joiningGateway = modeling.createShape(
