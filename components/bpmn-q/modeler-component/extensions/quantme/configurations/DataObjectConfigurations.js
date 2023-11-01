@@ -1,5 +1,6 @@
 import ConfigurationsEndpoint from "../../../editor/configurations/ConfigurationEndpoint";
 import * as configManager from "../framework-config/config-manager";
+import * as consts from "../Constants";
 
 /**
  * Configurations endpoint for custom QuantME data objects which can be applied to DataMapObjects. Loads configurations
@@ -14,7 +15,7 @@ class DataObjectConfigurations extends ConfigurationsEndpoint {
    * Returns all Configurations for DataMapObjects which are saved in this endpoint.
    */
   getQuantMEDataConfigurations() {
-    return this.getConfigurations("bpmn:DataObjectReference");
+    return this.getConfigurations(consts.DATA_OBJECT);
   }
 
   /**

@@ -19,6 +19,8 @@ import {
 import * as configConsts from "../../../../editor/configurations/Constants";
 import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
 import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
+import { ListGroup } from "@bpmn-io/properties-panel";
+import keyValueMap from "./KeyValueMap";
 
 const LOW_PRIORITY = 500;
 
@@ -56,6 +58,9 @@ export default function QuantMEPropertiesProvider(
         groups.unshift(createQuantMEGroup(element, translate));
       }
 
+      if (is(element, consts.DATA_OBJECT)) {
+        groups.push(createDataMapObjectGroup(element, injector, translate));
+      }
       // add properties group for displaying the properties defined by the configurations if a configuration
       // is applied to the current element
       if (is(element, dataConsts.DATA_MAP_OBJECT)) {
@@ -171,5 +176,24 @@ function createQuantMEDataGroup(element, injector, translate, configuration) {
       translate,
       configuration
     ),
+  };
+}
+
+/**
+ * Creates a properties group for displaying the custom properties of a DataFlow data map object. This group contains
+ * a key value map for the content attribute of the data map object.
+ *
+ * @param element THe element the properties group is for
+ * @param injector The injector module to load necessary dependencies
+ * @param translate The translate function of the bpmn-js modeler
+ * @returns {{add: function(*): void, component: ((function(import('../PropertiesPanel').ListGroupDefinition): preact.VNode<any>)|*), id: string, label, items: *}}
+ */
+function createDataMapObjectGroup(element, injector, translate) {
+  const attributeName = "content";
+  return {
+    id: "dataMapObjectProperties",
+    label: translate("Content"),
+    component: ListGroup,
+    ...keyValueMap({ element, injector, attributeName }),
   };
 }

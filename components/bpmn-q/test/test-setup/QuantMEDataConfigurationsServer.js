@@ -39,7 +39,7 @@ const quantmeDataObjects = [
     id: "Quantum-Circuit-Object",
     description:
       "data object for storing and transferring all relevant data about a quantum circuit",
-    appliesTo: "bpmn:DataObjectReference",
+    appliesTo: "quantme:DataObject",
     groupLabel: "Quantum Circuit Info",
     icon: {
       className: "quantum-circuit-object-icon",
@@ -73,7 +73,7 @@ const quantmeDataObjects = [
     name: "Result Object",
     id: "Result-Object",
     description: "data object to transfer the results of quantum computations",
-    appliesTo: "bpmn:DataObjectReference",
+    appliesTo: "quantme:DataObject",
     groupLabel: "Result",
     icon: {
       className: "result-object-icon",
@@ -97,7 +97,7 @@ const quantmeDataObjects = [
     id: "Evaluation-Result-Object",
     description:
       "data object to transfer the evaluated results of quantum computations",
-    appliesTo: "bpmn:DataObjectReference",
+    appliesTo: "quantme:DataObject",
     groupLabel: "Evaluation Result",
     icon: {
       className: "evaluation-result-object-icon",
@@ -121,7 +121,7 @@ const quantmeDataObjects = [
     id: "Parameterization-Object",
     description:
       "data object to transfer optimization parameters, e.g., in variational quantum algorithms",
-    appliesTo: "bpmn:DataObjectReference",
+    appliesTo: "quantme:DataObject",
     groupLabel: "Parameterization",
     icon: {
       className: "parametrization-object-icon",
@@ -145,7 +145,7 @@ const quantmeDataObjects = [
     id: "Initial-State-Object",
     description:
       "data object to transfer the initial state used to warm-start a quantum computations",
-    appliesTo: "bpmn:DataObjectReference",
+    appliesTo: "quantme:DataObject",
     groupLabel: "Initial State",
     icon: {
       className: "initial-state-object-icon",

@@ -8,7 +8,7 @@ const QUANTME_DATA_OBJECTS = [
     id: "Quantum-Circuit-Object",
     description:
       "data object for storing and transferring all relevant data about a quantum circuit",
-    appliesTo: "bpmn:DataObjectReference",
+    appliesTo: "quantme:DataObject",
     groupLabel: "Quantum Circuit Info",
     attributes: [
       {
@@ -35,7 +35,7 @@ const QUANTME_DATA_OBJECTS = [
     name: "Result Object",
     id: "Result-Object",
     description: "data object to transfer the results of quantum computations",
-    appliesTo: "bpmn:DataObjectReference",
+    appliesTo: "quantme:DataObject",
     groupLabel: "Result",
     attributes: [
       {

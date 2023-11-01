@@ -22,7 +22,8 @@ import {
 import { getFillColor, getStrokeColor } from "bpmn-js/lib/draw/BpmnRenderUtil";
 import { getQuantMESVG } from "./QuantMESVGMap";
 import { queryAll as domQueryAll } from "min-dom";
-
+import { drawDataElementSVG } from "../../../editor/util/RenderUtilities";
+import { extractConfigSVG } from "../../../editor/configurations/ConfigurationsUtil";
 /**
  * This class extends the default BPMNRenderer to render the newly introduced QuantME task types
  */
@@ -321,6 +322,16 @@ export default class QuantMERenderer extends BpmnRenderer {
       ) {
         var task = self.renderer("bpmn:Task")(parentGfx, element);
         drawTaskSVG(parentGfx, "TASK_TYPE_VQA");
+        return task;
+      },
+      [consts.DATA_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+
+        let svg = extractConfigSVG(element);
+        if (svg !== undefined) {
+          drawDataElementSVG(parentGfx, svg);
+        }
+
         return task;
       },
     };
