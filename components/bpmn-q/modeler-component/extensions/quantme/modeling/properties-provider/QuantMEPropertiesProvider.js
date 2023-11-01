@@ -53,13 +53,13 @@ export default function QuantMEPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
+      if (is(element, consts.DATA_OBJECT)) {
+        groups.push(createDataMapObjectGroup(element, injector, translate));
+      }
+
       // add properties of QuantME tasks to panel
       if (element.type && element.type.startsWith("quantme:")) {
         groups.unshift(createQuantMEGroup(element, translate));
-      }
-
-      if (is(element, consts.DATA_OBJECT)) {
-        groups.push(createDataMapObjectGroup(element, injector, translate));
       }
       // add properties group for displaying the properties defined by the configurations if a configuration
       // is applied to the current element
@@ -152,6 +152,8 @@ function QuantMEProps(element) {
       return WarmStartingTaskEntries(element);
     case consts.CUTTING_RESULT_COMBINATION_TASK:
       return CuttingResultCombinationTaskEntries(element);
+    case consts.DATA_OBJECT:
+      break;
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }

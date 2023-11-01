@@ -17,7 +17,8 @@
         "type": "string",
         "value": "",
         "bindTo": {
-          "name": "content"
+          "name": "content",
+          "type": "KeyValueMap"
         }
       },
       {
@@ -26,7 +27,8 @@
         "type": "string",
         "value": "",
         "bindTo": {
-          "name": "content"
+          "name": "content",
+          "type": "KeyValueMap"
         }
       }
     ]
@@ -48,7 +50,8 @@
         "label": "Execution Result",
         "type": "string",
         "bindTo": {
-          "name": "content"
+          "name": "content",
+          "type": "KeyValueMap"
         }
       }
     ]
@@ -70,7 +73,8 @@
         "label": "Evaluation Result",
         "type": "string",
         "bindTo": {
-          "name": "content"
+          "name": "content",
+          "type": "KeyValueMap"
         }
       }
     ]
@@ -92,7 +96,8 @@
         "label": "Parameterization",
         "type": "string",
         "bindTo": {
-          "name": "content"
+          "name": "content",
+          "type": "KeyValueMap"
         }
       }
     ]
@@ -114,7 +119,8 @@
         "label": "Initial State",
         "type": "string",
         "bindTo": {
-          "name": "content"
+          "name": "content",
+          "type": "KeyValueMap"
         }
       }
     ]
