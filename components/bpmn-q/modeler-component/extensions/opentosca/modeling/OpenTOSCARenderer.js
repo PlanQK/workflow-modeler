@@ -72,6 +72,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     this.elementRegistry = elementRegistry;
     this.styles = styles;
     this.textRenderer = textRenderer;
+    this.eventBus = eventBus;
 
     // snap boundary events
     eventBus.on(
@@ -481,11 +482,17 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       const getSimpleDirection = (direction) =>
         direction === "north" || direction === "south" ? "v" : "h";
 
-      connectionsAtNodeLocations.forEach((value) => {
+      connectionsAtNodeLocations.forEach((value, key) => {
         if (value.length > 1) {
-          value.sort((a, b) => {
-            return a.y - b.y;
-          });
+          if (key.includes("north") || key.includes("south")) {
+            value.sort((a, b) => {
+              return a.x - b.x;
+            });
+          } else if (key.includes("east") || key.includes("west")) {
+            value.sort((a, b) => {
+              return a.y - b.y;
+            });
+          }
         }
       });
 
