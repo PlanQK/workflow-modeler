@@ -10,6 +10,8 @@ In the following, all environment variables that can be used to customize the wo
            
 * ```DATA_CONFIG``` (default: 'http://localhost:8100/data-objects'): Defines the configuration of data objects.
 
+* ```DOWNLOAD_FILE_NAME``` (default: 'quantum-workflow-model'): Defines the name of the download file.
+
 * ```ENABLE_DATA_FLOW_PLUGIN``` (default: 'true'): Defines if the Data Flow plugin is enabled.
 
 * ```ENABLE_PLANQK_PLUGIN``` (default: 'true'): Defines if the PlanQK plugin is enabled.
@@ -46,8 +48,17 @@ In the following, all environment variables that can be used to customize the wo
 
 * ```TRANSFORMATION_FRAMEWORK_ENDPOINT``` (default: 'http://localhost:8888'): Defines the endpoint of the QuantME Transformation Framework to use for the automated hardware selection.
 
+* ```UPLOAD_BRANCH_NAME``` (default: ' '): Defines the branch name where the workflow will be uploaded.
+
+* ```UPLOAD_FILE_NAME``` (default: ' '): Defines the name of the workflow file which will be uploaded.
+
+* ```UPLOAD_GITHUB_REPO``` (default: ' '): Defines the repository for the file upload.
+
+* ```UPLOAD_GITHUB_USER``` (default: ' '): Defines the owner for the upload repository.
+
 * ```WINERY_ENDPOINT``` (default: 'http://localhost:8081/winery'): Defines the endpoint of the Winery to retrieve deployment models for services from.
 
 * ```PROVENANCE_COLLECTION``` (default: 'false'): Defines if the intermediate results of the workflow executed should be collected.
 
-The value of an environment variable is accessed using `process.env.ENV_NAME`. If you want to add a new environment variable, add it to the [webpack.config](../../../../../components/bpmn-q/webpack.config.js) file and restart the application.
+The value of an environment variable is accessed using `process.env.ENV_NAME`.
+If you want to add a new environment variable, add it to the [webpack.config.js](../../components/bpmn-q/webpack.config.js) file and also to [env.js.template](../../components/bpmn-q/public/env.js.template) so that it works in the docker image.
