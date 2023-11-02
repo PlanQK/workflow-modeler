@@ -42,7 +42,7 @@
       "properties": []
     },
     {
-      "name": "PredeployedExecution",
+      "name": "PreDeployedExecution",
       "superClass": ["bpmn:Event"],
       "properties": []
     },

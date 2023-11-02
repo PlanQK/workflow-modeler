@@ -43,7 +43,7 @@ export default class QuantMERenderer extends BpmnRenderer {
     var defaultFillColor = config && config.defaultFillColor,
       defaultStrokeColor = config && config.defaultStrokeColor;
 
-    function drawTaskSVG(parentGfx, iconID) {
+    function drawEventSVG(parentGfx, iconID) {
       var importsvg = getQuantMESVG(iconID);
       var innerSVGstring = importsvg.svg;
       var transformDef = importsvg.transform;
@@ -53,8 +53,9 @@ export default class QuantMERenderer extends BpmnRenderer {
       innerSVG(groupDef, innerSVGstring);
 
       // set task box opacity to 0 such that icon can be in the background
-      svgAttr(svgSelect(parentGfx, "rect"), { "fill-opacity": 0 });
-
+      //svgAttr(svgSelect(parentGfx, "rect"), { "fill-opacity": 0 });
+      console.log(parentGfx);
+      svgAttr(svgSelect(parentGfx, "circle"), { "fill-opacity": 0 });
       // draw svg in the background
       parentGfx.prepend(groupDef);
     }
@@ -104,7 +105,45 @@ export default class QuantMERenderer extends BpmnRenderer {
 
         return subprocess;
       },
-
+      [consts.ORCHESTRATED_EXECUTION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "ORCHESTRATED_EXECUTION");
+        return task;
+      },
+      [consts.PRE_DEPLOYED_EXECUTION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "PRE_DEPLOYED_EXECUTION");
+        return task;
+      },
+      [consts.PRIORITIZED_EXECUTION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "PRIORITIZED_EXECUTION");
+        return task;
+      },
     };
 
     setTimeout(function () {
