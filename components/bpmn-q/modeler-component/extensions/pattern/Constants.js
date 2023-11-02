@@ -12,11 +12,11 @@ export const PATTERN_ALGORITHM = "algorithm";
 export const PATTERN_BEHAVIORAL = "behavioral";
 export const PATTERN_AUGMENTATION = "augmentation";
 
-export const QUANTUM_KERNEL_ESTIMATION = "pattern:QuantumKernelEstimation";
+export const QUANTUM_KERNEL_ESTIMATOR = "pattern:QuantumKernelEstimator";
 export const ALTERNATING_OPERATOR_ANSATZ = "pattern:AlternatingOperatorAnsatz";
 export const QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM = "pattern:QuantumApproximateOptimizationAlgorithm";
 export const QUANTUM_PHASE_ESTIMATION = "pattern:QuantumPhaseEstimation";
-export const VARIATIONAL_QUANTUM_ALGORITHM = "pattern:VariationalQuantum Algorithm";
+export const VARIATIONAL_QUANTUM_ALGORITHM = "pattern:VariationalQuantumAlgorithm";
 export const VARIATIONAL_QUANTUM_EIGENSOLVER = "pattern:VariationalQuantumEigensolver";
 
 export const ORCHESTRATED_EXECUTION = "pattern:OrchestratedExecution";
