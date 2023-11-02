@@ -105,6 +105,84 @@ export default class QuantMERenderer extends BpmnRenderer {
 
         return subprocess;
       },
+      [consts.QUANTUM_KERNEL_ESTIMATION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "QUANTUM_KERNEL_ESTIMATION");
+        return task;
+      },
+      [consts.ALTERNATING_OPERATOR_ANSATZ]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "ALTERNATING_OPERATOR_ANSATZ");
+        return task;
+      },
+      [consts.QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM");
+        return task;
+      },
+      [consts.QUANTUM_PHASE_ESTIMATION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "QUANTUM_PHASE_ESTIMATION");
+        return task;
+      },
+      [consts.VARIATIONAL_QUANTUM_ALGORITHM]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "VARIATIONAL_QUANTUM_ALGORITHM");
+        return task;
+      },
+      [consts.VARIATIONAL_QUANTUM_EIGENSOLVER]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "VARIATIONAL_QUANTUM_EIGENSOLVER");
+        return task;
+      },
       [consts.ORCHESTRATED_EXECUTION]: function (
         self,
         parentGfx,
@@ -181,6 +259,19 @@ export default class QuantMERenderer extends BpmnRenderer {
         }
         var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
         drawEventSVG(parentGfx, "GATE_ERROR_MITIGATION");
+        return task;
+      },
+      [consts.WARM_START]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "WARM_START");
         return task;
       },
     };
