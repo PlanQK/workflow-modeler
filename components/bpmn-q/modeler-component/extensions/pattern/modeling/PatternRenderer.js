@@ -144,6 +144,45 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawEventSVG(parentGfx, "PRIORITIZED_EXECUTION");
         return task;
       },
+      [consts.ERROR_CORRECTION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "ERROR_CORRECTION");
+        return task;
+      },
+      [consts.READOUT_ERROR_MITIGATION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "READOUT_ERROR_MITIGATION");
+        return task;
+      },
+      [consts.GATE_ERROR_MITIGATION]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
+        drawEventSVG(parentGfx, "GATE_ERROR_MITIGATION");
+        return task;
+      },
     };
 
     setTimeout(function () {

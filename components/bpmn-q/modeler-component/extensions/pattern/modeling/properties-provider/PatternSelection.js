@@ -12,7 +12,6 @@
 import { HeaderButton } from "@bpmn-io/properties-panel";
 import { useService } from "bpmn-js-properties-panel";
 import React from "react";
-import YamlModal from "./YamlModal";
 import { createRoot } from "react-dom/client";
 import "./yaml-modal.css";
 import PatternOverviewModal from "../../ui/pattern-selection/PatternOverviewModal";
@@ -58,10 +57,10 @@ export function YamlUpload(props) {
   return HeaderButton({
     element,
     id: "upload-yaml-button",
-    text: translate("Upload YAML"),
-    description: "Upload YML",
+    text: translate("Specify Patterns"),
+    description: "Specify Patterns",
     className: "upload-yaml-button",
-    children: "Upload YAML",
+    children: "Specify Patterns",
     onClick,
   });
 }
