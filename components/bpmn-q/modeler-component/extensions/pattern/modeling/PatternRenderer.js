@@ -105,7 +105,7 @@ export default class QuantMERenderer extends BpmnRenderer {
 
         return subprocess;
       },
-      [consts.QUANTUM_KERNEL_ESTIMATION]: function (
+      [consts.QUANTUM_KERNEL_ESTIMATOR]: function (
         self,
         parentGfx,
         element
@@ -115,7 +115,7 @@ export default class QuantMERenderer extends BpmnRenderer {
           stroke: "none"
         }
         var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "QUANTUM_KERNEL_ESTIMATION");
+        drawEventSVG(parentGfx, "QUANTUM_KERNEL_ESTIMATOR");
         return task;
       },
       [consts.ALTERNATING_OPERATOR_ANSATZ]: function (

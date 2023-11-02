@@ -13,11 +13,11 @@ import * as consts from "../Constants";
 
 export var ALGORITHM_PATTERN = [
   {
-    label: "Quantum Kernel Estimation",
+    label: "Quantum Kernel Estimator",
     actionName: "replace-with-pattern-gate-error-mitigation",
     className: "qwm bpmn-pattern-gate-error-mitigation-icon",
     target: {
-      type: consts.QUANTUM_KERNEL_ESTIMATION,
+      type: consts.QUANTUM_KERNEL_ESTIMATOR,
     },
   },
   {
