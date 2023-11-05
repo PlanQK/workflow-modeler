@@ -29,6 +29,7 @@ export const CIRCUIT_CUTTING_SUBPROCESS = "quantme:CircuitCuttingSubprocess";
 export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
+export const POLICY = "quantme:Policy";
 export const PRIVACY_POLICY = "quantme:PrivacyPolicy";
 export const DEPLOYMENT_POLICY = "quantme:DeploymentPolicy";
 

@@ -493,3 +493,19 @@
   background-repeat: no-repeat;
   display: inline-block;
 }
+
+.qwm-quantme-icon-policy-palette:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/policy.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 11px 8px 11px 10px;
+  outline: none;
+}
+.qwm-quantme-icon-policy-palette:hover {
+  filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
+}

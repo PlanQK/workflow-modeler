@@ -314,6 +314,16 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "TASK_TYPE_RESULT_EVALUATION");
         return task;
       },
+      [consts.POLICY]: function (self, parentGfx, element) {
+        var attrs = {
+          fill: "white",
+          stroke: "none",
+        };
+        var task = self.renderer("bpmn:Task")(parentGfx, element, attrs);
+        setTimeout(function () {}, 10000);
+        drawTaskSVG(parentGfx, "POLICY");
+        return task;
+      },
       [consts.PRIVACY_POLICY]: function (self, parentGfx, element) {
         var attrs = {
           fill: "white",

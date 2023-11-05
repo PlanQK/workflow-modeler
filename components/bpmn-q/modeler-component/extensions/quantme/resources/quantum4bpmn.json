@@ -612,6 +612,11 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "Policy",
+      "superClass": [ "bpmn:Event" ],
+      "properties": []
     }
   ],
   "enumerations": [],
