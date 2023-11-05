@@ -319,7 +319,7 @@ export default class QuantMERenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
-        var task = self.renderer("bpmn:Task")(parentGfx, element, attrs);
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "POLICY");
         return task;
@@ -329,7 +329,7 @@ export default class QuantMERenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
-        var task = self.renderer("bpmn:Task")(parentGfx, element, attrs);
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "PRIVACY_POLICY");
         return task;
@@ -339,7 +339,7 @@ export default class QuantMERenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
-        var task = self.renderer("bpmn:Task")(parentGfx, element, attrs);
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "DEPLOYMENT_POLICY");
         return task;
