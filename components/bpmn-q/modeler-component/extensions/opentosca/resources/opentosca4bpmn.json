@@ -16,7 +16,7 @@
           "type": "String"
         },
         {
-          "name": "deploymentStrategy",
+          "name": "onDemand",
           "isAttr": true,
           "type": "String"
         },

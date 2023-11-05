@@ -607,7 +607,7 @@
       "superClass": [ "bpmn:Event" ],
       "properties": [
         {
-          "name": "deploymentStrategy",
+          "name": "onDemand",
           "isAttr": true,
           "type": "String"
         }

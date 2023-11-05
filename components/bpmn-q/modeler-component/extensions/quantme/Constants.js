@@ -73,7 +73,7 @@ export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
 
-export const DEPLOYMENT_STRATEGY = "deploymentStrategy";
+export const ON_DEMAND = "onDemand";
 export const COMPONENT_SHARING = "componentSharing";
 export const CLOUD_TYPE = "cloudType";
 

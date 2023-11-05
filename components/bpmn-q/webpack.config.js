@@ -71,10 +71,10 @@ module.exports = {
       DATA_CONFIG:
         "https://raw.githubusercontent.com/PlanQK/workflow-modeler/master/components/bpmn-q/modeler-component/extensions/quantme/configurations/quantmeDataObjects.json",
       DOWNLOAD_FILE_NAME: "quantum-workflow-model",
-      ENABLE_DATA_FLOW_PLUGIN: "true",
+      ENABLE_DATA_FLOW_PLUGIN: "false",
       ENABLE_PATTERN_PLUGIN: "true",
-      ENABLE_PLANQK_PLUGIN: "true",
-      ENABLE_QHANA_PLUGIN: "true",
+      ENABLE_PLANQK_PLUGIN: "false",
+      ENABLE_QHANA_PLUGIN: "false",
       ENABLE_QUANTME_PLUGIN: "true",
       ENABLE_OPENTOSCA_PLUGIN: "true",
       GITHUB_TOKEN: "",

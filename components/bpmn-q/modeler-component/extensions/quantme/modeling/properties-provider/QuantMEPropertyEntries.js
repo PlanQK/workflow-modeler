@@ -11,7 +11,7 @@
 
 import React from "@bpmn-io/properties-panel/preact/compat";
 
-import { TextFieldEntry, SelectEntry } from "@bpmn-io/properties-panel";
+import { TextFieldEntry, SelectEntry, CheckboxEntry } from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
 import { HiddenTextFieldEntry } from "../../../../editor/popup/HiddenTextFieldEntry";
@@ -1509,7 +1509,7 @@ export function CloudTypeEntry({ element }) {
   );
 }
 
-export function DeploymentStrategyEntry({ element }) {
+export function OnDemandEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
     useService("translate") ||
@@ -1519,31 +1519,21 @@ export function DeploymentStrategyEntry({ element }) {
   const debounce = useService("debounceInput");
 
   const getValue = function () {
-    return element.businessObject.deploymentStrategy;
+    return element.businessObject.onDemand;
   };
 
   const setValue = function (newValue) {
     return modeling.updateProperties(element, {
-      deploymentStrategy: newValue,
+      onDemand: newValue,
     });
   };
 
-  const selectOptions = [
-    { value: "ondemand", label: "On-demand" },
-    { value: "alwayson", label: "Always-on" },
-  ];
-
-  const getOptions = function () {
-    return selectOptions;
-  };
-
   return (
-    <SelectEntry
-      id={consts.DEPLOYMENT_STRATEGY}
-      label={translate("Deployment Strategy")}
+    <CheckboxEntry
+      id={consts.ON_DEMAND}
+      label={translate("Deploy on-demand")}
       getValue={getValue}
       setValue={setValue}
-      getOptions={getOptions}
       debounce={debounce}
     />
   );
@@ -1589,3 +1579,4 @@ export function ComponentSharingEntry({ element }) {
     />
   );
 }
+

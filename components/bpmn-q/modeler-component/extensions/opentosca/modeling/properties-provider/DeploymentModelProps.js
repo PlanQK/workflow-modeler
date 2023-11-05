@@ -11,7 +11,7 @@
 import React from "@bpmn-io/properties-panel/preact/compat";
 import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import { ArtifactUpload } from "./ArtifactUpload";
-import { isTextFieldEntryEdited, SelectEntry } from "@bpmn-io/properties-panel";
+import { CheckboxEntry, isTextFieldEntryEdited, SelectEntry } from "@bpmn-io/properties-panel";
 import { Deployment } from "./Deployment";
 import { useService } from "bpmn-js-properties-panel";
 
@@ -34,9 +34,9 @@ export function DeploymentModelProps(props) {
   // list of configuration options
   const entries = [];
   entries.push({
-    id: "deploymentStrategy",
+    id: "onDemand",
     element,
-    component: DeploymentStrategyEntry,
+    component: OnDemandEntry,
     isEdited: isTextFieldEntryEdited,
   });
 
@@ -62,7 +62,7 @@ export function DeploymentModelProps(props) {
 }
 
 
-export function DeploymentStrategyEntry({ element }) {
+export function OnDemandEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
     useService("translate") ||
@@ -72,31 +72,21 @@ export function DeploymentStrategyEntry({ element }) {
   const debounce = useService("debounceInput");
 
   const getValue = function () {
-    return element.businessObject.deploymentStrategy;
+    return element.businessObject.onDemand;
   };
 
   const setValue = function (newValue) {
     return modeling.updateProperties(element, {
-      deploymentStrategy: newValue,
+      onDemand: newValue,
     });
   };
 
-  const selectOptions = [
-    { value: "ondemand", label: "On-demand" },
-    { value: "alwayson", label: "Always-on" },
-  ];
-
-  const getOptions = function () {
-    return selectOptions;
-  };
-
   return (
-    <SelectEntry
-      id={"deploymentStrategy"}
-      label={translate("Deployment Strategy")}
+    <CheckboxEntry
+      id={"onDemand"}
+      label={translate("Deploy on-demand")}
       getValue={getValue}
       setValue={setValue}
-      getOptions={getOptions}
       debounce={debounce}
     />
   );

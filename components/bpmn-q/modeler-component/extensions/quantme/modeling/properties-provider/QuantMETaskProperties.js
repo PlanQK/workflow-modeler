@@ -3,13 +3,7 @@ import {
   isTextFieldEntryEdited,
   isSelectEntryEdited,
 } from "@bpmn-io/properties-panel";
-import {
-  AlgorithmEntry,
-  AlphaEntry,
-  CloudTypeEntry,
-  ComponentSharingEntry,
-  DeploymentStrategyEntry,
-} from "./QuantMEPropertyEntries.js";
+import { AlgorithmEntry, AlphaEntry, CloudTypeEntry, ComponentSharingEntry, OnDemandEntry } from "./QuantMEPropertyEntries.js";
 import {
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,
@@ -464,9 +458,9 @@ export function CuttingResultCombinationTaskEntries(element) {
 export function DeploymentPolicyTaskEntries(element) {
   return [
     {
-      id: consts.DEPLOYMENT_STRATEGY,
+      id: consts.ON_DEMAND,
       element,
-      component: DeploymentStrategyEntry,
+      component: OnDemandEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];
@@ -488,3 +482,4 @@ export function PrivacyPolicyTaskEntries(element) {
     },
   ];
 }
+
