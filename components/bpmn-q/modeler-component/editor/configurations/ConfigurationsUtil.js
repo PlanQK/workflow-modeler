@@ -1,6 +1,7 @@
 import * as configConsts from "./Constants";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import * as dataConsts from "../../extensions/data-extension/Constants";
+import * as quantmeConsts from "../../extensions/quantme/Constants";
 import {
   addCamundaInputMapParameter,
   addCamundaOutputMapParameter,
@@ -103,12 +104,12 @@ export function handleConfigurationsAction(
       [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
     });
   }
+  element.businessObject.content = [];
 
   // set name of the element to configuration name
   modeling.updateProperties(element, {
     name: config.name,
   });
-
   config.attributes.forEach(function (attribute) {
     // set properties based on the type of the bindTo value
     switch (attribute.bindTo.type) {
@@ -140,6 +141,14 @@ export function handleConfigurationsAction(
         break;
       case "KeyValueMap":
         addAttributeValueToKeyValueMap(
+          element,
+          attribute,
+          bpmnFactory,
+          commandStack
+        )(attribute.value);
+        break;
+      case "quantme:KeyValueMap":
+        addAttributeValueToQuantMEKeyValueMap(
           element,
           attribute,
           bpmnFactory,
@@ -248,6 +257,23 @@ export function addAttributeValueToKeyValueMap(
  * @returns {(function(*): (*))|*}
  */
 export function getAttributeValueFromKeyValueMap(element) {
+  return (attribute) => {
+    const businessObject = getBusinessObject(element);
+    const keyValueMap = businessObject.get(attribute.bindTo.name) || [];
+
+    // return value of respective key value entry or return the value of ConfigurationAttribute
+    const existingEntry = keyValueMap.find(
+      (entry) => entry.name === attribute.name
+    );
+    if (existingEntry) {
+      return existingEntry.value;
+    } else {
+      return attribute.value;
+    }
+  };
+}
+
+export function getAttributeValueFromQuantMEKeyValueMap(element) {
   return (attribute) => {
     const businessObject = getBusinessObject(element);
     const keyValueMap = businessObject.get(attribute.bindTo.name) || [];
@@ -377,4 +403,53 @@ export function extractConfigSVG(element) {
     }
   }
   return undefined;
+}
+
+/**
+ * Returns a function which adds the value specified in the callback to the key value map of the quantme element.
+ *
+ * @param element The element the Configuration is applied to.
+ * @param attribute The given ConfigurationAttribute.
+ * @param bpmnFactory The bpmnFactory of the current bpmn-js modeler.
+ * @param commandStack The commandStack of the current bpmn-js modeler.
+ * @returns {(function(*): void)|*}
+ */
+export function addAttributeValueToQuantMEKeyValueMap(
+  element,
+  attribute,
+  bpmnFactory,
+  commandStack
+) {
+  return (value) => {
+    const bo = element.businessObject;
+
+    const businessObject = getBusinessObject(element);
+    const keyValueMap = bo.get(attribute.bindTo.name) || [];
+
+    // add the value to the key value map
+    const existingEntry = keyValueMap.find(
+      (entry) => entry.name === attribute.name
+    );
+    if (existingEntry) {
+      // overwrite value of existing key value entry
+      commandStack.execute("element.updateModdleProperties", {
+        element,
+        moddleElement: existingEntry,
+        properties: { value: value },
+      });
+    } else {
+      // create new key value entry
+      const param = bpmnFactory.create(quantmeConsts.KEY_VALUE_ENTRY, {
+        name: attribute.name,
+        value: value,
+      });
+
+      // add new entry to the key value map and save changes
+      commandStack.execute("element.updateModdleProperties", {
+        element,
+        moddleElement: businessObject,
+        properties: { [attribute.bindTo.name]: keyValueMap.concat(param) },
+      });
+    }
+  };
 }

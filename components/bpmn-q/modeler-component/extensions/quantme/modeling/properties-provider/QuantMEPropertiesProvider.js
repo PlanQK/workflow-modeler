@@ -1,6 +1,5 @@
 import { is } from "bpmn-js/lib/util/ModelUtil";
 import * as consts from "../../Constants";
-import * as dataConsts from "../../../data-extension/Constants";
 import {
   DataPreparationTaskProperties,
   HardwareSelectionSubprocessProperties,
@@ -16,13 +15,10 @@ import {
   WarmStartingTaskEntries,
   CuttingResultCombinationTaskEntries,
 } from "./QuantMETaskProperties";
-import * as configConsts from "../../../../editor/configurations/Constants";
-import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
-import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
 import { ListGroup } from "@bpmn-io/properties-panel";
 import keyValueMap from "./KeyValueMap";
 
-const LOW_PRIORITY = 500;
+const LOW_PRIORITY = 600;
 
 /**
  * A provider with a `#getGroups(element)` method that exposes groups for a diagram element.
@@ -60,26 +56,6 @@ export default function QuantMEPropertiesProvider(
       // add properties of QuantME tasks to panel
       if (element.type && element.type.startsWith("quantme:")) {
         groups.unshift(createQuantMEGroup(element, translate));
-      }
-      // add properties group for displaying the properties defined by the configurations if a configuration
-      // is applied to the current element
-      if (is(element, dataConsts.DATA_MAP_OBJECT)) {
-        const selectedConfiguration =
-          dataObjectConfigs().getQuantMEDataConfiguration(
-            element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID)
-          );
-        if (selectedConfiguration) {
-          groups.splice(
-            1,
-            0,
-            createQuantMEDataGroup(
-              element,
-              injector,
-              translate,
-              selectedConfiguration
-            )
-          );
-        }
       }
       return groups;
     };
@@ -160,28 +136,6 @@ function QuantMEProps(element) {
 }
 
 /**
- * Create properties group to display the QuantME configurations applied to the DataMapObject
- *
- * @param element The given DataMapObject
- * @param injector The injector of the bpmn-js modeler.
- * @param translate The translate function.
- * @param configuration The configuration applied to the given DataMapObject
- * @return {{entries: (*), id: string, label}}
- */
-function createQuantMEDataGroup(element, injector, translate, configuration) {
-  return {
-    id: "QuantMEDataGroupProperties",
-    label: translate(configuration.groupLabel || "Data Properties"),
-    entries: ConfigurationsProperties(
-      element,
-      injector,
-      translate,
-      configuration
-    ),
-  };
-}
-
-/**
  * Creates a properties group for displaying the custom properties of a DataFlow data map object. This group contains
  * a key value map for the content attribute of the data map object.
  *
@@ -193,8 +147,8 @@ function createQuantMEDataGroup(element, injector, translate, configuration) {
 function createDataMapObjectGroup(element, injector, translate) {
   const attributeName = "content";
   return {
-    id: "dataMapObjectProperties",
-    label: translate("Content"),
+    id: "quantmeDataMapObjectProperties",
+    label: translate("Contents"),
     component: ListGroup,
     ...keyValueMap({ element, injector, attributeName }),
   };

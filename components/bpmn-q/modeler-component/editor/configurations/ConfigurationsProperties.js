@@ -13,6 +13,7 @@ import {
   getAttributeValueFromCamundaIO,
   getAttributeValueFromKeyValueMap,
   setAttributeValue,
+  addAttributeValueToQuantMEKeyValueMap,
 } from "./ConfigurationsUtil";
 
 /**
@@ -75,6 +76,15 @@ export default function ConfigurationsProperties(
         break;
       case "KeyValueMap":
         setValue = addAttributeValueToKeyValueMap(
+          element,
+          attribute,
+          bpmnFactory,
+          commandStack
+        );
+        getValue = getAttributeValueFromKeyValueMap(element);
+        break;
+      case "quantme:KeyValueMap":
+        setValue = addAttributeValueToQuantMEKeyValueMap(
           element,
           attribute,
           bpmnFactory,

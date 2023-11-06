@@ -20,8 +20,6 @@ export default function KeyValueMap({ element, injector, attributeName }) {
 
   // load key value map property
   const keyValueMap = element.businessObject.get(attributeName) || [];
-  console.log(element);
-  console.log(attributeName);
 
   // create a KeyValueEntry for each entry of keyValueMap
   const keyValueEntires = keyValueMap.map((keyValueEntry, index) => {
