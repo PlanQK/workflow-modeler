@@ -192,18 +192,23 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
     {
       method: "POST",
       body: JSON.stringify(inputParameters),
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "text/plain" },
     }
   );
-  const instanceCreationResponseJson = await instanceCreationResponse.json();
+  console.log("Received instance creation response");
+  console.log(instanceCreationResponse);
+  const instanceCreationResponseJson = await instanceCreationResponse.text();
 
+  console.log(instanceCreationResponseJson);
   // wait for the service instance to be created
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
+  console.log("Getting service template instance");
   // get service template instance to poll for completness
   let buildPlanResponse = await fetch(
     csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
   );
+  console.log("Received service template instance");
   let buildPlanResponseJson = await buildPlanResponse.json();
 
   // retry polling 10 times, creation of the build time takes some time
