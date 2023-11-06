@@ -18,7 +18,7 @@
         "value": "",
         "bindTo": {
           "name": "content",
-          "type": "KeyValueMap"
+          "type": "quantme:KeyValueMap"
         }
       },
       {
@@ -28,7 +28,7 @@
         "value": "",
         "bindTo": {
           "name": "content",
-          "type": "KeyValueMap"
+          "type": "quantme:KeyValueMap"
         }
       }
     ]
@@ -51,7 +51,7 @@
         "type": "string",
         "bindTo": {
           "name": "content",
-          "type": "KeyValueMap"
+          "type": "quantme:KeyValueMap"
         }
       }
     ]
@@ -74,7 +74,7 @@
         "type": "string",
         "bindTo": {
           "name": "content",
-          "type": "KeyValueMap"
+          "type": "quantme:KeyValueMap"
         }
       }
     ]
@@ -97,7 +97,7 @@
         "type": "string",
         "bindTo": {
           "name": "content",
-          "type": "KeyValueMap"
+          "type": "quantme:KeyValueMap"
         }
       }
     ]
@@ -120,7 +120,7 @@
         "type": "string",
         "bindTo": {
           "name": "content",
-          "type": "KeyValueMap"
+          "type": "quantme:KeyValueMap"
         }
       }
     ]
