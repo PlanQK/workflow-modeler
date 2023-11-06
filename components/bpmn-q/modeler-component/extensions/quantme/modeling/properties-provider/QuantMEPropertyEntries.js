@@ -1523,6 +1523,10 @@ export function OnDemandEntry({ element }) {
   };
 
   const setValue = function (newValue) {
+    let onDemandHostAttribute = element.host.businessObject.onDemand;
+    if (onDemandHostAttribute !== undefined && onDemandHostAttribute !== newValue) {
+      element.host.businessObject.onDemand = newValue;
+    }
     return modeling.updateProperties(element, {
       onDemand: newValue,
     });
