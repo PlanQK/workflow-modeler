@@ -61,7 +61,6 @@ export default class QuantMERules extends RuleProvider {
         shapeToAttach.type.includes("Policy") &&
         target.type === "bpmn:ServiceTask"
       ) {
-        console.log(target.attachers);
         for (let i = 0; i < target.attachers.length; i++) {
           let boundaryElement = target.attachers[i];
 
