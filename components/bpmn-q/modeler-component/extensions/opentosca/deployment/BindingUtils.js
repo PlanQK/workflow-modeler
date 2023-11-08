@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as config from "../framework-config/config-manager";
+import {fetchDataFromEndpoint} from "../../../editor/util/HttpUtilities";
 
 const QUANTME_NAMESPACE_PULL_ENCODED = encodeURIComponent(
   encodeURIComponent("http://quantil.org/quantme/pull")
@@ -57,6 +58,7 @@ export function getBindingType(serviceTask) {
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
 export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
+  console.log("binding using pull");
   if (
     csar.topicName === undefined ||
     serviceTaskId === undefined ||
@@ -109,7 +111,10 @@ export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
 export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
-  let url = await extractSelfserviceApplicationUrl(csar.properties);
+  console.log("binding using push");
+  console.log(csar);
+  let url = await extractSelfserviceApplicationUrl(csar.buildPlanUrl);
+  console.log(url);
   let success = false;
 
   if (
@@ -141,9 +146,23 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
       for (let j = 0; j < inputParameters.length; j++) {
         let inputParameter = inputParameters[j];
         if (inputParameter.name === "url") {
-          let connectorUrl = serviceTask.businessObject.connectorUrl;
-          inputParameter.value = url + connectorUrl;
-          success = true;
+          let connectorElement = serviceTask.businessObject.extensionElements.values.filter(x => x.$type === "camunda:Connector")
+          if (connectorElement === undefined || connectorElement.length < 1){
+            console.error("No connector available for push binding in extension elements");
+            success = false;
+            break;
+          } else {
+            let connectorUrl = connectorElement[0].inputOutput.inputParameters.filter(x => x.name === "url")[0].value;
+            if (url.slice(-1) === '/'){
+              url = url.substring(url.length - 1);
+            }
+            if (connectorUrl.slice(0) === '/') {
+              connectorUrl = connectorUrl.substring(1, connectorUrl.length);
+            }
+            inputParameter.value = url + '/' + connectorUrl;
+            success = true;
+          }
+
         }
       }
     }
@@ -152,17 +171,15 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
 }
 
 async function extractSelfserviceApplicationUrl(propertiesUrl) {
-  let properties = await fetchProperties(propertiesUrl);
-  let json = JSON.parse(properties);
-  return json.selfserviceApplicationUrl;
+  let buildPlanResponse = await fetchDataFromEndpoint(propertiesUrl);
+  console.log(buildPlanResponse);
+  // let json = JSON.parse(properties);
+  const selfserviceApplicationUrl = buildPlanResponse.outputs.filter(x => x.name === "selfserviceApplicationUrl");
+  if (selfserviceApplicationUrl === undefined || selfserviceApplicationUrl.length < 1){
+    console.error("Unable to fetch selfserviceApplicationUrl from: " + propertiesUrl);
+    return undefined;
+  }
+  console.log(selfserviceApplicationUrl);
+  return selfserviceApplicationUrl[0].value;
 }
 
-async function fetchProperties(url) {
-  const response = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-    },
-  });
-  const json = await response.text();
-  return json;
-}

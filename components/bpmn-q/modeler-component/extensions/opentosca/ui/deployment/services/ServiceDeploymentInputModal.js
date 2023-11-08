@@ -46,7 +46,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       if (
         inputParam.name === "instanceDataAPIUrl" ||
         inputParam.name === "CorrelationID" ||
-        inputParam.name === "csarEntrypoint"
+        inputParam.name === "csarEntrypoint" ||
+          inputParam.name === "planCallbackAddress_invoker"
       ) {
         paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
         continue;
@@ -68,20 +69,23 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       inputRequired = true;
 
       // add entries for the parameters
-      const listItems = paramsToRetrieve.map((param, j) => (
-        <tr
-          key={csar.csarName + "-" + param.inputParam.name}
-          hidden={param.hidden}
-        >
-          <td>{param.inputParam.name}</td>
-          <td>
+      const listItems = paramsToRetrieve.map((param, j) => {
+        const paramName = param.inputParam.name;
+        return (
+            <tr
+                key={csar.csarName + "-" + paramName}
+                hidden={param.hidden}
+            >
+              <td>{param.inputParam.name}</td>
+              <td>
             <textarea
-              value={initValues[i][j]}
-              onChange={(event) => handleInputChange(event, i, j)}
+                value={initValues[i][j]}
+                onChange={(event) => handleInputChange(event, i, j)}
             />
-          </td>
-        </tr>
-      ));
+              </td>
+            </tr>
+        );
+      });
 
       // assemble the table
       csarInputParts.push(

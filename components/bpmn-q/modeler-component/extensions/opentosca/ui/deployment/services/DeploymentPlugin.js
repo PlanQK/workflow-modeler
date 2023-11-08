@@ -177,6 +177,7 @@ export default class DeploymentPlugin extends PureComponent {
         );
         console.log("Creating service instance for CSAR: ", csar);
         csar.properties = instanceCreationResponse.properties;
+        csar.buildPlanUrl = instanceCreationResponse.buildPlanUrl;
         if (instanceCreationResponse.success === false) {
           // notify user about failed instance creation
           NotificationHandler.getInstance().displayNotification({

@@ -259,6 +259,7 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
 
   result.success = true;
   result.properties = properties;
+  result.buildPlanUrl = csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson;
   return result;
 }
 
