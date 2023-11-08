@@ -2,11 +2,12 @@ import React, { Fragment, useState } from "react";
 import NotificationHandler from "./notifications/NotificationHandler";
 import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
-import { getRootProcess } from "../util/ModellingUtilities";
+import {createCamundaProperties, getDefinitionsFromXml, getRootProcess} from "../util/ModellingUtilities";
 import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
-import { getModeler } from "../ModelerHandler";
+import {createTempModelerFromXml, getModeler} from "../ModelerHandler";
 import OnDemandDeploymentModal from "./OnDemandDeploymentModal";
 import { startOnDemandReplacementProcess } from "../../extensions/opentosca/replacement/OnDemandTransformator";
+import {getExtensionElementsList} from "../util/camunda-utils/ExtensionElementsUtil";
 
 // eslint-disable-next-line no-unused-vars
 const defaultState = {
@@ -60,6 +61,28 @@ export default function DeploymentButton(props) {
 
     // get XML of the current workflow
     const rootElement = getRootProcess(modeler.getDefinitions());
+
+    try {
+      let xmlModeler = await createTempModelerFromXml(xml);
+      let moddle = modeler.get("moddle");
+      let xmlDefinitions = xmlModeler.getDefinitions();
+      let xmlRoot = getRootProcess(xmlDefinitions);
+      let formDataFields = xmlRoot.flowElements.filter(x => x.$type === "bpmn:StartEvent")[0].extensionElements.values.filter(x => x.$type === "camunda:FormData")[0].fields;
+      let newField = {
+        defaultValue: process.env.CAMUNDA_ENDPOINT,
+        id: "CAMUNDA_ENDPOINT",
+        label: "Camunda Endpoint",
+        type: "string"
+      };
+      const formField = moddle.create("camunda:FormField", newField);
+      formDataFields.push(formField);
+      xml = (await xmlModeler.saveXML({format: true})).xml;
+    } catch (e) {
+      console.log("Camunda Endpoint was not added to Process Variables");
+    }
+
+
+
 
     // check if there are views defined for the modeler and include them in the deployment
     let viewsDict = {};
