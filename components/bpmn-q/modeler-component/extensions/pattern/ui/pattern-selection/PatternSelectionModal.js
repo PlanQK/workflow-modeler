@@ -87,14 +87,14 @@ export default function PatternSelectionModal({
     setErrorMessage("");
   };
 
-  const algorithmPatterns = patterns.filter((pattern) =>
-    pattern.tags.includes(PATTERN_ALGORITHM)
+  const algorithmPatterns = patterns.filter(
+    (pattern) => pattern.tags && pattern.tags.includes(PATTERN_ALGORITHM)
   );
-  const behavioralPatterns = patterns.filter((pattern) =>
-    pattern.tags.includes(PATTERN_BEHAVIORAL)
+  const behavioralPatterns = patterns.filter(
+    (pattern) => pattern.tags && pattern.tags.includes(PATTERN_BEHAVIORAL)
   );
-  const augmentationPatterns = patterns.filter((pattern) =>
-    pattern.tags.includes(PATTERN_AUGMENTATION)
+  const augmentationPatterns = patterns.filter(
+    (pattern) => pattern.tags && pattern.tags.includes(PATTERN_AUGMENTATION)
   );
 
   return (
