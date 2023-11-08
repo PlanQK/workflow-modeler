@@ -50,11 +50,15 @@ export default function QuantMEPropertiesProvider(
      */
     return function (groups) {
       if (is(element, consts.DATA_OBJECT)) {
-        groups.push(createDataMapObjectGroup(element, injector, translate));
+        groups.unshift(createDataMapObjectGroup(element, injector));
       }
 
       // add properties of QuantME tasks to panel
-      if (element.type && element.type.startsWith("quantme:")) {
+      if (
+        element.type &&
+        element.type.startsWith("quantme:") &&
+        !is(element, consts.DATA_OBJECT)
+      ) {
         groups.unshift(createQuantMEGroup(element, translate));
       }
       return groups;
@@ -128,8 +132,6 @@ function QuantMEProps(element) {
       return WarmStartingTaskEntries(element);
     case consts.CUTTING_RESULT_COMBINATION_TASK:
       return CuttingResultCombinationTaskEntries(element);
-    case consts.DATA_OBJECT:
-      break;
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }
@@ -141,14 +143,13 @@ function QuantMEProps(element) {
  *
  * @param element THe element the properties group is for
  * @param injector The injector module to load necessary dependencies
- * @param translate The translate function of the bpmn-js modeler
  * @returns {{add: function(*): void, component: ((function(import('../PropertiesPanel').ListGroupDefinition): preact.VNode<any>)|*), id: string, label, items: *}}
  */
-function createDataMapObjectGroup(element, injector, translate) {
+function createDataMapObjectGroup(element, injector) {
   const attributeName = "content";
   return {
     id: "quantmeDataMapObjectProperties",
-    label: translate("Contents"),
+    label: "Details",
     component: ListGroup,
     ...keyValueMap({ element, injector, attributeName }),
   };

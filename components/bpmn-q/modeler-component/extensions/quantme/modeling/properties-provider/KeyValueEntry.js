@@ -55,6 +55,7 @@ function Key(props) {
     label: translate("Name"),
     getValue,
     setValue,
+    disabled: true,
     debounce,
   });
 }
