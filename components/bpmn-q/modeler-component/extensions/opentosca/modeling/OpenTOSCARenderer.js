@@ -283,10 +283,10 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         shape: {
           ...element,
           parent: element.parent,
-          x: boundingBox.left,
+          x: boundingBox.left + NODE_WIDTH / 2,
           y: boundingBox.top,
-          width: boundingBox.right - boundingBox.left,
-          height: boundingBox.bottom - boundingBox.top,
+          width: boundingBox.right - boundingBox.left - NODE_WIDTH,
+          height: boundingBox.bottom - boundingBox.top - NODE_WIDTH / 2,
         },
         hints: {},
       },
