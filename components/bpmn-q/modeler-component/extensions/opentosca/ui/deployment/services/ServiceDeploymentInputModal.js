@@ -75,8 +75,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         >
           <td>{param.inputParam.name}</td>
           <td>
-            <input
-              type="string"
+            <textarea
               value={initValues[i][j]}
               onChange={(event) => handleInputChange(event, i, j)}
             />
