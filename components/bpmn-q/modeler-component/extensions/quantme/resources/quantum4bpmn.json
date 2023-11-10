@@ -629,7 +629,7 @@
       "superClass": ["bpmn:DataObjectReference"],
       "properties": [
         {
-          "name": "parameterization",
+          "name": "parametrization",
           "isAttr": true,
           "type": "String"
         }
