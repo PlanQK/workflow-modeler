@@ -18,7 +18,7 @@ describe("Test the TransformationTaskConfigurationsEndpoint", function () {
     const endpoint = transformationConfigs();
 
     fetchStub = sinon.stub(endpoint, "fetchConfigurations").callsFake(() => {
-      endpoint._configurations = TWO_TRANSF_TASK_CONFIGS;
+      endpoint.configurations = TWO_TRANSF_TASK_CONFIGS;
     });
 
     updateTransformationTaskConfigurations();
@@ -61,7 +61,7 @@ describe("Test the TransformationTaskConfigurationsEndpoint", function () {
     expect(configs.length).to.equal(2);
 
     fetchStub.callsFake(() => {
-      transformationConfigs()._configurations = THREE_TRANSF_TASK_CONFIGS;
+      transformationConfigs().configurations = THREE_TRANSF_TASK_CONFIGS;
     });
 
     updateTransformationTaskConfigurations();

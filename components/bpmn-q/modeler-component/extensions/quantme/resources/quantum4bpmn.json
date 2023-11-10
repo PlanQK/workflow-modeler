@@ -585,6 +585,66 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "QuantumCircuitObject",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "quantumCircuit",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "programmingLanguage",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ResultObject",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "executionResult",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "EvaluationResultObject",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "evaluationResult",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ParameterizationObject",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "parametrization",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "InitialStateObject",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "initialState",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "enumerations": [],
