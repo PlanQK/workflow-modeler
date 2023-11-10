@@ -60,17 +60,17 @@ export default class QuantMERenderer extends BpmnRenderer {
     }
 
     function drawDataObjectSVG(parentGfx, iconID) {
-      var importsvg = getQuantMESVG(iconID);
-      var innerSVGstring = importsvg.svg;
-      var transformDef = importsvg.transform;
+      let importsvg = getQuantMESVG(iconID);
+      let innerSVGstring = importsvg.svg;
+      let transformDef = importsvg.transform;
 
       const groupDef = svgCreate("g");
-      svgAttr(groupDef, { transform: transformDef, "z-index": -1 });
+      svgAttr(groupDef, { transform: transformDef });
       innerSVG(groupDef, innerSVGstring);
-      var pathElement = document.querySelector(".djs-visual path:last-child");
-
-      // Set the fill-opacity in the inline style to 0
-      pathElement.style.fillOpacity = 0;
+      let pathElement = parentGfx.querySelector("path");
+      let existingCssText = pathElement.style.cssText;
+      pathElement.style.cssText =
+        existingCssText + " fill-opacity: 0 !important;";
 
       // draw svg in the background
       parentGfx.prepend(groupDef);
@@ -342,6 +342,7 @@ export default class QuantMERenderer extends BpmnRenderer {
       },
       [consts.QUANTUM_CIRCUIT_OBJECT]: function (self, parentGfx, element) {
         const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        console.log(task);
         drawDataObjectSVG(parentGfx, "QUANTUM_CIRCUIT_OBJECT");
         return task;
       },
