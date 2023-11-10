@@ -1,4 +1,3 @@
-import { is } from "bpmn-js/lib/util/ModelUtil";
 import * as consts from "../../Constants";
 import {
   DataPreparationTaskProperties,
@@ -15,8 +14,6 @@ import {
   WarmStartingTaskEntries,
   CuttingResultCombinationTaskEntries,
 } from "./QuantMETaskProperties";
-import { ListGroup } from "@bpmn-io/properties-panel";
-import keyValueMap from "./KeyValueMap";
 
 const LOW_PRIORITY = 600;
 
@@ -49,16 +46,8 @@ export default function QuantMEPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
-      if (is(element, consts.DATA_OBJECT)) {
-        groups.unshift(createDataMapObjectGroup(element, injector));
-      }
-
       // add properties of QuantME tasks to panel
-      if (
-        element.type &&
-        element.type.startsWith("quantme:") &&
-        !is(element, consts.DATA_OBJECT)
-      ) {
+      if (element.type && element.type.startsWith("quantme:")) {
         groups.unshift(createQuantMEGroup(element, translate));
       }
       return groups;
@@ -132,25 +121,18 @@ function QuantMEProps(element) {
       return WarmStartingTaskEntries(element);
     case consts.CUTTING_RESULT_COMBINATION_TASK:
       return CuttingResultCombinationTaskEntries(element);
+
+    case consts.QUANTUM_CIRCUIT_OBJECT:
+      return CuttingResultCombinationTaskEntries(element);
+    case consts.RESULT_OBJECT:
+      return CircuitCuttingSubprocessEntries(element);
+    case consts.EVALUATION_RESULT_OBJECT:
+      return CircuitCuttingSubprocessEntries(element);
+    case consts.PARAMETRIZATION_OBJECT:
+      return CircuitCuttingSubprocessEntries(element);
+    case consts.INITIAL_STATE_OBJECT:
+      return CircuitCuttingSubprocessEntries(element);
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }
-}
-
-/**
- * Creates a properties group for displaying the custom properties of a DataFlow data map object. This group contains
- * a key value map for the content attribute of the data map object.
- *
- * @param element THe element the properties group is for
- * @param injector The injector module to load necessary dependencies
- * @returns {{add: function(*): void, component: ((function(import('../PropertiesPanel').ListGroupDefinition): preact.VNode<any>)|*), id: string, label, items: *}}
- */
-function createDataMapObjectGroup(element, injector) {
-  const attributeName = "content";
-  return {
-    id: "quantmeDataMapObjectProperties",
-    label: "Details",
-    component: ListGroup,
-    ...keyValueMap({ element, injector, attributeName }),
-  };
 }

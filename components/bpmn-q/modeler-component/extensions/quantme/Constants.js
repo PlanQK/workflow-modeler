@@ -29,7 +29,14 @@ export const CIRCUIT_CUTTING_SUBPROCESS = "quantme:CircuitCuttingSubprocess";
 export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
+
 export const DATA_OBJECT = "quantme:DataObject";
+export const QUANTUM_CIRCUIT_OBJECT = "quantme:QuantumCircuitObject";
+export const RESULT_OBJECT = "quantme:ResultObject";
+export const EVALUATION_RESULT_OBJECT = "quantme:EvaluationResultObject";
+export const PARAMETRIZATION_OBJECT = "quantme:ParameterizationObject";
+export const INITIAL_STATE_OBJECT = "quantme:InitialStateObject";
+
 export const KEY_VALUE_ENTRY = "quantme:KeyValueEntry";
 
 // Property names of the QuantME constructs

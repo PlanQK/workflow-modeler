@@ -22,8 +22,7 @@ import {
 import { getFillColor, getStrokeColor } from "bpmn-js/lib/draw/BpmnRenderUtil";
 import { getQuantMESVG } from "./QuantMESVGMap";
 import { queryAll as domQueryAll } from "min-dom";
-import { drawDataElementSVG } from "../../../editor/util/RenderUtilities";
-import { extractConfigSVG } from "../../../editor/configurations/ConfigurationsUtil";
+
 /**
  * This class extends the default BPMNRenderer to render the newly introduced QuantME task types
  */
@@ -52,9 +51,27 @@ export default class QuantMERenderer extends BpmnRenderer {
       const groupDef = svgCreate("g");
       svgAttr(groupDef, { transform: transformDef });
       innerSVG(groupDef, innerSVGstring);
+      console.log(parentGfx);
 
       // set task box opacity to 0 such that icon can be in the background
       svgAttr(svgSelect(parentGfx, "rect"), { "fill-opacity": 0 });
+
+      // draw svg in the background
+      parentGfx.prepend(groupDef);
+    }
+
+    function drawDataObjectSVG(parentGfx, iconID) {
+      var importsvg = getQuantMESVG(iconID);
+      var innerSVGstring = importsvg.svg;
+      var transformDef = importsvg.transform;
+
+      const groupDef = svgCreate("g");
+      svgAttr(groupDef, { transform: transformDef, "z-index": -1 });
+      innerSVG(groupDef, innerSVGstring);
+      var pathElement = document.querySelector(".djs-visual path:last-child");
+
+      // Set the fill-opacity in the inline style to 0
+      pathElement.style.fillOpacity = 0;
 
       // draw svg in the background
       parentGfx.prepend(groupDef);
@@ -324,14 +341,29 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "TASK_TYPE_VQA");
         return task;
       },
-      [consts.DATA_OBJECT]: function (self, parentGfx, element) {
+      [consts.QUANTUM_CIRCUIT_OBJECT]: function (self, parentGfx, element) {
         const task = self.renderer("bpmn:DataObject")(parentGfx, element);
-
-        let svg = extractConfigSVG(element);
-        if (svg !== undefined) {
-          drawDataElementSVG(parentGfx, svg);
-        }
-
+        drawDataObjectSVG(parentGfx, "QUANTUM_CIRCUIT_OBJECT");
+        return task;
+      },
+      [consts.RESULT_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "RESULT_OBJECT");
+        return task;
+      },
+      [consts.EVALUATION_RESULT_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "EVALUATION_RESULT");
+        return task;
+      },
+      [consts.PARAMETRIZATION_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "PARAMETRIZATION_OBJECT");
+        return task;
+      },
+      [consts.INITIAL_STATE_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "INITIAL_STATE_OBJECT");
         return task;
       },
     };
