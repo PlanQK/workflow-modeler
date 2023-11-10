@@ -44,32 +44,27 @@ const PLUGINS = [
 
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
 let activePlugins = [];
-let actualPlugins = [];
 
 export function getActivePlugins() {
   if (activePlugins.length > 0) {
     return activePlugins;
   } else {
     activePlugins = [];
-    actualPlugins = [];
 
     const loadPlugin = (plugin) => {
       if (!activePlugins.includes(plugin.plugin)) {
+        activePlugins.push(plugin.plugin);
         for (const dependency of plugin.dependencies) {
           const dependencyPlugin = PLUGINS.find(
             (p) => p.plugin.name === dependency
           );
           if (
             dependencyPlugin &&
-            !actualPlugins.includes(dependencyPlugin.plugin)
+            !activePlugins.includes(dependencyPlugin.plugin)
           ) {
-            //activePlugins.push(dependencyPlugin.plugin);
-            actualPlugins.push(dependencyPlugin.plugin);
             loadPlugin(dependencyPlugin);
-            console.log("circular");
           }
         }
-        activePlugins.push(plugin.plugin);
       }
     };
 
