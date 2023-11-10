@@ -13,19 +13,19 @@ import { fetch } from "whatwg-fetch";
 import {
   getQuantumCircuitExecutionTasks,
   performAjax,
-} from "../../../utilities/Utilities";
-import { startQuantmeReplacementProcess } from "../../../replacement/QuantMETransformator";
+} from "../../utilities/Utilities";
+import { startQuantmeReplacementProcess } from "../QuantMETransformator";
 import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion,
-} from "../../../../opentosca/deployment/OpenTOSCAUtils";
+} from "../../../opentosca/deployment/OpenTOSCAUtils";
 import {
   getInvalidModelingConstruct,
   getRequiredPrograms,
   getTaskOrder,
 } from "./RuntimeHandlerUtils";
-import { createTempModelerFromXml } from "../../../../../editor/ModelerHandler";
-import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
+import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
+import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 
 /**
  * Generate a AWS Runtime program for the given candidate

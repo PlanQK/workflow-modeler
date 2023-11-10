@@ -10,23 +10,23 @@
  */
 
 import { fetch } from "whatwg-fetch";
-import { startQuantmeReplacementProcess } from "../../../replacement/QuantMETransformator";
+import { startQuantmeReplacementProcess } from "../QuantMETransformator";
 import {
   getQuantumCircuitExecutionTasks,
   performAjax,
-} from "../../../utilities/Utilities";
+} from "../../utilities/Utilities";
 import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion,
-} from "../../../../opentosca/deployment/OpenTOSCAUtils";
+} from "../../../opentosca/deployment/OpenTOSCAUtils";
 import {
   getInvalidModelingConstruct,
   getRequiredPrograms,
   getTaskOrder,
 } from "./RuntimeHandlerUtils";
-import { getXml } from "../../../../../editor/util/IoUtilities";
-import { createTempModelerFromXml } from "../../../../../editor/ModelerHandler";
-import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
+import { getXml } from "../../../../editor/util/IoUtilities";
+import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
+import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 
 /**
  * Generate a Qiskit Runtime program for the given candidate

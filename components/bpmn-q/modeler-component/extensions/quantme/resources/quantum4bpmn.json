@@ -585,6 +585,17 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "HybridSphere",
+      "superClass": ["bpmn:Group"],
+      "properties": [
+        {
+          "name": "runtimeProvider",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "enumerations": [],

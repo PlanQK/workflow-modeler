@@ -1468,3 +1468,43 @@ export function OptimizationEntry({ element }) {
     />
   );
 }
+
+export function RuntimeProviderEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.runtimeProvider;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      runtimeProvider: newValue,
+    });
+  };
+
+  const selectOptions = [
+    { value: "qiskit", name: "Qiskit" },
+    { value: "aws", name: "AWS" },
+  ];
+
+  const getOptions = function () {
+    return selectOptions;
+  };
+
+  return (
+    <SelectEntry
+      id={consts.RUNTIME_PROVIDER}
+      label={translate("Runtime Provider")}
+      getValue={getValue}
+      setValue={setValue}
+      getOptions={getOptions}
+      debounce={debounce}
+    />
+  );
+}

@@ -13,6 +13,7 @@ import BpmnFactory from "bpmn-js/lib/features/modeling/BpmnFactory";
 import { isQuantMETask } from "../utilities/Utilities";
 import {
   CIRCUIT_CUTTING_SUBPROCESS,
+  HYBRID_SPHERE,
   PARAMETER_OPTIMIZATION_TASK,
   READOUT_ERROR_MITIGATION_TASK,
   RESULT_EVALUATION_TASK,
@@ -69,6 +70,10 @@ export default class QuantMEFactory extends BpmnFactory {
       element.mitigationMethod = "";
       element.cuttingMethod = "";
       element.warmStartingMethod = "";
+    }
+
+    if (element.$type === HYBRID_SPHERE) {
+      element.runtimeProvider = "qiskit";
     }
   }
 }

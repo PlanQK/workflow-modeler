@@ -3,7 +3,11 @@ import {
   isTextFieldEntryEdited,
   isSelectEntryEdited,
 } from "@bpmn-io/properties-panel";
-import { AlgorithmEntry, AlphaEntry } from "./QuantMEPropertyEntries.js";
+import {
+  AlgorithmEntry,
+  AlphaEntry,
+  RuntimeProviderEntry,
+} from "./QuantMEPropertyEntries.js";
 import {
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,
@@ -450,6 +454,17 @@ export function CuttingResultCombinationTaskEntries(element) {
       id: consts.CUTTING_METHOD,
       element,
       component: CuttingMethodEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function HybridSphereEntries(element) {
+  return [
+    {
+      id: consts.RUNTIME_PROVIDER,
+      element,
+      component: RuntimeProviderEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

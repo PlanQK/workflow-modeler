@@ -90,6 +90,21 @@ export default class QuantMEReplaceMenuProvider {
         return Object.assign(subprocessEntries, entries);
       }
 
+      // add additional elements to replace groups
+      if (is(element, "bpmn:Group")) {
+        let filteredOptions = filter(
+          quantmeReplaceOptions.GROUP,
+          isDifferentType(element)
+        );
+        const groupEntries = createMenuEntries(
+          element,
+          filteredOptions,
+          self.translate,
+          self.bpmnReplace.replaceElement
+        );
+        return Object.assign(groupEntries, entries);
+      }
+
       return entries;
     };
   }
