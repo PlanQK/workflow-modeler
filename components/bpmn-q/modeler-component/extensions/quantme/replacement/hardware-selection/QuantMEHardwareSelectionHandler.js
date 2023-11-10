@@ -9,21 +9,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getQuantMETasks } from "../QuantMETransformator";
 import {
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
-  POLL_FOR_TRANSFORMATION_SCRIPT,
   RETRIEVE_FRAGMENT_SCRIPT_PREFIX,
   RETRIEVE_FRAGMENT_SCRIPT_SUFFIX,
   SELECT_ON_QUEUE_SIZE_SCRIPT,
 } from "./HardwareSelectionScripts";
 import * as consts from "../../Constants";
 import { addExtensionElements } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import {
-  createTempModelerFromXml,
-  createTempModeler,
-} from "../../../../editor/ModelerHandler";
+import { createTempModeler } from "../../../../editor/ModelerHandler";
 import {
   getPropertiesToCopy,
   insertShape,
@@ -130,7 +125,7 @@ export async function replaceHardwareSelectionSubprocess(
   );
   invokeHardwareSelectionInOut.inputParameters.push(
     bpmnFactory.create("camunda:InputParameter", {
-      name: "nisq_analyzer_endpoint",
+      name: "nisq_analyzer_endpoint_qpu_selection",
       value: nisqAnalyzerEndpoint + consts.NISQ_ANALYZER_QPU_SELECTION_PATH,
     })
   );
@@ -237,24 +232,6 @@ export async function replaceHardwareSelectionSubprocess(
     })
   );
 
-  // add task to poll for the results of the transformation and deployment
-  let pollForTransformation = modeling.createShape(
-    { type: "bpmn:ScriptTask" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let pollForTransformationBo = elementRegistry.get(
-    pollForTransformation.id
-  ).businessObject;
-  pollForTransformationBo.name = "Poll for Transformation and Deployment";
-  pollForTransformationBo.scriptFormat = "groovy";
-  pollForTransformationBo.script = POLL_FOR_TRANSFORMATION_SCRIPT;
-  pollForTransformationBo.asyncBefore = true;
-  modeling.connect(invokeTransformation, pollForTransformation, {
-    type: "bpmn:SequenceFlow",
-  });
-
   // join control flow
   let joiningGateway = modeling.createShape(
     { type: "bpmn:ExclusiveGateway" },
@@ -262,7 +239,7 @@ export async function replaceHardwareSelectionSubprocess(
     element,
     {}
   );
-  modeling.connect(pollForTransformation, joiningGateway, {
+  modeling.connect(invokeTransformation, joiningGateway, {
     type: "bpmn:SequenceFlow",
   });
 
@@ -331,57 +308,6 @@ export async function replaceHardwareSelectionSubprocess(
     type: "bpmn:SequenceFlow",
   });
   return true;
-}
-
-/**
- * Configure the given QuantME workflow fragment based on the selected hardware
- *
- * @param xml the QuantME workflow fragment in XML format
- * @param provider the provider of the selected QPU
- * @param qpu the selected QPU
- * @param circuitLanguage the language of the circuit provided by the NISQ Analyzer
- * @return the configured workflow model
- */
-export async function configureBasedOnHardwareSelection(
-  xml,
-  provider,
-  qpu,
-  circuitLanguage
-) {
-  let modeler = await createTempModelerFromXml(xml);
-  let elementRegistry = modeler.get("elementRegistry");
-
-  // get root element of the current diagram
-  const rootElement = getRootProcess(modeler.getDefinitions());
-  if (typeof rootElement === "undefined") {
-    console.log("Unable to retrieve root process element from definitions!");
-    return {
-      status: "failed",
-      cause: "Unable to retrieve root process element from definitions!",
-    };
-  }
-  rootElement.isExecutable = true;
-
-  // get all QuantME modeling constructs from the process
-  const quantmeTasks = getQuantMETasks(rootElement, elementRegistry);
-
-  // update properties of quantum circuit execution and readout error mitigation tasks according to the hardware selection
-  for (let quantmeTask of quantmeTasks) {
-    console.log("Configuring task: ", quantmeTask.task);
-
-    if (quantmeTask.task.$type === consts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
-      quantmeTask.task.provider = provider;
-      quantmeTask.task.qpu = qpu;
-      quantmeTask.task.programmingLanguage = circuitLanguage;
-    }
-
-    if (quantmeTask.task.$type === consts.READOUT_ERROR_MITIGATION_TASK) {
-      quantmeTask.task.provider = provider;
-      quantmeTask.task.qpu = qpu;
-    }
-  }
-
-  return { status: "success", xml: await getXml(modeler) };
 }
 
 /**

@@ -1,8 +1,9 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
-import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
 import DataFlowPlugin from "../../extensions/data-extension/DataFlowPlugin";
 import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
+import PatternPlugin from "../../extensions/pattern/PatternPlugin";
+import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
 import { getAllConfigs } from "./PluginConfigHandler";
 import GeneralTab from "../config/GeneralTab";
 import GitHubTab from "../../extensions/quantme/configTabs/GitHubTab";
@@ -29,6 +30,10 @@ const PLUGINS = [
   },
   {
     plugin: PlanQKPlugin,
+    dependencies: [],
+  },
+  {
+    plugin: PatternPlugin,
     dependencies: [],
   },
   {
@@ -89,6 +94,8 @@ export function checkEnabledStatus(pluginName) {
       return process.env.ENABLE_QHANA_PLUGIN !== "false";
     case "quantme":
       return process.env.ENABLE_QUANTME_PLUGIN !== "false";
+    case "pattern":
+      return process.env.ENABLE_PATTERN_PLUGIN !== "false";
     case "opentosca":
       return process.env.ENABLE_OPENTOSCA_PLUGIN !== "false";
   }
