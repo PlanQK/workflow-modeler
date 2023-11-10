@@ -1,4 +1,4 @@
-// supported options to handle a transformed workflow
+// names of the supported plugins
 export const pluginNames = {
   QUANTME: "quantme",
   OPENTOSCA: "opentosca",
