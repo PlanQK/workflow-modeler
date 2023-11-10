@@ -1,4 +1,14 @@
 // supported options to handle a transformed workflow
+export const pluginNames = {
+  QUANTME: "quantme",
+  OPENTOSCA: "opentosca",
+  PLANQK: "planqk",
+  QHANA: "qhana",
+  PATTERN: "pattern",
+  DATAFLOW: "dataflow",
+};
+
+// supported options to handle a transformed workflow
 export const transformedWorkflowHandlers = {
   NEW_TAB: "Open in new Tab",
   SAVE_AS_FILE: "Save as File",
