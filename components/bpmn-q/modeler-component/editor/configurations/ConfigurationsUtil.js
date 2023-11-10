@@ -1,7 +1,6 @@
 import * as configConsts from "./Constants";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import * as dataConsts from "../../extensions/data-extension/Constants";
-import * as quantmeConsts from "../../extensions/quantme/Constants";
 import {
   addCamundaInputMapParameter,
   addCamundaOutputMapParameter,
