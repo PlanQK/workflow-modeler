@@ -11,6 +11,7 @@
 
 import defaultConfig from "./config";
 import { getPluginConfig } from "../../../editor/plugin/PluginConfigHandler";
+import { pluginNames } from "../../../editor/EditorConstants";
 
 let config = {};
 
@@ -22,7 +23,7 @@ let config = {};
 export function getOpenTOSCAEndpoint() {
   if (config.opentoscaEndpoint === undefined) {
     setOpenTOSCAEndpoint(
-      getPluginConfig("opentosca").opentoscaEndpoint ||
+      getPluginConfig(pluginNames.OPENTOSCA).opentoscaEndpoint ||
         defaultConfig.opentoscaEndpoint
     );
   }
@@ -48,7 +49,7 @@ export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
 export function getWineryEndpoint() {
   if (config.wineryEndpoint === undefined) {
     setWineryEndpoint(
-      getPluginConfig("opentosca").wineryEndpoint ||
+      getPluginConfig(pluginNames.OPENTOSCA).wineryEndpoint ||
         defaultConfig.wineryEndpoint
     );
   }

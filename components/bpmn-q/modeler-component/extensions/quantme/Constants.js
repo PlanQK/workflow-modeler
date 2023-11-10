@@ -73,7 +73,7 @@ export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
 export const AUTOMATED_SELECTION = "automatedSelection";
 
 // endpoint paths of connected services
-export const NISQ_ANALYZER_QPU_SELECTION_PATH = "qpu-selection";
+export const NISQ_ANALYZER_QPU_SELECTION_PATH = "nisq-analyzer/qpu-selection";
 
 // supported selection strategies
 export const SELECTION_STRATEGY_SHORTEST_QUEUE_SIZE = "Shortest-Queue";

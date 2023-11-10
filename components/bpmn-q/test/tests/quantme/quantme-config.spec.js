@@ -27,7 +27,7 @@ describe("Test QuantME ConfigManager", function () {
             githubRepositoryName: "Example-Repo",
             githubUsername: "userName",
             githubRepositoryPath: "path/to/repo",
-            hybridRuntimeProvenance: true,
+            hybridRuntimeProvenance: "true",
           },
         },
       ]);
