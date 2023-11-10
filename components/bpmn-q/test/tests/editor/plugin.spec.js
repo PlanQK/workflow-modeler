@@ -45,6 +45,32 @@ describe("Test plugins", function () {
           plugins.filter((plugin) => plugin.name === "planqk").length
         ).to.equal(1);
       });
+
+      it("Should find 4 active plugins due to dependencies", function () {
+        setPluginConfig([
+          { name: "dataflow" },
+          { name: "quantme" },
+          { name: "planqk" },
+        ]);
+
+        const plugins = getActivePlugins();
+
+        expect(plugins.length).to.equal(4);
+        expect(
+          plugins.filter((plugin) => plugin.name === "dataflow").length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === "quantme").length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === "planqk").length
+        ).to.equal(1);
+
+        // should be found due to dependency of quantme plugin
+        expect(
+          plugins.filter((plugin) => plugin.name === "opentosca").length
+        ).to.equal(1);
+      });
     });
 
     describe("Test getter for plugin attributes", function () {
