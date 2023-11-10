@@ -147,14 +147,6 @@ export function handleConfigurationsAction(
           commandStack
         )(attribute.value);
         break;
-      case "quantme:KeyValueMap":
-        addAttributeValueToQuantMEKeyValueMap(
-          element,
-          attribute,
-          bpmnFactory,
-          commandStack
-        )(attribute.value);
-        break;
       default:
         setAttributeValue(element, attribute, modeling)(attribute.value);
         break;
@@ -257,23 +249,6 @@ export function addAttributeValueToKeyValueMap(
  * @returns {(function(*): (*))|*}
  */
 export function getAttributeValueFromKeyValueMap(element) {
-  return (attribute) => {
-    const businessObject = getBusinessObject(element);
-    const keyValueMap = businessObject.get(attribute.bindTo.name) || [];
-
-    // return value of respective key value entry or return the value of ConfigurationAttribute
-    const existingEntry = keyValueMap.find(
-      (entry) => entry.name === attribute.name
-    );
-    if (existingEntry) {
-      return existingEntry.value;
-    } else {
-      return attribute.value;
-    }
-  };
-}
-
-export function getAttributeValueFromQuantMEKeyValueMap(element) {
   return (attribute) => {
     const businessObject = getBusinessObject(element);
     const keyValueMap = businessObject.get(attribute.bindTo.name) || [];
