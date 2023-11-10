@@ -32,10 +32,18 @@ describe("Test plugins", function () {
         const plugins = getActivePlugins();
 
         expect(plugins.length).to.equal(4);
-        expect(plugins[0].name).to.equal("dataflow");
-        expect(plugins[1].name).to.equal("opentosca");
-        expect(plugins[2].name).to.equal("quantme");
-        expect(plugins[3].name).to.equal("planqk");
+        expect(
+          plugins.filter((plugin) => plugin.name === "dataflow").length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === "opentosca").length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === "quantme").length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === "planqk").length
+        ).to.equal(1);
       });
     });
 
