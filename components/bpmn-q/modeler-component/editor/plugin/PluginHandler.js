@@ -34,7 +34,7 @@ const PLUGINS = [
   },
   {
     plugin: PatternPlugin,
-    dependencies: [],
+    dependencies: ["quantme"],
   },
   {
     plugin: OpenTOSCAPlugin,
@@ -44,12 +44,14 @@ const PLUGINS = [
 
 // list of currently active plugins in the current running instance of the modeler, defined based on the plugin configuration
 let activePlugins = [];
+let actualPlugins = [];
 
 export function getActivePlugins() {
   if (activePlugins.length > 0) {
     return activePlugins;
   } else {
     activePlugins = [];
+    actualPlugins = [];
 
     const loadPlugin = (plugin) => {
       if (!activePlugins.includes(plugin.plugin)) {
@@ -59,10 +61,12 @@ export function getActivePlugins() {
           );
           if (
             dependencyPlugin &&
-            !activePlugins.includes(dependencyPlugin.plugin)
+            !actualPlugins.includes(dependencyPlugin.plugin)
           ) {
-            activePlugins.push(dependencyPlugin.plugin);
+            //activePlugins.push(dependencyPlugin.plugin);
+            actualPlugins.push(dependencyPlugin.plugin);
             loadPlugin(dependencyPlugin);
+            console.log("circular");
           }
         }
         activePlugins.push(plugin.plugin);
