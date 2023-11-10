@@ -51,7 +51,6 @@ export default class QuantMERenderer extends BpmnRenderer {
       const groupDef = svgCreate("g");
       svgAttr(groupDef, { transform: transformDef });
       innerSVG(groupDef, innerSVGstring);
-      console.log(parentGfx);
 
       // set task box opacity to 0 such that icon can be in the background
       svgAttr(svgSelect(parentGfx, "rect"), { "fill-opacity": 0 });
@@ -353,7 +352,7 @@ export default class QuantMERenderer extends BpmnRenderer {
       },
       [consts.EVALUATION_RESULT_OBJECT]: function (self, parentGfx, element) {
         const task = self.renderer("bpmn:DataObject")(parentGfx, element);
-        drawDataObjectSVG(parentGfx, "EVALUATION_RESULT");
+        drawDataObjectSVG(parentGfx, "EVALUATION_RESULT_OBJECT");
         return task;
       },
       [consts.PARAMETRIZATION_OBJECT]: function (self, parentGfx, element) {

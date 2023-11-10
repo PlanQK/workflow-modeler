@@ -80,6 +80,11 @@ export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
 
+export const EXECUTION_RESULT = "executionResult";
+export const EVALUATION_RESULT = "evaluationResult";
+export const INITIAL_STATE = "initialState";
+export const PARAMETRIZATION = "parametrization";
+
 // endpoint paths of connected services
 export const NISQ_ANALYZER_QPU_SELECTION_PATH = "nisq-analyzer/qpu-selection";
 

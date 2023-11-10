@@ -587,32 +587,6 @@
       ]
     },
     {
-      "name": "KeyValueEntry",
-      "properties": [
-        {
-          "name": "name",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "value",
-          "isAttr": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
-      "name": "DataObject",
-      "superClass": ["bpmn:DataObjectReference"],
-      "properties": [
-        {
-          "name": "content",
-          "isMany": true,
-          "type": "KeyValueEntry"
-        }
-      ]
-    },
-    {
       "name": "QuantumCircuitObject",
       "superClass": ["bpmn:DataObjectReference"],
       "properties": [

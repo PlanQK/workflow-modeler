@@ -13,6 +13,11 @@ import {
   VariationalQuantumAlgorithmTaskEntries,
   WarmStartingTaskEntries,
   CuttingResultCombinationTaskEntries,
+  QuantumCircuitObjectEntries,
+  ResultObjectEntries,
+  InitialStateObjectEntries,
+  ParametrizationObjectEntries,
+  EvaluationResultObjectEntries,
 } from "./QuantMETaskProperties";
 
 const LOW_PRIORITY = 600;
@@ -123,15 +128,15 @@ function QuantMEProps(element) {
       return CuttingResultCombinationTaskEntries(element);
 
     case consts.QUANTUM_CIRCUIT_OBJECT:
-      return CuttingResultCombinationTaskEntries(element);
+      return QuantumCircuitObjectEntries(element);
     case consts.RESULT_OBJECT:
-      return CircuitCuttingSubprocessEntries(element);
+      return ResultObjectEntries(element);
     case consts.EVALUATION_RESULT_OBJECT:
-      return CircuitCuttingSubprocessEntries(element);
+      return EvaluationResultObjectEntries(element);
     case consts.PARAMETRIZATION_OBJECT:
-      return CircuitCuttingSubprocessEntries(element);
+      return ParametrizationObjectEntries(element);
     case consts.INITIAL_STATE_OBJECT:
-      return CircuitCuttingSubprocessEntries(element);
+      return InitialStateObjectEntries(element);
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }
