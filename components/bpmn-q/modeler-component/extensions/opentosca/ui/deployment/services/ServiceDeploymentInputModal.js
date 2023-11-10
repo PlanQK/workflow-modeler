@@ -31,6 +31,12 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       event.target.value;
   };
 
+  // TODO: add post endpoint to winery here which receives true false if one of csars is incomplete
+  const containsIncompleteModels = true;
+  if (containsIncompleteModels) {
+    let nodetypes = await fetch("http://localhost:8093/winery/nodetypes/?includeVersions=true");
+  }
+
   // determine input parameters that have to be passed by the user
   let csarInputParts = [];
   let inputRequired = false;
