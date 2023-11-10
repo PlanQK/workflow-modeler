@@ -69,9 +69,16 @@ export async function startQuantmeReplacementProcess(
   for (let replacementConstruct of replacementConstructs) {
     console.log(replacementConstruct);
     if (
-      constants.QUANTME_DATA_OBJECTS.includes(replacementConstruct.task.$type)
+      constants.QUANTME_DATA_OBJECTS.includes(
+        replacementConstruct.task.$type
+      ) ||
+      replacementConstruct.task.$type ===
+        constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
-      console.log("QuantME DataObjects needs no QRM. Skipping search...");
+      console.log("Found QuantME object of type:");
+      console.log(
+        "Hardware Selection Subprocesses and QuantME DataObjects needs no QRM. Skipping search..."
+      );
       continue;
     }
 
