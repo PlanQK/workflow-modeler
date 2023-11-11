@@ -67,13 +67,11 @@ export default class PatternReplaceMenuProvider {
    */
   createPatternReplacementOptions(element) {
     const popupMenu = this.popupMenu;
-    const algorithmPatterns = this.createPatternTypeReplacementOptions(element, quantmeReplaceOptions.ALGORITHM_PATTERN, consts.PATTERN_ALGORITHM);
     const behavioralPatterns = this.createPatternTypeReplacementOptions(element, quantmeReplaceOptions.BEHAVIORAL_PATTERN, consts.PATTERN_BEHAVIORAL);
     const augmentationPatterns = this.createPatternTypeReplacementOptions(element, quantmeReplaceOptions.AUGMENTATION_PATTERN, consts.PATTERN_AUGMENTATION);
 
 
     const patternEntries = Object.assign(
-      algorithmPatterns,
       behavioralPatterns,
       augmentationPatterns
     );

@@ -15,6 +15,8 @@ import PatternConfigTab from "./configTabs/PatternConfigTab";
 import patternStyles from "./styling/pattern.css";
 import PatternPluginButton from "./ui/PatternPluginButton";
 import PatternExtensionModule from "./modeling";
+import TransformationButton from "../../editor/ui/TransformationButton";
+import { startPatternReplacementProcess } from "./replacement/PatternTransformator";
 
 let patternModdleExtension = require("./resources/pattern.json");
 
@@ -34,4 +36,18 @@ export default {
   extensionModule: [ PatternExtensionModule ],
   moddleDescription: patternModdleExtension,
   styling: [patternStyles],
+  transformExtensionButton: (
+    <TransformationButton
+      name="Pattern Transformation"
+      transformWorkflow={async (xml) => {
+        let currentQRMs = getQRMs();
+        return await startPatternReplacementProcess(xml, currentQRMs, {
+          nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
+          transformationFrameworkEndpoint:
+            config.getTransformationFrameworkEndpoint(),
+          camundaEndpoint: camundaConfig.getCamundaEndpoint(),
+        });
+      }}
+    />
+  ),
 };
