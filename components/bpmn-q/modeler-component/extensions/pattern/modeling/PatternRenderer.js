@@ -60,6 +60,22 @@ export default class PatternRenderer extends BpmnRenderer {
       parentGfx.prepend(groupDef);
     }
 
+    function drawTaskSVG(parentGfx, iconID) {
+      var importsvg = getPatternSVG(iconID);
+      var innerSVGstring = importsvg.svg;
+      var transformDef = importsvg.transform;
+
+      const groupDef = svgCreate("g");
+      svgAttr(groupDef, { transform: transformDef });
+      innerSVG(groupDef, innerSVGstring);
+
+      // set task box opacity to 0 such that icon can be in the background
+      svgAttr(svgSelect(parentGfx, "rect"), { "fill-opacity": 0 });
+
+      // draw svg in the background
+      parentGfx.prepend(groupDef);
+    }
+
     function drawPath(parentGfx, d, attrs) {
       attrs = computeStyle(attrs, ["no-fill"], {
         strokeWidth: 2,
@@ -75,36 +91,6 @@ export default class PatternRenderer extends BpmnRenderer {
     }
 
     this.patternHandlers = {
-      [consts.GATE_ERROR_MITIGATION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
-        var subprocess = self.renderer("bpmn:SubProcess")(parentGfx, element);
-
-        var pathData = patternPathMap.getPath(
-          "SUBPROCESS_QUANTUM_HARDWARE_SELECTION"
-        );
-        drawPath(parentGfx, pathData, {
-          transform: "scale(0.5)",
-          strokeWidth: 1.5,
-          fill: getFillColor(element, defaultFillColor),
-          stroke: getStrokeColor(element, defaultStrokeColor),
-        });
-
-        // create circuit paths with filled shapes
-        pathData = patternPathMap.getPath(
-          "SUBPROCESS_QUANTUM_HARDWARE_SELECTION_FILL"
-        );
-        drawPath(parentGfx, pathData, {
-          transform: "scale(0.5)",
-          strokeWidth: 1.5,
-          fill: getFillColor(element, "#000000"),
-          stroke: getStrokeColor(element, defaultStrokeColor),
-        });
-
-        return subprocess;
-      },
       [consts.QUANTUM_KERNEL_ESTIMATOR]: function (
         self,
         parentGfx,
@@ -114,8 +100,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "QUANTUM_KERNEL_ESTIMATOR");
+        var task = self.renderer("bpmn:IntermediateThrowEvent")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "QUANTUM_KERNEL_ESTIMATOR");
         return task;
       },
       [consts.ALTERNATING_OPERATOR_ANSATZ]: function (
@@ -127,8 +113,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "ALTERNATING_OPERATOR_ANSATZ");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "ALTERNATING_OPERATOR_ANSATZ");
         return task;
       },
       [consts.QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM]: function (
@@ -140,8 +126,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM");
         return task;
       },
       [consts.QUANTUM_PHASE_ESTIMATION]: function (
@@ -153,8 +139,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "QUANTUM_PHASE_ESTIMATION");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "QUANTUM_PHASE_ESTIMATION");
         return task;
       },
       [consts.VARIATIONAL_QUANTUM_ALGORITHM]: function (
@@ -166,8 +152,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "VARIATIONAL_QUANTUM_ALGORITHM");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "VARIATIONAL_QUANTUM_ALGORITHM");
         return task;
       },
       [consts.VARIATIONAL_QUANTUM_EIGENSOLVER]: function (
@@ -179,8 +165,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "VARIATIONAL_QUANTUM_EIGENSOLVER");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "VARIATIONAL_QUANTUM_EIGENSOLVER");
         return task;
       },
       [consts.ORCHESTRATED_EXECUTION]: function (
@@ -192,8 +178,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "ORCHESTRATED_EXECUTION");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "ORCHESTRATED_EXECUTION");
         return task;
       },
       [consts.PRE_DEPLOYED_EXECUTION]: function (
@@ -205,8 +191,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "PRE_DEPLOYED_EXECUTION");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "PRE_DEPLOYED_EXECUTION");
         return task;
       },
       [consts.PRIORITIZED_EXECUTION]: function (
@@ -218,8 +204,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "PRIORITIZED_EXECUTION");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "PRIORITIZED_EXECUTION");
         return task;
       },
       [consts.ERROR_CORRECTION]: function (
@@ -231,8 +217,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "ERROR_CORRECTION");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "ERROR_CORRECTION");
         return task;
       },
       [consts.READOUT_ERROR_MITIGATION]: function (
@@ -244,8 +230,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "READOUT_ERROR_MITIGATION");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "READOUT_ERROR_MITIGATION");
         return task;
       },
       [consts.GATE_ERROR_MITIGATION]: function (
@@ -257,8 +243,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "GATE_ERROR_MITIGATION");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "GATE_ERROR_MITIGATION");
         return task;
       },
       [consts.WARM_START]: function (
@@ -270,8 +256,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:Event")(parentGfx, element, attrs);
-        drawEventSVG(parentGfx, "WARM_START");
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "WARM_START");
         return task;
       },
     };

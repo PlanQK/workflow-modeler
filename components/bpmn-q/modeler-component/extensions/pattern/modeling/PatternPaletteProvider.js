@@ -11,13 +11,13 @@ export default class PatternPaletteProvider {
   }
 
   getPaletteEntries() {
-    return this.createPlanqkServiceTaskEntry();
+    return this.createPatternEntry();
   }
 
-  createPlanqkServiceTaskEntry() {
+  createPatternEntry() {
     const { bpmnFactory, create, elementFactory, translate } = this;
 
-    function createPlanQKServiceTask(event) {
+    function createPattern(event) {
       const businessObject = bpmnFactory.create("pattern:GateErrorMitigation");
       let shape = elementFactory.createShape({
         type: "pattern:GateErrorMitigation",
@@ -39,8 +39,8 @@ export default class PatternPaletteProvider {
           "Creates a pattern"
         ),
         action: {
-          click: createPlanQKServiceTask,
-          dragstart: createPlanQKServiceTask,
+          click: createPattern,
+          dragstart: createPattern,
         },
       },
     };
