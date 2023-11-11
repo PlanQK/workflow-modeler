@@ -10,7 +10,7 @@
  */
 
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
-import * as quantmeReplaceOptions from "./PatternReplaceOptions";
+import * as patternReplaceOptions from "./PatternReplaceOptions";
 import * as consts from "../Constants";
 import {
   append as svgAppend,
@@ -20,19 +20,19 @@ import {
   select as svgSelect,
 } from "tiny-svg";
 import { getFillColor, getStrokeColor } from "bpmn-js/lib/draw/BpmnRenderUtil";
-import { getQuantMESVG } from "./PatternSVGMap";
+import { getPatternSVG } from "./PatternSVGMap";
 import { queryAll as domQueryAll } from "min-dom";
 
 /**
- * This class extends the default BPMNRenderer to render the newly introduced QuantME task types
+ * This class extends the default BPMNRenderer to render the newly introduced patterns
  */
-export default class QuantMERenderer extends BpmnRenderer {
+export default class PatternRenderer extends BpmnRenderer {
   constructor(
     config,
     eventBus,
     styles,
     pathMap,
-    quantMEPathMap,
+    patternPathMap,
     canvas,
     textRenderer
   ) {
@@ -44,7 +44,7 @@ export default class QuantMERenderer extends BpmnRenderer {
       defaultStrokeColor = config && config.defaultStrokeColor;
 
     function drawEventSVG(parentGfx, iconID) {
-      var importsvg = getQuantMESVG(iconID);
+      var importsvg = getPatternSVG(iconID);
       var innerSVGstring = importsvg.svg;
       var transformDef = importsvg.transform;
 
@@ -74,7 +74,7 @@ export default class QuantMERenderer extends BpmnRenderer {
       return path;
     }
 
-    this.quantMeHandlers = {
+    this.patternHandlers = {
       [consts.GATE_ERROR_MITIGATION]: function (
         self,
         parentGfx,
@@ -82,7 +82,7 @@ export default class QuantMERenderer extends BpmnRenderer {
       ) {
         var subprocess = self.renderer("bpmn:SubProcess")(parentGfx, element);
 
-        var pathData = quantMEPathMap.getPath(
+        var pathData = patternPathMap.getPath(
           "SUBPROCESS_QUANTUM_HARDWARE_SELECTION"
         );
         drawPath(parentGfx, pathData, {
@@ -93,7 +93,7 @@ export default class QuantMERenderer extends BpmnRenderer {
         });
 
         // create circuit paths with filled shapes
-        pathData = quantMEPathMap.getPath(
+        pathData = patternPathMap.getPath(
           "SUBPROCESS_QUANTUM_HARDWARE_SELECTION_FILL"
         );
         drawPath(parentGfx, pathData, {
@@ -308,23 +308,23 @@ export default class QuantMERenderer extends BpmnRenderer {
       return true;
     }
 
-    // QuantME elements can be handled
-    for (var i = 0; i < quantmeReplaceOptions.ALGORITHM_PATTERN.length; i++) {
-      if (element.type === quantmeReplaceOptions.ALGORITHM_PATTERN[i].target.type) {
+    // pattern elements can be handled
+    for (var i = 0; i < patternReplaceOptions.ALGORITHM_PATTERN.length; i++) {
+      if (element.type === patternReplaceOptions.ALGORITHM_PATTERN[i].target.type) {
         return true;
       }
     }
 
-    // QuantME elements can be handled
-    for (var i = 0; i < quantmeReplaceOptions.BEHAVIORAL_PATTERN.length; i++) {
-      if (element.type === quantmeReplaceOptions.BEHAVIORAL_PATTERN[i].target.type) {
+    // pattern elements can be handled
+    for (var i = 0; i < patternReplaceOptions.BEHAVIORAL_PATTERN.length; i++) {
+      if (element.type === patternReplaceOptions.BEHAVIORAL_PATTERN[i].target.type) {
         return true;
       }
     }
 
-    // QuantME elements can be handled
-    for (var i = 0; i < quantmeReplaceOptions.AUGMENTATION_PATTERN.length; i++) {
-      if (element.type === quantmeReplaceOptions.AUGMENTATION_PATTERN[i].target.type) {
+    // pattern elements can be handled
+    for (var i = 0; i < patternReplaceOptions.AUGMENTATION_PATTERN.length; i++) {
+      if (element.type === patternReplaceOptions.AUGMENTATION_PATTERN[i].target.type) {
         return true;
       }
     }
@@ -334,25 +334,22 @@ export default class QuantMERenderer extends BpmnRenderer {
   }
 
   drawShape(parentNode, element) {
-    // handle QuantME elements
-    if (element.type in this.quantMeHandlers) {
-      var h = this.quantMeHandlers[element.type];
+    // handle pattern elements
+    if (element.type in this.patternHandlers) {
+      var h = this.patternHandlers[element.type];
 
       /* jshint -W040 */
       return h(this, parentNode, element);
     }
-
-    // use parent class for all non QuantME elements
-    return super.drawShape(parentNode, element);
   }
 }
 
-QuantMERenderer.$inject = [
+PatternRenderer.$inject = [
   "config",
   "eventBus",
   "styles",
   "pathMap",
-  "quantMEPathMap",
+  "patternPathMap",
   "canvas",
   "textRenderer",
 ];
