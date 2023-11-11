@@ -266,8 +266,6 @@ export default class CustomRulesProvider extends BpmnRules {
         return false;
       }
     }
-
-    return super.canCreate(shape, target, source, position);
   }
 
   /**

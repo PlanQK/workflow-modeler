@@ -1,5 +1,3 @@
-import * as consts from "../Constants";
-
 export default class PatternPaletteProvider {
   constructor(bpmnFactory, create, elementFactory, palette, translate) {
     this.bpmnFactory = bpmnFactory;
@@ -32,7 +30,7 @@ export default class PatternPaletteProvider {
         group: "pattern",
         separator: true,
       },
-      "create.pattern-service-task": {
+      "create.pattern": {
         group: "pattern",
         className: "qwm-planqk-icon-service-task-palette",
         title: translate(

@@ -20,9 +20,8 @@ export default class PatternRules extends RuleProvider {
     this.addRule("shape.create", 10000, function (context) {
       var shape = context.shape,
         target = context.target;
-
-      if (shape.type.includes("pattern")) {
-        return true;
+      if (shape.type.includes("pattern") && target.type !== "bpmn:ServiceTask") {
+        return false;
       }
     });
 
@@ -41,25 +40,24 @@ export default class PatternRules extends RuleProvider {
     });
 
     this.addRule("shape.replace", function (context) {
-      if (context.element.type.includes("Policy")) {
-        return false;
+      if (context.element.type.includes("pattern")) {
+        return true;
       }
     });
 
     this.addRule("shape.attach", 4000, function (context) {
       let shapeToAttach = context.shape;
       let target = context.target;
-      console.log("shape")
-      if (
-        shapeToAttach.type.includes("pattern") &&
-        target.type !== "bpmn:ServiceTask"
-      ) {
-        console.log(context);
-        return false;
-      }
       if (
         shapeToAttach.type.includes("pattern") &&
         target.type === "bpmn:ServiceTask"
+      ) {
+      return true;
+      }
+
+      if (
+        shapeToAttach.type.includes("pattern:WarmStart") &&
+        target.type === "quantme:QuantumCircuitLoadingTask"
       ) {
       return true;
       }
