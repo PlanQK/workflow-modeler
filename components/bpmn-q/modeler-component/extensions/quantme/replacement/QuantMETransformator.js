@@ -12,7 +12,7 @@
 import { layout } from "./layouter/Layouter";
 import { matchesQRM } from "./QuantMEMatcher";
 import { addQuantMEInputParameters } from "./InputOutputHandler";
-import * as Constants from "../Constants";
+import * as constants from "../Constants";
 import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
 import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
 import { insertShape } from "../../../editor/util/TransformationUtilities";
@@ -24,6 +24,7 @@ import {
   getSingleFlowElement,
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
+import { replaceDataObjects } from "./dataObjects/QuantMEDataObjectsHandler";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -66,12 +67,17 @@ export async function startQuantmeReplacementProcess(
 
   // check for available replacement models for all QuantME modeling constructs
   for (let replacementConstruct of replacementConstructs) {
+    console.log(replacementConstruct);
     if (
+      constants.QUANTME_DATA_OBJECTS.includes(
+        replacementConstruct.task.$type
+      ) ||
       replacementConstruct.task.$type ===
-      Constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+        constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
+      console.log("Found QuantME object of type:");
       console.log(
-        "QuantumHardwareSelectionSubprocess needs no QRM. Skipping search..."
+        "Hardware Selection Subprocesses and QuantME DataObjects needs no QRM. Skipping search..."
       );
       continue;
     }
@@ -100,7 +106,7 @@ export async function startQuantmeReplacementProcess(
   for (let replacementConstruct of replacementConstructs) {
     let replacementSuccess = false;
     if (
-      replacementConstruct.task.$type === Constants.CIRCUIT_CUTTING_SUBPROCESS
+      replacementConstruct.task.$type === constants.CIRCUIT_CUTTING_SUBPROCESS
     ) {
       replacementSuccess = await replaceCuttingSubprocess(
         replacementConstruct.task,
@@ -131,14 +137,14 @@ export async function startQuantmeReplacementProcess(
 
   // remove already replaced circuit cutting subprocesses from replacement list
   replacementConstructs = replacementConstructs.filter(
-    (construct) => construct.task.$type !== Constants.CIRCUIT_CUTTING_SUBPROCESS
+    (construct) => construct.task.$type !== constants.CIRCUIT_CUTTING_SUBPROCESS
   );
 
   for (let replacementConstruct of replacementConstructs) {
     let replacementSuccess = false;
     if (
       replacementConstruct.task.$type ===
-      Constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+      constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
       console.log("Transforming QuantumHardwareSelectionSubprocess...");
       replacementSuccess = await replaceHardwareSelectionSubprocess(
@@ -148,6 +154,14 @@ export async function startQuantmeReplacementProcess(
         endpointConfig.nisqAnalyzerEndpoint,
         endpointConfig.transformationFrameworkEndpoint,
         endpointConfig.camundaEndpoint
+      );
+    } else if (
+      constants.QUANTME_DATA_OBJECTS.includes(replacementConstruct.task.$type)
+    ) {
+      console.log("Transforming QuantME Data Objects...");
+      replacementSuccess = await replaceDataObjects(
+        replacementConstruct.task,
+        modeler
       );
     } else {
       console.log(
@@ -206,7 +220,7 @@ export function getQuantMETasks(process, elementRegistry) {
     if (
       flowElement.$type &&
       (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === Constants.CIRCUIT_CUTTING_SUBPROCESS)
+        flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
     ) {
       Array.prototype.push.apply(
         quantmeTasks,

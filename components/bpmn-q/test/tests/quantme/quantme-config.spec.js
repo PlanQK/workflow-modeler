@@ -17,7 +17,6 @@ describe("Test QuantME ConfigManager", function () {
         {
           name: "quantme",
           config: {
-            quantmeDataConfigurationsEndpoint: "http://test:8100/data-objects",
             nisqAnalyzerEndpoint: "http://test:8098/nisq-analyzer",
             transformationFrameworkEndpoint: "http://test:8888",
             qiskitRuntimeHandlerEndpoint: "http://test:8889",
@@ -32,9 +31,6 @@ describe("Test QuantME ConfigManager", function () {
         },
       ]);
 
-      expect(quantmeConfig.getQuantMEDataConfigurationsEndpoint()).to.equal(
-        "http://test:8100/data-objects"
-      );
       expect(quantmeConfig.getNisqAnalyzerEndpoint()).to.equal(
         "http://test:8098/nisq-analyzer"
       );

@@ -10,6 +10,7 @@ import {
   getPluginConfig,
   setPluginConfig,
 } from "../../../modeler-component/editor/plugin/PluginConfigHandler";
+import { pluginNames } from "../../../modeler-component/editor/EditorConstants";
 
 describe("Test plugins", function () {
   describe("Test PluginHandler", function () {
@@ -23,39 +24,77 @@ describe("Test plugins", function () {
 
       it("Should find 4 active plugins", function () {
         setPluginConfig([
-          { name: "dataflow" },
-          { name: "quantme" },
-          { name: "opentosca" },
-          { name: "planqk" },
+          { name: pluginNames.DATAFLOW },
+          { name: pluginNames.QUANTME },
+          { name: pluginNames.OPENTOSCA },
+          { name: pluginNames.PLANQK },
         ]);
 
         const plugins = getActivePlugins();
 
         expect(plugins.length).to.equal(4);
-        expect(plugins[0].name).to.equal("dataflow");
-        expect(plugins[1].name).to.equal("quantme");
-        expect(plugins[2].name).to.equal("opentosca");
-        expect(plugins[3].name).to.equal("planqk");
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.DATAFLOW)
+            .length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.OPENTOSCA)
+            .length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.QUANTME).length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.PLANQK).length
+        ).to.equal(1);
+      });
+
+      it("Should find 4 active plugins due to dependencies", function () {
+        setPluginConfig([
+          { name: pluginNames.DATAFLOW },
+          { name: pluginNames.QUANTME },
+          { name: pluginNames.PLANQK },
+        ]);
+
+        const plugins = getActivePlugins();
+
+        expect(plugins.length).to.equal(4);
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.DATAFLOW)
+            .length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.QUANTME).length
+        ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.PLANQK).length
+        ).to.equal(1);
+
+        // should be found due to dependency of quantme plugin
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.OPENTOSCA)
+            .length
+        ).to.equal(1);
       });
     });
 
     describe("Test getter for plugin attributes", function () {
       it("Should get correct plugin entries for active plugins", function () {
         setPluginConfig([
-          { name: "dataflow" },
-          { name: "quantme" },
-          { name: "opentosca" },
-          { name: "planqk" },
+          { name: pluginNames.DATAFLOW },
+          { name: pluginNames.QUANTME },
+          { name: pluginNames.OPENTOSCA },
+          { name: pluginNames.PLANQK },
         ]);
 
         const modules = getAdditionalModules();
         const extensions = getModdleExtension();
 
         expect(modules.length).to.equal(4);
-        expect(extensions["dataflow"]).to.not.be.undefined;
-        expect(extensions["quantme"]).to.not.be.undefined;
-        expect(extensions["opentosca"]).to.not.be.undefined;
-        expect(extensions["planqk"]).to.not.be.undefined;
+        expect(extensions[pluginNames.DATAFLOW]).to.not.be.undefined;
+        expect(extensions[pluginNames.QUANTME]).to.not.be.undefined;
+        expect(extensions[pluginNames.OPENTOSCA]).to.not.be.undefined;
+        expect(extensions[pluginNames.PLANQK]).to.not.be.undefined;
       });
     });
   });

@@ -176,3 +176,46 @@ export var SUBPROCESS = [
     },
   },
 ];
+
+export const DATA_OBJECT = [
+  {
+    label: "Quantum Circuit Object",
+    actionName: "replace-with-quantum-circuit-object",
+    className: "qwm quantum-circuit-object-icon",
+    target: {
+      type: consts.QUANTUM_CIRCUIT_OBJECT,
+    },
+  },
+  {
+    label: "Result Object",
+    actionName: "replace-with-result-object",
+    className: "qwm result-object-icon",
+    target: {
+      type: consts.RESULT_OBJECT,
+    },
+  },
+  {
+    label: "Evaluation Result Object",
+    actionName: "replace-with-evaluation-result-object",
+    className: "qwm evaluation-result-object-icon",
+    target: {
+      type: consts.EVALUATION_RESULT_OBJECT,
+    },
+  },
+  {
+    label: "Parametrization Object",
+    actionName: "replace-with-parametrization-object",
+    className: "qwm parametrization-object-icon",
+    target: {
+      type: consts.PARAMETRIZATION_OBJECT,
+    },
+  },
+  {
+    label: "Initial State Object",
+    actionName: "replace-with-initial-state-object",
+    className: "qwm initial-state-object-icon",
+    target: {
+      type: consts.INITIAL_STATE_OBJECT,
+    },
+  },
+];

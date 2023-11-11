@@ -18,13 +18,16 @@ const {
 const config = require("../../../modeler-component/extensions/quantme/framework-config/config-manager");
 const camundaConfig = require("../../../modeler-component/editor/config/EditorConfigManager");
 const chai = require("chai");
+const {
+  pluginNames,
+} = require("../../../modeler-component/editor/EditorConstants");
 describe("Test the QuantMETransformator of the QuantME extension.", function () {
   describe("Transformation of QuantME extensions", function () {
     it("should create a valid native workflow model after two transformations", async function () {
       setPluginConfig([
-        { name: "dataflow" },
+        { name: pluginNames.DATAFLOW },
         {
-          name: "quantme",
+          name: pluginNames.QUANTME,
           config: {
             githubRepositoryName: "QuantME-UseCases",
             githubUsername: "UST-QuAntiL",
@@ -89,7 +92,10 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
     it("should fail due to missing QRMs", async function () {
       resetQRMs();
       // setConfig();
-      setPluginConfig([{ name: "dataflow" }, { name: "quantme" }]);
+      setPluginConfig([
+        { name: pluginNames.DATAFLOW },
+        { name: pluginNames.QUANTME },
+      ]);
       this.timeout(60000);
 
       const result = await startQuantmeReplacementProcess(

@@ -64,13 +64,6 @@ To be able to deploy the modeled workflows without any errors to the Camunda wor
 
  the above Docker setup, stop the 'camunda-engine' container.
 
-To load configurations for custom QuantME DataMapObjects, start the Node.js server [QuantMEDataConfigurationsServer.js](../../components/bpmn-q/test/test-setup/QuantMEDataConfigurationsServer.js) by executing the following command:
-```
-node ./QuantMEDataConfigurationsServer.js
-```
-
-With this setup, all features of the modeler can be used properly.
-
 ### QHAna
 The QHAna plugin must load QHAna services from a backend server. For quick testing, the Node.js server [QHAnaMockServer.js](../../components/bpmn-q/test/test-setup/QHAnaMockServer.js) can be started.
 

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="180"
+   height="180"
+   overflow="hidden"
+   version="1.1"
+   id="svg459"
+   sodipodi:docname="result-object.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview461"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.3111111"
+     inkscape:cx="90"
+     inkscape:cy="90.381356"
+     inkscape:window-width="1920"
+     inkscape:window-height="1111"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg459" />
+  <defs
+     id="defs437">
+    <clipPath
+       id="clip0">
+      <rect
+         x="410"
+         y="115"
+         width="180"
+         height="180"
+         id="rect434" />
+    </clipPath>
+  </defs>
+  <g
+     clip-path="url(#clip0)"
+     transform="translate(-410 -115)"
+     id="g445">
+    <path
+       d="M457.659 139.5 518.325 139.5 548.5 169.675 548.5 264.5 457.5 264.5 457.5 139.659C457.5 139.571 457.571 139.5 457.659 139.5Z"
+       stroke="#34212E"
+       stroke-width="6.66667"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path439" />
+    <path
+       d="M518.5 139.5 518.5 170.508"
+       stroke="#34212E"
+       stroke-width="6.66667"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path441" />
+    <path
+       d="M0 0 29.4488 0.000104987"
+       stroke="#34212E"
+       stroke-width="6.66667"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       transform="matrix(-1 0 0 1 547.949 170.5)"
+       id="path443" />
+  </g>
+  <g
+     transform="matrix(0.91298106,0,0,0.89054835,49.256231,59.485543)"
+     id="g457">
+    <!-- Include the transformed content here -->
+    <path
+       d="M 20,14 H 14 V 82 H 82 V 76 H 20 Z"
+       fill="#404040"
+       id="path447" />
+    <rect
+       x="26"
+       y="35"
+       width="11"
+       height="35"
+       fill="#404040"
+       id="rect449" />
+    <rect
+       x="41"
+       y="14"
+       width="11"
+       height="56"
+       fill="#404040"
+       id="rect451" />
+    <rect
+       x="56"
+       y="35"
+       width="11"
+       height="35"
+       fill="#404040"
+       id="rect453" />
+    <rect
+       x="71"
+       y="52"
+       width="11"
+       height="18"
+       fill="#404040"
+       id="rect455" />
+  </g>
+</svg>
