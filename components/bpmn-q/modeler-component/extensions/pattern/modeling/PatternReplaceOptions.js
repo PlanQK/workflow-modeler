@@ -14,8 +14,8 @@ import * as consts from "../Constants";
 export var ALGORITHM_PATTERN = [
   {
     label: "Quantum Kernel Estimator",
-    actionName: "replace-with-pattern-gate-error-mitigation",
-    className: "qwm bpmn-pattern-gate-error-mitigation-icon",
+    actionName: "replace-with-pattern-quantum-kernel-estimator",
+    className: "qwm bpmn-pattern-quantum-kernel-estimator-icon",
     target: {
       type: consts.QUANTUM_KERNEL_ESTIMATOR,
     },
@@ -31,7 +31,7 @@ export var ALGORITHM_PATTERN = [
   {
     label: "Quantum Approximate Optimization Algorithm",
     actionName: "replace-with-pattern-quantum-approximate-optimization-algorithm",
-    className: "qwm bpmn-pattern-gate-error-mitigation-icon",
+    className: "qwm bpmn-pattern-gate-equantum-approximate-optimization-algorithm-icon",
     target: {
       type: consts.QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM,
     },

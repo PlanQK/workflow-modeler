@@ -19,7 +19,6 @@ import {
   innerSVG,
   select as svgSelect,
 } from "tiny-svg";
-import { getFillColor, getStrokeColor } from "bpmn-js/lib/draw/BpmnRenderUtil";
 import { getPatternSVG } from "./PatternSVGMap";
 import { queryAll as domQueryAll } from "min-dom";
 
@@ -40,26 +39,6 @@ export default class PatternRenderer extends BpmnRenderer {
 
     var computeStyle = styles.computeStyle;
 
-    var defaultFillColor = config && config.defaultFillColor,
-      defaultStrokeColor = config && config.defaultStrokeColor;
-
-    function drawEventSVG(parentGfx, iconID) {
-      var importsvg = getPatternSVG(iconID);
-      var innerSVGstring = importsvg.svg;
-      var transformDef = importsvg.transform;
-
-      const groupDef = svgCreate("g");
-      svgAttr(groupDef, { transform: transformDef });
-      innerSVG(groupDef, innerSVGstring);
-
-      // set task box opacity to 0 such that icon can be in the background
-      //svgAttr(svgSelect(parentGfx, "rect"), { "fill-opacity": 0 });
-      console.log(parentGfx);
-      svgAttr(svgSelect(parentGfx, "circle"), { "fill-opacity": 0 });
-      // draw svg in the background
-      parentGfx.prepend(groupDef);
-    }
-
     function drawTaskSVG(parentGfx, iconID) {
       var importsvg = getPatternSVG(iconID);
       var innerSVGstring = importsvg.svg;
@@ -76,20 +55,6 @@ export default class PatternRenderer extends BpmnRenderer {
       parentGfx.prepend(groupDef);
     }
 
-    function drawPath(parentGfx, d, attrs) {
-      attrs = computeStyle(attrs, ["no-fill"], {
-        strokeWidth: 2,
-        stroke: "black",
-      });
-
-      const path = svgCreate("path");
-      svgAttr(path, { d: d });
-      svgAttr(path, attrs);
-      svgAppend(parentGfx, path);
-
-      return path;
-    }
-
     this.patternHandlers = {
       [consts.QUANTUM_KERNEL_ESTIMATOR]: function (
         self,
@@ -100,7 +65,9 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
-        var task = self.renderer("bpmn:IntermediateThrowEvent")(parentGfx, element, attrs);
+        element.width = 43;
+        element.height = 43;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "QUANTUM_KERNEL_ESTIMATOR");
         return task;
       },
@@ -113,6 +80,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "ALTERNATING_OPERATOR_ANSATZ");
         return task;
@@ -126,6 +95,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM");
         return task;
@@ -139,6 +110,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "QUANTUM_PHASE_ESTIMATION");
         return task;
@@ -152,6 +125,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "VARIATIONAL_QUANTUM_ALGORITHM");
         return task;
@@ -165,6 +140,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "VARIATIONAL_QUANTUM_EIGENSOLVER");
         return task;
@@ -178,6 +155,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "ORCHESTRATED_EXECUTION");
         return task;
@@ -191,6 +170,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "PRE_DEPLOYED_EXECUTION");
         return task;
@@ -204,6 +185,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "PRIORITIZED_EXECUTION");
         return task;
@@ -217,6 +200,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "ERROR_CORRECTION");
         return task;
@@ -230,6 +215,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "READOUT_ERROR_MITIGATION");
         return task;
@@ -243,6 +230,10 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        console.log(parentGfx)
+        element.width = 43;
+        element.height = 43;
+
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "GATE_ERROR_MITIGATION");
         return task;
@@ -256,6 +247,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none"
         }
+        element.width = 43;
+        element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "WARM_START");
         return task;
