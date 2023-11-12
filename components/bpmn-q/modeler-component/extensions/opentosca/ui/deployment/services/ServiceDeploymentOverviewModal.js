@@ -21,7 +21,7 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function ServiceDeploymentOverviewModal({
   onClose,
-  initValues,
+  initValues, elementRegistry
 }) {
   // close if no deployment required
   if (!initValues || initValues.length === 0) {
@@ -43,7 +43,24 @@ export default function ServiceDeploymentOverviewModal({
       },
     });
 
-  const listItems = initValues.map((CSAR) => (
+    const filteredInitValues = initValues.filter((CSAR) =>
+    CSAR.serviceTaskIds.some(
+      (taskId) => {
+        const taskData = elementRegistry.get(taskId);
+        return taskData && !taskData.businessObject.onDemand;
+      }
+    )
+  );
+  // Modify the filteredInitValues to update the serviceTaskIds
+  const updatedInitValues = filteredInitValues.map((CSAR) => {
+    const updatedServiceTaskIds = CSAR.serviceTaskIds.filter((taskId) => {
+      const taskData = elementRegistry.get(taskId);
+      return taskData && !taskData.businessObject.onDemand;
+    });
+    return { ...CSAR, serviceTaskIds: updatedServiceTaskIds };
+  });
+
+  const listItems = updatedInitValues.map((CSAR) => (
     <tr key={CSAR.csarName}>
       <td>{CSAR.csarName}</td>
       <td>{CSAR.serviceTaskIds.join(",")}</td>

@@ -28,20 +28,16 @@ export default function ServiceOnDemandDeploymentOverviewModal({
     onClose();
   }
 
-  let progressBarRef = React.createRef();
-  let progressBarDivRef = React.createRef();
   let footerRef = React.createRef();
 
   const onDemand = (value) =>
   onClose({
     onDemand: value,
   });
-  console.log('filteredInitValues:', initValues);
   const filteredInitValues = initValues.filter((CSAR) =>
   CSAR.serviceTaskIds.some(
     (taskId) => {
       const taskData = elementRegistry.get(taskId);
-      console.log(taskData)
       return taskData && taskData.businessObject.onDemand;
     }
   )
@@ -52,12 +48,9 @@ const updatedInitValues = filteredInitValues.map((CSAR) => {
     const taskData = elementRegistry.get(taskId);
     return taskData && taskData.businessObject.onDemand;
   });
-
-  // Return a new CSAR object with updated serviceTaskIds
   return { ...CSAR, serviceTaskIds: updatedServiceTaskIds };
 });
 
-  console.log('filteredInitValues:', filteredInitValues);
   const listItems = updatedInitValues.map((CSAR) => (
     <tr key={CSAR.csarName}>
       <td>{CSAR.csarName}</td>

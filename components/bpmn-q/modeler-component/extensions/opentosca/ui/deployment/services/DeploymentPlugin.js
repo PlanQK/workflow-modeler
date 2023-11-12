@@ -424,6 +424,7 @@ export default class DeploymentPlugin extends PureComponent {
           <ServiceDeploymentOverviewModal
             onClose={this.handleDeploymentOverviewClosed}
             initValues={this.getServiceTasksToDeployForModal()}
+            elementRegistry={this.modeler.get('elementRegistry')}
           />
         )}
         {this.state.windowOpenDeploymentInput && (
