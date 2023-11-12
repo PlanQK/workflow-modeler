@@ -141,6 +141,10 @@ export async function startOnDemandReplacementProcess(xml) {
   );
 
   for (const serviceTask of serviceTasks) {
+    let onDemand = serviceTask.businessObject.get(
+      "onDemand"
+    );
+    if (onDemand) {
     let deploymentModelUrl = serviceTask.businessObject.get(
       "opentosca:deploymentModelUrl"
     );
@@ -252,7 +256,7 @@ export async function startOnDemandReplacementProcess(xml) {
       { x: 1000, y: 200 },
       subProcess
     );
-  }
+  }}
 
   // layout diagram after successful transformation
   let updatedXml = await getXml(modeler);

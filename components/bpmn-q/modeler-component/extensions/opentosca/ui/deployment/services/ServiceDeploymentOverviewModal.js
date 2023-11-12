@@ -53,7 +53,7 @@ export default function ServiceDeploymentOverviewModal({
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (1/3)</Title>
+      <Title>Service Deployment (2/4)</Title>
 
       <Body>
         <h3 className="spaceUnder">
