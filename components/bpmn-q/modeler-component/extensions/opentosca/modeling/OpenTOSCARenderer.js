@@ -104,13 +104,13 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           canExecute && (canExecute === "attach" || canExecute.attach);
         const isRelevantEvent =
           context.shape.type === "bpmn:IntermediateThrowEvent" ||
-          context.shape.type === "bpmn:BoundaryEvent";
+          context.shape.type === "bpmn:BoundaryEvent" || context.shape.type.includes("Policy");
 
         if (
           canAttach &&
           isRelevantEvent &&
           context.target.businessObject.get("opentosca:deploymentModelUrl") &&
-          getOrientation(event, target, -30) === "bottom-right"
+          getOrientation(event, target, -50) === "bottom-right"
         ) {
           // Prevent snapping on deployment visualisation toggle button
           event.stopPropagation();
