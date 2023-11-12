@@ -52,6 +52,7 @@ export default function ServiceTaskPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
+
       // update ServiceTasks with the deployment extension
       if (element.type && element.type === "bpmn:ServiceTask") {
         groups[2] = ImplementationGroup(element, injector);

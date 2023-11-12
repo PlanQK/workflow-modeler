@@ -16,13 +16,13 @@ import OpenTOSCAReplaceMenuProvider from "./OpenTOSCAReplaceMenuProvider";
 export default {
   __init__: [
     "openToscaRenderer",
-    "propertiesProvider",
+    "openToscaPropertiesProvider",
     "openToscaRules",
     "openToscaPalette",
     "openToscaReplaceMenuProvider",
   ],
   openToscaRenderer: ["type", OpenTOSCARenderer],
-  propertiesProvider: ["type", ServiceTaskPropertiesProvider],
+  openToscaPropertiesProvider: ["type", ServiceTaskPropertiesProvider],
   openToscaRules: ["type", OpenTOSCARules],
   openToscaPalette: ["type", OpenTOSCAPaletteProvider],
   openToscaReplaceMenuProvider: ["type", OpenTOSCAReplaceMenuProvider],
