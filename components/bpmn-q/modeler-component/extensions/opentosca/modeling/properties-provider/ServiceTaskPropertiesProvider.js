@@ -14,10 +14,13 @@ import { Group } from "@bpmn-io/properties-panel";
 import { getWineryEndpoint } from "../../framework-config/config-manager";
 import { DeploymentModelProps } from "./DeploymentModelProps";
 import {
-  PrivacyPolicyTaskEntries,
-  DeploymentPolicyTaskEntries,
+  DeploymentPolicyEntries,
+  CloudDeploymentModelPolicyEntries,
+  DedicatedHostingPolicyEntries,
+  LocationPolicyEntries,
 } from "./OpenTOSCATaskProperties";
 import * as consts from "../../Constants";
+import { is } from "bpmn-js/lib/util/ModelUtil";
 
 const LOW_PRIORITY = 500;
 
@@ -60,7 +63,7 @@ export default function ServiceTaskPropertiesProvider(
       }
 
       // add properties of policies to panel
-      if (element.type && element.type.startsWith("opentosca:")) {
+      if (element.type && element.type.startsWith("opentosca:") && element.type !=="opentosca:Policy") {
         groups.unshift(createOpenTOSCAGroup(element, translate));
       }
       return groups;
@@ -152,12 +155,16 @@ function createOpenTOSCAGroup(element, translate) {
  */
 function OpenTOSCAProps(element) {
   switch (element.type) {
-    case consts.PRIVACY_POLICY:
-      return PrivacyPolicyTaskEntries(element);
+    case consts.CLOUD_DEPLOYMENT_MODEL_POLICY:
+      return CloudDeploymentModelPolicyEntries(element);
+    case consts.DEDICATED_HOSTING_POLICY:
+      return DedicatedHostingPolicyEntries(element);
     case consts.DEPLOYMENT_POLICY:
-      return DeploymentPolicyTaskEntries(element);
+      return DeploymentPolicyEntries(element);
+    case consts.LOCATION_POLICY:
+      return LocationPolicyEntries(element);
     case consts.POLICY:
-      return;
+      break;
     default:
       console.log("Unsupported OpenTOSCA element of type: ", element.type);
   }

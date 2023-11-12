@@ -65,8 +65,8 @@ export default class OpenTOSCARules extends RuleProvider {
           let boundaryElement = target.attachers[i];
 
           if (
-            boundaryElement.type === consts.PRIVACY_POLICY &&
-            shapeToAttach.type === consts.PRIVACY_POLICY
+            boundaryElement.type === consts.DEDICATED_HOSTING &&
+            shapeToAttach.type === consts.DEDICATED_HOSTING
           ) {
             return false;
           }

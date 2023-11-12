@@ -13,6 +13,22 @@ import * as consts from "../Constants";
 
 export var POLICY = [
   {
+    label: "Cloud Deployment Model Policy",
+    actionName: "replace-with-cloud-deployment-model-policy",
+    className: "qwm bpmn-icon-deployment-policy",
+    target: {
+      type: consts.CLOUD_DEPLOYMENT_MODEL_POLICY,
+    },
+  },
+  {
+    label: "Dedicated Hosting Policy",
+    actionName: "replace-with-dedicated-hosting-policy",
+    className: "qwm bpmn-icon-deployment-policy",
+    target: {
+      type: consts.DEDICATED_HOSTING_POLICY,
+    },
+  },
+  {
     label: "Deployment Policy",
     actionName: "replace-with-deployment-policy",
     className: "qwm bpmn-icon-deployment-policy",
@@ -21,11 +37,11 @@ export var POLICY = [
     },
   },
   {
-    label: "Privacy Policy",
-    actionName: "replace-with-privacy-policy",
-    className: "qwm bpmn-icon-privacy-policy",
+    label: "Location Policy",
+    actionName: "replace-with-location-policy",
+    className: "qwm bpmn-icon-deployment-policy",
     target: {
-      type: consts.PRIVACY_POLICY,
+      type: consts.LOCATION_POLICY,
     },
-  },
+  }
 ];

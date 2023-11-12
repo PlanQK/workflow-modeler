@@ -28,14 +28,9 @@
       ]
     },
     {
-      "name": "PrivacyPolicy",
+      "name": "CloudDeploymentModelPolicy",
       "superClass": ["bpmn:Event"],
       "properties": [
-        {
-          "name": "componentSharing",
-          "isAttr": true,
-          "type": "String"
-        },
         {
           "name": "cloudType",
           "isAttr": true,
@@ -49,6 +44,28 @@
       "properties": [
         {
           "name": "onDemand",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "DedicatedHostingPolicy",
+      "superClass": ["bpmn:Event"],
+      "properties": [
+        {
+          "name": "dedicatedHosting",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "LocationPolicy",
+      "superClass": ["bpmn:Event"],
+      "properties": [
+        {
+          "name": "location",
           "isAttr": true,
           "type": "String"
         }

@@ -134,7 +134,17 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "POLICY");
         return task;
       },
-      [consts.PRIVACY_POLICY]: function (self, parentGfx, element) {
+      [consts.CLOUD_DEPLOYMENT_MODEL_POLICY]: function (self, parentGfx, element) {
+        var attrs = {
+          fill: "white",
+          stroke: "none",
+        };
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        setTimeout(function () {}, 10000);
+        drawTaskSVG(parentGfx, "PRIVACY_POLICY");
+        return task;
+      },
+      [consts.DEDICATED_HOSTING_POLICY]: function (self, parentGfx, element) {
         var attrs = {
           fill: "white",
           stroke: "none",
@@ -152,6 +162,16 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "DEPLOYMENT_POLICY");
+        return task;
+      },
+      [consts.LOCATION_POLICY]: function (self, parentGfx, element) {
+        var attrs = {
+          fill: "white",
+          stroke: "none",
+        };
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        setTimeout(function () {}, 10000);
+        drawTaskSVG(parentGfx, "PRIVACY_POLICY");
         return task;
       },
     };

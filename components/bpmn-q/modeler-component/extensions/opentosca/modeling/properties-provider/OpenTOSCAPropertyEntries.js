@@ -11,7 +11,7 @@
 
 import React from "@bpmn-io/properties-panel/preact/compat";
 
-import { SelectEntry, CheckboxEntry } from "@bpmn-io/properties-panel";
+import { SelectEntry, CheckboxEntry, TextFieldEntry } from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
 
@@ -59,6 +59,36 @@ export function CloudTypeEntry({ element }) {
   );
 }
 
+export function DedicatedHostingEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.dedicatedHosting;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      dedicatedHosting: newValue,
+    });
+  };
+
+  return (
+    <CheckboxEntry
+      id={consts.DEDICATED_HOSTING}
+      label={translate("Dedicated Hosting")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
 export function OnDemandEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
@@ -96,7 +126,7 @@ export function OnDemandEntry({ element }) {
   );
 }
 
-export function ComponentSharingEntry({ element }) {
+export function LocationEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
     useService("translate") ||
@@ -106,32 +136,22 @@ export function ComponentSharingEntry({ element }) {
   const debounce = useService("debounceInput");
 
   const getValue = function () {
-    return element.businessObject.componentSharing;
+    return element.businessObject.location;
   };
 
   const setValue = function (newValue) {
     return modeling.updateProperties(element, {
-      componentSharing: newValue,
+      location: newValue,
     });
   };
 
-  const selectOptions = [
-    { value: "dedicated", label: "Dedicated Component" },
-    { value: "shared", label: "Shared Component" },
-    { value: "tenantIsolated", label: "Tenant-isolated Component" },
-  ];
-
-  const getOptions = function () {
-    return selectOptions;
-  };
-
   return (
-    <SelectEntry
-      id={consts.COMPONENT_SHARING}
-      label={translate("Component Sharing")}
+    <TextFieldEntry
+      id={consts.LOCATION}
+      element={element}
+      label={translate("Location")}
       getValue={getValue}
       setValue={setValue}
-      getOptions={getOptions}
       debounce={debounce}
     />
   );

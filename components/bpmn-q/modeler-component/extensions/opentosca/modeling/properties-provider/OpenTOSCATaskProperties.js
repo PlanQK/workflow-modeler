@@ -2,14 +2,37 @@ import * as consts from "../../Constants";
 import { isTextFieldEntryEdited } from "@bpmn-io/properties-panel";
 import {
   CloudTypeEntry,
-  ComponentSharingEntry,
+  DedicatedHostingEntry,
+  LocationEntry,
   OnDemandEntry,
 } from "./OpenTOSCAPropertyEntries.js";
 
 /**
  * This file contains all properties of the OpenTOSCA modeling constructs and the entries they define.
  */
-export function DeploymentPolicyTaskEntries(element) {
+export function CloudDeploymentModelPolicyEntries(element) {
+  return [
+    {
+      id: consts.CLOUD_TYPE,
+      element,
+      component: CloudTypeEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function DedicatedHostingPolicyEntries(element) {
+  return [
+    {
+      id: consts.DEDICATED_HOSTING,
+      element,
+      component: DedicatedHostingEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function DeploymentPolicyEntries(element) {
   return [
     {
       id: consts.ON_DEMAND,
@@ -20,18 +43,12 @@ export function DeploymentPolicyTaskEntries(element) {
   ];
 }
 
-export function PrivacyPolicyTaskEntries(element) {
+export function LocationPolicyEntries(element) {
   return [
     {
-      id: consts.COMPONENT_SHARING,
+      id: consts.LOCATION,
       element,
-      component: ComponentSharingEntry,
-      isEdited: isTextFieldEntryEdited,
-    },
-    {
-      id: consts.CLOUD_TYPE,
-      element,
-      component: CloudTypeEntry,
+      component: LocationEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];
