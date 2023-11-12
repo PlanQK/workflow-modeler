@@ -1,6 +1,6 @@
 import * as consts from "../Constants";
 
-export default class QuantMEPaletteProvider {
+export default class OpenTOSCAPaletteProvider {
   constructor(bpmnFactory, create, elementFactory, palette, translate) {
     this.bpmnFactory = bpmnFactory;
     this.create = create;
@@ -29,15 +29,13 @@ export default class QuantMEPaletteProvider {
     return {
       // add separator line to delimit the new group
       "quantme-separator": {
-        group: "quantme",
+        group: "opentosca",
         separator: true,
       },
-      "create.quantme-policy": {
+      "create.opentosca-policy": {
         group: "quantme",
         className: "qwm-quantme-icon-policy-palette",
-        title: translate(
-          "Creates a policy"
-        ),
+        title: translate("Creates a policy"),
         action: {
           click: createPolicy,
           dragstart: createPolicy,
@@ -47,7 +45,7 @@ export default class QuantMEPaletteProvider {
   }
 }
 
-QuantMEPaletteProvider.$inject = [
+OpenTOSCAPaletteProvider.$inject = [
   "bpmnFactory",
   "create",
   "elementFactory",

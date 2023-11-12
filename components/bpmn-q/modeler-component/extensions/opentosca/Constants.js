@@ -8,4 +8,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+export const POLICY = "opentosca:Policy";
+export const PRIVACY_POLICY = "opentosca:PrivacyPolicy";
+export const DEPLOYMENT_POLICY = "opentosca:DeploymentPolicy";
+
 export const ON_DEMAND = "onDemand";
+export const COMPONENT_SHARING = "componentSharing";
+export const CLOUD_TYPE = "cloudType";

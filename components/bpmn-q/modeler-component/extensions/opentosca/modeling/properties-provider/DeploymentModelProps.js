@@ -11,7 +11,10 @@
 import React from "@bpmn-io/properties-panel/preact/compat";
 import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import { ArtifactUpload } from "./ArtifactUpload";
-import { CheckboxEntry, isTextFieldEntryEdited, SelectEntry } from "@bpmn-io/properties-panel";
+import {
+  CheckboxEntry,
+  isTextFieldEntryEdited,
+} from "@bpmn-io/properties-panel";
 import { Deployment } from "./Deployment";
 import { useService } from "bpmn-js-properties-panel";
 
@@ -60,7 +63,6 @@ export function DeploymentModelProps(props) {
 
   return entries;
 }
-
 
 export function OnDemandEntry({ element }) {
   const modeling = useService("modeling");

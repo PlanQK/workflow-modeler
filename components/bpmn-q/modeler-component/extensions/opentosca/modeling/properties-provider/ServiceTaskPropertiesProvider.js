@@ -13,6 +13,11 @@ import { ImplementationProps } from "./ImplementationProps";
 import { Group } from "@bpmn-io/properties-panel";
 import { getWineryEndpoint } from "../../framework-config/config-manager";
 import { DeploymentModelProps } from "./DeploymentModelProps";
+import {
+  PrivacyPolicyTaskEntries,
+  DeploymentPolicyTaskEntries,
+} from "./OpenTOSCATaskProperties";
+import * as consts from "../../Constants";
 
 const LOW_PRIORITY = 500;
 
@@ -24,7 +29,8 @@ const LOW_PRIORITY = 500;
  */
 export default function ServiceTaskPropertiesProvider(
   propertiesPanel,
-  injector
+  injector,
+  translate
 ) {
   /**
    * Return the groups provided for the given element.
@@ -51,6 +57,11 @@ export default function ServiceTaskPropertiesProvider(
           injector,
           getWineryEndpoint()
         );
+      }
+
+      // add properties of policies to panel
+      if (element.type && element.type.startsWith("opentosca:")) {
+        groups.unshift(createOpenTOSCAGroup(element, translate));
       }
       return groups;
     };
@@ -115,4 +126,39 @@ function DeploymentModelGroup(element, injector, wineryEndpoint) {
   }
 
   return null;
+}
+
+/**
+ * Create properties group to display custom properties in the properties panel. The entries of this group
+ * depend on the actual type of the given element and are determined in OpenTOSCAProps.
+ *
+ * @param element The given element
+ * @param translate The translate function of the bpmn-js modeler.
+ * @return {{entries: ([{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]|*|[{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *},{component: function({element: *}): *, isEdited: function(*): *, id: string, element: *}]), id: string, label}}
+ */
+function createOpenTOSCAGroup(element, translate) {
+  // add required properties to general tab
+  return {
+    id: "opentoscaServiceDetails",
+    label: translate("Details"),
+    entries: OpenTOSCAProps(element),
+  };
+}
+
+/**
+ * Add the property entries for the attributes to the given group based on the type of the OpenTOSCA element
+ *
+ * @param element the OpenTOSCA element
+ */
+function OpenTOSCAProps(element) {
+  switch (element.type) {
+    case consts.PRIVACY_POLICY:
+      return PrivacyPolicyTaskEntries(element);
+    case consts.DEPLOYMENT_POLICY:
+      return DeploymentPolicyTaskEntries(element);
+    case consts.POLICY:
+      return;
+    default:
+      console.log("Unsupported OpenTOSCA element of type: ", element.type);
+  }
 }

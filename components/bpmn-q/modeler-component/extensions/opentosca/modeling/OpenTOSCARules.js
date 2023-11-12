@@ -12,7 +12,7 @@
 import RuleProvider from "diagram-js/lib/features/rules/RuleProvider";
 import * as consts from "../Constants";
 
-export default class QuantMERules extends RuleProvider {
+export default class OpenTOSCARules extends RuleProvider {
   constructor(eventBus, modeling) {
     super(eventBus);
     this.modeling = modeling;
@@ -84,4 +84,4 @@ export default class QuantMERules extends RuleProvider {
   }
 }
 
-QuantMERules.$inject = ["eventBus"];
+OpenTOSCARules.$inject = ["eventBus"];

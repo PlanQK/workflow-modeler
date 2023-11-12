@@ -10,9 +10,20 @@
  */
 import ServiceTaskPropertiesProvider from "./properties-provider/ServiceTaskPropertiesProvider";
 import OpenTOSCARenderer from "./OpenTOSCARenderer";
-
+import OpenTOSCAPaletteProvider from "./OpenTOSCAPaletteProvider";
+import OpenTOSCARules from "./OpenTOSCARules";
+import OpenTOSCAReplaceMenuProvider from "./OpenTOSCAReplaceMenuProvider";
 export default {
-  __init__: ["openToscaRenderer", "serviceTaskPropertyProvider"],
+  __init__: [
+    "openToscaRenderer",
+    "propertiesProvider",
+    "openToscaRules",
+    "openToscaPalette",
+    "openToscaReplaceMenuProvider",
+  ],
   openToscaRenderer: ["type", OpenTOSCARenderer],
-  serviceTaskPropertyProvider: ["type", ServiceTaskPropertiesProvider],
+  propertiesProvider: ["type", ServiceTaskPropertiesProvider],
+  openToscaRules: ["type", OpenTOSCARules],
+  openToscaPalette: ["type", OpenTOSCAPaletteProvider],
+  openToscaReplaceMenuProvider: ["type", OpenTOSCAReplaceMenuProvider],
 };

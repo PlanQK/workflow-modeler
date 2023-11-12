@@ -314,36 +314,6 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "TASK_TYPE_RESULT_EVALUATION");
         return task;
       },
-      [consts.POLICY]: function (self, parentGfx, element) {
-        var attrs = {
-          fill: "white",
-          stroke: "none",
-        };
-        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
-        setTimeout(function () {}, 10000);
-        drawTaskSVG(parentGfx, "POLICY");
-        return task;
-      },
-      [consts.PRIVACY_POLICY]: function (self, parentGfx, element) {
-        var attrs = {
-          fill: "white",
-          stroke: "none",
-        };
-        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
-        setTimeout(function () {}, 10000);
-        drawTaskSVG(parentGfx, "PRIVACY_POLICY");
-        return task;
-      },
-      [consts.DEPLOYMENT_POLICY]: function (self, parentGfx, element) {
-        var attrs = {
-          fill: "white",
-          stroke: "none",
-        };
-        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
-        setTimeout(function () {}, 10000);
-        drawTaskSVG(parentGfx, "DEPLOYMENT_POLICY");
-        return task;
-      },
       [consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK]: function (
         self,
         parentGfx,
@@ -381,38 +351,6 @@ export default class QuantMERenderer extends BpmnRenderer {
     return this.handlers[type];
   }
 
-  drawScroll(parentGfx, width, height, offset, attrs) {
-
-    if (isObject(offset)) {
-      attrs = offset;
-      offset = 0;
-    }
-
-    offset = offset || 0;
-
-    attrs = shapeStyle(attrs);
-
-    var cx = width / 2,
-        cy = height / 2;
-
-    var scroll = svgCreate('g', attrs);
-
-    // Zeichnen der Schriftrollenform
-    var scrollPath = `M${cx - width / 2},${cy} C${cx - width / 2},${cy - height / 4} ${cx + width / 2},${cy - height / 4} ${cx + width / 2},${cy}`;
-    var scrollShape = svgCreate('path', { d: scrollPath });
-    svgAppend(scroll, scrollShape);
-
-    // Zeichnen der gerollten Enden der Schriftrolle
-    var scrollEnd1 = svgCreate('circle', { cx: cx - width / 2, cy: cy, r: height / 4 });
-    var scrollEnd2 = svgCreate('circle', { cx: cx + width / 2, cy: cy, r: height / 4 });
-
-    svgAppend(scroll, scrollEnd1);
-    svgAppend(scroll, scrollEnd2);
-
-    svgAppend(parentGfx, scroll);
-
-    return scroll;
-}
   canRender(element) {
     // default elements can be handled
     if (super.canRender(element)) {

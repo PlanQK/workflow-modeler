@@ -23,11 +23,14 @@ import {
   append as svgAppend,
   attr as svgAttr,
   create as svgCreate,
-  select,
+  innerSVG,
+  select as svgSelect,
   prepend as svgPrepend,
 } from "tiny-svg";
 import { query as domQuery } from "min-dom";
 import { loadTopology } from "../deployment/WineryUtils";
+import * as consts from "../Constants";
+import { getOpenTOSCASVG } from "./OpenTOSCASVGMap";
 
 const HIGH_PRIORITY = 14001;
 const SERVICE_TASK_TYPE = "bpmn:ServiceTask";
@@ -72,6 +75,22 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     this.styles = styles;
     this.textRenderer = textRenderer;
 
+    function drawTaskSVG(parentGfx, iconID) {
+      var importsvg = getOpenTOSCASVG(iconID);
+      var innerSVGstring = importsvg.svg;
+      var transformDef = importsvg.transform;
+
+      const groupDef = svgCreate("g");
+      svgAttr(groupDef, { transform: transformDef });
+      innerSVG(groupDef, innerSVGstring);
+
+      // set task box opacity to 0 such that icon can be in the background
+      svgAttr(svgSelect(parentGfx, "rect"), { "fill-opacity": 0 });
+
+      // draw svg in the background
+      parentGfx.prepend(groupDef);
+    }
+
     // snap boundary events
     eventBus.on(
       ["create.move", "create.end", "shape.move.move", "shape.move.end"],
@@ -103,6 +122,36 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       [SERVICE_TASK_TYPE]: function (self, parentGfx, element) {
         const task = self.renderer("bpmn:ServiceTask")(parentGfx, element);
         self.showDeploymentModelButton(parentGfx, element);
+        return task;
+      },
+      [consts.POLICY]: function (self, parentGfx, element) {
+        var attrs = {
+          fill: "white",
+          stroke: "none",
+        };
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        setTimeout(function () {}, 10000);
+        drawTaskSVG(parentGfx, "POLICY");
+        return task;
+      },
+      [consts.PRIVACY_POLICY]: function (self, parentGfx, element) {
+        var attrs = {
+          fill: "white",
+          stroke: "none",
+        };
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        setTimeout(function () {}, 10000);
+        drawTaskSVG(parentGfx, "PRIVACY_POLICY");
+        return task;
+      },
+      [consts.DEPLOYMENT_POLICY]: function (self, parentGfx, element) {
+        var attrs = {
+          fill: "white",
+          stroke: "none",
+        };
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        setTimeout(function () {}, 10000);
+        drawTaskSVG(parentGfx, "DEPLOYMENT_POLICY");
         return task;
       },
     };
@@ -615,7 +664,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
 
   removeDeploymentModel(parentGfx, element) {
     this.currentlyShownDeploymentsModels.delete(element.id);
-    const group = select(parentGfx, "#" + DEPLOYMENT_GROUP_ID);
+    const group = svgSelect(parentGfx, "#" + DEPLOYMENT_GROUP_ID);
     if (group) {
       group.remove();
     }
