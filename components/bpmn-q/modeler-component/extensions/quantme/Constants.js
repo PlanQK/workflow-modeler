@@ -30,6 +30,12 @@ export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
 
+export const QUANTUM_CIRCUIT_OBJECT = "quantme:QuantumCircuitObject";
+export const RESULT_OBJECT = "quantme:ResultObject";
+export const EVALUATION_RESULT_OBJECT = "quantme:EvaluationResultObject";
+export const PARAMETRIZATION_OBJECT = "quantme:ParameterizationObject";
+export const INITIAL_STATE_OBJECT = "quantme:InitialStateObject";
+
 // Property names of the QuantME constructs
 export const ALGORITHM = "algorithm";
 export const PROVIDER = "provider";
@@ -71,7 +77,10 @@ export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
 
-export const ON_DEMAND = "onDemand";
+export const EXECUTION_RESULT = "executionResult";
+export const EVALUATION_RESULT = "evaluationResult";
+export const INITIAL_STATE = "initialState";
+export const PARAMETRIZATION = "parametrization";
 
 // endpoint paths of connected services
 export const NISQ_ANALYZER_QPU_SELECTION_PATH = "nisq-analyzer/qpu-selection";
@@ -121,4 +130,12 @@ export const QUANTME_ATTRIBUTES = [
   MAX_SUBCIRCUIT_WIDTH,
   MAX_NUMBER_OF_CUTS,
   MAXIMUM_NUM_SUBCIRCUITS,
+];
+
+export const QUANTME_DATA_OBJECTS = [
+  QUANTUM_CIRCUIT_OBJECT,
+  RESULT_OBJECT,
+  INITIAL_STATE_OBJECT,
+  EVALUATION_RESULT_OBJECT,
+  PARAMETRIZATION_OBJECT,
 ];

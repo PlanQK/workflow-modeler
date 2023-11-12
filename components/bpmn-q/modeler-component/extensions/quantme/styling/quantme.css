@@ -470,42 +470,52 @@
   margin-top: -1px; /* Adjust the value as per your requirements */
 }
 
-.bpmn-icon-privacy-policy:before {
-  content: "";
-  width: 20px;
-  margin-right: 5px;
-  height: 15px;
-  margin-top: 3px;
-  background-size: contain;
-  background-image: url("../resources/PrivacyPolicy_Icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-}
-
-.bpmn-icon-deployment-policy:before {
-  content: "";
-  width: 20px;
-  margin-right: 5px;
-  height: 15px;
-  margin-top: 3px;
-  background-size: contain;
-  background-image: url("../resources/DeploymentPolicy_Icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-}
-
-.qwm-quantme-icon-policy-palette:before {
+.quantum-circuit-object-icon:before {
   content: "";
   width: 10px;
   height: 10px;
   background-size: contain;
-  background-image: url("../resources/policy.svg");
+  background-image: url("../resources/quantum-circuit-data-object.svg");
   background-repeat: no-repeat;
   display: inline-block;
-  margin-top: 10px;
-  padding: 11px 8px 11px 10px;
-  outline: none;
 }
-.qwm-quantme-icon-policy-palette:hover {
-  filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
+
+.result-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/result-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.evaluation-result-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/evaluation-result-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.parametrization-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/parametrization-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.initial-state-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/initial-state-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
 }

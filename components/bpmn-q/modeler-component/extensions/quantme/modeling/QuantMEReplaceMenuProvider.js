@@ -15,8 +15,6 @@ import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn,
 } from "../../../editor/util/PopupMenuUtilities";
-import { createConfigurationsEntries } from "../../../editor/configurations/ConfigurationsUtil";
-import { instance as dataObjectConfigs } from "../configurations/DataObjectConfigurations";
 import * as dataConsts from "../../data-extension/Constants";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
@@ -99,6 +97,41 @@ export default class QuantMEReplaceMenuProvider {
    * @param element The given element
    * @return {{'replace-by-more-options': {label: string, className: string, action: Function}}}
    */
+  createQuantMEDataEntry(element) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+    let filteredOptions = filter(
+      quantmeReplaceOptions.DATA_OBJECT,
+      isDifferentType(element)
+    );
+
+    // create menu entries for the QuantME task types
+    let options = createMenuEntries(
+      element,
+      filteredOptions,
+      translate,
+      replaceElement
+    );
+
+    return {
+      ["replace-by-more-options"]: createMoreOptionsEntryWithReturn(
+        element,
+        "QuantME Data Objects",
+        "QuantME Data Objects",
+        popupMenu,
+        options,
+        "quantme-tasks-icon"
+      ),
+    };
+  }
+
+  /**
+   * Creates MoreOptionsEntry for the QuantME data objects configurations.
+   *
+   * @param element the given element the menu entries are requested for.
+   * @return {{'replace-by-quantme-data-options': {label: string, className: string, action: Function}}}
+   */
   createQuantMETasks(element) {
     const popupMenu = this.popupMenu;
     const translate = this.translate;
@@ -121,42 +154,6 @@ export default class QuantMEReplaceMenuProvider {
         element,
         "QuantME Tasks",
         "QuantME Tasks",
-        popupMenu,
-        options,
-        "quantme-tasks-icon"
-      ),
-    };
-  }
-
-  /**
-   * Creates MoreOptionsEntry for the QuantME data objects configurations.
-   *
-   * @param element the given element the menu entries are requested for.
-   * @return {{'replace-by-quantme-data-options': {label: string, className: string, action: Function}}}
-   */
-  createQuantMEDataEntry(element) {
-    const bpmnFactory = this.bpmnFactory;
-    const modeling = this.modeling;
-    const popupMenu = this.popupMenu;
-    const replaceElement = this.replaceElement;
-    const commandStack = this.commandStack;
-
-    // create menu entries to replace the current element by the configuration represented by the menu entry
-    let options = createConfigurationsEntries(
-      element,
-      "dataflow-data-map-object-icon",
-      dataObjectConfigs().getQuantMEDataConfigurations(),
-      bpmnFactory,
-      modeling,
-      commandStack,
-      replaceElement
-    );
-
-    return {
-      ["replace-by-quantme-data-options"]: createMoreOptionsEntryWithReturn(
-        element,
-        "QuantME Data Objects",
-        "QuantME Data Objects",
         popupMenu,
         options,
         "quantme-tasks-icon"

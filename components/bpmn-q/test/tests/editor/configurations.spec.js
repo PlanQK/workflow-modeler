@@ -14,12 +14,12 @@ describe("Test configurations", function () {
       );
 
       fetchStub = sinon
-        .stub(configurationsEndpoint, "fetchConfigurations")
+        .stub(configurationsEndpoint, "fetchConfiguration")
         .callsFake(() => {
-          configurationsEndpoint._configurations = VALID_DUMMY_CONFIGURATIONS;
+          configurationsEndpoint.configurations = VALID_DUMMY_CONFIGURATIONS;
         });
 
-      configurationsEndpoint.fetchConfigurations();
+      configurationsEndpoint.fetchConfiguration();
     });
 
     after(function () {
@@ -43,7 +43,7 @@ describe("Test configurations", function () {
         const configurations =
           configurationsEndpoint.getConfigurations("bpmn:ServiceTask");
 
-        expect(configurationsEndpoint._configurations.length).to.equal(3);
+        expect(configurationsEndpoint.configurations.length).to.equal(3);
         expect(configurations.length).to.equal(0);
       });
 
