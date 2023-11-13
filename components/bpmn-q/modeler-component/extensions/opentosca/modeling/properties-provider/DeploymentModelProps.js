@@ -17,6 +17,7 @@ import {
 } from "@bpmn-io/properties-panel";
 import { Deployment } from "./Deployment";
 import { useService } from "bpmn-js-properties-panel";
+import * as consts from "../../Constants";
 
 /**
  * Properties group for service tasks. Extends the original implementation by adding a new selection option to the
@@ -37,7 +38,7 @@ export function DeploymentModelProps(props) {
   // list of configuration options
   const entries = [];
   entries.push({
-    id: "onDemand",
+    id: consts.ON_DEMAND,
     element,
     component: OnDemandEntry,
     isEdited: isTextFieldEntryEdited,
@@ -78,6 +79,12 @@ export function OnDemandEntry({ element }) {
   };
 
   const setValue = function (newValue) {
+    let attachers = element.attachers;
+    for(let i = 0; i< attachers.length; i++) {
+      if(attachers[i].type === consts.DEPLOYMENT_POLICY) {
+        attachers[i].businessObject.onDemand = newValue;
+      }
+    }
     return modeling.updateProperties(element, {
       onDemand: newValue,
     });
@@ -85,7 +92,7 @@ export function OnDemandEntry({ element }) {
 
   return (
     <CheckboxEntry
-      id={"onDemand"}
+      id={consts.ON_DEMAND}
       label={translate("Deploy on-demand")}
       getValue={getValue}
       setValue={setValue}

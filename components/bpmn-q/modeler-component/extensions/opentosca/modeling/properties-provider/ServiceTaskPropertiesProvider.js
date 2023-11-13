@@ -164,8 +164,6 @@ function OpenTOSCAProps(element) {
       return DeploymentPolicyEntries(element);
     case consts.LOCATION_POLICY:
       return LocationPolicyEntries(element);
-    case consts.POLICY:
-      break;
     default:
       console.log("Unsupported OpenTOSCA element of type: ", element.type);
   }
