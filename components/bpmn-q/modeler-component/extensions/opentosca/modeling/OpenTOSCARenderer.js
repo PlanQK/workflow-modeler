@@ -782,7 +782,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                     needsResize = true;
                 }
                 if (oldBounds.x + oldBounds.width < boundingBox.right) {
-                    newBounds.width = boundingBox.right - oldBounds.x + NODE_WIDTH;
+                    newBounds.width = boundingBox.right - oldBounds.x + NODE_WIDTH*2;
                     needsResize = true;
                 }
                 if (oldBounds.y + oldBounds.height < boundingBox.bottom) {
