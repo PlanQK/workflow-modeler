@@ -19,6 +19,8 @@ import {
   getDefinitionsFromXml,
   getRootProcess,
 } from "../../../../editor/util/ModellingUtilities";
+import { getModeler } from "../../../../editor/ModelerHandler";
+import * as quantmeConsts from "../../../quantme/Constants";
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
  */
@@ -33,10 +35,33 @@ export async function replaceWarmStart(
   let bpmnReplace = modeler.get("bpmnReplace");
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
+  let em = getModeler().get('elementRegistry');
+  let host = em.get(subprocess.id).host;
+  console.log(host)
+
+  let internHost = elementRegistry.get(host.id);
+  let warmStartTask = modeling.createShape(
+    { type: quantmeConsts.WARM_STARTING_TASK },
+    { x: 50, y: 50 },
+    parent,
+    {}
+  );
+
+  let startEvent = null;
+  let combinePointers = [];
+  let incomingFlows = [];
+  host.incoming.forEach((element) => {
+    console.log(element);
+    console.log(element.source)
+    console.log(warmStartTask)
+    
+  });
+  modeling.connect(warmStartTask, internHost, { type: "bpmn:SequenceFlow" });
 
   // get host and insert Warm-starting Task & remove event
   // modeling.removeShape(subprocess);
   const events = elementRegistry.get(subprocess.id);
+  console.log(events)
   modeling.removeShape(elementRegistry.get(subprocess.id));
   modeling.removeElements([events]);
   /** 

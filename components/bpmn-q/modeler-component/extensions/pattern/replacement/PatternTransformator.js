@@ -75,6 +75,8 @@ export async function startPatternReplacementProcess(
     if (
       replacementConstruct.task.$type === "pattern:WarmStart"
     ) {
+      console.log(replacementConstruct);
+
       
       replacementSuccess = await replaceWarmStart(
         replacementConstruct.task,
@@ -164,6 +166,7 @@ export function getPatterns(process, elementRegistry) {
   const flowElements = process.flowElements;
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
+    
     if (flowElement.$type && flowElement.$type.startsWith("pattern:")) {
       quantmeTasks.push({ task: flowElement, parent: processBo });
     }
