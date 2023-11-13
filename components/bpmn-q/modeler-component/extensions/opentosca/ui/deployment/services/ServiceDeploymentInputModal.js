@@ -14,10 +14,26 @@ import React from "react";
 
 // polyfill upcoming structural components
 import Modal from "../../../../../editor/ui/modal/Modal";
+import {fetch} from "whatwg-fetch";
+import config from "../../../framework-config/config";
+import {forEach} from "min-dash";
+import {useState} from "diagram-js/lib/ui";
 
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
+
+
+function synchronousRequest(url) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', url, false);
+  xhr.send(null);
+  if (xhr.status === 200) {
+    return xhr.responseText;
+  } else {
+    throw new Error('Request failed: ' + xhr.statusText);
+  }
+}
 
 export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   // refs to enable changing the state through the plugin
@@ -31,10 +47,71 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       event.target.value;
   };
 
+  const handleCompletionChange = (event, nodetype, attribute) => {
+    nodetypesToChange[nodetype]['requiredAttributes'][attribute] = event.target.value;
+  };
+
+
   // TODO: add post endpoint to winery here which receives true false if one of csars is incomplete
   const containsIncompleteModels = true;
+  let completionHTML = [];
+  let nodetypesToChange = {};
   if (containsIncompleteModels) {
-    let nodetypes = await fetch("http://localhost:8093/winery/nodetypes/?includeVersions=true");
+    try {
+      const url = config.wineryEndpoint + "/nodetypes";
+      const nodetypes = JSON.parse(synchronousRequest(url));
+      nodetypes.forEach(nodetype =>{
+        const nodetypeUri = encodeURIComponent(encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))).replace("%257D", "/");
+        const tags = JSON.parse(synchronousRequest(url + '/' + nodetypeUri + "/tags"));
+        const type = tags.filter(x => x.name === "type")?.[0];
+        const requiredAttributes = tags.filter(x => x.name === "requiredAttributes")?.[0]?.value?.split(',');
+        console.log(requiredAttributes);
+        if (requiredAttributes !== undefined) {
+          const attributeListHTML = [];
+          nodetype['requiredAttributes'] = {};
+          nodetypesToChange[nodetype.name] = nodetype;
+          requiredAttributes.forEach(attribute => {
+            nodetype['requiredAttributes'][attribute] = "";
+            attributeListHTML.push(
+                <tr
+                    key={nodetype.name + "-" + attribute}
+                >
+                  <td>{attribute}</td>
+                  <td>
+            <textarea
+                value={nodetypesToChange[nodetype.name]['requiredAttributes'][attribute]}
+                onChange={(event) => handleCompletionChange(event, nodetype.name, attribute)}
+            />
+                  </td>
+                </tr>
+            );
+          });
+
+          completionHTML.push(
+              <div key={nodetype.name} style={{}}>
+                <h3 key={nodetype.name + 'h3'}  className="spaceUnderSmall" ><img  style={{height: '20px', width: '20px', verticalAlign: 'text-bottom'}} src={url + '/' + nodetypeUri + "/appearance/50x50"}  alt={url + '/' + nodetypeUri + "/appearance/50x50"}/> {nodetype.name}: </h3>
+                <table>
+                  <tbody>
+                  <tr>
+                    <th>Parameter Name</th>
+                    <th>Value</th>
+                  </tr>
+                  {attributeListHTML}
+                  </tbody>
+                </table>
+              </div>
+          );
+        }
+      });
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+
+    if (completionHTML.length > 0){
+      completionHTML.push(
+          <h3 className="spaceUnder">Uploaded CSARs contain incomplete Deployment Models requiring additional data for completion</h3>
+      );
+    }
   }
 
   // determine input parameters that have to be passed by the user
@@ -115,6 +192,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     onClose({
       next: true,
       csarList: initValues,
+      nodeTypeRequirements: nodetypesToChange,
       refs: {
         progressBarRef: progressBarRef,
         progressBarDivRef: progressBarDivRef,
@@ -130,6 +208,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         <h3 className="spaceUnder">
           CSARs successfully uploaded to the OpenTOSCA Container.
         </h3>
+
+        {completionHTML}
 
         <h3 className="spaceUnder" hidden={!inputRequired}>
           The following CSARs require input parameters:
