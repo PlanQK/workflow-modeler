@@ -14,10 +14,10 @@ import React from "react";
 
 // polyfill upcoming structural components
 import Modal from "../../../../../editor/ui/modal/Modal";
-import {fetch} from "whatwg-fetch";
+import { fetch } from "whatwg-fetch";
 import config from "../../../framework-config/config";
-import {forEach} from "min-dash";
-import {useState} from "diagram-js/lib/ui";
+import { forEach } from "min-dash";
+import { useState } from "diagram-js/lib/ui";
 
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -25,12 +25,12 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 function synchronousRequest(url) {
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', url, false);
+  xhr.open("GET", url, false);
   xhr.send(null);
   if (xhr.status === 200) {
     return xhr.responseText;
   } else {
-    throw new Error('Request failed: ' + xhr.statusText);
+    throw new Error("Request failed: " + xhr.statusText);
   }
 }
 
@@ -47,67 +47,93 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   };
 
   const handleCompletionChange = (event, nodetype, attribute) => {
-    nodetypesToChange[nodetype]['requiredAttributes'][attribute] = event.target.value;
+    nodetypesToChange[nodetype]["requiredAttributes"][attribute] =
+      event.target.value;
   };
 
   // check if one of the CSARs requires completion
-  const containsIncompleteModels = initValues.filter(csar => csar.complete).length > 0;
+  const containsIncompleteModels =
+    initValues.filter((csar) => csar.incomplete).length > 0;
   let completionHTML = [];
   let nodetypesToChange = {};
   if (containsIncompleteModels) {
     try {
       const url = config.wineryEndpoint + "/nodetypes";
       const nodetypes = JSON.parse(synchronousRequest(url));
-      nodetypes.forEach(nodetype =>{
-        const nodetypeUri = encodeURIComponent(encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))).replace("%257D", "/");
-        const tags = JSON.parse(synchronousRequest(url + '/' + nodetypeUri + "/tags"));
-        const type = tags.filter(x => x.name === "type")?.[0];
-        const requiredAttributes = tags.filter(x => x.name === "requiredAttributes")?.[0]?.value?.split(',');
+      nodetypes.forEach((nodetype) => {
+        const nodetypeUri = encodeURIComponent(
+          encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
+        ).replace("%257D", "/");
+        const tags = JSON.parse(
+          synchronousRequest(url + "/" + nodetypeUri + "/tags")
+        );
+        const type = tags.filter((x) => x.name === "type")?.[0];
+        const requiredAttributes = tags
+          .filter((x) => x.name === "requiredAttributes")?.[0]
+          ?.value?.split(",");
         console.log(requiredAttributes);
         if (requiredAttributes !== undefined) {
           const attributeListHTML = [];
-          nodetype['requiredAttributes'] = {};
+          nodetype["requiredAttributes"] = {};
           nodetypesToChange[nodetype.name] = nodetype;
-          requiredAttributes.forEach(attribute => {
-            nodetype['requiredAttributes'][attribute] = "";
+          requiredAttributes.forEach((attribute) => {
+            nodetype["requiredAttributes"][attribute] = "";
             attributeListHTML.push(
-                <tr
-                    key={nodetype.name + "-" + attribute}
-                >
-                  <td>{attribute}</td>
-                  <td>
-            <textarea
-                value={nodetypesToChange[nodetype.name]['requiredAttributes'][attribute]}
-                onChange={(event) => handleCompletionChange(event, nodetype.name, attribute)}
-            />
-                  </td>
-                </tr>
+              <tr key={nodetype.name + "-" + attribute}>
+                <td>{attribute}</td>
+                <td>
+                  <textarea
+                    value={
+                      nodetypesToChange[nodetype.name]["requiredAttributes"][
+                        attribute
+                      ]
+                    }
+                    onChange={(event) =>
+                      handleCompletionChange(event, nodetype.name, attribute)
+                    }
+                  />
+                </td>
+              </tr>
             );
           });
 
           completionHTML.push(
-              <div key={nodetype.name} style={{}}>
-                <h3 key={nodetype.name + 'h3'}  className="spaceUnderSmall" ><img  style={{height: '20px', width: '20px', verticalAlign: 'text-bottom'}} src={url + '/' + nodetypeUri + "/appearance/50x50"}  alt={url + '/' + nodetypeUri + "/appearance/50x50"}/> {nodetype.name}: </h3>
-                <table>
-                  <tbody>
+            <div key={nodetype.name} style={{}}>
+              <h3 key={nodetype.name + "h3"} className="spaceUnderSmall">
+                <img
+                  style={{
+                    height: "20px",
+                    width: "20px",
+                    verticalAlign: "text-bottom",
+                  }}
+                  src={url + "/" + nodetypeUri + "/appearance/50x50"}
+                  alt={url + "/" + nodetypeUri + "/appearance/50x50"}
+                />{" "}
+                {nodetype.name}:{" "}
+              </h3>
+              <table>
+                <tbody>
                   <tr>
                     <th>Parameter Name</th>
                     <th>Value</th>
                   </tr>
                   {attributeListHTML}
-                  </tbody>
-                </table>
-              </div>
+                </tbody>
+              </table>
+            </div>
           );
         }
       });
     } catch (error) {
-      console.error('Error:', error.message);
+      console.error("Error:", error.message);
     }
 
-    if (completionHTML.length > 0){
+    if (completionHTML.length > 0) {
       completionHTML.push(
-          <h3 className="spaceUnder">Uploaded CSARs contain incomplete Deployment Models requiring additional data for completion</h3>
+        <h3 className="spaceUnder">
+          Uploaded CSARs contain incomplete Deployment Models requiring
+          additional data for completion
+        </h3>
       );
     }
   }
@@ -117,72 +143,75 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   let inputRequired = false;
   for (let i = 0; i < initValues.length; i++) {
     let csar = initValues[i];
-    let inputParams = csar.inputParameters;
 
-    let paramsToRetrieve = [];
-    for (let j = 0; j < inputParams.length; j++) {
-      let inputParam = inputParams[j];
+    // only visualize input params of already completed CSARs
+    if (!csar.incomplete) {
+      let inputParams = csar.inputParameters;
 
-      // skip parameters that are automatically set by the OpenTOSCA Container
-      if (
-        inputParam.name === "instanceDataAPIUrl" ||
-        inputParam.name === "CorrelationID" ||
-        inputParam.name === "csarEntrypoint" ||
+      let paramsToRetrieve = [];
+      for (let j = 0; j < inputParams.length; j++) {
+        let inputParam = inputParams[j];
+
+        // skip parameters that are automatically set by the OpenTOSCA Container
+        if (
+          inputParam.name === "instanceDataAPIUrl" ||
+          inputParam.name === "CorrelationID" ||
+          inputParam.name === "csarEntrypoint" ||
           inputParam.name === "planCallbackAddress_invoker"
-      ) {
-        paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
-        continue;
+        ) {
+          paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
+          continue;
+        }
+
+        // skip parameters that are automatically set during service binding
+        if (
+          inputParam.name === "camundaTopic" ||
+          inputParam.name === "camundaEndpoint"
+        ) {
+          paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
+          continue;
+        }
+
+        paramsToRetrieve.push({ hidden: false, inputParam: inputParam });
       }
 
-      // skip parameters that are automatically set during service binding
       if (
-        inputParam.name === "camundaTopic" ||
-        inputParam.name === "camundaEndpoint"
+        paramsToRetrieve.filter((param) => param.hidden === false).length > 0
       ) {
-        paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
-        continue;
-      }
+        inputRequired = true;
 
-      paramsToRetrieve.push({ hidden: false, inputParam: inputParam });
-    }
-
-    if (paramsToRetrieve.filter((param) => param.hidden === false).length > 0) {
-      inputRequired = true;
-
-      // add entries for the parameters
-      const listItems = paramsToRetrieve.map((param, j) => {
-        const paramName = param.inputParam.name;
-        return (
-            <tr
-                key={csar.csarName + "-" + paramName}
-                hidden={param.hidden}
-            >
+        // add entries for the parameters
+        const listItems = paramsToRetrieve.map((param, j) => {
+          const paramName = param.inputParam.name;
+          return (
+            <tr key={csar.csarName + "-" + paramName} hidden={param.hidden}>
               <td>{param.inputParam.name}</td>
               <td>
-            <textarea
-                value={initValues[i][j]}
-                onChange={(event) => handleInputChange(event, i, j)}
-            />
+                <textarea
+                  value={initValues[i][j]}
+                  onChange={(event) => handleInputChange(event, i, j)}
+                />
               </td>
             </tr>
-        );
-      });
+          );
+        });
 
-      // assemble the table
-      csarInputParts.push(
-        <div key={csar.csarName}>
-          <h3 className="spaceUnderSmall">{csar.csarName}:</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>Parameter Name</th>
-                <th>Value</th>
-              </tr>
-              {listItems}
-            </tbody>
-          </table>
-        </div>
-      );
+        // assemble the table
+        csarInputParts.push(
+          <div key={csar.csarName}>
+            <h3 className="spaceUnderSmall">{csar.csarName}:</h3>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Parameter Name</th>
+                  <th>Value</th>
+                </tr>
+                {listItems}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
     }
   }
 

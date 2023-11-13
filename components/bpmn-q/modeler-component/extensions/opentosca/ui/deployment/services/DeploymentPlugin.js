@@ -87,46 +87,54 @@ export default class DeploymentPlugin extends PureComponent {
 
       // calculate progress step size for the number of CSARs to deploy
       let csarList = result.csarList;
-      let progressStep = Math.round(90 / csarList.length);
+      let progressStep = Math.round(
+        90 / csarList.filter((csar) => !csar.incomplete).length
+      );
 
       // upload all CSARs
       for (let i = 0; i < csarList.length; i++) {
         let csar = csarList[i];
-        console.log("Uploading CSAR to OpenTOSCA container: ", csar);
 
-        let uploadResult = await uploadCSARToContainer(
-          this.modeler.config.opentoscaEndpoint,
-          csar.csarName,
-          csar.url,
-          this.modeler.config.wineryEndpoint
-        );
-        if (uploadResult.success === false) {
-          // notify user about failed CSAR upload
-          NotificationHandler.getInstance().displayNotification({
-            type: "error",
-            title: "Unable to upload CSAR to the OpenTOSCA Container",
-            content:
-              "CSAR defined for ServiceTasks with Id '" +
-              csar.serviceTaskIds +
-              "' could not be uploaded to the connected OpenTOSCA Container!",
-            duration: 20000,
-          });
+        // skip incomplete CSARs as they are uploaded after completion
+        if (csar.incomplete) {
+          console.log("Skipping CSAR as it is currently incomplete: ", csar);
+        } else {
+          console.log("Uploading CSAR to OpenTOSCA container: ", csar);
 
-          // abort process
-          this.setState({
-            windowOpenDeploymentOverview: false,
-            windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false,
-          });
-          return;
+          let uploadResult = await uploadCSARToContainer(
+            this.modeler.config.opentoscaEndpoint,
+            csar.csarName,
+            csar.url,
+            this.modeler.config.wineryEndpoint
+          );
+          if (uploadResult.success === false) {
+            // notify user about failed CSAR upload
+            NotificationHandler.getInstance().displayNotification({
+              type: "error",
+              title: "Unable to upload CSAR to the OpenTOSCA Container",
+              content:
+                "CSAR defined for ServiceTasks with Id '" +
+                csar.serviceTaskIds +
+                "' could not be uploaded to the connected OpenTOSCA Container!",
+              duration: 20000,
+            });
+
+            // abort process
+            this.setState({
+              windowOpenDeploymentOverview: false,
+              windowOpenDeploymentInput: false,
+              windowOpenDeploymentBinding: false,
+            });
+            return;
+          }
+
+          // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
+          csar.buildPlanUrl = uploadResult.url;
+          csar.inputParameters = uploadResult.inputParameters;
+
+          // increase progress in the UI
+          this.handleProgress(progressBar, progressStep);
         }
-
-        // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
-        csar.buildPlanUrl = uploadResult.url;
-        csar.inputParameters = uploadResult.inputParameters;
-
-        // increase progress in the UI
-        this.handleProgress(progressBar, progressStep);
       }
 
       this.csarList = csarList;

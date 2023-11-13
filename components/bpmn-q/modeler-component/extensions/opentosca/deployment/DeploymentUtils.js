@@ -47,7 +47,7 @@ export function getServiceTasksToDeploy(startElement) {
           url: flowElement.deploymentModelUrl,
           type: getBindingType(flowElement),
           csarName: getCSARName(flowElement),
-          complete: true, // TODO: check with Winery
+          incomplete: true, // TODO: check with Winery
         });
       }
     }
