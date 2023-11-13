@@ -63,8 +63,34 @@
       "properties": []
     },
     {
+      "name": "Activity",
+      "extends": ["bpmn:Activity"],
+      "properties": [
+        {
+          "name": "boundaryEventRefs",
+          "type": "pattern:PrioritizedExecution",
+          "replaces": "bpmn:Activity#boundaryEventRefs",
+          "isMany": true,
+          "isReference": true
+        }
+      ]
+    },
+    {
+      "name": "BoundaryEvent",
+      "extends": ["bpmn:BoundaryEvent"],
+      "properties": [
+        {
+          "name": "attachedToRef",
+          "type": "bpmn:Activity",
+          "isAttr": true,
+          "replaces": "bpmn:BoundaryEvent#attachedToRef",
+          "isReference": true
+        }
+      ]
+    },
+    {
       "name": "GateErrorMitigation",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {

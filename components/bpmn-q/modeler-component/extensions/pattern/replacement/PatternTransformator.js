@@ -8,7 +8,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import * as constants from "../Constants";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
@@ -16,7 +15,7 @@ import {
   getRootProcess,
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
-
+import { replaceWarmStart } from "./warm-start/WarmStartPatternHandler";
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
  *
@@ -32,7 +31,6 @@ export async function startPatternReplacementProcess(
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
-
   // get root element of the current diagram
   const definitions = modeler.getDefinitions();
   const rootElement = getRootProcess(definitions);
@@ -44,7 +42,6 @@ export async function startPatternReplacementProcess(
       cause: "Unable to retrieve root process element from definitions!",
     };
   }
-
   // get all QuantME modeling constructs from the process
   let replacementConstructs = getPatterns(rootElement, elementRegistry);
   console.log(
@@ -55,7 +52,6 @@ export async function startPatternReplacementProcess(
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
   }
-
   // check for available replacement models for all QuantME modeling constructs
   for (let replacementConstruct of replacementConstructs) {
     console.log(replacementConstruct);
@@ -73,24 +69,21 @@ export async function startPatternReplacementProcess(
       continue;
     }
   }
-
   // first replace cutting subprocesses and insert tasks
   for (let replacementConstruct of replacementConstructs) {
-    let replacementSuccess = false;
+    let replacementSuccess = true;
     if (
-      replacementConstruct.task.$type === "constants.CIRCUIT_CUTTING_SUBPROCESS"
+      replacementConstruct.task.$type === "pattern:WarmStart"
     ) {
-      /** 
-      replacementSuccess = await replaceCuttingSubprocess(
+      
+      replacementSuccess = await replaceWarmStart(
         replacementConstruct.task,
         replacementConstruct.parent,
-        replacementConstruct.qrm.replacement,
+        replacementConstruct.qrm,
         modeler,
         definitions,
-        endpointConfig.transformationFrameworkEndpoint,
-        endpointConfig.camundaEndpoint
       );
-      */
+
       console.log("Successfully replaced Cutting Subprocess");
       if (!replacementSuccess) {
         console.log(
@@ -108,14 +101,12 @@ export async function startPatternReplacementProcess(
       }
     }
   }
-
   // remove already replaced circuit cutting subprocesses from replacement list
   replacementConstructs = replacementConstructs.filter(
     (construct) => construct.task.$type !== "constants.CIRCUIT_CUTTING_SUBPROCESS"
   );
-
   for (let replacementConstruct of replacementConstructs) {
-    let replacementSuccess = false;
+    let replacementSuccess = true;
     if (
       replacementConstruct.task.$type ===
       "constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS"
@@ -142,7 +133,6 @@ export async function startPatternReplacementProcess(
       );
       */
     }
-
     if (!replacementSuccess) {
       console.log(
         "Replacement of QuantME modeling construct with Id " +
@@ -158,21 +148,18 @@ export async function startPatternReplacementProcess(
       };
     }
   }
-
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
   let updated_xml = await getXml(modeler);
   console.log(updated_xml);
   return { status: "transformed", xml: updated_xml };
 }
-
 /**
  * Get QuantME tasks from process
  */
 export function getPatterns(process, elementRegistry) {
   // retrieve parent object for later replacement
   const processBo = elementRegistry.get(process.id);
-
   const quantmeTasks = [];
   const flowElements = process.flowElements;
   for (let i = 0; i < flowElements.length; i++) {
@@ -180,7 +167,6 @@ export function getPatterns(process, elementRegistry) {
     if (flowElement.$type && flowElement.$type.startsWith("pattern:")) {
       quantmeTasks.push({ task: flowElement, parent: processBo });
     }
-
     // recursively retrieve QuantME tasks if subprocess is found
     if (
       flowElement.$type &&
