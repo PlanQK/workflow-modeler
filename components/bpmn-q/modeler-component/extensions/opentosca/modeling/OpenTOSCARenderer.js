@@ -774,19 +774,19 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                 let needsResize = false;
 
                 if (oldBounds.x > boundingBox.left) {
-                    newBounds.x = boundingBox.left - NODE_WIDTH / 2;
+                    newBounds.x = boundingBox.left - NODE_WIDTH / 3;
                     needsResize = true;
                 }
                 if (oldBounds.y > boundingBox.top) {
-                    newBounds.y = boundingBox.top - NODE_HEIGHT / 2;
+                    newBounds.y = boundingBox.top - NODE_HEIGHT / 3;
                     needsResize = true;
                 }
                 if (oldBounds.x + oldBounds.width < boundingBox.right) {
-                    newBounds.width = boundingBox.right - oldBounds.x + NODE_WIDTH / 2;
+                    newBounds.width = boundingBox.right - oldBounds.x + NODE_WIDTH;
                     needsResize = true;
                 }
                 if (oldBounds.y + oldBounds.height < boundingBox.bottom) {
-                    newBounds.height = boundingBox.bottom - oldBounds.y + NODE_HEIGHT / 2;
+                    newBounds.height = boundingBox.bottom - oldBounds.y + NODE_HEIGHT;
                     needsResize = true;
                 }
 
@@ -806,26 +806,26 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
                     this.commandStack.execute("shape.resize", event.context);
                 }
             }
-        }
-
-        if (!element.executingResize) {
-            element.executingResize = true;
-            const event = {
-                context: {
-                    shape: {
-                        ...element,
-                        parent: element.parent,
-                        x: boundingBox.left + NODE_WIDTH / 2,
-                        y: boundingBox.top + NODE_HEIGHT / 2,
-                        width: boundingBox.right - boundingBox.left - NODE_WIDTH,
-                        height: boundingBox.bottom - boundingBox.top - NODE_HEIGHT,
+        } else {
+            if (!element.executingResize) {
+                element.executingResize = true;
+                const event = {
+                    context: {
+                        shape: {
+                            ...element,
+                            parent: element.parent,
+                            x: boundingBox.left + NODE_WIDTH / 2,
+                            y: boundingBox.top + NODE_HEIGHT / 2,
+                            width: boundingBox.right - boundingBox.left - NODE_WIDTH,
+                            height: boundingBox.bottom - boundingBox.top - NODE_HEIGHT,
+                        },
+                        hints: {},
                     },
-                    hints: {},
-                },
-            };
-            this.eventBus.fire("commandStack.shape.resize.preExecute", event);
-            this.eventBus.fire("commandStack.shape.resize.postExecuted", event);
-            element.executingResize = undefined;
+                };
+                this.eventBus.fire("commandStack.shape.resize.preExecute", event);
+                this.eventBus.fire("commandStack.shape.resize.postExecuted", event);
+                element.executingResize = undefined;
+            }
         }
     }
 }
