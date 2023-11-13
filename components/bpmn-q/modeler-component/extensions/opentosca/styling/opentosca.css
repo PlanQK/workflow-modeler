@@ -123,3 +123,58 @@
   background-size: contain;
   float: left;
 }
+
+.qwm .opentosca-icon-policy-palette:before {
+  content: "";
+  width: 30px;
+  height: 30px;
+  margin-top: 5px;
+  background-size: contain;
+  background-image: url("../resources/Policy.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .opentosca-icon-policy-palette:hover {
+  filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
+}
+
+.qwm .bpmn-icon-cloud-deployment-model-policy:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/clouddeploymentmodel_palette.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-icon-location-policy:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/location_policy_palette.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-icon-dedicated-hosting-policy:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/dedicatedHosting_policy_palette.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-icon-deployment-policy:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/deployment_policy_palette.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}

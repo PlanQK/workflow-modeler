@@ -15,7 +15,7 @@ export var POLICY = [
   {
     label: "Cloud Deployment Model Policy",
     actionName: "replace-with-cloud-deployment-model-policy",
-    className: "qwm bpmn-icon-deployment-policy",
+    className: "qwm bpmn-icon-cloud-deployment-model-policy",
     target: {
       type: consts.CLOUD_DEPLOYMENT_MODEL_POLICY,
     },
@@ -23,7 +23,7 @@ export var POLICY = [
   {
     label: "Dedicated Hosting Policy",
     actionName: "replace-with-dedicated-hosting-policy",
-    className: "qwm bpmn-icon-deployment-policy",
+    className: "qwm bpmn-icon-dedicated-hosting-policy",
     target: {
       type: consts.DEDICATED_HOSTING_POLICY,
     },
@@ -39,7 +39,7 @@ export var POLICY = [
   {
     label: "Location Policy",
     actionName: "replace-with-location-policy",
-    className: "qwm bpmn-icon-deployment-policy",
+    className: "qwm bpmn-icon-location-policy",
     target: {
       type: consts.LOCATION_POLICY,
     },
