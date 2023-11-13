@@ -23,7 +23,6 @@ const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-
 function synchronousRequest(url) {
   const xhr = new XMLHttpRequest();
   xhr.open('GET', url, false);
@@ -41,7 +40,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   let progressBarDivRef = React.createRef();
   let footerRef = React.createRef();
 
-  // propagte updates on dynamically created input fields to corresponding parameter fields
+  // propagate updates on dynamically created input fields to corresponding parameter fields
   const handleInputChange = (event, csarIndex, paramIndex) => {
     initValues[csarIndex].inputParameters[paramIndex].value =
       event.target.value;
@@ -51,9 +50,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     nodetypesToChange[nodetype]['requiredAttributes'][attribute] = event.target.value;
   };
 
-
-  // TODO: add post endpoint to winery here which receives true false if one of csars is incomplete
-  const containsIncompleteModels = true;
+  // check if one of the CSARs requires completion
+  const containsIncompleteModels = initValues.filter(csar => csar.complete).length > 0;
   let completionHTML = [];
   let nodetypesToChange = {};
   if (containsIncompleteModels) {
