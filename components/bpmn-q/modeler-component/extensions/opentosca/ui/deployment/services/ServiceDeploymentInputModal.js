@@ -46,8 +46,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       event.target.value;
   };
 
-  const handleCompletionChange = (event, nodetype, attribute) => {
-    nodetypesToChange[nodetype]["requiredAttributes"][attribute] =
+  const handleCompletionChange = (event, nodetypeName, attribute) => {
+    nodetypesToChange[nodetypeName].requiredAttributes[attribute] =
       event.target.value;
   };
 
@@ -60,6 +60,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     try {
       const url = config.wineryEndpoint + "/nodetypes";
       const nodetypes = JSON.parse(synchronousRequest(url));
+      console.log("Found NodeTypes: ", nodetypes);
+
       nodetypes.forEach((nodetype) => {
         const nodetypeUri = encodeURIComponent(
           encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
@@ -67,25 +69,24 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         const tags = JSON.parse(
           synchronousRequest(url + "/" + nodetypeUri + "/tags")
         );
-        const type = tags.filter((x) => x.name === "type")?.[0];
         const requiredAttributes = tags
           .filter((x) => x.name === "requiredAttributes")?.[0]
           ?.value?.split(",");
         console.log(requiredAttributes);
         if (requiredAttributes !== undefined) {
           const attributeListHTML = [];
-          nodetype["requiredAttributes"] = {};
+          nodetype.requiredAttributes = {};
           nodetypesToChange[nodetype.name] = nodetype;
           requiredAttributes.forEach((attribute) => {
-            nodetype["requiredAttributes"][attribute] = "";
+            nodetype.requiredAttributes[attribute] = "";
             attributeListHTML.push(
               <tr key={nodetype.name + "-" + attribute}>
                 <td>{attribute}</td>
                 <td>
                   <textarea
                     value={
-                      nodetypesToChange[nodetype.name]["requiredAttributes"][
-                        attribute
+                      nodetypesToChange[nodetype.name].requiredAttributes[
+                        { attribute }
                       ]
                     }
                     onChange={(event) =>
@@ -145,7 +146,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     let csar = initValues[i];
 
     // only visualize input params of already completed CSARs
-    if (!csar.incomplete) { // TODO: if incomplete retrieve input from Winery
+    if (!csar.incomplete) {
+      // TODO: if incomplete retrieve input from Winery
       let inputParams = csar.inputParameters;
 
       let paramsToRetrieve = [];
