@@ -129,6 +129,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
+        element.width = 42;
+        element.height = 44;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "POLICY");
@@ -139,6 +141,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
+        element.width = 42;
+        element.height = 44;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "CLOUD_DEPLOYMENT_MODEL_POLICY");
@@ -149,6 +153,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
+        element.width = 42;
+        element.height = 44;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "DEDICATED_HOSTING_POLICY");
@@ -159,6 +165,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
+        element.width = 42;
+        element.height = 44;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "DEPLOYMENT_POLICY");
@@ -169,6 +177,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           fill: "white",
           stroke: "none",
         };
+        element.width = 42;
+        element.height = 44;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
         drawTaskSVG(parentGfx, "LOCATION_POLICY");
