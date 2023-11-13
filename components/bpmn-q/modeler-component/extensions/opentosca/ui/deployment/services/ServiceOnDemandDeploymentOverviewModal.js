@@ -21,7 +21,8 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function ServiceOnDemandDeploymentOverviewModal({
   onClose,
-  initValues, elementRegistry
+  initValues,
+  elementRegistry,
 }) {
   // close if no deployment required
   if (!initValues || initValues.length === 0) {
@@ -31,25 +32,23 @@ export default function ServiceOnDemandDeploymentOverviewModal({
   let footerRef = React.createRef();
 
   const onDemand = (value) =>
-  onClose({
-    onDemand: value,
-  });
+    onClose({
+      onDemand: value,
+    });
   const filteredInitValues = initValues.filter((CSAR) =>
-  CSAR.serviceTaskIds.some(
-    (taskId) => {
+    CSAR.serviceTaskIds.some((taskId) => {
       const taskData = elementRegistry.get(taskId);
       return taskData && taskData.businessObject.onDemand;
-    }
-  )
-);
-// Modify the filteredInitValues to update the serviceTaskIds
-const updatedInitValues = filteredInitValues.map((CSAR) => {
-  const updatedServiceTaskIds = CSAR.serviceTaskIds.filter((taskId) => {
-    const taskData = elementRegistry.get(taskId);
-    return taskData && taskData.businessObject.onDemand;
+    })
+  );
+  // Modify the filteredInitValues to update the serviceTaskIds
+  const updatedInitValues = filteredInitValues.map((CSAR) => {
+    const updatedServiceTaskIds = CSAR.serviceTaskIds.filter((taskId) => {
+      const taskData = elementRegistry.get(taskId);
+      return taskData && taskData.businessObject.onDemand;
+    });
+    return { ...CSAR, serviceTaskIds: updatedServiceTaskIds };
   });
-  return { ...CSAR, serviceTaskIds: updatedServiceTaskIds };
-});
 
   const listItems = updatedInitValues.map((CSAR) => (
     <tr key={CSAR.csarName}>
@@ -81,9 +80,11 @@ const updatedInitValues = filteredInitValues.map((CSAR) => {
             </table>
           </>
         ) : (
-          <p>No service tasks with on-demand deployment models are contained in the workflow.</p>
+          <p>
+            No service tasks with on-demand deployment models are contained in
+            the workflow.
+          </p>
         )}
-
       </Body>
 
       <Footer>

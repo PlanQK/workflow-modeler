@@ -104,7 +104,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           canExecute && (canExecute === "attach" || canExecute.attach);
         const isRelevantEvent =
           context.shape.type === "bpmn:IntermediateThrowEvent" ||
-          context.shape.type === "bpmn:BoundaryEvent" || context.shape.type.includes("Policy");
+          context.shape.type === "bpmn:BoundaryEvent" ||
+          context.shape.type.includes("Policy");
 
         if (
           canAttach &&
@@ -136,7 +137,11 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "POLICY");
         return task;
       },
-      [consts.CLOUD_DEPLOYMENT_MODEL_POLICY]: function (self, parentGfx, element) {
+      [consts.CLOUD_DEPLOYMENT_MODEL_POLICY]: function (
+        self,
+        parentGfx,
+        element
+      ) {
         var attrs = {
           fill: "white",
           stroke: "none",

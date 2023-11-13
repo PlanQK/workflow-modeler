@@ -20,7 +20,6 @@ import {
   LocationPolicyEntries,
 } from "./OpenTOSCATaskProperties";
 import * as consts from "../../Constants";
-import { is } from "bpmn-js/lib/util/ModelUtil";
 
 const LOW_PRIORITY = 500;
 
@@ -52,7 +51,6 @@ export default function ServiceTaskPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
-
       // update ServiceTasks with the deployment extension
       if (element.type && element.type === "bpmn:ServiceTask") {
         groups[2] = ImplementationGroup(element, injector);
@@ -64,7 +62,11 @@ export default function ServiceTaskPropertiesProvider(
       }
 
       // add properties of policies to panel
-      if (element.type && element.type.startsWith("opentosca:") && element.type !=="opentosca:Policy") {
+      if (
+        element.type &&
+        element.type.startsWith("opentosca:") &&
+        element.type !== "opentosca:Policy"
+      ) {
         groups.unshift(createOpenTOSCAGroup(element, translate));
       }
       return groups;

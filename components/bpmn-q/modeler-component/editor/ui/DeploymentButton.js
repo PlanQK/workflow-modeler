@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import NotificationHandler from "./notifications/NotificationHandler";
 import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
@@ -60,7 +60,7 @@ export default function DeploymentButton(props) {
   }
 
   async function onClick() {
-      deploy((await modeler.saveXML({ format: true })).xml);
+    deploy((await modeler.saveXML({ format: true })).xml);
   }
 
   return (

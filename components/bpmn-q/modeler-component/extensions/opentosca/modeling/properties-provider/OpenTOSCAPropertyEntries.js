@@ -11,7 +11,11 @@
 
 import React from "@bpmn-io/properties-panel/preact/compat";
 
-import { SelectEntry, CheckboxEntry, TextFieldEntry } from "@bpmn-io/properties-panel";
+import {
+  SelectEntry,
+  CheckboxEntry,
+  TextFieldEntry,
+} from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
 
@@ -104,9 +108,7 @@ export function OnDemandEntry({ element }) {
 
   const setValue = function (newValue) {
     let onDemandHostAttribute = element.host.businessObject.onDemand;
-    if (
-      onDemandHostAttribute !== newValue
-    ) {
+    if (onDemandHostAttribute !== newValue) {
       element.host.businessObject.onDemand = newValue;
     }
     return modeling.updateProperties(element, {

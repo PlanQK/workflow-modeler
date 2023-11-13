@@ -80,8 +80,8 @@ export function OnDemandEntry({ element }) {
 
   const setValue = function (newValue) {
     let attachers = element.attachers;
-    for(let i = 0; i< attachers.length; i++) {
-      if(attachers[i].type === consts.DEPLOYMENT_POLICY) {
+    for (let i = 0; i < attachers.length; i++) {
+      if (attachers[i].type === consts.DEPLOYMENT_POLICY) {
         attachers[i].businessObject.onDemand = newValue;
       }
     }

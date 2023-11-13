@@ -43,5 +43,5 @@ export var POLICY = [
     target: {
       type: consts.LOCATION_POLICY,
     },
-  }
+  },
 ];

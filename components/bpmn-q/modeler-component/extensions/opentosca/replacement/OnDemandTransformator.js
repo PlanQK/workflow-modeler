@@ -141,122 +141,121 @@ export async function startOnDemandReplacementProcess(xml) {
   );
 
   for (const serviceTask of serviceTasks) {
-    let onDemand = serviceTask.businessObject.get(
-      "onDemand"
-    );
+    let onDemand = serviceTask.businessObject.get("onDemand");
     if (onDemand) {
-    let deploymentModelUrl = serviceTask.businessObject.get(
-      "opentosca:deploymentModelUrl"
-    );
-    if (deploymentModelUrl.startsWith("{{ wineryEndpoint }}")) {
-      deploymentModelUrl = deploymentModelUrl.replace(
-        "{{ wineryEndpoint }}",
-        config.getWineryEndpoint()
+      let deploymentModelUrl = serviceTask.businessObject.get(
+        "opentosca:deploymentModelUrl"
       );
-    }
-
-    const extensionElements = serviceTask.businessObject.extensionElements;
-
-    let subProcess = bpmnReplace.replaceElement(serviceTask, {
-      type: "bpmn:SubProcess",
-    });
-
-    subProcess.businessObject.set("opentosca:onDemandDeployment", true);
-    subProcess.businessObject.set(
-      "opentosca:deploymentModelUrl",
-      deploymentModelUrl
-    );
-
-    const startEvent = modeling.createShape(
-      {
-        type: "bpmn:StartEvent",
-      },
-      { x: 200, y: 200 },
-      subProcess
-    );
-
-    let topicName = makeId(12);
-    const serviceTask1 = modeling.appendShape(
-      startEvent,
-      {
-        type: "bpmn:ScriptTask",
-      },
-      { x: 400, y: 200 }
-    );
-    serviceTask1.businessObject.set("scriptFormat", "javascript");
-    serviceTask1.businessObject.set(
-      "script",
-      createDeploymentScript({
-        opentoscaEndpoint: config.getOpenTOSCAEndpoint(),
-        deploymentModelUrl: deploymentModelUrl,
-        subprocessId: subProcess.id,
-        camundaTopic: topicName,
-        camundaEndpoint: getCamundaEndpoint(),
-      })
-    );
-    serviceTask1.businessObject.set("name", "Create deployment");
-
-    const serviceTask2 = modeling.appendShape(
-      serviceTask1,
-      {
-        type: "bpmn:ScriptTask",
-      },
-      { x: 600, y: 200 }
-    );
-    serviceTask2.businessObject.set("scriptFormat", "javascript");
-    serviceTask2.businessObject.set(
-      "script",
-      createWaitScript({ subprocessId: subProcess.id })
-    );
-    serviceTask2.businessObject.set("name", "Wait for deployment");
-
-    const serviceTask3 = modeling.appendShape(
-      serviceTask2,
-      {
-        type: "bpmn:ServiceTask",
-      },
-      { x: 800, y: 200 }
-    );
-
-    serviceTask3.businessObject.set("name", "Call service");
-    if (!extensionElements) {
-      serviceTask3.businessObject.set("camunda:type", "external");
-      serviceTask3.businessObject.set("camunda:topic", topicName);
-    } else {
-      const values = extensionElements.values;
-      for (let value of values) {
-        if (value.inputOutput === undefined) continue;
-        for (let param of value.inputOutput.inputParameters) {
-          if (param.name === "url") {
-            param.value = `\${selfserviceApplicationUrl.concat(${JSON.stringify(
-              param.value || ""
-            )})}`;
-            break;
-          }
-        }
+      if (deploymentModelUrl.startsWith("{{ wineryEndpoint }}")) {
+        deploymentModelUrl = deploymentModelUrl.replace(
+          "{{ wineryEndpoint }}",
+          config.getWineryEndpoint()
+        );
       }
 
-      const newExtensionElements = createElement(
-        "bpmn:ExtensionElements",
-        { values },
-        serviceTask2.businessObject,
-        bpmnFactory
+      const extensionElements = serviceTask.businessObject.extensionElements;
+
+      let subProcess = bpmnReplace.replaceElement(serviceTask, {
+        type: "bpmn:SubProcess",
+      });
+
+      subProcess.businessObject.set("opentosca:onDemandDeployment", true);
+      subProcess.businessObject.set(
+        "opentosca:deploymentModelUrl",
+        deploymentModelUrl
       );
-      subProcess.businessObject.set("extensionElements", undefined);
-      serviceTask3.businessObject.set(
-        "extensionElements",
-        newExtensionElements
+
+      const startEvent = modeling.createShape(
+        {
+          type: "bpmn:StartEvent",
+        },
+        { x: 200, y: 200 },
+        subProcess
+      );
+
+      let topicName = makeId(12);
+      const serviceTask1 = modeling.appendShape(
+        startEvent,
+        {
+          type: "bpmn:ScriptTask",
+        },
+        { x: 400, y: 200 }
+      );
+      serviceTask1.businessObject.set("scriptFormat", "javascript");
+      serviceTask1.businessObject.set(
+        "script",
+        createDeploymentScript({
+          opentoscaEndpoint: config.getOpenTOSCAEndpoint(),
+          deploymentModelUrl: deploymentModelUrl,
+          subprocessId: subProcess.id,
+          camundaTopic: topicName,
+          camundaEndpoint: getCamundaEndpoint(),
+        })
+      );
+      serviceTask1.businessObject.set("name", "Create deployment");
+
+      const serviceTask2 = modeling.appendShape(
+        serviceTask1,
+        {
+          type: "bpmn:ScriptTask",
+        },
+        { x: 600, y: 200 }
+      );
+      serviceTask2.businessObject.set("scriptFormat", "javascript");
+      serviceTask2.businessObject.set(
+        "script",
+        createWaitScript({ subprocessId: subProcess.id })
+      );
+      serviceTask2.businessObject.set("name", "Wait for deployment");
+
+      const serviceTask3 = modeling.appendShape(
+        serviceTask2,
+        {
+          type: "bpmn:ServiceTask",
+        },
+        { x: 800, y: 200 }
+      );
+
+      serviceTask3.businessObject.set("name", "Call service");
+      if (!extensionElements) {
+        serviceTask3.businessObject.set("camunda:type", "external");
+        serviceTask3.businessObject.set("camunda:topic", topicName);
+      } else {
+        const values = extensionElements.values;
+        for (let value of values) {
+          if (value.inputOutput === undefined) continue;
+          for (let param of value.inputOutput.inputParameters) {
+            if (param.name === "url") {
+              param.value = `\${selfserviceApplicationUrl.concat(${JSON.stringify(
+                param.value || ""
+              )})}`;
+              break;
+            }
+          }
+        }
+
+        const newExtensionElements = createElement(
+          "bpmn:ExtensionElements",
+          { values },
+          serviceTask2.businessObject,
+          bpmnFactory
+        );
+        subProcess.businessObject.set("extensionElements", undefined);
+        serviceTask3.businessObject.set(
+          "extensionElements",
+          newExtensionElements
+        );
+      }
+      modeling.appendShape(
+        serviceTask3,
+        {
+          type: "bpmn:EndEvent",
+        },
+        { x: 1000, y: 200 },
+        subProcess
       );
     }
-    modeling.appendShape(
-      serviceTask3,
-      {
-        type: "bpmn:EndEvent",
-      },
-      { x: 1000, y: 200 },
-      subProcess
-    );
-  }}
+  }
 
   // layout diagram after successful transformation
   let updatedXml = await getXml(modeler);

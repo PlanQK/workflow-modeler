@@ -49,7 +49,8 @@ export default class DeploymentPlugin extends PureComponent {
       this.handleDeploymentInputClosed.bind(this);
     this.handleDeploymentBindingClosed =
       this.handleDeploymentBindingClosed.bind(this);
-    this.handleOnDemandDeploymentClosed = this.handleOnDemandDeploymentClosed.bind(this);
+    this.handleOnDemandDeploymentClosed =
+      this.handleOnDemandDeploymentClosed.bind(this);
   }
 
   componentDidMount() {
@@ -94,14 +95,14 @@ export default class DeploymentPlugin extends PureComponent {
           windowOpenDeploymentBinding: false,
         });
       }
-    }else{
-    this.setState({
-      windowOpenOnDemandDeploymentOverview: false,
-      windowOpenDeploymentOverview: false,
-      windowOpenDeploymentInput: false,
-      windowOpenDeploymentBinding: false,
-    });
-  }
+    } else {
+      this.setState({
+        windowOpenOnDemandDeploymentOverview: false,
+        windowOpenDeploymentOverview: false,
+        windowOpenDeploymentInput: false,
+        windowOpenDeploymentBinding: false,
+      });
+    }
   }
 
   /**
@@ -417,14 +418,14 @@ export default class DeploymentPlugin extends PureComponent {
           <ServiceOnDemandDeploymentOverviewModal
             onClose={this.handleOnDemandDeploymentClosed}
             initValues={this.getServiceTasksToDeployForModal()}
-            elementRegistry={this.modeler.get('elementRegistry')}
+            elementRegistry={this.modeler.get("elementRegistry")}
           />
         )}
         {this.state.windowOpenDeploymentOverview && (
           <ServiceDeploymentOverviewModal
             onClose={this.handleDeploymentOverviewClosed}
             initValues={this.getServiceTasksToDeployForModal()}
-            elementRegistry={this.modeler.get('elementRegistry')}
+            elementRegistry={this.modeler.get("elementRegistry")}
           />
         )}
         {this.state.windowOpenDeploymentInput && (

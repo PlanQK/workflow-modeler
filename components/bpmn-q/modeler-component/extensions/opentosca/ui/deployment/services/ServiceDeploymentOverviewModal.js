@@ -21,7 +21,8 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function ServiceDeploymentOverviewModal({
   onClose,
-  initValues, elementRegistry
+  initValues,
+  elementRegistry,
 }) {
   // close if no deployment required
   if (!initValues || initValues.length === 0) {
@@ -43,13 +44,11 @@ export default function ServiceDeploymentOverviewModal({
       },
     });
 
-    const filteredInitValues = initValues.filter((CSAR) =>
-    CSAR.serviceTaskIds.some(
-      (taskId) => {
-        const taskData = elementRegistry.get(taskId);
-        return taskData && !taskData.businessObject.onDemand;
-      }
-    )
+  const filteredInitValues = initValues.filter((CSAR) =>
+    CSAR.serviceTaskIds.some((taskId) => {
+      const taskData = elementRegistry.get(taskId);
+      return taskData && !taskData.businessObject.onDemand;
+    })
   );
   // Modify the filteredInitValues to update the serviceTaskIds
   const updatedInitValues = filteredInitValues.map((CSAR) => {

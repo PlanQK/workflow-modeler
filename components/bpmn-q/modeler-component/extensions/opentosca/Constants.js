@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export const POLICY = "opentosca:Policy";
-export const CLOUD_DEPLOYMENT_MODEL_POLICY = "opentosca:CloudDeploymentModelPolicy";
+export const CLOUD_DEPLOYMENT_MODEL_POLICY =
+  "opentosca:CloudDeploymentModelPolicy";
 export const DEPLOYMENT_POLICY = "opentosca:DeploymentPolicy";
 export const LOCATION_POLICY = "opentosca:LocationPolicy";
 export const DEDICATED_HOSTING_POLICY = "opentosca:DedicatedHostingPolicy";
@@ -17,4 +18,4 @@ export const DEDICATED_HOSTING_POLICY = "opentosca:DedicatedHostingPolicy";
 export const ON_DEMAND = "onDemand";
 export const DEDICATED_HOSTING = "dedicatedHosting";
 export const CLOUD_TYPE = "cloudType";
-export const LOCATION = "location"
+export const LOCATION = "location";
