@@ -56,6 +56,14 @@
   width: 100%;
 }
 
+.pattern-links {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pattern-links:hover {
+  text-decoration: underline;
+}
 .qwm-action {
   min-width: 10px;
   height: 35px;

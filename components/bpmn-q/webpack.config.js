@@ -21,6 +21,7 @@ let defaultConfig = {
   NISQ_ANALYZER_ENDPOINT: "http://localhost:8098/nisq-analyzer",
   PATTERN_ATLAS_ENDPOINT:
     "http://localhost:1977/patternatlas/patternLanguages/af7780d5-1f97-4536-8da7-4194b093ab1d",
+  PATTERN_ATLAS_UI_ENDPOINT: "http://localhost:1978",
   PROVENANCE_COLLECTION: "false",
   QHANA_GET_PLUGIN_URL: "http://localhost:5006/api/plugins/",
   QHANA_LIST_PLUGINS_URL: "http://localhost:5006/api/plugins/?item-count=100",
