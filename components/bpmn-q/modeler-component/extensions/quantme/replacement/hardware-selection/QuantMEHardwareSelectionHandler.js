@@ -13,7 +13,6 @@ import { getQuantMETasks } from "../QuantMETransformator";
 import {
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
-  POLL_FOR_TRANSFORMATION_SCRIPT,
   RETRIEVE_FRAGMENT_SCRIPT_PREFIX,
   RETRIEVE_FRAGMENT_SCRIPT_SUFFIX,
   SELECT_ON_QUEUE_SIZE_SCRIPT,
@@ -435,7 +434,7 @@ function insertTasks(modeling, elementRegistry, bpmnFactory, commandStack, moddl
   ).businessObject;
   pollForTransformationBo.name = "Poll for Transformation and Deployment";
   pollForTransformationBo.scriptFormat = "groovy";
-  pollForTransformationBo.script = POLL_FOR_TRANSFORMATION_SCRIPT;
+  pollForTransformationBo.script = SELECT_ON_QUEUE_SIZE_SCRIPTT;
   pollForTransformationBo.asyncBefore = true;
   modeling.connect(invokeTransformation, pollForTransformation, {
     type: "bpmn:SequenceFlow",
