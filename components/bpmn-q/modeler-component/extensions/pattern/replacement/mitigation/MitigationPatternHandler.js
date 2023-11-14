@@ -146,7 +146,7 @@ export async function replaceMitigationPattern(
     );
   });
 */
-  return {replacemenrSuccess: true, outgoingFlows: outgoingFlows, pattern: pattern};
+  return {replacementSuccess: true, flows: outgoingFlows, pattern: pattern};
 }
 
 /**

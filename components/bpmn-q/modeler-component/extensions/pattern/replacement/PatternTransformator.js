@@ -34,7 +34,7 @@ export async function startPatternReplacementProcess(
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
-  let allFlow =[];
+  let allFlow = [];
   let patterns = [];
   console.log(elementRegistry)
   // get root element of the current diagram
@@ -52,8 +52,8 @@ export async function startPatternReplacementProcess(
   let replacementConstructs = getPatterns(rootElement, elementRegistry);
   console.log(
     "Process contains " +
-      replacementConstructs.length +
-      " patterns to replace..."
+    replacementConstructs.length +
+    " patterns to replace..."
   );
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
@@ -61,15 +61,15 @@ export async function startPatternReplacementProcess(
 
   for (let replacementConstruct of replacementConstructs) {
     console.log(replacementConstruct);
-    
+
     //let replacementSuccess = false;
     if (
-      replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION || replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION 
+      replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION || replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION
     ) {
       console.log(replacementConstruct);
 
-      
-      const { replacementSuccess, outgoingFlows, pattern } = await replaceMitigationPattern(
+
+      let { replacementSuccess, flows, pattern } = await replaceMitigationPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
         replacementConstruct.qrm,
@@ -78,38 +78,47 @@ export async function startPatternReplacementProcess(
         elementRegistry,
         definitions,
       );
-      console.log(outgoingFlows)
-      allFlow = allFlow.concat(outgoingFlows);
+      console.log(flows)
+      allFlow = allFlow.concat(flows);
       console.log(allFlow)
       patterns.push(pattern);
-      
-  }
-  // first replace cutting subprocesses and insert tasks
-  for (let replacementConstruct of replacementConstructs) {
-    let replacementSuccess = true;
-    if (
-      replacementConstruct.task.$type === constants.WARM_START
-    ) {
-      //let updated_xml = await getXml(modeler);
-     // modeler = await createTempModelerFromXml(updated_xml);
-      console.log(replacementConstruct);
 
-      
-      replacementSuccess = await replaceWarmStart(
-        replacementConstruct.task,
-        replacementConstruct.parent,
-        replacementConstruct.qrm,
-        modeler,
-        definitions,
-      );
+    }
+  }
+    // first replace cutting subprocesses and insert tasks
+    for (let replacementConstruct of replacementConstructs) {
+      console.log(replacementConstructs.length)
+      let replacementSuccess = true;
+      if (
+        replacementConstruct.task.$type === constants.WARM_START
+      ) {
+        //let updated_xml = await getXml(modeler);
+        // modeler = await createTempModelerFromXml(updated_xml);
+        console.log(replacementConstruct);
+        console.log("WARM START EVNTER")
+
+
+        let { replacementSuccess, flows, pattern } = await replaceWarmStart(
+          replacementConstruct.task,
+          replacementConstruct.parent,
+          replacementConstruct.qrm,
+          modeler,
+          definitions,
+        );
+        allFlow = allFlow.concat(flows);
+        console.log(allFlow)
+        console.log(patterns)
+        console.log(pattern)
+        patterns.push(pattern);
+        console.log(pattern)
       }
 
       if (
         replacementConstruct.task.$type === constants.CIRCUIT_CUTTING
       ) {
         console.log(replacementConstruct);
-  
-        
+
+
         replacementSuccess = await replaceCuttingPattern(
           replacementConstruct.task,
           replacementConstruct.parent,
@@ -119,14 +128,14 @@ export async function startPatternReplacementProcess(
           elementRegistry,
           definitions,
         );
-        }
+      }
 
       console.log("Successfully replaced Cutting Subprocess");
       if (!replacementSuccess) {
         console.log(
           "Replacement of QuantME modeling construct with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!"
+          replacementConstruct.task.id +
+          " failed. Aborting process!"
         );
         return {
           status: "failed",
@@ -137,56 +146,9 @@ export async function startPatternReplacementProcess(
         };
       }
     }
-  }
-  // remove already replaced circuit cutting subprocesses from replacement list
-  replacementConstructs = replacementConstructs.filter(
-    (construct) => construct.task.$type !== "constants.CIRCUIT_CUTTING_SUBPROCESS"
-  );
-  for (let replacementConstruct of replacementConstructs) {
-    let replacementSuccess = true;
-    if (
-      replacementConstruct.task.$type ===
-      "constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS"
-    ) {
-      console.log("Transforming QuantumHardwareSelectionSubprocess...");
-      /** 
-      replacementSuccess = await replaceHardwareSelectionSubprocess(
-        replacementConstruct.task,
-        replacementConstruct.parent,
-        modeler,
-        endpointConfig.nisqAnalyzerEndpoint,
-        endpointConfig.transformationFrameworkEndpoint,
-        endpointConfig.camundaEndpoint
-      );
-      */
-    } else if (
-      constants.ALTERNATING_OPERATOR_ANSATZ.includes(replacementConstruct.task.$type)
-    ) {
-      console.log("Transforming QuantME Data Objects...");
-      /**
-      replacementSuccess = await replaceDataObjects(
-        replacementConstruct.task,
-        modeler
-      );
-      */
-    }
-    if (!replacementSuccess) {
-      console.log(
-        "Replacement of QuantME modeling construct with Id " +
-          replacementConstruct.task.id +
-          " failed. Aborting process!"
-      );
-      return {
-        status: "failed",
-        cause:
-          "Replacement of QuantME modeling construct with Id " +
-          replacementConstruct.task.id +
-          " failed. Aborting process!",
-      };
-    }
-  }
+  
   console.log(allFlow)
-  for(let i=0; i< allFlow.length; i++){
+  for (let i = 0; i < allFlow.length; i++) {
 
     console.log("remove connection")
     console.log(allFlow[i])
@@ -197,7 +159,7 @@ export async function startPatternReplacementProcess(
     console.log("removed")
   }
   //modeling.removeElements(allFlow);
-  for(let i=0; i< patterns.length; i++){
+  for (let i = 0; i < patterns.length; i++) {
     console.log(patterns);
     const pattern = elementRegistry.get(patterns[i].id);
     //modeling.removeShape(pattern);
@@ -221,7 +183,7 @@ export function getPatterns(process, elementRegistry) {
   const flowElements = process.flowElements;
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
-    
+
     if (flowElement.$type && flowElement.$type.startsWith("pattern:")) {
       quantmeTasks.push({ task: flowElement, parent: processBo });
     }

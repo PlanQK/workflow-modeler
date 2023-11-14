@@ -33,6 +33,8 @@ export async function replaceWarmStart(
 ) {
   console.log(subprocess, parent, qrm);
   let bpmnReplace = modeler.get("bpmnReplace");
+  let modeling = modeler.get("modeling");
+  let elementRegistry = modeler.get("elementRegistry");
   let em = getModeler().get('elementRegistry');
   let host = em.get(subprocess.id).host;
   console.log(host)
@@ -49,7 +51,8 @@ export async function replaceWarmStart(
   let combinePointers = [];
   let incomingFlows = [];
   host.incoming.forEach((element) => {
-    incomingFlows.push(element)
+    incomingFlows.push(elementRegistry.get(element.id))
+    //outgoingFlows.push(elementRegistry.get(element.id))
     console.log(element);
     console.log(element.source)
     console.log(warmStartTask)
@@ -58,19 +61,16 @@ export async function replaceWarmStart(
   });
   for(let i = 0; i< incomingFlows.length; i++){
     let flow = elementRegistry.get(incomingFlows[i].id)
-    console.log(flow)
-    if(flow !== undefined){
-    modeling.removeConnection(flow);
-    }
+    
   }
   modeling.connect(warmStartTask, internHost, { type: "bpmn:SequenceFlow" });
 
   // get host and insert Warm-starting Task & remove event
   // modeling.removeShape(subprocess);
-  const events = elementRegistry.get(subprocess.id);
-  console.log(events)
-  modeling.removeShape(elementRegistry.get(subprocess.id));
-  modeling.removeElements([events]);
+  const pattern = elementRegistry.get(subprocess.id);
+ 
+  //modeling.removeShape(elementRegistry.get(subprocess.id));
+ // modeling.removeElements([events]);
   /** 
 
   // extract cut & combine elements out of replacement fragement
@@ -143,7 +143,8 @@ export async function replaceWarmStart(
     );
   });
 */
-  return true;
+console.log(pattern)
+return {replacementSuccess: true, flows: incomingFlows, pattern: pattern};
 }
 
 /**
