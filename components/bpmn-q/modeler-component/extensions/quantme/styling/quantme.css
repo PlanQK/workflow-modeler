@@ -519,3 +519,13 @@
   background-repeat: no-repeat;
   display: inline-block;
 }
+
+.qwm .quantme-tasks-icon-error-correction:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/CuttingSubprocess_Icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}

@@ -156,6 +156,14 @@ export var TASK = [
       type: consts.CUTTING_RESULT_COMBINATION_TASK,
     },
   },
+  {
+    label: "Error Correction Task",
+    actionName: "replace-with-error-correction-task",
+    className: "qwm quantme-tasks-icon-error-correction",
+    target: {
+      type: consts.ERROR_CORRECTION_TASK,
+    },
+  },
 ];
 
 export var SUBPROCESS = [

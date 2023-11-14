@@ -18,6 +18,7 @@ import {
   InitialStateObjectEntries,
   ParametrizationObjectEntries,
   EvaluationResultObjectEntries,
+  ErrorCorrectionTaskEntries,
 } from "./QuantMETaskProperties";
 
 const LOW_PRIORITY = 600;
@@ -126,6 +127,8 @@ function QuantMEProps(element) {
       return WarmStartingTaskEntries(element);
     case consts.CUTTING_RESULT_COMBINATION_TASK:
       return CuttingResultCombinationTaskEntries(element);
+    case consts.ERROR_CORRECTION_TASK:
+      return ErrorCorrectionTaskEntries(element);
 
     case consts.QUANTUM_CIRCUIT_OBJECT:
       return QuantumCircuitObjectEntries(element);
