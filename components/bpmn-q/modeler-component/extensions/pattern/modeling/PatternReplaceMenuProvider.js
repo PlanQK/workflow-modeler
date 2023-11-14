@@ -113,7 +113,7 @@ export default class PatternReplaceMenuProvider {
         capitalize(specifier)+ " Patterns",
         popupMenu,
         options,
-        "quantme-tasks-icon"
+        "pattern-logo"
       ),
     };
   }

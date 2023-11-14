@@ -91,7 +91,7 @@ export var AUGMENTATION_PATTERN = [
   {
     label: "Circuit Cutting",
     actionName: "replace-with-circuit-cutting-correction",
-    className: "qwm bpmn-pattern-error-correction-icon",
+    className: "qwm bpmn-pattern-circuit-cutting-icon",
     target: {
       type: consts.CIRCUIT_CUTTING,
     },
