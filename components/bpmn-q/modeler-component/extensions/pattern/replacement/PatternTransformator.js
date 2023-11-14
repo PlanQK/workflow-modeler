@@ -16,6 +16,9 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { replaceWarmStart } from "./warm-start/WarmStartPatternHandler";
+import { replaceCuttingPattern } from "./cutting/CuttingPatternHandler";
+import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
+import * as quantmeConsts from "../../quantme/Constants";
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
  *
@@ -31,6 +34,7 @@ export async function startPatternReplacementProcess(
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
+  console.log(elementRegistry)
   // get root element of the current diagram
   const definitions = modeler.getDefinitions();
   const rootElement = getRootProcess(definitions);
@@ -52,28 +56,46 @@ export async function startPatternReplacementProcess(
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
   }
-  // check for available replacement models for all QuantME modeling constructs
+
   for (let replacementConstruct of replacementConstructs) {
     console.log(replacementConstruct);
+    
+    let replacementSuccess = false;
     if (
-      constants.ALTERNATING_OPERATOR_ANSATZ.includes(
-        replacementConstruct.task.$type
-      ) ||
-      replacementConstruct.task.$type ===
-        "constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS"
+      replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION || replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION 
     ) {
-      console.log("Found QuantME object of type:");
-      console.log(
-        "Hardware Selection Subprocesses and QuantME DataObjects needs no QRM. Skipping search..."
+      console.log(replacementConstruct);
+
+      
+      replacementSuccess = await replaceMitigationPattern(
+        replacementConstruct.task,
+        replacementConstruct.parent,
+        replacementConstruct.qrm,
+        modeler,
+        modeling,
+        elementRegistry,
+        definitions,
       );
-      continue;
-    }
+      if (!replacementSuccess) {
+        console.log(
+          "Replacement of modeling construct with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!"
+        );
+        return {
+          status: "failed",
+          cause:
+            "Replacement of modeling construct with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!",
+        };
+      }
   }
   // first replace cutting subprocesses and insert tasks
   for (let replacementConstruct of replacementConstructs) {
     let replacementSuccess = true;
     if (
-      replacementConstruct.task.$type === "pattern:WarmStart"
+      replacementConstruct.task.$type === constants.WARM_START
     ) {
       console.log(replacementConstruct);
 
@@ -83,8 +105,28 @@ export async function startPatternReplacementProcess(
         replacementConstruct.parent,
         replacementConstruct.qrm,
         modeler,
+        modeling,
+        elementRegistry,
         definitions,
       );
+      }
+
+      if (
+        replacementConstruct.task.$type === constants.CIRCUIT_CUTTING
+      ) {
+        console.log(replacementConstruct);
+  
+        
+        replacementSuccess = await replaceCuttingPattern(
+          replacementConstruct.task,
+          replacementConstruct.parent,
+          replacementConstruct.qrm,
+          modeler,
+          modeling,
+          elementRegistry,
+          definitions,
+        );
+        }
 
       console.log("Successfully replaced Cutting Subprocess");
       if (!replacementSuccess) {
@@ -174,7 +216,7 @@ export function getPatterns(process, elementRegistry) {
     if (
       flowElement.$type &&
       (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === "constants.CIRCUIT_CUTTING_SUBPROCESS")
+        flowElement.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS)
     ) {
       Array.prototype.push.apply(
         quantmeTasks,

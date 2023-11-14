@@ -24,7 +24,7 @@ import * as quantmeConsts from "../../../quantme/Constants";
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
  */
-export async function replaceWarmStart(
+export async function replaceCuttingPattern(
   subprocess,
   parent,
   qrm,
@@ -33,43 +33,64 @@ export async function replaceWarmStart(
 ) {
   console.log(subprocess, parent, qrm);
   let bpmnReplace = modeler.get("bpmnReplace");
+  let modeling = modeler.get("modeling");
+  let elementRegistry = modeler.get("elementRegistry");
   let em = getModeler().get('elementRegistry');
   let host = em.get(subprocess.id).host;
   console.log(host)
 
   let internHost = elementRegistry.get(host.id);
-  let warmStartTask = modeling.createShape(
-    { type: quantmeConsts.WARM_STARTING_TASK },
+  let cuttingTask = modeling.createShape(
+    { type: quantmeConsts.CIRCUIT_CUTTING_TASK },
     { x: 50, y: 50 },
     parent,
     {}
   );
 
+  let resultCombinationTaks = modeling.createShape(
+    { type: quantmeConsts.CUTTING_RESULT_COMBINATION_TASK },
+    { x: 50, y: 50 },
+    parent,
+    {}
+  );
   let startEvent = null;
   let combinePointers = [];
   let incomingFlows = [];
+  let outgoingFlows = [];
   host.incoming.forEach((element) => {
     incomingFlows.push(element)
     console.log(element);
     console.log(element.source)
-    console.log(warmStartTask)
-    modeling.connect(elementRegistry.get(element.source.id), warmStartTask, { type: "bpmn:SequenceFlow" });
+    console.log(cuttingTask)
+    modeling.connect(elementRegistry.get(element.source.id), cuttingTask, { type: "bpmn:SequenceFlow" });
     console.log("created connection")
   });
   for(let i = 0; i< incomingFlows.length; i++){
     let flow = elementRegistry.get(incomingFlows[i].id)
-    console.log(flow)
+    modeling.removeConnection(flow);
+  }
+
+  host.outgoing.forEach((element) => {
+    outgoingFlows.push(element)
+    console.log(element);
+    console.log(element.source)
+    console.log(cuttingTask)
+    modeling.connect(elementRegistry.get(cuttingTask.id), elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
+    console.log("created connection")
+  });
+  for(let i = 0; i< outgoingFlows.length; i++){
+    let flow = elementRegistry.get(outgoingFlows[i].id)
     if(flow !== undefined){
     modeling.removeConnection(flow);
     }
   }
-  modeling.connect(warmStartTask, internHost, { type: "bpmn:SequenceFlow" });
+  modeling.connect(internHost, resultCombinationTaks, { type: "bpmn:SequenceFlow" });
 
   // get host and insert Warm-starting Task & remove event
   // modeling.removeShape(subprocess);
-  const events = elementRegistry.get(subprocess.id);
+  const events = em.get(subprocess.id);
   console.log(events)
-  modeling.removeShape(elementRegistry.get(subprocess.id));
+  modeling.removeShape(em.get(subprocess.id));
   modeling.removeElements([events]);
   /** 
 

@@ -21,10 +21,11 @@ import {
 } from "../../../../editor/util/ModellingUtilities";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import * as quantmeConsts from "../../../quantme/Constants";
+import * as consts from "../../Constants";
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
  */
-export async function replaceWarmStart(
+export async function replaceMitigationPattern(
   subprocess,
   parent,
   qrm,
@@ -33,13 +34,19 @@ export async function replaceWarmStart(
 ) {
   console.log(subprocess, parent, qrm);
   let bpmnReplace = modeler.get("bpmnReplace");
+  let modeling = modeler.get("modeling");
+  let elementRegistry = modeler.get("elementRegistry");
   let em = getModeler().get('elementRegistry');
   let host = em.get(subprocess.id).host;
   console.log(host)
+  let type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
+  if(subprocess.type === consts.READOUT_ERROR_MITIGATION){
+    type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
+  }
 
   let internHost = elementRegistry.get(host.id);
-  let warmStartTask = modeling.createShape(
-    { type: quantmeConsts.WARM_STARTING_TASK },
+  let mitigationTask = modeling.createShape(
+    { type: type },
     { x: 50, y: 50 },
     parent,
     {}
@@ -47,23 +54,20 @@ export async function replaceWarmStart(
 
   let startEvent = null;
   let combinePointers = [];
-  let incomingFlows = [];
-  host.incoming.forEach((element) => {
-    incomingFlows.push(element)
+  let outgoingFlows = [];
+  host.outgoing.forEach((element) => {
+    outgoingFlows.push(element)
     console.log(element);
     console.log(element.source)
-    console.log(warmStartTask)
-    modeling.connect(elementRegistry.get(element.source.id), warmStartTask, { type: "bpmn:SequenceFlow" });
+    console.log(mitigationTask)
+    modeling.connect(mitigationTask, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
     console.log("created connection")
   });
-  for(let i = 0; i< incomingFlows.length; i++){
-    let flow = elementRegistry.get(incomingFlows[i].id)
-    console.log(flow)
-    if(flow !== undefined){
+  for(let i = 0; i< outgoingFlows.length; i++){
+    let flow = elementRegistry.get(outgoingFlows[i].id)
     modeling.removeConnection(flow);
-    }
   }
-  modeling.connect(warmStartTask, internHost, { type: "bpmn:SequenceFlow" });
+  modeling.connect(internHost, mitigationTask, { type: "bpmn:SequenceFlow" });
 
   // get host and insert Warm-starting Task & remove event
   // modeling.removeShape(subprocess);
