@@ -56,7 +56,7 @@ export async function replaceMitigationPattern(
   let combinePointers = [];
   let outgoingFlows = [];
   host.outgoing.forEach((element) => {
-    outgoingFlows.push(element)
+    outgoingFlows.push(elementRegistry.get(element.id))
     console.log(element);
     console.log(element.source)
     console.log(mitigationTask)
@@ -64,17 +64,16 @@ export async function replaceMitigationPattern(
     console.log("created connection")
   });
   for(let i = 0; i< outgoingFlows.length; i++){
-    let flow = elementRegistry.get(outgoingFlows[i].id)
-    modeling.removeConnection(flow);
+    let flow = elementRegistry.get(outgoingFlows[i].id);
+    //modeling.removeConnection(flow);
   }
   modeling.connect(internHost, mitigationTask, { type: "bpmn:SequenceFlow" });
 
   // get host and insert Warm-starting Task & remove event
   // modeling.removeShape(subprocess);
-  const events = elementRegistry.get(subprocess.id);
-  console.log(events)
-  modeling.removeShape(elementRegistry.get(subprocess.id));
-  modeling.removeElements([events]);
+  const pattern = elementRegistry.get(subprocess.id);
+  //modeling.removeShape(elementRegistry.get(subprocess.id));
+  //modeling.removeElements([events]);
   /** 
 
   // extract cut & combine elements out of replacement fragement
@@ -147,7 +146,7 @@ export async function replaceMitigationPattern(
     );
   });
 */
-  return true;
+  return {replacemenrSuccess: true, outgoingFlows: outgoingFlows, pattern: pattern};
 }
 
 /**

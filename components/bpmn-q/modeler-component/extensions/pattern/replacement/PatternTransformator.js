@@ -34,6 +34,8 @@ export async function startPatternReplacementProcess(
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
+  let allFlow =[];
+  let patterns = [];
   console.log(elementRegistry)
   // get root element of the current diagram
   const definitions = modeler.getDefinitions();
@@ -60,14 +62,14 @@ export async function startPatternReplacementProcess(
   for (let replacementConstruct of replacementConstructs) {
     console.log(replacementConstruct);
     
-    let replacementSuccess = false;
+    //let replacementSuccess = false;
     if (
       replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION || replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION 
     ) {
       console.log(replacementConstruct);
 
       
-      replacementSuccess = await replaceMitigationPattern(
+      const { replacementSuccess, outgoingFlows, pattern } = await replaceMitigationPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
         replacementConstruct.qrm,
@@ -76,20 +78,11 @@ export async function startPatternReplacementProcess(
         elementRegistry,
         definitions,
       );
-      if (!replacementSuccess) {
-        console.log(
-          "Replacement of modeling construct with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!"
-        );
-        return {
-          status: "failed",
-          cause:
-            "Replacement of modeling construct with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!",
-        };
-      }
+      console.log(outgoingFlows)
+      allFlow = allFlow.concat(outgoingFlows);
+      console.log(allFlow)
+      patterns.push(pattern);
+      
   }
   // first replace cutting subprocesses and insert tasks
   for (let replacementConstruct of replacementConstructs) {
@@ -192,6 +185,26 @@ export async function startPatternReplacementProcess(
       };
     }
   }
+  console.log(allFlow)
+  for(let i=0; i< allFlow.length; i++){
+
+    console.log("remove connection")
+    console.log(allFlow[i])
+    //let flow = elementRegistry.get(allFlow[i].id);
+    //console.log(flow);
+    //allFlow[i].parent = rootElement;
+    //modeling.removeConnection(allFlow[i]);
+    console.log("removed")
+  }
+  //modeling.removeElements(allFlow);
+  for(let i=0; i< patterns.length; i++){
+    console.log(patterns);
+    const pattern = elementRegistry.get(patterns[i].id);
+    //modeling.removeShape(pattern);
+    //modeling.removeElements([pattern]);
+  }
+  let allToDelete = patterns.concat(allFlow)
+  modeling.removeElements(allToDelete);
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
   let updated_xml = await getXml(modeler);
