@@ -55,43 +55,31 @@ export async function replaceCuttingPattern(
   );
   let startEvent = null;
   let combinePointers = [];
-  let incomingFlows = [];
+  let flows = [];
   let outgoingFlows = [];
   host.incoming.forEach((element) => {
-    incomingFlows.push(element)
+    flows.push(elementRegistry.get(element.id))
     console.log(element);
     console.log(element.source)
     console.log(cuttingTask)
     modeling.connect(elementRegistry.get(element.source.id), cuttingTask, { type: "bpmn:SequenceFlow" });
     console.log("created connection")
   });
-  for(let i = 0; i< incomingFlows.length; i++){
-    let flow = elementRegistry.get(incomingFlows[i].id)
-    modeling.removeConnection(flow);
-  }
-
+  modeling.connect(cuttingTask, internHost, { type: "bpmn:SequenceFlow" });
   host.outgoing.forEach((element) => {
-    outgoingFlows.push(element)
+    flows.push(elementRegistry.get(element.id))
     console.log(element);
     console.log(element.source)
     console.log(cuttingTask)
-    modeling.connect(elementRegistry.get(cuttingTask.id), elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
+    modeling.connect(resultCombinationTaks, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
     console.log("created connection")
   });
-  for(let i = 0; i< outgoingFlows.length; i++){
-    let flow = elementRegistry.get(outgoingFlows[i].id)
-    if(flow !== undefined){
-    modeling.removeConnection(flow);
-    }
-  }
   modeling.connect(internHost, resultCombinationTaks, { type: "bpmn:SequenceFlow" });
 
   // get host and insert Warm-starting Task & remove event
   // modeling.removeShape(subprocess);
-  const events = em.get(subprocess.id);
-  console.log(events)
-  modeling.removeShape(em.get(subprocess.id));
-  modeling.removeElements([events]);
+  const pattern = elementRegistry.get(subprocess.id);
+
   /** 
 
   // extract cut & combine elements out of replacement fragement
@@ -164,7 +152,7 @@ export async function replaceCuttingPattern(
     );
   });
 */
-  return true;
+return {replacementSuccess: true, flows: flows, pattern: pattern};
 }
 
 /**

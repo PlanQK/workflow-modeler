@@ -119,7 +119,7 @@ export async function startPatternReplacementProcess(
         console.log(replacementConstruct);
 
 
-        replacementSuccess = await replaceCuttingPattern(
+        let { replacementSuccess, flows, pattern } = await replaceCuttingPattern(
           replacementConstruct.task,
           replacementConstruct.parent,
           replacementConstruct.qrm,
@@ -128,8 +128,14 @@ export async function startPatternReplacementProcess(
           elementRegistry,
           definitions,
         );
+        allFlow = allFlow.concat(flows);
+        console.log(allFlow)
+        console.log(patterns)
+        console.log(pattern)
+        patterns.push(pattern);
+        console.log(pattern)
       }
-
+      
       console.log("Successfully replaced Cutting Subprocess");
       if (!replacementSuccess) {
         console.log(
