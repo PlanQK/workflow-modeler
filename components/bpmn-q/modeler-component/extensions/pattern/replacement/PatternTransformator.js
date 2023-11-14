@@ -97,6 +97,8 @@ export async function startPatternReplacementProcess(
     if (
       replacementConstruct.task.$type === constants.WARM_START
     ) {
+      //let updated_xml = await getXml(modeler);
+     // modeler = await createTempModelerFromXml(updated_xml);
       console.log(replacementConstruct);
 
       
@@ -105,8 +107,6 @@ export async function startPatternReplacementProcess(
         replacementConstruct.parent,
         replacementConstruct.qrm,
         modeler,
-        modeling,
-        elementRegistry,
         definitions,
       );
       }
