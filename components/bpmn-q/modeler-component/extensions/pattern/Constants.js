@@ -10,7 +10,10 @@
  */
 export const PATTERN_ALGORITHM = "algorithm";
 export const PATTERN_BEHAVIORAL = "behavioral";
+export const PATTERN_BEHAVIORAL_EXCLUSIVE = "behavioralExclusive";
 export const PATTERN_AUGMENTATION = "augmentation";
+
+export const PATTERN = "pattern:Pattern";
 
 export const QUANTUM_KERNEL_ESTIMATOR = "pattern:QuantumKernelEstimator";
 export const ALTERNATING_OPERATOR_ANSATZ = "pattern:AlternatingOperatorAnsatz";
@@ -27,3 +30,6 @@ export const ERROR_CORRECTION = "pattern:ErrorCorrection";
 export const GATE_ERROR_MITIGATION = "pattern:GateErrorMitigation";
 export const READOUT_ERROR_MITIGATION = "pattern:ReadoutErrorMitigation";
 export const WARM_START = "pattern:WarmStart";
+export const CIRCUIT_CUTTING = "pattern:CircuitCutting";
+
+export const PATTERN_MITIGATION = "mitigation";

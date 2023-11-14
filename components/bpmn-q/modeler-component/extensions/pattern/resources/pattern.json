@@ -63,34 +63,8 @@
       "properties": []
     },
     {
-      "name": "Activity",
-      "extends": ["bpmn:Activity"],
-      "properties": [
-        {
-          "name": "boundaryEventRefs",
-          "type": "pattern:PrioritizedExecution",
-          "replaces": "bpmn:Activity#boundaryEventRefs",
-          "isMany": true,
-          "isReference": true
-        }
-      ]
-    },
-    {
-      "name": "BoundaryEvent",
-      "extends": ["bpmn:BoundaryEvent"],
-      "properties": [
-        {
-          "name": "attachedToRef",
-          "type": "bpmn:Activity",
-          "isAttr": true,
-          "replaces": "bpmn:BoundaryEvent#attachedToRef",
-          "isReference": true
-        }
-      ]
-    },
-    {
       "name": "GateErrorMitigation",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["bpmn:Event"],
       "properties": []
     },
     {
@@ -100,6 +74,16 @@
     },
     {
       "name": "WarmStart",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "CircuitCutting",
+      "superClass": ["bpmn:Event"],
+      "properties": []
+    },
+    {
+      "name": "Pattern",
       "superClass": ["bpmn:Event"],
       "properties": []
     }

@@ -139,3 +139,20 @@
   .djs-popup-label {
   margin-top: 1px; /* Adjust the value as per your requirements */
 }
+
+.qwm-pattern-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/pattern-palette.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 11px 8px 11px 10px;
+  outline: none;
+}
+
+.qwm-pattern-icon:hover {
+  filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
+}

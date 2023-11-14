@@ -89,6 +89,14 @@ export var BEHAVIORAL_PATTERN = [
 ]
 export var AUGMENTATION_PATTERN = [
   {
+    label: "Circuit Cutting",
+    actionName: "replace-with-circuit-cutting-correction",
+    className: "qwm bpmn-pattern-error-correction-icon",
+    target: {
+      type: consts.CIRCUIT_CUTTING,
+    },
+  },
+  {
     label: "Error Correction",
     actionName: "replace-with-pattern-error-correction",
     className: "qwm bpmn-pattern-error-correction-icon",

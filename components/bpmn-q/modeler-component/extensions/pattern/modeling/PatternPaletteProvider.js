@@ -16,9 +16,9 @@ export default class PatternPaletteProvider {
     const { bpmnFactory, create, elementFactory, translate } = this;
 
     function createPattern(event) {
-      const businessObject = bpmnFactory.create("pattern:GateErrorMitigation");
+      const businessObject = bpmnFactory.create("pattern:Pattern");
       let shape = elementFactory.createShape({
-        type: "pattern:GateErrorMitigation",
+        type: "pattern:Pattern",
         businessObject: businessObject,
       });
       create.start(event, shape);
@@ -32,7 +32,7 @@ export default class PatternPaletteProvider {
       },
       "create.pattern": {
         group: "pattern",
-        className: "qwm-planqk-icon-service-task-palette",
+        className: "qwm-pattern-icon",
         title: translate(
           "Creates a pattern"
         ),

@@ -253,6 +253,36 @@ export default class PatternRenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "WARM_START");
         return task;
       },
+      [consts.CIRCUIT_CUTTING]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        element.width = 43;
+        element.height = 43;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "CIRCUIT_CUTTING");
+        return task;
+      },
+      [consts.PATTERN]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none"
+        }
+        element.width = 43;
+        element.height = 43;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "PATTERN");
+        return task;
+      },
     };
 
     setTimeout(function () {
@@ -287,6 +317,7 @@ export default class PatternRenderer extends BpmnRenderer {
       return true;
     }
 
+
     // pattern elements can be handled
     for (var i = 0; i < patternReplaceOptions.ALGORITHM_PATTERN.length; i++) {
       if (element.type === patternReplaceOptions.ALGORITHM_PATTERN[i].target.type) {
@@ -306,6 +337,10 @@ export default class PatternRenderer extends BpmnRenderer {
       if (element.type === patternReplaceOptions.AUGMENTATION_PATTERN[i].target.type) {
         return true;
       }
+    }
+
+    if(element.type === consts.PATTERN) {
+      return true;
     }
 
     console.log("Unable to render element of type: " + element.type);

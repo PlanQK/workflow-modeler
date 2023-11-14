@@ -56,8 +56,8 @@ export default class PatternRules extends RuleProvider {
       }
 
       if (
-        shapeToAttach.type.includes("pattern:WarmStart") &&
-        target.type === "quantme:QuantumCircuitLoadingTask"
+        shapeToAttach.type.includes("pattern:Pattern") &&(
+        target.type === "quantme:QuantumCircuitExecutionTask" || target.type === "quantme:QuantumCircuitLoadingTask")
       ) {
       return true;
       }
