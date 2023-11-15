@@ -29,6 +29,7 @@ export const CIRCUIT_CUTTING_SUBPROCESS = "quantme:CircuitCuttingSubprocess";
 export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
+export const ERROR_CORRECTION_TASK = "quantme:ErrorCorrectionTask";
 
 export const QUANTUM_CIRCUIT_OBJECT = "quantme:QuantumCircuitObject";
 export const RESULT_OBJECT = "quantme:ResultObject";
@@ -76,6 +77,7 @@ export const CUTTING_METHOD = "cuttingMethod";
 export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
+export const ERROR_CORRECTION_METHOD = "errorCorrectionMethod";
 
 export const EXECUTION_RESULT = "executionResult";
 export const EVALUATION_RESULT = "evaluationResult";
