@@ -10,10 +10,6 @@ import * as config from "../framework-config/config-manager";
  * @constructor
  */
 export default function QuantMETab() {
-  const [dataConfigurationsEndpoint, setDataConfigurationsEndpoint] = useState(
-    config.getQuantMEDataConfigurationsEndpoint()
-  );
-
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(
     config.getNisqAnalyzerEndpoint()
   );
@@ -33,7 +29,6 @@ export default function QuantMETab() {
   const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(
     config.getScriptSplitterThreshold()
   );
-  let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance;
 
   const modeler = getModeler();
 
@@ -118,7 +113,6 @@ export default function QuantMETab() {
 
   // save changed config entries on close
   QuantMETab.prototype.onClose = () => {
-    modeler.config.dataConfigurationsEndpoint = dataConfigurationsEndpoint;
     modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
     modeler.config.transformationFrameworkEndpoint =
       transformationFrameworkEndpoint;
@@ -127,7 +121,6 @@ export default function QuantMETab() {
     modeler.config.qiskitRuntimeHandlerEndpoint = qiskitRuntimeHandlerEndpoint;
     modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
     modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
-    config.setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint);
     config.setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint);
     config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
     config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
@@ -139,25 +132,6 @@ export default function QuantMETab() {
 
   return (
     <>
-      <h3>QuantME data configuration endpoint:</h3>
-      <table>
-        <tbody>
-          <tr className="spaceUnder">
-            <td align="right">Data Configurations Endpoint</td>
-            <td align="left">
-              <input
-                className="qwm-input"
-                type="string"
-                name="dataConfigurationsEndpoint"
-                value={dataConfigurationsEndpoint}
-                onChange={(event) =>
-                  setDataConfigurationsEndpoint(event.target.value)
-                }
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
       <h3>BPMN related configurations:</h3>
       <table>
         <tbody>
@@ -272,11 +246,9 @@ export default function QuantMETab() {
                 className="qwm-input"
                 type="checkbox"
                 name="hybridRuntimeProvenance"
-                checked={hybridRuntimeProvenanceBoolean}
+                checked={hybridRuntimeProvenance}
                 onChange={() => {
-                  hybridRuntimeProvenanceBoolean =
-                    !hybridRuntimeProvenanceBoolean;
-                  setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);
+                  setHybridRuntimeProvenance(!hybridRuntimeProvenance);
                 }}
               />
             </td>
