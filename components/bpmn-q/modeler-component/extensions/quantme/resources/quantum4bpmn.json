@@ -587,6 +587,17 @@
       ]
     },
     {
+      "name": "ErrorCorrectionTask",
+      "superClass": ["bpmn:Task"],
+      "properties": [
+        {
+          "name": "errorCorrectionMethod",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "QuantumCircuitObject",
       "superClass": ["bpmn:DataObjectReference"],
       "properties": [
