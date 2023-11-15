@@ -342,7 +342,7 @@ export default class QuantMERenderer extends BpmnRenderer {
       },
       [consts.ERROR_CORRECTION_TASK]: function (self, parentGfx, element) {
         var task = self.renderer("bpmn:Task")(parentGfx, element);
-        drawTaskSVG(parentGfx, "TASK_TYPE_VQA");
+        drawTaskSVG(parentGfx, "TASK_TYPE_ERROR_CORRECTION");
         return task;
       },
       [consts.QUANTUM_CIRCUIT_OBJECT]: function (self, parentGfx, element) {
