@@ -32,7 +32,6 @@ export default function PatternOverviewModal({ onClose, responseData }) {
   const closeAlgorithmicPatternModal = () => {
     setAlgorithmicPatternModalOpen(false);
   };
-
   const selectAlgorithmicPattern = useCallback(
     (selectedPattern) => {
       if (editRow !== null) {

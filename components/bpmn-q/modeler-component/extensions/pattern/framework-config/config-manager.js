@@ -35,6 +35,28 @@ export function setPatternAtlasEndpoint(patternAtlasEndpoint) {
     config.patternAtlasEndpoint = patternAtlasEndpoint;
   }
 }
+
+/**
+ * Get the endpoint of the connected Pattern Atlas UI
+ */
+export function getPatternAtlasUIEndpoint() {
+  if (config.patternAtlasUIEndpoint === undefined) {
+    setPatternAtlasUIEndpoint(
+      getPluginConfig("pattern").patternAtlasUIEndpoint ||
+        defaultConfig.patternAtlasUIEndpoint
+    );
+  }
+  return config.patternAtlasUIEndpoint;
+}
+
+/**
+ * Set the endpoint of the connected Pattern Atlas UI
+ */
+export function setPatternAtlasUIEndpoint(patternAtlasUIEndpoint) {
+  if (patternAtlasUIEndpoint !== null && patternAtlasUIEndpoint !== undefined) {
+    config.patternAtlasUIEndpoint = patternAtlasUIEndpoint;
+  }
+}
 /**
  * Reset all saved endpoints and configuration values back to default or the value of the respective plugin config
  * by setting this.comfig to an empty js object.
