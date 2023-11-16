@@ -58,6 +58,11 @@
   width: 100%;
 }
 
+.pattern-links {
+  color: blue;
+  text-decoration: underline;
+}
+
 .qwm-action {
   min-width: 10px;
   height: 35px;

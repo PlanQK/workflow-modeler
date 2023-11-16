@@ -33,29 +33,6 @@ export default function PatternOverviewModal({ onClose, element, commandStack, r
   const closeAlgorithmicPatternModal = () => {
     setAlgorithmicPatternModalOpen(false);
   };
-
-  const setPatterns = () => {
-    if(element !== undefined){
-      console.log(dynamicRows);
-      let modeling = getModeler().get("modeling");
-      
-      const businessObject = getModeler().get("bpmnFactory").create("pattern:GateErrorMitigation");
-      let shape = getModeler().get("elementFactory").createShape({
-        type: "pattern:GateErrorMitigation",
-        businessObject: businessObject,
-      });
-      let replace = getModeler().get('replace');
-      let elementRegistry = getModeler().get("elementRegistry")
-
-       // replace QuantumHardwareSelectionSubprocess with traditional subprocess
-      let replaceElement = replace.replaceElement(elementRegistry.get(element.id), {
-        type: "pattern:GateErrorMitigation",
-      });
-   
-     //replace.replaceElement(element, shape);
-
-    }
-  }
   const selectAlgorithmicPattern = useCallback(
     (selectedPattern) => {
       if (editRow !== null) {

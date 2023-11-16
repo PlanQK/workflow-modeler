@@ -12,5 +12,6 @@
 // takes either the environment variables or the default values defined in webpack.config
 const defaultConfig = {
   patternAtlasEndpoint: process.env.PATTERN_ATLAS_ENDPOINT,
+  patternAtlasUIEndpoint: process.env.PATTERN_ATLAS_UI_ENDPOINT,
 };
 export default defaultConfig;

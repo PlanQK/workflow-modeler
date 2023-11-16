@@ -18,6 +18,7 @@ import {
   PATTERN_MITIGATION,
   PATTERN_BEHAVIORAL_EXCLUSIVE,
 } from "../../Constants";
+import { getModeler } from "../../../../editor/ModelerHandler";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -196,6 +197,7 @@ export default function PatternSelectionModal({
       !mitigationErrorPatterns.some((mitigationPattern) => mitigationPattern.id === pattern.id)
   );
 
+  const patternAtlasUIEndpoint = getModeler().config.patternAtlasUIEndpoint;
   return (
     <Modal onClose={onClose}>
       <Title>Patterns</Title>
@@ -220,7 +222,22 @@ export default function PatternSelectionModal({
             <tbody>
               {algorithmPatterns.map((pattern) => (
                 <tr key={pattern.id}>
-                  <td>{pattern.name}</td>
+                  <td>
+                    <a
+                      className="pattern-links"
+                      href={
+                        patternAtlasUIEndpoint +
+                        "/pattern-languages/" +
+                        pattern.patternLanguageId +
+                        "/" +
+                        pattern.id
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {pattern.name}
+                    </a>
+                  </td>
                   <td>
                     <img
                       src={pattern.iconUrl}
@@ -261,7 +278,22 @@ export default function PatternSelectionModal({
             <tbody>
               {behavioralPatterns.map((pattern) => (
                 <tr key={pattern.id}>
-                  <td>{pattern.name}</td>
+                  <td>
+                    <a
+                      className="pattern-links"
+                      href={
+                        patternAtlasUIEndpoint +
+                        "/pattern-languages/" +
+                        pattern.patternLanguageId +
+                        "/" +
+                        pattern.id
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {pattern.name}
+                    </a>
+                  </td>
                   <td>
                     <img
                       src={pattern.iconUrl}
@@ -313,7 +345,22 @@ export default function PatternSelectionModal({
             <tbody>
               {augmentationPatterns.map((pattern) => (
                 <tr key={pattern.id}>
-                  <td>{pattern.name}</td>
+                  <td>
+                    <a
+                      className="pattern-links"
+                      href={
+                        patternAtlasUIEndpoint +
+                        "/pattern-languages/" +
+                        pattern.patternLanguageId +
+                        "/" +
+                        pattern.id
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {pattern.name}
+                    </a>
+                  </td>
                   <td>
                     <img
                       src={pattern.iconUrl}
