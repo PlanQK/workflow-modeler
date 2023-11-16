@@ -13,6 +13,7 @@ import OpenTOSCARenderer from "./OpenTOSCARenderer";
 import OpenTOSCAPaletteProvider from "./OpenTOSCAPaletteProvider";
 import OpenTOSCARules from "./OpenTOSCARules";
 import OpenTOSCAReplaceMenuProvider from "./OpenTOSCAReplaceMenuProvider";
+import OpenTOSCAContextPadProvider from "./OpenTOSCAContextPadProvider";
 export default {
   __init__: [
     "openToscaRenderer",
@@ -20,10 +21,12 @@ export default {
     "openToscaRules",
     "openToscaPalette",
     "openToscaReplaceMenuProvider",
+    "openToscaContextPadProvider",
   ],
   openToscaRenderer: ["type", OpenTOSCARenderer],
   openToscaPropertiesProvider: ["type", ServiceTaskPropertiesProvider],
   openToscaRules: ["type", OpenTOSCARules],
   openToscaPalette: ["type", OpenTOSCAPaletteProvider],
   openToscaReplaceMenuProvider: ["type", OpenTOSCAReplaceMenuProvider],
+  openToscaContextPadProvider: ["type", OpenTOSCAContextPadProvider],
 };

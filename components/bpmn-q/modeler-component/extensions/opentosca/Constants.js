@@ -19,3 +19,11 @@ export const ON_DEMAND = "onDemand";
 export const DEDICATED_HOSTING = "dedicatedHosting";
 export const CLOUD_TYPE = "cloudType";
 export const LOCATION = "location";
+
+export const POLICIES = [
+  POLICY,
+  CLOUD_DEPLOYMENT_MODEL_POLICY,
+  DEDICATED_HOSTING_POLICY,
+  LOCATION_POLICY,
+  DEPLOYMENT_POLICY,
+];
