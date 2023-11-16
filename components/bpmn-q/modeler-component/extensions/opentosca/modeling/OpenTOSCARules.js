@@ -65,8 +65,8 @@ export default class OpenTOSCARules extends RuleProvider {
           let boundaryElement = target.attachers[i];
 
           if (
-            boundaryElement.type === consts.DEDICATED_HOSTING &&
-            shapeToAttach.type === consts.DEDICATED_HOSTING
+            boundaryElement.type === consts.DEDICATED_HOSTING_POLICY &&
+            shapeToAttach.type === consts.DEDICATED_HOSTING_POLICY
           ) {
             return false;
           }
@@ -74,6 +74,20 @@ export default class OpenTOSCARules extends RuleProvider {
           if (
             boundaryElement.type === consts.DEPLOYMENT_POLICY &&
             shapeToAttach.type === consts.DEPLOYMENT_POLICY
+          ) {
+            return false;
+          }
+
+          if (
+            boundaryElement.type === consts.LOCATION_POLICY &&
+            shapeToAttach.type === consts.LOCATION_POLICY
+          ) {
+            return false;
+          }
+
+          if (
+            boundaryElement.type === consts.CLOUD_DEPLOYMENT_MODEL_POLICY &&
+            shapeToAttach.type === consts.CLOUD_DEPLOYMENT_MODEL_POLICY
           ) {
             return false;
           }

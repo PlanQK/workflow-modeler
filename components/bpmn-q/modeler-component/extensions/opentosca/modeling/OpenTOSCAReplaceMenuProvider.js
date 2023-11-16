@@ -47,13 +47,34 @@ export default class OpenTOSCAReplaceMenuProvider {
       if (is(element, "bpmn:Event")) {
         if (element.host !== undefined) {
           if (element.host.type === "bpmn:ServiceTask") {
+            let attachers = element.host.attachers;
+            let attacherTypes = [];
+            for (let i = 0; i < attachers.length; i++) {
+              let attacher = attachers[i];
+              let attacherType = attacher.type;
+
+              // Add the attacher type to the array if it's not already there
+              if (
+                !attacherTypes.includes(attacherType) &&
+                attacherType !== element.type
+              ) {
+                attacherTypes.push(attacherType);
+              }
+            }
+
             const filteredOptions = filter(
               opentoscaReplaceOptions.POLICY,
               isDifferentType(element)
             );
+
+            const filteredOptionsBasedOnAttachers = filteredOptions.filter(
+              (option) => {
+                return !attacherTypes.includes(option.target.type);
+              }
+            );
             const policyEntries = createMenuEntries(
               element,
-              filteredOptions,
+              filteredOptionsBasedOnAttachers,
               self.translate,
               self.bpmnReplace.replaceElement
             );
