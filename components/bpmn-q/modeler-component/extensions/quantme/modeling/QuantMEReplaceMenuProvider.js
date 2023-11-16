@@ -135,19 +135,20 @@ export default class QuantMEReplaceMenuProvider {
    */
   createQuantMETasks(element) {
     const popupMenu = this.popupMenu;
-    const translate = this.translate;
-    const replaceElement = this.bpmnReplace.replaceElement;
-    let filteredOptions = filter(
-      quantmeReplaceOptions.TASK,
-      isDifferentType(element)
+
+    // get entry for QHAna service tasks and its configurations
+    const quantmeTaskEntries = this.createQuantMETaskEntry(
+      element,
+      quantmeReplaceOptions.TASK
+    );
+    const quantmeSubprocessEntries = this.createQuantMESubprocessEntry(
+      element,
+      quantmeReplaceOptions.SUBPROCESS
     );
 
-    // create menu entries for the QuantME task types
-    let options = createMenuEntries(
-      element,
-      filteredOptions,
-      translate,
-      replaceElement
+    const quantmeEntries = Object.assign(
+      quantmeTaskEntries,
+      quantmeSubprocessEntries
     );
 
     return {
@@ -156,9 +157,74 @@ export default class QuantMEReplaceMenuProvider {
         "QuantME Tasks",
         "QuantME Tasks",
         popupMenu,
+        quantmeEntries,
+        "quantme-tasks-icon"
+      ),
+    };
+  }
+
+  /**
+   * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for QHAna service tasks and
+   * a QHAna service task element.
+   *
+   * @param element The element the menu entries are requested for.
+   * @return {{'replace-by-qhana-options': {label: string, className: string, action: Function}}}
+   */
+  createQuantMETaskEntry(element, taskOptions) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+    let taskFilteredOptions = filter(taskOptions, isDifferentType(element));
+
+    // create menu entries for the QuantME task types
+    let options = createMenuEntries(
+      element,
+      taskFilteredOptions,
+      translate,
+      replaceElement
+    );
+
+    // create a MoreOptionsEntry displaying the configurations entries
+    return {
+      ["replace-by-quantme-task-options"]: createMoreOptionsEntryWithReturn(
+        element,
+        "QuantME Task",
+        "QuantME Task",
+        popupMenu,
         options,
         "quantme-tasks-icon"
       ),
+    };
+  }
+
+  createQuantMESubprocessEntry(element, subprocessOptions) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+    let subprocessFilteredOptions = filter(
+      subprocessOptions,
+      isDifferentType(element)
+    );
+
+    // create menu entries for the QuantME task types
+    let options = createMenuEntries(
+      element,
+      subprocessFilteredOptions,
+      translate,
+      replaceElement
+    );
+
+    // create a MoreOptionsEntry displaying the configurations entries
+    return {
+      ["replace-by-quantme-subprocess-options"]:
+        createMoreOptionsEntryWithReturn(
+          element,
+          "QuantME Subprocess",
+          "QuantME Subprocess",
+          popupMenu,
+          options,
+          "quantme-tasks-icon"
+        ),
     };
   }
 }
