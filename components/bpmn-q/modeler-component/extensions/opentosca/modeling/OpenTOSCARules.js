@@ -57,6 +57,15 @@ export default class OpenTOSCARules extends RuleProvider {
       }
     });
 
+    this.addRule("connection.create", 2000, function (context) {
+      if (context.target.type.includes("Policy")) {
+        return false;
+      }
+      if (context.source.type.includes("Policy")) {
+        return false;
+      }
+    });
+
     this.addRule("shape.attach", 4000, function (context) {
       let shapeToAttach = context.shape;
       let target = context.target;

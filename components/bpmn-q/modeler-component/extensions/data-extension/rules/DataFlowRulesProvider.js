@@ -33,7 +33,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired during creation of a new connection (while you selected the target of a connection)
      */
-    this.addRule("connection.create", 200000, function (context) {
+    this.addRule("connection.create", 200, function (context) {
       const source = context.source,
         target = context.target;
 
