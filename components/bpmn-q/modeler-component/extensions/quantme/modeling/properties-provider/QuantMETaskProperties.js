@@ -48,6 +48,7 @@ import {
   ParametrizationEntry,
   InitialStateEntry,
   EvaluationResultEntry,
+  ErrorCorrectionMethodEntry,
 } from "./QuantMEPropertyEntries";
 
 /**
@@ -455,6 +456,17 @@ export function CuttingResultCombinationTaskEntries(element) {
       id: consts.CUTTING_METHOD,
       element,
       component: CuttingMethodEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function ErrorCorrectionTaskEntries(element) {
+  return [
+    {
+      id: consts.ERROR_CORRECTION_METHOD,
+      element,
+      component: ErrorCorrectionMethodEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

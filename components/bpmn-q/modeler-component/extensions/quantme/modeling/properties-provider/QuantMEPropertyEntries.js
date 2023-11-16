@@ -1588,3 +1588,34 @@ export function InitialStateEntry({ element }) {
     />
   );
 }
+
+export function ErrorCorrectionMethodEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.errorCorrectionMethod;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      errorCorrectionMethod: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.ERROR_CORRECTION_METHOD}
+      element={element}
+      label={translate("Error Correction Method")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
