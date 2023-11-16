@@ -154,8 +154,8 @@ export default class QuantMEReplaceMenuProvider {
     return {
       ["replace-by-more-options"]: createMoreOptionsEntryWithReturn(
         element,
-        "QuantME Tasks",
-        "QuantME Tasks",
+        "QuantME Constructs",
+        "QuantME Constructs",
         popupMenu,
         quantmeEntries,
         "quantme-tasks-icon"
@@ -164,8 +164,7 @@ export default class QuantMEReplaceMenuProvider {
   }
 
   /**
-   * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for QHAna service tasks and
-   * a QHAna service task element.
+   * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for QuantME service tasks.
    *
    * @param element The element the menu entries are requested for.
    * @return {{'replace-by-qhana-options': {label: string, className: string, action: Function}}}
@@ -188,8 +187,8 @@ export default class QuantMEReplaceMenuProvider {
     return {
       ["replace-by-quantme-task-options"]: createMoreOptionsEntryWithReturn(
         element,
-        "QuantME Task",
-        "QuantME Task",
+        "QuantME Tasks",
+        "QuantME Tasks",
         popupMenu,
         options,
         "quantme-tasks-icon"
@@ -219,8 +218,8 @@ export default class QuantMEReplaceMenuProvider {
       ["replace-by-quantme-subprocess-options"]:
         createMoreOptionsEntryWithReturn(
           element,
-          "QuantME Subprocess",
-          "QuantME Subprocess",
+          "QuantME Subprocesses",
+          "QuantME Subprocesses",
           popupMenu,
           options,
           "quantme-tasks-icon"
