@@ -43,7 +43,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a connection between two elements is drawn again, e.g. after dragging an element
      */
-    this.addRule("connection.reconnect", 200000000000, function (context) {
+    this.addRule("connection.reconnect", 200, function (context) {
       const source = context.source,
         target = context.target;
 
