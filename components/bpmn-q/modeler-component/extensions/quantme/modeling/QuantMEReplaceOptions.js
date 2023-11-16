@@ -13,14 +13,6 @@ import * as consts from "../Constants";
 
 export var TASK = [
   {
-    label: "Circuit Cutting Subprocess",
-    actionName: "replace-with-circuit-cutting-subprocess",
-    className: "qwm quantme-tasks-icon-cutting",
-    target: {
-      type: consts.CIRCUIT_CUTTING_SUBPROCESS,
-    },
-  },
-  {
     label: "Circuit Cutting Task",
     actionName: "replace-with-circuit-cutting-task",
     className: "qwm quantme-tasks-icon-cutting",
@@ -90,14 +82,6 @@ export var TASK = [
     className: "bpmn-icon-quantme-quantum-computation-task",
     target: {
       type: consts.QUANTUM_COMPUTATION_TASK,
-    },
-  },
-  {
-    label: "Quantum Hardware Selection Subprocess",
-    actionName: "replace-with-hardware-selection-subprocess",
-    className: "qwm quantme-tasks-icon-hardware-selection",
-    target: {
-      type: consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS,
     },
   },
   {
