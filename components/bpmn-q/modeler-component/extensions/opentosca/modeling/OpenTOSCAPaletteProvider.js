@@ -33,7 +33,7 @@ export default class OpenTOSCAPaletteProvider {
         separator: true,
       },
       "create.opentosca-policy": {
-        group: "quantme",
+        group: "opentosca",
         className: "qwm opentosca-icon-policy-palette",
         title: translate("Creates a policy"),
         action: {
