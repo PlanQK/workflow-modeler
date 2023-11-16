@@ -46,6 +46,17 @@ export default class OpenTOSCARules extends RuleProvider {
       }
     });
 
+    this.addRule("shape.replace", function (context) {
+      if (context.element.type.includes("Policy")) {
+        return false;
+      }
+    });
+    this.addRule("shape.append", function (context) {
+      if (context.element.type.includes("Policy")) {
+        return false;
+      }
+    });
+
     this.addRule("shape.attach", 4000, function (context) {
       let shapeToAttach = context.shape;
       let target = context.target;
@@ -61,6 +72,37 @@ export default class OpenTOSCARules extends RuleProvider {
         shapeToAttach.type.includes("Policy") &&
         target.type === "bpmn:ServiceTask"
       ) {
+        let specificPolicies = consts.POLICIES;
+        specificPolicies = specificPolicies.filter(
+          (policy) => policy !== consts.POLICY
+        );
+        let attachedElementTypesWithPolicy = 0;
+        for (let i = 0; i < target.attachers.length; i++) {
+          if (target.attachers[i].type.includes("Policy")) {
+            attachedElementTypesWithPolicy++;
+          }
+          if (specificPolicies.includes(target.attachers[i].type)) {
+            specificPolicies = specificPolicies.filter(
+              (policy) => policy !== target.attachers[i].type
+            );
+          }
+        }
+
+        for (let i = 0; i < target.attachers.length; i++) {
+          if (specificPolicies.includes(target.attachers[i].type)) {
+            specificPolicies = specificPolicies.filter(
+              (policy) => policy !== target.attachers[i].type
+            );
+          }
+        }
+        if (attachedElementTypesWithPolicy === consts.POLICIES.length - 1) {
+          return false;
+        }
+
+        // If the specific policies are included, prevent attaching another policy
+        if (specificPolicies.length === 0) {
+          return false;
+        }
         for (let i = 0; i < target.attachers.length; i++) {
           let boundaryElement = target.attachers[i];
 
