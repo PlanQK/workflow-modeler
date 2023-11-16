@@ -136,7 +136,7 @@ export default class QuantMEReplaceMenuProvider {
   createQuantMETasks(element) {
     const popupMenu = this.popupMenu;
 
-    // get entry for QHAna service tasks and its configurations
+    // get entry for QuantME tasks and their configurations
     const quantmeTaskEntries = this.createQuantMETaskEntry(
       element,
       quantmeReplaceOptions.TASK
@@ -164,10 +164,10 @@ export default class QuantMEReplaceMenuProvider {
   }
 
   /**
-   * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for QuantME service tasks.
+   * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for QuantME tasks.
    *
    * @param element The element the menu entries are requested for.
-   * @return {{'replace-by-qhana-options': {label: string, className: string, action: Function}}}
+   * @return {{'replace-by-quantme-task-options': {label: string, className: string, action: Function}}}
    */
   createQuantMETaskEntry(element, taskOptions) {
     const popupMenu = this.popupMenu;
