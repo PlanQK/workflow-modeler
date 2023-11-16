@@ -28,7 +28,7 @@ export default class OpenTOSCAPaletteProvider {
 
     return {
       // add separator line to delimit the new group
-      "quantme-separator": {
+      "opentosca-separator": {
         group: "opentosca",
         separator: true,
       },
