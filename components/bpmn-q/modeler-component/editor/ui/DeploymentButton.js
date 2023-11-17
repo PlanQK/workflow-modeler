@@ -65,8 +65,9 @@ export default function DeploymentButton(props) {
 
         // add the call to the transformation here
         // xml = await startOnDemandReplacementProcess(xml);
+        deployAsPlanQKService(xml)
 
-        // then deploy it to planqk 
+        // then deploy it to planqk
       }
       if (result.deploymentLocation === "camunda") {
         deploy(xml);
@@ -74,6 +75,28 @@ export default function DeploymentButton(props) {
     }
     // handle cancellation (don't deploy)
     setWindowOpenDemandSelection(false);
+  }
+
+  async function deployAsPlanQKService(xml) {
+    NotificationHandler.getInstance().displayNotification({
+      title: "Service Deployment started",
+      content:
+        "Transforming workflow to plain BPMN and deploying it as service to PlanQK.",
+    });
+
+    // get XML of the current workflow
+    const rootElement = getRootProcess(modeler.getDefinitions());
+
+    // Inform PlanQK that a new service must be created
+    const createWorkflowServiceEvent = new CustomEvent("create-workflow-service-event", {
+      bubbles: true,
+      detail: {
+        name: rootElement.id,
+        workflow: xml
+
+      },
+    });
+    document.dispatchEvent(createWorkflowServiceEvent);
   }
 
   /**
