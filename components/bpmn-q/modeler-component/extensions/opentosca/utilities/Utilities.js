@@ -29,3 +29,29 @@ export function performAjax(targetUrl, dataToSend) {
     });
   });
 }
+
+export function synchronousGetRequest(url) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url, false);
+  xhr.send(null);
+  if (xhr.status === 200) {
+    return xhr.responseText;
+  } else {
+    throw new Error("Request failed: " + xhr.statusText);
+  }
+}
+
+export function synchronousPostRequest(url) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, false);
+  xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+  xhr.setRequestHeader('Access-Control-Allow-Methods', 'text/plain');
+  xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+  // xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.send(null);
+  if (xhr.status === 200) {
+    return xhr.responseText;
+  } else {
+    throw new Error("Request failed: " + xhr.statusText);
+  }
+}

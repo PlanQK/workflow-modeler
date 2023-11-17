@@ -164,6 +164,21 @@ export default class DeploymentPlugin extends PureComponent {
   async handleDeploymentInputClosed(result) {
     // handle click on 'Next' button
     if (result && result.hasOwnProperty("next") && result.next === true) {
+
+      // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
+      const nodeTypeRequirements = result.nodeTypeRequirements;
+      let blackList = [];
+      Object.entries(nodeTypeRequirements).forEach(entry => {
+        const [key, value] = entry;
+        Object.values(value.requiredAttributes).forEach(value => {
+          if (value === "" && !blackList.includes(key)){
+            blackList.push(key);
+          }
+        });
+      });
+
+      // TODO handle completion  --> remove fake in first window to actually check for incomplete
+
       // make progress bar visible and hide buttons
       result.refs.progressBarDivRef.current.hidden = false;
       result.refs.footerRef.current.hidden = true;

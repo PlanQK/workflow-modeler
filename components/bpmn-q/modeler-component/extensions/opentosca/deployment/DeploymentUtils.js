@@ -11,6 +11,8 @@
 
 import { getBindingType } from "./BindingUtils";
 import { getFlowElementsRecursively } from "../../../editor/util/ModellingUtilities";
+import { synchronousPostRequest} from "../utilities/Utilities";
+import config from "../framework-config/config";
 
 /**
  * Get the ServiceTasks of the current workflow that have an attached deployment model to deploy the corresponding service starting from the given root element
@@ -47,7 +49,7 @@ export function getServiceTasksToDeploy(startElement) {
           url: flowElement.deploymentModelUrl,
           type: getBindingType(flowElement),
           csarName: getCSARName(flowElement),
-          incomplete: true, // TODO: check with Winery
+          incomplete: isCompleteDeplooymentModel(flowElement), // TODO: check with Winery
         });
       }
     }
@@ -81,4 +83,19 @@ export function isDeployableServiceTask(element) {
     element.deploymentModelUrl &&
     getBindingType(element) !== undefined
   );
+}
+
+/**
+ * Get the CSAR name from the deployment model URL
+ *
+ * @param serviceTask the service task the CSAR belongs to
+ * @return {*} the CSAR name
+ */
+function isCompleteDeplooymentModel(serviceTask) {
+  let url = serviceTask.deploymentModelUrl.split("/?csar")[0];
+  url = url.split('/');
+  url.shift();
+  url = url.join('/');
+  const iscomplete = synchronousPostRequest(config.wineryEndpoint + "/" + url + "/topologytemplate/iscomplete");
+  return iscomplete === 'true';
 }

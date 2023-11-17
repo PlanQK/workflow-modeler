@@ -18,21 +18,13 @@ import { fetch } from "whatwg-fetch";
 import config from "../../../framework-config/config";
 import { forEach } from "min-dash";
 import { useState } from "diagram-js/lib/ui";
+import {synchronousGetRequest} from "../../../utilities/Utilities";
 
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-function synchronousRequest(url) {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", url, false);
-  xhr.send(null);
-  if (xhr.status === 200) {
-    return xhr.responseText;
-  } else {
-    throw new Error("Request failed: " + xhr.statusText);
-  }
-}
+
 
 export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   // refs to enable changing the state through the plugin
@@ -59,7 +51,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   if (containsIncompleteModels) {
     try {
       const url = config.wineryEndpoint + "/nodetypes";
-      const nodetypes = JSON.parse(synchronousRequest(url));
+      const nodetypes = JSON.parse(synchronousGetRequest(url));
       console.log("Found NodeTypes: ", nodetypes);
 
       nodetypes.forEach((nodetype) => {
@@ -67,7 +59,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
           encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
         ).replace("%257D", "/");
         const tags = JSON.parse(
-          synchronousRequest(url + "/" + nodetypeUri + "/tags")
+            synchronousGetRequest(url + "/" + nodetypeUri + "/tags")
         );
         const requiredAttributes = tags
           .filter((x) => x.name === "requiredAttributes")?.[0]
