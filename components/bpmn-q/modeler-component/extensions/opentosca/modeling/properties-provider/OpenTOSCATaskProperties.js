@@ -4,7 +4,6 @@ import {
   CloudTypeEntry,
   DedicatedHostingEntry,
   LocationEntry,
-  OnDemandEntry,
 } from "./OpenTOSCAPropertyEntries.js";
 
 /**
@@ -27,17 +26,6 @@ export function DedicatedHostingPolicyEntries(element) {
       id: consts.DEDICATED_HOSTING,
       element,
       component: DedicatedHostingEntry,
-      isEdited: isTextFieldEntryEdited,
-    },
-  ];
-}
-
-export function DeploymentPolicyEntries(element) {
-  return [
-    {
-      id: consts.ON_DEMAND,
-      element,
-      component: OnDemandEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

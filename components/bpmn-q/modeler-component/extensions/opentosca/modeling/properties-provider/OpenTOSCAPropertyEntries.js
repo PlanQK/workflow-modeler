@@ -93,40 +93,6 @@ export function DedicatedHostingEntry({ element }) {
   );
 }
 
-export function OnDemandEntry({ element }) {
-  const modeling = useService("modeling");
-  const translate =
-    useService("translate") ||
-    function (str) {
-      return str;
-    };
-  const debounce = useService("debounceInput");
-
-  const getValue = function () {
-    return element.businessObject.onDemand;
-  };
-
-  const setValue = function (newValue) {
-    let onDemandHostAttribute = element.host.businessObject.onDemand;
-    if (onDemandHostAttribute !== newValue) {
-      element.host.businessObject.onDemand = newValue;
-    }
-    return modeling.updateProperties(element, {
-      onDemand: newValue,
-    });
-  };
-
-  return (
-    <CheckboxEntry
-      id={consts.ON_DEMAND}
-      label={translate("Deploy on-demand")}
-      getValue={getValue}
-      setValue={setValue}
-      debounce={debounce}
-    />
-  );
-}
-
 export function LocationEntry({ element }) {
   const modeling = useService("modeling");
   const translate =

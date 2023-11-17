@@ -39,7 +39,7 @@
       ]
     },
     {
-      "name": "DeploymentPolicy",
+      "name": "OnDemandPolicy",
       "superClass": ["bpmn:Event"],
       "properties": [
         {

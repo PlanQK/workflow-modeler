@@ -29,14 +29,6 @@ export var POLICY = [
     },
   },
   {
-    label: "Deployment Policy",
-    actionName: "replace-with-deployment-policy",
-    className: "qwm bpmn-icon-deployment-policy",
-    target: {
-      type: consts.DEPLOYMENT_POLICY,
-    },
-  },
-  {
     label: "Location Policy",
     actionName: "replace-with-location-policy",
     className: "qwm bpmn-icon-location-policy",

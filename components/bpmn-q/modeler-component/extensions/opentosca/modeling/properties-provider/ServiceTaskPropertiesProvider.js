@@ -14,7 +14,6 @@ import { Group } from "@bpmn-io/properties-panel";
 import { getWineryEndpoint } from "../../framework-config/config-manager";
 import { DeploymentModelProps } from "./DeploymentModelProps";
 import {
-  DeploymentPolicyEntries,
   CloudDeploymentModelPolicyEntries,
   DedicatedHostingPolicyEntries,
   LocationPolicyEntries,
@@ -32,7 +31,8 @@ const LOW_PRIORITY = 500;
 export default function ServiceTaskPropertiesProvider(
   propertiesPanel,
   injector,
-  translate
+  translate,
+  modeling
 ) {
   /**
    * Return the groups provided for the given element.
@@ -57,7 +57,8 @@ export default function ServiceTaskPropertiesProvider(
         groups[3] = DeploymentModelGroup(
           element,
           injector,
-          getWineryEndpoint()
+          getWineryEndpoint(),
+          modeling
         );
       }
 
@@ -65,7 +66,8 @@ export default function ServiceTaskPropertiesProvider(
       if (
         element.type &&
         element.type.startsWith("opentosca:") &&
-        element.type !== "opentosca:Policy"
+        element.type !== consts.POLICY &&
+        element.type !== consts.ON_DEMAND_POLICY
       ) {
         groups.unshift(createOpenTOSCAGroup(element, translate));
       }
@@ -80,7 +82,7 @@ ServiceTaskPropertiesProvider.$inject = [
   "propertiesPanel",
   "injector",
   "translate",
-  "eventBus",
+  "modeling",
 ];
 
 /**
@@ -117,14 +119,16 @@ function ImplementationGroup(element, injector) {
  * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
  * @constructor
  */
-function DeploymentModelGroup(element, injector, wineryEndpoint) {
+function DeploymentModelGroup(element, injector, wineryEndpoint, modeling) {
   const translate = injector.get("translate");
 
   const group = {
     label: translate("Deployment Models"),
     id: "CamundaPlatform__DeploymentModels",
     component: Group,
-    entries: [...DeploymentModelProps({ element, wineryEndpoint, translate })],
+    entries: [
+      ...DeploymentModelProps({ element, wineryEndpoint, translate, modeling }),
+    ],
   };
 
   if (group.entries.length) {
@@ -161,8 +165,6 @@ function OpenTOSCAProps(element) {
       return CloudDeploymentModelPolicyEntries(element);
     case consts.DEDICATED_HOSTING_POLICY:
       return DedicatedHostingPolicyEntries(element);
-    case consts.DEPLOYMENT_POLICY:
-      return DeploymentPolicyEntries(element);
     case consts.LOCATION_POLICY:
       return LocationPolicyEntries(element);
     default:

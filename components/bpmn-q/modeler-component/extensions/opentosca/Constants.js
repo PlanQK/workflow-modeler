@@ -11,7 +11,7 @@
 export const POLICY = "opentosca:Policy";
 export const CLOUD_DEPLOYMENT_MODEL_POLICY =
   "opentosca:CloudDeploymentModelPolicy";
-export const DEPLOYMENT_POLICY = "opentosca:DeploymentPolicy";
+export const ON_DEMAND_POLICY = "opentosca:OnDemandPolicy";
 export const LOCATION_POLICY = "opentosca:LocationPolicy";
 export const DEDICATED_HOSTING_POLICY = "opentosca:DedicatedHostingPolicy";
 
@@ -25,5 +25,5 @@ export const POLICIES = [
   CLOUD_DEPLOYMENT_MODEL_POLICY,
   DEDICATED_HOSTING_POLICY,
   LOCATION_POLICY,
-  DEPLOYMENT_POLICY,
+  ON_DEMAND_POLICY,
 ];

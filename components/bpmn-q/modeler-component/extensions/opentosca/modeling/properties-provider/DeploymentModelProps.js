@@ -67,6 +67,7 @@ export function DeploymentModelProps(props) {
 
 export function OnDemandEntry({ element }) {
   const modeling = useService("modeling");
+  const elementRegistry = useService("elementRegistry");
   const translate =
     useService("translate") ||
     function (str) {
@@ -80,14 +81,27 @@ export function OnDemandEntry({ element }) {
 
   const setValue = function (newValue) {
     let attachers = element.attachers;
-    for (let i = 0; i < attachers.length; i++) {
-      if (attachers[i].type === consts.DEPLOYMENT_POLICY) {
-        attachers[i].businessObject.onDemand = newValue;
+    if (newValue) {
+      modeling.createShape(
+        { type: consts.ON_DEMAND_POLICY },
+        { x: element.x + 85, y: element.y },
+        element,
+        { attach: true }
+      );
+      return modeling.updateProperties(element, {
+        onDemand: newValue,
+      });
+    } else {
+      for (let i = 0; i < attachers.length; i++) {
+        if (attachers[i].type === consts.ON_DEMAND_POLICY) {
+          attachers[i].businessObject.onDemand = newValue;
+          modeling.removeShape(elementRegistry.get(attachers[i].id));
+        }
       }
+      return modeling.updateProperties(element, {
+        onDemand: newValue,
+      });
     }
-    return modeling.updateProperties(element, {
-      onDemand: newValue,
-    });
   };
 
   return (

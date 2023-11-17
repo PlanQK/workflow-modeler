@@ -165,7 +165,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "DEDICATED_HOSTING_POLICY");
         return task;
       },
-      [consts.DEPLOYMENT_POLICY]: function (self, parentGfx, element) {
+      [consts.ON_DEMAND_POLICY]: function (self, parentGfx, element) {
         var attrs = {
           fill: "white",
           stroke: "none",
@@ -174,7 +174,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         element.height = 44;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         setTimeout(function () {}, 10000);
-        drawTaskSVG(parentGfx, "DEPLOYMENT_POLICY");
+        drawTaskSVG(parentGfx, "ON_DEMAND_POLICY");
         return task;
       },
       [consts.LOCATION_POLICY]: function (self, parentGfx, element) {

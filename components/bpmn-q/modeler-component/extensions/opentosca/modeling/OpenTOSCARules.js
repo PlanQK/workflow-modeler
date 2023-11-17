@@ -94,9 +94,15 @@ export default class OpenTOSCARules extends RuleProvider {
         specificPolicies = specificPolicies.filter(
           (policy) => policy !== consts.POLICY
         );
+        specificPolicies = specificPolicies.filter(
+          (policy) => policy !== consts.ON_DEMAND_POLICY
+        );
         let attachedElementTypesWithPolicy = 0;
         for (let i = 0; i < target.attachers.length; i++) {
-          if (target.attachers[i].type.includes("Policy")) {
+          if (
+            target.attachers[i].type.includes("Policy") &&
+            target.attachers[i].type !== consts.ON_DEMAND_POLICY
+          ) {
             attachedElementTypesWithPolicy++;
           }
           if (specificPolicies.includes(target.attachers[i].type)) {
@@ -113,7 +119,7 @@ export default class OpenTOSCARules extends RuleProvider {
             );
           }
         }
-        if (attachedElementTypesWithPolicy === consts.POLICIES.length - 1) {
+        if (attachedElementTypesWithPolicy === consts.POLICIES.length - 2) {
           return false;
         }
 
@@ -132,8 +138,8 @@ export default class OpenTOSCARules extends RuleProvider {
           }
 
           if (
-            boundaryElement.type === consts.DEPLOYMENT_POLICY &&
-            shapeToAttach.type === consts.DEPLOYMENT_POLICY
+            boundaryElement.type === consts.ON_DEMAND_POLICY &&
+            shapeToAttach.type === consts.ON_DEMAND_POLICY
           ) {
             return false;
           }
