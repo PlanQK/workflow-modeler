@@ -31,6 +31,10 @@ export default function OpenTOSCAContextPadProvider(injector) {
       delete entries["append.append-task"];
       delete entries["append.text-annotation"];
       delete entries["connect"];
+      if (element.type === consts.ON_DEMAND_POLICY) {
+        delete entries["delete"];
+        delete entries["replace"];
+      }
     }
     return entries;
   };
