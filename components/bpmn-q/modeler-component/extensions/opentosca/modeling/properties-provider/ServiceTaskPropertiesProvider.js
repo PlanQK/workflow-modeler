@@ -15,7 +15,6 @@ import { getWineryEndpoint } from "../../framework-config/config-manager";
 import { DeploymentModelProps } from "./DeploymentModelProps";
 import {
   CloudDeploymentModelPolicyEntries,
-  DedicatedHostingPolicyEntries,
   LocationPolicyEntries,
 } from "./OpenTOSCATaskProperties";
 import * as consts from "../../Constants";
@@ -67,7 +66,8 @@ export default function ServiceTaskPropertiesProvider(
         element.type &&
         element.type.startsWith("opentosca:") &&
         element.type !== consts.POLICY &&
-        element.type !== consts.ON_DEMAND_POLICY
+        element.type !== consts.ON_DEMAND_POLICY &&
+        element.type !== consts.DEDICATED_HOSTING_POLICY
       ) {
         groups.unshift(createOpenTOSCAGroup(element, translate));
       }
@@ -163,8 +163,6 @@ function OpenTOSCAProps(element) {
   switch (element.type) {
     case consts.CLOUD_DEPLOYMENT_MODEL_POLICY:
       return CloudDeploymentModelPolicyEntries(element);
-    case consts.DEDICATED_HOSTING_POLICY:
-      return DedicatedHostingPolicyEntries(element);
     case consts.LOCATION_POLICY:
       return LocationPolicyEntries(element);
     default:

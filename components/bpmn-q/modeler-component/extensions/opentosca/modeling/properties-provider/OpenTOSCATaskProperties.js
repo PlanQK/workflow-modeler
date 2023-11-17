@@ -1,10 +1,6 @@
 import * as consts from "../../Constants";
 import { isTextFieldEntryEdited } from "@bpmn-io/properties-panel";
-import {
-  CloudTypeEntry,
-  DedicatedHostingEntry,
-  LocationEntry,
-} from "./OpenTOSCAPropertyEntries.js";
+import { CloudTypeEntry, LocationEntry } from "./OpenTOSCAPropertyEntries.js";
 
 /**
  * This file contains all properties of the OpenTOSCA modeling constructs and the entries they define.
@@ -15,17 +11,6 @@ export function CloudDeploymentModelPolicyEntries(element) {
       id: consts.CLOUD_TYPE,
       element,
       component: CloudTypeEntry,
-      isEdited: isTextFieldEntryEdited,
-    },
-  ];
-}
-
-export function DedicatedHostingPolicyEntries(element) {
-  return [
-    {
-      id: consts.DEDICATED_HOSTING,
-      element,
-      component: DedicatedHostingEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

@@ -11,6 +11,7 @@
 
 import RuleProvider from "diagram-js/lib/features/rules/RuleProvider";
 import * as consts from "../Constants";
+import { getModeler } from "../../../editor/ModelerHandler";
 
 export default class OpenTOSCARules extends RuleProvider {
   constructor(eventBus, modeling) {
@@ -42,12 +43,11 @@ export default class OpenTOSCARules extends RuleProvider {
 
     this.addRule("shape.replace", function (context) {
       if (context.element.type.includes("Policy")) {
-        return false;
-      }
-    });
-
-    this.addRule("shape.replace", function (context) {
-      if (context.element.type.includes("Policy")) {
+        if (context.element.type === consts.DEDICATED_HOSTING_POLICY) {
+          getModeler().get("modeling").updateProperties(context.element, {
+            "opentosca:dedicatedHosting": "true",
+          });
+        }
         return false;
       }
     });
@@ -164,4 +164,4 @@ export default class OpenTOSCARules extends RuleProvider {
   }
 }
 
-OpenTOSCARules.$inject = ["eventBus"];
+OpenTOSCARules.$inject = ["eventBus", "modeling"];
