@@ -180,7 +180,6 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
 async function extractSelfserviceApplicationUrl(propertiesUrl) {
   let buildPlanResponse = await fetchDataFromEndpoint(propertiesUrl);
   console.log(buildPlanResponse);
-  // let json = JSON.parse(properties);
   const selfserviceApplicationUrl = buildPlanResponse.outputs.filter(
     (x) => x.name === "selfserviceApplicationUrl"
   );
