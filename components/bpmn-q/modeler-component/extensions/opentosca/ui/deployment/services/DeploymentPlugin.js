@@ -170,12 +170,12 @@ export default class DeploymentPlugin extends PureComponent {
     if (result && result.hasOwnProperty("next") && result.next === true) {
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
       const nodeTypeRequirements = result.nodeTypeRequirements;
-      let  blacklistedNodetypes = [];
+      let blacklistedNodetypes = [];
       Object.entries(nodeTypeRequirements).forEach((entry) => {
         const [key, value] = entry;
         Object.values(value.requiredAttributes).forEach((value) => {
-          if (value === "" && ! blacklistedNodetypes.includes(key)) {
-             blacklistedNodetypes.push(key);
+          if (value === "" && !blacklistedNodetypes.includes(key)) {
+            blacklistedNodetypes.push(key);
           }
         });
       });
@@ -192,7 +192,8 @@ export default class DeploymentPlugin extends PureComponent {
 
       for (let incompleteCSAR of incompleteCSARList) {
         const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
-          incompleteCSAR.url, blacklistedNodetypes,
+          incompleteCSAR.url,
+          blacklistedNodetypes,
           {}
         );
         const nameOfCompletedCSAR = locationOfCompletedCSAR
