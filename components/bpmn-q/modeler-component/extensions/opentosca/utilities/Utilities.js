@@ -29,3 +29,26 @@ export function performAjax(targetUrl, dataToSend) {
     });
   });
 }
+
+export function synchronousGetRequest(url) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url, false);
+  xhr.send(null);
+  if (xhr.status === 200) {
+    return xhr.responseText;
+  } else {
+    throw new Error("Request failed: " + xhr.statusText);
+  }
+}
+
+export function synchronousPostRequest(url, type, body) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, false);
+  xhr.setRequestHeader("Content-Type", type);
+  xhr.send(body);
+  if (xhr.status.toString().startsWith("2")) {
+    return xhr;
+  } else {
+    throw new Error("Request failed: " + xhr.statusText);
+  }
+}

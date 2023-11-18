@@ -48,6 +48,7 @@ export default function ServiceDeploymentOverviewModal({
       <td>{CSAR.csarName}</td>
       <td>{CSAR.serviceTaskIds.join(",")}</td>
       <td>{CSAR.type}</td>
+      <td>{CSAR.incomplete.toString()}</td>
     </tr>
   ));
 
@@ -66,6 +67,7 @@ export default function ServiceDeploymentOverviewModal({
               <th>CSAR Name</th>
               <th>Related ServiceTask IDs</th>
               <th>Type (Push/Pull)</th>
+              <th>CSAR Requires Completion</th>
             </tr>
             {listItems}
           </tbody>
