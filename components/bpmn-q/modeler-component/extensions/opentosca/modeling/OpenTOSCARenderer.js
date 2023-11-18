@@ -57,7 +57,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     canvas,
     textRenderer,
     commandStack,
-    elementRegistry
+    elementRegistry,
   ) {
     super(
       config,
@@ -66,7 +66,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       pathMap,
       canvas,
       textRenderer,
-      HIGH_PRIORITY
+      HIGH_PRIORITY,
     );
     this.commandStack = commandStack;
     this.elementRegistry = elementRegistry;
@@ -98,7 +98,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           // Prevent snapping on deployment visualisation toggle button
           event.stopPropagation();
         }
-      }
+      },
     );
 
     this.openToscaHandlers = {
@@ -118,7 +118,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       execute: ({ showDeploymentModel }) => {
         const elementsWithDeploymentModel = this.elementRegistry.filter(
           (element) =>
-            element.businessObject.get("opentosca:deploymentModelUrl")
+            element.businessObject.get("opentosca:deploymentModelUrl"),
         );
         const changed = [];
         for (const element of elementsWithDeploymentModel) {
@@ -176,7 +176,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           strokeWidth: 1,
           strokeDasharray: 2,
         }),
-      })
+      }),
     );
 
     let defs = domQuery("defs", canvas._svg);
@@ -190,7 +190,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
 
   showDeploymentModelButton(parentGfx, element) {
     let deploymentModelUrl = element.businessObject.get(
-      "opentosca:deploymentModelUrl"
+      "opentosca:deploymentModelUrl",
     );
     if (!deploymentModelUrl) return;
 
@@ -201,7 +201,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         svg: buttonIcon,
       },
       null,
-      true
+      true,
     );
     button.style["pointer-events"] = "all";
     button.style["cursor"] = "pointer";
@@ -280,7 +280,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
 
     this.expandSurroundingSubProcess(element, boundingBox);
     const previousBoundingBox = this.currentlyShownDeploymentsModels.get(
-      element.id
+      element.id,
     )?.boundingBox;
     if (JSON.stringify(previousBoundingBox) !== JSON.stringify(boundingBox)) {
       this.moveNeighborNodes(boundingBox, element);
@@ -294,7 +294,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       parentGfx,
       topNode,
       relationshipTemplates,
-      positions
+      positions,
     );
   }
 
@@ -302,7 +302,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     parentGfx,
     topNode,
     relationshipTemplates,
-    nodePositions
+    nodePositions,
   ) {
     const connectionsAtNodeLocations = new Map();
     const connections = [];
@@ -322,7 +322,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       sourceLocation,
       target,
       targetLocation,
-      connectionName
+      connectionName,
     ) => {
       addToPort(source, sourceLocation, target);
       addToPort(target, targetLocation, source);
@@ -360,7 +360,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "north",
             target,
             "south",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "top":
@@ -369,7 +369,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "south",
             target,
             "north",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "right":
@@ -378,7 +378,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "east",
             target,
             "west",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "left":
@@ -387,7 +387,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "west",
             target,
             "east",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "top-left":
@@ -396,7 +396,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "south",
             target,
             "east",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "top-right":
@@ -405,7 +405,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "south",
             target,
             "west",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "bottom-left":
@@ -414,7 +414,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "north",
             target,
             "east",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         case "bottom-right":
@@ -423,7 +423,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
             "north",
             target,
             "west",
-            relationshipTemplate.name
+            relationshipTemplate.name,
           );
           break;
         default:
@@ -434,7 +434,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     for (const connection of connections) {
       const getPortPoint = (element, location, otherNode) => {
         const connectionsAtNodeLocation = connectionsAtNodeLocations.get(
-          element.ref + "-" + location
+          element.ref + "-" + location,
         );
         const locationIndex = connectionsAtNodeLocation.indexOf(otherNode) + 1;
         const portCount = connectionsAtNodeLocation.length;
@@ -482,16 +482,16 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         getPortPoint(
           connection.source,
           connection.sourceLocation,
-          connection.target
+          connection.target,
         ),
         getPortPoint(
           connection.target,
           connection.targetLocation,
-          connection.source
+          connection.source,
         ),
         getSimpleDirection(connection.sourceLocation) +
           ":" +
-          getSimpleDirection(connection.targetLocation)
+          getSimpleDirection(connection.targetLocation),
       );
 
       const line = createLine(
@@ -500,7 +500,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           ...STROKE_STYLE,
           markerEnd: `url(#${DEPLOYMENT_REL_MARKER_ID})`,
         }),
-        5
+        5,
       );
 
       const labelGroup = svgCreate("g");
@@ -575,7 +575,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
         let otherXPosition = element.x + NODE_WIDTH / 2;
         const otherElementBoundingBox =
           this.currentlyShownDeploymentsModels.get(
-            otherElement.id
+            otherElement.id,
           )?.boundingBox;
         if (otherElementBoundingBox) {
           otherXPosition =
@@ -617,7 +617,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     if (commands.length > 0) {
       this.commandStack.execute(
         "properties-panel.multi-command-executor",
-        commands
+        commands,
       );
     }
   }
@@ -635,7 +635,7 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     const groupDef = svgCreate("g");
     svgAttr(groupDef, {
       transform: `matrix(1, 0, 0, 1, ${position.x.toFixed(
-        2
+        2,
       )}, ${position.y.toFixed(2)})`,
     });
     const rect = svgCreate("rect", {
@@ -714,10 +714,10 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       const parent = element.parent;
       if (parent === surroundingSubProcess.element) {
         const currentBounds = {
-          x: parent.x,
-          y: parent.y,
-          width: parent.width,
-          height: parent.height,
+          left: parent.x,
+          top: parent.y,
+          right: parent.x + parent.width,
+          bottom: parent.y + parent.height,
         };
 
         let newBounds = surroundingSubProcess.newBounds;
@@ -727,26 +727,32 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
 
         console.log(newBounds, currentBounds, oldBounds);
 
-        if (newBounds.x === currentBounds.x && newBounds.x !== oldBounds.x) {
-          currentBounds.x = oldBounds.x;
-          needsResize = true;
-        }
-        if (newBounds.y === currentBounds.y && newBounds.y !== oldBounds.y) {
-          currentBounds.y = oldBounds.y;
+        if (
+          newBounds.left === currentBounds.left &&
+          newBounds.left !== oldBounds.left
+        ) {
+          currentBounds.left = oldBounds.left;
           needsResize = true;
         }
         if (
-          newBounds.width === currentBounds.width &&
-          newBounds.width !== oldBounds.width
+          newBounds.top === currentBounds.top &&
+          newBounds.top !== oldBounds.top
         ) {
-          currentBounds.width = oldBounds.width;
+          currentBounds.top = oldBounds.top;
           needsResize = true;
         }
         if (
-          newBounds.height === currentBounds.height &&
-          newBounds.height !== oldBounds.height
+          newBounds.right === currentBounds.right &&
+          newBounds.right !== oldBounds.right
         ) {
-          currentBounds.height = oldBounds.height;
+          currentBounds.right = oldBounds.right;
+          needsResize = true;
+        }
+        if (
+          newBounds.bottom === currentBounds.bottom &&
+          newBounds.bottom !== oldBounds.bottom
+        ) {
+          currentBounds.bottom = oldBounds.bottom;
           needsResize = true;
         }
 
@@ -754,7 +760,12 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           const event = {
             context: {
               shape: parent,
-              newBounds: currentBounds,
+              newBounds: {
+                x: currentBounds.left,
+                y: currentBounds.top,
+                width: currentBounds.right - currentBounds.left,
+                height: currentBounds.bottom - currentBounds.top,
+              },
               hints: {},
             },
           };
@@ -769,30 +780,30 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       const parent = element.parent;
       if (parent && parent.type === "bpmn:SubProcess" && !parent.isExpanded) {
         const oldBounds = {
-          x: parent.x,
-          y: parent.y,
-          width: parent.width,
-          height: parent.height,
+          left: parent.x,
+          top: parent.y,
+          right: parent.x + parent.width,
+          bottom: parent.y + parent.height,
         };
         const newBounds = {
           ...oldBounds,
         };
         let needsResize = false;
 
-        if (oldBounds.x > boundingBox.left) {
-          newBounds.x = boundingBox.left - NODE_WIDTH / 3;
+        if (oldBounds.left > boundingBox.left) {
+          newBounds.left = boundingBox.left - NODE_WIDTH / 3;
           needsResize = true;
         }
-        if (oldBounds.y > boundingBox.top) {
-          newBounds.y = boundingBox.top - NODE_HEIGHT / 3;
+        if (oldBounds.top > boundingBox.top) {
+          newBounds.top = boundingBox.top - NODE_HEIGHT / 3;
           needsResize = true;
         }
-        if (oldBounds.x + oldBounds.width < boundingBox.right) {
-          newBounds.width = boundingBox.right - oldBounds.x + NODE_WIDTH * 2;
+        if (oldBounds.right < boundingBox.right) {
+          newBounds.right = boundingBox.right + NODE_WIDTH / 3;
           needsResize = true;
         }
-        if (oldBounds.y + oldBounds.height < boundingBox.bottom) {
-          newBounds.height = boundingBox.bottom - oldBounds.y + NODE_HEIGHT;
+        if (oldBounds.bottom < boundingBox.bottom) {
+          newBounds.bottom = boundingBox.bottom + NODE_HEIGHT / 3;
           needsResize = true;
         }
 
@@ -805,7 +816,12 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
           const event = {
             context: {
               shape: parent,
-              newBounds,
+              newBounds: {
+                x: newBounds.left,
+                y: newBounds.top,
+                width: newBounds.right - newBounds.left,
+                height: newBounds.bottom - newBounds.top,
+              },
               hints: {},
             },
           };
@@ -822,8 +838,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
               parent: element.parent,
               x: boundingBox.left + NODE_WIDTH / 2,
               y: boundingBox.top + NODE_HEIGHT / 2,
-              width: boundingBox.right - boundingBox.left - NODE_WIDTH,
-              height: boundingBox.bottom - boundingBox.top - NODE_HEIGHT,
+              width: boundingBox.right - boundingBox.left - NODE_WIDTH / 2,
+              height: boundingBox.bottom - boundingBox.top - NODE_HEIGHT / 2,
             },
             hints: {},
           },
