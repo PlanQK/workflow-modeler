@@ -46,7 +46,7 @@ export function synchronousPostRequest(url, type, body) {
   xhr.open("POST", url, false);
   xhr.setRequestHeader('Content-Type',type);
   xhr.send(body);
-  if (xhr.status === 200 || xhr.status === 201) {
+  if (xhr.status.toString().startsWith("2")) {
     return xhr;
   } else {
     throw new Error("Request failed: " + xhr.statusText);
