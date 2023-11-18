@@ -41,16 +41,13 @@ export function synchronousGetRequest(url) {
   }
 }
 
-export function synchronousPostRequest(url) {
+export function synchronousPostRequest(url, type, body) {
   const xhr = new XMLHttpRequest();
   xhr.open("POST", url, false);
-  xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-  xhr.setRequestHeader('Access-Control-Allow-Methods', 'text/plain');
-  xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-  // xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  xhr.send(null);
-  if (xhr.status === 200) {
-    return xhr.responseText;
+  xhr.setRequestHeader('Content-Type',type);
+  xhr.send(body);
+  if (xhr.status === 200 || xhr.status === 201) {
+    return xhr;
   } else {
     throw new Error("Request failed: " + xhr.statusText);
   }

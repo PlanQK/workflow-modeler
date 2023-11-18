@@ -21,11 +21,16 @@ import {
   uploadCSARToContainer,
 } from "../../../deployment/OpenTOSCAUtils";
 import { bindUsingPull, bindUsingPush } from "../../../deployment/BindingUtils";
-import { getServiceTasksToDeploy } from "../../../deployment/DeploymentUtils";
+import {
+  completeIncompleteDeploymentModel,
+  getServiceTasksToDeploy,
+  isCompleteDeploymentModel
+} from "../../../deployment/DeploymentUtils";
 import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
+
 
 const defaultState = {
   windowOpenDeploymentOverview: false,
@@ -177,16 +182,36 @@ export default class DeploymentPlugin extends PureComponent {
         });
       });
 
-      // TODO handle completion  --> remove fake in first window to actually check for incomplete
+      let csarList = result.csarList;
+      let incompleteCSARList = [];
+      for (let csar of  csarList) {
+        let url = csar;
+        const isComplete = isCompleteDeploymentModel(csar.url);
+        if (!isComplete){
+          incompleteCSARList.push(csar);
+        }
+      }
+
+      for (let incompleteCSAR of incompleteCSARList) {
+        const locationOfCompletedCSAR = completeIncompleteDeploymentModel(incompleteCSAR.url, blackList, {});
+        const nameOfCompletedCSAR = locationOfCompletedCSAR.split('/').filter(x => x.length > 1).pop();
+        for (let i = 0; i < csarList.length; i++){
+          if (csarList[i].name === incompleteCSAR.name){
+            csarList[i].url=locationOfCompletedCSAR;
+            csarList[i].name= nameOfCompletedCSAR;
+          }
+        }
+      }
+
+      // TODO buildplan url is missing still -> new complete deployment model needs to be uploaded and buildplan ref added
 
       // make progress bar visible and hide buttons
       result.refs.progressBarDivRef.current.hidden = false;
       result.refs.footerRef.current.hidden = true;
       let progressBar = result.refs.progressBarRef.current;
       this.handleProgress(progressBar, 10);
-
       // calculate progress step size for the number of CSARs to create an service instance for
-      let csarList = result.csarList;
+
       let progressStep = Math.round(90 / csarList.length);
 
       // create service instances for all CSARs

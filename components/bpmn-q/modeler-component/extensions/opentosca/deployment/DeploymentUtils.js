@@ -49,7 +49,7 @@ export function getServiceTasksToDeploy(startElement) {
           url: flowElement.deploymentModelUrl,
           type: getBindingType(flowElement),
           csarName: getCSARName(flowElement),
-          incomplete: isCompleteDeplooymentModel(flowElement), // TODO: check with Winery
+          incomplete: !isCompleteDeploymentModel(flowElement.deploymentModelUrl), // TODO: check with Winery
         });
       }
     }
@@ -88,14 +88,27 @@ export function isDeployableServiceTask(element) {
 /**
  * Get the CSAR name from the deployment model URL
  *
- * @param serviceTask the service task the CSAR belongs to
+ * @param deploymentModelUrl
  * @return {*} the CSAR name
  */
-function isCompleteDeplooymentModel(serviceTask) {
-  let url = serviceTask.deploymentModelUrl.split("/?csar")[0];
+export function isCompleteDeploymentModel(deploymentModelUrl) {
+  let url = deploymentModelUrl.split("/?csar")[0];
   url = url.split('/');
   url.shift();
   url = url.join('/');
-  const iscomplete = synchronousPostRequest(config.wineryEndpoint + "/" + url + "/topologytemplate/iscomplete");
+  const iscomplete = synchronousPostRequest(config.wineryEndpoint + "/" + url + "/topologytemplate/iscomplete", 'text/plain', null).responseText;
   return iscomplete === 'true';
+}
+
+export function completeIncompleteDeploymentModel(deploymentModelUrl, blacklist, policies) {
+  let url = deploymentModelUrl.split("/?csar")[0];
+  url = url.split('/');
+  url.shift();
+  url = url.join('/');
+  let body = JSON.stringify({
+    blacklistedNodetypes: blacklist,
+    policies: policies,
+  });
+  return synchronousPostRequest(config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel", 'application/json', body ).getResponseHeader('location');
+
 }
