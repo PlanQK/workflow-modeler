@@ -49,7 +49,7 @@ export function getServiceTasksToDeploy(startElement) {
           url: flowElement.deploymentModelUrl,
           type: getBindingType(flowElement),
           csarName: getCSARName(flowElement),
-          incomplete: !isCompleteDeploymentModel(flowElement.deploymentModelUrl), // TODO: check with Winery
+          incomplete: !isCompleteDeploymentModel(flowElement.deploymentModelUrl),
         });
       }
     }
