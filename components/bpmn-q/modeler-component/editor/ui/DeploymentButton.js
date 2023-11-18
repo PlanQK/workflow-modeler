@@ -66,6 +66,7 @@ export default function DeploymentButton(props) {
       let moddle = modeler.get("moddle");
       let xmlDefinitions = xmlModeler.getDefinitions();
       let xmlRoot = getRootProcess(xmlDefinitions);
+      // add new field to startevent form that contains the camunda endpoint required by the quantme backend
       let formDataFields = xmlRoot.flowElements
         .filter((x) => x.$type === "bpmn:StartEvent")[0]
         .extensionElements.values.filter(

@@ -137,7 +137,6 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
 
     // only visualize input params of already completed CSARs
     if (!csar.incomplete) {
-      // TODO: if incomplete retrieve input from Winery
       let inputParams = csar.inputParameters;
 
       let paramsToRetrieve = [];

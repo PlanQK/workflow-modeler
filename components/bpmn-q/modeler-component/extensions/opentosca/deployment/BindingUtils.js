@@ -157,6 +157,7 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
             success = false;
             break;
           } else {
+            // combine url containing ip:port and endpoint path while ensuring correctness of "/" connection
             let connectorUrl =
               connectorElement[0].inputOutput.inputParameters.filter(
                 (x) => x.name === "url"

@@ -108,7 +108,7 @@ export function isCompleteDeploymentModel(deploymentModelUrl) {
 
 export function completeIncompleteDeploymentModel(
   deploymentModelUrl,
-  blacklist,
+  blacklistedNodetypes,
   policies
 ) {
   let url = deploymentModelUrl.split("/?csar")[0];
@@ -116,7 +116,7 @@ export function completeIncompleteDeploymentModel(
   url.shift();
   url = url.join("/");
   let body = JSON.stringify({
-    blacklistedNodetypes: blacklist,
+    blacklistedNodetypes: blacklistedNodetypes,
     policies: policies,
   });
   return synchronousPostRequest(
