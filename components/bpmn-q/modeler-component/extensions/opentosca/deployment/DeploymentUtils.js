@@ -11,7 +11,7 @@
 
 import { getBindingType } from "./BindingUtils";
 import { getFlowElementsRecursively } from "../../../editor/util/ModellingUtilities";
-import { synchronousPostRequest} from "../utilities/Utilities";
+import { synchronousPostRequest } from "../utilities/Utilities";
 import config from "../framework-config/config";
 
 /**
@@ -49,7 +49,9 @@ export function getServiceTasksToDeploy(startElement) {
           url: flowElement.deploymentModelUrl,
           type: getBindingType(flowElement),
           csarName: getCSARName(flowElement),
-          incomplete: !isCompleteDeploymentModel(flowElement.deploymentModelUrl),
+          incomplete: !isCompleteDeploymentModel(
+            flowElement.deploymentModelUrl
+          ),
         });
       }
     }
@@ -93,22 +95,33 @@ export function isDeployableServiceTask(element) {
  */
 export function isCompleteDeploymentModel(deploymentModelUrl) {
   let url = deploymentModelUrl.split("/?csar")[0];
-  url = url.split('/');
+  url = url.split("/");
   url.shift();
-  url = url.join('/');
-  const iscomplete = synchronousPostRequest(config.wineryEndpoint + "/" + url + "/topologytemplate/iscomplete", 'text/plain', null).responseText;
-  return iscomplete === 'true';
+  url = url.join("/");
+  const iscomplete = synchronousPostRequest(
+    config.wineryEndpoint + "/" + url + "/topologytemplate/iscomplete",
+    "text/plain",
+    null
+  ).responseText;
+  return iscomplete === "true";
 }
 
-export function completeIncompleteDeploymentModel(deploymentModelUrl, blacklist, policies) {
+export function completeIncompleteDeploymentModel(
+  deploymentModelUrl,
+  blacklist,
+  policies
+) {
   let url = deploymentModelUrl.split("/?csar")[0];
-  url = url.split('/');
+  url = url.split("/");
   url.shift();
-  url = url.join('/');
+  url = url.join("/");
   let body = JSON.stringify({
     blacklistedNodetypes: blacklist,
     policies: policies,
   });
-  return synchronousPostRequest(config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel", 'application/json', body ).getResponseHeader('location');
-
+  return synchronousPostRequest(
+    config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel",
+    "application/json",
+    body
+  ).getResponseHeader("location");
 }

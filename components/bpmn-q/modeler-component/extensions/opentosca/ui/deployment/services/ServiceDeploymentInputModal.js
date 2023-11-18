@@ -18,13 +18,11 @@ import { fetch } from "whatwg-fetch";
 import config from "../../../framework-config/config";
 import { forEach } from "min-dash";
 import { useState } from "diagram-js/lib/ui";
-import {synchronousGetRequest} from "../../../utilities/Utilities";
+import { synchronousGetRequest } from "../../../utilities/Utilities";
 
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
-
-
 
 export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   // refs to enable changing the state through the plugin
@@ -59,7 +57,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
           encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
         ).replace("%257D", "/");
         const tags = JSON.parse(
-            synchronousGetRequest(url + "/" + nodetypeUri + "/tags")
+          synchronousGetRequest(url + "/" + nodetypeUri + "/tags")
         );
         const requiredAttributes = tags
           .filter((x) => x.name === "requiredAttributes")?.[0]

@@ -24,13 +24,12 @@ import { bindUsingPull, bindUsingPush } from "../../../deployment/BindingUtils";
 import {
   completeIncompleteDeploymentModel,
   getServiceTasksToDeploy,
-  isCompleteDeploymentModel
+  isCompleteDeploymentModel,
 } from "../../../deployment/DeploymentUtils";
 import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
-
 
 const defaultState = {
   windowOpenDeploymentOverview: false,
@@ -169,14 +168,13 @@ export default class DeploymentPlugin extends PureComponent {
   async handleDeploymentInputClosed(result) {
     // handle click on 'Next' button
     if (result && result.hasOwnProperty("next") && result.next === true) {
-
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
       const nodeTypeRequirements = result.nodeTypeRequirements;
       let blackList = [];
-      Object.entries(nodeTypeRequirements).forEach(entry => {
+      Object.entries(nodeTypeRequirements).forEach((entry) => {
         const [key, value] = entry;
-        Object.values(value.requiredAttributes).forEach(value => {
-          if (value === "" && !blackList.includes(key)){
+        Object.values(value.requiredAttributes).forEach((value) => {
+          if (value === "" && !blackList.includes(key)) {
             blackList.push(key);
           }
         });
@@ -184,21 +182,28 @@ export default class DeploymentPlugin extends PureComponent {
 
       let csarList = result.csarList;
       let incompleteCSARList = [];
-      for (let csar of  csarList) {
+      for (let csar of csarList) {
         let url = csar;
         const isComplete = isCompleteDeploymentModel(csar.url);
-        if (!isComplete){
+        if (!isComplete) {
           incompleteCSARList.push(csar);
         }
       }
 
       for (let incompleteCSAR of incompleteCSARList) {
-        const locationOfCompletedCSAR = completeIncompleteDeploymentModel(incompleteCSAR.url, blackList, {});
-        const nameOfCompletedCSAR = locationOfCompletedCSAR.split('/').filter(x => x.length > 1).pop();
-        for (let i = 0; i < csarList.length; i++){
-          if (csarList[i].name === incompleteCSAR.name){
-            csarList[i].url=locationOfCompletedCSAR;
-            csarList[i].name= nameOfCompletedCSAR;
+        const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
+          incompleteCSAR.url,
+          blackList,
+          {}
+        );
+        const nameOfCompletedCSAR = locationOfCompletedCSAR
+          .split("/")
+          .filter((x) => x.length > 1)
+          .pop();
+        for (let i = 0; i < csarList.length; i++) {
+          if (csarList[i].name === incompleteCSAR.name) {
+            csarList[i].url = locationOfCompletedCSAR;
+            csarList[i].name = nameOfCompletedCSAR;
           }
         }
       }

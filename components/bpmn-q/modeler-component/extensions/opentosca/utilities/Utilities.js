@@ -44,7 +44,7 @@ export function synchronousGetRequest(url) {
 export function synchronousPostRequest(url, type, body) {
   const xhr = new XMLHttpRequest();
   xhr.open("POST", url, false);
-  xhr.setRequestHeader('Content-Type',type);
+  xhr.setRequestHeader("Content-Type", type);
   xhr.send(body);
   if (xhr.status.toString().startsWith("2")) {
     return xhr;
