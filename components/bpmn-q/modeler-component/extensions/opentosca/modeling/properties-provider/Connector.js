@@ -60,7 +60,7 @@ export function Connector({ element, translate, urls }) {
     });
     const urlInputParameter = moddle.create("camunda:InputParameter", {
       name: "url",
-      value: "",
+      value: value,
     });
 
     let endpointParameters = determineInputParameters(
