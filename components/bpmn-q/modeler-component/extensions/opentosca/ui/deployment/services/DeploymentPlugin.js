@@ -201,6 +201,10 @@ export default class DeploymentPlugin extends PureComponent {
    */
   async handleDeploymentInputClosed(result) {
     // handle click on 'Next' button
+    console.log(
+      "Blacklisting NodeTypes based on requirements: ",
+      result.nodeTypeRequirements
+    );
     if (result && result.hasOwnProperty("next") && result.next === true) {
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
       const nodeTypeRequirements = result.nodeTypeRequirements;
@@ -213,6 +217,22 @@ export default class DeploymentPlugin extends PureComponent {
           }
         });
       });
+      console.log("Blacklisted NodeTypes: ", blacklistedNodetypes);
+
+      // collect input parameters of all NodeTypes that might be used during completion
+      let nodeTypesToUse = Object.entries(nodeTypeRequirements)
+        .filter(([key, value]) => !blacklistedNodetypes.includes(key))
+        .map(([key, value]) => value);
+      console.log("NodeTypes to use for completion: ", nodeTypesToUse);
+      let inputParams = {};
+      Object.values(nodeTypesToUse).forEach((nodeType) => {
+        console.log("Retrieving input parameters for NodeType: ", nodeType.id);
+        console.log("Input parameters: ", nodeType.requiredAttributes);
+        Object.entries(nodeType.requiredAttributes).forEach(([key, value]) => {
+          inputParams[key] = value;
+        });
+      });
+      console.log("Corresponding input parameters: ", inputParams);
 
       // make progress bar visible and hide buttons
       result.refs.progressBarDivRef.current.hidden = false;
@@ -223,9 +243,7 @@ export default class DeploymentPlugin extends PureComponent {
       let csarList = result.csarList;
       console.log("List of CSARs before completion: ", csarList);
       for (let csar of csarList) {
-        console.log("Checking if CSAR is complete: ", csar);
-        const isComplete = isCompleteDeploymentModel(csar.url);
-        if (!isComplete) {
+        if (csar.incomplete) {
           console.log("Found incomplete CSAR: ", csar.csarName);
 
           // complete CSAR and refresh meta data
@@ -281,9 +299,7 @@ export default class DeploymentPlugin extends PureComponent {
           csar.buildPlanUrl = uploadResult.url;
           csar.inputParameters = uploadResult.inputParameters;
           console.log("Build plan URL: ", csar.buildPlanUrl);
-          console.log("Input Parameters: ", csar.buildPlanUrl);
-
-          // TODO: prefill input
+          console.log("Input Parameters: ", csar.inputParameters);
         }
       }
       console.log("Retrieved CSAR list after completion: ", csarList);
@@ -298,7 +314,9 @@ export default class DeploymentPlugin extends PureComponent {
 
         let instanceCreationResponse = await createServiceInstance(
           csar,
-          this.modeler.config.camundaEndpoint
+          this.modeler.config.camundaEndpoint,
+          this.modeler.config.qprovEndpoint,
+          inputParams
         );
         console.log("Creating service instance for CSAR: ", csar);
         csar.properties = instanceCreationResponse.properties;

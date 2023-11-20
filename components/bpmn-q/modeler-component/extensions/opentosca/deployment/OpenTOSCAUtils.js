@@ -163,16 +163,19 @@ async function getBuildPlanUrl(csarUrl) {
  * @param csar the details about the CSAR to create an instance from the contained ServiceTemplate
  * @param camundaEngineEndpoint the endpoint of the Camunda engine to bind services using the pulling pattern
  * @param qprovEndpoint the endpoint of QProv to store provenance data
+ * @param inputParams a set of predfined input parameters to use for the instance creation
  * @return the result of the instance creation (success, endpoint, topic on which the service listens, ...)
  */
 export async function createServiceInstance(
   csar,
   camundaEngineEndpoint,
-  qprovEndpoint
+  qprovEndpoint,
+  inputParams
 ) {
   const result = { success: false };
 
   const inputParameters = csar.inputParameters;
+  console.log("Required input parameters: ", inputParameters);
   if (csar.type === "pull") {
     // get special parameters that are required to bind services using external tasks / the pulling pattern
     const camundaTopicParam = inputParameters.find(
@@ -209,6 +212,15 @@ export async function createServiceInstance(
     );
     qprovEndpointParam.value = qprovEndpoint;
   }
+
+  // handle input parameters for completed ServiceTemplates
+  inputParameters.forEach((param) => {
+    if (!param.value) {
+      console.log("Parameter is not yet defined: ", param.name);
+      param.value = inputParams[param.name];
+    }
+  });
+  console.log("Input parameters after adding provided data: ", inputParameters);
 
   // trigger instance creation
   const instanceCreationResponse = await fetch(
