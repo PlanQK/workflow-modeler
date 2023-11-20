@@ -16,6 +16,8 @@ import * as config from "../framework-config/config-manager";
 import { makeId } from "../deployment/OpenTOSCAUtils";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 import { createElement } from "../../../editor/util/camunda-utils/ElementUtil";
+import { getRootProcess } from "../../../editor/util/ModellingUtilities";
+import * as consts from "../Constants";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -135,10 +137,19 @@ export async function startOnDemandReplacementProcess(xml) {
   const bpmnAutoResizeProvider = modeler.get("bpmnAutoResizeProvider");
   const bpmnFactory = modeler.get("bpmnFactory");
   bpmnAutoResizeProvider.canResize = () => false;
+  const definitions = modeler.getDefinitions();
+  const rootElement = getRootProcess(definitions);
 
   const serviceTasks = elementRegistry.filter(({ businessObject }) =>
     isDeployableServiceTask(businessObject)
   );
+  let onDemandPolicies = [];
+  for (const flowElement of rootElement.flowElements) {
+    if (flowElement.$type === consts.ON_DEMAND_POLICY) {
+      onDemandPolicies.push(elementRegistry.get(flowElement.id));
+    }
+  }
+  modeling.removeElements(onDemandPolicies);
 
   for (const serviceTask of serviceTasks) {
     let onDemand = serviceTask.businessObject.get("onDemand");
