@@ -217,7 +217,6 @@ export default class DeploymentPlugin extends PureComponent {
       let csarList = result.csarList;
       let incompleteCSARList = [];
       for (let csar of csarList) {
-        let url = csar;
         const isComplete = isCompleteDeploymentModel(csar.url);
         if (!isComplete) {
           incompleteCSARList.push(csar);

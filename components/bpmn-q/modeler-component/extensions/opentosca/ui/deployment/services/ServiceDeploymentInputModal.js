@@ -157,7 +157,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         // skip parameters that are automatically set during service binding
         if (
           inputParam.name === "camundaTopic" ||
-          inputParam.name === "camundaEndpoint"
+          inputParam.name === "camundaEndpoint" ||
+          inputParam.name === "QProvEndpoint"
         ) {
           paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
           continue;
