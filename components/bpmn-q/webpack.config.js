@@ -26,6 +26,7 @@ let defaultConfig = {
   QHANA_GET_PLUGIN_URL: "http://localhost:5006/api/plugins/",
   QHANA_LIST_PLUGINS_URL: "http://localhost:5006/api/plugins/?item-count=100",
   QISKIT_RUNTIME_HANDLER_ENDPOINT: "http://localhost:8889",
+  QPROV_ENDPOINT: "http://localhost:8099/qprov",
   QRM_USERNAME: "",
   QRM_REPONAME: "",
   QRM_REPOPATH: "",

@@ -13,6 +13,9 @@ export default function QuantMETab() {
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(
     config.getNisqAnalyzerEndpoint()
   );
+  const [qprovEndpoint, setQprovEndpoint] = useState(
+    config.getQProvEndpoint()
+  );
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] =
     useState(config.getQiskitRuntimeHandlerEndpoint());
   const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(
@@ -121,6 +124,7 @@ export default function QuantMETab() {
     modeler.config.qiskitRuntimeHandlerEndpoint = qiskitRuntimeHandlerEndpoint;
     modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
     modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
+    modeler.config.qprovEndpoint = qprovEndpoint;
     config.setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint);
     config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
     config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
@@ -128,11 +132,12 @@ export default function QuantMETab() {
     config.setQiskitRuntimeHandlerEndpoint(qiskitRuntimeHandlerEndpoint);
     config.setAWSRuntimeHandlerEndpoint(awsRuntimeHandlerEndpoint);
     config.setHybridRuntimeProvenance(hybridRuntimeProvenance);
+    config.setQProvEndpoint(qprovEndpoint);
   };
 
   return (
     <>
-      <h3>BPMN related configurations:</h3>
+      <h3>BPMN-related Configurations:</h3>
       <table>
         <tbody>
           <tr className="spaceUnder">
@@ -170,7 +175,26 @@ export default function QuantMETab() {
           </tr>
         </tbody>
       </table>
-      <h3>Workflow generation:</h3>
+      <h3>QProv</h3>
+      <table>
+        <tbody>
+        <tr className="spaceUnder">
+          <td align="right">QProv Endpoint:</td>
+          <td align="left">
+            <input
+              className="qwm-input"
+              type="string"
+              name="qprovEndpoint"
+              value={qprovEndpoint}
+              onChange={(event) =>
+                setQProvEndpoint(event.target.value)
+              }
+            />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <h3>Workflow Generation:</h3>
       <table>
         <tbody>
           <tr className="spaceUnder">
