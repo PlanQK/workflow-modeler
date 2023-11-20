@@ -209,11 +209,14 @@ export default class DeploymentPlugin extends PureComponent {
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
       const nodeTypeRequirements = result.nodeTypeRequirements;
       let blacklistedNodetypes = [];
-      Object.entries(nodeTypeRequirements).forEach((entry) => {
-        const [key, value] = entry;
-        Object.values(value.requiredAttributes).forEach((value) => {
-          if (value === "" && !blacklistedNodetypes.includes(key)) {
-            blacklistedNodetypes.push(key);
+      Object.entries(nodeTypeRequirements).forEach(([key, value]) => {
+        console.log(value);
+        Object.values(value.requiredAttributes).forEach((innerValue) => {
+          if (
+            innerValue === "" &&
+            !blacklistedNodetypes.includes(value.qName)
+          ) {
+            blacklistedNodetypes.push(value.qName);
           }
         });
       });
@@ -221,7 +224,7 @@ export default class DeploymentPlugin extends PureComponent {
 
       // collect input parameters of all NodeTypes that might be used during completion
       let nodeTypesToUse = Object.entries(nodeTypeRequirements)
-        .filter(([key, value]) => !blacklistedNodetypes.includes(key))
+        .filter(([key, value]) => !blacklistedNodetypes.includes(value.qName))
         .map(([key, value]) => value);
       console.log("NodeTypes to use for completion: ", nodeTypesToUse);
       let inputParams = {};

@@ -111,6 +111,8 @@ export function completeIncompleteDeploymentModel(
   blacklistedNodetypes,
   policies
 ) {
+  console.log("Completing deployment model at: ", deploymentModelUrl);
+  console.log("Blacklist: ", blacklistedNodetypes);
   let url = deploymentModelUrl.split("/?csar")[0];
   url = url.split("/");
   url.shift();
