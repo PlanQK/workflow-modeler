@@ -58,9 +58,13 @@ export async function uploadCSARToContainer(
         body: JSON.stringify(body),
         headers: { "Content-Type": "application/json" },
       });
+      console.log(
+        "CSAR sent to OpenTOSCA Container. Waiting for build plan..."
+      );
 
       // check successful upload and retrieve corresponding url
       getCSARResult = await getBuildPlanForCSAR(opentoscaEndpoint, csarName);
+      console.log("Retrieved result: ", getCSARResult);
     }
 
     if (!getCSARResult.success) {
@@ -91,6 +95,8 @@ export async function uploadCSARToContainer(
  * @return the status whether the given CSAR is uploaded and the corresponding build plan link if available
  */
 async function getBuildPlanForCSAR(opentoscaEndpoint, csarName) {
+  console.log("Retrieving build plan for CSAR with name: ", csarName);
+
   // get all currently deployed CSARs
   const response = await fetch(opentoscaEndpoint);
   const responseJson = await response.json();
@@ -100,6 +106,7 @@ async function getBuildPlanForCSAR(opentoscaEndpoint, csarName) {
     // no CSARs available
     return { success: false };
   }
+  console.log("Retrieved all currently deployed CSARs: ", deployedCSARs);
 
   for (let i = 0; i < deployedCSARs.length; i++) {
     const deployedCSAR = deployedCSARs[i];

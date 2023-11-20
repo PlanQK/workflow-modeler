@@ -232,8 +232,8 @@ export default class DeploymentPlugin extends PureComponent {
             .split("/")
             .filter((x) => x.length > 1)
             .pop();
-          csar.url = locationOfCompletedCSAR;
-          csar.csarName = nameOfCompletedCSAR;
+          csar.url = locationOfCompletedCSAR + "?csar";
+          csar.csarName = nameOfCompletedCSAR + ".csar";
           csar.incomplete = false;
           console.log("Completed CSAR. New name: ", csar.csarName);
           console.log("New location: ", csar.url);
@@ -287,8 +287,8 @@ export default class DeploymentPlugin extends PureComponent {
       result.refs.footerRef.current.hidden = true;
       let progressBar = result.refs.progressBarRef.current;
       this.handleProgress(progressBar, 10);
-      // calculate progress step size for the number of CSARs to create an service instance for
 
+      // calculate progress step size for the number of CSARs to create a service instance for
       let progressStep = Math.round(90 / csarList.length);
 
       // create service instances for all CSARs
