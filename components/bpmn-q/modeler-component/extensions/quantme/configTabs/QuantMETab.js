@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { getModeler } from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
+import { setQProvEndpoint } from "../framework-config/config-manager";
 
 /**
  * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change workflow
@@ -13,7 +14,7 @@ export default function QuantMETab() {
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(
     config.getNisqAnalyzerEndpoint()
   );
-  const [qprovEndpoint, setQprovEndpoint] = useState(
+  const [qprovEndpoint, setQProvEndpoint] = useState(
     config.getQProvEndpoint()
   );
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] =
