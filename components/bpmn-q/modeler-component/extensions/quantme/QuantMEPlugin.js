@@ -9,6 +9,7 @@ import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
 import quantMEStyles from "./styling/quantme.css";
 import QuantMEPluginButton from "./ui/QuantMEPluginButton";
+import { getModeler } from "../../editor/ModelerHandler";
 
 let quantMEModdleExtension = require("./resources/quantum4bpmn.json");
 
@@ -32,13 +33,15 @@ export default {
     <TransformationButton
       name="QuantME Transformation"
       transformWorkflow={async (xml) => {
+        getModeler().views["view-before-rewriting"] = xml;
         let currentQRMs = getQRMs();
-        return await startQuantmeReplacementProcess(xml, currentQRMs, {
+        let transformedXml =  await startQuantmeReplacementProcess(xml, currentQRMs, {
           nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
           transformationFrameworkEndpoint:
             config.getTransformationFrameworkEndpoint(),
           camundaEndpoint: camundaConfig.getCamundaEndpoint(),
         });
+        return transformedXml;
       }}
     />
   ),

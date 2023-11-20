@@ -274,6 +274,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
     // create a new bpmn-js modeler instance with all additional modules and extensions defined by the plugins
     const modeler = createModeler(bpmnContainer, propertiesPanelContainer);
     console.log("Created Modeler");
+    modeler.views = [];
 
     // set up the notification handler and render it into the DOM
     const notificationsContainer = document.getElementById(
