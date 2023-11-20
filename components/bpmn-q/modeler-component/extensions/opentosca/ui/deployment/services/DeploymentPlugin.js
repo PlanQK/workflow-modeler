@@ -22,7 +22,11 @@ import {
   uploadCSARToContainer,
 } from "../../../deployment/OpenTOSCAUtils";
 import { bindUsingPull, bindUsingPush } from "../../../deployment/BindingUtils";
-import { getServiceTasksToDeploy } from "../../../deployment/DeploymentUtils";
+import {
+  completeIncompleteDeploymentModel,
+  getServiceTasksToDeploy,
+  isCompleteDeploymentModel,
+} from "../../../deployment/DeploymentUtils";
 import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
@@ -121,46 +125,54 @@ export default class DeploymentPlugin extends PureComponent {
 
       // calculate progress step size for the number of CSARs to deploy
       let csarList = result.csarList;
-      let progressStep = Math.round(90 / csarList.length);
+      let progressStep = Math.round(
+        90 / csarList.filter((csar) => !csar.incomplete).length
+      );
 
       // upload all CSARs
       for (let i = 0; i < csarList.length; i++) {
         let csar = csarList[i];
-        console.log("Uploading CSAR to OpenTOSCA container: ", csar);
 
-        let uploadResult = await uploadCSARToContainer(
-          this.modeler.config.opentoscaEndpoint,
-          csar.csarName,
-          csar.url,
-          this.modeler.config.wineryEndpoint
-        );
-        if (uploadResult.success === false) {
-          // notify user about failed CSAR upload
-          NotificationHandler.getInstance().displayNotification({
-            type: "error",
-            title: "Unable to upload CSAR to the OpenTOSCA Container",
-            content:
-              "CSAR defined for ServiceTasks with Id '" +
-              csar.serviceTaskIds +
-              "' could not be uploaded to the connected OpenTOSCA Container!",
-            duration: 20000,
-          });
+        // skip incomplete CSARs as they are uploaded after completion
+        if (csar.incomplete) {
+          console.log("Skipping CSAR as it is currently incomplete: ", csar);
+        } else {
+          console.log("Uploading CSAR to OpenTOSCA container: ", csar);
 
-          // abort process
-          this.setState({
-            windowOpenDeploymentOverview: false,
-            windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false,
-          });
-          return;
+          let uploadResult = await uploadCSARToContainer(
+            this.modeler.config.opentoscaEndpoint,
+            csar.csarName,
+            csar.url,
+            this.modeler.config.wineryEndpoint
+          );
+          if (uploadResult.success === false) {
+            // notify user about failed CSAR upload
+            NotificationHandler.getInstance().displayNotification({
+              type: "error",
+              title: "Unable to upload CSAR to the OpenTOSCA Container",
+              content:
+                "CSAR defined for ServiceTasks with Id '" +
+                csar.serviceTaskIds +
+                "' could not be uploaded to the connected OpenTOSCA Container!",
+              duration: 20000,
+            });
+
+            // abort process
+            this.setState({
+              windowOpenDeploymentOverview: false,
+              windowOpenDeploymentInput: false,
+              windowOpenDeploymentBinding: false,
+            });
+            return;
+          }
+
+          // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
+          csar.buildPlanUrl = uploadResult.url;
+          csar.inputParameters = uploadResult.inputParameters;
+
+          // increase progress in the UI
+          this.handleProgress(progressBar, progressStep);
         }
-
-        // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
-        csar.buildPlanUrl = uploadResult.url;
-        csar.inputParameters = uploadResult.inputParameters;
-
-        // increase progress in the UI
-        this.handleProgress(progressBar, progressStep);
       }
 
       this.csarList = csarList;
@@ -190,14 +202,55 @@ export default class DeploymentPlugin extends PureComponent {
   async handleDeploymentInputClosed(result) {
     // handle click on 'Next' button
     if (result && result.hasOwnProperty("next") && result.next === true) {
+      // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
+      const nodeTypeRequirements = result.nodeTypeRequirements;
+      let blacklistedNodetypes = [];
+      Object.entries(nodeTypeRequirements).forEach((entry) => {
+        const [key, value] = entry;
+        Object.values(value.requiredAttributes).forEach((value) => {
+          if (value === "" && !blacklistedNodetypes.includes(key)) {
+            blacklistedNodetypes.push(key);
+          }
+        });
+      });
+
+      let csarList = result.csarList;
+      let incompleteCSARList = [];
+      for (let csar of csarList) {
+        let url = csar;
+        const isComplete = isCompleteDeploymentModel(csar.url);
+        if (!isComplete) {
+          incompleteCSARList.push(csar);
+        }
+      }
+
+      for (let incompleteCSAR of incompleteCSARList) {
+        const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
+          incompleteCSAR.url,
+          blacklistedNodetypes,
+          {}
+        );
+        const nameOfCompletedCSAR = locationOfCompletedCSAR
+          .split("/")
+          .filter((x) => x.length > 1)
+          .pop();
+        for (let i = 0; i < csarList.length; i++) {
+          if (csarList[i].name === incompleteCSAR.name) {
+            csarList[i].url = locationOfCompletedCSAR;
+            csarList[i].name = nameOfCompletedCSAR;
+          }
+        }
+      }
+
+      // TODO buildplan url is missing still -> new complete deployment model needs to be uploaded and buildplan ref added
+
       // make progress bar visible and hide buttons
       result.refs.progressBarDivRef.current.hidden = false;
       result.refs.footerRef.current.hidden = true;
       let progressBar = result.refs.progressBarRef.current;
       this.handleProgress(progressBar, 10);
-
       // calculate progress step size for the number of CSARs to create an service instance for
-      let csarList = result.csarList;
+
       let progressStep = Math.round(90 / csarList.length);
 
       // create service instances for all CSARs
@@ -211,6 +264,7 @@ export default class DeploymentPlugin extends PureComponent {
         );
         console.log("Creating service instance for CSAR: ", csar);
         csar.properties = instanceCreationResponse.properties;
+        csar.buildPlanUrl = instanceCreationResponse.buildPlanUrl;
         if (instanceCreationResponse.success === false) {
           // notify user about failed instance creation
           NotificationHandler.getInstance().displayNotification({
