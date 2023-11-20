@@ -214,6 +214,12 @@ export default class DeploymentPlugin extends PureComponent {
         });
       });
 
+      // make progress bar visible and hide buttons
+      result.refs.progressBarDivRef.current.hidden = false;
+      result.refs.footerRef.current.hidden = true;
+      let progressBar = result.refs.progressBarRef.current;
+      this.handleProgress(progressBar, 10);
+
       let csarList = result.csarList;
       console.log("List of CSARs before completion: ", csarList);
       for (let csar of csarList) {
@@ -281,12 +287,6 @@ export default class DeploymentPlugin extends PureComponent {
         }
       }
       console.log("Retrieved CSAR list after completion: ", csarList);
-
-      // make progress bar visible and hide buttons
-      result.refs.progressBarDivRef.current.hidden = false;
-      result.refs.footerRef.current.hidden = true;
-      let progressBar = result.refs.progressBarRef.current;
-      this.handleProgress(progressBar, 10);
 
       // calculate progress step size for the number of CSARs to create a service instance for
       let progressStep = Math.round(90 / csarList.length);
