@@ -69,8 +69,7 @@ export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
 export function getQProvEndpoint() {
   if (config.qprovEndpoint === undefined) {
     setNisqAnalyzerEndpoint(
-      getPluginConfig("quantme").qprovEndpoint ||
-      defaultConfig.qprovEndpoint
+      getPluginConfig("quantme").qprovEndpoint || defaultConfig.qprovEndpoint
     );
   }
   return config.qprovEndpoint;

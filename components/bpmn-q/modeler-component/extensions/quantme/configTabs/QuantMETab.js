@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { getModeler } from "../../../editor/ModelerHandler";
 import * as config from "../framework-config/config-manager";
-import { setQProvEndpoint } from "../framework-config/config-manager";
 
 /**
  * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change workflow
@@ -14,9 +13,7 @@ export default function QuantMETab() {
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(
     config.getNisqAnalyzerEndpoint()
   );
-  const [qprovEndpoint, setQProvEndpoint] = useState(
-    config.getQProvEndpoint()
-  );
+  const [qprovEndpoint, setQProvEndpoint] = useState(config.getQProvEndpoint());
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] =
     useState(config.getQiskitRuntimeHandlerEndpoint());
   const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(
@@ -80,6 +77,13 @@ export default function QuantMETab() {
     editorActions.register({
       nisqAnalyzerEndpointChanged: function (nisqAnalyzerEndpoint) {
         self.modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
+      },
+    });
+  }
+  if (!editorActions._actions.hasOwnProperty("qprovEndpointChanged")) {
+    editorActions.register({
+      qprovEndpointChanged: function (qprovEndpoint) {
+        self.modeler.config.qprovEndpoint = qprovEndpoint;
       },
     });
   }
@@ -179,20 +183,18 @@ export default function QuantMETab() {
       <h3>QProv</h3>
       <table>
         <tbody>
-        <tr className="spaceUnder">
-          <td align="right">QProv Endpoint:</td>
-          <td align="left">
-            <input
-              className="qwm-input"
-              type="string"
-              name="qprovEndpoint"
-              value={qprovEndpoint}
-              onChange={(event) =>
-                setQProvEndpoint(event.target.value)
-              }
-            />
-          </td>
-        </tr>
+          <tr className="spaceUnder">
+            <td align="right">QProv Endpoint:</td>
+            <td align="left">
+              <input
+                className="qwm-input"
+                type="string"
+                name="qprovEndpoint"
+                value={qprovEndpoint}
+                onChange={(event) => setQProvEndpoint(event.target.value)}
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
       <h3>Workflow Generation:</h3>
