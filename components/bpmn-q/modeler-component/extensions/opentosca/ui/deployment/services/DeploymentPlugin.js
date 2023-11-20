@@ -15,6 +15,7 @@ import React, { Fragment, PureComponent } from "react";
 import ServiceDeploymentOverviewModal from "./ServiceDeploymentOverviewModal";
 import ServiceDeploymentInputModal from "./ServiceDeploymentInputModal";
 import ServiceDeploymentBindingModal from "./ServiceDeploymentBindingModal";
+import ServiceOnDemandDeploymentOverviewModal from "./ServiceOnDemandDeploymentOverviewModal";
 
 import {
   createServiceInstance,
@@ -30,8 +31,11 @@ import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
+import { loadDiagram } from "../../../../../editor/util/IoUtilities";
+import { startOnDemandReplacementProcess } from "../../../replacement/OnDemandTransformator";
 
 const defaultState = {
+  windowOpenOnDemandDeploymentOverview: false,
   windowOpenDeploymentOverview: false,
   windowOpenDeploymentInput: false,
   windowOpenDeploymentBinding: false,
@@ -49,6 +53,8 @@ export default class DeploymentPlugin extends PureComponent {
       this.handleDeploymentInputClosed.bind(this);
     this.handleDeploymentBindingClosed =
       this.handleDeploymentBindingClosed.bind(this);
+    this.handleOnDemandDeploymentClosed =
+      this.handleOnDemandDeploymentClosed.bind(this);
   }
 
   componentDidMount() {
@@ -72,6 +78,34 @@ export default class DeploymentPlugin extends PureComponent {
       currentWidth++;
       progressBar.style.width = currentWidth + "%";
       progressBar.innerHTML = currentWidth + "%";
+    }
+  }
+
+  /**
+   * Handle result of the on demand deployment dialog
+   *
+   * @param result the result from the dialog
+   */
+  async handleOnDemandDeploymentClosed(result) {
+    if (result && result.hasOwnProperty("onDemand")) {
+      let xml = (await this.modeler.saveXML({ format: true })).xml;
+      if (result.onDemand) {
+        xml = await startOnDemandReplacementProcess(xml);
+        loadDiagram(xml, this.modeler);
+        this.setState({
+          windowOpenOnDemandDeploymentOverview: false,
+          windowOpenDeploymentOverview: true,
+          windowOpenDeploymentInput: false,
+          windowOpenDeploymentBinding: false,
+        });
+      }
+    } else {
+      this.setState({
+        windowOpenOnDemandDeploymentOverview: false,
+        windowOpenDeploymentOverview: false,
+        windowOpenDeploymentInput: false,
+        windowOpenDeploymentBinding: false,
+      });
     }
   }
 
@@ -425,7 +459,7 @@ export default class DeploymentPlugin extends PureComponent {
               className="qwm-toolbar-btn"
               title="Open service deployment menu"
               onClick={() =>
-                this.setState({ windowOpenDeploymentOverview: true })
+                this.setState({ windowOpenOnDemandDeploymentOverview: true })
               }
             >
               <span className="app-icon-service-deployment">
@@ -434,10 +468,18 @@ export default class DeploymentPlugin extends PureComponent {
             </button>,
           ]}
         />
+        {this.state.windowOpenOnDemandDeploymentOverview && (
+          <ServiceOnDemandDeploymentOverviewModal
+            onClose={this.handleOnDemandDeploymentClosed}
+            initValues={this.getServiceTasksToDeployForModal()}
+            elementRegistry={this.modeler.get("elementRegistry")}
+          />
+        )}
         {this.state.windowOpenDeploymentOverview && (
           <ServiceDeploymentOverviewModal
             onClose={this.handleDeploymentOverviewClosed}
             initValues={this.getServiceTasksToDeployForModal()}
+            elementRegistry={this.modeler.get("elementRegistry")}
           />
         )}
         {this.state.windowOpenDeploymentInput && (

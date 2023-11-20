@@ -59,7 +59,7 @@ export default function ServiceDeploymentBindingModal({ onClose, initValues }) {
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (3/3)</Title>
+      <Title>Service Deployment (4/4)</Title>
 
       <Body>
         <h3 className="spaceUnder">
