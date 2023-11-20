@@ -62,7 +62,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         const requiredAttributes = tags
           .filter((x) => x.name === "requiredAttributes")?.[0]
           ?.value?.split(",");
-        console.log(requiredAttributes);
+        console.log("Required attributes tag contains: ", requiredAttributes);
         if (requiredAttributes !== undefined) {
           const attributeListHTML = [];
           nodetype.requiredAttributes = {};

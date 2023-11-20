@@ -215,33 +215,72 @@ export default class DeploymentPlugin extends PureComponent {
       });
 
       let csarList = result.csarList;
-      let incompleteCSARList = [];
+      console.log("List of CSARs before completion: ", csarList);
       for (let csar of csarList) {
+        console.log("Checking if CSAR is complete: ", csar);
         const isComplete = isCompleteDeploymentModel(csar.url);
         if (!isComplete) {
-          incompleteCSARList.push(csar);
-        }
-      }
+          console.log("Found incomplete CSAR: ", csar.csarName);
 
-      for (let incompleteCSAR of incompleteCSARList) {
-        const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
-          incompleteCSAR.url,
-          blacklistedNodetypes,
-          {}
-        );
-        const nameOfCompletedCSAR = locationOfCompletedCSAR
-          .split("/")
-          .filter((x) => x.length > 1)
-          .pop();
-        for (let i = 0; i < csarList.length; i++) {
-          if (csarList[i].name === incompleteCSAR.name) {
-            csarList[i].url = locationOfCompletedCSAR;
-            csarList[i].name = nameOfCompletedCSAR;
+          // complete CSAR and refresh meta data
+          const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
+            csar.url,
+            blacklistedNodetypes,
+            {}
+          );
+          const nameOfCompletedCSAR = locationOfCompletedCSAR
+            .split("/")
+            .filter((x) => x.length > 1)
+            .pop();
+          csar.url = locationOfCompletedCSAR;
+          csar.csarName = nameOfCompletedCSAR;
+          csar.incomplete = false;
+          console.log("Completed CSAR. New name: ", csar.csarName);
+          console.log("New location: ", csar.url);
+
+          // upload completed CSAR to the OpenTOSCA Container
+          console.log(
+            "Uploading CSAR to the OpenTOSCA Container at: ",
+            this.modeler.config.opentoscaEndpoint
+          );
+          let uploadResult = await uploadCSARToContainer(
+            this.modeler.config.opentoscaEndpoint,
+            csar.csarName,
+            csar.url,
+            this.modeler.config.wineryEndpoint
+          );
+          if (uploadResult.success === false) {
+            // notify user about failed CSAR upload
+            NotificationHandler.getInstance().displayNotification({
+              type: "error",
+              title: "Unable to upload CSAR to the OpenTOSCA Container",
+              content:
+                "CSAR defined for ServiceTasks with Id '" +
+                csar.serviceTaskIds +
+                "' could not be uploaded to the connected OpenTOSCA Container!",
+              duration: 20000,
+            });
+
+            // abort process
+            this.setState({
+              windowOpenDeploymentOverview: false,
+              windowOpenDeploymentInput: false,
+              windowOpenDeploymentBinding: false,
+            });
+            return;
           }
+
+          // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
+          console.log("Upload successfully!");
+          csar.buildPlanUrl = uploadResult.url;
+          csar.inputParameters = uploadResult.inputParameters;
+          console.log("Build plan URL: ", csar.buildPlanUrl);
+          console.log("Input Parameters: ", csar.buildPlanUrl);
+
+          // TODO: prefill input
         }
       }
-
-      // TODO buildplan url is missing still -> new complete deployment model needs to be uploaded and buildplan ref added
+      console.log("Retrieved CSAR list after completion: ", csarList);
 
       // make progress bar visible and hide buttons
       result.refs.progressBarDivRef.current.hidden = false;
