@@ -3,8 +3,9 @@ import {
   isTextFieldEntryEdited,
   isSelectEntryEdited,
 } from "@bpmn-io/properties-panel";
-import { AlgorithmEntry, AlphaEntry } from "./QuantMEPropertyEntries.js";
 import {
+  AlgorithmEntry,
+  AlphaEntry,
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,
   EncodingSchemaEntry,

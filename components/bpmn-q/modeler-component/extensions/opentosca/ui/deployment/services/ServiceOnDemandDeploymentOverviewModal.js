@@ -19,7 +19,7 @@ const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function ServiceDeploymentOverviewModal({
+export default function ServiceOnDemandDeploymentOverviewModal({
   onClose,
   initValues,
   elementRegistry,
@@ -29,32 +29,23 @@ export default function ServiceDeploymentOverviewModal({
     onClose();
   }
 
-  let progressBarRef = React.createRef();
-  let progressBarDivRef = React.createRef();
   let footerRef = React.createRef();
 
-  const onNext = () =>
+  const onDemand = (value) =>
     onClose({
-      next: true,
-      csarList: initValues,
-      refs: {
-        progressBarRef: progressBarRef,
-        progressBarDivRef: progressBarDivRef,
-        footerRef: footerRef,
-      },
+      onDemand: value,
     });
-
   const filteredInitValues = initValues.filter((CSAR) =>
     CSAR.serviceTaskIds.some((taskId) => {
       const taskData = elementRegistry.get(taskId);
-      return taskData && !taskData.businessObject.onDemand;
+      return taskData && taskData.businessObject.onDemand;
     })
   );
   // Modify the filteredInitValues to update the serviceTaskIds
   const updatedInitValues = filteredInitValues.map((CSAR) => {
     const updatedServiceTaskIds = CSAR.serviceTaskIds.filter((taskId) => {
       const taskData = elementRegistry.get(taskId);
-      return taskData && !taskData.businessObject.onDemand;
+      return taskData && taskData.businessObject.onDemand;
     });
     return { ...CSAR, serviceTaskIds: updatedServiceTaskIds };
   });
@@ -64,37 +55,36 @@ export default function ServiceDeploymentOverviewModal({
       <td>{CSAR.csarName}</td>
       <td>{CSAR.serviceTaskIds.join(",")}</td>
       <td>{CSAR.type}</td>
-      <td>{CSAR.incomplete.toString()}</td>
     </tr>
   ));
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (2/4)</Title>
+      <Title>Service Deployment (1/4)</Title>
 
       <Body>
-        <h3 className="spaceUnder">
-          CSARs that have to be uploaded to the OpenTOSCA Container:
-        </h3>
-
-        <table>
-          <tbody>
-            <tr>
-              <th>CSAR Name</th>
-              <th>Related ServiceTask IDs</th>
-              <th>Type (Push/Pull)</th>
-              <th>CSAR Requires Completion</th>
-            </tr>
-            {listItems}
-          </tbody>
-        </table>
-
-        <div hidden={true} ref={progressBarDivRef}>
-          <div className="spaceUnder spaceAbove">Upload progress:</div>
-          <div id="progress">
-            <div id="bar" ref={progressBarRef} />
-          </div>
-        </div>
+        {listItems.length > 0 ? (
+          <>
+            <h3 className="spaceUnder">
+              The following service-tasks contain on-demand deployment models:
+            </h3>
+            <table>
+              <tbody>
+                <tr>
+                  <th>CSAR Name</th>
+                  <th>Related ServiceTask IDs</th>
+                  <th>Type (Push/Pull)</th>
+                </tr>
+                {listItems}
+              </tbody>
+            </table>
+          </>
+        ) : (
+          <p>
+            No service tasks with on-demand deployment models are contained in
+            the workflow.
+          </p>
+        )}
       </Body>
 
       <Footer>
@@ -102,14 +92,14 @@ export default function ServiceDeploymentOverviewModal({
           <button
             type="button"
             className="qwm-btn qwm-btn-primary"
-            onClick={() => onNext()}
+            onClick={() => onDemand(true)}
           >
-            Upload CSARs
+            Transform Workflow
           </button>
           <button
             type="button"
             className="qwm-btn qwm-btn-secondary"
-            onClick={() => onClose()}
+            onClick={() => onDemand(false)}
           >
             Cancel
           </button>

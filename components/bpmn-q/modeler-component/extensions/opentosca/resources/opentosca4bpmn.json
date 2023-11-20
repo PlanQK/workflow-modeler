@@ -16,11 +16,65 @@
           "type": "String"
         },
         {
+          "name": "onDemand",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "connectorUrl",
           "isAttr": true,
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "CloudDeploymentModelPolicy",
+      "superClass": ["bpmn:Event"],
+      "properties": [
+        {
+          "name": "cloudType",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "OnDemandPolicy",
+      "superClass": ["bpmn:Event"],
+      "properties": [
+        {
+          "name": "onDemand",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "DedicatedHostingPolicy",
+      "superClass": ["bpmn:Event"],
+      "properties": [
+        {
+          "name": "dedicatedHosting",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "LocationPolicy",
+      "superClass": ["bpmn:Event"],
+      "properties": [
+        {
+          "name": "location",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Policy",
+      "superClass": ["bpmn:Event"],
+      "properties": []
     }
   ],
   "enumerations": [],

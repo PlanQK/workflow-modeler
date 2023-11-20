@@ -1,12 +1,9 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import NotificationHandler from "./notifications/NotificationHandler";
 import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
 import { getRootProcess } from "../util/ModellingUtilities";
-import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
-import { createTempModelerFromXml, getModeler } from "../ModelerHandler";
-import OnDemandDeploymentModal from "./OnDemandDeploymentModal";
-import { startOnDemandReplacementProcess } from "../../extensions/opentosca/replacement/OnDemandTransformator";
+import { createTempModelerFromXml } from "../ModelerHandler";
 
 // eslint-disable-next-line no-unused-vars
 const defaultState = {
@@ -21,30 +18,7 @@ const defaultState = {
  * @constructor
  */
 export default function DeploymentButton(props) {
-  const [windowOpenOnDemandDeployment, setWindowOpenOnDemandDeployment] =
-    useState(false);
-
   const { modeler } = props;
-
-  /**
-   * Handle result of the on demand deployment dialog
-   *
-   * @param result the result from the dialog
-   */
-  async function handleOnDemandDeployment(result) {
-    if (result && result.hasOwnProperty("onDemand")) {
-      // get XML of the current workflow
-      let xml = (await modeler.saveXML({ format: true })).xml;
-      console.log("XML", xml);
-      if (result.onDemand === true) {
-        xml = await startOnDemandReplacementProcess(xml);
-      }
-      // deploy in any case
-      deploy(xml);
-    }
-    // handle cancellation (don't deploy)
-    setWindowOpenOnDemandDeployment(false);
-  }
 
   /**
    * Deploy the current workflow to the Camunda engine
@@ -116,14 +90,7 @@ export default function DeploymentButton(props) {
   }
 
   async function onClick() {
-    let csarsToDeploy = getServiceTasksToDeploy(
-      getRootProcess(getModeler().getDefinitions())
-    );
-    if (csarsToDeploy.length > 0) {
-      setWindowOpenOnDemandDeployment(true);
-    } else {
-      deploy((await modeler.saveXML({ format: true })).xml);
-    }
+    deploy((await modeler.saveXML({ format: true })).xml);
   }
 
   return (
@@ -138,9 +105,6 @@ export default function DeploymentButton(props) {
           <span className="qwm-indent">Deploy Workflow</span>
         </span>
       </button>
-      {windowOpenOnDemandDeployment && (
-        <OnDemandDeploymentModal onClose={(e) => handleOnDemandDeployment(e)} />
-      )}
     </Fragment>
   );
 }
