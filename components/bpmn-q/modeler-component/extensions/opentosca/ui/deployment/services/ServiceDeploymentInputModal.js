@@ -120,10 +120,10 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     }
 
     if (completionHTML.length > 0) {
-      completionHTML.push(
+      completionHTML.unshift(
         <h3 className="spaceUnder">
-          Uploaded CSARs contain incomplete Deployment Models requiring
-          additional data for completion
+          CSARs comprise incomplete Deployment Models requiring additional data
+          for completion
         </h3>
       );
     }
