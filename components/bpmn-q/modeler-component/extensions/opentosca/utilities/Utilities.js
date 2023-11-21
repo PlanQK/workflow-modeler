@@ -10,6 +10,7 @@
  */
 
 import $ from "jquery";
+import { POLICIES } from "../Constants";
 
 export function performAjax(targetUrl, dataToSend) {
   return new Promise(function (resolve, reject) {
@@ -72,6 +73,9 @@ export function getPolicies(modeler, serviceTaskId) {
   let attachers = serviceTask.attachers;
   console.log("Found %i attachers!", attachers.length);
 
-  // TODO
-  return {};
+  let policies = attachers.filter(
+    (attacher) => !POLICIES.includes(attacher.$type)
+  );
+  console.log("Found %i policies!", policies.length);
+  return policies;
 }

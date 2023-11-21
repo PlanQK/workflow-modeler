@@ -34,6 +34,11 @@ import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 import { loadDiagram } from "../../../../../editor/util/IoUtilities";
 import { startOnDemandReplacementProcess } from "../../../replacement/OnDemandTransformator";
 import { getPolicies } from "../../../utilities/Utilities";
+import {
+  CLOUD_DEPLOYMENT_MODEL_POLICY,
+  LOCATION_POLICY,
+  ON_DEMAND_POLICY,
+} from "../../../Constants";
 
 const defaultState = {
   windowOpenOnDemandDeploymentOverview: false,
@@ -252,11 +257,33 @@ export default class DeploymentPlugin extends PureComponent {
           console.log("Found incomplete CSAR: ", csar.csarName);
 
           // retrieve policies for the ServiceTask the CSAR belongs to
-          let policies = getPolicies(getModeler(), csar.serviceTaskIds[0]);
-          console.log(
-            "Found %i policies for completion: ",
-            Object.keys(policies).length
-          );
+          let policyShapes = getPolicies(getModeler(), csar.serviceTaskIds[0]);
+          let policies = {};
+          policyShapes.forEach((policy) => {
+            console.log("Found policy: ", policy);
+            switch (policy.type) {
+              case CLOUD_DEPLOYMENT_MODEL_POLICY:
+                console.log(
+                  "Adding cloud model policy: ",
+                  policy.businessObject.cloudType
+                );
+                policies[policy.type] = policy.businessObject.cloudType;
+                break;
+              case LOCATION_POLICY:
+                console.log(
+                  "Adding location policy: ",
+                  policy.businessObject.location
+                );
+                policies[policy.type] = policy.businessObject.location;
+                break;
+              default:
+                console.error(
+                  "Policy of type %s not supported for completion!"
+                );
+            }
+          });
+          console.log("Invoking completion with policies: ", policies);
+          // TODO: delete policies
 
           // complete CSAR and refresh meta data
           const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
