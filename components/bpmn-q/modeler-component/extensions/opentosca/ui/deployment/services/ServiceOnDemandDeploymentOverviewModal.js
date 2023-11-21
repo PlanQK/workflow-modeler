@@ -33,7 +33,8 @@ export default function ServiceOnDemandDeploymentOverviewModal({
 
   const onDemand = (value) =>
     onClose({
-      onDemand: value,
+      next: value,
+      csarList: initValues,
     });
   const filteredInitValues = initValues.filter((CSAR) =>
     CSAR.serviceTaskIds.some((taskId) => {

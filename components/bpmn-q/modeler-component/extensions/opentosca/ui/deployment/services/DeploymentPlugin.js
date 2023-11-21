@@ -91,19 +91,20 @@ export default class DeploymentPlugin extends PureComponent {
    * @param result the result from the dialog
    */
   async handleOnDemandDeploymentClosed(result) {
-    if (result && result.hasOwnProperty("onDemand")) {
+    if (result && result.hasOwnProperty("next") && result.next === true) {
+      console.log("Starting on-demand transformation: ", result);
+
       let xml = (await this.modeler.saveXML({ format: true })).xml;
-      if (result.onDemand) {
-        xml = await startOnDemandReplacementProcess(xml);
-        loadDiagram(xml, this.modeler);
-        this.setState({
-          windowOpenDeploymentOverview: false,
-          windowOpenDeploymentInput: false,
-          windowOpenDeploymentBinding: false,
-          windowOpenOnDemandDeploymentOverview: false,
-        });
-      }
+      xml = await startOnDemandReplacementProcess(xml);
+      loadDiagram(xml, this.modeler);
     }
+
+    this.setState({
+      windowOpenDeploymentOverview: false,
+      windowOpenDeploymentInput: false,
+      windowOpenDeploymentBinding: false,
+      windowOpenOnDemandDeploymentOverview: false,
+    });
   }
 
   /**
@@ -616,7 +617,7 @@ export default class DeploymentPlugin extends PureComponent {
         {this.state.windowOpenOnDemandDeploymentOverview && (
           <ServiceOnDemandDeploymentOverviewModal
             onClose={this.handleOnDemandDeploymentClosed}
-            initValues={this.getServiceTasksToDeployForModal()}
+            initValues={this.csarList}
             elementRegistry={this.modeler.get("elementRegistry")}
           />
         )}
