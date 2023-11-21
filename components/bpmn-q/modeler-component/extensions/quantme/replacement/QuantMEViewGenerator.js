@@ -78,6 +78,18 @@ export async function createQuantMEView(
         "quantmeTaskType": replacementConstruct.task.$type,
       });
     }
+
+    if (
+      replacementConstruct.task.$type === constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS || replacementConstruct.task.$type === constants.CIRCUIT_CUTTING_SUBPROCESS 
+    ) {
+      console.log(replacementConstruct)
+      let element = bpmnReplace.replaceElement(elementRegistry.get(replacementConstruct.task.id), {
+        type: "bpmn:SubProcess",
+      });
+      modeling.updateProperties(element, {
+        "quantmeTaskType": replacementConstruct.task.$type,
+      });
+    }
   }
 
   // layout diagram after successful transformation
