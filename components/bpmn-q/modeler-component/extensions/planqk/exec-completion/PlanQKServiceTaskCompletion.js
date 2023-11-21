@@ -150,8 +150,9 @@ export async function startPlanqkReplacementProcess(xml) {
 
   layout(modeling, elementRegistry, rootProcess);
 
-  const transformedXml = await getXml(modeler);
-  return { status: "transformed", xml: transformedXml };
+  const transformedXml = await getXml(modeler, false);
+
+  return { status: "transformed", xml:  transformedXml };
 }
 
 /**

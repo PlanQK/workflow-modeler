@@ -3,7 +3,7 @@
   <semantic:message id="_1275940932310" />
   <semantic:message id="_1275940932433" />
   <semantic:message id="_1275940932198" />
-  <semantic:error id="Error_05i64we" name="Error_1ubrv1j" />
+  <semantic:error id="Error_05i64we" name="ServiceStateError" errorCode="SERVICE_STATE_ERROR" camunda:errorMessage="Service execution ${executionId} is in state ${executionState}" />
   <semantic:process id="Process_0m7mgwo" isExecutable="false">
     <semantic:subProcess id="Activity_1b6kukx" name="PlanQK Service Interaction" camunda:asyncAfter="true">
       <semantic:extensionElements>
@@ -58,7 +58,7 @@
       <semantic:sequenceFlow id="Flow_0m9kjpk" sourceRef="Activity_Call_Service" targetRef="Event_1ajrxt7" />
       <semantic:sequenceFlow id="Flow_ServiceResult" sourceRef="Activity_Polling_Response" targetRef="Gateway_0t1bksy" />
       <semantic:sequenceFlow id="Flow_ServicePending" sourceRef="Gateway_0t1bksy" targetRef="Event_1ajrxt7">
-        <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=='PENDING'}</semantic:conditionExpression>
+        <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=='PENDING' || executionState=='RUNNING'}</semantic:conditionExpression>
       </semantic:sequenceFlow>
       <semantic:sequenceFlow id="Flow_080k7s4" sourceRef="Event_1du4ral" targetRef="Activity_Call_Service" />
       <semantic:sequenceFlow id="Flow_023j8hf" sourceRef="Activity_0q3qrfi" targetRef="Event_0e35csg" />
@@ -67,7 +67,7 @@
       </semantic:sequenceFlow>
       <semantic:endEvent id="Event_0m8b2ic">
         <semantic:incoming>Flow_171hjar</semantic:incoming>
-        <semantic:errorEventDefinition id="ErrorEventDefinition_1wu3a14" />
+        <semantic:errorEventDefinition id="ErrorEventDefinition_1wu3a14" errorRef="Error_05i64we"/>
       </semantic:endEvent>
     </semantic:subProcess>
   </semantic:process>

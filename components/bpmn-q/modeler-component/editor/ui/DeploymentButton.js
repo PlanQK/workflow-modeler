@@ -8,6 +8,7 @@ import { getModeler } from "../ModelerHandler";
 import OnDemandDeploymentModal from "./OnDemandDeploymentModal";
 import DeploymentSelectionModal from "./DeploymentSelectionModal";
 import { startOnDemandReplacementProcess } from "../../extensions/opentosca/replacement/OnDemandTransformator";
+import {startPlanqkReplacementProcess} from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
 
 // eslint-disable-next-line no-unused-vars
 const defaultState = {
@@ -62,12 +63,7 @@ export default function DeploymentButton(props) {
       let xml = (await modeler.saveXML({ format: true })).xml;
       console.log("XML", xml);
       if (result.deploymentLocation === "planqk") {
-
-        // add the call to the transformation here
-        // xml = await startOnDemandReplacementProcess(xml);
         deployAsPlanQKService(xml)
-
-        // then deploy it to planqk
       }
       if (result.deploymentLocation === "camunda") {
         deploy(xml);
@@ -78,21 +74,48 @@ export default function DeploymentButton(props) {
   }
 
   async function deployAsPlanQKService(xml) {
+    // get XML of the current workflow
+    const rootElement = getRootProcess(modeler.getDefinitions());
+    if (!rootElement.name) {
+      NotificationHandler.getInstance().displayNotification({
+        type: "error",
+        title: "Missing Service Name ",
+        content:
+          "You need to provide a name for the workflow before deploying it as a service. " +
+          "This name will serve as the identifier for the service and should be specified in " +
+          "the 'General' section of the properties panel.",
+        duration: 20000,
+      });
+      return;
+    }
+    console.log("Transforming workflow to Camunda BPMN");
+    const replaceResult = await startPlanqkReplacementProcess(xml);
+    if (replaceResult.status === "failed") {
+      NotificationHandler.getInstance().displayNotification({
+        type: "error",
+        title: "Workflow Transformation Failure",
+        content:
+          "Could not transform PlanQK workflow to Camunda BPMN: " + replaceResult.cause,
+        duration: 20000,
+      });
+      return;
+    }
+    console.log("Transformed Camunda BPMN XML", xml);
+
+    console.log("Deploying workflow as PlanQK service " + rootElement.name);
+
     NotificationHandler.getInstance().displayNotification({
       title: "Service Deployment started",
       content:
-        "Transforming workflow to plain BPMN and deploying it as service to PlanQK.",
+        "Deploying workflow as service to PlanQK.",
     });
-
-    // get XML of the current workflow
-    const rootElement = getRootProcess(modeler.getDefinitions());
 
     // Inform PlanQK that a new service must be created
     const createWorkflowServiceEvent = new CustomEvent("create-workflow-service-event", {
       bubbles: true,
       detail: {
-        name: rootElement.id,
-        workflow: xml
+        name: rootElement.name,
+        workflow: replaceResult.xml
 
       },
     });
