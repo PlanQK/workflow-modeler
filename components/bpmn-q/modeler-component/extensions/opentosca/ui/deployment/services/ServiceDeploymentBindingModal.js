@@ -61,6 +61,12 @@ export default function ServiceDeploymentBindingModal({ onClose, initValues }) {
 
   const onFinished = () => onClose({ next: true, csarList: initValues });
 
+  // skip dialog if there is nothing to bind
+  if (!bindByPull && !bindByPush) {
+    console.log("Nothing to bind. Skipping dialog...");
+    onFinished();
+  }
+
   return (
     <Modal onClose={onClose}>
       <Title>Service Deployment (3/4)</Title>

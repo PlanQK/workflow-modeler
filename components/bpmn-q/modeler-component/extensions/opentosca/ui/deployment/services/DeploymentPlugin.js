@@ -514,15 +514,19 @@ export default class DeploymentPlugin extends PureComponent {
           );
         }
       }
-
-      this.setState({
-        windowOpenDeploymentOverview: false,
-        windowOpenDeploymentInput: false,
-        windowOpenDeploymentBinding: false,
-        windowOpenOnDemandDeploymentOverview: true,
-      });
+      if (csarList.filter(csar => csar.onDemand).length > 0) {
+        console.log("On-demand CSARs available. Opening transformation modal...");
+        this.setState({
+          windowOpenDeploymentOverview: false,
+          windowOpenDeploymentInput: false,
+          windowOpenDeploymentBinding: false,
+          windowOpenOnDemandDeploymentOverview: true,
+        });
+        return;
+      }
     }
 
+    // cancel button was pressed or no on-demand CSARs
     this.setState({
       windowOpenDeploymentOverview: false,
       windowOpenDeploymentInput: false,
