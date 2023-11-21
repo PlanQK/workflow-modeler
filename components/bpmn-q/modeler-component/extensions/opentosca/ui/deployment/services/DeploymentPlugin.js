@@ -250,8 +250,10 @@ export default class DeploymentPlugin extends PureComponent {
         if (csar.incomplete) {
           console.log("Found incomplete CSAR: ", csar.csarName);
 
-          // retrieve policies for the activity the CSAR belongs to
-          let elementRegistry = this.modeler.get("modeling");
+          // retrieve policies for the ServiceTask the CSAR belongs to
+          let elementRegistry = getModeler().get("elementRegistry");
+          let serviceTask = elementRegistry.get(csar.serviceTaskIds[0]);
+          console.log("Retrieving policies for completion from ServiceTask: ", serviceTask);
           // TODO
 
           // complete CSAR and refresh meta data
