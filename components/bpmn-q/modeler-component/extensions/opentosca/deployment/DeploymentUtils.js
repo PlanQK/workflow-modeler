@@ -111,6 +111,8 @@ export function completeIncompleteDeploymentModel(
   blacklistedNodetypes,
   policies
 ) {
+  console.log("Completing deployment model at: ", deploymentModelUrl);
+  console.log("Blacklist: ", blacklistedNodetypes);
   let url = deploymentModelUrl.split("/?csar")[0];
   url = url.split("/");
   url.shift();
@@ -119,9 +121,14 @@ export function completeIncompleteDeploymentModel(
     blacklistedNodetypes: blacklistedNodetypes,
     policies: policies,
   });
-  return synchronousPostRequest(
-    config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel",
-    "application/json",
-    body
-  ).getResponseHeader("location");
+  try {
+    return synchronousPostRequest(
+      config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel",
+      "application/json",
+      body
+    ).getResponseHeader("location");
+  } catch (e) {
+    console.error("Error while completing deployment model: ", e);
+    return undefined;
+  }
 }

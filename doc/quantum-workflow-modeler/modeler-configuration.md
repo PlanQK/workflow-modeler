@@ -34,6 +34,8 @@ In the following, all environment variables that can be used to customize the wo
 
 * ```QHANA_LIST_PLUGINS_URL``` (default: 'http://localhost:5006/api/plugins/?item-count=100'): Defines the plugin list url for QHAna.
 
+* ```QProv_ENDPOINT``` (default: 'http://localhost:8099/qprov'): Defines the endpoint of [QProv](https://github.com/UST-QuAntiL/qprov) to store and retrieve provenance data.
+
 * ```QRM_USERNAME``` (default: ' '): Defines the GitHub username to access the [QRM-Repository](../QRM-Repository)
 
 * ```QRM_REPONAME``` (default: ' '): Defines the GitHub repository name to access the [QRM-Repository](../QRM-Repository)

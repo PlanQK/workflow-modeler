@@ -62,9 +62,9 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         const requiredAttributes = tags
           .filter((x) => x.name === "requiredAttributes")?.[0]
           ?.value?.split(",");
-        console.log(requiredAttributes);
         if (requiredAttributes !== undefined) {
           const attributeListHTML = [];
+          requiredAttributes.sort();
           nodetype.requiredAttributes = {};
           nodetypesToChange[nodetype.name] = nodetype;
           requiredAttributes.forEach((attribute) => {
@@ -139,6 +139,13 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     if (!csar.incomplete) {
       let inputParams = csar.inputParameters;
 
+      // sort input params alphabetically
+      inputParams.sort(function (a, b) {
+        const textA = a.name.toUpperCase();
+        const textB = b.name.toUpperCase();
+        return textA < textB ? -1 : textA > textB ? 1 : 0;
+      });
+
       let paramsToRetrieve = [];
       for (let j = 0; j < inputParams.length; j++) {
         let inputParam = inputParams[j];
@@ -157,7 +164,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         // skip parameters that are automatically set during service binding
         if (
           inputParam.name === "camundaTopic" ||
-          inputParam.name === "camundaEndpoint"
+          inputParam.name === "camundaEndpoint" ||
+          inputParam.name === "QProvEndpoint"
         ) {
           paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
           continue;

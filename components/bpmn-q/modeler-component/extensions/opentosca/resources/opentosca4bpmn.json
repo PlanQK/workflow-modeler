@@ -29,7 +29,7 @@
     },
     {
       "name": "CloudDeploymentModelPolicy",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": [
         {
           "name": "cloudType",
@@ -40,7 +40,7 @@
     },
     {
       "name": "OnDemandPolicy",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": [
         {
           "name": "onDemand",
@@ -51,7 +51,7 @@
     },
     {
       "name": "DedicatedHostingPolicy",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": [
         {
           "name": "dedicatedHosting",
@@ -62,7 +62,7 @@
     },
     {
       "name": "LocationPolicy",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": [
         {
           "name": "location",
@@ -73,7 +73,7 @@
     },
     {
       "name": "Policy",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     }
   ],

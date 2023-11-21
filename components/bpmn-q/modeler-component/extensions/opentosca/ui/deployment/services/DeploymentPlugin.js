@@ -25,7 +25,6 @@ import { bindUsingPull, bindUsingPush } from "../../../deployment/BindingUtils";
 import {
   completeIncompleteDeploymentModel,
   getServiceTasksToDeploy,
-  isCompleteDeploymentModel,
 } from "../../../deployment/DeploymentUtils";
 import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
@@ -33,6 +32,11 @@ import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 import { loadDiagram } from "../../../../../editor/util/IoUtilities";
 import { startOnDemandReplacementProcess } from "../../../replacement/OnDemandTransformator";
+import { deletePolicies, getPolicies } from "../../../utilities/Utilities";
+import {
+  CLOUD_DEPLOYMENT_MODEL_POLICY,
+  LOCATION_POLICY,
+} from "../../../Constants";
 
 const defaultState = {
   windowOpenOnDemandDeploymentOverview: false,
@@ -202,55 +206,172 @@ export default class DeploymentPlugin extends PureComponent {
   async handleDeploymentInputClosed(result) {
     // handle click on 'Next' button
     if (result && result.hasOwnProperty("next") && result.next === true) {
+      console.log(
+        "Blacklisting NodeTypes based on requirements: ",
+        result.nodeTypeRequirements
+      );
+
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
       const nodeTypeRequirements = result.nodeTypeRequirements;
       let blacklistedNodetypes = [];
-      Object.entries(nodeTypeRequirements).forEach((entry) => {
-        const [key, value] = entry;
-        Object.values(value.requiredAttributes).forEach((value) => {
-          if (value === "" && !blacklistedNodetypes.includes(key)) {
-            blacklistedNodetypes.push(key);
+      Object.entries(nodeTypeRequirements).forEach(([key, value]) => {
+        console.log(value);
+        Object.values(value.requiredAttributes).forEach((innerValue) => {
+          if (
+            innerValue === "" &&
+            !blacklistedNodetypes.includes(value.qName)
+          ) {
+            blacklistedNodetypes.push(value.qName);
           }
         });
       });
+      console.log("Blacklisted NodeTypes: ", blacklistedNodetypes);
 
-      let csarList = result.csarList;
-      let incompleteCSARList = [];
-      for (let csar of csarList) {
-        let url = csar;
-        const isComplete = isCompleteDeploymentModel(csar.url);
-        if (!isComplete) {
-          incompleteCSARList.push(csar);
-        }
-      }
-
-      for (let incompleteCSAR of incompleteCSARList) {
-        const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
-          incompleteCSAR.url,
-          blacklistedNodetypes,
-          {}
-        );
-        const nameOfCompletedCSAR = locationOfCompletedCSAR
-          .split("/")
-          .filter((x) => x.length > 1)
-          .pop();
-        for (let i = 0; i < csarList.length; i++) {
-          if (csarList[i].name === incompleteCSAR.name) {
-            csarList[i].url = locationOfCompletedCSAR;
-            csarList[i].name = nameOfCompletedCSAR;
-          }
-        }
-      }
-
-      // TODO buildplan url is missing still -> new complete deployment model needs to be uploaded and buildplan ref added
+      // collect input parameters of all NodeTypes that might be used during completion
+      let nodeTypesToUse = Object.entries(nodeTypeRequirements)
+        .filter(([key, value]) => !blacklistedNodetypes.includes(value.qName))
+        .map(([key, value]) => value);
+      console.log("NodeTypes to use for completion: ", nodeTypesToUse);
+      let inputParams = {};
+      Object.values(nodeTypesToUse).forEach((nodeType) => {
+        console.log("Retrieving input parameters for NodeType: ", nodeType.id);
+        console.log("Input parameters: ", nodeType.requiredAttributes);
+        Object.entries(nodeType.requiredAttributes).forEach(([key, value]) => {
+          inputParams[key] = value;
+        });
+      });
+      console.log("Corresponding input parameters: ", inputParams);
 
       // make progress bar visible and hide buttons
       result.refs.progressBarDivRef.current.hidden = false;
       result.refs.footerRef.current.hidden = true;
       let progressBar = result.refs.progressBarRef.current;
       this.handleProgress(progressBar, 10);
-      // calculate progress step size for the number of CSARs to create an service instance for
 
+      let csarList = result.csarList;
+      console.log("List of CSARs before completion: ", csarList);
+      for (let csar of csarList) {
+        if (csar.incomplete) {
+          console.log("Found incomplete CSAR: ", csar.csarName);
+
+          // retrieve policies for the ServiceTask the CSAR belongs to
+          let policyShapes = getPolicies(this.modeler, csar.serviceTaskIds[0]);
+          let policies = {};
+          policyShapes.forEach((policy) => {
+            console.log("Found policy: ", policy);
+            switch (policy.type) {
+              case CLOUD_DEPLOYMENT_MODEL_POLICY:
+                console.log(
+                  "Adding cloud model policy: ",
+                  policy.businessObject.cloudType
+                );
+                policies[policy.type] = policy.businessObject.cloudType;
+                break;
+              case LOCATION_POLICY:
+                console.log(
+                  "Adding location policy: ",
+                  policy.businessObject.location
+                );
+                policies[policy.type] = policy.businessObject.location;
+                break;
+              default:
+                console.error(
+                  "Policy of type %s not supported for completion!"
+                );
+            }
+          });
+          console.log("Invoking completion with policies: ", policies);
+
+          // complete CSAR and refresh meta data
+          const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
+            csar.url,
+            blacklistedNodetypes,
+            policies
+          );
+          if (!locationOfCompletedCSAR) {
+            // notify user about failed completion
+            NotificationHandler.getInstance().displayNotification({
+              type: "error",
+              title: "Unable to complete ServiceTemplate",
+              content:
+                "ServiceTemplate with Id '" +
+                csar.csarName +
+                "' could not be completed!",
+              duration: 20000,
+            });
+
+            // abort process
+            this.setState({
+              windowOpenDeploymentOverview: false,
+              windowOpenDeploymentInput: false,
+              windowOpenDeploymentBinding: false,
+            });
+            return;
+          }
+          const nameOfCompletedCSAR = locationOfCompletedCSAR
+            .split("/")
+            .filter((x) => x.length > 1)
+            .pop();
+          csar.url = locationOfCompletedCSAR + "?csar";
+          csar.csarName = nameOfCompletedCSAR + ".csar";
+          csar.incomplete = false;
+          console.log("Completed CSAR. New name: ", csar.csarName);
+          console.log("New location: ", csar.url);
+
+          // update the deployment model connected to the ServiceTask
+          let serviceTask = this.modeler
+            .get("elementRegistry")
+            .get(csar.serviceTaskIds[0]);
+          serviceTask.businessObject.deploymentModelUrl =
+            "{{ wineryEndpoint }}/servicetemplates/" +
+            csar.url.split("/servicetemplates/")[1];
+
+          // delete the policies as they are now incorporated into the new deployment model
+          deletePolicies(this.modeler, csar.serviceTaskIds[0]);
+
+          // upload completed CSAR to the OpenTOSCA Container
+          console.log(
+            "Uploading CSAR to the OpenTOSCA Container at: ",
+            this.modeler.config.opentoscaEndpoint
+          );
+          let uploadResult = await uploadCSARToContainer(
+            this.modeler.config.opentoscaEndpoint,
+            csar.csarName,
+            csar.url,
+            this.modeler.config.wineryEndpoint
+          );
+          if (uploadResult.success === false) {
+            // notify user about failed CSAR upload
+            NotificationHandler.getInstance().displayNotification({
+              type: "error",
+              title: "Unable to upload CSAR to the OpenTOSCA Container",
+              content:
+                "CSAR defined for ServiceTasks with Id '" +
+                csar.serviceTaskIds +
+                "' could not be uploaded to the connected OpenTOSCA Container!",
+              duration: 20000,
+            });
+
+            // abort process
+            this.setState({
+              windowOpenDeploymentOverview: false,
+              windowOpenDeploymentInput: false,
+              windowOpenDeploymentBinding: false,
+            });
+            return;
+          }
+
+          // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
+          console.log("Upload successfully!");
+          csar.buildPlanUrl = uploadResult.url;
+          csar.inputParameters = uploadResult.inputParameters;
+          console.log("Build plan URL: ", csar.buildPlanUrl);
+          console.log("Input Parameters: ", csar.inputParameters);
+        }
+      }
+      console.log("Retrieved CSAR list after completion: ", csarList);
+
+      // calculate progress step size for the number of CSARs to create a service instance for
       let progressStep = Math.round(90 / csarList.length);
 
       // create service instances for all CSARs
@@ -260,7 +381,9 @@ export default class DeploymentPlugin extends PureComponent {
 
         let instanceCreationResponse = await createServiceInstance(
           csar,
-          this.modeler.config.camundaEndpoint
+          this.modeler.config.camundaEndpoint,
+          this.modeler.config.qprovEndpoint,
+          inputParams
         );
         console.log("Creating service instance for CSAR: ", csar);
         csar.properties = instanceCreationResponse.properties;
