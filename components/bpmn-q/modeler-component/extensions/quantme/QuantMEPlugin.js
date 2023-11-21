@@ -4,6 +4,7 @@ import QuantMEExtensionModule from "./modeling";
 import QuantMETab from "./configTabs/QuantMETab";
 import { getQRMs } from "./qrm-manager";
 import { startQuantmeReplacementProcess } from "./replacement/QuantMETransformator";
+import { createQuantMEView } from "./replacement/QuantMEViewGenerator";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
@@ -33,14 +34,25 @@ export default {
     <TransformationButton
       name="QuantME Transformation"
       transformWorkflow={async (xml) => {
-        getModeler().views["view-before-rewriting"] = xml;
+        let quantumView = await createQuantMEView(xml);
+        let modeler = getModeler();
+        // Initialize 'views' as an empty object if it's undefined
+        modeler.views = modeler.views || {};
+        modeler.views["view-before-rewriting"] = quantumView.xml
+        console.log(quantumView)
+        console.log(modeler.views["view-before-rewriting"])
+        console.log(xml)
+        console.log(getModeler())
+
         let currentQRMs = getQRMs();
-        let transformedXml =  await startQuantmeReplacementProcess(xml, currentQRMs, {
+        let transformedXml = await startQuantmeReplacementProcess(xml, currentQRMs, {
           nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
           transformationFrameworkEndpoint:
             config.getTransformationFrameworkEndpoint(),
           camundaEndpoint: camundaConfig.getCamundaEndpoint(),
         });
+        console.log(getModeler())
+        console.log(modeler)
         return transformedXml;
       }}
     />
