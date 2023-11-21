@@ -247,8 +247,11 @@ export default class DeploymentPlugin extends PureComponent {
       let csarList = result.csarList;
       console.log("List of CSARs before completion: ", csarList);
       for (let csar of csarList) {
-        if (csar.incomplete) {
-          console.log("Found incomplete CSAR: ", csar.csarName);
+        if (csar.incomplete && !csar.onDemand) {
+          console.log(
+            "Found incomplete CSAR which is not deployed on-demand: ",
+            csar.csarName
+          );
 
           // retrieve policies for the ServiceTask the CSAR belongs to
           let policyShapes = getPolicies(this.modeler, csar.serviceTaskIds[0]);
@@ -370,51 +373,57 @@ export default class DeploymentPlugin extends PureComponent {
       console.log("Retrieved CSAR list after completion: ", csarList);
 
       // calculate progress step size for the number of CSARs to create a service instance for
-      let progressStep = Math.round(90 / csarList.length);
+      let progressStep = Math.round(
+        90 / csarList.filter((csar) => !csar.onDemand).length
+      );
 
-      // create service instances for all CSARs
+      // create service instances for all CSARs, which are not on-demand
       for (let i = 0; i < csarList.length; i++) {
         let csar = csarList[i];
-        console.log("Creating service instance for CSAR: ", csar);
+        if (csar.onDemand) {
+          console.log("Skipping CSAR as it is deployed on-demand: ", csar);
+        } else {
+          console.log("Creating service instance for CSAR: ", csar);
 
-        let instanceCreationResponse = await createServiceInstance(
-          csar,
-          this.modeler.config.camundaEndpoint,
-          this.modeler.config.qprovEndpoint,
-          inputParams
-        );
-        console.log("Creating service instance for CSAR: ", csar);
-        csar.properties = instanceCreationResponse.properties;
-        csar.buildPlanUrl = instanceCreationResponse.buildPlanUrl;
-        if (instanceCreationResponse.success === false) {
-          // notify user about failed instance creation
-          NotificationHandler.getInstance().displayNotification({
-            type: "error",
-            title: "Unable to create service instace",
-            content:
-              "Unable to create service instance for CSAR '" +
-              csar.csarName +
-              "'. Aborting process!",
-            duration: 20000,
-          });
+          let instanceCreationResponse = await createServiceInstance(
+            csar,
+            this.modeler.config.camundaEndpoint,
+            this.modeler.config.qprovEndpoint,
+            inputParams
+          );
+          console.log("Creating service instance for CSAR: ", csar);
+          csar.properties = instanceCreationResponse.properties;
+          csar.buildPlanUrl = instanceCreationResponse.buildPlanUrl;
+          if (instanceCreationResponse.success === false) {
+            // notify user about failed instance creation
+            NotificationHandler.getInstance().displayNotification({
+              type: "error",
+              title: "Unable to create service instace",
+              content:
+                "Unable to create service instance for CSAR '" +
+                csar.csarName +
+                "'. Aborting process!",
+              duration: 20000,
+            });
 
-          // abort process
-          this.setState({
-            windowOpenDeploymentOverview: false,
-            windowOpenDeploymentInput: false,
-            windowOpenDeploymentBinding: false,
-            windowOpenOnDemandDeploymentOverview: false,
-          });
-          return;
+            // abort process
+            this.setState({
+              windowOpenDeploymentOverview: false,
+              windowOpenDeploymentInput: false,
+              windowOpenDeploymentBinding: false,
+              windowOpenOnDemandDeploymentOverview: false,
+            });
+            return;
+          }
+
+          // store topic name for pulling services
+          if (instanceCreationResponse.topicName !== undefined) {
+            csar.topicName = instanceCreationResponse.topicName;
+          }
+
+          // increase progress in the UI
+          this.handleProgress(progressBar, progressStep);
         }
-
-        // store topic name for pulling services
-        if (instanceCreationResponse.topicName !== undefined) {
-          csar.topicName = instanceCreationResponse.topicName;
-        }
-
-        // increase progress in the UI
-        this.handleProgress(progressBar, progressStep);
       }
 
       // update CSAR list for the binding
