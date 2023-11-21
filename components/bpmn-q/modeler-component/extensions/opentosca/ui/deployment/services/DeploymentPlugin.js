@@ -260,6 +260,26 @@ export default class DeploymentPlugin extends PureComponent {
             blacklistedNodetypes,
             {}
           );
+          if (!locationOfCompletedCSAR) {
+            // notify user about failed completion
+            NotificationHandler.getInstance().displayNotification({
+              type: "error",
+              title: "Unable to complete ServiceTemplate",
+              content:
+                "ServiceTemplate with Id '" +
+                csar.csarName +
+                "' could not be completed!",
+              duration: 20000,
+            });
+
+            // abort process
+            this.setState({
+              windowOpenDeploymentOverview: false,
+              windowOpenDeploymentInput: false,
+              windowOpenDeploymentBinding: false,
+            });
+            return;
+          }
           const nameOfCompletedCSAR = locationOfCompletedCSAR
             .split("/")
             .filter((x) => x.length > 1)

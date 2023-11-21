@@ -121,9 +121,14 @@ export function completeIncompleteDeploymentModel(
     blacklistedNodetypes: blacklistedNodetypes,
     policies: policies,
   });
-  return synchronousPostRequest(
-    config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel",
-    "application/json",
-    body
-  ).getResponseHeader("location");
+  try {
+    return synchronousPostRequest(
+      config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel",
+      "application/json",
+      body
+    ).getResponseHeader("location");
+  } catch (e) {
+    console.error("Error while completing deployment model: ", e);
+    return undefined;
+  }
 }
