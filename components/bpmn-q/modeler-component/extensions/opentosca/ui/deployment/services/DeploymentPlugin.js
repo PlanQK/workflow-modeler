@@ -514,8 +514,10 @@ export default class DeploymentPlugin extends PureComponent {
           );
         }
       }
-      if (csarList.filter(csar => csar.onDemand).length > 0) {
-        console.log("On-demand CSARs available. Opening transformation modal...");
+      if (csarList.filter((csar) => csar.onDemand).length > 0) {
+        console.log(
+          "On-demand CSARs available. Opening transformation modal..."
+        );
         this.setState({
           windowOpenDeploymentOverview: false,
           windowOpenDeploymentInput: false,

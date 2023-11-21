@@ -63,28 +63,21 @@ export default function ServiceOnDemandDeploymentOverviewModal({
       <Title>Service Deployment (4/4)</Title>
 
       <Body>
-        {listItems.length > 0 ? (
-          <>
-            <h3 className="spaceUnder">
-              The following service-tasks contain on-demand deployment models:
-            </h3>
-            <table>
-              <tbody>
-                <tr>
-                  <th>CSAR Name</th>
-                  <th>Related ServiceTask IDs</th>
-                  <th>Type (Push/Pull)</th>
-                </tr>
-                {listItems}
-              </tbody>
-            </table>
-          </>
-        ) : (
-          <p>
-            No service tasks with on-demand deployment models are contained in
-            the workflow.
-          </p>
-        )}
+        <>
+          <h3 className="spaceUnder">
+            The following service-tasks contain on-demand deployment models:
+          </h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>CSAR Name</th>
+                <th>Related ServiceTask IDs</th>
+                <th>Type (Push/Pull)</th>
+              </tr>
+              {listItems}
+            </tbody>
+          </table>
+        </>
       </Body>
 
       <Footer>
