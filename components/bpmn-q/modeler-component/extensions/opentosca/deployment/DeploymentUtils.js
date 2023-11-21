@@ -13,6 +13,7 @@ import { getBindingType } from "./BindingUtils";
 import { getFlowElementsRecursively } from "../../../editor/util/ModellingUtilities";
 import { synchronousPostRequest } from "../utilities/Utilities";
 import config from "../framework-config/config";
+import { getModeler } from "../../../editor/ModelerHandler";
 
 /**
  * Get the ServiceTasks of the current workflow that have an attached deployment model to deploy the corresponding service starting from the given root element
@@ -44,6 +45,17 @@ export function getServiceTasksToDeploy(startElement) {
         console.log("Adding to existing CSAR entry...");
         csarEntry.serviceTaskIds.push(flowElement.id);
       } else {
+        // get businessObject for onDemand property retrieval
+        const taskData = getModeler()
+          .get("elementRegistry")
+          .get(flowElement.id);
+        let onDemand;
+        if (taskData.businessObject.onDemand) {
+          onDemand = taskData.businessObject.onDemand;
+        } else {
+          onDemand = false;
+        }
+
         csarsToDeploy.push({
           serviceTaskIds: [flowElement.id],
           url: flowElement.deploymentModelUrl,
@@ -52,6 +64,7 @@ export function getServiceTasksToDeploy(startElement) {
           incomplete: !isCompleteDeploymentModel(
             flowElement.deploymentModelUrl
           ),
+          onDemand: onDemand,
         });
       }
     }

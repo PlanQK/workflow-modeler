@@ -44,14 +44,8 @@ export default function ServiceDeploymentOverviewModal({
       },
     });
 
-  const filteredInitValues = initValues.filter((CSAR) =>
-    CSAR.serviceTaskIds.some((taskId) => {
-      const taskData = elementRegistry.get(taskId);
-      return taskData && !taskData.businessObject.onDemand;
-    })
-  );
   // Modify the filteredInitValues to update the serviceTaskIds
-  const updatedInitValues = filteredInitValues.map((CSAR) => {
+  const updatedInitValues = initValues.map((CSAR) => {
     const updatedServiceTaskIds = CSAR.serviceTaskIds.filter((taskId) => {
       const taskData = elementRegistry.get(taskId);
       return taskData && !taskData.businessObject.onDemand;
@@ -65,6 +59,7 @@ export default function ServiceDeploymentOverviewModal({
       <td>{CSAR.serviceTaskIds.join(",")}</td>
       <td>{CSAR.type}</td>
       <td>{CSAR.incomplete.toString()}</td>
+      <td>{CSAR.onDemand.toString()}</td>
     </tr>
   ));
 
