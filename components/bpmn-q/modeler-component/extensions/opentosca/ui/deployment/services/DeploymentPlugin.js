@@ -201,11 +201,12 @@ export default class DeploymentPlugin extends PureComponent {
    */
   async handleDeploymentInputClosed(result) {
     // handle click on 'Next' button
-    console.log(
-      "Blacklisting NodeTypes based on requirements: ",
-      result.nodeTypeRequirements
-    );
     if (result && result.hasOwnProperty("next") && result.next === true) {
+      console.log(
+        "Blacklisting NodeTypes based on requirements: ",
+        result.nodeTypeRequirements
+      );
+
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
       const nodeTypeRequirements = result.nodeTypeRequirements;
       let blacklistedNodetypes = [];
@@ -248,6 +249,10 @@ export default class DeploymentPlugin extends PureComponent {
       for (let csar of csarList) {
         if (csar.incomplete) {
           console.log("Found incomplete CSAR: ", csar.csarName);
+
+          // retrieve policies for the activity the CSAR belongs to
+          let elementRegistry = this.modeler.get("modeling");
+          // TODO
 
           // complete CSAR and refresh meta data
           const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
