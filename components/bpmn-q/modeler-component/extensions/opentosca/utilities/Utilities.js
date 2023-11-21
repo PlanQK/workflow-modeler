@@ -52,3 +52,26 @@ export function synchronousPostRequest(url, type, body) {
     throw new Error("Request failed: " + xhr.statusText);
   }
 }
+
+/**
+ * Get all policies defined for the ServiceTask with the given ID
+ *
+ * @param modeler the modeler to which the ServiceTask belongs to
+ * @param serviceTaskId the ID of the ServiceTask
+ * @returns {{}} the list of retrived policies
+ */
+export function getPolicies(modeler, serviceTaskId) {
+  console.log("Retrieving policies for ServiceTask with ID: ", serviceTaskId);
+
+  // get ServiceTask with the given ID
+  let elementRegistry = modeler.get("elementRegistry");
+  let serviceTask = elementRegistry.get(serviceTaskId);
+  console.log("ServiceTask element for policy retrieval: ", serviceTask);
+
+  // get attachers which contains policies
+  let attachers = serviceTask.attachers;
+  console.log("Found %i attachers!", attachers.length);
+
+  // TODO
+  return {};
+}

@@ -33,6 +33,7 @@ import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 import { loadDiagram } from "../../../../../editor/util/IoUtilities";
 import { startOnDemandReplacementProcess } from "../../../replacement/OnDemandTransformator";
+import { getPolicies } from "../../../utilities/Utilities";
 
 const defaultState = {
   windowOpenOnDemandDeploymentOverview: false,
@@ -251,16 +252,17 @@ export default class DeploymentPlugin extends PureComponent {
           console.log("Found incomplete CSAR: ", csar.csarName);
 
           // retrieve policies for the ServiceTask the CSAR belongs to
-          let elementRegistry = getModeler().get("elementRegistry");
-          let serviceTask = elementRegistry.get(csar.serviceTaskIds[0]);
-          console.log("Retrieving policies for completion from ServiceTask: ", serviceTask);
-          // TODO
+          let policies = getPolicies(getModeler(), csar.serviceTaskIds[0]);
+          console.log(
+            "Found %i policies for completion: ",
+            Object.keys(policies).length
+          );
 
           // complete CSAR and refresh meta data
           const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
             csar.url,
             blacklistedNodetypes,
-            {}
+            policies
           );
           if (!locationOfCompletedCSAR) {
             // notify user about failed completion
