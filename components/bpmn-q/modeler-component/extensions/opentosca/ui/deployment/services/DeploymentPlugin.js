@@ -93,11 +93,8 @@ export default class DeploymentPlugin extends PureComponent {
   async handleOnDemandDeploymentClosed(result) {
     if (result && result.hasOwnProperty("next") && result.next === true) {
       console.log("Starting on-demand transformation: ", result);
-
-      // TODO: add blacklist, input params, and policies
-
       let xml = (await this.modeler.saveXML({ format: true })).xml;
-      xml = await startOnDemandReplacementProcess(xml);
+      xml = await startOnDemandReplacementProcess(xml, result.csarList);
       loadDiagram(xml, this.modeler);
     }
 

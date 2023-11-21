@@ -128,8 +128,13 @@ java.lang.Thread.sleep(12000);
  * Initiate the replacement process for the ServiceTasks requiring on-demand deployment in the current process model
  *
  * @param xml the BPMN diagram in XML format
+ * @param csars the CSARs to use for the on-demand deployment
  */
-export async function startOnDemandReplacementProcess(xml) {
+export async function startOnDemandReplacementProcess(xml, csars) {
+  console.log("Starting on-demand replacement with CSARs: ", csars);
+
+  // TODO: add blacklist, input params, and policies
+
   const modeler = await createTempModelerFromXml(xml);
   const modeling = modeler.get("modeling");
   const elementRegistry = modeler.get("elementRegistry");
