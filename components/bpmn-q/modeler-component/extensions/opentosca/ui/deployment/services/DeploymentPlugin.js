@@ -25,7 +25,6 @@ import { bindUsingPull, bindUsingPush } from "../../../deployment/BindingUtils";
 import {
   completeIncompleteDeploymentModel,
   getServiceTasksToDeploy,
-  isCompleteDeploymentModel,
 } from "../../../deployment/DeploymentUtils";
 import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
@@ -33,11 +32,10 @@ import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 import { loadDiagram } from "../../../../../editor/util/IoUtilities";
 import { startOnDemandReplacementProcess } from "../../../replacement/OnDemandTransformator";
-import { getPolicies } from "../../../utilities/Utilities";
+import { deletePolicies, getPolicies } from "../../../utilities/Utilities";
 import {
   CLOUD_DEPLOYMENT_MODEL_POLICY,
   LOCATION_POLICY,
-  ON_DEMAND_POLICY,
 } from "../../../Constants";
 
 const defaultState = {
@@ -257,7 +255,7 @@ export default class DeploymentPlugin extends PureComponent {
           console.log("Found incomplete CSAR: ", csar.csarName);
 
           // retrieve policies for the ServiceTask the CSAR belongs to
-          let policyShapes = getPolicies(getModeler(), csar.serviceTaskIds[0]);
+          let policyShapes = getPolicies(this.modeler, csar.serviceTaskIds[0]);
           let policies = {};
           policyShapes.forEach((policy) => {
             console.log("Found policy: ", policy);
@@ -283,7 +281,6 @@ export default class DeploymentPlugin extends PureComponent {
             }
           });
           console.log("Invoking completion with policies: ", policies);
-          // TODO: delete policies
 
           // complete CSAR and refresh meta data
           const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
@@ -320,6 +317,17 @@ export default class DeploymentPlugin extends PureComponent {
           csar.incomplete = false;
           console.log("Completed CSAR. New name: ", csar.csarName);
           console.log("New location: ", csar.url);
+
+          // update the deployment model connected to the ServiceTask
+          let serviceTask = this.modeler
+            .get("elementRegistry")
+            .get(csar.serviceTaskIds[0]);
+          serviceTask.businessObject.deploymentModelUrl =
+            "{{ wineryEndpoint }}/servicetemplates/" +
+            csar.url.split("/servicetemplates/")[1];
+
+          // delete the policies as they are now incorporated into the new deployment model
+          deletePolicies(this.modeler, csar.serviceTaskIds[0]);
 
           // upload completed CSAR to the OpenTOSCA Container
           console.log(

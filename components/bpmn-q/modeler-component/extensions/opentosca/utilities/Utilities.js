@@ -79,3 +79,24 @@ export function getPolicies(modeler, serviceTaskId) {
   console.log("Found %i policies!", policies.length);
   return policies;
 }
+
+/**
+ * Delete all policies defined for the ServiceTask with the given ID
+ *
+ * @param modeler the modeler to which the ServiceTask belongs to
+ * @param serviceTaskId the ID of the ServiceTask
+ */
+export function deletePolicies(modeler, serviceTaskId) {
+  console.log("Deleting policies for ServiceTask with ID: ", serviceTaskId);
+
+  // get all policies for the ServiceTask
+  let policies = getPolicies(modeler, serviceTaskId);
+  console.log("Deleting policies: ", policies);
+
+  // remove policies
+  let modeling = modeler.get("modeling");
+  for (let policy of policies) {
+    console.log("Deleting policy with ID: ", policy);
+    modeling.removeShape(policy);
+  }
+}
