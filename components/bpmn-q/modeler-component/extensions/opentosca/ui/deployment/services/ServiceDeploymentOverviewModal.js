@@ -70,11 +70,11 @@ export default function ServiceDeploymentOverviewModal({
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (2/4)</Title>
+      <Title>Service Deployment (1/4)</Title>
 
       <Body>
         <h3 className="spaceUnder">
-          CSARs that have to be uploaded to the OpenTOSCA Container:
+          CSARs attached to ServiceTasks within the workflow model:
         </h3>
 
         <table>
@@ -84,6 +84,7 @@ export default function ServiceDeploymentOverviewModal({
               <th>Related ServiceTask IDs</th>
               <th>Type (Push/Pull)</th>
               <th>CSAR Requires Completion</th>
+              <th>On-Demand</th>
             </tr>
             {listItems}
           </tbody>

@@ -60,7 +60,7 @@ export default function ServiceOnDemandDeploymentOverviewModal({
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (1/4)</Title>
+      <Title>Service Deployment (4/4)</Title>
 
       <Body>
         {listItems.length > 0 ? (

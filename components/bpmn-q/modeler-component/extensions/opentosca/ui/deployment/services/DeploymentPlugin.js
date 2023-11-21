@@ -97,19 +97,12 @@ export default class DeploymentPlugin extends PureComponent {
         xml = await startOnDemandReplacementProcess(xml);
         loadDiagram(xml, this.modeler);
         this.setState({
-          windowOpenOnDemandDeploymentOverview: false,
-          windowOpenDeploymentOverview: true,
+          windowOpenDeploymentOverview: false,
           windowOpenDeploymentInput: false,
           windowOpenDeploymentBinding: false,
+          windowOpenOnDemandDeploymentOverview: false,
         });
       }
-    } else {
-      this.setState({
-        windowOpenOnDemandDeploymentOverview: false,
-        windowOpenDeploymentOverview: false,
-        windowOpenDeploymentInput: false,
-        windowOpenDeploymentBinding: false,
-      });
     }
   }
 
@@ -166,6 +159,7 @@ export default class DeploymentPlugin extends PureComponent {
               windowOpenDeploymentOverview: false,
               windowOpenDeploymentInput: false,
               windowOpenDeploymentBinding: false,
+              windowOpenOnDemandDeploymentOverview: false,
             });
             return;
           }
@@ -185,6 +179,7 @@ export default class DeploymentPlugin extends PureComponent {
         windowOpenDeploymentOverview: false,
         windowOpenDeploymentInput: true,
         windowOpenDeploymentBinding: false,
+        windowOpenOnDemandDeploymentOverview: false,
         csarList: csarList,
       });
       return;
@@ -195,6 +190,7 @@ export default class DeploymentPlugin extends PureComponent {
       windowOpenDeploymentOverview: false,
       windowOpenDeploymentInput: false,
       windowOpenDeploymentBinding: false,
+      windowOpenOnDemandDeploymentOverview: false,
     });
   }
 
@@ -305,6 +301,7 @@ export default class DeploymentPlugin extends PureComponent {
               windowOpenDeploymentOverview: false,
               windowOpenDeploymentInput: false,
               windowOpenDeploymentBinding: false,
+              windowOpenOnDemandDeploymentOverview: false,
             });
             return;
           }
@@ -357,6 +354,7 @@ export default class DeploymentPlugin extends PureComponent {
               windowOpenDeploymentOverview: false,
               windowOpenDeploymentInput: false,
               windowOpenDeploymentBinding: false,
+              windowOpenOnDemandDeploymentOverview: false,
             });
             return;
           }
@@ -405,6 +403,7 @@ export default class DeploymentPlugin extends PureComponent {
             windowOpenDeploymentOverview: false,
             windowOpenDeploymentInput: false,
             windowOpenDeploymentBinding: false,
+            windowOpenOnDemandDeploymentOverview: false,
           });
           return;
         }
@@ -425,6 +424,7 @@ export default class DeploymentPlugin extends PureComponent {
         windowOpenDeploymentOverview: false,
         windowOpenDeploymentInput: false,
         windowOpenDeploymentBinding: true,
+        windowOpenOnDemandDeploymentOverview: false,
       });
       return;
     }
@@ -434,6 +434,7 @@ export default class DeploymentPlugin extends PureComponent {
       windowOpenDeploymentOverview: false,
       windowOpenDeploymentInput: false,
       windowOpenDeploymentBinding: false,
+      windowOpenOnDemandDeploymentOverview: false,
     });
   }
 
@@ -492,19 +493,18 @@ export default class DeploymentPlugin extends PureComponent {
               windowOpenDeploymentOverview: false,
               windowOpenDeploymentInput: false,
               windowOpenDeploymentBinding: false,
+              windowOpenOnDemandDeploymentOverview: false,
             });
             return;
           }
         }
       }
 
-      // notify user about successful binding
-      NotificationHandler.getInstance().displayNotification({
-        type: "info",
-        title: "Binding completed",
-        content:
-          "Binding of the deployed service instances completed. The resulting workflow can now be deployed to the Camunda engine!",
-        duration: 20000,
+      this.setState({
+        windowOpenDeploymentOverview: false,
+        windowOpenDeploymentInput: false,
+        windowOpenDeploymentBinding: false,
+        windowOpenOnDemandDeploymentOverview: true,
       });
     }
 
@@ -512,6 +512,7 @@ export default class DeploymentPlugin extends PureComponent {
       windowOpenDeploymentOverview: false,
       windowOpenDeploymentInput: false,
       windowOpenDeploymentBinding: false,
+      windowOpenOnDemandDeploymentOverview: false,
     });
   }
 
@@ -582,7 +583,7 @@ export default class DeploymentPlugin extends PureComponent {
               className="qwm-toolbar-btn"
               title="Open service deployment menu"
               onClick={() =>
-                this.setState({ windowOpenOnDemandDeploymentOverview: true })
+                this.setState({ windowOpenDeploymentOverview: true })
               }
             >
               <span className="app-icon-service-deployment">
