@@ -459,53 +459,59 @@ export default class DeploymentPlugin extends PureComponent {
       let csarList = result.csarList;
       for (let i = 0; i < csarList.length; i++) {
         let csar = csarList[i];
+        if (!csar.onDemand) {
+          let serviceTaskIds = csar.serviceTaskIds;
+          for (let j = 0; j < serviceTaskIds.length; j++) {
+            // bind the service instance using the specified binding pattern
+            let bindingResponse = undefined;
+            if (csar.type === "pull") {
+              bindingResponse = bindUsingPull(
+                csar,
+                serviceTaskIds[j],
+                this.modeler.get("elementRegistry"),
+                this.modeler.get("modeling")
+              );
+            } else if (csar.type === "push") {
+              bindingResponse = bindUsingPush(
+                csar,
+                serviceTaskIds[j],
+                this.modeler.get("elementRegistry")
+              );
+            }
 
-        let serviceTaskIds = csar.serviceTaskIds;
-        for (let j = 0; j < serviceTaskIds.length; j++) {
-          // bind the service instance using the specified binding pattern
-          let bindingResponse = undefined;
-          if (csar.type === "pull") {
-            bindingResponse = bindUsingPull(
-              csar,
-              serviceTaskIds[j],
-              this.modeler.get("elementRegistry"),
-              this.modeler.get("modeling")
-            );
-          } else if (csar.type === "push") {
-            bindingResponse = bindUsingPush(
-              csar,
-              serviceTaskIds[j],
-              this.modeler.get("elementRegistry")
-            );
+            // abort if binding pattern is invalid or binding fails
+            if (
+              bindingResponse === undefined ||
+              bindingResponse.success === false
+            ) {
+              // notify user about failed binding
+              NotificationHandler.getInstance().displayNotification({
+                type: "error",
+                title: "Unable to perform binding",
+                content:
+                  "Unable to bind ServiceTask with Id '" +
+                  serviceTaskIds[j] +
+                  "' using binding pattern '" +
+                  csar.type +
+                  "'. Aborting process!",
+                duration: 20000,
+              });
+
+              // abort process
+              this.setState({
+                windowOpenDeploymentOverview: false,
+                windowOpenDeploymentInput: false,
+                windowOpenDeploymentBinding: false,
+                windowOpenOnDemandDeploymentOverview: false,
+              });
+              return;
+            }
           }
-
-          // abort if binding pattern is invalid or binding fails
-          if (
-            bindingResponse === undefined ||
-            bindingResponse.success === false
-          ) {
-            // notify user about failed binding
-            NotificationHandler.getInstance().displayNotification({
-              type: "error",
-              title: "Unable to perform binding",
-              content:
-                "Unable to bind ServiceTask with Id '" +
-                serviceTaskIds[j] +
-                "' using binding pattern '" +
-                csar.type +
-                "'. Aborting process!",
-              duration: 20000,
-            });
-
-            // abort process
-            this.setState({
-              windowOpenDeploymentOverview: false,
-              windowOpenDeploymentInput: false,
-              windowOpenDeploymentBinding: false,
-              windowOpenOnDemandDeploymentOverview: false,
-            });
-            return;
-          }
+        } else {
+          console.log(
+            "CSAR is on-demand and will be bound during runtime: ",
+            csar
+          );
         }
       }
 
