@@ -94,6 +94,8 @@ export default class DeploymentPlugin extends PureComponent {
     if (result && result.hasOwnProperty("next") && result.next === true) {
       console.log("Starting on-demand transformation: ", result);
 
+      // TODO: add blacklist, input params, and policies
+
       let xml = (await this.modeler.saveXML({ format: true })).xml;
       xml = await startOnDemandReplacementProcess(xml);
       loadDiagram(xml, this.modeler);
@@ -247,13 +249,9 @@ export default class DeploymentPlugin extends PureComponent {
 
       let csarList = result.csarList;
       console.log("List of CSARs before completion: ", csarList);
-      for (let csar of csarList) {
-        if (csar.incomplete && !csar.onDemand) {
-          console.log(
-            "Found incomplete CSAR which is not deployed on-demand: ",
-            csar.csarName
-          );
-
+      for (var i in csarList) {
+        let csar = csarList[i];
+        if (csar.incomplete) {
           // retrieve policies for the ServiceTask the CSAR belongs to
           let policyShapes = getPolicies(this.modeler, csar.serviceTaskIds[0]);
           let policies = {};
@@ -282,93 +280,112 @@ export default class DeploymentPlugin extends PureComponent {
           });
           console.log("Invoking completion with policies: ", policies);
 
-          // complete CSAR and refresh meta data
-          const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
-            csar.url,
-            blacklistedNodetypes,
-            policies
-          );
-          if (!locationOfCompletedCSAR) {
-            // notify user about failed completion
-            NotificationHandler.getInstance().displayNotification({
-              type: "error",
-              title: "Unable to complete ServiceTemplate",
-              content:
-                "ServiceTemplate with Id '" +
-                csar.csarName +
-                "' could not be completed!",
-              duration: 20000,
-            });
+          if (csar.onDemand) {
+            // add variables in case the CSAR is on-demand to enable a later transformation
+            console.log(
+              "CSAR %s is incomplete and on-demand. Adding inputs and blacklisted NodeTypes",
+              csar.csarName
+            );
+            csar.blacklistedNodetypes = blacklistedNodetypes;
+            csar.policies = policies;
+            csar.inputParams = inputParams;
+          } else {
+            console.log(
+              "Found incomplete CSAR which is not deployed on-demand: ",
+              csar.csarName
+            );
 
-            // abort process
-            this.setState({
-              windowOpenDeploymentOverview: false,
-              windowOpenDeploymentInput: false,
-              windowOpenDeploymentBinding: false,
-              windowOpenOnDemandDeploymentOverview: false,
-            });
-            return;
+            // complete CSAR and refresh meta data
+            const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
+              csar.url,
+              blacklistedNodetypes,
+              policies
+            );
+            if (!locationOfCompletedCSAR) {
+              // notify user about failed completion
+              NotificationHandler.getInstance().displayNotification({
+                type: "error",
+                title: "Unable to complete ServiceTemplate",
+                content:
+                  "ServiceTemplate with Id '" +
+                  csar.csarName +
+                  "' could not be completed!",
+                duration: 20000,
+              });
+
+              // abort process
+              this.setState({
+                windowOpenDeploymentOverview: false,
+                windowOpenDeploymentInput: false,
+                windowOpenDeploymentBinding: false,
+                windowOpenOnDemandDeploymentOverview: false,
+              });
+              return;
+            }
+            const nameOfCompletedCSAR = locationOfCompletedCSAR
+              .split("/")
+              .filter((x) => x.length > 1)
+              .pop();
+            csar.url = locationOfCompletedCSAR + "?csar";
+            csar.csarName = nameOfCompletedCSAR + ".csar";
+            csar.incomplete = false;
+            console.log("Completed CSAR. New name: ", csar.csarName);
+            console.log("New location: ", csar.url);
+
+            // update the deployment model connected to the ServiceTask
+            let serviceTask = this.modeler
+              .get("elementRegistry")
+              .get(csar.serviceTaskIds[0]);
+            serviceTask.businessObject.deploymentModelUrl =
+              "{{ wineryEndpoint }}/servicetemplates/" +
+              csar.url.split("/servicetemplates/")[1];
+
+            // delete the policies as they are now incorporated into the new deployment model
+            deletePolicies(this.modeler, csar.serviceTaskIds[0]);
+
+            // upload completed CSAR to the OpenTOSCA Container
+            console.log(
+              "Uploading CSAR to the OpenTOSCA Container at: ",
+              this.modeler.config.opentoscaEndpoint
+            );
+            let uploadResult = await uploadCSARToContainer(
+              this.modeler.config.opentoscaEndpoint,
+              csar.csarName,
+              csar.url,
+              this.modeler.config.wineryEndpoint
+            );
+            if (uploadResult.success === false) {
+              // notify user about failed CSAR upload
+              NotificationHandler.getInstance().displayNotification({
+                type: "error",
+                title: "Unable to upload CSAR to the OpenTOSCA Container",
+                content:
+                  "CSAR defined for ServiceTasks with Id '" +
+                  csar.serviceTaskIds +
+                  "' could not be uploaded to the connected OpenTOSCA Container!",
+                duration: 20000,
+              });
+
+              // abort process
+              this.setState({
+                windowOpenDeploymentOverview: false,
+                windowOpenDeploymentInput: false,
+                windowOpenDeploymentBinding: false,
+                windowOpenOnDemandDeploymentOverview: false,
+              });
+              return;
+            }
+
+            // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
+            console.log("Upload successfully!");
+            csar.buildPlanUrl = uploadResult.url;
+            csar.inputParameters = uploadResult.inputParameters;
+            console.log("Build plan URL: ", csar.buildPlanUrl);
+            console.log("Input Parameters: ", csar.inputParameters);
+
+            // update element in list
+            csarList[i] = csar;
           }
-          const nameOfCompletedCSAR = locationOfCompletedCSAR
-            .split("/")
-            .filter((x) => x.length > 1)
-            .pop();
-          csar.url = locationOfCompletedCSAR + "?csar";
-          csar.csarName = nameOfCompletedCSAR + ".csar";
-          csar.incomplete = false;
-          console.log("Completed CSAR. New name: ", csar.csarName);
-          console.log("New location: ", csar.url);
-
-          // update the deployment model connected to the ServiceTask
-          let serviceTask = this.modeler
-            .get("elementRegistry")
-            .get(csar.serviceTaskIds[0]);
-          serviceTask.businessObject.deploymentModelUrl =
-            "{{ wineryEndpoint }}/servicetemplates/" +
-            csar.url.split("/servicetemplates/")[1];
-
-          // delete the policies as they are now incorporated into the new deployment model
-          deletePolicies(this.modeler, csar.serviceTaskIds[0]);
-
-          // upload completed CSAR to the OpenTOSCA Container
-          console.log(
-            "Uploading CSAR to the OpenTOSCA Container at: ",
-            this.modeler.config.opentoscaEndpoint
-          );
-          let uploadResult = await uploadCSARToContainer(
-            this.modeler.config.opentoscaEndpoint,
-            csar.csarName,
-            csar.url,
-            this.modeler.config.wineryEndpoint
-          );
-          if (uploadResult.success === false) {
-            // notify user about failed CSAR upload
-            NotificationHandler.getInstance().displayNotification({
-              type: "error",
-              title: "Unable to upload CSAR to the OpenTOSCA Container",
-              content:
-                "CSAR defined for ServiceTasks with Id '" +
-                csar.serviceTaskIds +
-                "' could not be uploaded to the connected OpenTOSCA Container!",
-              duration: 20000,
-            });
-
-            // abort process
-            this.setState({
-              windowOpenDeploymentOverview: false,
-              windowOpenDeploymentInput: false,
-              windowOpenDeploymentBinding: false,
-              windowOpenOnDemandDeploymentOverview: false,
-            });
-            return;
-          }
-
-          // set URL of the CSAR in the OpenTOSCA Container which is required to create instances
-          console.log("Upload successfully!");
-          csar.buildPlanUrl = uploadResult.url;
-          csar.inputParameters = uploadResult.inputParameters;
-          console.log("Build plan URL: ", csar.buildPlanUrl);
-          console.log("Input Parameters: ", csar.inputParameters);
         }
       }
       console.log("Retrieved CSAR list after completion: ", csarList);
@@ -527,6 +544,8 @@ export default class DeploymentPlugin extends PureComponent {
         });
         return;
       }
+
+      this.csarList = csarList;
     }
 
     // cancel button was pressed or no on-demand CSARs
