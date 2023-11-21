@@ -123,7 +123,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       completionHTML.unshift(
         <h3 className="spaceUnder">
           CSARs comprise incomplete Deployment Models requiring additional data
-          for completion
+          for completion:
         </h3>
       );
     }
