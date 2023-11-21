@@ -293,4 +293,5 @@ QuantMETab.prototype.config = () => {
     config.getTransformationFrameworkEndpoint();
   modeler.config.scriptSplitterEndpoint = config.getScriptSplitterEndpoint();
   modeler.config.scriptSplitterThreshold = config.getScriptSplitterThreshold();
+  modeler.config.qprovEndpoint = config.getQProvEndpoint();
 };
