@@ -327,7 +327,12 @@ async function replaceByFragment(
     );
     movePolicies(modeler, resultShape.id, policies);
   } else {
-    if (resultShape.businessObject.$type === "bpmn:Subprocess") {
+    if (resultShape.businessObject.$type === "bpmn:SubProcess") {
+      console.log(
+        "Attaching policies within subprocess: ",
+        resultShape.businessObject
+      );
+
       // TODO: add policies to all QuantME and ServiceTasks within Subprocess
     } else {
       console.log(
