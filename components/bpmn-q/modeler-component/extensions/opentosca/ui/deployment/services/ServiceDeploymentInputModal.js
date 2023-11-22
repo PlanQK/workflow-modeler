@@ -47,11 +47,40 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
   let completionHTML = [];
   let nodetypesToChange = {};
   let requiredVMAttributesMappedToOtherNodetype = [];
+  let attributeListHTMLMap = {};
   if (containsIncompleteModels) {
     try {
       const url = config.wineryEndpoint + "/nodetypes";
       const nodetypes = JSON.parse(synchronousGetRequest(url));
       console.log("Found NodeTypes: ", nodetypes);
+
+      // save requiredAttributes of NodeTypes of type VM to Map them to corresponding Host NodeType
+      nodetypes.forEach(nodetype => {
+        const nodetypeUri = encodeURIComponent(
+            encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
+        ).replace("%257D", "/");
+        const tags = JSON.parse(
+            synchronousGetRequest(url + "/" + nodetypeUri + "/tags")
+        );
+        const type = tags.filter(x => x.name ==="type")[0];
+        if (type?.value === "vm"){
+          const requiredAttributes = tags
+              .filter((x) => x.name === "requiredAttributes")?.[0]
+              ?.value?.split(",");
+          if (requiredAttributes !== undefined) {
+            const attributeListHTML = [];
+            requiredAttributes.sort();
+            nodetype.requiredAttributes = {};
+            nodetypesToChange[nodetype.name] = nodetype;
+            requiredAttributes.forEach((attribute) => {
+              // Some VM requiredAttributes are host dependent and thus need to be mapped to host
+              if (attribute.split('.').length > 1) {
+                requiredVMAttributesMappedToOtherNodetype.push({"nodeTypeName": attribute.split(".")[0], "requiredAttribute":attribute.split(".")[1], "vmQName":nodetype.qName});
+              }
+            });
+          }
+        }
+      });
 
       nodetypes.forEach((nodetype) => {
         const nodetypeUri = encodeURIComponent(
@@ -65,14 +94,22 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
           ?.value?.split(",");
         if (requiredAttributes !== undefined) {
           const attributeListHTML = [];
+
+          // insert requiredVMAttributesMappedToOtherNodetype if suitable
+          requiredVMAttributesMappedToOtherNodetype.forEach(vmRequirement => {
+            if (nodetype.name === vmRequirement.nodeTypeName){
+              vmRequirement['qName'] = nodetype.qName;
+              requiredAttributes.push(vmRequirement.requiredAttribute);
+            }
+          });
+
+
           requiredAttributes.sort();
           nodetype.requiredAttributes = {};
           nodetypesToChange[nodetype.name] = nodetype;
           requiredAttributes.forEach((attribute) => {
             // Some VM requiredAttributes are host dependent and thus need to be mapped to host
-            if (attribute.split('.').length > 1) {
-              requiredVMAttributesMappedToOtherNodetype.push({"nodeTypeName": attribute.split(".")[0], "requiredAttribute":attribute.split(".")[1]});
-            } else {
+            if (attribute.split('.').length < 2) {
               nodetype.requiredAttributes[attribute] = "";
               attributeListHTML.push(
                 <tr key={nodetype.name + "-" + attribute}>
@@ -122,36 +159,6 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
             );
           }
         }
-      });
-
-      //add requiredAttributes to form
-      requiredVMAttributesMappedToOtherNodetype.forEach(attributeInput =>{
-        let requiredAttribute = attributeInput.requiredAttribute;
-        let name = attributeInput.nodeTypeName;
-        nodetypesToChange[name].requiredAttributes[requiredAttribute] = "123";
-
-        const findTbodyById = () => {
-          const tbodyElement = document.getElementById(`${name}-tbody`);
-          nodetypesToChange[name].requiredAttributes[requiredAttribute] = "";
-          const trHTML = `
-              <tr key=${name}-${requiredAttribute}>
-                <td>${requiredAttribute}</td>
-                <td>
-                  <textarea
-                    value="${nodetypesToChange[name].requiredAttributes[requiredAttribute]}"
-                    onChange="(event) => handleCompletionChange(event, '${name}', '${requiredAttribute}')"
-                  ></textarea>
-                </td>
-              </tr>
-          `;
-          if (tbodyElement) {
-            tbodyElement.insertAdjacentHTML("beforeend",trHTML);
-          }
-        };
-        useEffect(() => {
-          findTbodyById();
-        }, []);
-
       });
     } catch (error) {
       console.error("Error:", error.message);

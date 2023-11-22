@@ -24,7 +24,7 @@ import {
 import { bindUsingPull, bindUsingPush } from "../../../deployment/BindingUtils";
 import {
   completeIncompleteDeploymentModel,
-  getServiceTasksToDeploy,
+  getServiceTasksToDeploy, getTopology,
 } from "../../../deployment/DeploymentUtils";
 import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
@@ -207,26 +207,42 @@ export default class DeploymentPlugin extends PureComponent {
         result.nodeTypeRequirements
       );
 
-      let reconstructedVMs = [];
+      let reconstructedVMs = {};
       result.requiredVMAttributesMappedToOtherNodetype.forEach( attr => {
-        reconstructedVMs[attr.nodeTypeName] ??={};
-        // reconstructedVMs[attr.nodeTypeName][attr.requiredAttribute] ??="";
-
-        reconstructedVMs[attr.nodeTypeName][attr.requiredAttribute] = result.nodeTypeRequirements[attr.nodeTypeName][attr.requiredAttribute];
+        reconstructedVMs[attr.nodeTypeName] ??={"name":attr.nodeTypeName, "qName":attr.qName};
+        reconstructedVMs[attr.nodeTypeName]['requiredAttributes'] ??={};
+        reconstructedVMs[attr.nodeTypeName].requiredAttributes[attr.requiredAttribute] = result.nodeTypeRequirements[attr.nodeTypeName].requiredAttributes[attr.requiredAttribute];
       });
+
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
-      const nodeTypeRequirements = result.nodeTypeRequirements;
       let blacklistedNodetypes = [];
-      Object.entries(nodeTypeRequirements).forEach(([key, value]) => {
+      Object.entries(reconstructedVMs).forEach(([key, value]) => {
         console.log(value);
         Object.values(value.requiredAttributes).forEach((innerValue) => {
           if (
-            innerValue === "" &&
-            !blacklistedNodetypes.includes(value.qName)
+              innerValue === "" &&
+              !blacklistedNodetypes.includes(value.qName)
           ) {
             blacklistedNodetypes.push(value.qName);
           }
         });
+      });
+
+      const nodeTypeRequirements = result.nodeTypeRequirements;
+      Object.entries(nodeTypeRequirements).forEach(([key, value]) => {
+        console.log(value);
+        Object.entries(value.requiredAttributes).forEach(([innerKey, innerValue]) => {
+          if (
+            innerValue === "" &&
+              !blacklistedNodetypes.includes(value.qName) &&
+              !innerKey?.startsWith("VM")
+          ) {
+            blacklistedNodetypes.push(value.qName);
+          }
+        });
+        // remove VM attributes from other Nodetypes
+        value.requiredAttributes = Object.fromEntries(Object.entries(value.requiredAttributes).filter(([innerKey, innerValue]) =>  !innerKey?.startsWith("VM")));
+        console.log("value" + value.requiredAttributes.length);
       });
       console.log("Blacklisted NodeTypes: ", blacklistedNodetypes);
 
@@ -384,6 +400,7 @@ export default class DeploymentPlugin extends PureComponent {
             console.log("Upload successfully!");
             csar.buildPlanUrl = uploadResult.url;
             csar.inputParameters = uploadResult.inputParameters;
+            csar.wasIncomplete = true;
             console.log("Build plan URL: ", csar.buildPlanUrl);
             console.log("Input Parameters: ", csar.inputParameters);
 
@@ -406,6 +423,19 @@ export default class DeploymentPlugin extends PureComponent {
           console.log("Skipping CSAR as it is deployed on-demand: ", csar);
         } else {
           console.log("Creating service instance for CSAR: ", csar);
+
+          if (csar?.wasIncomplete === true){
+            // Add suitable VM properties for completion
+            const deployedTopology = getTopology(csar.url);
+            for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)){
+              for (const [constructKey, constructValue] of Object.entries(reconstructedVMs)){
+                if (constructValue.name.includes(value.name) && !value.name.includes("VM")){
+                  inputParams = Object.assign({}, inputParams, constructValue.requiredAttributes);
+                }
+              }
+            }
+          }
+          console.log("Updated input params" + inputParams);
 
           let instanceCreationResponse = await createServiceInstance(
             csar,
