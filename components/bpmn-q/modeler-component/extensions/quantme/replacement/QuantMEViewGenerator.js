@@ -90,6 +90,17 @@ export async function createQuantMEView(
         "quantmeTaskType": replacementConstruct.task.$type,
       });
     }
+    if (
+      constants.QUANTME_DATA_OBJECTS.includes(replacementConstruct.task.$type)
+    ) {
+      let element = bpmnReplace.replaceElement(elementRegistry.get(replacementConstruct.task.id), {
+        type: "bpmn:DataObjectReference",
+      });
+      modeling.updateProperties(element, {
+        "quantmeTaskType": replacementConstruct.task.$type,
+      });
+    }
+    
   }
 
   // layout diagram after successful transformation
