@@ -10,7 +10,7 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, {useEffect} from "react";
 
 // polyfill upcoming structural components
 import Modal from "../../../../../editor/ui/modal/Modal";
@@ -46,6 +46,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     initValues.filter((csar) => csar.incomplete).length > 0;
   let completionHTML = [];
   let nodetypesToChange = {};
+  let requiredVMAttributesMappedToOtherNodetype = [];
   if (containsIncompleteModels) {
     try {
       const url = config.wineryEndpoint + "/nodetypes";
@@ -68,52 +69,89 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
           nodetype.requiredAttributes = {};
           nodetypesToChange[nodetype.name] = nodetype;
           requiredAttributes.forEach((attribute) => {
-            nodetype.requiredAttributes[attribute] = "";
-            attributeListHTML.push(
-              <tr key={nodetype.name + "-" + attribute}>
-                <td>{attribute}</td>
-                <td>
-                  <textarea
-                    value={
-                      nodetypesToChange[nodetype.name].requiredAttributes[
-                        { attribute }
-                      ]
-                    }
-                    onChange={(event) =>
-                      handleCompletionChange(event, nodetype.name, attribute)
-                    }
-                  />
-                </td>
-              </tr>
-            );
+            // Some VM requiredAttributes are host dependent and thus need to be mapped to host
+            if (attribute.split('.').length > 1) {
+              requiredVMAttributesMappedToOtherNodetype.push({"nodeTypeName": attribute.split(".")[0], "requiredAttribute":attribute.split(".")[1]});
+            } else {
+              nodetype.requiredAttributes[attribute] = "";
+              attributeListHTML.push(
+                <tr key={nodetype.name + "-" + attribute}>
+                  <td>{attribute}</td>
+                  <td>
+                    <textarea
+                      value={
+                        nodetypesToChange[nodetype.name].requiredAttributes[
+                          { attribute }
+                        ]
+                      }
+                      onChange={(event) =>
+                        handleCompletionChange(event, nodetype.name, attribute)
+                      }
+                    />
+                  </td>
+                </tr>
+              );
+            }
           });
 
-          completionHTML.push(
-            <div key={nodetype.name} style={{}}>
-              <h3 key={nodetype.name + "h3"} className="spaceUnderSmall">
-                <img
-                  style={{
-                    height: "20px",
-                    width: "20px",
-                    verticalAlign: "text-bottom",
-                  }}
-                  src={url + "/" + nodetypeUri + "/appearance/50x50"}
-                  alt={url + "/" + nodetypeUri + "/appearance/50x50"}
-                />{" "}
-                {nodetype.name}:{" "}
-              </h3>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Parameter Name</th>
-                    <th>Value</th>
-                  </tr>
-                  {attributeListHTML}
-                </tbody>
-              </table>
-            </div>
-          );
+          if (attributeListHTML.length > 0) {
+            completionHTML.push(
+                <div key={nodetype.name} style={{}}>
+                  <h3 key={nodetype.name + "h3"} className="spaceUnderSmall">
+                    <img
+                        style={{
+                          height: "20px",
+                          width: "20px",
+                          verticalAlign: "text-bottom",
+                        }}
+                        src={url + "/" + nodetypeUri + "/appearance/50x50"}
+                        alt={url + "/" + nodetypeUri + "/appearance/50x50"}
+                    />{" "}
+                    {nodetype.name}:{" "}
+                  </h3>
+                  <table>
+                    <tbody id={nodetype.name + "-tbody"}>
+                    <tr>
+                      <th>Parameter Name</th>
+                      <th>Value</th>
+                    </tr>
+                    {attributeListHTML}
+                    </tbody>
+                  </table>
+                </div>
+            );
+          }
         }
+      });
+
+      //add requiredAttributes to form
+      requiredVMAttributesMappedToOtherNodetype.forEach(attributeInput =>{
+        let requiredAttribute = attributeInput.requiredAttribute;
+        let name = attributeInput.nodeTypeName;
+        nodetypesToChange[name].requiredAttributes[requiredAttribute] = "123";
+
+        const findTbodyById = () => {
+          const tbodyElement = document.getElementById(`${name}-tbody`);
+          nodetypesToChange[name].requiredAttributes[requiredAttribute] = "";
+          const trHTML = `
+              <tr key=${name}-${requiredAttribute}>
+                <td>${requiredAttribute}</td>
+                <td>
+                  <textarea
+                    value="${nodetypesToChange[name].requiredAttributes[requiredAttribute]}"
+                    onChange="(event) => handleCompletionChange(event, '${name}', '${requiredAttribute}')"
+                  ></textarea>
+                </td>
+              </tr>
+          `;
+          if (tbodyElement) {
+            tbodyElement.insertAdjacentHTML("beforeend",trHTML);
+          }
+        };
+        useEffect(() => {
+          findTbodyById();
+        }, []);
+
       });
     } catch (error) {
       console.error("Error:", error.message);
@@ -219,6 +257,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       next: true,
       csarList: initValues,
       nodeTypeRequirements: nodetypesToChange,
+      requiredVMAttributesMappedToOtherNodetype: requiredVMAttributesMappedToOtherNodetype,
       refs: {
         progressBarRef: progressBarRef,
         progressBarDivRef: progressBarDivRef,

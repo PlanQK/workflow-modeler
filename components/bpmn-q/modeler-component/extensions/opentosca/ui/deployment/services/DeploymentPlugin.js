@@ -207,6 +207,13 @@ export default class DeploymentPlugin extends PureComponent {
         result.nodeTypeRequirements
       );
 
+      let reconstructedVMs = [];
+      result.requiredVMAttributesMappedToOtherNodetype.forEach( attr => {
+        reconstructedVMs[attr.nodeTypeName] ??={};
+        // reconstructedVMs[attr.nodeTypeName][attr.requiredAttribute] ??="";
+
+        reconstructedVMs[attr.nodeTypeName][attr.requiredAttribute] = result.nodeTypeRequirements[attr.nodeTypeName][attr.requiredAttribute];
+      });
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
       const nodeTypeRequirements = result.nodeTypeRequirements;
       let blacklistedNodetypes = [];
