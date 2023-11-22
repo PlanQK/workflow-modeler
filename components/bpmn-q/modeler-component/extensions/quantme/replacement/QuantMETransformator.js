@@ -25,6 +25,8 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { replaceDataObjects } from "./dataObjects/QuantMEDataObjectsHandler";
+import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
+import { isQuantMETask } from "../utilities/Utilities";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -256,6 +258,13 @@ async function replaceByFragment(
   modeler
 ) {
   let bpmnFactory = modeler.get("bpmnFactory");
+  let elementRegistry = modeler.get("elementRegistry");
+  let modeling = modeler.get("modeling");
+  let taskToReplace = elementRegistry.get(task.id);
+  console.log(
+    "Replacing the following task using a replacement fragment: ",
+    taskToReplace
+  );
 
   if (!replacement) {
     console.log("Replacement fragment is undefined. Aborting replacement!");
@@ -275,6 +284,19 @@ async function replaceByFragment(
     return false;
   }
 
+  // extract policies attached to QuantME tasks
+  let policies = getPolicies(modeler, task.id);
+  console.log("Found %i polices attached to QuantME task!", policies.length);
+  let attachersPlaceholder = modeling.createShape(
+    { type: "bpmn:Task" },
+    { x: 50, y: 50 },
+    parent,
+    {}
+  );
+
+  // attach policies to the placeholder
+  movePolicies(modeler, attachersPlaceholder.id, policies);
+
   console.log("Replacement element: ", replacementElement);
   let result = insertShape(
     definitions,
@@ -285,6 +307,8 @@ async function replaceByFragment(
     modeler,
     task
   );
+  let resultShape = result.element;
+  console.log("Inserted shape: ", resultShape);
 
   // add all attributes of the replaced QuantME task to the input parameters of the replacement fragment
   let inputOutputExtension = getCamundaInputOutput(
@@ -292,6 +316,27 @@ async function replaceByFragment(
     bpmnFactory
   );
   addQuantMEInputParameters(task, inputOutputExtension, bpmnFactory);
+
+  // attach policies to the newly created shape if it's a single task
+  if (
+    resultShape.businessObject.$type === "bpmn:ServiceTask" ||
+    isQuantMETask(resultShape.businessObject)
+  ) {
+    console.log(
+      "Replacement was ServiceTask or QuantME task. Attaching policies..."
+    );
+    movePolicies(modeler, resultShape.id, policies);
+  } else {
+    if (resultShape.businessObject.$type === "bpmn:Subprocess") {
+      // TODO: add policies to all QuantME and ServiceTasks within Subprocess
+    } else {
+      console.log(
+        "Type not supported for policy attachment: ",
+        resultShape.businessObject.$type
+      );
+    }
+  }
+  modeling.removeShape(attachersPlaceholder);
 
   return result["success"];
 }
