@@ -9,7 +9,7 @@ import {
 const defaultConfig = {
   camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
   fileName: process.env.DOWNLOAD_FILE_NAME,
-  transformedWorkflowHandler: transformedWorkflowHandlers.NEW_TAB,
+  transformedWorkflowHandler: transformedWorkflowHandlers.INLINE,
   autoSaveFileOption: autoSaveFile.INTERVAL,
   fileFormat: saveFileFormats.BPMN,
   autoSaveIntervalSize: process.env.AUTOSAVE_INTERVAL,
