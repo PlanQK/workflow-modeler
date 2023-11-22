@@ -333,6 +333,22 @@ async function replaceByFragment(
         resultShape.businessObject
       );
 
+      // get flow elements to check if they support policy attachment
+      let flowElements = resultShape.businessObject.flowElements;
+      console.log(
+        "Subprocess contains %i flow elements...",
+        flowElements.length
+      );
+      flowElements = flowElements.filter(
+        (flowElement) =>
+          flowElement.$type === "bpmn:ServiceTask" ||
+          flowElement.$type.startsWith("quantme:")
+      );
+      console.log(
+        "Found %i ServiceTasks or QuantME tasks...",
+        flowElements.length
+      );
+
       // TODO: add policies to all QuantME and ServiceTasks within Subprocess
     } else {
       console.log(
