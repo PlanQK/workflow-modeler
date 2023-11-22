@@ -18,6 +18,8 @@ import {
 import * as dataConsts from "../../data-extension/Constants";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
+import * as consts from "../Constants";
+import * as opentoscaReplaceOptions from "../../opentosca/modeling/OpenTOSCAReplaceOptions";
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced QuantME task types
@@ -57,6 +59,45 @@ export default class QuantMEReplaceMenuProvider {
         )
       ) {
         return entries;
+      }
+
+      if (is(element, "bpmn:Event")) {
+        if (element.host !== undefined) {
+          if (consts.QUANTME_TASKS.includes(element.host.type)) {
+            let attachers = element.host.attachers;
+            let attacherTypes = [];
+            for (let i = 0; i < attachers.length; i++) {
+              let attacher = attachers[i];
+              let attacherType = attacher.type;
+
+              // Add the attacher type to the array if it's not already there
+              if (
+                !attacherTypes.includes(attacherType) &&
+                attacherType !== element.type
+              ) {
+                attacherTypes.push(attacherType);
+              }
+            }
+
+            const filteredOptions = filter(
+              opentoscaReplaceOptions.POLICY,
+              isDifferentType(element)
+            );
+
+            const filteredOptionsBasedOnAttachers = filteredOptions.filter(
+              (option) => {
+                return !attacherTypes.includes(option.target.type);
+              }
+            );
+            const policyEntries = createMenuEntries(
+              element,
+              filteredOptionsBasedOnAttachers,
+              self.translate,
+              self.bpmnReplace.replaceElement
+            );
+            return Object.assign(policyEntries, entries);
+          }
+        }
       }
 
       // add menu entries for the loaded configuration which can be applied to DataMapObjects

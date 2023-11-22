@@ -46,40 +46,38 @@ export default class OpenTOSCAReplaceMenuProvider {
       // add additional elements to replace policies
       if (is(element, "bpmn:Event")) {
         if (element.host !== undefined) {
-          if (element.host.type === "bpmn:ServiceTask") {
-            let attachers = element.host.attachers;
-            let attacherTypes = [];
-            for (let i = 0; i < attachers.length; i++) {
-              let attacher = attachers[i];
-              let attacherType = attacher.type;
+          let attachers = element.host.attachers;
+          let attacherTypes = [];
+          for (let i = 0; i < attachers.length; i++) {
+            let attacher = attachers[i];
+            let attacherType = attacher.type;
 
-              // Add the attacher type to the array if it's not already there
-              if (
-                !attacherTypes.includes(attacherType) &&
-                attacherType !== element.type
-              ) {
-                attacherTypes.push(attacherType);
-              }
+            // Add the attacher type to the array if it's not already there
+            if (
+              !attacherTypes.includes(attacherType) &&
+              attacherType !== element.type
+            ) {
+              attacherTypes.push(attacherType);
             }
-
-            const filteredOptions = filter(
-              opentoscaReplaceOptions.POLICY,
-              isDifferentType(element)
-            );
-
-            const filteredOptionsBasedOnAttachers = filteredOptions.filter(
-              (option) => {
-                return !attacherTypes.includes(option.target.type);
-              }
-            );
-            const policyEntries = createMenuEntries(
-              element,
-              filteredOptionsBasedOnAttachers,
-              self.translate,
-              self.bpmnReplace.replaceElement
-            );
-            return Object.assign(policyEntries, entries);
           }
+
+          const filteredOptions = filter(
+            opentoscaReplaceOptions.POLICY,
+            isDifferentType(element)
+          );
+
+          const filteredOptionsBasedOnAttachers = filteredOptions.filter(
+            (option) => {
+              return !attacherTypes.includes(option.target.type);
+            }
+          );
+          const policyEntries = createMenuEntries(
+            element,
+            filteredOptionsBasedOnAttachers,
+            self.translate,
+            self.bpmnReplace.replaceElement
+          );
+          return Object.assign(policyEntries, entries);
         }
       }
 
