@@ -15,7 +15,10 @@ import { addQuantMEInputParameters } from "./InputOutputHandler";
 import * as constants from "../Constants";
 import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
 import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
-import { insertShape } from "../../../editor/util/TransformationUtilities";
+import {
+  getPropertiesToCopy,
+  insertShape,
+} from "../../../editor/util/TransformationUtilities";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import {
   getCamundaInputOutput,
@@ -341,7 +344,8 @@ async function replaceByFragment(
       );
       flowElements = flowElements.filter(
         (flowElement) =>
-          flowElement.$type === "bpmn:ServiceTask" ||
+          (flowElement.$type === "bpmn:ServiceTask" &&
+            flowElement.deploymentModelUrl) ||
           flowElement.$type.startsWith("quantme:")
       );
       console.log(
@@ -349,7 +353,34 @@ async function replaceByFragment(
         flowElements.length
       );
 
-      // TODO: add policies to all QuantME and ServiceTasks within Subprocess
+      if (flowElements.length === 1) {
+        // if only one relevant flow element, moce policies
+        movePolicies(modeler, flowElements[0].id, policies);
+      } else {
+        // copy policies for each relevant flow element
+        flowElements.forEach((flowElement) => {
+          console.log("Adding policies to task: ", flowElement);
+          policies.forEach((policy) => {
+            console.log("Adding policy: ", policy);
+
+            let newPolicyShape = modeling.createShape(
+              { type: policy.type },
+              { x: 50, y: 50 },
+              parent,
+              {}
+            );
+            modeling.updateProperties(
+              newPolicyShape,
+              getPropertiesToCopy(policy)
+            );
+
+            modeling.updateProperties(newPolicyShape, {
+              attachedToRef: flowElement.businessObject,
+            });
+            newPolicyShape.host = flowElement;
+          });
+        });
+      }
     } else {
       console.log(
         "Type not supported for policy attachment: ",
