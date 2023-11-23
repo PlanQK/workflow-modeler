@@ -125,6 +125,51 @@ java.lang.Thread.sleep(12000);
 `;
 }
 
+
+
+function createCompleteModelScript(url, blacklist, policies, taskId) {
+  return `
+import groovy.json.*
+def url = "${url}"
+def blacklist = ${JSON.stringify(blacklist)};
+def policies = ${JSON.stringify(policies)};
+def message = JsonOutput.toJson("policies": policies, "blacklist": blacklist);
+
+try {
+   def post = new URL(url).openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("accept", "application/json");
+
+   // post.getOutputStream().write(message);
+   OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
+   println message;
+   wr.write(message.toString());
+   wr.flush();
+
+
+   def status = post.getResponseCode();
+   println status;
+   if(status.toString().startsWith("2")){
+       println post;
+       println post.getInputStream();
+       def location = post.getHeaderFields()['Location'];
+       def saveVarName = "completeModelUrl_" + "${taskId}";
+       execution.setVariable(saveVarName, location);
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while completing Deployment Model!");
+   }
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + "${url}");
+};
+`;
+}
+
 /**
  * Initiate the replacement process for the ServiceTasks requiring on-demand deployment in the current process model
  *
@@ -164,6 +209,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
   modeling.removeElements(onDemandPolicies);
 
   for (const serviceTask of serviceTasks) {
+    let CSARForServiceTask = csars.filter(csar => csar.serviceTaskIds.filter(id => id === serviceTask.id))[0];
     let onDemand = serviceTask.businessObject.get("onDemand");
     if (onDemand) {
       let deploymentModelUrl = serviceTask.businessObject.get(
@@ -199,11 +245,16 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       const serviceTaskCompleteDeploymentModel = modeling.appendShape(
           startEvent,
           {
-            type: "bpmn:ServiceTask",
+            type: "bpmn:ScriptTask",
           },
           { x: 400, y: 200 }
       );
       serviceTaskCompleteDeploymentModel.businessObject.set("name", "Adapt Model");
+      serviceTaskCompleteDeploymentModel.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCompleteDeploymentModel.businessObject.set(
+          "script",
+          createCompleteModelScript(deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"), CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
+      );
 
       // add gateway to check for dedicated policy
       let dedicatedGateway = modeling.createShape(
@@ -227,7 +278,14 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           subProcess,
           {}
       );
+      // TODO adjust script method
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.set("name", "Check For Equivalent Deployment Model");
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
+          "script",
+          createCompleteModelScript(deploymentModelUrl, CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
+      );
+
 
       let dedicatedFlow = modeling.connect(
           dedicatedGateway,
@@ -249,6 +307,11 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           {}
       );
       serviceTaskCheckForAvailableInstance.businessObject.set("name", "Check Container For Available Instance");
+      serviceTaskCheckForAvailableInstance.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCheckForAvailableInstance.businessObject.set(
+          "script",
+          createCompleteModelScript(deploymentModelUrl, CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
+      );
 
       modeling.connect(serviceTaskCheckForEquivalentDeploymentModel, serviceTaskCheckForAvailableInstance, {
         type: "bpmn:SequenceFlow",
