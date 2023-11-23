@@ -11,6 +11,7 @@
 
 import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
 import { isFlowLikeElement } from "../../../../editor/util/ModellingUtilities";
+import { POLICIES } from "../../../opentosca/Constants";
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = "10";
@@ -71,15 +72,15 @@ function layoutProcess(modeling, elementRegistry, process) {
         }
 
         // boundary events are skipped here, as they are always attached to some task and only this task has to be layouted
-        if (flowElements[i].$type === "bpmn:BoundaryEvent") {
+        if (
+          flowElements[i].$type === "bpmn:BoundaryEvent" ||
+          POLICIES.includes(flowElements[i].$type)
+        ) {
           continue;
         }
 
         let flowElement = elementRegistry.get(flowElements[i].id);
         if (flowElement) {
-          // if (is(flowElement, 'bpmn:DataObjectReference')) {
-          //     continue;
-          // }
           nodes.push(flowElement);
         } else {
           console.log(
@@ -128,7 +129,11 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
 
   // add the boundary events to the new location of the tasks to which they are attached
   for (let boundaryEvent of elementRegistry.getAll()) {
-    if (boundaryEvent.type === "bpmn:BoundaryEvent") {
+    if (
+      boundaryEvent.type === "bpmn:BoundaryEvent" ||
+      POLICIES.includes(boundaryEvent.type)
+    ) {
+      console.log("Found boundary like element: ", boundaryEvent.type);
       // retrieve the required elements from the registry
       let boundaryEventShape = elementRegistry.get(boundaryEvent.id);
       let attachedToElementShape = elementRegistry.get(
