@@ -159,10 +159,10 @@ export async function startQuantmeReplacementProcess(
       constants.QUANTME_DATA_OBJECTS.includes(replacementConstruct.task.$type)
     ) {
       console.log("Transforming QuantME Data Objects...");
-      replacementSuccess = await replaceDataObjects(
-        replacementConstruct.task,
-        modeler
-      );
+
+      // for now we delete data objects
+      modeling.removeShape(elementRegistry.get(replacementConstruct.task.id));
+      replacementSuccess = true;
     } else {
       console.log(
         "Replacing task with id %s by using QRM: ",
