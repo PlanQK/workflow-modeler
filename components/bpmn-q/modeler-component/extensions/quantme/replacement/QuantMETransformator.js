@@ -290,15 +290,18 @@ async function replaceByFragment(
   // extract policies attached to QuantME tasks
   let policies = getPolicies(modeler, task.id);
   console.log("Found %i polices attached to QuantME task!", policies.length);
-  let attachersPlaceholder = modeling.createShape(
-    { type: "bpmn:Task" },
-    { x: 50, y: 50 },
-    parent,
-    {}
-  );
+  let attachersPlaceholder;
+  if (policies.length > 0) {
+    attachersPlaceholder = modeling.createShape(
+      { type: "bpmn:Task" },
+      { x: 50, y: 50 },
+      parent,
+      {}
+    );
 
-  // attach policies to the placeholder
-  movePolicies(modeler, attachersPlaceholder.id, policies);
+    // attach policies to the placeholder
+    movePolicies(modeler, attachersPlaceholder.id, policies);
+  }
 
   console.log("Replacement element: ", replacementElement);
   let result = insertShape(
@@ -320,75 +323,77 @@ async function replaceByFragment(
   );
   addQuantMEInputParameters(task, inputOutputExtension, bpmnFactory);
 
-  // attach policies to the newly created shape if it's a single task
-  if (
-    resultShape.businessObject.$type === "bpmn:ServiceTask" ||
-    isQuantMETask(resultShape.businessObject)
-  ) {
-    console.log(
-      "Replacement was ServiceTask or QuantME task. Attaching policies..."
-    );
-    movePolicies(modeler, resultShape.id, policies);
-  } else {
-    if (resultShape.businessObject.$type === "bpmn:SubProcess") {
+  if (attachersPlaceholder) {
+    // attach policies to the newly created shape if it's a single task
+    if (
+      resultShape.businessObject.$type === "bpmn:ServiceTask" ||
+      isQuantMETask(resultShape.businessObject)
+    ) {
       console.log(
-        "Attaching policies within subprocess: ",
-        resultShape.businessObject
+        "Replacement was ServiceTask or QuantME task. Attaching policies..."
       );
-
-      // get flow elements to check if they support policy attachment
-      let flowElements = resultShape.businessObject.flowElements;
-      console.log(
-        "Subprocess contains %i flow elements...",
-        flowElements.length
-      );
-      flowElements = flowElements.filter(
-        (flowElement) =>
-          (flowElement.$type === "bpmn:ServiceTask" &&
-            flowElement.deploymentModelUrl) ||
-          flowElement.$type.startsWith("quantme:")
-      );
-      console.log(
-        "Found %i ServiceTasks or QuantME tasks...",
-        flowElements.length
-      );
-
-      if (flowElements.length === 1) {
-        // if only one relevant flow element, moce policies
-        movePolicies(modeler, flowElements[0].id, policies);
-      } else {
-        // copy policies for each relevant flow element
-        flowElements.forEach((flowElement) => {
-          console.log("Adding policies to task: ", flowElement);
-          policies.forEach((policy) => {
-            console.log("Adding policy: ", policy);
-
-            let newPolicyShape = modeling.createShape(
-              { type: policy.type },
-              { x: 50, y: 50 },
-              parent,
-              {}
-            );
-            modeling.updateProperties(
-              newPolicyShape,
-              getPropertiesToCopy(policy)
-            );
-
-            modeling.updateProperties(newPolicyShape, {
-              attachedToRef: flowElement.businessObject,
-            });
-            newPolicyShape.host = flowElement;
-          });
-        });
-      }
+      movePolicies(modeler, resultShape.id, policies);
     } else {
-      console.log(
-        "Type not supported for policy attachment: ",
-        resultShape.businessObject.$type
-      );
+      if (resultShape.businessObject.$type === "bpmn:SubProcess") {
+        console.log(
+          "Attaching policies within subprocess: ",
+          resultShape.businessObject
+        );
+
+        // get flow elements to check if they support policy attachment
+        let flowElements = resultShape.businessObject.flowElements;
+        console.log(
+          "Subprocess contains %i flow elements...",
+          flowElements.length
+        );
+        flowElements = flowElements.filter(
+          (flowElement) =>
+            (flowElement.$type === "bpmn:ServiceTask" &&
+              flowElement.deploymentModelUrl) ||
+            flowElement.$type.startsWith("quantme:")
+        );
+        console.log(
+          "Found %i ServiceTasks or QuantME tasks...",
+          flowElements.length
+        );
+
+        if (flowElements.length === 1) {
+          // if only one relevant flow element, moce policies
+          movePolicies(modeler, flowElements[0].id, policies);
+        } else {
+          // copy policies for each relevant flow element
+          flowElements.forEach((flowElement) => {
+            console.log("Adding policies to task: ", flowElement);
+            policies.forEach((policy) => {
+              console.log("Adding policy: ", policy);
+
+              let newPolicyShape = modeling.createShape(
+                { type: policy.type },
+                { x: 50, y: 50 },
+                parent,
+                {}
+              );
+              modeling.updateProperties(
+                newPolicyShape,
+                getPropertiesToCopy(policy)
+              );
+
+              modeling.updateProperties(newPolicyShape, {
+                attachedToRef: flowElement.businessObject,
+              });
+              newPolicyShape.host = flowElement;
+            });
+          });
+        }
+      } else {
+        console.log(
+          "Type not supported for policy attachment: ",
+          resultShape.businessObject.$type
+        );
+      }
     }
+    modeling.removeShape(attachersPlaceholder);
   }
-  modeling.removeShape(attachersPlaceholder);
 
   return result["success"];
 }
