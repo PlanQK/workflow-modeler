@@ -11,7 +11,10 @@
 
 import { getBindingType } from "./BindingUtils";
 import { getFlowElementsRecursively } from "../../../editor/util/ModellingUtilities";
-import {synchronousGetRequest, synchronousPostRequest} from "../utilities/Utilities";
+import {
+  synchronousGetRequest,
+  synchronousPostRequest,
+} from "../utilities/Utilities";
 import config from "../framework-config/config";
 import { getModeler } from "../../../editor/ModelerHandler";
 
@@ -148,9 +151,6 @@ export function completeIncompleteDeploymentModel(
 
 export function getTopology(deploymentModelUrl) {
   let url = deploymentModelUrl.replace("/?csar", "/topologytemplate");
-  const topology = synchronousGetRequest(
-      url,
-      "application/json",
-  );
+  const topology = synchronousGetRequest(url, "application/json");
   return JSON.parse(topology);
 }

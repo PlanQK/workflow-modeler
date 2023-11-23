@@ -24,7 +24,8 @@ import {
 import { bindUsingPull, bindUsingPush } from "../../../deployment/BindingUtils";
 import {
   completeIncompleteDeploymentModel,
-  getServiceTasksToDeploy, getTopology,
+  getServiceTasksToDeploy,
+  getTopology,
 } from "../../../deployment/DeploymentUtils";
 import { getModeler } from "../../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../../editor/ui/notifications/NotificationHandler";
@@ -94,7 +95,11 @@ export default class DeploymentPlugin extends PureComponent {
     if (result && result.hasOwnProperty("next") && result.next === true) {
       console.log("Starting on-demand transformation: ", result);
       let xml = (await this.modeler.saveXML({ format: true })).xml;
-      xml = await startOnDemandReplacementProcess(xml, result.csarList);
+      xml = await startOnDemandReplacementProcess(
+        xml,
+        result.csarList,
+        this.modeler.config.opentoscaEndpoint
+      );
       loadDiagram(xml, this.modeler);
     }
 
@@ -208,10 +213,18 @@ export default class DeploymentPlugin extends PureComponent {
       );
 
       let reconstructedVMs = {};
-      result.requiredVMAttributesMappedToOtherNodetype.forEach( attr => {
-        reconstructedVMs[attr.nodeTypeName] ??={"name":attr.nodeTypeName, "qName":attr.qName};
-        reconstructedVMs[attr.nodeTypeName]['requiredAttributes'] ??={};
-        reconstructedVMs[attr.nodeTypeName].requiredAttributes[attr.requiredAttribute] = result.nodeTypeRequirements[attr.nodeTypeName].requiredAttributes[attr.requiredAttribute];
+      result.requiredVMAttributesMappedToOtherNodetype.forEach((attr) => {
+        reconstructedVMs[attr.nodeTypeName] ??= {
+          name: attr.nodeTypeName,
+          qName: attr.qName,
+        };
+        reconstructedVMs[attr.nodeTypeName]["requiredAttributes"] ??= {};
+        reconstructedVMs[attr.nodeTypeName].requiredAttributes[
+          attr.requiredAttribute
+        ] =
+          result.nodeTypeRequirements[attr.nodeTypeName].requiredAttributes[
+            attr.requiredAttribute
+          ];
       });
 
       // Blacklist Nodetypes which don't have their requirements fulfilled for Incomplete Deployment Models
@@ -220,8 +233,8 @@ export default class DeploymentPlugin extends PureComponent {
         console.log(value);
         Object.values(value.requiredAttributes).forEach((innerValue) => {
           if (
-              innerValue === "" &&
-              !blacklistedNodetypes.includes(value.qName)
+            innerValue === "" &&
+            !blacklistedNodetypes.includes(value.qName)
           ) {
             blacklistedNodetypes.push(value.qName);
           }
@@ -231,17 +244,23 @@ export default class DeploymentPlugin extends PureComponent {
       const nodeTypeRequirements = result.nodeTypeRequirements;
       Object.entries(nodeTypeRequirements).forEach(([key, value]) => {
         console.log(value);
-        Object.entries(value.requiredAttributes).forEach(([innerKey, innerValue]) => {
-          if (
-            innerValue === "" &&
+        Object.entries(value.requiredAttributes).forEach(
+          ([innerKey, innerValue]) => {
+            if (
+              innerValue === "" &&
               !blacklistedNodetypes.includes(value.qName) &&
               !innerKey?.startsWith("VM")
-          ) {
-            blacklistedNodetypes.push(value.qName);
+            ) {
+              blacklistedNodetypes.push(value.qName);
+            }
           }
-        });
+        );
         // remove VM attributes from other Nodetypes
-        value.requiredAttributes = Object.fromEntries(Object.entries(value.requiredAttributes).filter(([innerKey, innerValue]) =>  !innerKey?.startsWith("VM")));
+        value.requiredAttributes = Object.fromEntries(
+          Object.entries(value.requiredAttributes).filter(
+            ([innerKey, innerValue]) => !innerKey?.startsWith("VM")
+          )
+        );
         console.log("value" + value.requiredAttributes.length);
       });
       console.log("Blacklisted NodeTypes: ", blacklistedNodetypes);
@@ -428,13 +447,24 @@ export default class DeploymentPlugin extends PureComponent {
         } else {
           console.log("Creating service instance for CSAR: ", csar);
 
-          if (csar?.wasIncomplete === true){
+          if (csar?.wasIncomplete === true) {
             // Add suitable VM properties for completion
             const deployedTopology = getTopology(csar.url);
-            for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)){
-              for (const [constructKey, constructValue] of Object.entries(reconstructedVMs)){
-                if (constructValue.name.includes(value.name) && !value.name.includes("VM")){
-                  inputParams = Object.assign({}, inputParams, constructValue.requiredAttributes);
+            for (const [key, value] of Object.entries(
+              deployedTopology.nodeTemplates
+            )) {
+              for (const [constructKey, constructValue] of Object.entries(
+                reconstructedVMs
+              )) {
+                if (
+                  constructValue.name.includes(value.name) &&
+                  !value.name.includes("VM")
+                ) {
+                  inputParams = Object.assign(
+                    {},
+                    inputParams,
+                    constructValue.requiredAttributes
+                  );
                 }
               }
             }
