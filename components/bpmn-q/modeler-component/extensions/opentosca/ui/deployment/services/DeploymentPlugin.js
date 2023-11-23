@@ -309,6 +309,7 @@ export default class DeploymentPlugin extends PureComponent {
             csar.blacklistedNodetypes = blacklistedNodetypes;
             csar.policies = policies;
             csar.inputParams = inputParams;
+            csar.reconstructedVMs = reconstructedVMs;
           } else {
             console.log(
               "Found incomplete CSAR which is not deployed on-demand: ",

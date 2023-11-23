@@ -18,6 +18,7 @@ import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 import { createElement } from "../../../editor/util/camunda-utils/ElementUtil";
 import { getRootProcess } from "../../../editor/util/ModellingUtilities";
 import * as consts from "../Constants";
+import { layout } from "../../quantme/replacement/layouter/Layouter";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -134,6 +135,12 @@ export async function startOnDemandReplacementProcess(xml, csars) {
   console.log("Starting on-demand replacement with CSARs: ", csars);
 
   // TODO: add blacklist, input params, and policies
+  // 1task completemodel
+  // 1task checkequivalent
+  // 1task an OT alle equivalents chekcen? actually geht das irgendwie in einem call bietet der container nen interface um alle uploaded instances zu bekommen ?
+  //     dann gateways
+  // Und Gateways einmal eins nach complete falls dedicated und einmal eins nachm Instance Check oder?
+
 
   const modeler = await createTempModelerFromXml(xml);
   const modeling = modeler.get("modeling");
@@ -189,16 +196,139 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         subProcess
       );
 
-      let topicName = makeId(12);
-      const serviceTask1 = modeling.appendShape(
-        startEvent,
-        {
-          type: "bpmn:ScriptTask",
-        },
-        { x: 400, y: 200 }
+      const serviceTaskCompleteDeploymentModel = modeling.appendShape(
+          startEvent,
+          {
+            type: "bpmn:ServiceTask",
+          },
+          { x: 400, y: 200 }
       );
-      serviceTask1.businessObject.set("scriptFormat", "javascript");
-      serviceTask1.businessObject.set(
+      serviceTaskCompleteDeploymentModel.businessObject.set("name", "Adapt Model");
+
+      // add gateway to check for dedicated policy
+      let dedicatedGateway = modeling.createShape(
+          { type: "bpmn:ExclusiveGateway" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
+      );
+      let dedicatedGatewayBo = elementRegistry.get(
+          dedicatedGateway.id
+      ).businessObject;
+      dedicatedGatewayBo.name = "Dedidcated Policy?";
+      modeling.connect(serviceTaskCompleteDeploymentModel, dedicatedGateway, {
+        type: "bpmn:SequenceFlow",
+      });
+
+      // add task to check for running container instance
+      let serviceTaskCheckForEquivalentDeploymentModel = modeling.createShape(
+          { type: "bpmn:ScriptTask" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
+      );
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set("name", "Check For Equivalent Deployment Model");
+
+      let dedicatedFlow = modeling.connect(
+          dedicatedGateway,
+          serviceTaskCheckForEquivalentDeploymentModel,
+          { type: "bpmn:SequenceFlow" }
+      );
+      let dedicatedFlowBo = elementRegistry.get(dedicatedFlow.id).businessObject;
+      dedicatedFlowBo.name = "no";
+      let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
+      dedicatedFlowCondition.body =
+          '${execution.hasVariable("dedicatedInstance") == false || dedicatedInstance == false}';
+      dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
+
+      // add task to check for available instance
+      let serviceTaskCheckForAvailableInstance = modeling.createShape(
+          { type: "bpmn:ScriptTask" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
+      );
+      serviceTaskCheckForAvailableInstance.businessObject.set("name", "Check Container For Available Instance");
+
+      modeling.connect(serviceTaskCheckForEquivalentDeploymentModel, serviceTaskCheckForAvailableInstance, {
+        type: "bpmn:SequenceFlow",
+      });
+
+      // add gateway to check if instance is available
+      let instanceAvailablityGateway = modeling.createShape(
+          { type: "bpmn:ExclusiveGateway" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
+      );
+      let instanceAvailablityGatewayBo = elementRegistry.get(
+          instanceAvailablityGateway.id
+      ).businessObject;
+      instanceAvailablityGatewayBo.name = "Instance Available?";
+
+      modeling.connect(serviceTaskCheckForAvailableInstance, instanceAvailablityGateway, {
+        type: "bpmn:SequenceFlow",
+      });
+
+
+      let joiningDedicatedGateway = modeling.createShape(
+          { type: "bpmn:ExclusiveGateway" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
+      );
+      // add connection from InstanceAvailableGateway to joiningDedicatedGateway and add condition
+      let notInstanceAvailableFlow = modeling.connect(instanceAvailablityGateway, joiningDedicatedGateway, {
+        type: "bpmn:SequenceFlow",
+      });
+      let notInstanceAvailableFlowBo = elementRegistry.get(
+          notInstanceAvailableFlow.id
+      ).businessObject;
+      notInstanceAvailableFlowBo.name = "no";
+      let notInstanceAvailableFlowCondition = bpmnFactory.create(
+          "bpmn:FormalExpression"
+      );
+      notInstanceAvailableFlowCondition.body =
+          '${execution.hasVariable("InstanceAvailable") == false || InstanceAvailable == false}';
+      notInstanceAvailableFlowBo.conditionExpression = notInstanceAvailableFlowCondition;
+
+      // add connection from dedicatedGateway to joining joiningDedicatedGateway and add condition
+      let notDedicatedFlow = modeling.connect(dedicatedGateway, joiningDedicatedGateway, {
+        type: "bpmn:SequenceFlow",
+      });
+      let notDedicatedFlowBo = elementRegistry.get(
+          notDedicatedFlow.id
+      ).businessObject;
+      notDedicatedFlowBo.name = "yes";
+      let notDedicatedFlowCondition = bpmnFactory.create(
+          "bpmn:FormalExpression"
+      );
+      notDedicatedFlowCondition.body =
+          '${execution.hasVariable("dedicatedInstance") == true && dedicatedInstance == true}';
+      notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      let topicName = makeId(12);
+      const scriptTaskUploadToContainer = modeling.createShape(
+          { type: "bpmn:ScriptTask" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
+      );
+      scriptTaskUploadToContainer.businessObject.set("scriptFormat", "javascript");
+      scriptTaskUploadToContainer.businessObject.set(
         "script",
         createDeploymentScript({
           opentoscaEndpoint: config.getOpenTOSCAEndpoint(),
@@ -208,34 +338,68 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           camundaEndpoint: getCamundaEndpoint(),
         })
       );
-      serviceTask1.businessObject.set("name", "Create deployment");
+      scriptTaskUploadToContainer.businessObject.set("name", "Upload to Container");
 
-      const serviceTask2 = modeling.appendShape(
-        serviceTask1,
-        {
-          type: "bpmn:ScriptTask",
-        },
-        { x: 600, y: 200 }
+      modeling.connect(joiningDedicatedGateway, scriptTaskUploadToContainer, {
+        type: "bpmn:SequenceFlow",
+      });
+
+      const scriptTaskWaitForDeployment = modeling.createShape(
+          { type: "bpmn:ScriptTask" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
       );
-      serviceTask2.businessObject.set("scriptFormat", "javascript");
-      serviceTask2.businessObject.set(
+      scriptTaskWaitForDeployment.businessObject.set("scriptFormat", "javascript");
+      scriptTaskWaitForDeployment.businessObject.set(
         "script",
         createWaitScript({ subprocessId: subProcess.id })
       );
-      serviceTask2.businessObject.set("name", "Wait for deployment");
+      scriptTaskWaitForDeployment.businessObject.set("name", "Deploy Service");
+      modeling.connect(scriptTaskUploadToContainer, scriptTaskWaitForDeployment, {
+        type: "bpmn:SequenceFlow",
+      });
 
-      const serviceTask3 = modeling.appendShape(
-        serviceTask2,
-        {
-          type: "bpmn:ServiceTask",
-        },
-        { x: 800, y: 200 }
+
+
+
+
+      let joiningInstanceAvailablityGatewayGateway = modeling.createShape(
+          { type: "bpmn:ExclusiveGateway" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
       );
+      modeling.connect(scriptTaskWaitForDeployment, joiningInstanceAvailablityGatewayGateway, {
+        type: "bpmn:SequenceFlow",
+      });
 
-      serviceTask3.businessObject.set("name", "Call service");
+      // add connection from instanceAvailableGateway to  joiningInstanceAvailableGateway and add condition
+      let instanceAvailableFlow = modeling.connect(instanceAvailablityGateway, joiningInstanceAvailablityGatewayGateway, {
+        type: "bpmn:SequenceFlow",
+      });
+      let InstanceAvailableFlowBo = elementRegistry.get(
+          instanceAvailableFlow.id
+      ).businessObject;
+      InstanceAvailableFlowBo.name = "yes";
+      let InstanceAvailableFlowCondition = bpmnFactory.create(
+          "bpmn:FormalExpression"
+      );
+      InstanceAvailableFlowCondition.body =
+          '${execution.hasVariable("instanceAvailable") == true && instanceAvailable == true}';
+      InstanceAvailableFlowBo.conditionExpression = InstanceAvailableFlowCondition;
+
+
+      const serviceTaskInvokeService = modeling.createShape(
+          { type: "bpmn:ServiceTask" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
+      );
+      serviceTaskInvokeService.businessObject.set("name", "Invoke Service");
       if (!extensionElements) {
-        serviceTask3.businessObject.set("camunda:type", "external");
-        serviceTask3.businessObject.set("camunda:topic", topicName);
+        serviceTaskInvokeService.businessObject.set("camunda:type", "external");
+        serviceTaskInvokeService.businessObject.set("camunda:topic", topicName);
       } else {
         const values = extensionElements.values;
         for (let value of values) {
@@ -250,26 +414,33 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           }
         }
 
+        modeling.connect(joiningInstanceAvailablityGatewayGateway, serviceTaskInvokeService, {
+          type: "bpmn:SequenceFlow",
+        });
+
         const newExtensionElements = createElement(
           "bpmn:ExtensionElements",
           { values },
-          serviceTask2.businessObject,
+          scriptTaskWaitForDeployment.businessObject,
           bpmnFactory
         );
         subProcess.businessObject.set("extensionElements", undefined);
-        serviceTask3.businessObject.set(
+        serviceTaskInvokeService.businessObject.set(
           "extensionElements",
           newExtensionElements
         );
       }
-      modeling.appendShape(
-        serviceTask3,
-        {
-          type: "bpmn:EndEvent",
-        },
-        { x: 1000, y: 200 },
-        subProcess
+      let endEvent = modeling.createShape(
+          { type: "bpmn:EndEvent" },
+          { x: 50, y: 50 },
+          subProcess,
+          {}
       );
+      modeling.connect(serviceTaskInvokeService, endEvent, {
+        type: "bpmn:SequenceFlow",
+      });
+
+      layout(modeling, elementRegistry, rootElement);
     }
   }
 
