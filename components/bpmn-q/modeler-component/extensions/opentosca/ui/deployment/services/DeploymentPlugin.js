@@ -95,7 +95,11 @@ export default class DeploymentPlugin extends PureComponent {
     if (result && result.hasOwnProperty("next") && result.next === true) {
       console.log("Starting on-demand transformation: ", result);
       let xml = (await this.modeler.saveXML({ format: true })).xml;
-      xml = await startOnDemandReplacementProcess(xml, result.csarList);
+      xml = await startOnDemandReplacementProcess(
+        xml,
+        result.csarList,
+        this.modeler.config.opentoscaEndpoint
+      );
       loadDiagram(xml, this.modeler);
     }
 

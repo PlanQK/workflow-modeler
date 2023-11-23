@@ -250,8 +250,13 @@ try {
  *
  * @param xml the BPMN diagram in XML format
  * @param csars the CSARs to use for the on-demand deployment
+ * @param opentoscaEndpoint the endpoint of the OpenTOSCA Container to use for the on-demand deployment
  */
-export async function startOnDemandReplacementProcess(xml, csars) {
+export async function startOnDemandReplacementProcess(
+  xml,
+  csars,
+  opentoscaEndpoint
+) {
   console.log("Starting on-demand replacement with CSARs: ", csars);
 
   // TODO: add blacklist, input params, and policies
@@ -415,7 +420,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       serviceTaskCheckForAvailableInstance.businessObject.set(
         "script",
         createCheckForAvailableInstancesScript(
-          modeler.config.opentoscaEndpoint,
+          opentoscaEndpoint,
           serviceTask.id
         )
       );
