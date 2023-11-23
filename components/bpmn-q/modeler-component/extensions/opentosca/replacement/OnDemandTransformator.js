@@ -125,8 +125,6 @@ java.lang.Thread.sleep(12000);
 `;
 }
 
-
-
 function createCompleteModelScript(url, blacklist, policies, taskId) {
   return `
 import groovy.json.*
@@ -186,12 +184,7 @@ try {
    post.setRequestProperty("accept", "application/json");
 
    post.getOutputStream().write();
-   // OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
-   // println message;
-   // wr.write(message.toString());
-   // wr.flush();
-
-
+   
    def status = post.getResponseCode();
    println status;
    if(status.toString().startsWith("2")){
@@ -214,6 +207,43 @@ try {
 `;
 }
 
+function createCheckForAvailableInstancesScript(containerUrl, taskId) {
+  return `
+import groovy.json.*
+def containerUrl = "${containerUrl}";
+def equivalentCSARs = execution.getVariable("equivalentCSARs_" + "${taskId}");
+
+try {
+   for (String equivalentCSAR : equivalentCSARs ){
+       println "Checking availability for CSAR with URL: " + equivalentCSAR;
+       def values = equivalentCSAR.split('/');
+       def csarName = values[values.length - 1];
+       println "Checking availability for CSAR with name: " + csarName;
+
+       def csarUrl = containerUrl + "/" + csarName + ".csar";
+       println "Checking for ServiceTemaplates using URL: " + csarUrl;
+
+       def get = new URL(csarUrl).openConnection();
+       get.setRequestMethod("GET");
+       get.setDoOutput(true);
+       get.setRequestProperty("accept", "application/json");
+       def status = get.getResponseCode();
+       println "Status code: " + status;
+       if(status != 200){
+          println "CSAR not found. Skipping...";
+          break;
+       }
+       def resultText = get.getInputStream().getText();
+       def json = new JsonSlurper().parseText(resultText);
+       def serviceTemplateLink = json.get("_links").get("servicetemplate").get("href") + "/instances";
+       println "Retrieved link to ServiceTemplate: " + serviceTemplateLink;
+   }
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Failed to retrieve CSARs due to exception: " + e);
+};
+`;
+}
 
 /**
  * Initiate the replacement process for the ServiceTasks requiring on-demand deployment in the current process model
@@ -225,12 +255,9 @@ export async function startOnDemandReplacementProcess(xml, csars) {
   console.log("Starting on-demand replacement with CSARs: ", csars);
 
   // TODO: add blacklist, input params, and policies
-  // 1task completemodel
-  // 1task checkequivalent
-  // 1task an OT alle equivalents chekcen? actually geht das irgendwie in einem call bietet der container nen interface um alle uploaded instances zu bekommen ?
+  // 1task an OT alle equivalents checken? actually geht das irgendwie in einem call bietet der container nen interface um alle uploaded instances zu bekommen ?
   //     dann gateways
   // Und Gateways einmal eins nach complete falls dedicated und einmal eins nachm Instance Check oder?
-
 
   const modeler = await createTempModelerFromXml(xml);
   const modeling = modeler.get("modeling");
@@ -254,7 +281,9 @@ export async function startOnDemandReplacementProcess(xml, csars) {
   modeling.removeElements(onDemandPolicies);
 
   for (const serviceTask of serviceTasks) {
-    let CSARForServiceTask = csars.filter(csar => csar.serviceTaskIds.filter(id => id === serviceTask.id))[0];
+    let CSARForServiceTask = csars.filter((csar) =>
+      csar.serviceTaskIds.filter((id) => id === serviceTask.id)
+    )[0];
     let onDemand = serviceTask.businessObject.get("onDemand");
     if (onDemand) {
       let deploymentModelUrl = serviceTask.businessObject.get(
@@ -288,30 +317,41 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       );
 
       const serviceTaskCompleteDeploymentModel = modeling.appendShape(
-          startEvent,
-          {
-            type: "bpmn:ScriptTask",
-          },
-          { x: 400, y: 200 }
+        startEvent,
+        {
+          type: "bpmn:ScriptTask",
+        },
+        { x: 400, y: 200 }
       );
-      serviceTaskCompleteDeploymentModel.businessObject.set("name", "Adapt Model");
-      serviceTaskCompleteDeploymentModel.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCompleteDeploymentModel.businessObject.set(
+        "name",
+        "Adapt Model"
+      );
+      serviceTaskCompleteDeploymentModel.businessObject.set(
+        "scriptFormat",
+        "groovy"
+      );
       serviceTaskCompleteDeploymentModel.businessObject.asyncBefore = true;
       serviceTaskCompleteDeploymentModel.businessObject.asyncAfter = true;
       serviceTaskCompleteDeploymentModel.businessObject.set(
-          "script",
-          createCompleteModelScript(deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"), CSARForServiceTask.blacklistedNodetypes, JSON.stringify(CSARForServiceTask.policies), serviceTask.id)
+        "script",
+        createCompleteModelScript(
+          deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"),
+          CSARForServiceTask.blacklistedNodetypes,
+          JSON.stringify(CSARForServiceTask.policies),
+          serviceTask.id
+        )
       );
 
       // add gateway to check for dedicated policy
       let dedicatedGateway = modeling.createShape(
-          { type: "bpmn:ExclusiveGateway" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
       let dedicatedGatewayBo = elementRegistry.get(
-          dedicatedGateway.id
+        dedicatedGateway.id
       ).businessObject;
       dedicatedGatewayBo.name = "Dedidcated Policy?";
       modeling.connect(serviceTaskCompleteDeploymentModel, dedicatedGateway, {
@@ -320,128 +360,150 @@ export async function startOnDemandReplacementProcess(xml, csars) {
 
       // add task to check for running container instance
       let serviceTaskCheckForEquivalentDeploymentModel = modeling.createShape(
-          { type: "bpmn:ScriptTask" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
       // TODO adjust script method
-      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set("name", "Check For Equivalent Deployment Model");
-      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
+        "name",
+        "Check For Equivalent Deployment Model"
+      );
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
+        "scriptFormat",
+        "groovy"
+      );
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.asyncBefore = true;
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.asyncAfter = true;
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
-          "script",
-          createCheckForEquivalencyScript(serviceTask.id)
+        "script",
+        createCheckForEquivalencyScript(serviceTask.id)
       );
-
 
       let dedicatedFlow = modeling.connect(
-          dedicatedGateway,
-          serviceTaskCheckForEquivalentDeploymentModel,
-          { type: "bpmn:SequenceFlow" }
+        dedicatedGateway,
+        serviceTaskCheckForEquivalentDeploymentModel,
+        { type: "bpmn:SequenceFlow" }
       );
-      let dedicatedFlowBo = elementRegistry.get(dedicatedFlow.id).businessObject;
+      let dedicatedFlowBo = elementRegistry.get(
+        dedicatedFlow.id
+      ).businessObject;
       dedicatedFlowBo.name = "no";
       let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
       dedicatedFlowCondition.body =
-          '${execution.hasVariable("dedicatedInstance") == false || dedicatedInstance == false}';
+        '${execution.hasVariable("dedicatedInstance") == false || dedicatedInstance == false}';
       dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
 
       // add task to check for available instance
       let serviceTaskCheckForAvailableInstance = modeling.createShape(
-          { type: "bpmn:ScriptTask" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
-      serviceTaskCheckForAvailableInstance.businessObject.set("name", "Check Container For Available Instance");
-      serviceTaskCheckForAvailableInstance.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCheckForAvailableInstance.businessObject.set(
+        "name",
+        "Check Container For Available Instance"
+      );
+      serviceTaskCheckForAvailableInstance.businessObject.set(
+        "scriptFormat",
+        "groovy"
+      );
       serviceTaskCheckForAvailableInstance.businessObject.asyncBefore = true;
       serviceTaskCheckForAvailableInstance.businessObject.asyncAfter = true;
       serviceTaskCheckForAvailableInstance.businessObject.set(
-          "script",
-          createCompleteModelScript(deploymentModelUrl, CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
+        "script",
+        createCheckForAvailableInstancesScript(
+          modeler.config.opentoscaEndpoint,
+          serviceTask.id
+        )
       );
 
-      modeling.connect(serviceTaskCheckForEquivalentDeploymentModel, serviceTaskCheckForAvailableInstance, {
-        type: "bpmn:SequenceFlow",
-      });
+      modeling.connect(
+        serviceTaskCheckForEquivalentDeploymentModel,
+        serviceTaskCheckForAvailableInstance,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
 
       // add gateway to check if instance is available
       let instanceAvailablityGateway = modeling.createShape(
-          { type: "bpmn:ExclusiveGateway" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
       let instanceAvailablityGatewayBo = elementRegistry.get(
-          instanceAvailablityGateway.id
+        instanceAvailablityGateway.id
       ).businessObject;
       instanceAvailablityGatewayBo.name = "Instance Available?";
 
-      modeling.connect(serviceTaskCheckForAvailableInstance, instanceAvailablityGateway, {
-        type: "bpmn:SequenceFlow",
-      });
-
+      modeling.connect(
+        serviceTaskCheckForAvailableInstance,
+        instanceAvailablityGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
 
       let joiningDedicatedGateway = modeling.createShape(
-          { type: "bpmn:ExclusiveGateway" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
       // add connection from InstanceAvailableGateway to joiningDedicatedGateway and add condition
-      let notInstanceAvailableFlow = modeling.connect(instanceAvailablityGateway, joiningDedicatedGateway, {
-        type: "bpmn:SequenceFlow",
-      });
+      let notInstanceAvailableFlow = modeling.connect(
+        instanceAvailablityGateway,
+        joiningDedicatedGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
       let notInstanceAvailableFlowBo = elementRegistry.get(
-          notInstanceAvailableFlow.id
+        notInstanceAvailableFlow.id
       ).businessObject;
       notInstanceAvailableFlowBo.name = "no";
       let notInstanceAvailableFlowCondition = bpmnFactory.create(
-          "bpmn:FormalExpression"
+        "bpmn:FormalExpression"
       );
       notInstanceAvailableFlowCondition.body =
-          '${execution.hasVariable("InstanceAvailable") == false || InstanceAvailable == false}';
-      notInstanceAvailableFlowBo.conditionExpression = notInstanceAvailableFlowCondition;
+        '${execution.hasVariable("InstanceAvailable") == false || InstanceAvailable == false}';
+      notInstanceAvailableFlowBo.conditionExpression =
+        notInstanceAvailableFlowCondition;
 
       // add connection from dedicatedGateway to joining joiningDedicatedGateway and add condition
-      let notDedicatedFlow = modeling.connect(dedicatedGateway, joiningDedicatedGateway, {
-        type: "bpmn:SequenceFlow",
-      });
+      let notDedicatedFlow = modeling.connect(
+        dedicatedGateway,
+        joiningDedicatedGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
       let notDedicatedFlowBo = elementRegistry.get(
-          notDedicatedFlow.id
+        notDedicatedFlow.id
       ).businessObject;
       notDedicatedFlowBo.name = "yes";
       let notDedicatedFlowCondition = bpmnFactory.create(
-          "bpmn:FormalExpression"
+        "bpmn:FormalExpression"
       );
       notDedicatedFlowCondition.body =
-          '${execution.hasVariable("dedicatedInstance") == true && dedicatedInstance == true}';
+        '${execution.hasVariable("dedicatedInstance") == true && dedicatedInstance == true}';
       notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       let topicName = makeId(12);
       const scriptTaskUploadToContainer = modeling.createShape(
-          { type: "bpmn:ScriptTask" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
-      scriptTaskUploadToContainer.businessObject.set("scriptFormat", "javascript");
+      scriptTaskUploadToContainer.businessObject.set(
+        "scriptFormat",
+        "javascript"
+      );
       scriptTaskUploadToContainer.businessObject.asyncBefore = true;
       scriptTaskUploadToContainer.businessObject.asyncAfter = true;
       scriptTaskUploadToContainer.businessObject.set(
@@ -454,19 +516,25 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           camundaEndpoint: getCamundaEndpoint(),
         })
       );
-      scriptTaskUploadToContainer.businessObject.set("name", "Upload to Container");
+      scriptTaskUploadToContainer.businessObject.set(
+        "name",
+        "Upload to Container"
+      );
 
       modeling.connect(joiningDedicatedGateway, scriptTaskUploadToContainer, {
         type: "bpmn:SequenceFlow",
       });
 
       const scriptTaskWaitForDeployment = modeling.createShape(
-          { type: "bpmn:ScriptTask" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
-      scriptTaskWaitForDeployment.businessObject.set("scriptFormat", "javascript");
+      scriptTaskWaitForDeployment.businessObject.set(
+        "scriptFormat",
+        "javascript"
+      );
       scriptTaskWaitForDeployment.businessObject.asyncBefore = true;
       scriptTaskWaitForDeployment.businessObject.asyncAfter = true;
       scriptTaskWaitForDeployment.businessObject.set(
@@ -474,45 +542,53 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         createWaitScript({ subprocessId: subProcess.id })
       );
       scriptTaskWaitForDeployment.businessObject.set("name", "Deploy Service");
-      modeling.connect(scriptTaskUploadToContainer, scriptTaskWaitForDeployment, {
-        type: "bpmn:SequenceFlow",
-      });
-
-
-
-
+      modeling.connect(
+        scriptTaskUploadToContainer,
+        scriptTaskWaitForDeployment,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
 
       let joiningInstanceAvailablityGatewayGateway = modeling.createShape(
-          { type: "bpmn:ExclusiveGateway" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
-      modeling.connect(scriptTaskWaitForDeployment, joiningInstanceAvailablityGatewayGateway, {
-        type: "bpmn:SequenceFlow",
-      });
+      modeling.connect(
+        scriptTaskWaitForDeployment,
+        joiningInstanceAvailablityGatewayGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
 
       // add connection from instanceAvailableGateway to  joiningInstanceAvailableGateway and add condition
-      let instanceAvailableFlow = modeling.connect(instanceAvailablityGateway, joiningInstanceAvailablityGatewayGateway, {
-        type: "bpmn:SequenceFlow",
-      });
+      let instanceAvailableFlow = modeling.connect(
+        instanceAvailablityGateway,
+        joiningInstanceAvailablityGatewayGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
       let InstanceAvailableFlowBo = elementRegistry.get(
-          instanceAvailableFlow.id
+        instanceAvailableFlow.id
       ).businessObject;
       InstanceAvailableFlowBo.name = "yes";
       let InstanceAvailableFlowCondition = bpmnFactory.create(
-          "bpmn:FormalExpression"
+        "bpmn:FormalExpression"
       );
       InstanceAvailableFlowCondition.body =
-          '${execution.hasVariable("instanceAvailable") == true && instanceAvailable == true}';
-      InstanceAvailableFlowBo.conditionExpression = InstanceAvailableFlowCondition;
-
+        '${execution.hasVariable("instanceAvailable") == true && instanceAvailable == true}';
+      InstanceAvailableFlowBo.conditionExpression =
+        InstanceAvailableFlowCondition;
 
       const serviceTaskInvokeService = modeling.createShape(
-          { type: "bpmn:ServiceTask" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:ServiceTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
       serviceTaskInvokeService.businessObject.set("name", "Invoke Service");
       if (!extensionElements) {
@@ -534,9 +610,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           }
         }
 
-        modeling.connect(joiningInstanceAvailablityGatewayGateway, serviceTaskInvokeService, {
-          type: "bpmn:SequenceFlow",
-        });
+        modeling.connect(
+          joiningInstanceAvailablityGatewayGateway,
+          serviceTaskInvokeService,
+          {
+            type: "bpmn:SequenceFlow",
+          }
+        );
 
         const newExtensionElements = createElement(
           "bpmn:ExtensionElements",
@@ -551,10 +631,10 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         );
       }
       let endEvent = modeling.createShape(
-          { type: "bpmn:EndEvent" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+        { type: "bpmn:EndEvent" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
       modeling.connect(serviceTaskInvokeService, endEvent, {
         type: "bpmn:SequenceFlow",

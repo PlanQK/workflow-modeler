@@ -10,7 +10,7 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 
 // polyfill upcoming structural components
 import Modal from "../../../../../editor/ui/modal/Modal";
@@ -55,18 +55,18 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       console.log("Found NodeTypes: ", nodetypes);
 
       // save requiredAttributes of NodeTypes of type VM to Map them to corresponding Host NodeType
-      nodetypes.forEach(nodetype => {
+      nodetypes.forEach((nodetype) => {
         const nodetypeUri = encodeURIComponent(
-            encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
+          encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
         ).replace("%257D", "/");
         const tags = JSON.parse(
-            synchronousGetRequest(url + "/" + nodetypeUri + "/tags")
+          synchronousGetRequest(url + "/" + nodetypeUri + "/tags")
         );
-        const type = tags.filter(x => x.name ==="type")[0];
-        if (type?.value === "vm"){
+        const type = tags.filter((x) => x.name === "type")[0];
+        if (type?.value === "vm") {
           const requiredAttributes = tags
-              .filter((x) => x.name === "requiredAttributes")?.[0]
-              ?.value?.split(",");
+            .filter((x) => x.name === "requiredAttributes")?.[0]
+            ?.value?.split(",");
           if (requiredAttributes !== undefined) {
             const attributeListHTML = [];
             requiredAttributes.sort();
@@ -74,8 +74,12 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
             nodetypesToChange[nodetype.name] = nodetype;
             requiredAttributes.forEach((attribute) => {
               // Some VM requiredAttributes are host dependent and thus need to be mapped to host
-              if (attribute.split('.').length > 1) {
-                requiredVMAttributesMappedToOtherNodetype.push({"nodeTypeName": attribute.split(".")[0], "requiredAttribute":attribute.split(".")[1], "vmQName":nodetype.qName});
+              if (attribute.split(".").length > 1) {
+                requiredVMAttributesMappedToOtherNodetype.push({
+                  nodeTypeName: attribute.split(".")[0],
+                  requiredAttribute: attribute.split(".")[1],
+                  vmQName: nodetype.qName,
+                });
               }
             });
           }
@@ -96,20 +100,19 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
           const attributeListHTML = [];
 
           // insert requiredVMAttributesMappedToOtherNodetype if suitable
-          requiredVMAttributesMappedToOtherNodetype.forEach(vmRequirement => {
-            if (nodetype.name === vmRequirement.nodeTypeName){
-              vmRequirement['qName'] = nodetype.qName;
+          requiredVMAttributesMappedToOtherNodetype.forEach((vmRequirement) => {
+            if (nodetype.name === vmRequirement.nodeTypeName) {
+              vmRequirement["qName"] = nodetype.qName;
               requiredAttributes.push(vmRequirement.requiredAttribute);
             }
           });
-
 
           requiredAttributes.sort();
           nodetype.requiredAttributes = {};
           nodetypesToChange[nodetype.name] = nodetype;
           requiredAttributes.forEach((attribute) => {
             // Some VM requiredAttributes are host dependent and thus need to be mapped to host
-            if (attribute.split('.').length < 2) {
+            if (attribute.split(".").length < 2) {
               nodetype.requiredAttributes[attribute] = "";
               attributeListHTML.push(
                 <tr key={nodetype.name + "-" + attribute}>
@@ -133,29 +136,29 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
 
           if (attributeListHTML.length > 0) {
             completionHTML.push(
-                <div key={nodetype.name} style={{}}>
-                  <h3 key={nodetype.name + "h3"} className="spaceUnderSmall">
-                    <img
-                        style={{
-                          height: "20px",
-                          width: "20px",
-                          verticalAlign: "text-bottom",
-                        }}
-                        src={url + "/" + nodetypeUri + "/appearance/50x50"}
-                        alt={url + "/" + nodetypeUri + "/appearance/50x50"}
-                    />{" "}
-                    {nodetype.name}:{" "}
-                  </h3>
-                  <table>
-                    <tbody id={nodetype.name + "-tbody"}>
+              <div key={nodetype.name} style={{}}>
+                <h3 key={nodetype.name + "h3"} className="spaceUnderSmall">
+                  <img
+                    style={{
+                      height: "20px",
+                      width: "20px",
+                      verticalAlign: "text-bottom",
+                    }}
+                    src={url + "/" + nodetypeUri + "/appearance/50x50"}
+                    alt={url + "/" + nodetypeUri + "/appearance/50x50"}
+                  />{" "}
+                  {nodetype.name}:{" "}
+                </h3>
+                <table>
+                  <tbody id={nodetype.name + "-tbody"}>
                     <tr>
                       <th>Parameter Name</th>
                       <th>Value</th>
                     </tr>
                     {attributeListHTML}
-                    </tbody>
-                  </table>
-                </div>
+                  </tbody>
+                </table>
+              </div>
             );
           }
         }
@@ -264,7 +267,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       next: true,
       csarList: initValues,
       nodeTypeRequirements: nodetypesToChange,
-      requiredVMAttributesMappedToOtherNodetype: requiredVMAttributesMappedToOtherNodetype,
+      requiredVMAttributesMappedToOtherNodetype:
+        requiredVMAttributesMappedToOtherNodetype,
       refs: {
         progressBarRef: progressBarRef,
         progressBarDivRef: progressBarDivRef,
