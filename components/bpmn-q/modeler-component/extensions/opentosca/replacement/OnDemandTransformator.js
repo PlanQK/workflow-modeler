@@ -176,6 +176,7 @@ function createCheckForEquivalencyScript(taskId) {
   return `
 import groovy.json.*
 def url = execution.getVariable("completeModelUrl_" + "${taskId}");
+url = url + "topologytemplate/checkforequivalentcsars"
 
 try {
    def post = new URL(url).openConnection();
@@ -184,18 +185,22 @@ try {
    post.setRequestProperty("Content-Type", "application/json");
    post.setRequestProperty("accept", "application/json");
 
-   // post.getOutputStream().write(message);
-   OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
-   println message;
-   wr.write(message.toString());
-   wr.flush();
+   post.getOutputStream().write();
+   // OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
+   // println message;
+   // wr.write(message.toString());
+   // wr.flush();
 
 
    def status = post.getResponseCode();
    println status;
    if(status.toString().startsWith("2")){
        println post.getInputStream();
-       execution.setVariable(saveVarName, location);
+       def resultText = post.getInputStream().getText();
+       def slurper = new JsonSlurper();
+       def json = slurper.parseText(resultText);
+       def saveVarName = "equivalentCSARs_" + "${taskId}";
+       execution.setVariable(saveVarName, json);
    }else{
        throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while completing Deployment Model!");
    }
@@ -327,7 +332,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.asyncAfter = true;
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
           "script",
-          createCompleteModelScript(deploymentModelUrl, CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
+          createCheckForEquivalencyScript(serviceTask.id)
       );
 
 
