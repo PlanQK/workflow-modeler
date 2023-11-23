@@ -16,7 +16,7 @@ import * as config from "../framework-config/config-manager";
 import { makeId } from "../deployment/OpenTOSCAUtils";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 import { createElement } from "../../../editor/util/camunda-utils/ElementUtil";
-import { getRootProcess } from "../../../editor/util/ModellingUtilities";
+import {getCamundaInputOutput, getRootProcess} from "../../../editor/util/ModellingUtilities";
 import * as consts from "../Constants";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 
@@ -267,7 +267,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         );
       }
 
-      const extensionElements = serviceTask.businessObject.extensionElements;
+
 
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
@@ -345,7 +345,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       dedicatedFlowBo.name = "no";
       let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
       dedicatedFlowCondition.body =
-          '${execution.hasVariable("dedicatedInstance") == false || dedicatedInstance == false}';
+          '${execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false}';
       dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
 
       // add task to check for available instance
@@ -418,7 +418,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           "bpmn:FormalExpression"
       );
       notDedicatedFlowCondition.body =
-          '${execution.hasVariable("dedicatedInstance") == true && dedicatedInstance == true}';
+          '${execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true}';
       notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
 
 
@@ -514,6 +514,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           subProcess,
           {}
       );
+      const extensionElements = serviceTask.businessObject.extensionElements;
       serviceTaskInvokeService.businessObject.set("name", "Invoke Service");
       if (!extensionElements) {
         serviceTaskInvokeService.businessObject.set("camunda:type", "external");
@@ -544,7 +545,23 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           scriptTaskWaitForDeployment.businessObject,
           bpmnFactory
         );
+
+
+        // remove attributes from original service task that was replaced by subprocess
         subProcess.businessObject.set("extensionElements", undefined);
+
+        let subprocessInputOutput = getCamundaInputOutput(
+            subProcess.businessObject,
+            bpmnFactory
+        );
+        subprocessInputOutput.inputParameters.push(
+            bpmnFactory.create("camunda:InputParameter", {
+              name: "dedicatedHosting",
+              value: CSARForServiceTask.dedicatedHosting ?? "false",
+            })
+        );
+
+
         serviceTaskInvokeService.businessObject.set(
           "extensionElements",
           newExtensionElements
