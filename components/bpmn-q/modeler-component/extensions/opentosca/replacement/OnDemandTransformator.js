@@ -132,7 +132,8 @@ function createCompleteModelScript(url, blacklist, policies, taskId) {
 import groovy.json.*
 def url = "${url}"
 def blacklist = ${JSON.stringify(blacklist)};
-def policies = ${JSON.stringify(policies)};
+def slurper = new JsonSlurper();
+def policies = slurper.parseText(${JSON.stringify(policies)});
 
 def message = JsonOutput.toJson("policies": policies, "blacklist": blacklist);
 
@@ -294,7 +295,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       serviceTaskCompleteDeploymentModel.businessObject.asyncAfter = true;
       serviceTaskCompleteDeploymentModel.businessObject.set(
           "script",
-          createCompleteModelScript(deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"), CSARForServiceTask.blacklistedNodetypes, JSON.stringify(CSARForServiceTask.policies).replace("{", "[").replace("}","]"), serviceTask.id)
+          createCompleteModelScript(deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"), CSARForServiceTask.blacklistedNodetypes, JSON.stringify(CSARForServiceTask.policies), serviceTask.id)
       );
 
       // add gateway to check for dedicated policy
