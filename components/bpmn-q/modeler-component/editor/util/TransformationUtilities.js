@@ -69,13 +69,9 @@ export function insertShape(
       "quantme:CircuitCuttingSubprocess",
     ].includes(newElement.$type)
   ) {
-    // get the shape element related to the subprocess
+    // get the shape element related to the subprocess and expand it
     let shape = getDi(element);
-
-    // expand the replacement subprocess if the detector subprocess was expanded
-    if (shape && newElement.isExpanded === "true") {
-      shape.isExpanded = true;
-    }
+    shape.isExpanded = true;
 
     // preserve messages defined in ReceiveTasks
   } else if (newElement.$type === "bpmn:ReceiveTask" && newElement.messageRef) {
