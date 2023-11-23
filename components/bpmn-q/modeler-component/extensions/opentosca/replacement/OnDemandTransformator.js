@@ -133,6 +133,7 @@ import groovy.json.*
 def url = "${url}"
 def blacklist = ${JSON.stringify(blacklist)};
 def policies = ${JSON.stringify(policies)};
+
 def message = JsonOutput.toJson("policies": policies, "blacklist": blacklist);
 
 try {
@@ -154,7 +155,7 @@ try {
    if(status.toString().startsWith("2")){
        println post;
        println post.getInputStream();
-       def location = post.getHeaderFields()['Location'];
+       def location = post.getHeaderFields()['Location'][0];
        def saveVarName = "completeModelUrl_" + "${taskId}";
        execution.setVariable(saveVarName, location);
    }else{
@@ -169,6 +170,44 @@ try {
 };
 `;
 }
+
+function createCheckForEquivalencyScript(taskId) {
+  return `
+import groovy.json.*
+def url = execution.getVariable("completeModelUrl_" + "${taskId}");
+
+try {
+   def post = new URL(url).openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("accept", "application/json");
+
+   // post.getOutputStream().write(message);
+   OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
+   println message;
+   wr.write(message.toString());
+   wr.flush();
+
+
+   def status = post.getResponseCode();
+   println status;
+   if(status.toString().startsWith("2")){
+       println post.getInputStream();
+       execution.setVariable(saveVarName, location);
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while completing Deployment Model!");
+   }
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + url);
+};
+`;
+}
+
 
 /**
  * Initiate the replacement process for the ServiceTasks requiring on-demand deployment in the current process model
@@ -251,9 +290,11 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       );
       serviceTaskCompleteDeploymentModel.businessObject.set("name", "Adapt Model");
       serviceTaskCompleteDeploymentModel.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCompleteDeploymentModel.businessObject.asyncBefore = true;
+      serviceTaskCompleteDeploymentModel.businessObject.asyncAfter = true;
       serviceTaskCompleteDeploymentModel.businessObject.set(
           "script",
-          createCompleteModelScript(deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"), CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
+          createCompleteModelScript(deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"), CSARForServiceTask.blacklistedNodetypes, JSON.stringify(CSARForServiceTask.policies).replace("{", "[").replace("}","]"), serviceTask.id)
       );
 
       // add gateway to check for dedicated policy
@@ -281,6 +322,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       // TODO adjust script method
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.set("name", "Check For Equivalent Deployment Model");
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.asyncBefore = true;
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.asyncAfter = true;
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
           "script",
           createCompleteModelScript(deploymentModelUrl, CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
@@ -308,6 +351,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       );
       serviceTaskCheckForAvailableInstance.businessObject.set("name", "Check Container For Available Instance");
       serviceTaskCheckForAvailableInstance.businessObject.set("scriptFormat", "groovy");
+      serviceTaskCheckForAvailableInstance.businessObject.asyncBefore = true;
+      serviceTaskCheckForAvailableInstance.businessObject.asyncAfter = true;
       serviceTaskCheckForAvailableInstance.businessObject.set(
           "script",
           createCompleteModelScript(deploymentModelUrl, CSARForServiceTask.blacklistedNodetypes, CSARForServiceTask.policies, serviceTask.id)
@@ -391,6 +436,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           {}
       );
       scriptTaskUploadToContainer.businessObject.set("scriptFormat", "javascript");
+      scriptTaskUploadToContainer.businessObject.asyncBefore = true;
+      scriptTaskUploadToContainer.businessObject.asyncAfter = true;
       scriptTaskUploadToContainer.businessObject.set(
         "script",
         createDeploymentScript({
@@ -414,6 +461,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           {}
       );
       scriptTaskWaitForDeployment.businessObject.set("scriptFormat", "javascript");
+      scriptTaskWaitForDeployment.businessObject.asyncBefore = true;
+      scriptTaskWaitForDeployment.businessObject.asyncAfter = true;
       scriptTaskWaitForDeployment.businessObject.set(
         "script",
         createWaitScript({ subprocessId: subProcess.id })
@@ -462,6 +511,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       serviceTaskInvokeService.businessObject.set("name", "Invoke Service");
       if (!extensionElements) {
         serviceTaskInvokeService.businessObject.set("camunda:type", "external");
+        serviceTaskInvokeService.businessObject.asyncBefore = true;
+        serviceTaskInvokeService.businessObject.asyncAfter = true;
         serviceTaskInvokeService.businessObject.set("camunda:topic", topicName);
       } else {
         const values = extensionElements.values;
