@@ -16,12 +16,18 @@
           "type": "String"
         },
         {
-          "name": "onDemand",
+          "name": "connectorUrl",
           "isAttr": true,
           "type": "String"
-        },
+        }
+      ]
+    },
+    {
+      "name": "Task",
+      "extends": ["bpmn:Task"],
+      "properties": [
         {
-          "name": "connectorUrl",
+          "name": "onDemand",
           "isAttr": true,
           "type": "String"
         }

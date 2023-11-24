@@ -100,3 +100,26 @@ export function deletePolicies(modeler, serviceTaskId) {
     modeling.removeShape(policy);
   }
 }
+
+/**
+ * Move all policies to the new target
+ *
+ * @param modeler the modeler to which the policies belong to
+ * @param newTargetId the ID of the new target element
+ * @param policies the set of policies to move
+ */
+export function movePolicies(modeler, newTargetId, policies) {
+  let elementRegistry = modeler.get("elementRegistry");
+  let modeling = modeler.get("modeling");
+
+  policies.forEach((policy) => {
+    let hostElement = elementRegistry.get(newTargetId);
+    let policyElement = elementRegistry.get(policy.id);
+    console.log("Parent element: ", hostElement);
+    console.log("Policy type: ", policyElement);
+    modeling.updateProperties(policyElement, {
+      attachedToRef: hostElement.businessObject,
+    });
+    policyElement.host = hostElement;
+  });
+}
