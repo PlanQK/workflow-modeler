@@ -338,7 +338,7 @@ try {
           def selfserviceApplicationUrl = selfserviceApplicationUrlEntry[0].value;
           println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
           execution.setVariable("instanceAvailable", "true");
-          execution.setVariable("selfserviceApplicationUrl", selfserviceApplicationUrl);
+          execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl);
           return;
       }
    }
