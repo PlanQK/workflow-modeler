@@ -75,15 +75,27 @@ var reconstructedVMs= ${JSON.stringify(reconstructedVMs)};
 
 ${fetchMethod}
 
-
-
 var createCsarResponse = fetch('POST', "${opentoscaEndpoint}", JSON.stringify({
     enrich: 'false',
     name: csarName,
     url: execution.getVariable("completeModelUrl_" + "${taskId}") + "?csar"
 }))
 
+var deployedTopology = JSON.parse(fetch('GET', execution.getVariable("completeModelUrl_" + "${taskId}") + "topologytemplate"));
 
+for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)) {
+  for (const [constructKey, constructValue] of Object.entries(reconstructedVMs)) {
+    if (
+      constructValue.name.includes(value.name) &&
+      !value.name.includes("VM")
+    ) {
+      for (const [propertyName, propertyValue] of Object.entries(constructValue.requiredAttributes)) {
+        inputParams[propertyName] = propertyValue;
+      }
+    }
+  }
+}
+java.lang.System.out.println("Input parameters after update: " + JSON.stringify(inputParams));
 
 var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + csarName + ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
@@ -100,31 +112,11 @@ for(var i = 0; i < inputParameters.length; i++) {
     }
 }
 
-var deployedTopology = JSON.parse(fetch('GET', execution.getVariable("completeModelUrl_" + "${taskId}") + "topologytemplate"));
-
-
-for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)) {
-  for (const [constructKey, constructValue] of Object.entries(reconstructedVMs)) {
-    if (
-      constructValue.name.includes(value.name) &&
-      !value.name.includes("VM")
-    ) {
-      inputParameters = Object.assign(
-        {},
-        inputParameters,
-        constructValue.requiredAttributes
-      );
-    }
-  }
-}
-
-java.lang.System.out.println(JSON.stringify(inputParameters));
-
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
 execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
 
-function createWaitScript(subprocessId) {
+function createWaitScript(subprocessId, taskId) {
   return `
 
 ${fetchMethod}
@@ -155,7 +147,7 @@ for(var i = 0; i < 30 * 3; i++) {
 
 var properties = JSON.parse(fetch('GET', instanceUrl + "/properties"));
  
-execution.setVariable("selfserviceApplicationUrl", properties.selfserviceApplicationUrl);
+execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", properties.selfserviceApplicationUrl);
 java.lang.Thread.sleep(12000);
 `;
 }
@@ -619,7 +611,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           subProcess.id,
           CSARForServiceTask.inputParams,
           serviceTask.id,
-            CSARForServiceTask.reconstructedVMs
+          CSARForServiceTask.reconstructedVMs
         )
       );
       scriptTaskUploadToContainer.businessObject.set(
@@ -645,7 +637,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       scriptTaskWaitForDeployment.businessObject.asyncAfter = true;
       scriptTaskWaitForDeployment.businessObject.set(
         "script",
-        createWaitScript(subProcess.id)
+        createWaitScript(subProcess.id, serviceTask.id)
       );
       scriptTaskWaitForDeployment.businessObject.set("name", "Deploy Service");
       modeling.connect(
