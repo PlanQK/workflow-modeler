@@ -33,7 +33,8 @@ export default function ServiceOnDemandDeploymentOverviewModal({
 
   const onDemand = (value) =>
     onClose({
-      onDemand: value,
+      next: value,
+      csarList: initValues,
     });
   const filteredInitValues = initValues.filter((CSAR) =>
     CSAR.serviceTaskIds.some((taskId) => {
@@ -55,36 +56,31 @@ export default function ServiceOnDemandDeploymentOverviewModal({
       <td>{CSAR.csarName}</td>
       <td>{CSAR.serviceTaskIds.join(",")}</td>
       <td>{CSAR.type}</td>
+      <td>{CSAR.incomplete.toString()}</td>
     </tr>
   ));
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (1/4)</Title>
+      <Title>Service Deployment (4/4)</Title>
 
       <Body>
-        {listItems.length > 0 ? (
-          <>
-            <h3 className="spaceUnder">
-              The following service-tasks contain on-demand deployment models:
-            </h3>
-            <table>
-              <tbody>
-                <tr>
-                  <th>CSAR Name</th>
-                  <th>Related ServiceTask IDs</th>
-                  <th>Type (Push/Pull)</th>
-                </tr>
-                {listItems}
-              </tbody>
-            </table>
-          </>
-        ) : (
-          <p>
-            No service tasks with on-demand deployment models are contained in
-            the workflow.
-          </p>
-        )}
+        <>
+          <h3 className="spaceUnder">
+            The following service-tasks contain on-demand deployment models:
+          </h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>CSAR Name</th>
+                <th>Related ServiceTask IDs</th>
+                <th>Type (Push/Pull)</th>
+                <th>CSAR Requires Completion</th>
+              </tr>
+              {listItems}
+            </tbody>
+          </table>
+        </>
       </Body>
 
       <Footer>

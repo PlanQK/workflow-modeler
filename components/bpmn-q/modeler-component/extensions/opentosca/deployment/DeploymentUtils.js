@@ -11,8 +11,12 @@
 
 import { getBindingType } from "./BindingUtils";
 import { getFlowElementsRecursively } from "../../../editor/util/ModellingUtilities";
-import { synchronousPostRequest } from "../utilities/Utilities";
+import {
+  synchronousGetRequest,
+  synchronousPostRequest,
+} from "../utilities/Utilities";
 import config from "../framework-config/config";
+import { getModeler } from "../../../editor/ModelerHandler";
 
 /**
  * Get the ServiceTasks of the current workflow that have an attached deployment model to deploy the corresponding service starting from the given root element
@@ -44,6 +48,17 @@ export function getServiceTasksToDeploy(startElement) {
         console.log("Adding to existing CSAR entry...");
         csarEntry.serviceTaskIds.push(flowElement.id);
       } else {
+        // get businessObject for onDemand property retrieval
+        const taskData = getModeler()
+          .get("elementRegistry")
+          .get(flowElement.id);
+        let onDemand;
+        if (taskData.businessObject.onDemand) {
+          onDemand = taskData.businessObject.onDemand;
+        } else {
+          onDemand = false;
+        }
+
         csarsToDeploy.push({
           serviceTaskIds: [flowElement.id],
           url: flowElement.deploymentModelUrl,
@@ -52,6 +67,7 @@ export function getServiceTasksToDeploy(startElement) {
           incomplete: !isCompleteDeploymentModel(
             flowElement.deploymentModelUrl
           ),
+          onDemand: onDemand,
         });
       }
     }
@@ -131,4 +147,11 @@ export function completeIncompleteDeploymentModel(
     console.error("Error while completing deployment model: ", e);
     return undefined;
   }
+}
+
+export function getTopology(deploymentModelUrl) {
+  let url = deploymentModelUrl.replace("/?csar", "/topologytemplate");
+  console.log("Getting topology from URL:", url);
+  const topology = synchronousGetRequest(url, "application/json");
+  return JSON.parse(topology);
 }
