@@ -262,6 +262,51 @@ try {
              println "Instance has invalid state. Skipping: " + serviceTemplateInstance.get("state");
              continue;
           }
+
+          println "Found instance with state CREATED. Extracting selfServiceUrl...";
+          def instancesLink = serviceTemplateInstance.get("_links").get("self").get("href");
+          println "Retrieving instance information from URL: " + instancesLink;
+
+          get = new URL(instancesLink).openConnection();
+          get.setRequestMethod("GET");
+          get.setDoOutput(true);
+          get.setRequestProperty("accept", "application/json");
+          status = get.getResponseCode();
+          if(status != 200){
+             println "Unable to retrieve instance information. Skipping...";
+             continue;
+          }
+
+          resultText = get.getInputStream().getText();
+          json = new JsonSlurper().parseText(resultText);
+          def buildPlanLink = json .get("_links").get("build_plan_instance").get("href");
+          println "Retrieved build plan URL: " + buildPlanLink;
+
+          get = new URL(buildPlanLink).openConnection();
+          get.setRequestMethod("GET");
+          get.setDoOutput(true);
+          get.setRequestProperty("accept", "application/json");
+          status = get.getResponseCode();
+          if(status != 200){
+             println "Unable to retrieve build plan information. Skipping...";
+             continue;
+          }
+
+          resultText = get.getInputStream().getText();
+          json = new JsonSlurper().parseText(resultText);
+          def outputs = json.get("outputs");
+          println outputs;
+
+          def selfserviceApplicationUrlEntry = outputs.findAll { it.name.equalsIgnoreCase("selfserviceApplicationUrl") };
+          if(selfserviceApplicationUrlEntry .size() < 1) {
+             println "Unable to retrieve selfserviceApplicationUrl. Skipping...";
+             continue;
+          }
+          def selfserviceApplicationUrl = selfserviceApplicationUrlEntry[0].value;
+          println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
+          execution.setVariable("instanceAvailable", "true");
+          execution.setVariable("selfserviceApplicationUrl", selfserviceApplicationUrl);
+          return;
       }
    }
 
@@ -501,7 +546,7 @@ export async function startOnDemandReplacementProcess(
         "bpmn:FormalExpression"
       );
       notInstanceAvailableFlowCondition.body =
-        '${execution.hasVariable("InstanceAvailable") == false || InstanceAvailable == false}';
+        '${execution.hasVariable("instanceAvailable") == false || instanceAvailable == false}';
       notInstanceAvailableFlowBo.conditionExpression =
         notInstanceAvailableFlowCondition;
 
