@@ -363,6 +363,8 @@ export async function startOnDemandReplacementProcess(
 
   for (const serviceTaskId of serviceTaskIds) {
     let serviceTask = elementRegistry.get(serviceTaskId);
+
+    // delete policies as they are incorporated into the completion functionality
     deletePolicies(modeler, serviceTaskId);
 
     let CSARForServiceTask = csars.filter((csar) =>
