@@ -59,43 +59,49 @@ function fetch(method, url, body) {
     }
 }`;
 
-function createDeploymentScript(params) {
+function createDeploymentScript(
+  deploymentModelUrl,
+  opentoscaEndpoint,
+  camundaEndpoint,
+  camundaTopic,
+  subprocessId,
+  inputParams
+) {
   return `
-var params = ${JSON.stringify(params)};
-params.csarName = "ondemand_" + (Math.random().toString().substring(3));
+var inputParams = new JsonSlurper().parseText(${JSON.stringify(inputParams)});
+var csarName = "ondemand_" + (Math.random().toString().substring(3));
 
 ${fetchMethod}
 
-var createCsarResponse = fetch('POST', params.opentoscaEndpoint, JSON.stringify({
+var createCsarResponse = fetch('POST', ${opentoscaEndpoint}, JSON.stringify({
     enrich: 'false',
-    name: params.csarName,
-    url: params.deploymentModelUrl
+    name: csarName,
+    url: ${deploymentModelUrl}
 }))
 
-var serviceTemplates = JSON.parse(fetch('GET', params.opentoscaEndpoint + "/" + params.csarName + ".csar/servicetemplates"))
+var serviceTemplates = JSON.parse(fetch('GET', ${opentoscaEndpoint} + "/" + csarName + ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
 var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
 var buildPlanUrl = buildPlans.plans[0]._links.self.href
 var inputParameters = JSON.parse(fetch('GET', buildPlanUrl)).input_parameters
 for(var i = 0; i < inputParameters.length; i++) {
     if(inputParameters[i].name === "camundaEndpoint") {
-        inputParameters[i].value = params.opentoscaEndpoint
+        inputParameters[i].value = ${camundaEndpoint}
     } else if(inputParameters[i].name === "camundaTopic") {
-        inputParameters[i].value = params.camundaTopic
+        inputParameters[i].value = ${camundaTopic}
     } else {
-        inputParameters[i].value = "null"
+        inputParameters[i].value = inputParams.get(inputParameters[i].name);
     }
 }
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
-execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
+execution.setVariable(${subprocessId} + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
 
-function createWaitScript(params) {
+function createWaitScript(subprocessId) {
   return `
-var params = ${JSON.stringify(params)};
 
 ${fetchMethod}
-var buildPlanInstanceUrl = execution.getVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl");
+var buildPlanInstanceUrl = execution.getVariable(${subprocessId} + "_deploymentBuildPlanInstanceUrl");
 var instanceUrl;
 for(var i = 0; i < 30; i++) {
     try {
@@ -144,12 +150,10 @@ try {
    post.setRequestProperty("Content-Type", "application/json");
    post.setRequestProperty("accept", "application/json");
 
-   // post.getOutputStream().write(message);
    OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
    println message;
    wr.write(message.toString());
    wr.flush();
-
 
    def status = post.getResponseCode();
    println status;
@@ -323,19 +327,9 @@ try {
  *
  * @param xml the BPMN diagram in XML format
  * @param csars the CSARs to use for the on-demand deployment
- * @param opentoscaEndpoint the endpoint of the OpenTOSCA Container to use for the on-demand deployment
  */
-export async function startOnDemandReplacementProcess(
-  xml,
-  csars,
-  opentoscaEndpoint
-) {
+export async function startOnDemandReplacementProcess(xml, csars) {
   console.log("Starting on-demand replacement with CSARs: ", csars);
-
-  // TODO: add blacklist, input params, and policies
-  // 1task an OT alle equivalents checken? actually geht das irgendwie in einem call bietet der container nen interface um alle uploaded instances zu bekommen ?
-  //     dann gateways
-  // Und Gateways einmal eins nach complete falls dedicated und einmal eins nachm Instance Check oder?
 
   const modeler = await createTempModelerFromXml(xml);
   const modeling = modeler.get("modeling");
@@ -498,7 +492,7 @@ export async function startOnDemandReplacementProcess(
       serviceTaskCheckForAvailableInstance.businessObject.set(
         "script",
         createCheckForAvailableInstancesScript(
-          opentoscaEndpoint,
+          config.getOpenTOSCAEndpoint(),
           serviceTask.id
         )
       );
@@ -591,13 +585,14 @@ export async function startOnDemandReplacementProcess(
       scriptTaskUploadToContainer.businessObject.asyncAfter = true;
       scriptTaskUploadToContainer.businessObject.set(
         "script",
-        createDeploymentScript({
-          opentoscaEndpoint: config.getOpenTOSCAEndpoint(),
-          deploymentModelUrl: deploymentModelUrl,
-          subprocessId: subProcess.id,
-          camundaTopic: topicName,
-          camundaEndpoint: getCamundaEndpoint(),
-        })
+        createDeploymentScript(
+          deploymentModelUrl,
+          config.getOpenTOSCAEndpoint(),
+          getCamundaEndpoint(),
+          topicName,
+          subProcess.id,
+          CSARForServiceTask.inputParams
+        )
       );
       scriptTaskUploadToContainer.businessObject.set(
         "name",
@@ -622,7 +617,7 @@ export async function startOnDemandReplacementProcess(
       scriptTaskWaitForDeployment.businessObject.asyncAfter = true;
       scriptTaskWaitForDeployment.businessObject.set(
         "script",
-        createWaitScript({ subprocessId: subProcess.id })
+        createWaitScript(subProcess.id)
       );
       scriptTaskWaitForDeployment.businessObject.set("name", "Deploy Service");
       modeling.connect(
