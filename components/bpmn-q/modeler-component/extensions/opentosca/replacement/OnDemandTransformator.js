@@ -60,48 +60,48 @@ function fetch(method, url, body) {
 }`;
 
 function createDeploymentScript(
-  deploymentModelUrl,
   opentoscaEndpoint,
   camundaEndpoint,
   camundaTopic,
   subprocessId,
-  inputParams
+  inputParams,
+  taskId
 ) {
   return `
-var inputParams = new JsonSlurper().parseText(${JSON.stringify(inputParams)});
+var inputParams = ${JSON.stringify(inputParams)};
 var csarName = "ondemand_" + (Math.random().toString().substring(3));
 
 ${fetchMethod}
 
-var createCsarResponse = fetch('POST', ${opentoscaEndpoint}, JSON.stringify({
+var createCsarResponse = fetch('POST', "${opentoscaEndpoint}", JSON.stringify({
     enrich: 'false',
     name: csarName,
-    url: ${deploymentModelUrl}
+    url: execution.getVariable("completeModelUrl_" + "${taskId}") + "?csar"
 }))
 
-var serviceTemplates = JSON.parse(fetch('GET', ${opentoscaEndpoint} + "/" + csarName + ".csar/servicetemplates"))
+var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + csarName + ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
 var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
 var buildPlanUrl = buildPlans.plans[0]._links.self.href
 var inputParameters = JSON.parse(fetch('GET', buildPlanUrl)).input_parameters
 for(var i = 0; i < inputParameters.length; i++) {
     if(inputParameters[i].name === "camundaEndpoint") {
-        inputParameters[i].value = ${camundaEndpoint}
+        inputParameters[i].value = "${camundaEndpoint}"
     } else if(inputParameters[i].name === "camundaTopic") {
-        inputParameters[i].value = ${camundaTopic}
+        inputParameters[i].value = "${camundaTopic}"
     } else {
-        inputParameters[i].value = inputParams.get(inputParameters[i].name);
+        inputParameters[i].value = inputParams[inputParameters[i].name];
     }
 }
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
-execution.setVariable(${subprocessId} + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
+execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
 
 function createWaitScript(subprocessId) {
   return `
 
 ${fetchMethod}
-var buildPlanInstanceUrl = execution.getVariable(${subprocessId} + "_deploymentBuildPlanInstanceUrl");
+var buildPlanInstanceUrl = execution.getVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl");
 var instanceUrl;
 for(var i = 0; i < 30; i++) {
     try {
@@ -586,12 +586,12 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       scriptTaskUploadToContainer.businessObject.set(
         "script",
         createDeploymentScript(
-          deploymentModelUrl,
           config.getOpenTOSCAEndpoint(),
           getCamundaEndpoint(),
           topicName,
           subProcess.id,
-          CSARForServiceTask.inputParams
+          CSARForServiceTask.inputParams,
+          serviceTask.id
         )
       );
       scriptTaskUploadToContainer.businessObject.set(

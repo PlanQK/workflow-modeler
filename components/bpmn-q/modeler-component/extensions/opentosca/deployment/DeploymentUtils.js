@@ -151,6 +151,7 @@ export function completeIncompleteDeploymentModel(
 
 export function getTopology(deploymentModelUrl) {
   let url = deploymentModelUrl.replace("/?csar", "/topologytemplate");
+  console.log("Getting topology from URL:", url);
   const topology = synchronousGetRequest(url, "application/json");
   return JSON.parse(topology);
 }
