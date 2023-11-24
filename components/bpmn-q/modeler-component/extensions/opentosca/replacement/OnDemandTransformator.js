@@ -65,19 +65,25 @@ function createDeploymentScript(
   camundaTopic,
   subprocessId,
   inputParams,
-  taskId
+  taskId,
+  reconstructedVMs
 ) {
   return `
 var inputParams = ${JSON.stringify(inputParams)};
 var csarName = "ondemand_" + (Math.random().toString().substring(3));
+var reconstructedVMs= ${JSON.stringify(reconstructedVMs)};
 
 ${fetchMethod}
+
+
 
 var createCsarResponse = fetch('POST', "${opentoscaEndpoint}", JSON.stringify({
     enrich: 'false',
     name: csarName,
     url: execution.getVariable("completeModelUrl_" + "${taskId}") + "?csar"
 }))
+
+
 
 var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + csarName + ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
@@ -93,6 +99,27 @@ for(var i = 0; i < inputParameters.length; i++) {
         inputParameters[i].value = inputParams[inputParameters[i].name];
     }
 }
+
+var deployedTopology = JSON.parse(fetch('GET', execution.getVariable("completeModelUrl_" + "${taskId}") + "topologytemplate"));
+
+
+for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)) {
+  for (const [constructKey, constructValue] of Object.entries(reconstructedVMs)) {
+    if (
+      constructValue.name.includes(value.name) &&
+      !value.name.includes("VM")
+    ) {
+      inputParameters = Object.assign(
+        {},
+        inputParameters,
+        constructValue.requiredAttributes
+      );
+    }
+  }
+}
+
+java.lang.System.out.println(JSON.stringify(inputParameters));
+
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
 execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
@@ -591,7 +618,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           topicName,
           subProcess.id,
           CSARForServiceTask.inputParams,
-          serviceTask.id
+          serviceTask.id,
+            CSARForServiceTask.reconstructedVMs
         )
       );
       scriptTaskUploadToContainer.businessObject.set(
