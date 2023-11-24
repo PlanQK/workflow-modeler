@@ -384,6 +384,8 @@ export default class DeploymentPlugin extends PureComponent {
               "{{ wineryEndpoint }}/servicetemplates/" +
               csar.url.split("/servicetemplates/")[1];
 
+            console.log("Deleting Policies");
+
             // delete the policies as they are now incorporated into the new deployment model
             deletePolicies(this.modeler, csar.serviceTaskIds[0]);
 

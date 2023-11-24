@@ -11,7 +11,6 @@
 
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import { getXml } from "../../../editor/util/IoUtilities";
-import { isDeployableServiceTask } from "../deployment/DeploymentUtils";
 import * as config from "../framework-config/config-manager";
 import { makeId } from "../deployment/OpenTOSCAUtils";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
@@ -20,8 +19,8 @@ import {
   getCamundaInputOutput,
   getRootProcess,
 } from "../../../editor/util/ModellingUtilities";
-import * as consts from "../Constants";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
+import { deletePolicies } from "../utilities/Utilities";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -348,20 +347,26 @@ export async function startOnDemandReplacementProcess(
   const definitions = modeler.getDefinitions();
   const rootElement = getRootProcess(definitions);
 
-  const serviceTasks = elementRegistry.filter(({ businessObject }) =>
-    isDeployableServiceTask(businessObject)
+  let serviceTaskIds = [];
+  csars
+    .filter((csar) => csar.onDemand)
+    .forEach(
+      (csar) =>
+        (serviceTaskIds = serviceTaskIds.concat(
+          csar.serviceTaskIds.filter((id) => !serviceTaskIds.includes(id))
+        ))
+    );
+  console.log(
+    "Performing on-demand transformation for the following ServiceTask IDs: ",
+    serviceTaskIds
   );
-  let onDemandPolicies = [];
-  for (const flowElement of rootElement.flowElements) {
-    if (flowElement.$type === consts.ON_DEMAND_POLICY) {
-      onDemandPolicies.push(elementRegistry.get(flowElement.id));
-    }
-  }
-  modeling.removeElements(onDemandPolicies);
 
-  for (const serviceTask of serviceTasks) {
+  for (const serviceTaskId of serviceTaskIds) {
+    let serviceTask = elementRegistry.get(serviceTaskId);
+    deletePolicies(modeler, serviceTaskId);
+
     let CSARForServiceTask = csars.filter((csar) =>
-      csar.serviceTaskIds.filter((id) => id === serviceTask.id)
+      csar.serviceTaskIds.filter((id) => id === serviceTaskId)
     )[0];
     let onDemand = serviceTask.businessObject.get("onDemand");
     if (onDemand) {
