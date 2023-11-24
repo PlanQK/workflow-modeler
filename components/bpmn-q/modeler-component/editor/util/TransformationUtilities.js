@@ -1,6 +1,6 @@
 import { isFlowLikeElement } from "./ModellingUtilities";
 import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
-import {createLayoutedShape} from "./camunda-utils/ElementUtil";
+import { createLayoutedShape } from "./camunda-utils/ElementUtil";
 
 /**
  * Insert the given element and all child elements into the diagram
@@ -43,9 +43,12 @@ export function insertShape(
       });
     } else {
       // create new shape for this element
-      element = createLayoutedShape(modeling, { type: newElement.$type },
-          { x: 50, y: 50 },
-          parent);
+      element = createLayoutedShape(
+        modeling,
+        { type: newElement.$type },
+        { x: 50, y: 50 },
+        parent
+      );
     }
   } else {
     // create connection between two previously created elements
@@ -54,8 +57,6 @@ export function insertShape(
     element = modeling.connect(sourceElement, targetElement, {
       type: newElement.$type,
     });
-
-
   }
   // store id to create sequence flows
   idMap[newElement["id"]] = element.id;
