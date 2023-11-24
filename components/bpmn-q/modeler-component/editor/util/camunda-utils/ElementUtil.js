@@ -64,3 +64,27 @@ export function findRootElementById(businessObject, type, id) {
 
   return elements.find((element) => element.id === id);
 }
+
+export function createLayoutedShape(modeling, type, size, parent, parentIndex){
+  let resetWidth;
+  let resetHeight;
+  if (parent.width < parent.x +size.x){
+    resetWidth= parent.x;
+  }
+  if (parent.height < parent.y +size.y){
+    resetHeight = parent.y;
+  }
+  let shape = modeling.createShape(
+      type,
+      size,
+      parent,
+      parentIndex
+  );
+  if (resetWidth) {
+    parent.width = parent.width - resetWidth;
+  }
+  if (resetHeight) {
+    parent.height = parent.height - resetHeight;
+  }
+  return shape;
+}

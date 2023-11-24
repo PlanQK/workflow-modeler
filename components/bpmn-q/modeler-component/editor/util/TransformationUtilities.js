@@ -1,5 +1,6 @@
 import { isFlowLikeElement } from "./ModellingUtilities";
 import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
+import {createLayoutedShape} from "./camunda-utils/ElementUtil";
 
 /**
  * Insert the given element and all child elements into the diagram
@@ -42,25 +43,9 @@ export function insertShape(
       });
     } else {
       // create new shape for this element
-      let resetWidth;
-      let resetHeight;
-      if (parent.width < parent.x +50){
-         resetWidth= parent.x;
-      }
-      if (parent.height < parent.y +50){
-        resetHeight = parent.y;
-      }
-      element = modeling.createShape(
-        { type: newElement.$type },
-        { x: 50, y: 50 },
-        parent
-      );
-      if (resetWidth) {
-        parent.width = parent.width - resetWidth;
-      }
-      if (resetHeight) {
-        parent.height = parent.height - resetHeight;
-      }
+      element = createLayoutedShape(modeling, { type: newElement.$type },
+          { x: 50, y: 50 },
+          parent);
     }
   } else {
     // create connection between two previously created elements
