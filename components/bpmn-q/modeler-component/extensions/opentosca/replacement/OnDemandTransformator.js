@@ -719,7 +719,7 @@ export async function startOnDemandReplacementProcess(
         subprocessInputOutput.inputParameters.push(
           bpmnFactory.create("camunda:InputParameter", {
             name: "dedicatedHosting",
-            value: CSARForServiceTask.dedicatedHosting ?? "false",
+            value: String(CSARForServiceTask.dedicatedHosting) ?? "false",
           })
         );
 

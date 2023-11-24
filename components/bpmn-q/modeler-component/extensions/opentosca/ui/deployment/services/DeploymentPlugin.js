@@ -317,7 +317,8 @@ export default class DeploymentPlugin extends PureComponent {
                 break;
               default:
                 console.error(
-                  "Policy of type %s not supported for completion!", policy.type
+                  "Policy of type %s not supported for completion!",
+                  policy.type
                 );
             }
           });
