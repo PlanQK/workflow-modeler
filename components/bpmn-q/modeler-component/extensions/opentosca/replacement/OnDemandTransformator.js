@@ -712,7 +712,9 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           if (value.inputOutput === undefined) continue;
           for (let param of value.inputOutput.inputParameters) {
             if (param.name === "url") {
-              param.value = `\${selfserviceApplicationUrl.concat(${JSON.stringify(
+              param.value = `\${${
+                serviceTask.id
+              }_selfserviceApplicationUrl.concat(${JSON.stringify(
                 param.value || ""
               )})}`;
               break;
