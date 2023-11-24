@@ -42,12 +42,25 @@ export function insertShape(
       });
     } else {
       // create new shape for this element
+      let resetWidth;
+      let resetHeight;
+      if (parent.width < parent.x +50){
+         resetWidth= parent.x;
+      }
+      if (parent.height < parent.y +50){
+        resetHeight = parent.y;
+      }
       element = modeling.createShape(
         { type: newElement.$type },
         { x: 50, y: 50 },
-        parent,
-        {}
+        parent
       );
+      if (resetWidth) {
+        parent.width = parent.width - resetWidth;
+      }
+      if (resetHeight) {
+        parent.height = parent.height - resetHeight;
+      }
     }
   } else {
     // create connection between two previously created elements
@@ -56,8 +69,9 @@ export function insertShape(
     element = modeling.connect(sourceElement, targetElement, {
       type: newElement.$type,
     });
-  }
 
+
+  }
   // store id to create sequence flows
   idMap[newElement["id"]] = element.id;
 
