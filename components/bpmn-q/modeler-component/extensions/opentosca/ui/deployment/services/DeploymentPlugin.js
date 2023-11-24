@@ -35,7 +35,8 @@ import { loadDiagram } from "../../../../../editor/util/IoUtilities";
 import { startOnDemandReplacementProcess } from "../../../replacement/OnDemandTransformator";
 import { deletePolicies, getPolicies } from "../../../utilities/Utilities";
 import {
-  CLOUD_DEPLOYMENT_MODEL_POLICY, DEDICATED_HOSTING_POLICY,
+  CLOUD_DEPLOYMENT_MODEL_POLICY,
+  DEDICATED_HOSTING_POLICY,
   LOCATION_POLICY,
 } from "../../../Constants";
 

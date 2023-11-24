@@ -16,7 +16,10 @@ import * as config from "../framework-config/config-manager";
 import { makeId } from "../deployment/OpenTOSCAUtils";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 import { createElement } from "../../../editor/util/camunda-utils/ElementUtil";
-import {getCamundaInputOutput, getRootProcess} from "../../../editor/util/ModellingUtilities";
+import {
+  getCamundaInputOutput,
+  getRootProcess,
+} from "../../../editor/util/ModellingUtilities";
 import * as consts from "../Constants";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 
@@ -228,19 +231,45 @@ try {
        get.setDoOutput(true);
        get.setRequestProperty("accept", "application/json");
        def status = get.getResponseCode();
-       println "Status code: " + status;
+       println "Status code for ServiceTemplate retrieval: " + status;
        if(status != 200){
           println "CSAR not found. Skipping...";
-          break;
+          continue;
        }
        def resultText = get.getInputStream().getText();
        def json = new JsonSlurper().parseText(resultText);
        def serviceTemplateLink = json.get("_links").get("servicetemplate").get("href") + "/instances";
        println "Retrieved link to ServiceTemplate: " + serviceTemplateLink;
+
+       get = new URL(serviceTemplateLink).openConnection();
+       get.setRequestMethod("GET");
+       get.setDoOutput(true);
+       get.setRequestProperty("accept", "application/json");
+       status = get.getResponseCode();
+       println "Status code for instance retrieval: " + status;
+       if(status != 200){
+          println "Unable to retrieve instances. Skipping...";
+          continue;
+       }
+       resultText = get.getInputStream().getText();
+       json = new JsonSlurper().parseText(resultText);
+       def serviceTemplateInstances = json.get("service_template_instances");
+       println serviceTemplateInstances;
+       
+       for (Object serviceTemplateInstance: serviceTemplateInstances){
+          println "Checking instance with ID: " + serviceTemplateInstance.get("id");
+          if(serviceTemplateInstance.get("state") != "CREATED"){
+             println "Instance has invalid state. Skipping: " + serviceTemplateInstance.get("state");
+             continue;
+          }
+      }
    }
+
+   println "Unable to retrieve suitable instances!";
+   execution.setVariable("instanceAvailable", "false");
 } catch(Exception e) {
-   println e;
-   throw new org.camunda.bpm.engine.delegate.BpmnError("Failed to retrieve CSARs due to exception: " + e);
+   println "Exception while searching for available instances: " + e;
+   execution.setVariable("instanceAvailable", "false");
 };
 `;
 }
@@ -300,8 +329,6 @@ export async function startOnDemandReplacementProcess(
           config.getWineryEndpoint()
         );
       }
-
-
 
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
@@ -370,7 +397,6 @@ export async function startOnDemandReplacementProcess(
         subProcess,
         {}
       );
-      // TODO adjust script method
       serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
         "name",
         "Check For Equivalent Deployment Model"
@@ -635,16 +661,15 @@ export async function startOnDemandReplacementProcess(
         subProcess.businessObject.set("extensionElements", undefined);
 
         let subprocessInputOutput = getCamundaInputOutput(
-            subProcess.businessObject,
-            bpmnFactory
+          subProcess.businessObject,
+          bpmnFactory
         );
         subprocessInputOutput.inputParameters.push(
-            bpmnFactory.create("camunda:InputParameter", {
-              name: "dedicatedHosting",
-              value: CSARForServiceTask.dedicatedHosting ?? "false",
-            })
+          bpmnFactory.create("camunda:InputParameter", {
+            name: "dedicatedHosting",
+            value: CSARForServiceTask.dedicatedHosting ?? "false",
+          })
         );
-
 
         serviceTaskInvokeService.businessObject.set(
           "extensionElements",
