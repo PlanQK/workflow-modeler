@@ -131,7 +131,7 @@ for(var i = 0; i < 20; i++) {
      java.lang.Thread.sleep(10000);
 }
 
-java.lang.System.out.println("InstanceUrl: " + instanceUrl);
+console.log("InstanceUrl: " + instanceUrl);
 
 var buildPlanUrl = "";
 for(var i = 0; i < 50; i++) {
@@ -139,7 +139,7 @@ for(var i = 0; i < 50; i++) {
         java.lang.System.out.println("Iteration: " + i);
         var createInstanceResponse = fetch('GET', instanceUrl);
         var instance = JSON.parse(createInstanceResponse);
-        java.lang.System.out.println("Instance state: " + instance.state);
+        console.log("Instance state: " + instance.state);
         buildPlanUrl = instance._links.build_plan_instance.href;
         if (instance && instance.state === "CREATED") {
             break;
@@ -150,13 +150,15 @@ for(var i = 0; i < 50; i++) {
      java.lang.Thread.sleep(30000);
 }
 
-java.lang.System.out.println("Retrieving selfServiceApplicationUrl from build plan output from URL: " + buildPlanUrl);
+console.log("Retrieving selfServiceApplicationUrl from build plan output from URL: ", buildPlanUrl);
 var buildPlanResult = JSON.parse(fetch('GET', buildPlanUrl));
-java.lang.System.out.println("Build plan result: " + buildPlanResult);
+console.log("Build plan result: ", buildPlanResult);
 var buildPlanOutputs = buildPlanResult.outputs;
-java.lang.System.out.println("Outputs: " + buildPlanOutputs);
+console.log("Outputs: ", buildPlanOutputs.toString());
+var selfserviceApplicationUrl = buildPlanOutputs.filter((output) => output.name === "selfserviceApplicationUrl");
+console.log("SelfServiceApplicationUrl: " + selfserviceApplicationUrl[0].value);
  
-execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", "TODO");
+execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl[0].value);
 java.lang.Thread.sleep(12000);
 `;
 }
