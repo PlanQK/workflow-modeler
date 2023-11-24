@@ -122,32 +122,41 @@ function createWaitScript(subprocessId, taskId) {
 ${fetchMethod}
 var buildPlanInstanceUrl = execution.getVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl");
 var instanceUrl;
-for(var i = 0; i < 30; i++) {
+for(var i = 0; i < 20; i++) {
     try {
         instanceUrl = JSON.parse(fetch('GET', buildPlanInstanceUrl))._links.service_template_instance.href; 
         if (instanceUrl) break;
      } catch (e) {
      }
-     java.lang.Thread.sleep(2000);
+     java.lang.Thread.sleep(10000);
 }
 
 java.lang.System.out.println("InstanceUrl: " + instanceUrl);
 
-for(var i = 0; i < 30 * 3; i++) {
+var buildPlanUrl = "";
+for(var i = 0; i < 50; i++) {
     try {
+        java.lang.System.out.println("Iteration: " + i);
         var createInstanceResponse = fetch('GET', instanceUrl);
-        var instance = JSON.parse(createInstanceResponse).service_template_instances;
+        var instance = JSON.parse(createInstanceResponse);
+        java.lang.System.out.println("Instance state: " + instance.state);
+        buildPlanUrl = instance._links.build_plan_instance.href;
         if (instance && instance.state === "CREATED") {
             break;
         }
      } catch (e) {
+        java.lang.System.out.println("Error while checking instance state: " + e);
      }
      java.lang.Thread.sleep(30000);
 }
 
-var properties = JSON.parse(fetch('GET', instanceUrl + "/properties"));
+java.lang.System.out.println("Retrieving selfServiceApplicationUrl from build plan output from URL: " + buildPlanUrl);
+var buildPlanResult = JSON.parse(fetch('GET', buildPlanUrl));
+java.lang.System.out.println("Build plan result: " + buildPlanResult);
+var buildPlanOutputs = buildPlanResult.outputs;
+java.lang.System.out.println("Outputs: " + buildPlanOutputs);
  
-execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", properties.selfserviceApplicationUrl);
+execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", "TODO");
 java.lang.Thread.sleep(12000);
 `;
 }
