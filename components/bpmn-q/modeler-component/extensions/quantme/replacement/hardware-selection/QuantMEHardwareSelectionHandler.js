@@ -49,10 +49,15 @@ export async function replaceHardwareSelectionSubprocess(
   let commandStack = modeler.get("commandStack");
   let moddle = modeler.get("moddle");
 
+  console.log(subprocess);
+  let id = subprocess.id;
+
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {
     type: "bpmn:SubProcess",
   });
+  console.log(element)
+  element.businessObject.$attrs["quantme:oldId"] = id;
 
   // update the properties of the new element
   modeling.updateProperties(element, getPropertiesToCopy(subprocess));

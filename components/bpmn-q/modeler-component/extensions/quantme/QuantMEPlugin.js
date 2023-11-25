@@ -4,7 +4,7 @@ import QuantMEExtensionModule from "./modeling";
 import QuantMETab from "./configTabs/QuantMETab";
 import { getQRMs } from "./qrm-manager";
 import { startQuantmeReplacementProcess } from "./replacement/QuantMETransformator";
-import { createQuantMEView } from "./replacement/QuantMEViewGenerator";
+import { createQuantMEView, updateQuantMEView } from "./replacement/QuantMEViewGenerator";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
@@ -53,6 +53,9 @@ export default {
         });
         console.log(getModeler())
         console.log(modeler)
+        let combinedResult = await updateQuantMEView(quantumView.xml, transformedXml.xml);
+        console.log(combinedResult.xml);
+        modeler.views["view-before-rewriting"] = combinedResult.xml
         return transformedXml;
       }}
     />
