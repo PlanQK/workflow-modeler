@@ -10,7 +10,7 @@
  */
 
 import $ from "jquery";
-import { POLICIES } from "../Constants";
+import { ON_DEMAND_POLICY, POLICIES } from "../Constants";
 
 export function performAjax(targetUrl, dataToSend) {
   return new Promise(function (resolve, reject) {
@@ -121,5 +121,12 @@ export function movePolicies(modeler, newTargetId, policies) {
       attachedToRef: hostElement.businessObject,
     });
     policyElement.host = hostElement;
+
+    if (policy.type === ON_DEMAND_POLICY) {
+      console.log("Updating on demand attribute at task: ", hostElement);
+      modeling.updateProperties(hostElement, {
+        onDemand: true,
+      });
+    }
   });
 }

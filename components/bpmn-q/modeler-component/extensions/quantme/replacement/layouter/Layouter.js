@@ -150,8 +150,6 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
       }
 
       if (boundaryEvent.type === ON_DEMAND_POLICY) {
-        console.log("Test");
-        console.log(attachedToElementShape);
         let to_move_x = attachedToElementShape.x + 65 - boundaryEventBounds.x;
         let to_move_y =
           attachedToElementShape.y -
