@@ -14,15 +14,14 @@ import { getXml } from "../../../editor/util/IoUtilities";
 import * as config from "../framework-config/config-manager";
 import { makeId } from "../deployment/OpenTOSCAUtils";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
-import {createElement, createLayoutedShape} from "../../../editor/util/camunda-utils/ElementUtil";
 import {
-  getCamundaInputOutput,
-  getRootProcess,
-} from "../../../editor/util/ModellingUtilities";
+  createElement,
+  createLayoutedShape,
+} from "../../../editor/util/camunda-utils/ElementUtil";
+import { getCamundaInputOutput } from "../../../editor/util/ModellingUtilities";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import { deletePolicies } from "../utilities/Utilities";
-import {getPropertiesToCopy} from "../../../editor/util/TransformationUtilities";
-
+import { getPropertiesToCopy } from "../../../editor/util/TransformationUtilities";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -370,8 +369,6 @@ export async function startOnDemandReplacementProcess(xml, csars) {
   const bpmnAutoResizeProvider = modeler.get("bpmnAutoResizeProvider");
   const bpmnFactory = modeler.get("bpmnFactory");
   bpmnAutoResizeProvider.canResize = () => false;
-  const definitions = modeler.getDefinitions();
-  const rootElement = getRootProcess(definitions);
 
   let serviceTaskIds = [];
   csars
@@ -386,6 +383,10 @@ export async function startOnDemandReplacementProcess(xml, csars) {
     "Performing on-demand transformation for the following ServiceTask IDs: ",
     serviceTaskIds
   );
+
+  for (const aaa of elementRegistry.getAll()) {
+    console.log(aaa);
+  }
 
   for (const serviceTaskId of serviceTaskIds) {
     let serviceTask = elementRegistry.get(serviceTaskId);
@@ -411,6 +412,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
       });
+      subProcess = elementRegistry.get(subProcess.id);
       modeling.updateProperties(subProcess, getPropertiesToCopy(serviceTask));
 
       subProcess.businessObject.set("opentosca:onDemandDeployment", true);
@@ -419,19 +421,21 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         deploymentModelUrl
       );
 
-      const startEvent = createLayoutedShape(modeling,
+      const startEvent = createLayoutedShape(
+        modeling,
         {
           type: "bpmn:StartEvent",
         },
-        { x: subProcess.x +30, y: subProcess.y +30 },
+        { x: subProcess.x + 30, y: subProcess.y + 30 },
         subProcess
       );
 
-      const serviceTaskCompleteDeploymentModel = createLayoutedShape(modeling,
-          { type: "bpmn:ScriptTask" },
-          { x: 50, y: 50 },
-          subProcess,
-          {}
+      const serviceTaskCompleteDeploymentModel = createLayoutedShape(
+        modeling,
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
 
       serviceTaskCompleteDeploymentModel.businessObject.set(
@@ -454,14 +458,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         )
       );
 
-      modeling.connect(
-          startEvent,
-          serviceTaskCompleteDeploymentModel,
-          { type: "bpmn:SequenceFlow" }
-      );
+      modeling.connect(startEvent, serviceTaskCompleteDeploymentModel, {
+        type: "bpmn:SequenceFlow",
+      });
 
       // add gateway to check for dedicated policy
-      let dedicatedGateway = createLayoutedShape(modeling,
+      let dedicatedGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -476,7 +479,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       });
 
       // add task to check for running container instance
-      let serviceTaskCheckForEquivalentDeploymentModel = createLayoutedShape(modeling,
+      let serviceTaskCheckForEquivalentDeploymentModel = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -512,7 +516,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
 
       // add task to check for available instance
-      let serviceTaskCheckForAvailableInstance = createLayoutedShape(modeling,
+      let serviceTaskCheckForAvailableInstance = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -545,7 +550,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       );
 
       // add gateway to check if instance is available
-      let instanceAvailablityGateway = createLayoutedShape(modeling,
+      let instanceAvailablityGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -564,7 +570,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         }
       );
 
-      let joiningDedicatedGateway = createLayoutedShape(modeling,
+      let joiningDedicatedGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -610,7 +617,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
 
       let topicName = makeId(12);
-      const scriptTaskUploadToContainer = createLayoutedShape(modeling,
+      const scriptTaskUploadToContainer = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -643,7 +651,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         type: "bpmn:SequenceFlow",
       });
 
-      const scriptTaskWaitForDeployment = createLayoutedShape(modeling,
+      const scriptTaskWaitForDeployment = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -668,7 +677,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         }
       );
 
-      let joiningInstanceAvailablityGatewayGateway = createLayoutedShape(modeling,
+      let joiningInstanceAvailablityGatewayGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -702,7 +712,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       InstanceAvailableFlowBo.conditionExpression =
         InstanceAvailableFlowCondition;
 
-      const serviceTaskInvokeService = createLayoutedShape(modeling,
+      const serviceTaskInvokeService = createLayoutedShape(
+        modeling,
         { type: "bpmn:ServiceTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -765,7 +776,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           newExtensionElements
         );
       }
-      let endEvent = createLayoutedShape(modeling,
+      let endEvent = createLayoutedShape(
+        modeling,
         { type: "bpmn:EndEvent" },
         { x: 50, y: 50 },
         subProcess,
@@ -774,11 +786,21 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       modeling.connect(serviceTaskInvokeService, endEvent, {
         type: "bpmn:SequenceFlow",
       });
-      layout(modeling, elementRegistry, subProcess);
+
+      // expand subprocess
+      console.log("Expanding subprocess...");
+      subProcess.collapsed = false;
+      subProcess.businessObject.isExpanded = true;
+      subProcess.di.isExpanded = true;
+
+      layout(modeling, elementRegistry, subProcess.businessObject);
+
+      // collapsing subprocess
+      subProcess.collapsed = true;
+      subProcess.businessObject.isExpanded = false;
+      subProcess.di.isExpanded = false;
     }
   }
-
-  // layout diagram after successful transformation
 
   let updatedXml = await getXml(modeler);
   console.log(updatedXml);
