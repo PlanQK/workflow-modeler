@@ -186,7 +186,7 @@ try {
    wr.flush();
 
    def status = post.getResponseCode();
-   println status;docker
+   println status;
    if(status.toString().startsWith("2")){
        println post;
        println post.getInputStream();
