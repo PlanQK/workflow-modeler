@@ -70,14 +70,14 @@ function createDeploymentScript(
 ) {
   return `
 var inputParams = ${JSON.stringify(inputParams)};
-var csarName = "ondemand_" + (Math.random().toString().substring(3));
+var urlParts = execution.getVariable("completeModelUrl_" + "${taskId}").split("/");
 var reconstructedVMs= ${JSON.stringify(reconstructedVMs)};
 
 ${fetchMethod}
 
 var createCsarResponse = fetch('POST', "${opentoscaEndpoint}", JSON.stringify({
     enrich: 'false',
-    name: csarName,
+    name: urlParts[urlParts.length - 1] + ".csar",
     url: execution.getVariable("completeModelUrl_" + "${taskId}") + "?csar"
 }))
 
