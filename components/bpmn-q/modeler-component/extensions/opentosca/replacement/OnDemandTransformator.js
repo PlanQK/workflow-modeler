@@ -782,17 +782,9 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         type: "bpmn:SequenceFlow",
       });
 
-      // expand subprocess
-      console.log("Expanding subprocess...");
-      subProcess.collapsed = false;
-      subProcess.businessObject.isExpanded = true;
+      // expand subprocess, layout, and collapse again
       subProcess.di.isExpanded = true;
-
       layout(modeling, elementRegistry, subProcess.businessObject);
-
-      // collapsing subprocess
-      subProcess.collapsed = true;
-      subProcess.businessObject.isExpanded = false;
       subProcess.di.isExpanded = false;
     }
   }
