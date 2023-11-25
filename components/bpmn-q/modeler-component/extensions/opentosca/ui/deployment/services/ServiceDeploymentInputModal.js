@@ -10,7 +10,7 @@
  */
 
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect } from "react";
 
 // polyfill upcoming structural components
 import Modal from "../../../../../editor/ui/modal/Modal";
@@ -46,11 +46,45 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     initValues.filter((csar) => csar.incomplete).length > 0;
   let completionHTML = [];
   let nodetypesToChange = {};
+  let requiredVMAttributesMappedToOtherNodetype = [];
+  let attributeListHTMLMap = {};
   if (containsIncompleteModels) {
     try {
       const url = config.wineryEndpoint + "/nodetypes";
       const nodetypes = JSON.parse(synchronousGetRequest(url));
       console.log("Found NodeTypes: ", nodetypes);
+
+      // save requiredAttributes of NodeTypes of type VM to Map them to corresponding Host NodeType
+      nodetypes.forEach((nodetype) => {
+        const nodetypeUri = encodeURIComponent(
+          encodeURIComponent(nodetype.qName.substring(1, nodetype.qName.length))
+        ).replace("%257D", "/");
+        const tags = JSON.parse(
+          synchronousGetRequest(url + "/" + nodetypeUri + "/tags")
+        );
+        const type = tags.filter((x) => x.name === "type")[0];
+        if (type?.value === "vm") {
+          const requiredAttributes = tags
+            .filter((x) => x.name === "requiredAttributes")?.[0]
+            ?.value?.split(",");
+          if (requiredAttributes !== undefined) {
+            const attributeListHTML = [];
+            requiredAttributes.sort();
+            nodetype.requiredAttributes = {};
+            nodetypesToChange[nodetype.name] = nodetype;
+            requiredAttributes.forEach((attribute) => {
+              // Some VM requiredAttributes are host dependent and thus need to be mapped to host
+              if (attribute.split(".").length > 1) {
+                requiredVMAttributesMappedToOtherNodetype.push({
+                  nodeTypeName: attribute.split(".")[0],
+                  requiredAttribute: attribute.split(".")[1],
+                  vmQName: nodetype.qName,
+                });
+              }
+            });
+          }
+        }
+      });
 
       nodetypes.forEach((nodetype) => {
         const nodetypeUri = encodeURIComponent(
@@ -62,57 +96,71 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         const requiredAttributes = tags
           .filter((x) => x.name === "requiredAttributes")?.[0]
           ?.value?.split(",");
-        console.log(requiredAttributes);
         if (requiredAttributes !== undefined) {
           const attributeListHTML = [];
+
+          // insert requiredVMAttributesMappedToOtherNodetype if suitable
+          requiredVMAttributesMappedToOtherNodetype.forEach((vmRequirement) => {
+            if (nodetype.name === vmRequirement.nodeTypeName) {
+              vmRequirement["qName"] = nodetype.qName;
+              requiredAttributes.push(vmRequirement.requiredAttribute);
+            }
+          });
+
+          requiredAttributes.sort();
           nodetype.requiredAttributes = {};
           nodetypesToChange[nodetype.name] = nodetype;
           requiredAttributes.forEach((attribute) => {
-            nodetype.requiredAttributes[attribute] = "";
-            attributeListHTML.push(
-              <tr key={nodetype.name + "-" + attribute}>
-                <td>{attribute}</td>
-                <td>
-                  <textarea
-                    value={
-                      nodetypesToChange[nodetype.name].requiredAttributes[
-                        { attribute }
-                      ]
-                    }
-                    onChange={(event) =>
-                      handleCompletionChange(event, nodetype.name, attribute)
-                    }
-                  />
-                </td>
-              </tr>
-            );
+            // Some VM requiredAttributes are host dependent and thus need to be mapped to host
+            if (attribute.split(".").length < 2) {
+              nodetype.requiredAttributes[attribute] = "";
+              attributeListHTML.push(
+                <tr key={nodetype.name + "-" + attribute}>
+                  <td>{attribute}</td>
+                  <td>
+                    <textarea
+                      value={
+                        nodetypesToChange[nodetype.name].requiredAttributes[
+                          { attribute }
+                        ]
+                      }
+                      onChange={(event) =>
+                        handleCompletionChange(event, nodetype.name, attribute)
+                      }
+                    />
+                  </td>
+                </tr>
+              );
+            }
           });
 
-          completionHTML.push(
-            <div key={nodetype.name} style={{}}>
-              <h3 key={nodetype.name + "h3"} className="spaceUnderSmall">
-                <img
-                  style={{
-                    height: "20px",
-                    width: "20px",
-                    verticalAlign: "text-bottom",
-                  }}
-                  src={url + "/" + nodetypeUri + "/appearance/50x50"}
-                  alt={url + "/" + nodetypeUri + "/appearance/50x50"}
-                />{" "}
-                {nodetype.name}:{" "}
-              </h3>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Parameter Name</th>
-                    <th>Value</th>
-                  </tr>
-                  {attributeListHTML}
-                </tbody>
-              </table>
-            </div>
-          );
+          if (attributeListHTML.length > 0) {
+            completionHTML.push(
+              <div key={nodetype.name} style={{}}>
+                <h3 key={nodetype.name + "h3"} className="spaceUnderSmall">
+                  <img
+                    style={{
+                      height: "20px",
+                      width: "20px",
+                      verticalAlign: "text-bottom",
+                    }}
+                    src={url + "/" + nodetypeUri + "/appearance/50x50"}
+                    alt={url + "/" + nodetypeUri + "/appearance/50x50"}
+                  />{" "}
+                  {nodetype.name}:{" "}
+                </h3>
+                <table>
+                  <tbody id={nodetype.name + "-tbody"}>
+                    <tr>
+                      <th>Parameter Name</th>
+                      <th>Value</th>
+                    </tr>
+                    {attributeListHTML}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
         }
       });
     } catch (error) {
@@ -120,10 +168,10 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     }
 
     if (completionHTML.length > 0) {
-      completionHTML.push(
+      completionHTML.unshift(
         <h3 className="spaceUnder">
-          Uploaded CSARs contain incomplete Deployment Models requiring
-          additional data for completion
+          CSARs comprise incomplete Deployment Models requiring additional data
+          for completion:
         </h3>
       );
     }
@@ -138,6 +186,13 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
     // only visualize input params of already completed CSARs
     if (!csar.incomplete) {
       let inputParams = csar.inputParameters;
+
+      // sort input params alphabetically
+      inputParams.sort(function (a, b) {
+        const textA = a.name.toUpperCase();
+        const textB = b.name.toUpperCase();
+        return textA < textB ? -1 : textA > textB ? 1 : 0;
+      });
 
       let paramsToRetrieve = [];
       for (let j = 0; j < inputParams.length; j++) {
@@ -157,7 +212,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
         // skip parameters that are automatically set during service binding
         if (
           inputParam.name === "camundaTopic" ||
-          inputParam.name === "camundaEndpoint"
+          inputParam.name === "camundaEndpoint" ||
+          inputParam.name === "QProvEndpoint"
         ) {
           paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
           continue;
@@ -211,6 +267,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
       next: true,
       csarList: initValues,
       nodeTypeRequirements: nodetypesToChange,
+      requiredVMAttributesMappedToOtherNodetype:
+        requiredVMAttributesMappedToOtherNodetype,
       refs: {
         progressBarRef: progressBarRef,
         progressBarDivRef: progressBarDivRef,
@@ -220,7 +278,7 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (3/4)</Title>
+      <Title>Service Deployment (2/4)</Title>
 
       <Body>
         <h3 className="spaceUnder">

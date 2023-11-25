@@ -29,6 +29,7 @@ import {
   getRootProcess,
 } from "../../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../../editor/util/IoUtilities";
+import { createLayoutedShape } from "../../../../editor/util/camunda-utils/ElementUtil";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 /**
@@ -77,7 +78,8 @@ export async function replaceHardwareSelectionSubprocess(
   bo.flowElements = [];
 
   // add start event for the new subprocess
-  let startEvent = modeling.createShape(
+  let startEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:StartEvent" },
     { x: 50, y: 50 },
     element,
@@ -87,7 +89,8 @@ export async function replaceHardwareSelectionSubprocess(
   startEventBo.name = "Start Hardware Selection Subprocess";
 
   // add gateway to avoid multiple hardware selections for the same circuit
-  let splittingGateway = modeling.createShape(
+  let splittingGateway = createLayoutedShape(
+    modeling,
     { type: "bpmn:ExclusiveGateway" },
     { x: 50, y: 50 },
     element,
@@ -102,7 +105,8 @@ export async function replaceHardwareSelectionSubprocess(
   modeling.connect(startEvent, splittingGateway, { type: "bpmn:SequenceFlow" });
 
   // add task to invoke the NISQ Analyzer and connect it
-  let invokeHardwareSelection = modeling.createShape(
+  let invokeHardwareSelection = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     element,
@@ -181,7 +185,8 @@ export async function replaceHardwareSelectionSubprocess(
     "Adding extracted workflow fragment XML: ",
     hardwareSelectionFragment
   );
-  let retrieveFragment = modeling.createShape(
+  let retrieveFragment = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     element,
@@ -202,7 +207,8 @@ export async function replaceHardwareSelectionSubprocess(
   });
 
   // add task implementing the transformation of the QuantME modeling constructs within the QuantumHardwareSelectionSubprocess
-  let invokeTransformation = modeling.createShape(
+  let invokeTransformation = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     element,
@@ -238,7 +244,8 @@ export async function replaceHardwareSelectionSubprocess(
   );
 
   // join control flow
-  let joiningGateway = modeling.createShape(
+  let joiningGateway = createLayoutedShape(
+    modeling,
     { type: "bpmn:ExclusiveGateway" },
     { x: 50, y: 50 },
     element,
@@ -264,7 +271,8 @@ export async function replaceHardwareSelectionSubprocess(
   alreadySelectedFlowBo.conditionExpression = alreadySelectedFlowCondition;
 
   // add call activity invoking the dynamically transformed and deployed workflow fragment
-  let invokeTransformedFragment = modeling.createShape(
+  let invokeTransformedFragment = createLayoutedShape(
+    modeling,
     { type: "bpmn:CallActivity" },
     { x: 50, y: 50 },
     element,
@@ -301,7 +309,8 @@ export async function replaceHardwareSelectionSubprocess(
   invokeTransformedFragmentBo.extensionElements = extensionElements;
 
   // add end event for the new subprocess
-  let endEvent = modeling.createShape(
+  let endEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:EndEvent" },
     { x: 50, y: 50 },
     element,
@@ -356,7 +365,8 @@ function addSelectionStrategyTask(
  * Add a task implementing the Shortest-Queue selection strategy
  */
 function addShortestQueueSelectionStrategy(parent, elementRegistry, modeling) {
-  let task = modeling.createShape(
+  let task = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     parent,
@@ -399,7 +409,8 @@ async function getHardwareSelectionFragment(subprocess) {
     elementRegistry.get(rootElement.flowElements[0].id),
     { type: "bpmn:StartEvent" }
   );
-  let endEvent = modeling.createShape(
+  let endEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:EndEvent" },
     { x: 50, y: 50 },
     rootElementBo,

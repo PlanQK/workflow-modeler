@@ -15,7 +15,10 @@ import { addQuantMEInputParameters } from "./InputOutputHandler";
 import * as constants from "../Constants";
 import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
 import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
-import { insertShape } from "../../../editor/util/TransformationUtilities";
+import {
+  getPropertiesToCopy,
+  insertShape,
+} from "../../../editor/util/TransformationUtilities";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import {
   getCamundaInputOutput,
@@ -25,6 +28,8 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { replaceDataObjects } from "./dataObjects/QuantMEDataObjectsHandler";
+import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
+import { isQuantMETask } from "../utilities/Utilities";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -256,6 +261,13 @@ async function replaceByFragment(
   modeler
 ) {
   let bpmnFactory = modeler.get("bpmnFactory");
+  let elementRegistry = modeler.get("elementRegistry");
+  let modeling = modeler.get("modeling");
+  let taskToReplace = elementRegistry.get(task.id);
+  console.log(
+    "Replacing the following task using a replacement fragment: ",
+    taskToReplace
+  );
 
   if (!replacement) {
     console.log("Replacement fragment is undefined. Aborting replacement!");
@@ -275,6 +287,22 @@ async function replaceByFragment(
     return false;
   }
 
+  // extract policies attached to QuantME tasks
+  let policies = getPolicies(modeler, task.id);
+  console.log("Found %i polices attached to QuantME task!", policies.length);
+  let attachersPlaceholder;
+  if (policies.length > 0) {
+    attachersPlaceholder = modeling.createShape(
+      { type: "bpmn:Task" },
+      { x: 50, y: 50 },
+      parent,
+      {}
+    );
+
+    // attach policies to the placeholder
+    movePolicies(modeler, attachersPlaceholder.id, policies);
+  }
+
   console.log("Replacement element: ", replacementElement);
   let result = insertShape(
     definitions,
@@ -285,6 +313,8 @@ async function replaceByFragment(
     modeler,
     task
   );
+  let resultShape = result.element;
+  console.log("Inserted shape: ", resultShape);
 
   // add all attributes of the replaced QuantME task to the input parameters of the replacement fragment
   let inputOutputExtension = getCamundaInputOutput(
@@ -292,6 +322,78 @@ async function replaceByFragment(
     bpmnFactory
   );
   addQuantMEInputParameters(task, inputOutputExtension, bpmnFactory);
+
+  if (attachersPlaceholder) {
+    // attach policies to the newly created shape if it's a single task
+    if (
+      resultShape.businessObject.$type === "bpmn:ServiceTask" ||
+      isQuantMETask(resultShape.businessObject)
+    ) {
+      console.log(
+        "Replacement was ServiceTask or QuantME task. Attaching policies..."
+      );
+      movePolicies(modeler, resultShape.id, policies);
+    } else {
+      if (resultShape.businessObject.$type === "bpmn:SubProcess") {
+        console.log(
+          "Attaching policies within subprocess: ",
+          resultShape.businessObject
+        );
+
+        // get flow elements to check if they support policy attachment
+        let flowElements = resultShape.businessObject.flowElements;
+        console.log(
+          "Subprocess contains %i flow elements...",
+          flowElements.length
+        );
+        flowElements = flowElements.filter(
+          (flowElement) =>
+            (flowElement.$type === "bpmn:ServiceTask" &&
+              flowElement.deploymentModelUrl) ||
+            flowElement.$type.startsWith("quantme:")
+        );
+        console.log(
+          "Found %i ServiceTasks or QuantME tasks...",
+          flowElements.length
+        );
+
+        if (flowElements.length === 1) {
+          // if only one relevant flow element, moce policies
+          movePolicies(modeler, flowElements[0].id, policies);
+        } else {
+          // copy policies for each relevant flow element
+          flowElements.forEach((flowElement) => {
+            console.log("Adding policies to task: ", flowElement);
+            policies.forEach((policy) => {
+              console.log("Adding policy: ", policy);
+
+              let newPolicyShape = modeling.createShape(
+                { type: policy.type },
+                { x: 50, y: 50 },
+                parent,
+                {}
+              );
+              modeling.updateProperties(
+                newPolicyShape,
+                getPropertiesToCopy(policy)
+              );
+
+              modeling.updateProperties(newPolicyShape, {
+                attachedToRef: flowElement.businessObject,
+              });
+              newPolicyShape.host = flowElement;
+            });
+          });
+        }
+      } else {
+        console.log(
+          "Type not supported for policy attachment: ",
+          resultShape.businessObject.$type
+        );
+      }
+    }
+    modeling.removeShape(attachersPlaceholder);
+  }
 
   return result["success"];
 }

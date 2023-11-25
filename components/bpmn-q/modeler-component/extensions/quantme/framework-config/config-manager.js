@@ -64,6 +64,27 @@ export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
 }
 
 /**
+ * Get the QProv endpoint
+ */
+export function getQProvEndpoint() {
+  if (config.qprovEndpoint === undefined) {
+    setQProvEndpoint(
+      getPluginConfig("quantme").qprovEndpoint || defaultConfig.qprovEndpoint
+    );
+  }
+  return config.qprovEndpoint;
+}
+
+/**
+ * Set the QProv endpoint
+ */
+export function setQProvEndpoint(qprovEndpoint) {
+  if (qprovEndpoint !== null && qprovEndpoint !== undefined) {
+    config.qprovEndpoint = qprovEndpoint;
+  }
+}
+
+/**
  * Get the Transformation Framework endpoint
  */
 export function getTransformationFrameworkEndpoint() {

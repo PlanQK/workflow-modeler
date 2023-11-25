@@ -11,13 +11,16 @@
 
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import { getXml } from "../../../editor/util/IoUtilities";
-import { isDeployableServiceTask } from "../deployment/DeploymentUtils";
 import * as config from "../framework-config/config-manager";
 import { makeId } from "../deployment/OpenTOSCAUtils";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 import { createElement } from "../../../editor/util/camunda-utils/ElementUtil";
-import { getRootProcess } from "../../../editor/util/ModellingUtilities";
-import * as consts from "../Constants";
+import {
+  getCamundaInputOutput,
+  getRootProcess,
+} from "../../../editor/util/ModellingUtilities";
+import { layout } from "../../quantme/replacement/layouter/Layouter";
+import { deletePolicies } from "../utilities/Utilities";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -56,71 +59,296 @@ function fetch(method, url, body) {
     }
 }`;
 
-function createDeploymentScript(params) {
+function createDeploymentScript(
+  opentoscaEndpoint,
+  camundaEndpoint,
+  camundaTopic,
+  subprocessId,
+  inputParams,
+  taskId,
+  reconstructedVMs
+) {
   return `
-var params = ${JSON.stringify(params)};
-params.csarName = "ondemand_" + (Math.random().toString().substring(3));
+var inputParams = ${JSON.stringify(inputParams)};
+var urlParts = execution.getVariable("completeModelUrl_" + "${taskId}").split("/");
+var reconstructedVMs= ${JSON.stringify(reconstructedVMs)};
 
 ${fetchMethod}
 
-var createCsarResponse = fetch('POST', params.opentoscaEndpoint, JSON.stringify({
+var createCsarResponse = fetch('POST', "${opentoscaEndpoint}", JSON.stringify({
     enrich: 'false',
-    name: params.csarName,
-    url: params.deploymentModelUrl
+    name: urlParts[urlParts.length - 1] + ".csar",
+    url: execution.getVariable("completeModelUrl_" + "${taskId}") + "?csar"
 }))
 
-var serviceTemplates = JSON.parse(fetch('GET', params.opentoscaEndpoint + "/" + params.csarName + ".csar/servicetemplates"))
+var deployedTopology = JSON.parse(fetch('GET', execution.getVariable("completeModelUrl_" + "${taskId}") + "topologytemplate"));
+
+for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)) {
+  for (const [constructKey, constructValue] of Object.entries(reconstructedVMs)) {
+    if (
+      constructValue.name.includes(value.name) &&
+      !value.name.includes("VM")
+    ) {
+      for (const [propertyName, propertyValue] of Object.entries(constructValue.requiredAttributes)) {
+        inputParams[propertyName] = propertyValue;
+      }
+    }
+  }
+}
+java.lang.System.out.println("Input parameters after update: " + JSON.stringify(inputParams));
+
+var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + urlParts[urlParts.length - 1] ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
 var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
 var buildPlanUrl = buildPlans.plans[0]._links.self.href
 var inputParameters = JSON.parse(fetch('GET', buildPlanUrl)).input_parameters
 for(var i = 0; i < inputParameters.length; i++) {
     if(inputParameters[i].name === "camundaEndpoint") {
-        inputParameters[i].value = params.opentoscaEndpoint
+        inputParameters[i].value = "${camundaEndpoint}"
     } else if(inputParameters[i].name === "camundaTopic") {
-        inputParameters[i].value = params.camundaTopic
+        inputParameters[i].value = "${camundaTopic}"
     } else {
-        inputParameters[i].value = "null"
+        inputParameters[i].value = inputParams[inputParameters[i].name];
     }
 }
+
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
-execution.setVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
+execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
 }
 
-function createWaitScript(params) {
+function createWaitScript(subprocessId, taskId) {
   return `
-var params = ${JSON.stringify(params)};
 
 ${fetchMethod}
-var buildPlanInstanceUrl = execution.getVariable(params.subprocessId + "_deploymentBuildPlanInstanceUrl");
+var buildPlanInstanceUrl = execution.getVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl");
 var instanceUrl;
-for(var i = 0; i < 30; i++) {
+for(var i = 0; i < 20; i++) {
     try {
         instanceUrl = JSON.parse(fetch('GET', buildPlanInstanceUrl))._links.service_template_instance.href; 
         if (instanceUrl) break;
      } catch (e) {
      }
-     java.lang.Thread.sleep(2000);
+     java.lang.Thread.sleep(10000);
 }
 
-java.lang.System.out.println("InstanceUrl: " + instanceUrl);
+console.log("InstanceUrl: " + instanceUrl);
 
-for(var i = 0; i < 30 * 3; i++) {
+var buildPlanUrl = "";
+for(var i = 0; i < 50; i++) {
     try {
+        java.lang.System.out.println("Iteration: " + i);
         var createInstanceResponse = fetch('GET', instanceUrl);
-        var instance = JSON.parse(createInstanceResponse).service_template_instances;
+        var instance = JSON.parse(createInstanceResponse);
+        console.log("Instance state: " + instance.state);
+        buildPlanUrl = instance._links.build_plan_instance.href;
         if (instance && instance.state === "CREATED") {
             break;
         }
      } catch (e) {
+        java.lang.System.out.println("Error while checking instance state: " + e);
      }
      java.lang.Thread.sleep(30000);
 }
 
-var properties = JSON.parse(fetch('GET', instanceUrl + "/properties"));
+console.log("Retrieving selfServiceApplicationUrl from build plan output from URL: ", buildPlanUrl);
+var buildPlanResult = JSON.parse(fetch('GET', buildPlanUrl));
+console.log("Build plan result: ", buildPlanResult);
+var buildPlanOutputs = buildPlanResult.outputs;
+console.log("Outputs: ", buildPlanOutputs.toString());
+var selfserviceApplicationUrl = buildPlanOutputs.filter((output) => output.name === "selfserviceApplicationUrl");
+console.log("SelfServiceApplicationUrl: " + selfserviceApplicationUrl[0].value);
  
-execution.setVariable("selfserviceApplicationUrl", properties.selfserviceApplicationUrl);
+execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl[0].value);
 java.lang.Thread.sleep(12000);
+`;
+}
+
+function createCompleteModelScript(url, blacklist, policies, taskId) {
+  return `
+import groovy.json.*
+def url = "${url}"
+def blacklist = ${JSON.stringify(blacklist)};
+def slurper = new JsonSlurper();
+def policies = slurper.parseText(${JSON.stringify(policies)});
+
+def message = JsonOutput.toJson("policies": policies, "blacklist": blacklist);
+
+try {
+   def post = new URL(url).openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("accept", "application/json");
+
+   OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
+   println message;
+   wr.write(message.toString());
+   wr.flush();
+
+   def status = post.getResponseCode();
+   println status;
+   if(status.toString().startsWith("2")){
+       println post;
+       println post.getInputStream();
+       def location = post.getHeaderFields()['Location'][0];
+       def saveVarName = "completeModelUrl_" + "${taskId}";
+       execution.setVariable(saveVarName, location);
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while completing Deployment Model!");
+   }
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + "${url}");
+};
+`;
+}
+
+function createCheckForEquivalencyScript(taskId) {
+  return `
+import groovy.json.*
+def url = execution.getVariable("completeModelUrl_" + "${taskId}");
+url = url + "topologytemplate/checkforequivalentcsars?includeSelf=true"
+
+try {
+   def post = new URL(url).openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("accept", "application/json");
+
+   post.getOutputStream().write();
+   
+   def status = post.getResponseCode();
+   println status;
+   if(status.toString().startsWith("2")){
+       println post.getInputStream();
+       def resultText = post.getInputStream().getText();
+       def slurper = new JsonSlurper();
+       def json = slurper.parseText(resultText);
+       def saveVarName = "equivalentCSARs_" + "${taskId}";
+       execution.setVariable(saveVarName, json);
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while completing Deployment Model!");
+   }
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + url);
+};
+`;
+}
+
+function createCheckForAvailableInstancesScript(containerUrl, taskId) {
+  return `
+import groovy.json.*
+def containerUrl = "${containerUrl}";
+def equivalentCSARs = execution.getVariable("equivalentCSARs_" + "${taskId}");
+
+try {
+   for (String equivalentCSAR : equivalentCSARs ){
+       println "Checking availability for CSAR with URL: " + equivalentCSAR;
+       def values = equivalentCSAR.split('/');
+       def csarName = values[values.length - 1];
+       println "Checking availability for CSAR with name: " + csarName;
+
+       def csarUrl = containerUrl + "/" + csarName + ".csar";
+       println "Checking for ServiceTemaplates using URL: " + csarUrl;
+
+       def get = new URL(csarUrl).openConnection();
+       get.setRequestMethod("GET");
+       get.setDoOutput(true);
+       get.setRequestProperty("accept", "application/json");
+       def status = get.getResponseCode();
+       println "Status code for ServiceTemplate retrieval: " + status;
+       if(status != 200){
+          println "CSAR not found. Skipping...";
+          continue;
+       }
+       def resultText = get.getInputStream().getText();
+       def json = new JsonSlurper().parseText(resultText);
+       def serviceTemplateLink = json.get("_links").get("servicetemplate").get("href") + "/instances";
+       println "Retrieved link to ServiceTemplate: " + serviceTemplateLink;
+
+       get = new URL(serviceTemplateLink).openConnection();
+       get.setRequestMethod("GET");
+       get.setDoOutput(true);
+       get.setRequestProperty("accept", "application/json");
+       status = get.getResponseCode();
+       println "Status code for instance retrieval: " + status;
+       if(status != 200){
+          println "Unable to retrieve instances. Skipping...";
+          continue;
+       }
+       resultText = get.getInputStream().getText();
+       json = new JsonSlurper().parseText(resultText);
+       def serviceTemplateInstances = json.get("service_template_instances");
+       println serviceTemplateInstances;
+       
+       for (Object serviceTemplateInstance: serviceTemplateInstances){
+          println "Checking instance with ID: " + serviceTemplateInstance.get("id");
+          if(serviceTemplateInstance.get("state") != "CREATED"){
+             println "Instance has invalid state. Skipping: " + serviceTemplateInstance.get("state");
+             continue;
+          }
+
+          println "Found instance with state CREATED. Extracting selfServiceUrl...";
+          def instancesLink = serviceTemplateInstance.get("_links").get("self").get("href");
+          println "Retrieving instance information from URL: " + instancesLink;
+
+          get = new URL(instancesLink).openConnection();
+          get.setRequestMethod("GET");
+          get.setDoOutput(true);
+          get.setRequestProperty("accept", "application/json");
+          status = get.getResponseCode();
+          if(status != 200){
+             println "Unable to retrieve instance information. Skipping...";
+             continue;
+          }
+
+          resultText = get.getInputStream().getText();
+          json = new JsonSlurper().parseText(resultText);
+          def buildPlanLink = json .get("_links").get("build_plan_instance").get("href");
+          println "Retrieved build plan URL: " + buildPlanLink;
+
+          get = new URL(buildPlanLink).openConnection();
+          get.setRequestMethod("GET");
+          get.setDoOutput(true);
+          get.setRequestProperty("accept", "application/json");
+          status = get.getResponseCode();
+          if(status != 200){
+             println "Unable to retrieve build plan information. Skipping...";
+             continue;
+          }
+
+          resultText = get.getInputStream().getText();
+          json = new JsonSlurper().parseText(resultText);
+          def outputs = json.get("outputs");
+          println outputs;
+
+          def selfserviceApplicationUrlEntry = outputs.findAll { it.name.equalsIgnoreCase("selfserviceApplicationUrl") };
+          if(selfserviceApplicationUrlEntry .size() < 1) {
+             println "Unable to retrieve selfserviceApplicationUrl. Skipping...";
+             continue;
+          }
+          def selfserviceApplicationUrl = selfserviceApplicationUrlEntry[0].value;
+          println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
+          execution.setVariable("instanceAvailable", "true");
+          execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl);
+          return;
+      }
+   }
+
+   println "Unable to retrieve suitable instances!";
+   execution.setVariable("instanceAvailable", "false");
+} catch(Exception e) {
+   println "Exception while searching for available instances: " + e;
+   execution.setVariable("instanceAvailable", "false");
+};
 `;
 }
 
@@ -128,8 +356,11 @@ java.lang.Thread.sleep(12000);
  * Initiate the replacement process for the ServiceTasks requiring on-demand deployment in the current process model
  *
  * @param xml the BPMN diagram in XML format
+ * @param csars the CSARs to use for the on-demand deployment
  */
-export async function startOnDemandReplacementProcess(xml) {
+export async function startOnDemandReplacementProcess(xml, csars) {
+  console.log("Starting on-demand replacement with CSARs: ", csars);
+
   const modeler = await createTempModelerFromXml(xml);
   const modeling = modeler.get("modeling");
   const elementRegistry = modeler.get("elementRegistry");
@@ -140,18 +371,29 @@ export async function startOnDemandReplacementProcess(xml) {
   const definitions = modeler.getDefinitions();
   const rootElement = getRootProcess(definitions);
 
-  const serviceTasks = elementRegistry.filter(({ businessObject }) =>
-    isDeployableServiceTask(businessObject)
+  let serviceTaskIds = [];
+  csars
+    .filter((csar) => csar.onDemand)
+    .forEach(
+      (csar) =>
+        (serviceTaskIds = serviceTaskIds.concat(
+          csar.serviceTaskIds.filter((id) => !serviceTaskIds.includes(id))
+        ))
+    );
+  console.log(
+    "Performing on-demand transformation for the following ServiceTask IDs: ",
+    serviceTaskIds
   );
-  let onDemandPolicies = [];
-  for (const flowElement of rootElement.flowElements) {
-    if (flowElement.$type === consts.ON_DEMAND_POLICY) {
-      onDemandPolicies.push(elementRegistry.get(flowElement.id));
-    }
-  }
-  modeling.removeElements(onDemandPolicies);
 
-  for (const serviceTask of serviceTasks) {
+  for (const serviceTaskId of serviceTaskIds) {
+    let serviceTask = elementRegistry.get(serviceTaskId);
+
+    // delete policies as they are incorporated into the completion functionality
+    deletePolicies(modeler, serviceTaskId);
+
+    let CSARForServiceTask = csars.filter((csar) =>
+      csar.serviceTaskIds.filter((id) => id === serviceTaskId)
+    )[0];
     let onDemand = serviceTask.businessObject.get("onDemand");
     if (onDemand) {
       let deploymentModelUrl = serviceTask.businessObject.get(
@@ -163,8 +405,6 @@ export async function startOnDemandReplacementProcess(xml) {
           config.getWineryEndpoint()
         );
       }
-
-      const extensionElements = serviceTask.businessObject.extensionElements;
 
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
@@ -184,60 +424,297 @@ export async function startOnDemandReplacementProcess(xml) {
         subProcess
       );
 
-      let topicName = makeId(12);
-      const serviceTask1 = modeling.appendShape(
+      const serviceTaskCompleteDeploymentModel = modeling.appendShape(
         startEvent,
         {
           type: "bpmn:ScriptTask",
         },
         { x: 400, y: 200 }
       );
-      serviceTask1.businessObject.set("scriptFormat", "javascript");
-      serviceTask1.businessObject.set(
+      serviceTaskCompleteDeploymentModel.businessObject.set(
+        "name",
+        "Adapt Model"
+      );
+      serviceTaskCompleteDeploymentModel.businessObject.set(
+        "scriptFormat",
+        "groovy"
+      );
+      serviceTaskCompleteDeploymentModel.businessObject.asyncBefore = true;
+      serviceTaskCompleteDeploymentModel.businessObject.asyncAfter = true;
+      serviceTaskCompleteDeploymentModel.businessObject.set(
         "script",
-        createDeploymentScript({
-          opentoscaEndpoint: config.getOpenTOSCAEndpoint(),
-          deploymentModelUrl: deploymentModelUrl,
-          subprocessId: subProcess.id,
-          camundaTopic: topicName,
-          camundaEndpoint: getCamundaEndpoint(),
-        })
+        createCompleteModelScript(
+          deploymentModelUrl.replace("?csar", "topologytemplate/completemodel"),
+          CSARForServiceTask.blacklistedNodetypes,
+          JSON.stringify(CSARForServiceTask.policies),
+          serviceTask.id
+        )
       );
-      serviceTask1.businessObject.set("name", "Create deployment");
 
-      const serviceTask2 = modeling.appendShape(
-        serviceTask1,
-        {
-          type: "bpmn:ScriptTask",
-        },
-        { x: 600, y: 200 }
+      // add gateway to check for dedicated policy
+      let dedicatedGateway = modeling.createShape(
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
-      serviceTask2.businessObject.set("scriptFormat", "javascript");
-      serviceTask2.businessObject.set(
+      let dedicatedGatewayBo = elementRegistry.get(
+        dedicatedGateway.id
+      ).businessObject;
+      dedicatedGatewayBo.name = "Dedidcated Policy?";
+      modeling.connect(serviceTaskCompleteDeploymentModel, dedicatedGateway, {
+        type: "bpmn:SequenceFlow",
+      });
+
+      // add task to check for running container instance
+      let serviceTaskCheckForEquivalentDeploymentModel = modeling.createShape(
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
+        "name",
+        "Check For Equivalent Deployment Model"
+      );
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
+        "scriptFormat",
+        "groovy"
+      );
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.asyncBefore = true;
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.asyncAfter = true;
+      serviceTaskCheckForEquivalentDeploymentModel.businessObject.set(
         "script",
-        createWaitScript({ subprocessId: subProcess.id })
+        createCheckForEquivalencyScript(serviceTask.id)
       );
-      serviceTask2.businessObject.set("name", "Wait for deployment");
 
-      const serviceTask3 = modeling.appendShape(
-        serviceTask2,
+      let dedicatedFlow = modeling.connect(
+        dedicatedGateway,
+        serviceTaskCheckForEquivalentDeploymentModel,
+        { type: "bpmn:SequenceFlow" }
+      );
+      let dedicatedFlowBo = elementRegistry.get(
+        dedicatedFlow.id
+      ).businessObject;
+      dedicatedFlowBo.name = "no";
+      let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
+      dedicatedFlowCondition.body =
+        '${execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false}';
+      dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
+
+      // add task to check for available instance
+      let serviceTaskCheckForAvailableInstance = modeling.createShape(
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      serviceTaskCheckForAvailableInstance.businessObject.set(
+        "name",
+        "Check Container For Available Instance"
+      );
+      serviceTaskCheckForAvailableInstance.businessObject.set(
+        "scriptFormat",
+        "groovy"
+      );
+      serviceTaskCheckForAvailableInstance.businessObject.asyncBefore = true;
+      serviceTaskCheckForAvailableInstance.businessObject.asyncAfter = true;
+      serviceTaskCheckForAvailableInstance.businessObject.set(
+        "script",
+        createCheckForAvailableInstancesScript(
+          config.getOpenTOSCAEndpoint(),
+          serviceTask.id
+        )
+      );
+
+      modeling.connect(
+        serviceTaskCheckForEquivalentDeploymentModel,
+        serviceTaskCheckForAvailableInstance,
         {
-          type: "bpmn:ServiceTask",
-        },
-        { x: 800, y: 200 }
+          type: "bpmn:SequenceFlow",
+        }
       );
 
-      serviceTask3.businessObject.set("name", "Call service");
+      // add gateway to check if instance is available
+      let instanceAvailablityGateway = modeling.createShape(
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      let instanceAvailablityGatewayBo = elementRegistry.get(
+        instanceAvailablityGateway.id
+      ).businessObject;
+      instanceAvailablityGatewayBo.name = "Instance Available?";
+
+      modeling.connect(
+        serviceTaskCheckForAvailableInstance,
+        instanceAvailablityGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
+
+      let joiningDedicatedGateway = modeling.createShape(
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      // add connection from InstanceAvailableGateway to joiningDedicatedGateway and add condition
+      let notInstanceAvailableFlow = modeling.connect(
+        instanceAvailablityGateway,
+        joiningDedicatedGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
+      let notInstanceAvailableFlowBo = elementRegistry.get(
+        notInstanceAvailableFlow.id
+      ).businessObject;
+      notInstanceAvailableFlowBo.name = "no";
+      let notInstanceAvailableFlowCondition = bpmnFactory.create(
+        "bpmn:FormalExpression"
+      );
+      notInstanceAvailableFlowCondition.body =
+        '${execution.hasVariable("instanceAvailable") == false || instanceAvailable == false}';
+      notInstanceAvailableFlowBo.conditionExpression =
+        notInstanceAvailableFlowCondition;
+
+      // add connection from dedicatedGateway to joining joiningDedicatedGateway and add condition
+      let notDedicatedFlow = modeling.connect(
+        dedicatedGateway,
+        joiningDedicatedGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
+      let notDedicatedFlowBo = elementRegistry.get(
+        notDedicatedFlow.id
+      ).businessObject;
+      notDedicatedFlowBo.name = "yes";
+      let notDedicatedFlowCondition = bpmnFactory.create(
+        "bpmn:FormalExpression"
+      );
+      notDedicatedFlowCondition.body =
+        '${execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true}';
+      notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
+
+      let topicName = makeId(12);
+      const scriptTaskUploadToContainer = modeling.createShape(
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      scriptTaskUploadToContainer.businessObject.set(
+        "scriptFormat",
+        "javascript"
+      );
+      scriptTaskUploadToContainer.businessObject.asyncBefore = true;
+      scriptTaskUploadToContainer.businessObject.asyncAfter = true;
+      scriptTaskUploadToContainer.businessObject.set(
+        "script",
+        createDeploymentScript(
+          config.getOpenTOSCAEndpoint(),
+          getCamundaEndpoint(),
+          topicName,
+          subProcess.id,
+          CSARForServiceTask.inputParams,
+          serviceTask.id,
+          CSARForServiceTask.reconstructedVMs
+        )
+      );
+      scriptTaskUploadToContainer.businessObject.set(
+        "name",
+        "Upload to Container"
+      );
+
+      modeling.connect(joiningDedicatedGateway, scriptTaskUploadToContainer, {
+        type: "bpmn:SequenceFlow",
+      });
+
+      const scriptTaskWaitForDeployment = modeling.createShape(
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      scriptTaskWaitForDeployment.businessObject.set(
+        "scriptFormat",
+        "javascript"
+      );
+      scriptTaskWaitForDeployment.businessObject.asyncBefore = true;
+      scriptTaskWaitForDeployment.businessObject.asyncAfter = true;
+      scriptTaskWaitForDeployment.businessObject.set(
+        "script",
+        createWaitScript(subProcess.id, serviceTask.id)
+      );
+      scriptTaskWaitForDeployment.businessObject.set("name", "Deploy Service");
+      modeling.connect(
+        scriptTaskUploadToContainer,
+        scriptTaskWaitForDeployment,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
+
+      let joiningInstanceAvailablityGatewayGateway = modeling.createShape(
+        { type: "bpmn:ExclusiveGateway" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      modeling.connect(
+        scriptTaskWaitForDeployment,
+        joiningInstanceAvailablityGatewayGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
+
+      // add connection from instanceAvailableGateway to  joiningInstanceAvailableGateway and add condition
+      let instanceAvailableFlow = modeling.connect(
+        instanceAvailablityGateway,
+        joiningInstanceAvailablityGatewayGateway,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
+      let InstanceAvailableFlowBo = elementRegistry.get(
+        instanceAvailableFlow.id
+      ).businessObject;
+      InstanceAvailableFlowBo.name = "yes";
+      let InstanceAvailableFlowCondition = bpmnFactory.create(
+        "bpmn:FormalExpression"
+      );
+      InstanceAvailableFlowCondition.body =
+        '${execution.hasVariable("instanceAvailable") == true && instanceAvailable == true}';
+      InstanceAvailableFlowBo.conditionExpression =
+        InstanceAvailableFlowCondition;
+
+      const serviceTaskInvokeService = modeling.createShape(
+        { type: "bpmn:ServiceTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
+      );
+      const extensionElements = serviceTask.businessObject.extensionElements;
+      serviceTaskInvokeService.businessObject.set("name", "Invoke Service");
       if (!extensionElements) {
-        serviceTask3.businessObject.set("camunda:type", "external");
-        serviceTask3.businessObject.set("camunda:topic", topicName);
+        serviceTaskInvokeService.businessObject.set("camunda:type", "external");
+        serviceTaskInvokeService.businessObject.asyncBefore = true;
+        serviceTaskInvokeService.businessObject.asyncAfter = true;
+        serviceTaskInvokeService.businessObject.set("camunda:topic", topicName);
       } else {
         const values = extensionElements.values;
         for (let value of values) {
           if (value.inputOutput === undefined) continue;
           for (let param of value.inputOutput.inputParameters) {
             if (param.name === "url") {
-              param.value = `\${selfserviceApplicationUrl.concat(${JSON.stringify(
+              param.value = `\${${
+                serviceTask.id
+              }_selfserviceApplicationUrl.concat(${JSON.stringify(
                 param.value || ""
               )})}`;
               break;
@@ -245,26 +722,51 @@ export async function startOnDemandReplacementProcess(xml) {
           }
         }
 
+        modeling.connect(
+          joiningInstanceAvailablityGatewayGateway,
+          serviceTaskInvokeService,
+          {
+            type: "bpmn:SequenceFlow",
+          }
+        );
+
         const newExtensionElements = createElement(
           "bpmn:ExtensionElements",
           { values },
-          serviceTask2.businessObject,
+          scriptTaskWaitForDeployment.businessObject,
           bpmnFactory
         );
+
+        // remove attributes from original service task that was replaced by subprocess
         subProcess.businessObject.set("extensionElements", undefined);
-        serviceTask3.businessObject.set(
+
+        let subprocessInputOutput = getCamundaInputOutput(
+          subProcess.businessObject,
+          bpmnFactory
+        );
+        subprocessInputOutput.inputParameters.push(
+          bpmnFactory.create("camunda:InputParameter", {
+            name: "dedicatedHosting",
+            value: String(CSARForServiceTask.dedicatedHosting) ?? "false",
+          })
+        );
+
+        serviceTaskInvokeService.businessObject.set(
           "extensionElements",
           newExtensionElements
         );
       }
-      modeling.appendShape(
-        serviceTask3,
-        {
-          type: "bpmn:EndEvent",
-        },
-        { x: 1000, y: 200 },
-        subProcess
+      let endEvent = modeling.createShape(
+        { type: "bpmn:EndEvent" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
+      modeling.connect(serviceTaskInvokeService, endEvent, {
+        type: "bpmn:SequenceFlow",
+      });
+
+      layout(modeling, elementRegistry, rootElement);
     }
   }
 

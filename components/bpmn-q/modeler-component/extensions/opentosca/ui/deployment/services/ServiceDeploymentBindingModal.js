@@ -27,28 +27,32 @@ export default function ServiceDeploymentBindingModal({ onClose, initValues }) {
     let csar = initValues[i];
     let serviceTaskIds = csar.serviceTaskIds;
     for (let j = 0; j < serviceTaskIds.length; j++) {
-      if (csar.type === "pull") {
-        bindByPullTasks.push(
-          <li key={serviceTaskIds[j]} className="spaceUnderSmall">
-            {serviceTaskIds[j]}
-          </li>
-        );
-        continue;
-      }
+      if (!csar.onDemand) {
+        if (csar.type === "pull") {
+          bindByPullTasks.push(
+            <li key={serviceTaskIds[j]} className="spaceUnderSmall">
+              {serviceTaskIds[j]}
+            </li>
+          );
+          continue;
+        }
 
-      if (csar.type === "push") {
-        bindByPushTasks.push(
-          <li key={serviceTaskIds[j]} className="spaceUnderSmall">
-            {serviceTaskIds[j]}
-          </li>
-        );
-        continue;
-      }
+        if (csar.type === "push") {
+          bindByPushTasks.push(
+            <li key={serviceTaskIds[j]} className="spaceUnderSmall">
+              {serviceTaskIds[j]}
+            </li>
+          );
+          continue;
+        }
 
-      console.error(
-        "Found task that does not use the push or pull pattern: %s",
-        serviceTaskIds[j]
-      );
+        console.error(
+          "Found task that does not use the push or pull pattern: %s",
+          serviceTaskIds[j]
+        );
+      } else {
+        console.log("CSAR is on-demand and will be bound later: ", csar);
+      }
     }
   }
 
@@ -57,9 +61,15 @@ export default function ServiceDeploymentBindingModal({ onClose, initValues }) {
 
   const onFinished = () => onClose({ next: true, csarList: initValues });
 
+  // skip dialog if there is nothing to bind
+  if (!bindByPull && !bindByPush) {
+    console.log("Nothing to bind. Skipping dialog...");
+    onFinished();
+  }
+
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (4/4)</Title>
+      <Title>Service Deployment (3/4)</Title>
 
       <Body>
         <h3 className="spaceUnder">
