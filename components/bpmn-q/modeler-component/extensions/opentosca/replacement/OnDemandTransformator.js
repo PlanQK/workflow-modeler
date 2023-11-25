@@ -210,7 +210,7 @@ function createCheckForEquivalencyScript(taskId) {
   return `
 import groovy.json.*
 def url = execution.getVariable("completeModelUrl_" + "${taskId}");
-url = url + "topologytemplate/checkforequivalentcsars"
+url = url + "topologytemplate/checkforequivalentcsars?includeSelf=true"
 
 try {
    def post = new URL(url).openConnection();
