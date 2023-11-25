@@ -21,7 +21,6 @@ import {
 import { getCamundaInputOutput } from "../../../editor/util/ModellingUtilities";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import { deletePolicies } from "../utilities/Utilities";
-import { getPropertiesToCopy } from "../../../editor/util/TransformationUtilities";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -408,7 +407,6 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
       });
-      modeling.updateProperties(subProcess, getPropertiesToCopy(serviceTask));
 
       subProcess.businessObject.set("opentosca:onDemandDeployment", true);
       subProcess.businessObject.set(
