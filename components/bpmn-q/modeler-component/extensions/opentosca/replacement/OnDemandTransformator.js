@@ -384,10 +384,6 @@ export async function startOnDemandReplacementProcess(xml, csars) {
     serviceTaskIds
   );
 
-  for (const aaa of elementRegistry.getAll()) {
-    console.log(aaa);
-  }
-
   for (const serviceTaskId of serviceTaskIds) {
     let serviceTask = elementRegistry.get(serviceTaskId);
 
@@ -412,7 +408,6 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
       });
-      subProcess = elementRegistry.get(subProcess.id);
       modeling.updateProperties(subProcess, getPropertiesToCopy(serviceTask));
 
       subProcess.businessObject.set("opentosca:onDemandDeployment", true);
