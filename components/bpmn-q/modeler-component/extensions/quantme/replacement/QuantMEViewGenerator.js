@@ -25,8 +25,10 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { replaceDataObjects } from "./dataObjects/QuantMEDataObjectsHandler";
+import * as openToscaConsts from "../../opentosca/Constants";
 import { filterRedundantWaypoints } from "diagram-js/lib/layout/LayoutUtil";
-
+import { createTempModeler } from "../../../editor/ModelerHandler";
+import { createLayoutedShape } from "../../../editor/util/camunda-utils/ElementUtil";
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
  *
@@ -87,12 +89,28 @@ export async function createQuantMEView(
     ) {
       console.log(replacementConstruct)
       console.log(elementRegistry.get(replacementConstruct.task.id));
+
+      let hardwareSelectionFragment = await getHardwareSelectionFragment(elementRegistry.get(replacementConstruct.task.id).businessObject);
+      console.log(hardwareSelectionFragment)
       let element = bpmnReplace.replaceElement(elementRegistry.get(replacementConstruct.task.id), {
         type: "bpmn:SubProcess",
       });
+
       modeling.updateProperties(element, {
         "quantmeTaskType": replacementConstruct.task.$type,
       });
+
+      for(let child of element.children) {
+        if(child.type.startsWith("quantme:")){
+          
+        let element = bpmnReplace.replaceElement(elementRegistry.get(child.id), {
+          type: "bpmn:Task",
+        });
+        modeling.updateProperties(element, {
+          "quantmeTaskType": child.type,
+        });
+      }
+      }
       console.log(elementRegistry.get(element.id));
     }
     if (
@@ -104,6 +122,13 @@ export async function createQuantMEView(
       modeling.updateProperties(element, {
         "quantmeTaskType": replacementConstruct.task.$type,
       });
+    }
+
+    if (
+      openToscaConsts.POLICIES.includes(replacementConstruct.task.$type)
+    ) {
+      
+      modeling.removeShape(element);
     }
     
   }
@@ -234,4 +259,61 @@ export function getSubProcesses(process, elementRegistry) {
     }
   }
   return quantmeTasks;
+}
+
+async function getHardwareSelectionFragment(subprocess) {
+  console.log("Extracting workflow fragment from subprocess: ", subprocess);
+
+  // create new modeler to extract the XML of the workflow fragment
+  let modeler = createTempModeler();
+  let elementRegistry = modeler.get("elementRegistry");
+  let bpmnReplace = modeler.get("bpmnReplace");
+  let modeling = modeler.get("modeling");
+
+  // initialize the modeler
+  function initializeModeler() {
+    return new Promise((resolve) => {
+      modeler.createDiagram((err, successResponse) => {
+        resolve(successResponse);
+      });
+    });
+  }
+
+  await initializeModeler();
+
+  // retrieve root element to add extracted workflow fragment
+  let definitions = modeler.getDefinitions();
+  let rootElement = getRootProcess(definitions);
+  let rootElementBo = elementRegistry.get(rootElement.id);
+
+  // add start and end event to the new process
+  let startEvent = bpmnReplace.replaceElement(
+    elementRegistry.get(rootElement.flowElements[0].id),
+    { type: "bpmn:StartEvent" }
+  );
+  let endEvent = createLayoutedShape(
+    modeling,
+    { type: "bpmn:EndEvent" },
+    { x: 50, y: 50 },
+    rootElementBo,
+    {}
+  );
+
+  // insert given subprocess and connect to start and end event
+  let insertedSubprocess = insertShape(
+    definitions,
+    rootElementBo,
+    subprocess,
+    {},
+    false,
+    modeler
+  ).element;
+  modeling.connect(startEvent, insertedSubprocess, {
+    type: "bpmn:SequenceFlow",
+  });
+  modeling.connect(insertedSubprocess, endEvent, { type: "bpmn:SequenceFlow" });
+
+  // export xml and remove line breaks
+  let xml = await getXml(modeler);
+  return xml.replace(/(\r\n|\n|\r)/gm, "");
 }
