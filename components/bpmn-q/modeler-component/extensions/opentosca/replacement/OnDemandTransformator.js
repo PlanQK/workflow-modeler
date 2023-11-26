@@ -77,7 +77,7 @@ ${fetchMethod}
 
 var createCsarResponse = fetch('POST', "${opentoscaEndpoint}", JSON.stringify({
     enrich: 'false',
-    name: urlParts[urlParts.length - 1] + ".csar",
+    name: urlParts[urlParts.length - 2] + ".csar",
     url: execution.getVariable("completeModelUrl_" + "${taskId}") + "?csar"
 }))
 
@@ -97,7 +97,7 @@ for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)) {
 }
 java.lang.System.out.println("Input parameters after update: " + JSON.stringify(inputParams));
 
-var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + urlParts[urlParts.length - 1] + ".csar/servicetemplates"))
+var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + urlParts[urlParts.length - 2] + ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
 var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
 var buildPlanUrl = buildPlans.plans[0]._links.self.href
