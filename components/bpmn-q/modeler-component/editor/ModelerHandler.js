@@ -14,7 +14,7 @@ import {
 import ModelerRulesModule from "./rules/";
 import LintModule from "bpmn-js-bpmnlint";
 import bpmnlintConfig from "../../.bpmnlintrc";
-import TokenSimulationModule from 'bpmn-js-token-simulation';
+import TokenSimulationModule from "bpmn-js-token-simulation";
 
 import Clipboard from "diagram-js/lib/features/clipboard/Clipboard";
 let camundaModdleDescriptor = require("camunda-bpmn-moddle/resources/camunda.json");
@@ -143,7 +143,7 @@ function getModules() {
     LintModule,
     clipboardModule,
     ModelerRulesModule,
-    TokenSimulationModule
+    TokenSimulationModule,
   ].concat(pluginModules);
 
   console.log("\n Additional modules of the modeler: ");

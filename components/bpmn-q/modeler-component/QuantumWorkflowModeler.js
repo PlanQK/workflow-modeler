@@ -8,7 +8,7 @@ import "./editor/ui/notifications/Notification.css";
 import "./editor/resources/styling/camunda-styles/style.css";
 import "bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css";
 import "./modeler.css";
-import './editor/resources/styling/bpmn-js-token-simulation.css';
+import "./editor/resources/styling/bpmn-js-token-simulation.css";
 
 import React from "react";
 import { createRoot } from "react-dom/client";
