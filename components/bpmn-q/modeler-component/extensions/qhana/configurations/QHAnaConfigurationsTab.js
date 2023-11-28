@@ -31,6 +31,7 @@ export default function QHAnaConfigurationsTab() {
             <td align="right">List Plugins Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="listPluginsEndpoint"
                 value={listPluginsEndpoint}
@@ -42,6 +43,7 @@ export default function QHAnaConfigurationsTab() {
             <td align="right">Get Plugin Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="getPluginEndpoint"
                 value={getPluginEndpoint}

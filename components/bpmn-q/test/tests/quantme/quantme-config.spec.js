@@ -17,9 +17,6 @@ describe("Test QuantME ConfigManager", function () {
         {
           name: "quantme",
           config: {
-            quantmeDataConfigurationsEndpoint: "http://test:8100/data-objects",
-            opentoscaEndpoint: "http://test:1337/csars",
-            wineryEndpoint: "http://test:8093/winery",
             nisqAnalyzerEndpoint: "http://test:8098/nisq-analyzer",
             transformationFrameworkEndpoint: "http://test:8888",
             qiskitRuntimeHandlerEndpoint: "http://test:8889",
@@ -29,20 +26,11 @@ describe("Test QuantME ConfigManager", function () {
             githubRepositoryName: "Example-Repo",
             githubUsername: "userName",
             githubRepositoryPath: "path/to/repo",
-            hybridRuntimeProvenance: true,
+            hybridRuntimeProvenance: "true",
           },
         },
       ]);
 
-      expect(quantmeConfig.getQuantMEDataConfigurationsEndpoint()).to.equal(
-        "http://test:8100/data-objects"
-      );
-      expect(quantmeConfig.getOpenTOSCAEndpoint()).to.equal(
-        "http://test:1337/csars"
-      );
-      expect(quantmeConfig.getWineryEndpoint()).to.equal(
-        "http://test:8093/winery"
-      );
       expect(quantmeConfig.getNisqAnalyzerEndpoint()).to.equal(
         "http://test:8098/nisq-analyzer"
       );

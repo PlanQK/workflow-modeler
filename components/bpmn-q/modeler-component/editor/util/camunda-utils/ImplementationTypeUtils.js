@@ -43,15 +43,6 @@ export function isExternalCapable(element) {
 }
 
 /**
- * Returns 'true'
- *
- * @return {boolean} true
- */
-export function isDeploymentCapable() {
-  return true;
-}
-
-/**
  * getServiceTaskLikeBusinessObject - Get a 'camunda:ServiceTaskLike' business object.
  *
  * If the given element is not a 'camunda:ServiceTaskLike', then 'false'
@@ -77,76 +68,6 @@ export function getServiceTaskLikeBusinessObject(element) {
 
   return isServiceTaskLike(element) && getBusinessObject(element);
 }
-
-// /**
-//  * Returns the implementation type of the given element.
-//  *
-//  * Possible implementation types are:
-//  * - dmn
-//  * - connector
-//  * - external
-//  * - class
-//  * - expression
-//  * - delegateExpression
-//  * - script
-//  * - or undefined, when no matching implementation type is found
-//  *
-//  * @param  {djs.model.Base} element
-//  *
-//  * @return {String} the implementation type
-//  */
-// export function getImplementationType(element) {
-//
-//   const businessObject = (
-//     getListenerBusinessObject(element) ||
-//     getServiceTaskLikeBusinessObject(element)
-//   );
-//
-//   if (!businessObject) {
-//     return;
-//   }
-//
-//   if (isDmnCapable(businessObject)) {
-//     const decisionRef = businessObject.get('camunda:decisionRef');
-//     if (typeof decisionRef !== 'undefined') {
-//       return 'dmn';
-//     }
-//   }
-//
-//   if (isServiceTaskLike(businessObject)) {
-//     const connectors = getExtensionElementsList(businessObject, 'camunda:Connector');
-//     if (connectors.length) {
-//       return 'connector';
-//     }
-//   }
-//
-//   if (isExternalCapable(businessObject)) {
-//     const type = businessObject.get('camunda:type');
-//     if (type === 'external') {
-//       return 'external';
-//     }
-//   }
-//
-//   const cls = businessObject.get('camunda:class');
-//   if (typeof cls !== 'undefined') {
-//     return 'class';
-//   }
-//
-//   const expression = businessObject.get('camunda:expression');
-//   if (typeof expression !== 'undefined') {
-//     return 'expression';
-//   }
-//
-//   const delegateExpression = businessObject.get('camunda:delegateExpression');
-//   if (typeof delegateExpression !== 'undefined') {
-//     return 'delegateExpression';
-//   }
-//
-//   const script = businessObject.get('script');
-//   if (typeof script !== 'undefined') {
-//     return 'script';
-//   }
-// }
 
 export function isListener(element) {
   return this.isTaskListener(element) || this.isExecutionListener(element);

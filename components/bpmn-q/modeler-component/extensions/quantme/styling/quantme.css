@@ -75,17 +75,6 @@
   float: left;
 }
 
-.qwm .app-icon-service-deployment:before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background-size: contain;
-  background-image: url("../resources/service-deployment-icon.png");
-  background-repeat: no-repeat;
-  display: inline-block;
-  float: left;
-}
-
 .qwm .indent {
   margin-left: 5px;
 }
@@ -479,4 +468,64 @@
   .entry[data-id="replace-by-more-options"]
   .djs-popup-label {
   margin-top: -1px; /* Adjust the value as per your requirements */
+}
+
+.quantum-circuit-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/quantum-circuit-data-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.result-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/result-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.evaluation-result-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/evaluation-result-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.parametrization-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/parametrization-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.initial-state-object-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/initial-state-object.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .quantme-tasks-icon-error-correction:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/ErrorCorrectionTask_Icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
 }

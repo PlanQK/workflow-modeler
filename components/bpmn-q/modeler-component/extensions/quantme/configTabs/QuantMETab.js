@@ -9,20 +9,11 @@ import * as config from "../framework-config/config-manager";
  * @return {JSX.Element} The tab as a React component
  * @constructor
  */
-export default function BPMNConfigTab() {
-  const [dataConfigurationsEndpoint, setDataConfigurationsEndpoint] = useState(
-    config.getQuantMEDataConfigurationsEndpoint()
-  );
-
-  const [opentoscaEndpoint, setOpentoscaEndpoint] = useState(
-    config.getOpenTOSCAEndpoint()
-  );
-  const [wineryEndpoint, setWineryEndpoint] = useState(
-    config.getWineryEndpoint()
-  );
+export default function QuantMETab() {
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(
     config.getNisqAnalyzerEndpoint()
   );
+  const [qprovEndpoint, setQProvEndpoint] = useState(config.getQProvEndpoint());
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] =
     useState(config.getQiskitRuntimeHandlerEndpoint());
   const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(
@@ -39,7 +30,6 @@ export default function BPMNConfigTab() {
   const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(
     config.getScriptSplitterThreshold()
   );
-  let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance;
 
   const modeler = getModeler();
 
@@ -83,25 +73,17 @@ export default function BPMNConfigTab() {
       },
     });
   }
-  if (!editorActions._actions.hasOwnProperty("opentoscaEndpointChanged")) {
-    editorActions.register({
-      opentoscaEndpointChanged: function (opentoscaEndpoint) {
-        self.modeler.config.opentoscaEndpoint = opentoscaEndpoint;
-      },
-    });
-  }
-  if (!editorActions._actions.hasOwnProperty("wineryEndpointChanged")) {
-    editorActions.register({
-      wineryEndpointChanged: function (wineryEndpoint) {
-        self.modeler.config.wineryEndpoint = wineryEndpoint;
-        eventBus.fire("config.updated", self.modeler.config);
-      },
-    });
-  }
   if (!editorActions._actions.hasOwnProperty("nisqAnalyzerEndpointChanged")) {
     editorActions.register({
       nisqAnalyzerEndpointChanged: function (nisqAnalyzerEndpoint) {
         self.modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
+      },
+    });
+  }
+  if (!editorActions._actions.hasOwnProperty("qprovEndpointChanged")) {
+    editorActions.register({
+      qprovEndpointChanged: function (qprovEndpoint) {
+        self.modeler.config.qprovEndpoint = qprovEndpoint;
       },
     });
   }
@@ -138,10 +120,7 @@ export default function BPMNConfigTab() {
   }
 
   // save changed config entries on close
-  BPMNConfigTab.prototype.onClose = () => {
-    modeler.config.dataConfigurationsEndpoint = dataConfigurationsEndpoint;
-    modeler.config.opentoscaEndpoint = opentoscaEndpoint;
-    modeler.config.wineryEndpoint = wineryEndpoint;
+  QuantMETab.prototype.onClose = () => {
     modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
     modeler.config.transformationFrameworkEndpoint =
       transformationFrameworkEndpoint;
@@ -150,9 +129,7 @@ export default function BPMNConfigTab() {
     modeler.config.qiskitRuntimeHandlerEndpoint = qiskitRuntimeHandlerEndpoint;
     modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
     modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
-    config.setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint);
-    config.setOpenTOSCAEndpoint(opentoscaEndpoint);
-    config.setWineryEndpoint(wineryEndpoint);
+    modeler.config.qprovEndpoint = qprovEndpoint;
     config.setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint);
     config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
     config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
@@ -160,62 +137,19 @@ export default function BPMNConfigTab() {
     config.setQiskitRuntimeHandlerEndpoint(qiskitRuntimeHandlerEndpoint);
     config.setAWSRuntimeHandlerEndpoint(awsRuntimeHandlerEndpoint);
     config.setHybridRuntimeProvenance(hybridRuntimeProvenance);
+    config.setQProvEndpoint(qprovEndpoint);
   };
 
   return (
     <>
-      <h3>QuantME data configuration endpoint:</h3>
-      <table>
-        <tbody>
-          <tr className="spaceUnder">
-            <td align="right">Data Configurations Endpoint</td>
-            <td align="left">
-              <input
-                type="string"
-                name="dataConfigurationsEndpoint"
-                value={dataConfigurationsEndpoint}
-                onChange={(event) =>
-                  setDataConfigurationsEndpoint(event.target.value)
-                }
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h3>OpenTOSCA</h3>
-      <table>
-        <tbody>
-          <tr className="spaceUnder">
-            <td align="right">OpenTOSCA Endpoint:</td>
-            <td align="left">
-              <input
-                type="string"
-                name="opentoscaEndpoint"
-                value={opentoscaEndpoint}
-                onChange={(event) => setOpentoscaEndpoint(event.target.value)}
-              />
-            </td>
-          </tr>
-          <tr className="spaceUnder">
-            <td align="right">Winery Endpoint:</td>
-            <td align="left">
-              <input
-                type="string"
-                name="wineryEndpoint"
-                value={wineryEndpoint}
-                onChange={(event) => setWineryEndpoint(event.target.value)}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h3>BPMN related configurations:</h3>
+      <h3>BPMN-related Configurations:</h3>
       <table>
         <tbody>
           <tr className="spaceUnder">
             <td align="right">QuantME Framework Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="transformationFrameworkEndpoint"
                 value={transformationFrameworkEndpoint}
@@ -234,6 +168,7 @@ export default function BPMNConfigTab() {
             <td align="right">NISQ Analyzer Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="nisqAnalyzerEndpoint"
                 value={nisqAnalyzerEndpoint}
@@ -245,13 +180,31 @@ export default function BPMNConfigTab() {
           </tr>
         </tbody>
       </table>
-      <h3>Workflow generation:</h3>
+      <h3>QProv</h3>
+      <table>
+        <tbody>
+          <tr className="spaceUnder">
+            <td align="right">QProv Endpoint:</td>
+            <td align="left">
+              <input
+                className="qwm-input"
+                type="string"
+                name="qprovEndpoint"
+                value={qprovEndpoint}
+                onChange={(event) => setQProvEndpoint(event.target.value)}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>Workflow Generation:</h3>
       <table>
         <tbody>
           <tr className="spaceUnder">
             <td align="right">Script Splitter Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="scriptSplitterEndpoint"
                 value={scriptSplitterEndpoint}
@@ -265,6 +218,7 @@ export default function BPMNConfigTab() {
             <td align="right">Script Splitter Threshold</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="int"
                 name="scriptSplitterThreshold"
                 value={scriptSplitterThreshold}
@@ -283,6 +237,7 @@ export default function BPMNConfigTab() {
             <td align="right">Qiskit Runtime Handler Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="qiskitRuntimeHandlerEndpoint"
                 value={qiskitRuntimeHandlerEndpoint}
@@ -296,6 +251,7 @@ export default function BPMNConfigTab() {
             <td align="right">AWS Runtime Handler Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="awsRuntimeHandlerEndpoint"
                 value={awsRuntimeHandlerEndpoint}
@@ -314,13 +270,12 @@ export default function BPMNConfigTab() {
             <td align="right">Retrieve Intermediate Results:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="checkbox"
                 name="hybridRuntimeProvenance"
-                checked={hybridRuntimeProvenanceBoolean}
+                checked={hybridRuntimeProvenance}
                 onChange={() => {
-                  hybridRuntimeProvenanceBoolean =
-                    !hybridRuntimeProvenanceBoolean;
-                  setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);
+                  setHybridRuntimeProvenance(!hybridRuntimeProvenance);
                 }}
               />
             </td>
@@ -331,11 +286,12 @@ export default function BPMNConfigTab() {
   );
 }
 
-BPMNConfigTab.prototype.config = () => {
+QuantMETab.prototype.config = () => {
   const modeler = getModeler();
 
   modeler.config.transformationFrameworkEndpoint =
     config.getTransformationFrameworkEndpoint();
   modeler.config.scriptSplitterEndpoint = config.getScriptSplitterEndpoint();
   modeler.config.scriptSplitterThreshold = config.getScriptSplitterThreshold();
+  modeler.config.qprovEndpoint = config.getQProvEndpoint();
 };

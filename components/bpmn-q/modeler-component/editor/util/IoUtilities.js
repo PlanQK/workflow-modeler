@@ -15,14 +15,14 @@ let FormData = require("form-data");
 // workflow with a start event to use as template for new workflows
 const NEW_DIAGRAM_XML =
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
-  '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn">\n' +
-  '  <bpmn2:process id="Process_1" isExecutable="false">\n' +
-  '    <bpmn2:startEvent id="StartEvent_1"/>\n' +
+  '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">\n' +
+  '  <bpmn2:process id="Process_1" isExecutable="true">\n' +
+  '    <bpmn2:startEvent id="StartEvent_1" />\n' +
   "  </bpmn2:process>\n" +
   '  <bpmndi:BPMNDiagram id="BPMNDiagram_1">\n' +
   '    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">\n' +
   '      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">\n' +
-  '        <dc:Bounds height="36.0" width="36.0" x="412.0" y="240.0"/>\n' +
+  '        <dc:Bounds x="412" y="240" width="36" height="36" />\n' +
   "      </bpmndi:BPMNShape>\n" +
   "    </bpmndi:BPMNPlane>\n" +
   "  </bpmndi:BPMNDiagram>\n" +
@@ -72,8 +72,9 @@ export async function saveModelerAsLocalFile(
     fileFormat === saveFileFormats.ALL
   ) {
     if (openWindow) {
-      await openFileDialog(xml, fileName, saveFileFormats.BPMN);
+      await openFileDialog(modeler, xml, fileName, saveFileFormats.BPMN);
     } else {
+      modeler.oldXml = xml;
       await saveXmlAsLocalFile(xml, fileName);
     }
   }
@@ -276,6 +277,9 @@ export async function handleTransformedWorkflow(workflowXml) {
       case transformedWorkflowHandlers.SAVE_AS_FILE: // save workflow to local file system
         await saveXmlAsLocalFile(workflowXml, fileName);
         break;
+      case transformedWorkflowHandlers.INLINE:
+        await loadDiagram(workflowXml, getModeler());
+        break;
       default:
         console.log(`Invalid transformed workflow handler ID ${handlerId}`);
     }
@@ -346,7 +350,7 @@ export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
       fileFormat === saveFileFormats.ALL ||
       fileFormat === saveFileFormats.SVG
     ) {
-      openFileDialog(svg, fileName, saveFileFormats.SVG);
+      openFileDialog(modeler, svg, fileName, saveFileFormats.SVG);
     }
     if (
       fileFormat === saveFileFormats.ALL ||
@@ -378,7 +382,7 @@ function downloadPng(pngDataUrl, fileName, fileFormat) {
   openFileUrlDialog(pngDataUrl, fileName, fileFormat);
 }
 
-async function openFileDialog(content, fileName, fileFormat) {
+async function openFileDialog(modeler, content, fileName, fileFormat) {
   let suggestedName = fileName;
   if (suggestedName.includes(".bpmn")) {
     suggestedName = fileName.split(".bpmn")[0];
@@ -398,6 +402,12 @@ async function openFileDialog(content, fileName, fileFormat) {
     ],
   });
   writeFile(fileHandle, content);
+  if (
+    fileFormat === saveFileFormats.BPMN ||
+    fileFormat === saveFileFormats.ALL
+  ) {
+    modeler.oldXml = content;
+  }
 }
 
 async function openFileUrlDialog(content, fileName, fileFormat) {

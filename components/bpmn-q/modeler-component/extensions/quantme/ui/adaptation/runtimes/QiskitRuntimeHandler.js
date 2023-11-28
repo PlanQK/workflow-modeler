@@ -18,7 +18,7 @@ import {
 import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion,
-} from "../../../deployment/OpenTOSCAUtils";
+} from "../../../../opentosca/deployment/OpenTOSCAUtils";
 import {
   getInvalidModelingConstruct,
   getRequiredPrograms,

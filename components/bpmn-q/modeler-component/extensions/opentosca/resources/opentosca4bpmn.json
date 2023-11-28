@@ -1,0 +1,88 @@
+{
+  "name": "OpenTOSCA4BPMN",
+  "uri": "https://github.com/UST-QuAntiL/OpenTOSCA",
+  "prefix": "opentosca",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "ServiceTask",
+      "extends": ["bpmn:ServiceTask"],
+      "properties": [
+        {
+          "name": "deploymentModelUrl",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "connectorUrl",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Task",
+      "extends": ["bpmn:Task"],
+      "properties": [
+        {
+          "name": "onDemand",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "CloudDeploymentModelPolicy",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": [
+        {
+          "name": "cloudType",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "OnDemandPolicy",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": [
+        {
+          "name": "onDemand",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "DedicatedHostingPolicy",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": [
+        {
+          "name": "dedicatedHosting",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "LocationPolicy",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": [
+        {
+          "name": "location",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Policy",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}

@@ -2,4 +2,6 @@ node_modules/*
 public/*
 !public/index.html
 !public/src
+!public/env.js
+!public/env.js.template
 bpmnlint-plugin-custom/node_modules/*

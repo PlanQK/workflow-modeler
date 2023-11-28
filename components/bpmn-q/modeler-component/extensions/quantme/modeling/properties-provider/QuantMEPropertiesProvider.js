@@ -1,6 +1,4 @@
-import { is } from "bpmn-js/lib/util/ModelUtil";
 import * as consts from "../../Constants";
-import * as dataConsts from "../../../data-extension/Constants";
 import {
   DataPreparationTaskProperties,
   HardwareSelectionSubprocessProperties,
@@ -15,15 +13,16 @@ import {
   VariationalQuantumAlgorithmTaskEntries,
   WarmStartingTaskEntries,
   CuttingResultCombinationTaskEntries,
+  QuantumCircuitObjectEntries,
+  ResultObjectEntries,
+  InitialStateObjectEntries,
+  ParametrizationObjectEntries,
+  EvaluationResultObjectEntries,
+  ErrorCorrectionTaskEntries,
 } from "./QuantMETaskProperties";
-import { ImplementationProps } from "./service-task/ImplementationProps";
-import { Group } from "@bpmn-io/properties-panel";
-import { getWineryEndpoint } from "../../framework-config/config-manager";
-import * as configConsts from "../../../../editor/configurations/Constants";
-import { instance as dataObjectConfigs } from "../../configurations/DataObjectConfigurations";
-import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
+import { DeploymentModelProps } from "./DeploymentModelProps";
 
-const LOW_PRIORITY = 500;
+const LOW_PRIORITY = 600;
 
 /**
  * A provider with a `#getGroups(element)` method that exposes groups for a diagram element.
@@ -31,13 +30,12 @@ const LOW_PRIORITY = 500;
  * @param propertiesPanel
  * @param injector
  * @param {Function} translate
- * @param eventBus
- * @param bpmnFactory
  */
 export default function QuantMEPropertiesProvider(
   propertiesPanel,
   injector,
-  translate
+  translate,
+  modeling
 ) {
   /**
    * Return the groups provided for the given element.
@@ -59,32 +57,7 @@ export default function QuantMEPropertiesProvider(
       // add properties of QuantME tasks to panel
       if (element.type && element.type.startsWith("quantme:")) {
         groups.unshift(createQuantMEGroup(element, translate));
-      }
-
-      // update ServiceTasks with the deployment extension
-      if (element.type && element.type === "bpmn:ServiceTask") {
-        groups[2] = ImplementationGroup(element, injector, getWineryEndpoint());
-      }
-
-      // add properties group for displaying the properties defined by the configurations if a configuration
-      // is applied to the current element
-      if (is(element, dataConsts.DATA_MAP_OBJECT)) {
-        const selectedConfiguration =
-          dataObjectConfigs().getQuantMEDataConfiguration(
-            element.businessObject.get(configConsts.SELECT_CONFIGURATIONS_ID)
-          );
-        if (selectedConfiguration) {
-          groups.splice(
-            1,
-            0,
-            createQuantMEDataGroup(
-              element,
-              injector,
-              translate,
-              selectedConfiguration
-            )
-          );
-        }
+        groups.unshift(DeploymentModelGroup(element, injector, modeling));
       }
       return groups;
     };
@@ -97,6 +70,7 @@ QuantMEPropertiesProvider.$inject = [
   "propertiesPanel",
   "injector",
   "translate",
+  "modeling",
 ];
 
 /**
@@ -114,32 +88,6 @@ function createQuantMEGroup(element, translate) {
     label: translate("Details"),
     entries: QuantMEProps(element),
   };
-}
-
-/**
- * Properties group to show customized implementation options entry for service tasks.
- *
- * @param element The element to show the properties for.
- * @param injector The injector of the bpmn-js modeler
- * @param wineryEndpoint The winery endpoint of the QuantME plugin
- * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
- * @constructor
- */
-function ImplementationGroup(element, injector, wineryEndpoint) {
-  const translate = injector.get("translate");
-
-  const group = {
-    label: translate("Implementation"),
-    id: "CamundaPlatform__Implementation",
-    component: Group,
-    entries: [...ImplementationProps({ element, wineryEndpoint, translate })],
-  };
-
-  if (group.entries.length) {
-    return group;
-  }
-
-  return null;
 }
 
 /**
@@ -183,29 +131,39 @@ function QuantMEProps(element) {
       return WarmStartingTaskEntries(element);
     case consts.CUTTING_RESULT_COMBINATION_TASK:
       return CuttingResultCombinationTaskEntries(element);
+    case consts.ERROR_CORRECTION_TASK:
+      return ErrorCorrectionTaskEntries(element);
+
+    case consts.QUANTUM_CIRCUIT_OBJECT:
+      return QuantumCircuitObjectEntries(element);
+    case consts.RESULT_OBJECT:
+      return ResultObjectEntries(element);
+    case consts.EVALUATION_RESULT_OBJECT:
+      return EvaluationResultObjectEntries(element);
+    case consts.PARAMETRIZATION_OBJECT:
+      return ParametrizationObjectEntries(element);
+    case consts.INITIAL_STATE_OBJECT:
+      return InitialStateObjectEntries(element);
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }
 }
 
 /**
- * Create properties group to display the QuantME configurations applied to the DataMapObject
+ * Properties group showing options to define deployment models for service tasks.
  *
- * @param element The given DataMapObject
- * @param injector The injector of the bpmn-js modeler.
- * @param translate The translate function.
- * @param configuration The configuration applied to the given DataMapObject
- * @return {{entries: (*), id: string, label}}
+ * @param element The element to show the properties for.
+ * @param injector The injector of the bpmn-js modeler
+ * @param wineryEndpoint The winery endpoint of the QuantME plugin
+ * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
+ * @constructor
  */
-function createQuantMEDataGroup(element, injector, translate, configuration) {
+function DeploymentModelGroup(element, injector, modeling) {
+  const translate = injector.get("translate");
+
   return {
-    id: "QuantMEDataGroupProperties",
-    label: translate(configuration.groupLabel || "Data Properties"),
-    entries: ConfigurationsProperties(
-      element,
-      injector,
-      translate,
-      configuration
-    ),
+    id: "quantmeDeploymentModelDetails",
+    label: translate("Deployment Models"),
+    entries: DeploymentModelProps({ element, modeling }),
   };
 }

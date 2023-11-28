@@ -9,21 +9,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getQuantMETasks } from "../QuantMETransformator";
 import {
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
-  POLL_FOR_TRANSFORMATION_SCRIPT,
   RETRIEVE_FRAGMENT_SCRIPT_PREFIX,
   RETRIEVE_FRAGMENT_SCRIPT_SUFFIX,
   SELECT_ON_QUEUE_SIZE_SCRIPT,
 } from "./HardwareSelectionScripts";
 import * as consts from "../../Constants";
 import { addExtensionElements } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import {
-  createTempModelerFromXml,
-  createModeler,
-} from "../../../../editor/ModelerHandler";
+import { createTempModeler } from "../../../../editor/ModelerHandler";
 import {
   getPropertiesToCopy,
   insertShape,
@@ -34,6 +29,8 @@ import {
   getRootProcess,
 } from "../../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../../editor/util/IoUtilities";
+import { createLayoutedShape } from "../../../../editor/util/camunda-utils/ElementUtil";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
@@ -76,7 +73,8 @@ export async function replaceHardwareSelectionSubprocess(
   bo.flowElements = [];
 
   // add start event for the new subprocess
-  let startEvent = modeling.createShape(
+  let startEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:StartEvent" },
     { x: 50, y: 50 },
     element,
@@ -86,7 +84,8 @@ export async function replaceHardwareSelectionSubprocess(
   startEventBo.name = "Start Hardware Selection Subprocess";
 
   // add gateway to avoid multiple hardware selections for the same circuit
-  let splittingGateway = modeling.createShape(
+  let splittingGateway = createLayoutedShape(
+    modeling,
     { type: "bpmn:ExclusiveGateway" },
     { x: 50, y: 50 },
     element,
@@ -101,7 +100,8 @@ export async function replaceHardwareSelectionSubprocess(
   modeling.connect(startEvent, splittingGateway, { type: "bpmn:SequenceFlow" });
 
   // add task to invoke the NISQ Analyzer and connect it
-  let invokeHardwareSelection = modeling.createShape(
+  let invokeHardwareSelection = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     element,
@@ -129,7 +129,7 @@ export async function replaceHardwareSelectionSubprocess(
   );
   invokeHardwareSelectionInOut.inputParameters.push(
     bpmnFactory.create("camunda:InputParameter", {
-      name: "nisq_analyzer_endpoint",
+      name: "nisq_analyzer_endpoint_qpu_selection",
       value: nisqAnalyzerEndpoint + consts.NISQ_ANALYZER_QPU_SELECTION_PATH,
     })
   );
@@ -180,7 +180,8 @@ export async function replaceHardwareSelectionSubprocess(
     "Adding extracted workflow fragment XML: ",
     hardwareSelectionFragment
   );
-  let retrieveFragment = modeling.createShape(
+  let retrieveFragment = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     element,
@@ -201,7 +202,8 @@ export async function replaceHardwareSelectionSubprocess(
   });
 
   // add task implementing the transformation of the QuantME modeling constructs within the QuantumHardwareSelectionSubprocess
-  let invokeTransformation = modeling.createShape(
+  let invokeTransformation = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     element,
@@ -236,32 +238,15 @@ export async function replaceHardwareSelectionSubprocess(
     })
   );
 
-  // add task to poll for the results of the transformation and deployment
-  let pollForTransformation = modeling.createShape(
-    { type: "bpmn:ScriptTask" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let pollForTransformationBo = elementRegistry.get(
-    pollForTransformation.id
-  ).businessObject;
-  pollForTransformationBo.name = "Poll for Transformation and Deployment";
-  pollForTransformationBo.scriptFormat = "groovy";
-  pollForTransformationBo.script = POLL_FOR_TRANSFORMATION_SCRIPT;
-  pollForTransformationBo.asyncBefore = true;
-  modeling.connect(invokeTransformation, pollForTransformation, {
-    type: "bpmn:SequenceFlow",
-  });
-
   // join control flow
-  let joiningGateway = modeling.createShape(
+  let joiningGateway = createLayoutedShape(
+    modeling,
     { type: "bpmn:ExclusiveGateway" },
     { x: 50, y: 50 },
     element,
     {}
   );
-  modeling.connect(pollForTransformation, joiningGateway, {
+  modeling.connect(invokeTransformation, joiningGateway, {
     type: "bpmn:SequenceFlow",
   });
 
@@ -281,7 +266,8 @@ export async function replaceHardwareSelectionSubprocess(
   alreadySelectedFlowBo.conditionExpression = alreadySelectedFlowCondition;
 
   // add call activity invoking the dynamically transformed and deployed workflow fragment
-  let invokeTransformedFragment = modeling.createShape(
+  let invokeTransformedFragment = createLayoutedShape(
+    modeling,
     { type: "bpmn:CallActivity" },
     { x: 50, y: 50 },
     element,
@@ -318,7 +304,8 @@ export async function replaceHardwareSelectionSubprocess(
   invokeTransformedFragmentBo.extensionElements = extensionElements;
 
   // add end event for the new subprocess
-  let endEvent = modeling.createShape(
+  let endEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:EndEvent" },
     { x: 50, y: 50 },
     element,
@@ -333,57 +320,6 @@ export async function replaceHardwareSelectionSubprocess(
 }
 
 /**
- * Configure the given QuantME workflow fragment based on the selected hardware
- *
- * @param xml the QuantME workflow fragment in XML format
- * @param provider the provider of the selected QPU
- * @param qpu the selected QPU
- * @param circuitLanguage the language of the circuit provided by the NISQ Analyzer
- * @return the configured workflow model
- */
-export async function configureBasedOnHardwareSelection(
-  xml,
-  provider,
-  qpu,
-  circuitLanguage
-) {
-  let modeler = await createTempModelerFromXml(xml);
-  let elementRegistry = modeler.get("elementRegistry");
-
-  // get root element of the current diagram
-  const rootElement = getRootProcess(modeler.getDefinitions());
-  if (typeof rootElement === "undefined") {
-    console.log("Unable to retrieve root process element from definitions!");
-    return {
-      status: "failed",
-      cause: "Unable to retrieve root process element from definitions!",
-    };
-  }
-  rootElement.isExecutable = true;
-
-  // get all QuantME modeling constructs from the process
-  const quantmeTasks = getQuantMETasks(rootElement, elementRegistry);
-
-  // update properties of quantum circuit execution and readout error mitigation tasks according to the hardware selection
-  for (let quantmeTask of quantmeTasks) {
-    console.log("Configuring task: ", quantmeTask.task);
-
-    if (quantmeTask.task.$type === consts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
-      quantmeTask.task.provider = provider;
-      quantmeTask.task.qpu = qpu;
-      quantmeTask.task.programmingLanguage = circuitLanguage;
-    }
-
-    if (quantmeTask.task.$type === consts.READOUT_ERROR_MITIGATION_TASK) {
-      quantmeTask.task.provider = provider;
-      quantmeTask.task.qpu = qpu;
-    }
-  }
-
-  return { status: "success", xml: await getXml(modeler) };
-}
-
-/**
  * Add and return a task implementing the given selection strategy
  */
 function addSelectionStrategyTask(
@@ -394,11 +330,16 @@ function addSelectionStrategyTask(
 ) {
   console.log("Adding task for selection strategy: %s", selectionStrategy);
 
-  if (
-    selectionStrategy === undefined ||
-    !consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)
-  ) {
-    console.log("Selection strategy not supported. Aborting!");
+  if (selectionStrategy === undefined) {
+    return addShortestQueueSelectionStrategy(parent, elementRegistry, modeling);
+  } else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
+    NotificationHandler.getInstance().displayNotification({
+      type: "info",
+      title: "Transformation Unsuccessful!",
+      content:
+        "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
+      duration: 7000,
+    });
     return undefined;
   }
 
@@ -419,7 +360,8 @@ function addSelectionStrategyTask(
  * Add a task implementing the Shortest-Queue selection strategy
  */
 function addShortestQueueSelectionStrategy(parent, elementRegistry, modeling) {
-  let task = modeling.createShape(
+  let task = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     parent,
@@ -436,7 +378,7 @@ async function getHardwareSelectionFragment(subprocess) {
   console.log("Extracting workflow fragment from subprocess: ", subprocess);
 
   // create new modeler to extract the XML of the workflow fragment
-  let modeler = createModeler();
+  let modeler = createTempModeler();
   let elementRegistry = modeler.get("elementRegistry");
   let bpmnReplace = modeler.get("bpmnReplace");
   let modeling = modeler.get("modeling");
@@ -462,7 +404,8 @@ async function getHardwareSelectionFragment(subprocess) {
     elementRegistry.get(rootElement.flowElements[0].id),
     { type: "bpmn:StartEvent" }
   );
-  let endEvent = modeling.createShape(
+  let endEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:EndEvent" },
     { x: 50, y: 50 },
     rootElementBo,

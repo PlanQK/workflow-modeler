@@ -64,6 +64,27 @@ export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
 }
 
 /**
+ * Get the QProv endpoint
+ */
+export function getQProvEndpoint() {
+  if (config.qprovEndpoint === undefined) {
+    setQProvEndpoint(
+      getPluginConfig("quantme").qprovEndpoint || defaultConfig.qprovEndpoint
+    );
+  }
+  return config.qprovEndpoint;
+}
+
+/**
+ * Set the QProv endpoint
+ */
+export function setQProvEndpoint(qprovEndpoint) {
+  if (qprovEndpoint !== null && qprovEndpoint !== undefined) {
+    config.qprovEndpoint = qprovEndpoint;
+  }
+}
+
+/**
  * Get the Transformation Framework endpoint
  */
 export function getTransformationFrameworkEndpoint() {
@@ -87,57 +108,6 @@ export function setTransformationFrameworkEndpoint(
     transformationFrameworkEndpoint !== undefined
   ) {
     config.transformationFrameworkEndpoint = transformationFrameworkEndpoint;
-  }
-}
-
-/**
- * Get the endpoint of the configured OpenTOSCA container
- *
- * @return {string} the currently specified endpoint of the OpenTOSCA container
- */
-export function getOpenTOSCAEndpoint() {
-  if (config.opentoscaEndpoint === undefined) {
-    setOpenTOSCAEndpoint(
-      getPluginConfig("quantme").opentoscaEndpoint ||
-        defaultConfig.opentoscaEndpoint
-    );
-  }
-  return config.opentoscaEndpoint;
-}
-
-/**
- * Set the endpoint of the OpenTOSCA container
- *
- * @param opentoscaEndpoint the endpoint of the OpenTOSCA container
- */
-export function setOpenTOSCAEndpoint(opentoscaEndpoint) {
-  if (opentoscaEndpoint !== null && opentoscaEndpoint !== undefined) {
-    config.opentoscaEndpoint = opentoscaEndpoint.replace(/\/$/, "");
-  }
-}
-
-/**
- * Get the endpoint of the configured Winery
- *
- * @return {string} the currently specified endpoint of the Winery
- */
-export function getWineryEndpoint() {
-  if (config.wineryEndpoint === undefined) {
-    setWineryEndpoint(
-      getPluginConfig("quantme").wineryEndpoint || defaultConfig.wineryEndpoint
-    );
-  }
-  return config.wineryEndpoint;
-}
-
-/**
- * Set the endpoint of the Winery
- *
- * @param wineryEndpoint the endpoint of the Winery
- */
-export function setWineryEndpoint(wineryEndpoint) {
-  if (wineryEndpoint !== null && wineryEndpoint !== undefined) {
-    config.wineryEndpoint = wineryEndpoint.replace(/\/$/, "");
   }
 }
 
@@ -346,7 +316,9 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
     hybridRuntimeProvenance !== null &&
     hybridRuntimeProvenance !== undefined
   ) {
-    config.hybridRuntimeProvenance = hybridRuntimeProvenance;
+    let hybridRuntimeProvenanceBoolean =
+      hybridRuntimeProvenance === "true" ? true : false;
+    config.hybridRuntimeProvenance = hybridRuntimeProvenanceBoolean;
   }
 }
 
