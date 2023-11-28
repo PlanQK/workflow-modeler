@@ -1,5 +1,6 @@
 import { isFlowLikeElement } from "./ModellingUtilities";
 import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
+import { createLayoutedShape } from "./camunda-utils/ElementUtil";
 
 /**
  * Insert the given element and all child elements into the diagram
@@ -42,11 +43,11 @@ export function insertShape(
       });
     } else {
       // create new shape for this element
-      element = modeling.createShape(
+      element = createLayoutedShape(
+        modeling,
         { type: newElement.$type },
         { x: 50, y: 50 },
-        parent,
-        {}
+        parent
       );
     }
   } else {
@@ -57,7 +58,6 @@ export function insertShape(
       type: newElement.$type,
     });
   }
-
   // store id to create sequence flows
   idMap[newElement["id"]] = element.id;
 
@@ -69,13 +69,9 @@ export function insertShape(
       "quantme:CircuitCuttingSubprocess",
     ].includes(newElement.$type)
   ) {
-    // get the shape element related to the subprocess
+    // get the shape element related to the subprocess and expand it
     let shape = getDi(element);
-
-    // expand the replacement subprocess if the detector subprocess was expanded
-    if (shape && newElement.isExpanded === "true") {
-      shape.isExpanded = true;
-    }
+    shape.isExpanded = true;
 
     // preserve messages defined in ReceiveTasks
   } else if (newElement.$type === "bpmn:ReceiveTask" && newElement.messageRef) {

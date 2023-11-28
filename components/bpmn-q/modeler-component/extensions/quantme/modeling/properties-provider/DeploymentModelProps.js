@@ -9,31 +9,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import React from "@bpmn-io/properties-panel/preact/compat";
-import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
-import { ArtifactUpload } from "./ArtifactUpload";
 import {
   CheckboxEntry,
   isTextFieldEntryEdited,
 } from "@bpmn-io/properties-panel";
-import { Deployment } from "./Deployment";
 import { useService } from "bpmn-js-properties-panel";
-import * as consts from "../../Constants";
+import * as consts from "../../../opentosca/Constants";
 
 /**
- * Properties group for service tasks. Extends the original implementation by adding a new selection option to the
- * implementation entry: deployment.
+ * Properties group for quantme tasks.
  *
  * @param props
- * @return {{component: function(*): preact.VNode<any>, isEdited: function(*): *, id: string}[]|*[]}
- * @constructor
  */
 export function DeploymentModelProps(props) {
-  const { element, wineryEndpoint, translate } = props;
-
-  // deployment models can only be defined for ServiceTasks
-  if (!getServiceTaskLikeBusinessObject(element)) {
-    return [];
-  }
+  const { element } = props;
 
   // list of configuration options
   const entries = [];
@@ -43,25 +32,6 @@ export function DeploymentModelProps(props) {
     component: OnDemandEntry,
     isEdited: isTextFieldEntryEdited,
   });
-
-  // field to define deployment models
-  entries.push({
-    id: "deployment",
-    element,
-    translate,
-    wineryEndpoint,
-    component: Deployment,
-    isEdited: isTextFieldEntryEdited,
-  });
-
-  entries.push({
-    id: "artifactUpload",
-    element,
-    translate,
-    component: ArtifactUpload,
-    isEdited: isTextFieldEntryEdited,
-  });
-
   return entries;
 }
 
@@ -76,6 +46,7 @@ export function OnDemandEntry({ element }) {
   const debounce = useService("debounceInput");
 
   const getValue = function () {
+    console.log(element.businessObject);
     return element.businessObject.onDemand;
   };
 
@@ -98,6 +69,7 @@ export function OnDemandEntry({ element }) {
           modeling.removeShape(elementRegistry.get(attachers[i].id));
         }
       }
+      console.log(newValue);
       return modeling.updateProperties(element, {
         onDemand: newValue,
       });

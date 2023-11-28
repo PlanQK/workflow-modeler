@@ -20,6 +20,7 @@ import {
   EvaluationResultObjectEntries,
   ErrorCorrectionTaskEntries,
 } from "./QuantMETaskProperties";
+import { DeploymentModelProps } from "./DeploymentModelProps";
 
 const LOW_PRIORITY = 600;
 
@@ -33,7 +34,8 @@ const LOW_PRIORITY = 600;
 export default function QuantMEPropertiesProvider(
   propertiesPanel,
   injector,
-  translate
+  translate,
+  modeling
 ) {
   /**
    * Return the groups provided for the given element.
@@ -55,6 +57,7 @@ export default function QuantMEPropertiesProvider(
       // add properties of QuantME tasks to panel
       if (element.type && element.type.startsWith("quantme:")) {
         groups.unshift(createQuantMEGroup(element, translate));
+        groups.unshift(DeploymentModelGroup(element, injector, modeling));
       }
       return groups;
     };
@@ -67,6 +70,7 @@ QuantMEPropertiesProvider.$inject = [
   "propertiesPanel",
   "injector",
   "translate",
+  "modeling",
 ];
 
 /**
@@ -143,4 +147,23 @@ function QuantMEProps(element) {
     default:
       console.log("Unsupported QuantME element of type: ", element.type);
   }
+}
+
+/**
+ * Properties group showing options to define deployment models for service tasks.
+ *
+ * @param element The element to show the properties for.
+ * @param injector The injector of the bpmn-js modeler
+ * @param wineryEndpoint The winery endpoint of the QuantME plugin
+ * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
+ * @constructor
+ */
+function DeploymentModelGroup(element, injector, modeling) {
+  const translate = injector.get("translate");
+
+  return {
+    id: "quantmeDeploymentModelDetails",
+    label: translate("Deployment Models"),
+    entries: DeploymentModelProps({ element, modeling }),
+  };
 }

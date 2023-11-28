@@ -33,7 +33,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired during creation of a new connection (while you selected the target of a connection)
      */
-    this.addRule("connection.create", 200000, function (context) {
+    this.addRule("connection.create", 200, function (context) {
       const source = context.source,
         target = context.target;
 
@@ -43,7 +43,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a connection between two elements is drawn again, e.g. after dragging an element
      */
-    this.addRule("connection.reconnect", 200000000000, function (context) {
+    this.addRule("connection.reconnect", 200, function (context) {
       const source = context.source,
         target = context.target;
 
@@ -57,7 +57,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a new shape for an element is created
      */
-    this.addRule("shape.create", 200000000000, function (context) {
+    this.addRule("shape.create", 200, function (context) {
       return canCreate(
         context.shape,
         context.target,

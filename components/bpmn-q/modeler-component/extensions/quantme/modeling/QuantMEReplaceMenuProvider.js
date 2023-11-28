@@ -87,7 +87,6 @@ export default class QuantMEReplaceMenuProvider {
         );
         return Object.assign(subprocessEntries, entries);
       }
-
       return entries;
     };
   }

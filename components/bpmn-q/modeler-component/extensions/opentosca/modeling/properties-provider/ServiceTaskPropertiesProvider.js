@@ -13,6 +13,11 @@ import { ImplementationProps } from "./ImplementationProps";
 import { Group } from "@bpmn-io/properties-panel";
 import { getWineryEndpoint } from "../../framework-config/config-manager";
 import { DeploymentModelProps } from "./DeploymentModelProps";
+import {
+  CloudDeploymentModelPolicyEntries,
+  LocationPolicyEntries,
+} from "./OpenTOSCATaskProperties";
+import * as consts from "../../Constants";
 
 const LOW_PRIORITY = 500;
 
@@ -24,7 +29,9 @@ const LOW_PRIORITY = 500;
  */
 export default function ServiceTaskPropertiesProvider(
   propertiesPanel,
-  injector
+  injector,
+  translate,
+  modeling
 ) {
   /**
    * Return the groups provided for the given element.
@@ -49,8 +56,20 @@ export default function ServiceTaskPropertiesProvider(
         groups[3] = DeploymentModelGroup(
           element,
           injector,
-          getWineryEndpoint()
+          getWineryEndpoint(),
+          modeling
         );
+      }
+
+      // add properties of policies to panel
+      if (
+        element.type &&
+        element.type.startsWith("opentosca:") &&
+        element.type !== consts.POLICY &&
+        element.type !== consts.ON_DEMAND_POLICY &&
+        element.type !== consts.DEDICATED_HOSTING_POLICY
+      ) {
+        groups.unshift(createOpenTOSCAGroup(element, translate));
       }
       return groups;
     };
@@ -63,7 +82,7 @@ ServiceTaskPropertiesProvider.$inject = [
   "propertiesPanel",
   "injector",
   "translate",
-  "eventBus",
+  "modeling",
 ];
 
 /**
@@ -100,14 +119,16 @@ function ImplementationGroup(element, injector) {
  * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
  * @constructor
  */
-function DeploymentModelGroup(element, injector, wineryEndpoint) {
+function DeploymentModelGroup(element, injector, wineryEndpoint, modeling) {
   const translate = injector.get("translate");
 
   const group = {
     label: translate("Deployment Models"),
     id: "CamundaPlatform__DeploymentModels",
     component: Group,
-    entries: [...DeploymentModelProps({ element, wineryEndpoint, translate })],
+    entries: [
+      ...DeploymentModelProps({ element, wineryEndpoint, translate, modeling }),
+    ],
   };
 
   if (group.entries.length) {
@@ -115,4 +136,36 @@ function DeploymentModelGroup(element, injector, wineryEndpoint) {
   }
 
   return null;
+}
+
+/**
+ * Create properties group to display custom properties in the properties panel. The entries of this group
+ * depend on the actual type of the given element and are determined in OpenTOSCAProps.
+ *
+ * @param element The given element
+ * @param translate The translate function of the bpmn-js modeler.
+ */
+function createOpenTOSCAGroup(element, translate) {
+  // add required properties to general tab
+  return {
+    id: "opentoscaServiceDetails",
+    label: translate("Details"),
+    entries: OpenTOSCAProps(element),
+  };
+}
+
+/**
+ * Add the property entries for the attributes to the given group based on the type of the OpenTOSCA element
+ *
+ * @param element the OpenTOSCA element
+ */
+function OpenTOSCAProps(element) {
+  switch (element.type) {
+    case consts.CLOUD_DEPLOYMENT_MODEL_POLICY:
+      return CloudDeploymentModelPolicyEntries(element);
+    case consts.LOCATION_POLICY:
+      return LocationPolicyEntries(element);
+    default:
+      console.log("Unsupported OpenTOSCA element of type: ", element.type);
+  }
 }
