@@ -398,7 +398,20 @@ export default function PatternSelectionModal({
             <tbody>
               {mitigationErrorPatterns.map((pattern) => (
                 <tr key={pattern.id}>
-                  <td>{pattern.name}</td>
+                  <td><a
+                      className="pattern-links"
+                      href={
+                        patternAtlasUIEndpoint +
+                        "/pattern-languages/" +
+                        pattern.patternLanguageId +
+                        "/" +
+                        pattern.id
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {pattern.name}
+                    </a></td>
                   <td>
                     <img
                       src={pattern.iconUrl}
@@ -419,7 +432,20 @@ export default function PatternSelectionModal({
                 </tr>
               ))}
               <tr key={"mitigationErrorPatterns"}>
-                <td>Gate & Readout Error Mitigation</td>
+                <td><a
+                      className="pattern-links"
+                      href={
+                        patternAtlasUIEndpoint +
+                        "/pattern-languages/" +
+                        mitigationPatterns[0].patternLanguageId +
+                        "/" +
+                        mitigationPatterns[0].id
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Gate & Readout Error Mitigation
+                    </a></td>
                 <td>
                   <img
                     src={mitigationPatterns[0].iconUrl}
