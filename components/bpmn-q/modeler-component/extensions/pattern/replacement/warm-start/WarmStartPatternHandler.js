@@ -38,6 +38,7 @@ export async function replaceWarmStart(
   let em = getModeler().get('elementRegistry');
   let host = em.get(subprocess.id).host;
   console.log(host)
+  console.log(parent)
 
   let internHost = elementRegistry.get(host.id);
   let warmStartTask = modeling.createShape(
@@ -46,6 +47,8 @@ export async function replaceWarmStart(
     parent,
     {}
   );
+  let startEventBo = elementRegistry.get(warmStartTask.id).businessObject;
+  startEventBo.name = "Warm Start";
 
   let startEvent = null;
   let combinePointers = [];

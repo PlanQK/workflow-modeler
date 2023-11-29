@@ -25,7 +25,7 @@ import * as consts from "../../Constants";
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
  */
-export async function replaceMitigationPattern(
+export async function replaceErrorCorrectionPattern(
   subprocess,
   parent,
   qrm,
@@ -39,10 +39,6 @@ export async function replaceMitigationPattern(
   let em = getModeler().get('elementRegistry');
   let host = em.get(subprocess.id).host;
   console.log(host)
-  let type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
-  if(subprocess.type === consts.READOUT_ERROR_MITIGATION){
-    type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
-  }
 
   let internHost = elementRegistry.get(host.id);
   let errorCorrectionTask = modeling.createShape(
@@ -51,6 +47,8 @@ export async function replaceMitigationPattern(
     parent,
     {}
   );
+  let startEventBo = elementRegistry.get(errorCorrectionTask.id).businessObject;
+  startEventBo.name = "Correct Errors";
 
   let startEvent = null;
   let combinePointers = [];
@@ -73,8 +71,9 @@ export async function replaceMitigationPattern(
   // modeling.removeShape(subprocess);
   const events = elementRegistry.get(subprocess.id);
   console.log(events)
-  modeling.removeShape(elementRegistry.get(subprocess.id));
-  modeling.removeElements([events]);
+  //modeling.removeShape(elementRegistry.get(subprocess.id));
+  //modeling.removeElements([events]);
+  const pattern = elementRegistry.get(subprocess.id);
   /** 
 
   // extract cut & combine elements out of replacement fragement
@@ -147,7 +146,7 @@ export async function replaceMitigationPattern(
     );
   });
 */
-  return true;
+  return {replacementSuccess: true, flows: outgoingFlows, pattern: pattern};
 }
 
 /**

@@ -18,6 +18,7 @@ import { getXml } from "../../../editor/util/IoUtilities";
 import { replaceWarmStart } from "./warm-start/WarmStartPatternHandler";
 import { replaceCuttingPattern } from "./cutting/CuttingPatternHandler";
 import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
+import { replaceErrorCorrectionPattern } from "./correction/ErrorCorrectionPatternHandler";
 import * as quantmeConsts from "../../quantme/Constants";
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
@@ -99,6 +100,26 @@ export async function startPatternReplacementProcess(
 
 
         let { replacementSuccess, flows, pattern } = await replaceWarmStart(
+          replacementConstruct.task,
+          replacementConstruct.parent,
+          replacementConstruct.qrm,
+          modeler,
+          definitions,
+        );
+        allFlow = allFlow.concat(flows);
+        console.log(allFlow)
+        console.log(patterns)
+        console.log(pattern)
+        patterns.push(pattern);
+        console.log(pattern)
+      }
+
+      if (
+        replacementConstruct.task.$type === constants.ERROR_CORRECTION
+      ) {
+
+
+        let { replacementSuccess, flows, pattern } = await replaceErrorCorrectionPattern(
           replacementConstruct.task,
           replacementConstruct.parent,
           replacementConstruct.qrm,

@@ -51,6 +51,8 @@ export async function replaceMitigationPattern(
     parent,
     {}
   );
+  let startEventBo = elementRegistry.get(mitigationTask.id).businessObject;
+  startEventBo.name = "Mitigate Errors";
 
   let startEvent = null;
   let combinePointers = [];
