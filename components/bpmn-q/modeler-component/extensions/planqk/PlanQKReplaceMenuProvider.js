@@ -201,8 +201,6 @@ export default class PlanQKMenuProvider {
           consumerKey: oAuthInfo.consumerKey,
           consumerSecret: oAuthInfo.consumerSecret,
           serviceEndpoint: subscription.api.gatewayEndpoint,
-          data: "{}",
-          params: "{}",
           result: "${output}",
         });
       },

@@ -3,7 +3,7 @@ import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
 import DataFlowPlugin from "../../extensions/data-extension/DataFlowPlugin";
 import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
-import { getAllConfigs } from "./PluginConfigHandler";
+import {getAllConfigs} from "./PluginConfigHandler";
 import GeneralTab from "../config/GeneralTab";
 import GitHubTab from "../../extensions/quantme/configTabs/GitHubTab";
 
@@ -20,15 +20,15 @@ const PLUGINS = [
     dependencies: ["DataFlowPlugin"],
   },
   {
+    plugin: PlanQKPlugin,
+    dependencies: ["DataFlowPlugin"],
+  },
+  {
     plugin: DataFlowPlugin,
     dependencies: [],
   },
   {
     plugin: QHAnaPlugin,
-    dependencies: [],
-  },
-  {
-    plugin: PlanQKPlugin,
     dependencies: [],
   },
   {
@@ -93,6 +93,7 @@ export function checkEnabledStatus(pluginName) {
       return process.env.ENABLE_OPENTOSCA_PLUGIN !== "false";
   }
 }
+
 /**
  * Returns all additional modules for the bpmn-js modeler the active plugins define in their extensionModule
  * property as an array.
@@ -163,11 +164,21 @@ export function getModdleExtension() {
 export function getTransformationButtons() {
   const transformationButtons = [];
 
+  let planqkButton = null;
   // load all transformation buttons of the active plugins
   for (let plugin of getActivePlugins()) {
     if (plugin.transformExtensionButton) {
-      transformationButtons.push(plugin.transformExtensionButton);
+      if (plugin.name === "planqk") {
+        planqkButton = plugin.transformExtensionButton;
+      } else {
+        transformationButtons.push(plugin.transformExtensionButton);
+      }
     }
+  }
+
+  // ensure that the planqk button is the last one as it depends on the results of the other transformations
+  if (planqkButton) {
+    transformationButtons.push(planqkButton);
   }
 
   console.log("\n Got " + transformationButtons.length + " Transformations");

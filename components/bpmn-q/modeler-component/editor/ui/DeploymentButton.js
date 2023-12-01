@@ -9,6 +9,7 @@ import OnDemandDeploymentModal from "./OnDemandDeploymentModal";
 import DeploymentSelectionModal from "./DeploymentSelectionModal";
 import { startOnDemandReplacementProcess } from "../../extensions/opentosca/replacement/OnDemandTransformator";
 import {startPlanqkReplacementProcess} from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
+import {startDataFlowReplacementProcess} from "../../extensions/data-extension/transformation/TransformationManager";
 
 // eslint-disable-next-line no-unused-vars
 const defaultState = {
@@ -88,12 +89,27 @@ export default function DeploymentButton(props) {
       });
       return;
     }
+
+    console.log("Transforming data flow extension to BPMN");
+
+    const replaceDataFlowResult = await startDataFlowReplacementProcess(xml);
+    if (replaceDataFlowResult.status === "failed") {
+      NotificationHandler.getInstance().displayNotification({
+        type: "error",
+        title: "Data Flow Transformation Failure",
+        content:
+          "Could not transform data flow: " + replaceDataFlowResult.cause,
+        duration: 20000,
+      });
+      return;
+    }
+
     console.log("Transforming workflow to Camunda BPMN");
-    const replaceResult = await startPlanqkReplacementProcess(xml);
+    const replaceResult = await startPlanqkReplacementProcess(replaceDataFlowResult.xml);
     if (replaceResult.status === "failed") {
       NotificationHandler.getInstance().displayNotification({
         type: "error",
-        title: "Workflow Transformation Failure",
+      title: "PlanQK Workflow Transformation Failure",
         content:
           "Could not transform PlanQK workflow to Camunda BPMN: " + replaceResult.cause,
         duration: 20000,
