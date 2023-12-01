@@ -10,7 +10,7 @@ import {
 import {
   addCamundaInputMapParameter,
   addCamundaInputParameter,
-  addCamundaOutputMapParameter,
+  addCamundaOutputParameter,
   addFormField,
   findSequenceFlowConnection,
   getDocumentation,
@@ -187,12 +187,11 @@ export async function startDataFlowReplacementProcess(xml) {
           );
         }
       } else {
-        addCamundaOutputMapParameter(
+        addCamundaOutputParameter(
           activity.businessObject,
           businessObject.name,
-          businessObject.get(consts.CONTENT),
-          bpmnFactory
-        );
+          "${result}",
+          bpmnFactory);
       }
     }
   }
@@ -254,26 +253,6 @@ export async function startDataFlowReplacementProcess(xml) {
       status: "failed",
       cause: failureMessage,
     };
-  }
-
-  if (Object.entries(globalProcessVariables).length > 0) {
-    transformationSuccess = createProcessContextVariablesTask(
-      globalProcessVariables,
-      rootProcess,
-      definitions,
-      modeler
-    );
-    if (!transformationSuccess) {
-      const failureMessage =
-        `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` +
-        transformationSuccess.failedData.id +
-        " failed. Aborting process!";
-      console.log(failureMessage);
-      return {
-        status: "failed",
-        cause: failureMessage,
-      };
-    }
   }
 
   layout(modeling, elementRegistry, rootProcess);
@@ -551,8 +530,6 @@ export function createProcessContextVariablesTask(
   modeler
 ) {
   const elementRegistry = modeler.get("elementRegistry");
-  const bpmnFactory = modeler.get("bpmnFactory");
-  const modeling = modeler.get("modeling");
 
   // add for each process or subprocess a new task to create process variables
   for (let processEntry of Object.entries(processContextVariables)) {
@@ -573,28 +550,28 @@ export function createProcessContextVariablesTask(
     console.log(startEvents);
 
     // add ProcessVariablesTask after each start event
-    for (let event of startEvents) {
-      const startEventBo = event.element;
-      const startEventElement = elementRegistry.get(startEventBo.id);
-
-      const newTaskBo = getProcessContextVariablesTask(
-        startEventElement,
-        event.parent,
-        bpmnFactory,
-        modeling,
-        elementRegistry
-      );
-
-      // add camunda map to outputs for each entry
-      for (let processVariable of processContextVariables[processId]) {
-        addCamundaOutputMapParameter(
-          newTaskBo,
-          processVariable.name,
-          processVariable.map,
-          bpmnFactory
-        );
-      }
-    }
+    // for (let event of startEvents) {
+    //   const startEventBo = event.element;
+    //   const startEventElement = elementRegistry.get(startEventBo.id);
+    //
+    //   const newTaskBo = getProcessContextVariablesTask(
+    //     startEventElement,
+    //     event.parent,
+    //     bpmnFactory,
+    //     modeling,
+    //     elementRegistry
+    //   );
+    //
+    //   // add camunda map to outputs for each entry
+    //   for (let processVariable of processContextVariables[processId]) {
+    //     addCamundaOutputMapParameter(
+    //       newTaskBo,
+    //       processVariable.name,
+    //       processVariable.map,
+    //       bpmnFactory
+    //     );
+    //   }
+    // }
   }
 
   return { success: true };

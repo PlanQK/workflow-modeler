@@ -179,6 +179,12 @@ async function replaceByInteractionSubprocess(
     return false;
   }
 
+  // Ensure that the time definition and error event have unique ids as the id is not updated by Moodle
+  const timerDefinitionEventId = "TimerEventDefinition_";
+  replacement = replacement.replace(timerDefinitionEventId, timerDefinitionEventId + task.id);
+  const errorDefinitionEventId = "ErrorEventDefinition_";
+  replacement = replacement.replace(errorDefinitionEventId, errorDefinitionEventId + task.id);
+
   // get the root process of the replacement fragment
   let replacementProcess = getRootProcess(
     await getDefinitionsFromXml(replacement)
@@ -191,7 +197,7 @@ async function replaceByInteractionSubprocess(
     console.log("Unable to retrieve replacement subprocess: ", replacement);
     return false;
   }
-
+  replacementIASubprocess.de
   console.log("Replacement interaction subprocess: ", replacementIASubprocess);
 
   // replace task by replacementIASubprocess
