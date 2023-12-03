@@ -59,6 +59,7 @@ function fetch(method, url, body) {
     }
 }`;
 
+// TODO make request that checks if csar is already uploading before trying upload otherwise can lead to conflicts
 function createDeploymentScript(
   opentoscaEndpoint,
   camundaEndpoint,
@@ -505,7 +506,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       dedicatedFlowBo.name = "no";
       let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
       dedicatedFlowCondition.body =
-        '${execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false}';
+        '${(execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false) ||' +
+          ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == true )}`;
       dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
 
       // add task to check for available instance
@@ -606,7 +608,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         "bpmn:FormalExpression"
       );
       notDedicatedFlowCondition.body =
-        '${execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true}';
+        '${(execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true) &&' +
+          ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == false )}`;
       notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
 
       let topicName = makeId(12);
