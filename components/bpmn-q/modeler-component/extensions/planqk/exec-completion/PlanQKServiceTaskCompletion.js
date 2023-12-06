@@ -243,8 +243,6 @@ function applyTaskInput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
 
   subProcessIo.inputParameters.push(...taskIo.inputParameters);
 
-  setInputParameter(subprocessBO, "params", taskBO.params, bpmnFactory);
-  setInputParameter(subprocessBO, "data", taskBO.data, bpmnFactory);
   setInputParameter(
     subprocessBO,
     "serviceEndpoint",
