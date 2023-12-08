@@ -21,6 +21,7 @@ import {
 import { getCamundaInputOutput } from "../../../editor/util/ModellingUtilities";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import { deletePolicies } from "../utilities/Utilities";
+import { getQProvEndpoint } from "../../quantme/framework-config/config-manager";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -67,7 +68,8 @@ function createDeploymentScript(
   subprocessId,
   inputParams,
   taskId,
-  reconstructedVMs
+  reconstructedVMs,
+  QProvEndpoint
 ) {
   return `
 var inputParams = ${JSON.stringify(inputParams)};
@@ -108,6 +110,8 @@ for(var i = 0; i < inputParameters.length; i++) {
         inputParameters[i].value = "${camundaEndpoint}"
     } else if(inputParameters[i].name === "camundaTopic") {
         inputParameters[i].value = "${camundaTopic}"
+    } else if(inputParameters[i].name === "QProvEndpoint") {
+        inputParameters[i].value = "${QProvEndpoint}"
     } else {
         inputParameters[i].value = inputParams[inputParameters[i].name];
     }
@@ -622,7 +626,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           subProcess.id,
           CSARForServiceTask.inputParams,
           serviceTask.id,
-          CSARForServiceTask.reconstructedVMs
+          CSARForServiceTask.reconstructedVMs,
+          getQProvEndpoint()
         )
       );
       scriptTaskUploadToContainer.businessObject.set(
