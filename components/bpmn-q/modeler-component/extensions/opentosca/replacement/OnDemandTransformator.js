@@ -14,11 +14,11 @@ import { getXml } from "../../../editor/util/IoUtilities";
 import * as config from "../framework-config/config-manager";
 import { makeId } from "../deployment/OpenTOSCAUtils";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
-import { createElement } from "../../../editor/util/camunda-utils/ElementUtil";
 import {
-  getCamundaInputOutput,
-  getRootProcess,
-} from "../../../editor/util/ModellingUtilities";
+  createElement,
+  createLayoutedShape,
+} from "../../../editor/util/camunda-utils/ElementUtil";
+import { getCamundaInputOutput } from "../../../editor/util/ModellingUtilities";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import { deletePolicies } from "../utilities/Utilities";
 
@@ -59,6 +59,7 @@ function fetch(method, url, body) {
     }
 }`;
 
+// TODO make request that checks if csar is already uploading before trying upload otherwise can lead to conflicts
 function createDeploymentScript(
   opentoscaEndpoint,
   camundaEndpoint,
@@ -77,7 +78,7 @@ ${fetchMethod}
 
 var createCsarResponse = fetch('POST', "${opentoscaEndpoint}", JSON.stringify({
     enrich: 'false',
-    name: urlParts[urlParts.length - 1] + ".csar",
+    name: urlParts[urlParts.length - 2] + ".csar",
     url: execution.getVariable("completeModelUrl_" + "${taskId}") + "?csar"
 }))
 
@@ -97,7 +98,7 @@ for (const [key, value] of Object.entries(deployedTopology.nodeTemplates)) {
 }
 java.lang.System.out.println("Input parameters after update: " + JSON.stringify(inputParams));
 
-var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + urlParts[urlParts.length - 1] ".csar/servicetemplates"))
+var serviceTemplates = JSON.parse(fetch('GET', "${opentoscaEndpoint}" + "/" + urlParts[urlParts.length - 2] + ".csar/servicetemplates"))
 var buildPlansUrl = serviceTemplates.service_templates[0]._links.self.href + '/buildplans'
 var buildPlans = JSON.parse(fetch('GET', buildPlansUrl))
 var buildPlanUrl = buildPlans.plans[0]._links.self.href
@@ -133,14 +134,12 @@ for(var i = 0; i < 20; i++) {
 
 console.log("InstanceUrl: " + instanceUrl);
 
-var buildPlanUrl = "";
 for(var i = 0; i < 50; i++) {
     try {
         java.lang.System.out.println("Iteration: " + i);
         var createInstanceResponse = fetch('GET', instanceUrl);
         var instance = JSON.parse(createInstanceResponse);
         console.log("Instance state: " + instance.state);
-        buildPlanUrl = instance._links.build_plan_instance.href;
         if (instance && instance.state === "CREATED") {
             break;
         }
@@ -150,15 +149,17 @@ for(var i = 0; i < 50; i++) {
      java.lang.Thread.sleep(30000);
 }
 
-console.log("Retrieving selfServiceApplicationUrl from build plan output from URL: ", buildPlanUrl);
-var buildPlanResult = JSON.parse(fetch('GET', buildPlanUrl));
-console.log("Build plan result: ", buildPlanResult);
-var buildPlanOutputs = buildPlanResult.outputs;
-console.log("Outputs: ", buildPlanOutputs.toString());
-var selfserviceApplicationUrl = buildPlanOutputs.filter((output) => output.name === "selfserviceApplicationUrl");
-console.log("SelfServiceApplicationUrl: " + selfserviceApplicationUrl[0].value);
- 
-execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl[0].value);
+var serviceTemplateInstanceUrl = instanceUrl + "/properties";
+console.log("Retrieving selfServiceApplicationUrl from service instance url: ", serviceTemplateInstanceUrl);
+var serviceTemplateInstanceUrlResult = JSON.parse(fetch('GET', serviceTemplateInstanceUrl));
+def selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
+println "Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl;
+execution.setVariable("${taskId}" + "_selfServiceApplicationUrl", selfServiceApplicationUrl);
+
+def qProvUrl = serviceTemplateInstanceUrlResult.get("qProvUrl");
+println "Retrieved qProvUrl: " + qProvUrl;
+execution.setVariable("${taskId}" + "_qProvUrl", qProvUrl);
+
 java.lang.Thread.sleep(12000);
 `;
 }
@@ -297,7 +298,7 @@ try {
           }
 
           println "Found instance with state CREATED. Extracting selfServiceUrl...";
-          def instancesLink = serviceTemplateInstance.get("_links").get("self").get("href");
+          def instancesLink = serviceTemplateInstance.get("_links").get("self").get("href") + "/properties";
           println "Retrieving instance information from URL: " + instancesLink;
 
           get = new URL(instancesLink).openConnection();
@@ -312,33 +313,17 @@ try {
 
           resultText = get.getInputStream().getText();
           json = new JsonSlurper().parseText(resultText);
-          def buildPlanLink = json .get("_links").get("build_plan_instance").get("href");
-          println "Retrieved build plan URL: " + buildPlanLink;
+                    
+          def selfServiceApplicationUrl = json.get("selfServiceApplicationUrl");
 
-          get = new URL(buildPlanLink).openConnection();
-          get.setRequestMethod("GET");
-          get.setDoOutput(true);
-          get.setRequestProperty("accept", "application/json");
-          status = get.getResponseCode();
-          if(status != 200){
-             println "Unable to retrieve build plan information. Skipping...";
-             continue;
-          }
-
-          resultText = get.getInputStream().getText();
-          json = new JsonSlurper().parseText(resultText);
-          def outputs = json.get("outputs");
-          println outputs;
-
-          def selfserviceApplicationUrlEntry = outputs.findAll { it.name.equalsIgnoreCase("selfserviceApplicationUrl") };
-          if(selfserviceApplicationUrlEntry .size() < 1) {
-             println "Unable to retrieve selfserviceApplicationUrl. Skipping...";
-             continue;
-          }
-          def selfserviceApplicationUrl = selfserviceApplicationUrlEntry[0].value;
-          println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
+          println "Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl;
           execution.setVariable("instanceAvailable", "true");
-          execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl);
+          execution.setVariable("${taskId}" + "_selfServiceApplicationUrl", selfServiceApplicationUrl);
+          
+          def qProvUrl = json.get("qProvUrl");
+          println "Retrieved qProvUrl: " + qProvUrl;
+          execution.setVariable("${taskId}" + "_qProvUrl", qProvUrl);
+          
           return;
       }
    }
@@ -368,8 +353,6 @@ export async function startOnDemandReplacementProcess(xml, csars) {
   const bpmnAutoResizeProvider = modeler.get("bpmnAutoResizeProvider");
   const bpmnFactory = modeler.get("bpmnFactory");
   bpmnAutoResizeProvider.canResize = () => false;
-  const definitions = modeler.getDefinitions();
-  const rootElement = getRootProcess(definitions);
 
   let serviceTaskIds = [];
   csars
@@ -392,7 +375,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
     deletePolicies(modeler, serviceTaskId);
 
     let CSARForServiceTask = csars.filter((csar) =>
-      csar.serviceTaskIds.filter((id) => id === serviceTaskId)
+      csar.serviceTaskIds.includes(serviceTaskId)
     )[0];
     let onDemand = serviceTask.businessObject.get("onDemand");
     if (onDemand) {
@@ -416,21 +399,23 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         deploymentModelUrl
       );
 
-      const startEvent = modeling.createShape(
+      const startEvent = createLayoutedShape(
+        modeling,
         {
           type: "bpmn:StartEvent",
         },
-        { x: 200, y: 200 },
+        { x: subProcess.x + 30, y: subProcess.y + 30 },
         subProcess
       );
 
-      const serviceTaskCompleteDeploymentModel = modeling.appendShape(
-        startEvent,
-        {
-          type: "bpmn:ScriptTask",
-        },
-        { x: 400, y: 200 }
+      const serviceTaskCompleteDeploymentModel = createLayoutedShape(
+        modeling,
+        { type: "bpmn:ScriptTask" },
+        { x: 50, y: 50 },
+        subProcess,
+        {}
       );
+
       serviceTaskCompleteDeploymentModel.businessObject.set(
         "name",
         "Adapt Model"
@@ -451,8 +436,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         )
       );
 
+      modeling.connect(startEvent, serviceTaskCompleteDeploymentModel, {
+        type: "bpmn:SequenceFlow",
+      });
+
       // add gateway to check for dedicated policy
-      let dedicatedGateway = modeling.createShape(
+      let dedicatedGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -467,7 +457,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       });
 
       // add task to check for running container instance
-      let serviceTaskCheckForEquivalentDeploymentModel = modeling.createShape(
+      let serviceTaskCheckForEquivalentDeploymentModel = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -499,11 +490,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       dedicatedFlowBo.name = "no";
       let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
       dedicatedFlowCondition.body =
-        '${execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false}';
+        '${(execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false) ||' +
+        ` (execution.hasVariable("${serviceTask.id}" + "_selfServiceApplicationUrl") == true )}`;
       dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
 
       // add task to check for available instance
-      let serviceTaskCheckForAvailableInstance = modeling.createShape(
+      let serviceTaskCheckForAvailableInstance = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -536,7 +529,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       );
 
       // add gateway to check if instance is available
-      let instanceAvailablityGateway = modeling.createShape(
+      let instanceAvailablityGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -555,7 +549,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         }
       );
 
-      let joiningDedicatedGateway = modeling.createShape(
+      let joiningDedicatedGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -597,11 +592,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         "bpmn:FormalExpression"
       );
       notDedicatedFlowCondition.body =
-        '${execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true}';
+        '${(execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true) &&' +
+        ` (execution.hasVariable("${serviceTask.id}" + "_selfServiceApplicationUrl") == false )}`;
       notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
 
       let topicName = makeId(12);
-      const scriptTaskUploadToContainer = modeling.createShape(
+      const scriptTaskUploadToContainer = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -634,7 +631,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         type: "bpmn:SequenceFlow",
       });
 
-      const scriptTaskWaitForDeployment = modeling.createShape(
+      const scriptTaskWaitForDeployment = createLayoutedShape(
+        modeling,
         { type: "bpmn:ScriptTask" },
         { x: 50, y: 50 },
         subProcess,
@@ -659,7 +657,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         }
       );
 
-      let joiningInstanceAvailablityGatewayGateway = modeling.createShape(
+      let joiningInstanceAvailablityGatewayGateway = createLayoutedShape(
+        modeling,
         { type: "bpmn:ExclusiveGateway" },
         { x: 50, y: 50 },
         subProcess,
@@ -693,11 +692,19 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       InstanceAvailableFlowBo.conditionExpression =
         InstanceAvailableFlowCondition;
 
-      const serviceTaskInvokeService = modeling.createShape(
+      const serviceTaskInvokeService = createLayoutedShape(
+        modeling,
         { type: "bpmn:ServiceTask" },
         { x: 50, y: 50 },
         subProcess,
         {}
+      );
+      modeling.connect(
+        joiningInstanceAvailablityGatewayGateway,
+        serviceTaskInvokeService,
+        {
+          type: "bpmn:SequenceFlow",
+        }
       );
       const extensionElements = serviceTask.businessObject.extensionElements;
       serviceTaskInvokeService.businessObject.set("name", "Invoke Service");
@@ -714,21 +721,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
             if (param.name === "url") {
               param.value = `\${${
                 serviceTask.id
-              }_selfserviceApplicationUrl.concat(${JSON.stringify(
+              }_selfServiceApplicationUrl.concat(${JSON.stringify(
                 param.value || ""
               )})}`;
               break;
             }
           }
         }
-
-        modeling.connect(
-          joiningInstanceAvailablityGatewayGateway,
-          serviceTaskInvokeService,
-          {
-            type: "bpmn:SequenceFlow",
-          }
-        );
 
         const newExtensionElements = createElement(
           "bpmn:ExtensionElements",
@@ -756,7 +755,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           newExtensionElements
         );
       }
-      let endEvent = modeling.createShape(
+      let endEvent = createLayoutedShape(
+        modeling,
         { type: "bpmn:EndEvent" },
         { x: 50, y: 50 },
         subProcess,
@@ -766,11 +766,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         type: "bpmn:SequenceFlow",
       });
 
-      layout(modeling, elementRegistry, rootElement);
+      // expand subprocess, layout, and collapse again
+      subProcess.di.isExpanded = true;
+      layout(modeling, elementRegistry, subProcess.businessObject);
+      subProcess.di.isExpanded = false;
     }
   }
 
-  // layout diagram after successful transformation
   let updatedXml = await getXml(modeler);
   console.log(updatedXml);
 
