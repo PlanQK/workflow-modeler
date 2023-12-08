@@ -181,18 +181,18 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry) {
 async function extractSelfserviceApplicationUrl(propertiesUrl) {
   let buildPlanResponse = await fetchDataFromEndpoint(propertiesUrl);
   console.log(buildPlanResponse);
-  const selfserviceApplicationUrl = buildPlanResponse.outputs.filter(
-    (x) => x.name === "selfserviceApplicationUrl"
+  const selfServiceApplicationUrl = buildPlanResponse.outputs.filter(
+    (x) => x.name === "selfServiceApplicationUrl"
   );
   if (
-    selfserviceApplicationUrl === undefined ||
-    selfserviceApplicationUrl.length < 1
+    selfServiceApplicationUrl === undefined ||
+    selfServiceApplicationUrl.length < 1
   ) {
     console.error(
-      "Unable to fetch selfserviceApplicationUrl from: " + propertiesUrl
+      "Unable to fetch selfServiceApplicationUrl from: " + propertiesUrl
     );
     return undefined;
   }
-  console.log(selfserviceApplicationUrl);
-  return selfserviceApplicationUrl[0].value;
+  console.log(selfServiceApplicationUrl);
+  return selfServiceApplicationUrl[0].value;
 }
