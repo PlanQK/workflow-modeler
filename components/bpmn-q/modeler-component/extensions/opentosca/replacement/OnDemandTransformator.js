@@ -491,7 +491,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
       dedicatedFlowCondition.body =
         '${(execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false) ||' +
-          ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == true )}`;
+        ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == true )}`;
       dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
 
       // add task to check for available instance
@@ -593,7 +593,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       );
       notDedicatedFlowCondition.body =
         '${(execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true) &&' +
-          ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == false )}`;
+        ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == false )}`;
       notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
 
       let topicName = makeId(12);
