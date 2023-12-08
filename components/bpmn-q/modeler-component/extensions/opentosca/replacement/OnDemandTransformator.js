@@ -113,8 +113,11 @@ for(var i = 0; i < inputParameters.length; i++) {
     }
 }
 
+java.lang.System.out.println("Creating instance using URL: " + buildPlanUrl + "/instances");
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
-execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
+execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);
+java.lang.System.out.println("Build plan URL: " + buildPlanUrl + "/instances/" + createInstanceResponse);
+`;
 }
 
 function createWaitScript(subprocessId, taskId) {
@@ -152,12 +155,12 @@ for(var i = 0; i < 50; i++) {
 var serviceTemplateInstanceUrl = instanceUrl + "/properties";
 console.log("Retrieving selfServiceApplicationUrl from service instance url: ", serviceTemplateInstanceUrl);
 var serviceTemplateInstanceUrlResult = JSON.parse(fetch('GET', serviceTemplateInstanceUrl));
-var selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
-println "Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl;
+var selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.selfServiceApplicationUrl;
+console.log("Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl);
 execution.setVariable("${taskId}" + "_selfServiceApplicationUrl", selfServiceApplicationUrl);
 
-var qProvUrl = serviceTemplateInstanceUrlResult.get("qProvUrl");
-println "Retrieved qProvUrl: " + qProvUrl;
+var qProvUrl = serviceTemplateInstanceUrlResult.qProvUrl;
+console.log("Retrieved qProvUrl: " + qProvUrl);
 execution.setVariable("${taskId}" + "_qProvUrl", qProvUrl);
 
 java.lang.Thread.sleep(12000);
