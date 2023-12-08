@@ -134,14 +134,12 @@ for(var i = 0; i < 20; i++) {
 
 console.log("InstanceUrl: " + instanceUrl);
 
-var buildPlanUrl = "";
 for(var i = 0; i < 50; i++) {
     try {
         java.lang.System.out.println("Iteration: " + i);
         var createInstanceResponse = fetch('GET', instanceUrl);
         var instance = JSON.parse(createInstanceResponse);
         console.log("Instance state: " + instance.state);
-        buildPlanUrl = instance._links.build_plan_instance.href;
         if (instance && instance.state === "CREATED") {
             break;
         }
@@ -151,15 +149,17 @@ for(var i = 0; i < 50; i++) {
      java.lang.Thread.sleep(30000);
 }
 
-console.log("Retrieving selfServiceApplicationUrl from build plan output from URL: ", buildPlanUrl);
-var buildPlanResult = JSON.parse(fetch('GET', buildPlanUrl));
-console.log("Build plan result: ", buildPlanResult);
-var buildPlanOutputs = buildPlanResult.outputs;
-console.log("Outputs: ", buildPlanOutputs.toString());
-var selfserviceApplicationUrl = buildPlanOutputs.filter((output) => output.name === "selfserviceApplicationUrl");
-console.log("SelfServiceApplicationUrl: " + selfserviceApplicationUrl[0].value);
- 
-execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl[0].value);
+var serviceTemplateInstanceUrl = instanceUrl + "/properties";
+console.log("Retrieving selfServiceApplicationUrl from service instance url: ", serviceTemplateInstanceUrl);
+var serviceTemplateInstanceUrlResult = JSON.parse(fetch('GET', serviceTemplateInstanceUrl));
+def selfserviceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
+println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
+execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl);
+
+def qProvUrl = serviceTemplateInstanceUrlResult.get("qProvUrl");
+println "Retrieved qProvUrl: " + qProvUrl;
+execution.setVariable("${taskId}" + "_qProvUrl", qProvUrl);
+
 java.lang.Thread.sleep(12000);
 `;
 }
@@ -298,7 +298,7 @@ try {
           }
 
           println "Found instance with state CREATED. Extracting selfServiceUrl...";
-          def instancesLink = serviceTemplateInstance.get("_links").get("self").get("href");
+          def instancesLink = serviceTemplateInstance.get("_links").get("self").get("href") + "/properties";
           println "Retrieving instance information from URL: " + instancesLink;
 
           get = new URL(instancesLink).openConnection();
@@ -313,33 +313,17 @@ try {
 
           resultText = get.getInputStream().getText();
           json = new JsonSlurper().parseText(resultText);
-          def buildPlanLink = json .get("_links").get("build_plan_instance").get("href");
-          println "Retrieved build plan URL: " + buildPlanLink;
+                    
+          def selfserviceApplicationUrl = json.get("selfServiceApplicationUrl");
 
-          get = new URL(buildPlanLink).openConnection();
-          get.setRequestMethod("GET");
-          get.setDoOutput(true);
-          get.setRequestProperty("accept", "application/json");
-          status = get.getResponseCode();
-          if(status != 200){
-             println "Unable to retrieve build plan information. Skipping...";
-             continue;
-          }
-
-          resultText = get.getInputStream().getText();
-          json = new JsonSlurper().parseText(resultText);
-          def outputs = json.get("outputs");
-          println outputs;
-
-          def selfserviceApplicationUrlEntry = outputs.findAll { it.name.equalsIgnoreCase("selfserviceApplicationUrl") };
-          if(selfserviceApplicationUrlEntry .size() < 1) {
-             println "Unable to retrieve selfserviceApplicationUrl. Skipping...";
-             continue;
-          }
-          def selfserviceApplicationUrl = selfserviceApplicationUrlEntry[0].value;
           println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
           execution.setVariable("instanceAvailable", "true");
           execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl);
+          
+          def qProvUrl = json.get("qProvUrl");
+          println "Retrieved qProvUrl: " + qProvUrl;
+          execution.setVariable("${taskId}" + "_qProvUrl", qProvUrl);
+          
           return;
       }
    }
