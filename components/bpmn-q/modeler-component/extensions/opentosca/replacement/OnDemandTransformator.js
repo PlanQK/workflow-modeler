@@ -21,6 +21,7 @@ import {
 import { getCamundaInputOutput } from "../../../editor/util/ModellingUtilities";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import { deletePolicies } from "../utilities/Utilities";
+import { getQProvEndpoint } from "../../quantme/framework-config/config-manager";
 
 const fetchMethod = `
 function fetch(method, url, body) {
@@ -67,7 +68,8 @@ function createDeploymentScript(
   subprocessId,
   inputParams,
   taskId,
-  reconstructedVMs
+  reconstructedVMs,
+  QProvEndpoint
 ) {
   return `
 var inputParams = ${JSON.stringify(inputParams)};
@@ -108,13 +110,18 @@ for(var i = 0; i < inputParameters.length; i++) {
         inputParameters[i].value = "${camundaEndpoint}"
     } else if(inputParameters[i].name === "camundaTopic") {
         inputParameters[i].value = "${camundaTopic}"
+    } else if(inputParameters[i].name === "QProvEndpoint") {
+        inputParameters[i].value = "${QProvEndpoint}"
     } else {
         inputParameters[i].value = inputParams[inputParameters[i].name];
     }
 }
 
+java.lang.System.out.println("Creating instance using URL: " + buildPlanUrl + "/instances");
 var createInstanceResponse = fetch('POST', buildPlanUrl + "/instances", JSON.stringify(inputParameters))
-execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);`;
+execution.setVariable("${subprocessId}" + "_deploymentBuildPlanInstanceUrl", buildPlanUrl + "/instances/" + createInstanceResponse);
+java.lang.System.out.println("Build plan URL: " + buildPlanUrl + "/instances/" + createInstanceResponse);
+`;
 }
 
 function createWaitScript(subprocessId, taskId) {
@@ -152,12 +159,12 @@ for(var i = 0; i < 50; i++) {
 var serviceTemplateInstanceUrl = instanceUrl + "/properties";
 console.log("Retrieving selfServiceApplicationUrl from service instance url: ", serviceTemplateInstanceUrl);
 var serviceTemplateInstanceUrlResult = JSON.parse(fetch('GET', serviceTemplateInstanceUrl));
-def selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
-println "Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl;
+var selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.selfServiceApplicationUrl;
+console.log("Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl);
 execution.setVariable("${taskId}" + "_selfServiceApplicationUrl", selfServiceApplicationUrl);
 
-def qProvUrl = serviceTemplateInstanceUrlResult.get("qProvUrl");
-println "Retrieved qProvUrl: " + qProvUrl;
+var qProvUrl = serviceTemplateInstanceUrlResult.qProvUrl;
+console.log("Retrieved qProvUrl: " + qProvUrl);
 execution.setVariable("${taskId}" + "_qProvUrl", qProvUrl);
 
 java.lang.Thread.sleep(12000);
@@ -172,7 +179,7 @@ def blacklist = ${JSON.stringify(blacklist)};
 def slurper = new JsonSlurper();
 def policies = slurper.parseText(${JSON.stringify(policies)});
 
-def message = JsonOutput.toJson("policies": policies, "blacklist": blacklist);
+def message = JsonOutput.toJson("policies": policies, "blacklistedNodetypes": blacklist);
 
 try {
    def post = new URL(url).openConnection();
@@ -619,7 +626,8 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           subProcess.id,
           CSARForServiceTask.inputParams,
           serviceTask.id,
-          CSARForServiceTask.reconstructedVMs
+          CSARForServiceTask.reconstructedVMs,
+          getQProvEndpoint()
         )
       );
       scriptTaskUploadToContainer.businessObject.set(
