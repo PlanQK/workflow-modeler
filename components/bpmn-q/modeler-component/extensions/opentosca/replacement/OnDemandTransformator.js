@@ -152,11 +152,11 @@ for(var i = 0; i < 50; i++) {
 var serviceTemplateInstanceUrl = instanceUrl + "/properties";
 console.log("Retrieving selfServiceApplicationUrl from service instance url: ", serviceTemplateInstanceUrl);
 var serviceTemplateInstanceUrlResult = JSON.parse(fetch('GET', serviceTemplateInstanceUrl));
-def selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
+var selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
 println "Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl;
 execution.setVariable("${taskId}" + "_selfServiceApplicationUrl", selfServiceApplicationUrl);
 
-def qProvUrl = serviceTemplateInstanceUrlResult.get("qProvUrl");
+var qProvUrl = serviceTemplateInstanceUrlResult.get("qProvUrl");
 println "Retrieved qProvUrl: " + qProvUrl;
 execution.setVariable("${taskId}" + "_qProvUrl", qProvUrl);
 
