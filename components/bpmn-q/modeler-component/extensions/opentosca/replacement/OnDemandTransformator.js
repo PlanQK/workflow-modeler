@@ -172,7 +172,7 @@ def blacklist = ${JSON.stringify(blacklist)};
 def slurper = new JsonSlurper();
 def policies = slurper.parseText(${JSON.stringify(policies)});
 
-def message = JsonOutput.toJson("policies": policies, "blacklist": blacklist);
+def message = JsonOutput.toJson("policies": policies, "blacklistedNodetypes": blacklist);
 
 try {
    def post = new URL(url).openConnection();
