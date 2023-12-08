@@ -152,9 +152,9 @@ for(var i = 0; i < 50; i++) {
 var serviceTemplateInstanceUrl = instanceUrl + "/properties";
 console.log("Retrieving selfServiceApplicationUrl from service instance url: ", serviceTemplateInstanceUrl);
 var serviceTemplateInstanceUrlResult = JSON.parse(fetch('GET', serviceTemplateInstanceUrl));
-def selfserviceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
-println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
-execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl);
+def selfServiceApplicationUrl = serviceTemplateInstanceUrlResult.get("selfServiceApplicationUrl");
+println "Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl;
+execution.setVariable("${taskId}" + "_selfServiceApplicationUrl", selfServiceApplicationUrl);
 
 def qProvUrl = serviceTemplateInstanceUrlResult.get("qProvUrl");
 println "Retrieved qProvUrl: " + qProvUrl;
@@ -314,11 +314,11 @@ try {
           resultText = get.getInputStream().getText();
           json = new JsonSlurper().parseText(resultText);
                     
-          def selfserviceApplicationUrl = json.get("selfServiceApplicationUrl");
+          def selfServiceApplicationUrl = json.get("selfServiceApplicationUrl");
 
-          println "Retrieved selfserviceApplicationUrl: " + selfserviceApplicationUrl;
+          println "Retrieved selfServiceApplicationUrl: " + selfServiceApplicationUrl;
           execution.setVariable("instanceAvailable", "true");
-          execution.setVariable("${taskId}" + "_selfserviceApplicationUrl", selfserviceApplicationUrl);
+          execution.setVariable("${taskId}" + "_selfServiceApplicationUrl", selfServiceApplicationUrl);
           
           def qProvUrl = json.get("qProvUrl");
           println "Retrieved qProvUrl: " + qProvUrl;
@@ -491,7 +491,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       let dedicatedFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
       dedicatedFlowCondition.body =
         '${(execution.hasVariable("dedicatedHosting") == false || dedicatedHosting == false) ||' +
-          ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == true )}`;
+        ` (execution.hasVariable("${serviceTask.id}" + "_selfServiceApplicationUrl") == true )}`;
       dedicatedFlowBo.conditionExpression = dedicatedFlowCondition;
 
       // add task to check for available instance
@@ -593,7 +593,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       );
       notDedicatedFlowCondition.body =
         '${(execution.hasVariable("dedicatedHosting") == true && dedicatedHosting == true) &&' +
-          ` ((execution.hasVariable("${serviceTask.id}" +_selfserviceApplicationUrl") == false )}`;
+        ` (execution.hasVariable("${serviceTask.id}" + "_selfServiceApplicationUrl") == false )}`;
       notDedicatedFlowBo.conditionExpression = notDedicatedFlowCondition;
 
       let topicName = makeId(12);
@@ -699,6 +699,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         subProcess,
         {}
       );
+      modeling.connect(
+        joiningInstanceAvailablityGatewayGateway,
+        serviceTaskInvokeService,
+        {
+          type: "bpmn:SequenceFlow",
+        }
+      );
       const extensionElements = serviceTask.businessObject.extensionElements;
       serviceTaskInvokeService.businessObject.set("name", "Invoke Service");
       if (!extensionElements) {
@@ -714,21 +721,13 @@ export async function startOnDemandReplacementProcess(xml, csars) {
             if (param.name === "url") {
               param.value = `\${${
                 serviceTask.id
-              }_selfserviceApplicationUrl.concat(${JSON.stringify(
+              }_selfServiceApplicationUrl.concat(${JSON.stringify(
                 param.value || ""
               )})}`;
               break;
             }
           }
         }
-
-        modeling.connect(
-          joiningInstanceAvailablityGatewayGateway,
-          serviceTaskInvokeService,
-          {
-            type: "bpmn:SequenceFlow",
-          }
-        );
 
         const newExtensionElements = createElement(
           "bpmn:ExtensionElements",
