@@ -399,7 +399,6 @@ export async function startOnDemandReplacementProcess(xml, csars) {
         serviceTask.businessObject.extensionElements.values;
       let variablesToDisplay = [];
       for (let extensionElement of serviceTaskExtensionElements) {
-
         // requires to retrieve the children
         if (extensionElement.$type === "camunda:Connector") {
           if (extensionElement.inputOutput.$type === "camunda:InputOutput") {
