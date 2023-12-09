@@ -96,13 +96,18 @@ export async function rewriteWorkflow(
   let exitPoint = elementRegistry.get(candidate.exitPoint.id);
   console.log("Exit point: ", exitPoint);
 
-  console.log(getDi(entryPoint))
   // calculate initial position of the new service task
-  let x = calculatePosition(getDi(entryPoint).bounds.x, getDi(exitPoint).bounds.x);
+  let x = calculatePosition(
+    getDi(entryPoint).bounds.x,
+    getDi(exitPoint).bounds.x
+  );
 
   // add the half of the service task width (100) to place the task in the middle of the sequence flow
   x = x + 50;
-  let y = calculatePosition(getDi(entryPoint).bounds.y, getDi(exitPoint).bounds.y);
+  let y = calculatePosition(
+    getDi(entryPoint).bounds.y,
+    getDi(exitPoint).bounds.y
+  );
 
   // since we add a service task we have to adapt y based on the height of a exclusive gateway which is 50 and take the half of it
   y = y + getDi(entryPoint).bounds.height / 2;

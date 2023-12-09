@@ -4,7 +4,10 @@ import QuantMEExtensionModule from "./modeling";
 import QuantMETab from "./configTabs/QuantMETab";
 import { getQRMs } from "./qrm-manager";
 import { startQuantmeReplacementProcess } from "./replacement/QuantMETransformator";
-import { createQuantMEView, updateQuantMEView } from "./replacement/QuantMEViewGenerator";
+import {
+  createQuantMEView,
+  updateQuantMEView,
+} from "./replacement/QuantMEViewGenerator";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
@@ -38,24 +41,24 @@ export default {
         let modeler = getModeler();
         // Initialize 'views' as an empty object if it's undefined
         modeler.views = modeler.views || {};
-        modeler.views["view-before-rewriting"] = quantumView.xml
-        console.log(quantumView)
-        console.log(modeler.views["view-before-rewriting"])
-        console.log(xml)
-        console.log(getModeler())
+        modeler.views["view-before-rewriting"] = quantumView.xml;
 
         let currentQRMs = getQRMs();
-        let transformedXml = await startQuantmeReplacementProcess(xml, currentQRMs, {
-          nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
-          transformationFrameworkEndpoint:
-            config.getTransformationFrameworkEndpoint(),
-          camundaEndpoint: camundaConfig.getCamundaEndpoint(),
-        });
-        console.log(getModeler())
-        console.log(modeler)
-        let combinedResult = await updateQuantMEView(quantumView.xml, transformedXml.xml);
-        console.log(combinedResult.xml);
-        modeler.views["view-before-rewriting"] = combinedResult.xml
+        let transformedXml = await startQuantmeReplacementProcess(
+          xml,
+          currentQRMs,
+          {
+            nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
+            transformationFrameworkEndpoint:
+              config.getTransformationFrameworkEndpoint(),
+            camundaEndpoint: camundaConfig.getCamundaEndpoint(),
+          }
+        );
+        let combinedResult = await updateQuantMEView(
+          quantumView.xml,
+          transformedXml.xml
+        );
+        modeler.views["view-before-rewriting"] = combinedResult.xml;
         return transformedXml;
       }}
     />
