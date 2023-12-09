@@ -656,28 +656,6 @@
           "type": "String"
         }
       ]
-    },
-    {
-      "name": "Task",
-      "extends": ["bpmn:Task"],
-      "properties": [
-        {
-          "name": "quantmeTaskType",
-          "isAttr": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
-      "name": "SubProcess",
-      "extends": ["bpmn:SubProcess"],
-      "properties": [
-        {
-          "name": "quantmeTaskType",
-          "isAttr": true,
-          "type": "String"
-        }
-      ]
     }
   ],
   "enumerations": [],

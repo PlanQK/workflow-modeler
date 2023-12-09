@@ -8,25 +8,11 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import { layout } from "./layouter/Layouter";
-import { matchesQRM } from "./QuantMEMatcher";
-import { addQuantMEInputParameters } from "./InputOutputHandler";
 import * as constants from "../Constants";
-import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
-import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
 import { insertShape } from "../../../editor/util/TransformationUtilities";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
-import {
-  getCamundaInputOutput,
-  getDefinitionsFromXml,
-  getRootProcess,
-  getSingleFlowElement,
-} from "../../../editor/util/ModellingUtilities";
+import { getRootProcess } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
-import { replaceDataObjects } from "./dataObjects/QuantMEDataObjectsHandler";
-import * as openToscaConsts from "../../opentosca/Constants";
-import { filterRedundantWaypoints } from "diagram-js/lib/layout/LayoutUtil";
 import { createTempModeler } from "../../../editor/ModelerHandler";
 import { createLayoutedShape } from "../../../editor/util/camunda-utils/ElementUtil";
 /**
@@ -36,9 +22,7 @@ import { createLayoutedShape } from "../../../editor/util/camunda-utils/ElementU
  * @param currentQRMs the set of currently in the framework available QRMs
  * @param endpointConfig endpoints of the services required for the dynamic hardware selection
  */
-export async function createQuantMEView(
-  xml
-) {
+export async function createQuantMEView(xml) {
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
@@ -69,68 +53,72 @@ export async function createQuantMEView(
 
   // first replace cutting subprocesses and insert tasks
   for (let replacementConstruct of replacementConstructs) {
-    let replacementSuccess = false;
-    if (
-      constants.QUANTME_TASKS.includes(replacementConstruct.task.$type)
-    ) {
-      console.log(replacementConstruct)
+    if (constants.QUANTME_TASKS.includes(replacementConstruct.task.$type)) {
+      console.log(replacementConstruct);
       //modeler.get("moddleCopy").copyElement(elementRegistry.get(replacementConstruct.task.id), copyElement);
-      let element = bpmnReplace.replaceElement(elementRegistry.get(replacementConstruct.task.id), {
-        type: "bpmn:Task",
-      });
+      let element = bpmnReplace.replaceElement(
+        elementRegistry.get(replacementConstruct.task.id),
+        {
+          type: "bpmn:Task",
+        }
+      );
 
       modeling.updateProperties(element, {
-        "quantmeTaskType": replacementConstruct.task.$type,
+        "quantme:quantmeTaskType": replacementConstruct.task.$type,
       });
     }
 
     if (
-      replacementConstruct.task.$type === constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS || replacementConstruct.task.$type === constants.CIRCUIT_CUTTING_SUBPROCESS 
+      replacementConstruct.task.$type ===
+        constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS ||
+      replacementConstruct.task.$type === constants.CIRCUIT_CUTTING_SUBPROCESS
     ) {
-      console.log(replacementConstruct)
+      console.log(replacementConstruct);
       console.log(elementRegistry.get(replacementConstruct.task.id));
 
-      let hardwareSelectionFragment = await getHardwareSelectionFragment(elementRegistry.get(replacementConstruct.task.id).businessObject);
-      console.log(hardwareSelectionFragment)
-      let element = bpmnReplace.replaceElement(elementRegistry.get(replacementConstruct.task.id), {
-        type: "bpmn:SubProcess",
-      });
+      let hardwareSelectionFragment = await getHardwareSelectionFragment(
+        elementRegistry.get(replacementConstruct.task.id).businessObject
+      );
+      console.log(hardwareSelectionFragment);
+      let element = bpmnReplace.replaceElement(
+        elementRegistry.get(replacementConstruct.task.id),
+        {
+          type: "bpmn:SubProcess",
+        }
+      );
 
       modeling.updateProperties(element, {
-        "quantmeTaskType": replacementConstruct.task.$type,
+        "quantme:quantmeTaskType": replacementConstruct.task.$type,
       });
 
-      for(let child of element.children) {
-        if(child.type.startsWith("quantme:")){
-          
-        let element = bpmnReplace.replaceElement(elementRegistry.get(child.id), {
-          type: "bpmn:Task",
-        });
-        modeling.updateProperties(element, {
-          "quantmeTaskType": child.type,
-        });
-      }
+      for (let child of element.children) {
+        if (child.type.startsWith("quantme:")) {
+          let element = bpmnReplace.replaceElement(
+            elementRegistry.get(child.id),
+            {
+              type: "bpmn:Task",
+            }
+          );
+          modeling.updateProperties(element, {
+            quantmeTaskType: child.type,
+          });
+        }
       }
       console.log(elementRegistry.get(element.id));
     }
     if (
       constants.QUANTME_DATA_OBJECTS.includes(replacementConstruct.task.$type)
     ) {
-      let element = bpmnReplace.replaceElement(elementRegistry.get(replacementConstruct.task.id), {
-        type: "bpmn:DataObjectReference",
-      });
+      let element = bpmnReplace.replaceElement(
+        elementRegistry.get(replacementConstruct.task.id),
+        {
+          type: "bpmn:DataObjectReference",
+        }
+      );
       modeling.updateProperties(element, {
-        "quantmeTaskType": replacementConstruct.task.$type,
+        quantmeTaskType: replacementConstruct.task.$type,
       });
     }
-
-    if (
-      openToscaConsts.POLICIES.includes(replacementConstruct.task.$type)
-    ) {
-      
-      modeling.removeShape(element);
-    }
-    
   }
 
   // layout diagram after successful transformation
@@ -170,18 +158,11 @@ export function getQuantMETasks(process, elementRegistry) {
   return quantmeTasks;
 }
 
-export async function updateQuantMEView(
-  quantumViewXml, transformedXml
-) {
+export async function updateQuantMEView(quantumViewXml, transformedXml) {
   let modeler = await createTempModelerFromXml(quantumViewXml);
   let transformedXmlModeler = await createTempModelerFromXml(transformedXml);
-  let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
-  let bpmnReplace = modeler.get("bpmnReplace");
-
-  let modeling2 = transformedXmlModeler.get("modeling");
   let elementRegistry2 = transformedXmlModeler.get("elementRegistry");
-  let bpmnReplace2 = transformedXmlModeler.get("bpmnReplace");
 
   // get root element of the current diagram
   const definitions = modeler.getDefinitions();
@@ -210,19 +191,20 @@ export async function updateQuantMEView(
   let replacementConstructs2 = getSubProcesses(rootElement2, elementRegistry2);
 
   console.log(replacementConstructs2);
-  for(let flowElement of rootElement.flowElements){
-    for(let subprocess of replacementConstructs2) {
-      if(flowElement.id === subprocess.id) {
+  for (let flowElement of rootElement.flowElements) {
+    for (let subprocess of replacementConstructs2) {
+      if (flowElement.id === subprocess.id) {
         let containedElements = [];
-        console.log(subprocess)
-        for(let element of subprocess.flowElements){
+        console.log(subprocess);
+        for (let element of subprocess.flowElements) {
           containedElements.push(element.id);
+          console.log(element);
         }
+
         let flowElementRegistry = elementRegistry.get(flowElement.id);
-        flowElementRegistry.businessObject.$attrs["quantme:containedElements"] = containedElements;
-
+        flowElementRegistry.businessObject.$attrs["quantme:containedElements"] =
+          containedElements;
       }
-
     }
   }
   // layout diagram after successful transformation
@@ -237,7 +219,6 @@ export async function updateQuantMEView(
  */
 export function getSubProcesses(process, elementRegistry) {
   // retrieve parent object for later replacement
-  const processBo = elementRegistry.get(process.id);
 
   const quantmeTasks = [];
   const flowElements = process.flowElements;
@@ -250,8 +231,9 @@ export function getSubProcesses(process, elementRegistry) {
       flowElement.$type &&
       (flowElement.$type === "bpmn:SubProcess" ||
         flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS ||
-        flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)) {
-          quantmeTasks.push(flowElement);
+        flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
+    ) {
+      quantmeTasks.push(flowElement);
       Array.prototype.push.apply(
         quantmeTasks,
         getSubProcesses(flowElement, elementRegistry)

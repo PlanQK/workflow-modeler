@@ -178,7 +178,11 @@ export async function deployWorkflowToCamunda(
     console.info("Adding view with name: ", key);
 
     // add view xml to the body
-    const viewBlob = new File([value], fileName.replace(".bpmn", key + ".xml"), { type: "text/xml" });
+    const viewBlob = new File(
+      [value],
+      fileName.replace(".bpmn", key + ".xml"),
+      { type: "text/xml" }
+    );
     form.append(key, viewBlob);
   }
 

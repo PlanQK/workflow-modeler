@@ -27,7 +27,6 @@ import {
   getSingleFlowElement,
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
-import { replaceDataObjects } from "./dataObjects/QuantMEDataObjectsHandler";
 import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
 import { isQuantMETask } from "../utilities/Utilities";
 
