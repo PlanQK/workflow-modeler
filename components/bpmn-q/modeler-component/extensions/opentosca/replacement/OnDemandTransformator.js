@@ -395,10 +395,30 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           config.getWineryEndpoint()
         );
       }
+      let extensionElementS = serviceTask.businessObject.extensionElements.values;
+      let variablesToDisplay = [];
+      for (let extensionElement of extensionElementS) {
+        console.log("DIE EXTEN")
+        console.log(extensionElement);
+
+        // requires to retrieve the children
+        if (extensionElement.$type === "camunda:Connector") {
+                if (extensionElement.inputOutput.$type === "camunda:InputOutput") {
+                  let parameters = extensionElement.inputOutput.outputParameters;
+                    for (let inoutParam of parameters) {
+                        if (inoutParam.$type === "camunda:OutputParameter") {
+                            variablesToDisplay.push(inoutParam.name);
+                        }
+                    }
+                }
+            }
+        
+    }
 
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
       });
+      subProcess.businessObject.set("opentosca:extension", variablesToDisplay);
 
       subProcess.businessObject.set("opentosca:onDemandDeployment", true);
       subProcess.businessObject.set(
