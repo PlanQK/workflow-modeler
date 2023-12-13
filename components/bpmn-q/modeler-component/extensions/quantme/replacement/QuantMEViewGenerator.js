@@ -100,7 +100,7 @@ export async function createQuantMEView(xml) {
             }
           );
           modeling.updateProperties(element, {
-            quantmeTaskType: child.type,
+            "quantme:quantmeTaskType": child.type,
           });
         }
       }
@@ -116,7 +116,7 @@ export async function createQuantMEView(xml) {
         }
       );
       modeling.updateProperties(element, {
-        quantmeTaskType: replacementConstruct.task.$type,
+        "quantme:quantmeTaskType": replacementConstruct.task.$type,
       });
     }
   }
