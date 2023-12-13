@@ -45,6 +45,9 @@ export default class ModelerRules extends BpmnRules {
           }
           aceEditor.setValue(result);
         });
+
+        // clear views since they become invalid if changes are applied
+        modeler.views = [];
       }
     });
   }
