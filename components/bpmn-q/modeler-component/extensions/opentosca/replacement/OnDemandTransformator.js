@@ -475,7 +475,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       let dedicatedGatewayBo = elementRegistry.get(
         dedicatedGateway.id
       ).businessObject;
-      dedicatedGatewayBo.name = "Dedidcated Policy?";
+      dedicatedGatewayBo.name = "Dedicated Policy?";
       modeling.connect(serviceTaskCompleteDeploymentModel, dedicatedGateway, {
         type: "bpmn:SequenceFlow",
       });
