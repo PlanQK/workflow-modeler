@@ -29,6 +29,7 @@ import {
 import { getXml } from "../../../editor/util/IoUtilities";
 import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
 import { isQuantMETask } from "../utilities/Utilities";
+import { getQProvEndpoint } from "../framework-config/config-manager";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -45,10 +46,12 @@ export async function startQuantmeReplacementProcess(
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
+  let moddle = modeler.get("moddle");
 
   // get root element of the current diagram
   const definitions = modeler.getDefinitions();
   const rootElement = getRootProcess(definitions);
+
   console.log(rootElement);
   if (typeof rootElement === "undefined") {
     console.log("Unable to retrieve root process element from definitions!");
@@ -68,6 +71,8 @@ export async function startQuantmeReplacementProcess(
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
   }
+
+  addQProvEndpoint(rootElement, elementRegistry, modeling, moddle);
 
   // check for available replacement models for all QuantME modeling constructs
   for (let replacementConstruct of replacementConstructs) {
@@ -395,4 +400,46 @@ async function replaceByFragment(
   }
 
   return result["success"];
+}
+
+/**
+ * Add QProv endpoint to start event form.
+ *
+ * @param rootElement
+ * @param elementRegistry
+ * @param modeling
+ * @param moddle
+ */
+function addQProvEndpoint(rootElement, elementRegistry, modeling, moddle) {
+  for (let flowElement of rootElement.flowElements) {
+    if (flowElement.$type === "bpmn:StartEvent") {
+      let startEvent = elementRegistry.get(flowElement.id);
+
+      let extensionElements =
+        startEvent.businessObject.get("extensionElements");
+
+      if (!extensionElements) {
+        extensionElements = moddle.create("bpmn:ExtensionElements");
+      }
+
+      let form = extensionElements.get("values").filter(function (elem) {
+        return elem.$type == "camunda:FormData";
+      })[0];
+
+      if (!form) {
+        form = moddle.create("camunda:FormData");
+      }
+
+      const formField = moddle.create("camunda:FormField", {
+        defaultValue: getQProvEndpoint(),
+        id: "QProvEndpoint",
+        label: "QProvEndpoint",
+        type: "string",
+      });
+      form.get("fields").push(formField);
+      modeling.updateProperties(startEvent, {
+        extensionElements: extensionElements,
+      });
+    }
+  }
 }
