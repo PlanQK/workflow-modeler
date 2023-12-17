@@ -203,6 +203,8 @@ export async function replaceHardwareSelectionSubprocess(
       userHardwareSelection.id
     ).businessObject;
     userHardwareSelectionBo.name = "Invoke NISQ Analyzer UI";
+    userHardwareSelectionBo.$attrs["camunda:assignee"] = "demo";
+    userHardwareSelectionBo.$attrs["camunda:formKey"] = "embedded:deployment:hardwareSelection.html";
     modeling.connect(splittingGateway, userHardwareSelection, {
       type: "bpmn:SequenceFlow",
     });
