@@ -10,6 +10,7 @@
  */
 
 import {
+  CONVERT_CIRCUIT,
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
   RETRIEVE_FRAGMENT_SCRIPT_PREFIX,
@@ -193,6 +194,25 @@ export async function replaceHardwareSelectionSubprocess(
     );
     return true;
   } else {
+    let task = modeling.createShape(
+      { type: "bpmn:ScriptTask" },
+      { x: 50, y: 50 },
+      element,
+      {}
+    );
+    let taskBo = elementRegistry.get(task.id).businessObject;
+    taskBo.name = "Create Circuit File";
+    taskBo.scriptFormat = "groovy";
+    taskBo.script = CONVERT_CIRCUIT;
+    let flow = modeling.connect(splittingGateway, task, {
+      type: "bpmn:SequenceFlow",
+    });
+    let flowBo = elementRegistry.get(flow.id).businessObject;
+    flowBo.name = "no";
+    let flowCondition = bpmnFactory.create("bpmn:FormalExpression");
+    flowCondition.body =
+      '${execution.hasVariable("already_selected") == false || already_selected == false}';
+    flowBo.conditionExpression = flowCondition;
     let userHardwareSelection = modeling.createShape(
       { type: "bpmn:UserTask" },
       { x: 50, y: 50 },
@@ -204,8 +224,9 @@ export async function replaceHardwareSelectionSubprocess(
     ).businessObject;
     userHardwareSelectionBo.name = "Invoke NISQ Analyzer UI";
     userHardwareSelectionBo.$attrs["camunda:assignee"] = "demo";
-    userHardwareSelectionBo.$attrs["camunda:formKey"] = "embedded:deployment:hardwareSelection.html";
-    modeling.connect(splittingGateway, userHardwareSelection, {
+    userHardwareSelectionBo.$attrs["camunda:formKey"] =
+      "embedded:deployment:hardwareSelection.html";
+    modeling.connect(task, userHardwareSelection, {
       type: "bpmn:SequenceFlow",
     });
     insertTasks(
