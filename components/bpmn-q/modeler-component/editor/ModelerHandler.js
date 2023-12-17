@@ -11,7 +11,7 @@ import {
   getAdditionalModules,
   getModdleExtension,
 } from "./plugin/PluginHandler";
-import ModelerRulesModule from "./rules/";
+import ModelingModule from "./modeling/";
 import LintModule from "bpmn-js-bpmnlint";
 import bpmnlintConfig from "../../.bpmnlintrc";
 import TokenSimulationModule from "bpmn-js-token-simulation";
@@ -142,8 +142,8 @@ function getModules() {
     CustomPopupMenuModule,
     LintModule,
     clipboardModule,
-    ModelerRulesModule,
     TokenSimulationModule,
+    ModelingModule,
   ].concat(pluginModules);
 
   console.log("\n Additional modules of the modeler: ");
