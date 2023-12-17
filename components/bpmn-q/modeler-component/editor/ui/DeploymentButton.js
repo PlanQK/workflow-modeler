@@ -35,7 +35,6 @@ export default function DeploymentButton(props) {
     // get XML of the current workflow
     const rootElement = getRootProcess(modeler.getDefinitions());
 
-
     // Add Camunda & QProv endpoints to formfield of start event
     try {
       let xmlModeler = await createTempModelerFromXml(xml);
@@ -55,7 +54,10 @@ export default function DeploymentButton(props) {
         label: "Camunda Endpoint",
         type: "string",
       };
-      const camundaEndpointFormField = moddle.create("camunda:FormField", camundaEndpoint);
+      const camundaEndpointFormField = moddle.create(
+        "camunda:FormField",
+        camundaEndpoint
+      );
       formDataFields.push(camundaEndpointFormField);
 
       let qprovEndpoint = {
@@ -64,12 +66,17 @@ export default function DeploymentButton(props) {
         label: "QProv Endpoint",
         type: "string",
       };
-      const qprovEndpointFormField = moddle.create("camunda:FormField", qprovEndpoint);
+      const qprovEndpointFormField = moddle.create(
+        "camunda:FormField",
+        qprovEndpoint
+      );
       formDataFields.push(qprovEndpointFormField);
 
       xml = (await xmlModeler.saveXML({ format: true })).xml;
     } catch (e) {
-      console.log("Camunda & QProv Endpoints were not added to Process Variables");
+      console.log(
+        "Camunda & QProv Endpoints were not added to Process Variables"
+      );
     }
 
     // check if there are views defined for the modeler and include them in the deployment
