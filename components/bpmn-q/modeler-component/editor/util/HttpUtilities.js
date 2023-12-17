@@ -21,8 +21,7 @@ export async function fetchDataFromEndpoint(endpoint) {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Error fetching data:", error);
     return {};

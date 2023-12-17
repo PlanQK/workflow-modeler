@@ -46,7 +46,7 @@ To serve the application from a Docker container execute:
 ```
 docker run --name workflow-modeler -p 8080:8080 planqk/workflow-modeler
 ```
-Afterwards the application is available in a browser on localhost:8080 
+Afterwards the application is available in a browser on [http://localhost:8080](http://localhost:8080).
 
 To build and run an own image execute:
 ```

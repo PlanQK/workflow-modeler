@@ -15,8 +15,6 @@ import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn,
 } from "../../../editor/util/PopupMenuUtilities";
-import { createConfigurationsEntries } from "../../../editor/configurations/ConfigurationsUtil";
-import { instance as dataObjectConfigs } from "../configurations/DataObjectConfigurations";
 import * as dataConsts from "../../data-extension/Constants";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
@@ -89,7 +87,6 @@ export default class QuantMEReplaceMenuProvider {
         );
         return Object.assign(subprocessEntries, entries);
       }
-
       return entries;
     };
   }
@@ -100,12 +97,12 @@ export default class QuantMEReplaceMenuProvider {
    * @param element The given element
    * @return {{'replace-by-more-options': {label: string, className: string, action: Function}}}
    */
-  createQuantMETasks(element) {
+  createQuantMEDataEntry(element) {
     const popupMenu = this.popupMenu;
     const translate = this.translate;
     const replaceElement = this.bpmnReplace.replaceElement;
     let filteredOptions = filter(
-      quantmeReplaceOptions.TASK,
+      quantmeReplaceOptions.DATA_OBJECT,
       isDifferentType(element)
     );
 
@@ -120,8 +117,8 @@ export default class QuantMEReplaceMenuProvider {
     return {
       ["replace-by-more-options"]: createMoreOptionsEntryWithReturn(
         element,
-        "QuantME Tasks",
-        "QuantME Tasks",
+        "QuantME Data Objects",
+        "QuantME Data Objects",
         popupMenu,
         options,
         "quantme-tasks-icon"
@@ -135,33 +132,97 @@ export default class QuantMEReplaceMenuProvider {
    * @param element the given element the menu entries are requested for.
    * @return {{'replace-by-quantme-data-options': {label: string, className: string, action: Function}}}
    */
-  createQuantMEDataEntry(element) {
-    const bpmnFactory = this.bpmnFactory;
-    const modeling = this.modeling;
+  createQuantMETasks(element) {
     const popupMenu = this.popupMenu;
-    const replaceElement = this.replaceElement;
-    const commandStack = this.commandStack;
 
-    // create menu entries to replace the current element by the configuration represented by the menu entry
-    let options = createConfigurationsEntries(
+    // get entry for QuantME tasks and their configurations
+    const quantmeTaskEntries = this.createQuantMETaskEntry(
       element,
-      "dataflow-data-map-object-icon",
-      dataObjectConfigs().getQuantMEDataConfigurations(),
-      bpmnFactory,
-      modeling,
-      commandStack,
-      replaceElement
+      quantmeReplaceOptions.TASK
+    );
+    const quantmeSubprocessEntries = this.createQuantMESubprocessEntry(
+      element,
+      quantmeReplaceOptions.SUBPROCESS
+    );
+
+    const quantmeEntries = Object.assign(
+      quantmeTaskEntries,
+      quantmeSubprocessEntries
     );
 
     return {
-      ["replace-by-quantme-data-options"]: createMoreOptionsEntryWithReturn(
+      ["replace-by-more-options"]: createMoreOptionsEntryWithReturn(
         element,
-        "QuantME Data Objects",
-        "QuantME Data Objects",
+        "QuantME Constructs",
+        "QuantME Constructs",
+        popupMenu,
+        quantmeEntries,
+        "quantme-tasks-icon"
+      ),
+    };
+  }
+
+  /**
+   * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for QuantME tasks.
+   *
+   * @param element The element the menu entries are requested for.
+   * @return {{'replace-by-quantme-task-options': {label: string, className: string, action: Function}}}
+   */
+  createQuantMETaskEntry(element, taskOptions) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+    let taskFilteredOptions = filter(taskOptions, isDifferentType(element));
+
+    // create menu entries for the QuantME task types
+    let options = createMenuEntries(
+      element,
+      taskFilteredOptions,
+      translate,
+      replaceElement
+    );
+
+    // create a MoreOptionsEntry displaying the configurations entries
+    return {
+      ["replace-by-quantme-task-options"]: createMoreOptionsEntryWithReturn(
+        element,
+        "QuantME Tasks",
+        "QuantME Tasks",
         popupMenu,
         options,
         "quantme-tasks-icon"
       ),
+    };
+  }
+
+  createQuantMESubprocessEntry(element, subprocessOptions) {
+    const popupMenu = this.popupMenu;
+    const translate = this.translate;
+    const replaceElement = this.bpmnReplace.replaceElement;
+    let subprocessFilteredOptions = filter(
+      subprocessOptions,
+      isDifferentType(element)
+    );
+
+    // create menu entries for the QuantME task types
+    let options = createMenuEntries(
+      element,
+      subprocessFilteredOptions,
+      translate,
+      replaceElement
+    );
+
+    // create a MoreOptionsEntry displaying the configurations entries
+    return {
+      ["replace-by-quantme-subprocess-options"]:
+        createMoreOptionsEntryWithReturn(
+          element,
+          "QuantME Subprocesses",
+          "QuantME Subprocesses",
+          popupMenu,
+          options,
+          "quantme-tasks-icon"
+        ),
     };
   }
 }

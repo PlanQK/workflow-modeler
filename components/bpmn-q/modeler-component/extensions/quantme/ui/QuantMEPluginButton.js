@@ -1,7 +1,6 @@
 import React from "react";
 import AdaptationPlugin from "./adaptation/AdaptationPlugin";
 import QuantMEController from "./control/QuantMEController";
-import UpdateDataObjectConfigurationsButton from "../configurations/UpdateDataObjectConfigurationsButton";
 import ExtensibleButton from "../../../editor/ui/ExtensibleButton";
 import NotificationHandler from "../../../editor/ui/notifications/NotificationHandler";
 import { updateQRMs } from "../qrm-manager";
@@ -30,11 +29,7 @@ export default function QuantMEPluginButton() {
 
   return (
     <ExtensibleButton
-      subButtons={[
-        <AdaptationPlugin />,
-        <QuantMEController />,
-        <UpdateDataObjectConfigurationsButton />,
-      ]}
+      subButtons={[<AdaptationPlugin />, <QuantMEController />]}
       title="QuantME"
       styleClass="quantme-logo"
       description="Show buttons of the QuantME plugin"

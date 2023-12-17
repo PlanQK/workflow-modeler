@@ -9,7 +9,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getQuantMETasks } from "../QuantMETransformator";
 import {
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
@@ -19,10 +18,7 @@ import {
 } from "./HardwareSelectionScripts";
 import * as consts from "../../Constants";
 import { addExtensionElements } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import {
-  createTempModelerFromXml,
-  createTempModeler,
-} from "../../../../editor/ModelerHandler";
+import { createTempModeler } from "../../../../editor/ModelerHandler";
 import {
   getPropertiesToCopy,
   insertShape,
@@ -33,6 +29,7 @@ import {
   getRootProcess,
 } from "../../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../../editor/util/IoUtilities";
+import { createLayoutedShape } from "../../../../editor/util/camunda-utils/ElementUtil";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 /**
@@ -52,8 +49,6 @@ export async function replaceHardwareSelectionSubprocess(
   let elementRegistry = modeler.get("elementRegistry");
   let commandStack = modeler.get("commandStack");
   let moddle = modeler.get("moddle");
-  console.log(subprocess)
-  const automatedSelection = subprocess.automatedSelection
 
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {
@@ -66,7 +61,6 @@ export async function replaceHardwareSelectionSubprocess(
     selectionStrategy: undefined,
     providers: undefined,
     simulatorsAllowed: undefined,
-    automatedSelection: undefined
   });
 
   // retrieve business object of the new element
@@ -79,7 +73,8 @@ export async function replaceHardwareSelectionSubprocess(
   bo.flowElements = [];
 
   // add start event for the new subprocess
-  let startEvent = modeling.createShape(
+  let startEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:StartEvent" },
     { x: 50, y: 50 },
     element,
@@ -87,8 +82,10 @@ export async function replaceHardwareSelectionSubprocess(
   );
   let startEventBo = elementRegistry.get(startEvent.id).businessObject;
   startEventBo.name = "Start Hardware Selection Subprocess";
+
   // add gateway to avoid multiple hardware selections for the same circuit
-  let splittingGateway = modeling.createShape(
+  let splittingGateway = createLayoutedShape(
+    modeling,
     { type: "bpmn:ExclusiveGateway" },
     { x: 50, y: 50 },
     element,
@@ -101,158 +98,225 @@ export async function replaceHardwareSelectionSubprocess(
 
   // connect start event and gateway
   modeling.connect(startEvent, splittingGateway, { type: "bpmn:SequenceFlow" });
-    console.log(automatedSelection)
-  if (automatedSelection) {
-    // add task to invoke the NISQ Analyzer and connect it
-    let invokeHardwareSelection = modeling.createShape(
-      { type: "bpmn:ScriptTask" },
-      { x: 50, y: 50 },
-      element,
-      {}
-    );
-    let invokeHardwareSelectionBo = elementRegistry.get(
-      invokeHardwareSelection.id
-    ).businessObject;
-    invokeHardwareSelectionBo.name = "Invoke NISQ Analyzer";
-    invokeHardwareSelectionBo.scriptFormat = "groovy";
-    invokeHardwareSelectionBo.script = INVOKE_NISQ_ANALYZER_SCRIPT;
-    invokeHardwareSelectionBo.asyncBefore = true;
 
-    // add NISQ Analyzer endpoint, providers attribute, and simulatorAllowed attribute as input parameters
-    let invokeHardwareSelectionInOut = getCamundaInputOutput(
-      invokeHardwareSelectionBo,
-      bpmnFactory
-    );
-    nisqAnalyzerEndpoint += nisqAnalyzerEndpoint.endsWith("/") ? "" : "/";
-    invokeHardwareSelectionInOut.inputParameters.push(
-      bpmnFactory.create("camunda:InputParameter", {
-        name: "camunda_endpoint",
-        value: camundaEndpoint,
-      })
-    );
-    invokeHardwareSelectionInOut.inputParameters.push(
-      bpmnFactory.create("camunda:InputParameter", {
-        name: "nisq_analyzer_endpoint",
-        value: nisqAnalyzerEndpoint + consts.NISQ_ANALYZER_QPU_SELECTION_PATH,
-      })
-    );
-    invokeHardwareSelectionInOut.inputParameters.push(
-      bpmnFactory.create("camunda:InputParameter", {
-        name: "providers",
-        value: subprocess.providers,
-      })
-    );
-    invokeHardwareSelectionInOut.inputParameters.push(
-      bpmnFactory.create("camunda:InputParameter", {
-        name: "simulators_allowed",
-        value: subprocess.simulatorsAllowed,
-      })
-    );
+  // add task to invoke the NISQ Analyzer and connect it
+  let invokeHardwareSelection = createLayoutedShape(
+    modeling,
+    { type: "bpmn:ScriptTask" },
+    { x: 50, y: 50 },
+    element,
+    {}
+  );
+  let invokeHardwareSelectionBo = elementRegistry.get(
+    invokeHardwareSelection.id
+  ).businessObject;
+  invokeHardwareSelectionBo.name = "Invoke NISQ Analyzer";
+  invokeHardwareSelectionBo.scriptFormat = "groovy";
+  invokeHardwareSelectionBo.script = INVOKE_NISQ_ANALYZER_SCRIPT;
+  invokeHardwareSelectionBo.asyncBefore = true;
 
-    // connect gateway with selection path and add condition
-    let selectionFlow = modeling.connect(
-      splittingGateway,
-      invokeHardwareSelection,
-      { type: "bpmn:SequenceFlow" }
-    );
-    let selectionFlowBo = elementRegistry.get(selectionFlow.id).businessObject;
-    selectionFlowBo.name = "no";
-    let selectionFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
-    selectionFlowCondition.body =
-      '${execution.hasVariable("already_selected") == false || already_selected == false}';
-    selectionFlowBo.conditionExpression = selectionFlowCondition;
+  // add NISQ Analyzer endpoint, providers attribute, and simulatorAllowed attribute as input parameters
+  let invokeHardwareSelectionInOut = getCamundaInputOutput(
+    invokeHardwareSelectionBo,
+    bpmnFactory
+  );
+  nisqAnalyzerEndpoint += nisqAnalyzerEndpoint.endsWith("/") ? "" : "/";
+  invokeHardwareSelectionInOut.inputParameters.push(
+    bpmnFactory.create("camunda:InputParameter", {
+      name: "camunda_endpoint",
+      value: camundaEndpoint,
+    })
+  );
+  invokeHardwareSelectionInOut.inputParameters.push(
+    bpmnFactory.create("camunda:InputParameter", {
+      name: "nisq_analyzer_endpoint_qpu_selection",
+      value: nisqAnalyzerEndpoint + consts.NISQ_ANALYZER_QPU_SELECTION_PATH,
+    })
+  );
+  invokeHardwareSelectionInOut.inputParameters.push(
+    bpmnFactory.create("camunda:InputParameter", {
+      name: "providers",
+      value: subprocess.providers,
+    })
+  );
+  invokeHardwareSelectionInOut.inputParameters.push(
+    bpmnFactory.create("camunda:InputParameter", {
+      name: "simulators_allowed",
+      value: subprocess.simulatorsAllowed,
+    })
+  );
 
-    // add task implementing the defined selection strategy and connect it
-    let selectionTask = addSelectionStrategyTask(
-      subprocess.selectionStrategy,
-      element,
-      elementRegistry,
-      modeling
-    );
-    if (selectionTask === undefined) {
-      return false;
-    }
-    let selectionTaskBo = elementRegistry.get(selectionTask.id).businessObject;
-    selectionTaskBo.asyncBefore = true;
-    modeling.connect(invokeHardwareSelection, selectionTask, {
-      type: "bpmn:SequenceFlow",
-    });
+  // connect gateway with selection path and add condition
+  let selectionFlow = modeling.connect(
+    splittingGateway,
+    invokeHardwareSelection,
+    { type: "bpmn:SequenceFlow" }
+  );
+  let selectionFlowBo = elementRegistry.get(selectionFlow.id).businessObject;
+  selectionFlowBo.name = "no";
+  let selectionFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
+  selectionFlowCondition.body =
+    '${execution.hasVariable("already_selected") == false || already_selected == false}';
+  selectionFlowBo.conditionExpression = selectionFlowCondition;
 
-    // add task implementing the transformation of the QuantME modeling constructs within the QuantumHardwareSelectionSubprocess
-    console.log(
-      "Adding extracted workflow fragment XML: ",
-      hardwareSelectionFragment
-    );
-    insertTasks(modeling, elementRegistry, bpmnFactory, commandStack, moddle, element, splittingGateway, selectionTask, hardwareSelectionFragment, transformationFrameworkEndpoint, camundaEndpoint)
-    return true;
-  } else {
-    let userHardwareSelection = modeling.createShape(
-      { type: "bpmn:UserTask" },
-      { x: 50, y: 50 },
-      element,
-      {}
-    );
-    let userHardwareSelectionBo = elementRegistry.get(
-      userHardwareSelection.id
-    ).businessObject;
-    userHardwareSelectionBo.name = "Invoke NISQ Analyzer UI";
-    modeling.connect(splittingGateway, userHardwareSelection, {
-      type: "bpmn:SequenceFlow",
-    });
-    insertTasks(modeling, elementRegistry, bpmnFactory, commandStack, moddle, element, splittingGateway, userHardwareSelection, hardwareSelectionFragment, transformationFrameworkEndpoint, camundaEndpoint);
-    return true;
+  // add task implementing the defined selection strategy and connect it
+  let selectionTask = addSelectionStrategyTask(
+    subprocess.selectionStrategy,
+    element,
+    elementRegistry,
+    modeling
+  );
+  if (selectionTask === undefined) {
+    return false;
   }
-}
+  let selectionTaskBo = elementRegistry.get(selectionTask.id).businessObject;
+  selectionTaskBo.asyncBefore = true;
+  modeling.connect(invokeHardwareSelection, selectionTask, {
+    type: "bpmn:SequenceFlow",
+  });
 
-/**
- * Configure the given QuantME workflow fragment based on the selected hardware
- *
- * @param xml the QuantME workflow fragment in XML format
- * @param provider the provider of the selected QPU
- * @param qpu the selected QPU
- * @param circuitLanguage the language of the circuit provided by the NISQ Analyzer
- * @return the configured workflow model
- */
-export async function configureBasedOnHardwareSelection(
-  xml,
-  provider,
-  qpu,
-  circuitLanguage
-) {
-  let modeler = await createTempModelerFromXml(xml);
-  let elementRegistry = modeler.get("elementRegistry");
+  // add task implementing the transformation of the QuantME modeling constructs within the QuantumHardwareSelectionSubprocess
+  console.log(
+    "Adding extracted workflow fragment XML: ",
+    hardwareSelectionFragment
+  );
+  let retrieveFragment = createLayoutedShape(
+    modeling,
+    { type: "bpmn:ScriptTask" },
+    { x: 50, y: 50 },
+    element,
+    {}
+  );
+  let retrieveFragmentBo = elementRegistry.get(
+    retrieveFragment.id
+  ).businessObject;
+  retrieveFragmentBo.name = "Retrieve Fragment to Transform";
+  retrieveFragmentBo.scriptFormat = "groovy";
+  retrieveFragmentBo.script =
+    RETRIEVE_FRAGMENT_SCRIPT_PREFIX +
+    hardwareSelectionFragment +
+    RETRIEVE_FRAGMENT_SCRIPT_SUFFIX;
+  retrieveFragmentBo.asyncBefore = true;
+  modeling.connect(selectionTask, retrieveFragment, {
+    type: "bpmn:SequenceFlow",
+  });
 
-  // get root element of the current diagram
-  const rootElement = getRootProcess(modeler.getDefinitions());
-  if (typeof rootElement === "undefined") {
-    console.log("Unable to retrieve root process element from definitions!");
-    return {
-      status: "failed",
-      cause: "Unable to retrieve root process element from definitions!",
-    };
-  }
-  rootElement.isExecutable = true;
+  // add task implementing the transformation of the QuantME modeling constructs within the QuantumHardwareSelectionSubprocess
+  let invokeTransformation = createLayoutedShape(
+    modeling,
+    { type: "bpmn:ScriptTask" },
+    { x: 50, y: 50 },
+    element,
+    {}
+  );
+  let invokeTransformationBo = elementRegistry.get(
+    invokeTransformation.id
+  ).businessObject;
+  invokeTransformationBo.name = "Invoke Transformation Framework";
+  invokeTransformationBo.scriptFormat = "groovy";
+  invokeTransformationBo.script = INVOKE_TRANSFORMATION_SCRIPT;
+  invokeTransformationBo.asyncBefore = true;
+  modeling.connect(retrieveFragment, invokeTransformation, {
+    type: "bpmn:SequenceFlow",
+  });
 
-  // get all QuantME modeling constructs from the process
-  const quantmeTasks = getQuantMETasks(rootElement, elementRegistry);
+  // add Transformation Framework endpoint as input parameter
+  let invokeTransformationInOut = getCamundaInputOutput(
+    invokeTransformationBo,
+    bpmnFactory
+  );
+  invokeTransformationInOut.inputParameters.push(
+    bpmnFactory.create("camunda:InputParameter", {
+      name: "transformation_framework_endpoint",
+      value: transformationFrameworkEndpoint,
+    })
+  );
+  invokeTransformationInOut.inputParameters.push(
+    bpmnFactory.create("camunda:InputParameter", {
+      name: "camunda_endpoint",
+      value: camundaEndpoint,
+    })
+  );
 
-  // update properties of quantum circuit execution and readout error mitigation tasks according to the hardware selection
-  for (let quantmeTask of quantmeTasks) {
-    console.log("Configuring task: ", quantmeTask.task);
+  // join control flow
+  let joiningGateway = createLayoutedShape(
+    modeling,
+    { type: "bpmn:ExclusiveGateway" },
+    { x: 50, y: 50 },
+    element,
+    {}
+  );
+  modeling.connect(invokeTransformation, joiningGateway, {
+    type: "bpmn:SequenceFlow",
+  });
 
-    if (quantmeTask.task.$type === consts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
-      quantmeTask.task.provider = provider;
-      quantmeTask.task.qpu = qpu;
-      quantmeTask.task.programmingLanguage = circuitLanguage;
-    }
+  // add connection from splitting to joining gateway and add condition
+  let alreadySelectedFlow = modeling.connect(splittingGateway, joiningGateway, {
+    type: "bpmn:SequenceFlow",
+  });
+  let alreadySelectedFlowBo = elementRegistry.get(
+    alreadySelectedFlow.id
+  ).businessObject;
+  alreadySelectedFlowBo.name = "yes";
+  let alreadySelectedFlowCondition = bpmnFactory.create(
+    "bpmn:FormalExpression"
+  );
+  alreadySelectedFlowCondition.body =
+    '${execution.hasVariable("already_selected") == true && already_selected == true}';
+  alreadySelectedFlowBo.conditionExpression = alreadySelectedFlowCondition;
 
-    if (quantmeTask.task.$type === consts.READOUT_ERROR_MITIGATION_TASK) {
-      quantmeTask.task.provider = provider;
-      quantmeTask.task.qpu = qpu;
-    }
-  }
+  // add call activity invoking the dynamically transformed and deployed workflow fragment
+  let invokeTransformedFragment = createLayoutedShape(
+    modeling,
+    { type: "bpmn:CallActivity" },
+    { x: 50, y: 50 },
+    element,
+    {}
+  );
+  let invokeTransformedFragmentBo = elementRegistry.get(
+    invokeTransformedFragment.id
+  ).businessObject;
+  invokeTransformedFragmentBo.name = "Invoke Transformed Fragment";
+  invokeTransformedFragmentBo.calledElement = "${fragment_endpoint}";
+  invokeTransformedFragmentBo.calledElementBinding = "latest";
+  invokeTransformedFragmentBo.asyncBefore = true;
+  modeling.connect(joiningGateway, invokeTransformedFragment, {
+    type: "bpmn:SequenceFlow",
+  });
 
-  return { status: "success", xml: await getXml(modeler) };
+  // pass all variables between the caller and callee workflow
+  addExtensionElements(
+    invokeTransformedFragment,
+    invokeTransformedFragmentBo,
+    bpmnFactory.create("camunda:In"),
+    bpmnFactory,
+    commandStack
+  );
+  let extensionElements = getExtensionElements(
+    invokeTransformedFragmentBo,
+    moddle
+  );
+  let invokeTransformedFragmentIn = extensionElements.values[0];
+  let invokeTransformedFragmentOut = bpmnFactory.create("camunda:Out");
+  extensionElements.values.push(invokeTransformedFragmentOut);
+  invokeTransformedFragmentIn.variables = "all";
+  invokeTransformedFragmentOut.variables = "all";
+  invokeTransformedFragmentBo.extensionElements = extensionElements;
+
+  // add end event for the new subprocess
+  let endEvent = createLayoutedShape(
+    modeling,
+    { type: "bpmn:EndEvent" },
+    { x: 50, y: 50 },
+    element,
+    {}
+  );
+  let endEventBo = elementRegistry.get(endEvent.id).businessObject;
+  endEventBo.name = "Terminate Hardware Selection Subprocess";
+  modeling.connect(invokeTransformedFragment, endEvent, {
+    type: "bpmn:SequenceFlow",
+  });
+  return true;
 }
 
 /**
@@ -296,7 +360,8 @@ function addSelectionStrategyTask(
  * Add a task implementing the Shortest-Queue selection strategy
  */
 function addShortestQueueSelectionStrategy(parent, elementRegistry, modeling) {
-  let task = modeling.createShape(
+  let task = createLayoutedShape(
+    modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
     parent,
@@ -339,7 +404,8 @@ async function getHardwareSelectionFragment(subprocess) {
     elementRegistry.get(rootElement.flowElements[0].id),
     { type: "bpmn:StartEvent" }
   );
-  let endEvent = modeling.createShape(
+  let endEvent = createLayoutedShape(
+    modeling,
     { type: "bpmn:EndEvent" },
     { x: 50, y: 50 },
     rootElementBo,
@@ -363,156 +429,4 @@ async function getHardwareSelectionFragment(subprocess) {
   // export xml and remove line breaks
   let xml = await getXml(modeler);
   return xml.replace(/(\r\n|\n|\r)/gm, "");
-}
-
-function insertTasks(modeling, elementRegistry, bpmnFactory, commandStack, moddle, element, splittingGateway, task, hardwareSelectionFragment, transformationFrameworkEndpoint, camundaEndpoint) {
-  let retrieveFragment = modeling.createShape(
-    { type: "bpmn:ScriptTask" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let retrieveFragmentBo = elementRegistry.get(
-    retrieveFragment.id
-  ).businessObject;
-  retrieveFragmentBo.name = "Retrieve Fragment to Transform";
-  retrieveFragmentBo.scriptFormat = "groovy";
-  retrieveFragmentBo.script =
-    RETRIEVE_FRAGMENT_SCRIPT_PREFIX +
-    hardwareSelectionFragment +
-    RETRIEVE_FRAGMENT_SCRIPT_SUFFIX;
-  retrieveFragmentBo.asyncBefore = true;
-  modeling.connect(task, retrieveFragment, {
-    type: "bpmn:SequenceFlow",
-  });
-
-  // add task implementing the transformation of the QuantME modeling constructs within the QuantumHardwareSelectionSubprocess
-  let invokeTransformation = modeling.createShape(
-    { type: "bpmn:ScriptTask" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let invokeTransformationBo = elementRegistry.get(
-    invokeTransformation.id
-  ).businessObject;
-  invokeTransformationBo.name = "Invoke Transformation Framework";
-  invokeTransformationBo.scriptFormat = "groovy";
-  invokeTransformationBo.script = INVOKE_TRANSFORMATION_SCRIPT;
-  invokeTransformationBo.asyncBefore = true;
-  modeling.connect(retrieveFragment, invokeTransformation, {
-    type: "bpmn:SequenceFlow",
-  });
-
-  // add Transformation Framework endpoint as input parameter
-  let invokeTransformationInOut = getCamundaInputOutput(
-    invokeTransformationBo,
-    bpmnFactory
-  );
-  invokeTransformationInOut.inputParameters.push(
-    bpmnFactory.create("camunda:InputParameter", {
-      name: "transformation_framework_endpoint",
-      value: transformationFrameworkEndpoint,
-    })
-  );
-  invokeTransformationInOut.inputParameters.push(
-    bpmnFactory.create("camunda:InputParameter", {
-      name: "camunda_endpoint",
-      value: camundaEndpoint,
-    })
-  );
-
-  // add task to poll for the results of the transformation and deployment
-  let pollForTransformation = modeling.createShape(
-    { type: "bpmn:ScriptTask" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let pollForTransformationBo = elementRegistry.get(
-    pollForTransformation.id
-  ).businessObject;
-  pollForTransformationBo.name = "Poll for Transformation and Deployment";
-  pollForTransformationBo.scriptFormat = "groovy";
-  pollForTransformationBo.script = SELECT_ON_QUEUE_SIZE_SCRIPTT;
-  pollForTransformationBo.asyncBefore = true;
-  modeling.connect(invokeTransformation, pollForTransformation, {
-    type: "bpmn:SequenceFlow",
-  });
-
-  // join control flow
-  let joiningGateway = modeling.createShape(
-    { type: "bpmn:ExclusiveGateway" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  modeling.connect(pollForTransformation, joiningGateway, {
-    type: "bpmn:SequenceFlow",
-  });
-
-  // add connection from splitting to joining gateway and add condition
-  let alreadySelectedFlow = modeling.connect(splittingGateway, joiningGateway, {
-    type: "bpmn:SequenceFlow",
-  });
-  let alreadySelectedFlowBo = elementRegistry.get(
-    alreadySelectedFlow.id
-  ).businessObject;
-  alreadySelectedFlowBo.name = "yes";
-  let alreadySelectedFlowCondition = bpmnFactory.create(
-    "bpmn:FormalExpression"
-  );
-  alreadySelectedFlowCondition.body =
-    '${execution.hasVariable("already_selected") == true && already_selected == true}';
-  alreadySelectedFlowBo.conditionExpression = alreadySelectedFlowCondition;
-
-  // add call activity invoking the dynamically transformed and deployed workflow fragment
-  let invokeTransformedFragment = modeling.createShape(
-    { type: "bpmn:CallActivity" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let invokeTransformedFragmentBo = elementRegistry.get(
-    invokeTransformedFragment.id
-  ).businessObject;
-  invokeTransformedFragmentBo.name = "Invoke Transformed Fragment";
-  invokeTransformedFragmentBo.calledElement = "${fragment_endpoint}";
-  invokeTransformedFragmentBo.calledElementBinding = "latest";
-  invokeTransformedFragmentBo.asyncBefore = true;
-  modeling.connect(joiningGateway, invokeTransformedFragment, {
-    type: "bpmn:SequenceFlow",
-  });
-
-  // pass all variables between the caller and callee workflow
-  addExtensionElements(
-    invokeTransformedFragment,
-    invokeTransformedFragmentBo,
-    bpmnFactory.create("camunda:In"),
-    bpmnFactory,
-    commandStack
-  );
-  let extensionElements = getExtensionElements(
-    invokeTransformedFragmentBo,
-    moddle
-  );
-  let invokeTransformedFragmentIn = extensionElements.values[0];
-  let invokeTransformedFragmentOut = bpmnFactory.create("camunda:Out");
-  extensionElements.values.push(invokeTransformedFragmentOut);
-  invokeTransformedFragmentIn.variables = "all";
-  invokeTransformedFragmentOut.variables = "all";
-  invokeTransformedFragmentBo.extensionElements = extensionElements;
-
-  // add end event for the new subprocess
-  let endEvent = modeling.createShape(
-    { type: "bpmn:EndEvent" },
-    { x: 50, y: 50 },
-    element,
-    {}
-  );
-  let endEventBo = elementRegistry.get(endEvent.id).businessObject;
-  endEventBo.name = "Terminate Hardware Selection Subprocess";
-  modeling.connect(invokeTransformedFragment, endEvent, {
-    type: "bpmn:SequenceFlow",
-  });
 }

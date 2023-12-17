@@ -224,7 +224,7 @@ export function getConfigTabs() {
 
   // load the config tabs of the active plugins into one array
   for (let plugin of getActivePlugins()) {
-    if (plugin.configTabs && checkEnabledStatus(plugin.name)) {
+    if (plugin.configTabs) {
       configTabs = configTabs.concat(plugin.configTabs);
     }
   }

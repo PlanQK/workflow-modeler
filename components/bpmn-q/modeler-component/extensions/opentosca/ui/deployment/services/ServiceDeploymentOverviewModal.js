@@ -22,6 +22,7 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 export default function ServiceDeploymentOverviewModal({
   onClose,
   initValues,
+  elementRegistry,
 }) {
   // close if no deployment required
   if (!initValues || initValues.length === 0) {
@@ -43,21 +44,32 @@ export default function ServiceDeploymentOverviewModal({
       },
     });
 
-  const listItems = initValues.map((CSAR) => (
+  // Modify the filteredInitValues to update the serviceTaskIds
+  const updatedInitValues = initValues.map((CSAR) => {
+    const updatedServiceTaskIds = CSAR.serviceTaskIds.filter((taskId) => {
+      const taskData = elementRegistry.get(taskId);
+      return taskData && !taskData.businessObject.onDemand;
+    });
+    return { ...CSAR, serviceTaskIds: updatedServiceTaskIds };
+  });
+
+  const listItems = updatedInitValues.map((CSAR) => (
     <tr key={CSAR.csarName}>
       <td>{CSAR.csarName}</td>
       <td>{CSAR.serviceTaskIds.join(",")}</td>
       <td>{CSAR.type}</td>
+      <td>{CSAR.incomplete.toString()}</td>
+      <td>{CSAR.onDemand.toString()}</td>
     </tr>
   ));
 
   return (
     <Modal onClose={onClose}>
-      <Title>Service Deployment (1/3)</Title>
+      <Title>Service Deployment (1/4)</Title>
 
       <Body>
         <h3 className="spaceUnder">
-          CSARs that have to be uploaded to the OpenTOSCA Container:
+          CSARs attached to ServiceTasks within the workflow model:
         </h3>
 
         <table>
@@ -66,6 +78,8 @@ export default function ServiceDeploymentOverviewModal({
               <th>CSAR Name</th>
               <th>Related ServiceTask IDs</th>
               <th>Type (Push/Pull)</th>
+              <th>CSAR Requires Completion</th>
+              <th>On-Demand</th>
             </tr>
             {listItems}
           </tbody>

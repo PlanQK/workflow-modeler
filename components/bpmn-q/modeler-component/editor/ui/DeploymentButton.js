@@ -1,12 +1,9 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import NotificationHandler from "./notifications/NotificationHandler";
 import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
 import { getRootProcess } from "../util/ModellingUtilities";
-import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
-import { getModeler } from "../ModelerHandler";
-import OnDemandDeploymentModal from "./OnDemandDeploymentModal";
-import { startOnDemandReplacementProcess } from "../../extensions/opentosca/replacement/OnDemandTransformator";
+import { createTempModelerFromXml } from "../ModelerHandler";
 
 // eslint-disable-next-line no-unused-vars
 const defaultState = {
@@ -21,30 +18,7 @@ const defaultState = {
  * @constructor
  */
 export default function DeploymentButton(props) {
-  const [windowOpenOnDemandDeployment, setWindowOpenOnDemandDeployment] =
-    useState(false);
-
   const { modeler } = props;
-
-  /**
-   * Handle result of the on demand deployment dialog
-   *
-   * @param result the result from the dialog
-   */
-  async function handleOnDemandDeployment(result) {
-    if (result && result.hasOwnProperty("onDemand")) {
-      // get XML of the current workflow
-      let xml = (await modeler.saveXML({ format: true })).xml;
-      console.log("XML", xml);
-      if (result.onDemand === true) {
-        xml = await startOnDemandReplacementProcess(xml);
-      }
-      // deploy in any case
-      deploy(xml);
-    }
-    // handle cancellation (don't deploy)
-    setWindowOpenOnDemandDeployment(false);
-  }
 
   /**
    * Deploy the current workflow to the Camunda engine
@@ -60,6 +34,30 @@ export default function DeploymentButton(props) {
 
     // get XML of the current workflow
     const rootElement = getRootProcess(modeler.getDefinitions());
+
+    try {
+      let xmlModeler = await createTempModelerFromXml(xml);
+      let moddle = modeler.get("moddle");
+      let xmlDefinitions = xmlModeler.getDefinitions();
+      let xmlRoot = getRootProcess(xmlDefinitions);
+      // add new field to startevent form that contains the camunda endpoint required by the quantme backend
+      let formDataFields = xmlRoot.flowElements
+        .filter((x) => x.$type === "bpmn:StartEvent")[0]
+        .extensionElements.values.filter(
+          (x) => x.$type === "camunda:FormData"
+        )[0].fields;
+      let newField = {
+        defaultValue: process.env.CAMUNDA_ENDPOINT,
+        id: "CAMUNDA_ENDPOINT",
+        label: "Camunda Endpoint",
+        type: "string",
+      };
+      const formField = moddle.create("camunda:FormField", newField);
+      formDataFields.push(formField);
+      xml = (await xmlModeler.saveXML({ format: true })).xml;
+    } catch (e) {
+      console.log("Camunda Endpoint was not added to Process Variables");
+    }
 
     // check if there are views defined for the modeler and include them in the deployment
     let viewsDict = {};
@@ -92,14 +90,7 @@ export default function DeploymentButton(props) {
   }
 
   async function onClick() {
-    let csarsToDeploy = getServiceTasksToDeploy(
-      getRootProcess(getModeler().getDefinitions())
-    );
-    if (csarsToDeploy.length > 0) {
-      setWindowOpenOnDemandDeployment(true);
-    } else {
-      deploy((await modeler.saveXML({ format: true })).xml);
-    }
+    deploy((await modeler.saveXML({ format: true })).xml);
   }
 
   return (
@@ -114,9 +105,6 @@ export default function DeploymentButton(props) {
           <span className="qwm-indent">Deploy Workflow</span>
         </span>
       </button>
-      {windowOpenOnDemandDeployment && (
-        <OnDemandDeploymentModal onClose={(e) => handleOnDemandDeployment(e)} />
-      )}
     </Fragment>
   );
 }

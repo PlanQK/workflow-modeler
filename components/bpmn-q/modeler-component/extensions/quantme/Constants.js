@@ -29,6 +29,13 @@ export const CIRCUIT_CUTTING_SUBPROCESS = "quantme:CircuitCuttingSubprocess";
 export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
+export const ERROR_CORRECTION_TASK = "quantme:ErrorCorrectionTask";
+
+export const QUANTUM_CIRCUIT_OBJECT = "quantme:QuantumCircuitObject";
+export const RESULT_OBJECT = "quantme:ResultObject";
+export const EVALUATION_RESULT_OBJECT = "quantme:EvaluationResultObject";
+export const PARAMETRIZATION_OBJECT = "quantme:ParameterizationObject";
+export const INITIAL_STATE_OBJECT = "quantme:InitialStateObject";
 
 // Property names of the QuantME constructs
 export const ALGORITHM = "algorithm";
@@ -71,6 +78,12 @@ export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
 export const AUTOMATED_SELECTION = "automatedSelection";
+export const ERROR_CORRECTION_METHOD = "errorCorrectionMethod";
+
+export const EXECUTION_RESULT = "executionResult";
+export const EVALUATION_RESULT = "evaluationResult";
+export const INITIAL_STATE = "initialState";
+export const PARAMETRIZATION = "parametrization";
 
 // endpoint paths of connected services
 export const NISQ_ANALYZER_QPU_SELECTION_PATH = "nisq-analyzer/qpu-selection";
@@ -120,4 +133,28 @@ export const QUANTME_ATTRIBUTES = [
   MAX_SUBCIRCUIT_WIDTH,
   MAX_NUMBER_OF_CUTS,
   MAXIMUM_NUM_SUBCIRCUITS,
+];
+
+export const QUANTME_DATA_OBJECTS = [
+  QUANTUM_CIRCUIT_OBJECT,
+  RESULT_OBJECT,
+  INITIAL_STATE_OBJECT,
+  EVALUATION_RESULT_OBJECT,
+  PARAMETRIZATION_OBJECT,
+];
+
+export const QUANTME_TASKS = [
+  QUANTUM_COMPUTATION_TASK,
+  QUANTUM_CIRCUIT_LOADING_TASK,
+  DATA_PREPARATION_TASK,
+  ORACLE_EXPANSION_TASK,
+  QUANTUM_CIRCUIT_EXECUTION_TASK,
+  READOUT_ERROR_MITIGATION_TASK,
+  VARIATIONAL_QUANTUM_ALGORITHM_TASK,
+  WARM_STARTING_TASK,
+  PARAMETER_OPTIMIZATION_TASK,
+  RESULT_EVALUATION_TASK,
+  CIRCUIT_CUTTING_TASK,
+  CUTTING_RESULT_COMBINATION_TASK,
+  ERROR_CORRECTION_TASK,
 ];
