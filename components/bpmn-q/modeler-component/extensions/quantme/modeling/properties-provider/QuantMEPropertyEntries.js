@@ -500,9 +500,6 @@ export function AutomatedSelectionEntry({ element }) {
   };
 
   const setValue = function (newValue) {
-    console.log(newValue);
-    console.log(!newValue);
-    console.log(element.businessObject.automatedSelection)
     return modeling.updateProperties(element, {
       automatedSelection: newValue,
     });

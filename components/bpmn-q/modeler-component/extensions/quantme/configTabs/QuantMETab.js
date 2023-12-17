@@ -13,6 +13,9 @@ export default function QuantMETab() {
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(
     config.getNisqAnalyzerEndpoint()
   );
+  const [nisqAnalyzerUiEndpoint, setNisqAnalyzerUiEndpoint] = useState(
+    config.getNisqAnalyzerUiEndpoint()
+  );
   const [qprovEndpoint, setQProvEndpoint] = useState(config.getQProvEndpoint());
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] =
     useState(config.getQiskitRuntimeHandlerEndpoint());
@@ -80,6 +83,13 @@ export default function QuantMETab() {
       },
     });
   }
+  if (!editorActions._actions.hasOwnProperty("nisqAnalyzerUiEndpointChanged")) {
+    editorActions.register({
+      nisqAnalyzerUiEndpointChanged: function (nisqAnalyzerUiEndpoint) {
+        self.modeler.config.nisqAnalyzerUiEndpoint = nisqAnalyzerUiEndpoint;
+      },
+    });
+  }
   if (!editorActions._actions.hasOwnProperty("qprovEndpointChanged")) {
     editorActions.register({
       qprovEndpointChanged: function (qprovEndpoint) {
@@ -122,6 +132,7 @@ export default function QuantMETab() {
   // save changed config entries on close
   QuantMETab.prototype.onClose = () => {
     modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
+    modeler.config.nisqAnalyzerUiEndpoint = nisqAnalyzerUiEndpoint;
     modeler.config.transformationFrameworkEndpoint =
       transformationFrameworkEndpoint;
     modeler.config.scriptSplitterEndpoint = scriptSplitterEndpoint;
@@ -131,6 +142,7 @@ export default function QuantMETab() {
     modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
     modeler.config.qprovEndpoint = qprovEndpoint;
     config.setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint);
+    config.setNisqAnalyzerUiEndpoint(nisqAnalyzerUiEndpoint);
     config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
     config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
     config.setScriptSplitterThreshold(scriptSplitterThreshold);
@@ -174,6 +186,20 @@ export default function QuantMETab() {
                 value={nisqAnalyzerEndpoint}
                 onChange={(event) =>
                   setNisqAnalyzerEndpoint(event.target.value)
+                }
+              />
+            </td>
+          </tr>
+          <tr className="spaceUnder">
+            <td align="right">NISQ Analyzer UI Endpoint:</td>
+            <td align="left">
+              <input
+                className="qwm-input"
+                type="string"
+                name="nisqAnalyzerUiEndpoint"
+                value={nisqAnalyzerUiEndpoint}
+                onChange={(event) =>
+                  setNisqAnalyzerUiEndpoint(event.target.value)
                 }
               />
             </td>
@@ -294,4 +320,5 @@ QuantMETab.prototype.config = () => {
   modeler.config.scriptSplitterEndpoint = config.getScriptSplitterEndpoint();
   modeler.config.scriptSplitterThreshold = config.getScriptSplitterThreshold();
   modeler.config.qprovEndpoint = config.getQProvEndpoint();
+  modeler.config.nisqAnalyzerUiEndpoint = config.getNisqAnalyzerUiEndpoint();
 };
