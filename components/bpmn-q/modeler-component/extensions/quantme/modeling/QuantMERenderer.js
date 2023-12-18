@@ -424,9 +424,6 @@ export default class QuantMERenderer extends BpmnRenderer {
       /* jshint -W040 */
       return h(this, parentNode, element);
     }
-
-    // use parent class for all non QuantME elements
-    return super.drawShape(parentNode, element);
   }
 }
 
