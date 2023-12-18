@@ -395,10 +395,27 @@ export async function startOnDemandReplacementProcess(xml, csars) {
           config.getWineryEndpoint()
         );
       }
+      let serviceTaskExtensionElements =
+        serviceTask.businessObject.extensionElements.values;
+      let variablesToDisplay = [];
+      for (let extensionElement of serviceTaskExtensionElements) {
+        // requires to retrieve the children
+        if (extensionElement.$type === "camunda:Connector") {
+          if (extensionElement.inputOutput.$type === "camunda:InputOutput") {
+            let parameters = extensionElement.inputOutput.outputParameters;
+            for (let inoutParam of parameters) {
+              if (inoutParam.$type === "camunda:OutputParameter") {
+                variablesToDisplay.push(inoutParam.name);
+              }
+            }
+          }
+        }
+      }
 
       let subProcess = bpmnReplace.replaceElement(serviceTask, {
         type: "bpmn:SubProcess",
       });
+      subProcess.businessObject.set("opentosca:extension", variablesToDisplay);
 
       subProcess.businessObject.set("opentosca:onDemandDeployment", true);
       subProcess.businessObject.set(
@@ -458,7 +475,7 @@ export async function startOnDemandReplacementProcess(xml, csars) {
       let dedicatedGatewayBo = elementRegistry.get(
         dedicatedGateway.id
       ).businessObject;
-      dedicatedGatewayBo.name = "Dedidcated Policy?";
+      dedicatedGatewayBo.name = "Dedicated Policy?";
       modeling.connect(serviceTaskCompleteDeploymentModel, dedicatedGateway, {
         type: "bpmn:SequenceFlow",
       });
