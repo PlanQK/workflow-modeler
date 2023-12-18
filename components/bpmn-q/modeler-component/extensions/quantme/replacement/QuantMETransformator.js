@@ -30,6 +30,7 @@ import { getXml } from "../../../editor/util/IoUtilities";
 import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
 import { isQuantMETask } from "../utilities/Utilities";
 import { getQProvEndpoint } from "../framework-config/config-manager";
+import {getCamundaEndpoint} from "../../../editor/config/EditorConfigManager";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -430,13 +431,23 @@ function addQProvEndpoint(rootElement, elementRegistry, modeling, moddle) {
         form = moddle.create("camunda:FormData");
       }
 
-      const formField = moddle.create("camunda:FormField", {
-        defaultValue: getQProvEndpoint(),
-        id: "QProvEndpoint",
-        label: "QProvEndpoint",
+      const formFieldCamundaEndpoint = moddle.create("camunda:FormField", {
+        defaultValue: getCamundaEndpoint(),
+        id: "CAMUNDA_ENDPOINT",
+        label: "Camunda Endpoint",
         type: "string",
       });
-      form.get("fields").push(formField);
+      form.get("fields").push(formFieldCamundaEndpoint);
+
+      const formFieldQProvEndpoint = moddle.create("camunda:FormField", {
+        defaultValue: getQProvEndpoint(),
+        id: "QPROV_ENDPOINT",
+        label: "QProv Endpoint",
+        type: "string",
+      });
+      form.get("fields").push(formFieldQProvEndpoint);
+
+
       modeling.updateProperties(startEvent, {
         extensionElements: extensionElements,
       });
