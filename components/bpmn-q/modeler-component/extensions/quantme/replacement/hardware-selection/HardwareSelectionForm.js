@@ -68,6 +68,7 @@ async function getVariables(circuitUrl) {
                console.log(uiEndpoint);
                document.getElementById('selectedProviderGroup').style.display = 'block';
                document.getElementById('selectedQpuGroup').style.display = 'block';
+               document.getElementById('submitButton').style.display = 'none';
                window.open(uiEndpoint, "_blank");
             }
          }
