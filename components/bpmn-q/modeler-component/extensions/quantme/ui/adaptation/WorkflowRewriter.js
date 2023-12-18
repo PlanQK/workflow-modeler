@@ -11,6 +11,7 @@
 
 import { getXml } from "../../../../editor/util/IoUtilities";
 import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
+import { getDi } from "bpmn-js/lib/util/ModelUtil";
 
 /**
  * Rewrite the workflow available within the given modeler using the given optimization candidate
@@ -88,25 +89,31 @@ export async function rewriteWorkflow(
   }
 
   // get entry point of the hybrid loop to retrieve ingoing sequence flow
-  let entryPoint = elementRegistry.get(candidate.entryPoint.id).businessObject;
+  let entryPoint = elementRegistry.get(candidate.entryPoint.id);
   console.log("Entry point: ", entryPoint);
 
   // get exit point of the hybrid loop to retrieve outgoing sequence flow
-  let exitPoint = elementRegistry.get(candidate.exitPoint.id).businessObject;
+  let exitPoint = elementRegistry.get(candidate.exitPoint.id);
   console.log("Exit point: ", exitPoint);
 
   // calculate initial position of the new service task
-  let x = calculatePosition(entryPoint.di.bounds.x, exitPoint.di.bounds.x);
+  let x = calculatePosition(
+    getDi(entryPoint).bounds.x,
+    getDi(exitPoint).bounds.x
+  );
 
   // add the half of the service task width (100) to place the task in the middle of the sequence flow
   x = x + 50;
-  let y = calculatePosition(entryPoint.di.bounds.y, exitPoint.di.bounds.y);
+  let y = calculatePosition(
+    getDi(entryPoint).bounds.y,
+    getDi(exitPoint).bounds.y
+  );
 
   // since we add a service task we have to adapt y based on the height of a exclusive gateway which is 50 and take the half of it
-  y = y + entryPoint.di.bounds.height / 2;
+  y = y + getDi(entryPoint).bounds.height / 2;
 
   // retrieve parent of the hybrid loop elements to add replacing service task
-  let parent = elementRegistry.get(entryPoint.$parent.id);
+  let parent = elementRegistry.get(entryPoint.parent.id);
   console.log("Parent element of the hybrid loop: ", parent);
 
   // add new service task to invoke the hybrid runtime
@@ -137,13 +144,14 @@ export async function rewriteWorkflow(
   console.log("Adding ingoing sequence flow to new ServiceTask!");
   for (let i = 0; i < entryPoint.incoming.length; i++) {
     let sequenceFlow = entryPoint.incoming[i];
+    console.log(sequenceFlow);
     if (
       !candidate.containedElements.filter((e) => e.id === sequenceFlow.id)
         .length > 0
     ) {
-      console.log("Connecting ServiceTask with: ", sequenceFlow.sourceRef);
+      console.log("Connecting ServiceTask with: ", sequenceFlow.source);
       modeling.connect(
-        elementRegistry.get(sequenceFlow.sourceRef.id),
+        elementRegistry.get(sequenceFlow.source.id),
         invokeHybridRuntime,
         { type: "bpmn:SequenceFlow" }
       );
@@ -154,14 +162,15 @@ export async function rewriteWorkflow(
   console.log("Adding outgoing sequence flow to new ServiceTask!");
   for (let i = 0; i < exitPoint.outgoing.length; i++) {
     let sequenceFlow = exitPoint.outgoing[i];
+    console.log(sequenceFlow);
     if (
       !candidate.containedElements.filter((e) => e.id === sequenceFlow.id)
         .length > 0
     ) {
-      console.log("Connecting ServiceTask with: ", sequenceFlow.targetRef);
+      console.log("Connecting ServiceTask with: ", sequenceFlow.target);
       modeling.connect(
         invokeHybridRuntime,
-        elementRegistry.get(sequenceFlow.targetRef.id),
+        elementRegistry.get(sequenceFlow.target.id),
         { type: "bpmn:SequenceFlow" }
       );
     }
