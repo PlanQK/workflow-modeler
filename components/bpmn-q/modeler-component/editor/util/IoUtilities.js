@@ -7,9 +7,11 @@ import {
 import { getModeler } from "../ModelerHandler";
 import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
 import fetch from "node-fetch";
+import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardware-selection/HardwareSelectionForm";
 import JSZip from "jszip";
 
 const editorConfig = require("../config/EditorConfigManager");
+const quantmeConfig = require("../../extensions/quantme/framework-config/config-manager");
 
 let FormData = require("form-data");
 
@@ -186,6 +188,19 @@ export async function deployWorkflowToCamunda(
     );
     form.append(key, viewBlob);
   }
+
+  // add hardware selection form
+  const hardwareSelectionForm = getHardwareSelectionForm(
+    quantmeConfig.getNisqAnalyzerUiEndpoint(),
+    quantmeConfig.getNisqAnalyzerEndpoint(),
+    editorConfig.getCamundaEndpoint()
+  );
+  const hardwareSelectionFormFile = new File(
+    [hardwareSelectionForm],
+    "hardwareSelection.html",
+    { type: "text/html" }
+  );
+  form.append("deployment", hardwareSelectionFormFile);
 
   // make the request and wait for the response of the deployment endpoint
   try {

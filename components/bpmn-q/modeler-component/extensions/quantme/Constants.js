@@ -77,6 +77,7 @@ export const CUTTING_METHOD = "cuttingMethod";
 export const MAX_SUBCIRCUIT_WIDTH = "maxSubCircuitWidth";
 export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
+export const AUTOMATED_SELECTION = "automatedSelection";
 export const ERROR_CORRECTION_METHOD = "errorCorrectionMethod";
 
 export const EXECUTION_RESULT = "executionResult";

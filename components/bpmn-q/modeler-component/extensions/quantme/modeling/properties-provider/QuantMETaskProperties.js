@@ -6,6 +6,7 @@ import {
 import {
   AlgorithmEntry,
   AlphaEntry,
+  AutomatedSelectionEntry,
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,
   EncodingSchemaEntry,
@@ -266,6 +267,12 @@ export function HardwareSelectionSubprocessProperties(element) {
       id: consts.SELECTION_STRATEGY,
       element,
       component: SelectionStrategyEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.AUTOMATED_SELECTION,
+      element,
+      component: AutomatedSelectionEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

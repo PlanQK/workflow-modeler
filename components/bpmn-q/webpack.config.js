@@ -19,6 +19,7 @@ let defaultConfig = {
   GITHUB_TOKEN: "",
   OPENTOSCA_ENDPOINT: "http://localhost:1337/csars",
   NISQ_ANALYZER_ENDPOINT: "http://localhost:8098/nisq-analyzer",
+  NISQ_ANALYZER_UI_ENDPOINT: "http://localhost:5009/#/algorithms",
   PATTERN_ATLAS_ENDPOINT:
     "http://localhost:1977/patternatlas/patternLanguages/af7780d5-1f97-4536-8da7-4194b093ab1d",
   PATTERN_ATLAS_UI_ENDPOINT: "http://localhost:1978",
