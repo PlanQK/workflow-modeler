@@ -18,7 +18,7 @@ export default function getHardwareSelectionForm(
   let hardwareSelectionForm = `<form role="form" name="form">
    <div class="form-group">  
       <label for="circuitUrl-field">Circuit URL</label>  
-      <input cam-variable-name="circuitUrl" cam-variable-type="String" class="form-control" id="circuitUrl" />
+      <input cam-variable-name="circuitUrl" cam-variable-type="String" class="form-control" id="circuitUrl" readonly />
    </div>
    <div class="form-group" id="selectedProviderGroup" style="display:none">
       <label for="selected_provider-field">Selected Provider</label>  
@@ -32,7 +32,7 @@ export default function getHardwareSelectionForm(
       <label for="already_selected-field">Already selected</label>  
       <input id="already_selected" cam-variable-name="already_selected" cam-variable-type="Boolean" class="form-control" /> 
    </div>
-   <div class="form-group" id="selectedQpuGroup">  
+   <div class="form-group" id="selectedQpuGroup" style="display:none">  
       <label for="selected_qpu-field">Selected QPU</label>  
       <input required id="selected_qpu" cam-variable-name="selected_qpu" cam-variable-type="String" class="form-control" />
    </div>
