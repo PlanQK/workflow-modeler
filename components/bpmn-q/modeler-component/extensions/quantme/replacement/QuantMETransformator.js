@@ -30,7 +30,7 @@ import { getXml } from "../../../editor/util/IoUtilities";
 import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
 import { isQuantMETask } from "../utilities/Utilities";
 import { getQProvEndpoint } from "../framework-config/config-manager";
-import {getCamundaEndpoint} from "../../../editor/config/EditorConfigManager";
+import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -446,7 +446,6 @@ function addQProvEndpoint(rootElement, elementRegistry, modeling, moddle) {
         type: "string",
       });
       form.get("fields").push(formFieldQProvEndpoint);
-
 
       modeling.updateProperties(startEvent, {
         extensionElements: extensionElements,

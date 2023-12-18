@@ -3,7 +3,6 @@ import NotificationHandler from "./notifications/NotificationHandler";
 import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
 import { getRootProcess } from "../util/ModellingUtilities";
-import { createTempModelerFromXml } from "../ModelerHandler";
 
 // eslint-disable-next-line no-unused-vars
 const defaultState = {
