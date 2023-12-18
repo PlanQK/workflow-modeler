@@ -22,7 +22,7 @@ export default function getHardwareSelectionForm(
    </div>
    <div class="form-group" id="selectedProviderGroup" style="display:none">
       <label for="selected_provider-field">Selected Provider</label>  
-      <input id="selected_provider" cam-variable-name="selected_provider" cam-variable-type="String" class="form-control" /> 
+      <input required id="selected_provider" cam-variable-name="selected_provider" cam-variable-type="String" class="form-control" /> 
    </div>
    <div class="form-group" style="display:none">
       <label for="circuit_language-field">Circuit Language</label>  
@@ -40,19 +40,12 @@ export default function getHardwareSelectionForm(
 </form>
 <script>
 async function getVariables(circuitUrl) {
-
-   document.getElementById('selectedProviderGroup').style.display = 'block';
-   document.getElementById('selectedQpuGroup').style.display = 'block';
-   let selectedProviderInput = document.getElementById('selected_provider');
-   selectedProviderInput.value = "Provider Value";
-
    let circuitLanguageInput = document.getElementById('circuit_language');
    circuitLanguageInput.value = "openqasm";
 
    let alreadySelectedInput = document.getElementById('already_selected');
    alreadySelectedInput.value = true;
 
-   console.log("Selected Provider:", selectedProviderInput.value);
    console.log("Circuit Language:", circuitLanguageInput.value);
    console.log("Already Selected:", alreadySelectedInput.value);
 
@@ -72,7 +65,9 @@ async function getVariables(circuitUrl) {
             if (xhr.status === 201) {
                console.log("created implementation");
                let uiEndpoint = "${nisqAnalyzerUiEndpoint}";
-               console.log(uiEndpoint)
+               console.log(uiEndpoint);
+               document.getElementById('selectedProviderGroup').style.display = 'block';
+               document.getElementById('selectedQpuGroup').style.display = 'block';
                window.open(uiEndpoint, "_blank");
             }
          }
