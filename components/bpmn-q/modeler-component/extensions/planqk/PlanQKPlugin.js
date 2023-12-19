@@ -1,6 +1,6 @@
 import React from "react";
 import planqkStyles from "./resources/css/planqk-icons.css";
-import PlanQKExtensionModule from "./";
+import PlanQKExtensionModule from "./modeling";
 import { startPlanqkReplacementProcess } from "./exec-completion/PlanQKServiceTaskCompletion";
 import TransformationButton from "../../editor/ui/TransformationButton";
 

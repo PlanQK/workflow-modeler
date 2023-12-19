@@ -1,12 +1,12 @@
 import * as planqkReplaceOptions from "./PlanQKReplaceOptions";
 import { is } from "bpmn-js/lib/util/ModelUtil";
-import * as consts from "./utilities/Constants";
+import * as consts from "../utilities/Constants";
 import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn,
-} from "../../editor/util/PopupMenuUtilities";
-import { getPluginConfig } from "../../editor/plugin/PluginConfigHandler";
-import * as planqkConsts from "./utilities/Constants";
+} from "../../../editor/util/PopupMenuUtilities";
+import { getPluginConfig } from "../../../editor/plugin/PluginConfigHandler";
+import * as planqkConsts from "../utilities/Constants";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
 
