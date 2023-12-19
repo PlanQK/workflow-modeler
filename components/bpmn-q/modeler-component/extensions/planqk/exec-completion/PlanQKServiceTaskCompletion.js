@@ -197,7 +197,7 @@ async function replaceByInteractionSubprocess(
     console.log("Unable to retrieve replacement subprocess: ", replacement);
     return false;
   }
-  replacementIASubprocess.de
+
   console.log("Replacement interaction subprocess: ", replacementIASubprocess);
 
   // replace task by replacementIASubprocess

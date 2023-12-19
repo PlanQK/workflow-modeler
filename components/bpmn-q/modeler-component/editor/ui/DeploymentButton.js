@@ -33,7 +33,7 @@ export default function DeploymentButton(props) {
       let xml = (await modeler.saveXML({ format: true })).xml;
       console.log("XML", xml);
       if (result.deploymentLocation === "planqk") {
-        deployAsPlanQKService(xml)
+        deployAsPlanQKService(xml);
       }
       if (result.deploymentLocation === "camunda") {
         deploy(xml);

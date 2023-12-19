@@ -110,7 +110,7 @@ const validPlanqkDiagram = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
   "      </bpmndi:BPMNEdge>\n" +
   "    </bpmndi:BPMNPlane>\n" +
   "  </bpmndi:BPMNDiagram>\n" +
-  "</bpmn2:definitions>\n"
+  "</bpmn2:definitions>\n";
 
 const transformedValidPlanqkDiagram =
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
