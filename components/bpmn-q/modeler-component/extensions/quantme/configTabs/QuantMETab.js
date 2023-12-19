@@ -10,13 +10,13 @@ import * as config from "../framework-config/config-manager";
  * @constructor
  */
 export default function QuantMETab() {
-  const [dataConfigurationsEndpoint, setDataConfigurationsEndpoint] = useState(
-    config.getQuantMEDataConfigurationsEndpoint()
-  );
-
   const [nisqAnalyzerEndpoint, setNisqAnalyzerEndpoint] = useState(
     config.getNisqAnalyzerEndpoint()
   );
+  const [nisqAnalyzerUiEndpoint, setNisqAnalyzerUiEndpoint] = useState(
+    config.getNisqAnalyzerUiEndpoint()
+  );
+  const [qprovEndpoint, setQProvEndpoint] = useState(config.getQProvEndpoint());
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] =
     useState(config.getQiskitRuntimeHandlerEndpoint());
   const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(
@@ -33,7 +33,6 @@ export default function QuantMETab() {
   const [scriptSplitterThreshold, setScriptSplitterThreshold] = useState(
     config.getScriptSplitterThreshold()
   );
-  let hybridRuntimeProvenanceBoolean = hybridRuntimeProvenance;
 
   const modeler = getModeler();
 
@@ -84,6 +83,20 @@ export default function QuantMETab() {
       },
     });
   }
+  if (!editorActions._actions.hasOwnProperty("nisqAnalyzerUiEndpointChanged")) {
+    editorActions.register({
+      nisqAnalyzerUiEndpointChanged: function (nisqAnalyzerUiEndpoint) {
+        self.modeler.config.nisqAnalyzerUiEndpoint = nisqAnalyzerUiEndpoint;
+      },
+    });
+  }
+  if (!editorActions._actions.hasOwnProperty("qprovEndpointChanged")) {
+    editorActions.register({
+      qprovEndpointChanged: function (qprovEndpoint) {
+        self.modeler.config.qprovEndpoint = qprovEndpoint;
+      },
+    });
+  }
   if (
     !editorActions._actions.hasOwnProperty(
       "transformationFrameworkEndpointChanged"
@@ -118,8 +131,8 @@ export default function QuantMETab() {
 
   // save changed config entries on close
   QuantMETab.prototype.onClose = () => {
-    modeler.config.dataConfigurationsEndpoint = dataConfigurationsEndpoint;
     modeler.config.nisqAnalyzerEndpoint = nisqAnalyzerEndpoint;
+    modeler.config.nisqAnalyzerUiEndpoint = nisqAnalyzerUiEndpoint;
     modeler.config.transformationFrameworkEndpoint =
       transformationFrameworkEndpoint;
     modeler.config.scriptSplitterEndpoint = scriptSplitterEndpoint;
@@ -127,43 +140,28 @@ export default function QuantMETab() {
     modeler.config.qiskitRuntimeHandlerEndpoint = qiskitRuntimeHandlerEndpoint;
     modeler.config.hybridRuntimeProvenance = hybridRuntimeProvenance;
     modeler.config.awsRuntimeHandlerEndpoint = awsRuntimeHandlerEndpoint;
-    config.setQuantMEDataConfigurationsEndpoint(dataConfigurationsEndpoint);
+    modeler.config.qprovEndpoint = qprovEndpoint;
     config.setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint);
+    config.setNisqAnalyzerUiEndpoint(nisqAnalyzerUiEndpoint);
     config.setTransformationFrameworkEndpoint(transformationFrameworkEndpoint);
     config.setScriptSplitterEndpoint(scriptSplitterEndpoint);
     config.setScriptSplitterThreshold(scriptSplitterThreshold);
     config.setQiskitRuntimeHandlerEndpoint(qiskitRuntimeHandlerEndpoint);
     config.setAWSRuntimeHandlerEndpoint(awsRuntimeHandlerEndpoint);
     config.setHybridRuntimeProvenance(hybridRuntimeProvenance);
+    config.setQProvEndpoint(qprovEndpoint);
   };
 
   return (
     <>
-      <h3>QuantME data configuration endpoint:</h3>
-      <table>
-        <tbody>
-          <tr className="spaceUnder">
-            <td align="right">Data Configurations Endpoint</td>
-            <td align="left">
-              <input
-                type="string"
-                name="dataConfigurationsEndpoint"
-                value={dataConfigurationsEndpoint}
-                onChange={(event) =>
-                  setDataConfigurationsEndpoint(event.target.value)
-                }
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h3>BPMN related configurations:</h3>
+      <h3>BPMN-related Configurations:</h3>
       <table>
         <tbody>
           <tr className="spaceUnder">
             <td align="right">QuantME Framework Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="transformationFrameworkEndpoint"
                 value={transformationFrameworkEndpoint}
@@ -182,6 +180,7 @@ export default function QuantMETab() {
             <td align="right">NISQ Analyzer Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="nisqAnalyzerEndpoint"
                 value={nisqAnalyzerEndpoint}
@@ -191,15 +190,47 @@ export default function QuantMETab() {
               />
             </td>
           </tr>
+          <tr className="spaceUnder">
+            <td align="right">NISQ Analyzer UI Endpoint:</td>
+            <td align="left">
+              <input
+                className="qwm-input"
+                type="string"
+                name="nisqAnalyzerUiEndpoint"
+                value={nisqAnalyzerUiEndpoint}
+                onChange={(event) =>
+                  setNisqAnalyzerUiEndpoint(event.target.value)
+                }
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
-      <h3>Workflow generation:</h3>
+      <h3>QProv</h3>
+      <table>
+        <tbody>
+          <tr className="spaceUnder">
+            <td align="right">QProv Endpoint:</td>
+            <td align="left">
+              <input
+                className="qwm-input"
+                type="string"
+                name="qprovEndpoint"
+                value={qprovEndpoint}
+                onChange={(event) => setQProvEndpoint(event.target.value)}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>Workflow Generation:</h3>
       <table>
         <tbody>
           <tr className="spaceUnder">
             <td align="right">Script Splitter Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="scriptSplitterEndpoint"
                 value={scriptSplitterEndpoint}
@@ -213,6 +244,7 @@ export default function QuantMETab() {
             <td align="right">Script Splitter Threshold</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="int"
                 name="scriptSplitterThreshold"
                 value={scriptSplitterThreshold}
@@ -231,6 +263,7 @@ export default function QuantMETab() {
             <td align="right">Qiskit Runtime Handler Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="qiskitRuntimeHandlerEndpoint"
                 value={qiskitRuntimeHandlerEndpoint}
@@ -244,6 +277,7 @@ export default function QuantMETab() {
             <td align="right">AWS Runtime Handler Endpoint:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="awsRuntimeHandlerEndpoint"
                 value={awsRuntimeHandlerEndpoint}
@@ -262,13 +296,12 @@ export default function QuantMETab() {
             <td align="right">Retrieve Intermediate Results:</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="checkbox"
                 name="hybridRuntimeProvenance"
-                checked={hybridRuntimeProvenanceBoolean}
+                checked={hybridRuntimeProvenance}
                 onChange={() => {
-                  hybridRuntimeProvenanceBoolean =
-                    !hybridRuntimeProvenanceBoolean;
-                  setHybridRuntimeProvenance(hybridRuntimeProvenanceBoolean);
+                  setHybridRuntimeProvenance(!hybridRuntimeProvenance);
                 }}
               />
             </td>
@@ -286,4 +319,6 @@ QuantMETab.prototype.config = () => {
     config.getTransformationFrameworkEndpoint();
   modeler.config.scriptSplitterEndpoint = config.getScriptSplitterEndpoint();
   modeler.config.scriptSplitterThreshold = config.getScriptSplitterThreshold();
+  modeler.config.qprovEndpoint = config.getQProvEndpoint();
+  modeler.config.nisqAnalyzerUiEndpoint = config.getNisqAnalyzerUiEndpoint();
 };

@@ -64,6 +64,46 @@ export function setNisqAnalyzerEndpoint(nisqAnalyzerEndpoint) {
 }
 
 /**
+ * Get the NISQ Analyzer UI Endpoint
+ */
+export function getNisqAnalyzerUiEndpoint() {
+  if (config.nisqAnalyzerUiEndpoint === undefined) {
+    setNisqAnalyzerUiEndpoint(defaultConfig.nisqAnalyzerUiEndpoint);
+  }
+  return config.nisqAnalyzerUiEndpoint;
+}
+
+/**
+ * Set the NISQ Analyzer UI Endpoint
+ */
+export function setNisqAnalyzerUiEndpoint(nisqAnalyzerUiEndpoint) {
+  if (nisqAnalyzerUiEndpoint !== null && nisqAnalyzerUiEndpoint !== undefined) {
+    config.nisqAnalyzerUiEndpoint = nisqAnalyzerUiEndpoint;
+  }
+}
+
+/**
+ * Get the QProv endpoint
+ */
+export function getQProvEndpoint() {
+  if (config.qprovEndpoint === undefined) {
+    setQProvEndpoint(
+      getPluginConfig("quantme").qprovEndpoint || defaultConfig.qprovEndpoint
+    );
+  }
+  return config.qprovEndpoint;
+}
+
+/**
+ * Set the QProv endpoint
+ */
+export function setQProvEndpoint(qprovEndpoint) {
+  if (qprovEndpoint !== null && qprovEndpoint !== undefined) {
+    config.qprovEndpoint = qprovEndpoint;
+  }
+}
+
+/**
  * Get the Transformation Framework endpoint
  */
 export function getTransformationFrameworkEndpoint() {
@@ -295,7 +335,9 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
     hybridRuntimeProvenance !== null &&
     hybridRuntimeProvenance !== undefined
   ) {
-    config.hybridRuntimeProvenance = hybridRuntimeProvenance;
+    let hybridRuntimeProvenanceBoolean =
+      hybridRuntimeProvenance === "true" ? true : false;
+    config.hybridRuntimeProvenance = hybridRuntimeProvenanceBoolean;
   }
 }
 

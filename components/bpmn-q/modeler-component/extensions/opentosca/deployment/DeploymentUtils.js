@@ -11,6 +11,12 @@
 
 import { getBindingType } from "./BindingUtils";
 import { getFlowElementsRecursively } from "../../../editor/util/ModellingUtilities";
+import {
+  synchronousGetRequest,
+  synchronousPostRequest,
+} from "../utilities/Utilities";
+import config from "../framework-config/config";
+import { getModeler } from "../../../editor/ModelerHandler";
 
 /**
  * Get the ServiceTasks of the current workflow that have an attached deployment model to deploy the corresponding service starting from the given root element
@@ -42,11 +48,26 @@ export function getServiceTasksToDeploy(startElement) {
         console.log("Adding to existing CSAR entry...");
         csarEntry.serviceTaskIds.push(flowElement.id);
       } else {
+        // get businessObject for onDemand property retrieval
+        const taskData = getModeler()
+          .get("elementRegistry")
+          .get(flowElement.id);
+        let onDemand;
+        if (taskData.businessObject.onDemand) {
+          onDemand = taskData.businessObject.onDemand;
+        } else {
+          onDemand = false;
+        }
+
         csarsToDeploy.push({
           serviceTaskIds: [flowElement.id],
           url: flowElement.deploymentModelUrl,
           type: getBindingType(flowElement),
           csarName: getCSARName(flowElement),
+          incomplete: !isCompleteDeploymentModel(
+            flowElement.deploymentModelUrl
+          ),
+          onDemand: onDemand,
         });
       }
     }
@@ -80,4 +101,57 @@ export function isDeployableServiceTask(element) {
     element.deploymentModelUrl &&
     getBindingType(element) !== undefined
   );
+}
+
+/**
+ * Get the CSAR name from the deployment model URL
+ *
+ * @param deploymentModelUrl
+ * @return {*} the CSAR name
+ */
+export function isCompleteDeploymentModel(deploymentModelUrl) {
+  let url = deploymentModelUrl.split("/?csar")[0];
+  url = url.split("/");
+  url.shift();
+  url = url.join("/");
+  const iscomplete = synchronousPostRequest(
+    config.wineryEndpoint + "/" + url + "/topologytemplate/iscomplete",
+    "text/plain",
+    null
+  ).responseText;
+  return iscomplete === "true";
+}
+
+export function completeIncompleteDeploymentModel(
+  deploymentModelUrl,
+  blacklistedNodetypes,
+  policies
+) {
+  console.log("Completing deployment model at: ", deploymentModelUrl);
+  console.log("Blacklist: ", blacklistedNodetypes);
+  let url = deploymentModelUrl.split("/?csar")[0];
+  url = url.split("/");
+  url.shift();
+  url = url.join("/");
+  let body = JSON.stringify({
+    blacklistedNodetypes: blacklistedNodetypes,
+    policies: policies,
+  });
+  try {
+    return synchronousPostRequest(
+      config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel",
+      "application/json",
+      body
+    ).getResponseHeader("location");
+  } catch (e) {
+    console.error("Error while completing deployment model: ", e);
+    return undefined;
+  }
+}
+
+export function getTopology(deploymentModelUrl) {
+  let url = deploymentModelUrl.replace("/?csar", "/topologytemplate");
+  console.log("Getting topology from URL:", url);
+  const topology = synchronousGetRequest(url, "application/json");
+  return JSON.parse(topology);
 }

@@ -3,37 +3,59 @@
  */
 export default class ConfigurationsEndpoint {
   // array containing the fetched configurations
-  _configurations = [];
+  configurations = [];
+  endpointUrl;
 
   constructor(endpointUrl) {
-    this._endpointUrl = endpointUrl;
-
+    this.endpointUrl = endpointUrl;
     // initial fetch for configurations
-    this.fetchConfigurations();
+    this.fetchConfiguration();
   }
 
   /**
-   * Fetch the configured endpoint and store the result in this._configurations
+   * Fetch the configured endpoint and store the result in the configurations
    */
-  fetchConfigurations() {
-    fetch(this._endpointUrl)
+  fetchConfiguration() {
+    fetch(this.endpointUrl)
       .then((response) =>
         response.headers.get("content-type") === "text/plain; charset=utf-8"
           ? response.text()
           : response.json()
       )
       .then((data) => {
-        this._configurations =
+        this.configurations =
           typeof data === "string" ? JSON.parse(data) : data;
-        console.log(this._configurations);
       })
       .catch((error) => {
         console.error(
           "Error fetching configurations from " +
-            this._endpointUrl +
+            this.endpointUrl +
             ": \n" +
             error
         );
+        this.configurations = [];
+      });
+  }
+
+  /**
+   * Fetch the endpoint and store the result in the configurations
+   */
+  fetchConfigurations(endpoint) {
+    fetch(endpoint)
+      .then((response) =>
+        response.headers.get("content-type") === "text/plain; charset=utf-8"
+          ? response.text()
+          : response.json()
+      )
+      .then((data) => {
+        this.configurations =
+          typeof data === "string" ? JSON.parse(data) : data;
+      })
+      .catch((error) => {
+        console.error(
+          "Error fetching configurations from " + endpoint + ": \n" + error
+        );
+        this.configurations = [];
       });
   }
 
@@ -45,7 +67,7 @@ export default class ConfigurationsEndpoint {
    */
   getConfigurations(type) {
     // return all configurations which apply to the given type
-    return this._configurations.filter(function (configuration) {
+    return this.configurations.filter(function (configuration) {
       return configuration.appliesTo === type;
     });
   }
@@ -57,6 +79,6 @@ export default class ConfigurationsEndpoint {
    * @returns {*} The configuration with the given id.
    */
   getConfiguration(id) {
-    return this._configurations.find((config) => config.id === id);
+    return this.configurations.find((config) => config.id === id);
   }
 }

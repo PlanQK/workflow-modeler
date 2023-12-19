@@ -11,7 +11,11 @@
 
 import React from "@bpmn-io/properties-panel/preact/compat";
 
-import { TextFieldEntry, SelectEntry } from "@bpmn-io/properties-panel";
+import {
+  TextFieldEntry,
+  SelectEntry,
+  CheckboxEntry,
+} from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
 import { HiddenTextFieldEntry } from "../../../../editor/popup/HiddenTextFieldEntry";
@@ -482,6 +486,35 @@ export function SelectionStrategyEntry({ element }) {
   );
 }
 
+export function AutomatedSelectionEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.automatedSelection;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      automatedSelection: newValue,
+    });
+  };
+
+  return (
+    <CheckboxEntry
+      id={consts.AUTOMATED_SELECTION}
+      label={translate("Automated Selection")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
 export function CalibrationMethodEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
@@ -1464,6 +1497,157 @@ export function OptimizationEntry({ element }) {
       getValue={getValue}
       setValue={setValue}
       getOptions={getOptions}
+      debounce={debounce}
+    />
+  );
+}
+
+export function ExecutionResultEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.executionResult;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      executionResult: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.EXECUTION_RESULT}
+      label={translate("Execution Result")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
+export function EvaluationResultEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.evaluationResult;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      evaluationResult: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.EVALUATION_RESULT}
+      label={translate("Evaluation Result")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
+export function ParametrizationEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.parametrization;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      parametrization: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.PARAMETRIZATION}
+      label={translate("Parametrization")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
+export function InitialStateEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.initialState;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      initialState: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.INITIAL_STATE}
+      label={translate("Initial State")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
+export function ErrorCorrectionMethodEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.errorCorrectionMethod;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      errorCorrectionMethod: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.ERROR_CORRECTION_METHOD}
+      element={element}
+      label={translate("Error Correction Method")}
+      getValue={getValue}
+      setValue={setValue}
       debounce={debounce}
     />
   );

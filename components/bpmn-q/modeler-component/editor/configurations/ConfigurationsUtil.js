@@ -62,6 +62,9 @@ export function createConfigurationsEntries(
       };
     }
 
+    if (config.icon !== undefined) {
+      className = config.icon.className;
+    }
     // create popup menu entry
     menuEntries[config.id] = {
       label: config.name,
@@ -100,12 +103,12 @@ export function handleConfigurationsAction(
       [configsConsts.CONFIGURATIONS_ICON]: JSON.stringify(config.icon),
     });
   }
+  element.businessObject.content = [];
 
   // set name of the element to configuration name
   modeling.updateProperties(element, {
     name: config.name,
   });
-
   config.attributes.forEach(function (attribute) {
     // set properties based on the type of the bindTo value
     switch (attribute.bindTo.type) {

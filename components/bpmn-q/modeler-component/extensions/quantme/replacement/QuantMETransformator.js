@@ -12,10 +12,13 @@
 import { layout } from "./layouter/Layouter";
 import { matchesQRM } from "./QuantMEMatcher";
 import { addQuantMEInputParameters } from "./InputOutputHandler";
-import * as Constants from "../Constants";
+import * as constants from "../Constants";
 import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
 import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
-import { insertShape } from "../../../editor/util/TransformationUtilities";
+import {
+  getPropertiesToCopy,
+  insertShape,
+} from "../../../editor/util/TransformationUtilities";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import {
   getCamundaInputOutput,
@@ -24,6 +27,10 @@ import {
   getSingleFlowElement,
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
+import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
+import { isQuantMETask } from "../utilities/Utilities";
+import { getQProvEndpoint } from "../framework-config/config-manager";
+import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -40,10 +47,12 @@ export async function startQuantmeReplacementProcess(
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
+  let moddle = modeler.get("moddle");
 
   // get root element of the current diagram
   const definitions = modeler.getDefinitions();
   const rootElement = getRootProcess(definitions);
+
   console.log(rootElement);
   if (typeof rootElement === "undefined") {
     console.log("Unable to retrieve root process element from definitions!");
@@ -64,14 +73,21 @@ export async function startQuantmeReplacementProcess(
     return { status: "transformed", xml: xml };
   }
 
+  addQProvEndpoint(rootElement, elementRegistry, modeling, moddle);
+
   // check for available replacement models for all QuantME modeling constructs
   for (let replacementConstruct of replacementConstructs) {
+    console.log(replacementConstruct);
     if (
+      constants.QUANTME_DATA_OBJECTS.includes(
+        replacementConstruct.task.$type
+      ) ||
       replacementConstruct.task.$type ===
-      Constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+        constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
+      console.log("Found QuantME object of type:");
       console.log(
-        "QuantumHardwareSelectionSubprocess needs no QRM. Skipping search..."
+        "Hardware Selection Subprocesses and QuantME DataObjects needs no QRM. Skipping search..."
       );
       continue;
     }
@@ -100,7 +116,7 @@ export async function startQuantmeReplacementProcess(
   for (let replacementConstruct of replacementConstructs) {
     let replacementSuccess = false;
     if (
-      replacementConstruct.task.$type === Constants.CIRCUIT_CUTTING_SUBPROCESS
+      replacementConstruct.task.$type === constants.CIRCUIT_CUTTING_SUBPROCESS
     ) {
       replacementSuccess = await replaceCuttingSubprocess(
         replacementConstruct.task,
@@ -131,14 +147,14 @@ export async function startQuantmeReplacementProcess(
 
   // remove already replaced circuit cutting subprocesses from replacement list
   replacementConstructs = replacementConstructs.filter(
-    (construct) => construct.task.$type !== Constants.CIRCUIT_CUTTING_SUBPROCESS
+    (construct) => construct.task.$type !== constants.CIRCUIT_CUTTING_SUBPROCESS
   );
 
   for (let replacementConstruct of replacementConstructs) {
     let replacementSuccess = false;
     if (
       replacementConstruct.task.$type ===
-      Constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+      constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
       console.log("Transforming QuantumHardwareSelectionSubprocess...");
       replacementSuccess = await replaceHardwareSelectionSubprocess(
@@ -149,6 +165,14 @@ export async function startQuantmeReplacementProcess(
         endpointConfig.transformationFrameworkEndpoint,
         endpointConfig.camundaEndpoint
       );
+    } else if (
+      constants.QUANTME_DATA_OBJECTS.includes(replacementConstruct.task.$type)
+    ) {
+      console.log("Transforming QuantME Data Objects...");
+
+      // for now we delete data objects
+      modeling.removeShape(elementRegistry.get(replacementConstruct.task.id));
+      replacementSuccess = true;
     } else {
       console.log(
         "Replacing task with id %s by using QRM: ",
@@ -206,7 +230,7 @@ export function getQuantMETasks(process, elementRegistry) {
     if (
       flowElement.$type &&
       (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === Constants.CIRCUIT_CUTTING_SUBPROCESS)
+        flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
     ) {
       Array.prototype.push.apply(
         quantmeTasks,
@@ -242,6 +266,13 @@ async function replaceByFragment(
   modeler
 ) {
   let bpmnFactory = modeler.get("bpmnFactory");
+  let elementRegistry = modeler.get("elementRegistry");
+  let modeling = modeler.get("modeling");
+  let taskToReplace = elementRegistry.get(task.id);
+  console.log(
+    "Replacing the following task using a replacement fragment: ",
+    taskToReplace
+  );
 
   if (!replacement) {
     console.log("Replacement fragment is undefined. Aborting replacement!");
@@ -261,6 +292,22 @@ async function replaceByFragment(
     return false;
   }
 
+  // extract policies attached to QuantME tasks
+  let policies = getPolicies(modeler, task.id);
+  console.log("Found %i polices attached to QuantME task!", policies.length);
+  let attachersPlaceholder;
+  if (policies.length > 0) {
+    attachersPlaceholder = modeling.createShape(
+      { type: "bpmn:Task" },
+      { x: 50, y: 50 },
+      parent,
+      {}
+    );
+
+    // attach policies to the placeholder
+    movePolicies(modeler, attachersPlaceholder.id, policies);
+  }
+
   console.log("Replacement element: ", replacementElement);
   let result = insertShape(
     definitions,
@@ -271,6 +318,8 @@ async function replaceByFragment(
     modeler,
     task
   );
+  let resultShape = result.element;
+  console.log("Inserted shape: ", resultShape);
 
   // add all attributes of the replaced QuantME task to the input parameters of the replacement fragment
   let inputOutputExtension = getCamundaInputOutput(
@@ -279,5 +328,128 @@ async function replaceByFragment(
   );
   addQuantMEInputParameters(task, inputOutputExtension, bpmnFactory);
 
+  if (attachersPlaceholder) {
+    // attach policies to the newly created shape if it's a single task
+    if (
+      resultShape.businessObject.$type === "bpmn:ServiceTask" ||
+      isQuantMETask(resultShape.businessObject)
+    ) {
+      console.log(
+        "Replacement was ServiceTask or QuantME task. Attaching policies..."
+      );
+      movePolicies(modeler, resultShape.id, policies);
+    } else {
+      if (resultShape.businessObject.$type === "bpmn:SubProcess") {
+        console.log(
+          "Attaching policies within subprocess: ",
+          resultShape.businessObject
+        );
+
+        // get flow elements to check if they support policy attachment
+        let flowElements = resultShape.businessObject.flowElements;
+        console.log(
+          "Subprocess contains %i flow elements...",
+          flowElements.length
+        );
+        flowElements = flowElements.filter(
+          (flowElement) =>
+            (flowElement.$type === "bpmn:ServiceTask" &&
+              flowElement.deploymentModelUrl) ||
+            flowElement.$type.startsWith("quantme:")
+        );
+        console.log(
+          "Found %i ServiceTasks or QuantME tasks...",
+          flowElements.length
+        );
+
+        if (flowElements.length === 1) {
+          // if only one relevant flow element, moce policies
+          movePolicies(modeler, flowElements[0].id, policies);
+        } else {
+          // copy policies for each relevant flow element
+          flowElements.forEach((flowElement) => {
+            console.log("Adding policies to task: ", flowElement);
+            policies.forEach((policy) => {
+              console.log("Adding policy: ", policy);
+
+              let newPolicyShape = modeling.createShape(
+                { type: policy.type },
+                { x: 50, y: 50 },
+                parent,
+                {}
+              );
+              modeling.updateProperties(
+                newPolicyShape,
+                getPropertiesToCopy(policy)
+              );
+
+              modeling.updateProperties(newPolicyShape, {
+                attachedToRef: flowElement.businessObject,
+              });
+              newPolicyShape.host = flowElement;
+            });
+          });
+        }
+      } else {
+        console.log(
+          "Type not supported for policy attachment: ",
+          resultShape.businessObject.$type
+        );
+      }
+    }
+    modeling.removeShape(attachersPlaceholder);
+  }
+
   return result["success"];
+}
+
+/**
+ * Add QProv endpoint to start event form.
+ *
+ * @param rootElement
+ * @param elementRegistry
+ * @param modeling
+ * @param moddle
+ */
+function addQProvEndpoint(rootElement, elementRegistry, modeling, moddle) {
+  for (let flowElement of rootElement.flowElements) {
+    if (flowElement.$type === "bpmn:StartEvent") {
+      let startEvent = elementRegistry.get(flowElement.id);
+
+      let extensionElements =
+        startEvent.businessObject.get("extensionElements");
+
+      if (!extensionElements) {
+        extensionElements = moddle.create("bpmn:ExtensionElements");
+      }
+
+      let form = extensionElements.get("values").filter(function (elem) {
+        return elem.$type == "camunda:FormData";
+      })[0];
+
+      if (!form) {
+        form = moddle.create("camunda:FormData");
+      }
+
+      const formFieldCamundaEndpoint = moddle.create("camunda:FormField", {
+        defaultValue: getCamundaEndpoint(),
+        id: "CAMUNDA_ENDPOINT",
+        label: "Camunda Endpoint",
+        type: "string",
+      });
+      form.get("fields").push(formFieldCamundaEndpoint);
+
+      const formFieldQProvEndpoint = moddle.create("camunda:FormField", {
+        defaultValue: getQProvEndpoint(),
+        id: "QPROV_ENDPOINT",
+        label: "QProv Endpoint",
+        type: "string",
+      });
+      form.get("fields").push(formFieldQProvEndpoint);
+
+      modeling.updateProperties(startEvent, {
+        extensionElements: extensionElements,
+      });
+    }
+  }
 }

@@ -3,18 +3,9 @@ import NotificationHandler from "./notifications/NotificationHandler";
 import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
 import { getRootProcess } from "../util/ModellingUtilities";
-import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
-import { getModeler } from "../ModelerHandler";
-import OnDemandDeploymentModal from "./OnDemandDeploymentModal";
 import DeploymentSelectionModal from "./DeploymentSelectionModal";
-import { startOnDemandReplacementProcess } from "../../extensions/opentosca/replacement/OnDemandTransformator";
 import {startPlanqkReplacementProcess} from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
 import {startDataFlowReplacementProcess} from "../../extensions/data-extension/transformation/TransformationManager";
-
-// eslint-disable-next-line no-unused-vars
-const defaultState = {
-  windowOpenOnDemandDeployment: false,
-};
 
 /**
  * React button for starting the deployment of the workflow.
@@ -24,34 +15,10 @@ const defaultState = {
  * @constructor
  */
 export default function DeploymentButton(props) {
-  const [windowOpenOnDemandDeployment, setWindowOpenOnDemandDeployment] =
-    useState(false);
-
   const [windowOpenDeploymentSelection, setWindowOpenDemandSelection] =
     useState(false);
 
-
   const { modeler } = props;
-
-  /**
-   * Handle result of the on demand deployment dialog
-   *
-   * @param result the result from the dialog
-   */
-  async function handleOnDemandDeployment(result) {
-    if (result && result.hasOwnProperty("onDemand")) {
-      // get XML of the current workflow
-      let xml = (await modeler.saveXML({ format: true })).xml;
-      console.log("XML", xml);
-      if (result.onDemand === true) {
-        xml = await startOnDemandReplacementProcess(xml);
-      }
-      // deploy in any case
-      deploy(xml);
-    }
-    // handle cancellation (don't deploy)
-    setWindowOpenOnDemandDeployment(false);
-  }
 
    /**
    * Handle result of the deployment selection dialog
@@ -184,14 +151,7 @@ export default function DeploymentButton(props) {
   }
 
   async function onClick() {
-    let csarsToDeploy = getServiceTasksToDeploy(
-      getRootProcess(getModeler().getDefinitions())
-    );
-    if (csarsToDeploy.length > 0) {
-      setWindowOpenOnDemandDeployment(true);
-    } else {
-      setWindowOpenDemandSelection(true);
-    }
+    deploy((await modeler.saveXML({ format: true })).xml);
   }
 
   return (
@@ -206,9 +166,6 @@ export default function DeploymentButton(props) {
           <span className="qwm-indent">Deploy Workflow</span>
         </span>
       </button>
-      {windowOpenOnDemandDeployment && (
-        <OnDemandDeploymentModal onClose={(e) => handleOnDemandDeployment(e)} />
-      )}
       {windowOpenDeploymentSelection && (
         <DeploymentSelectionModal onClose={(e) => handleDeploymentSelection(e)} />
       )}

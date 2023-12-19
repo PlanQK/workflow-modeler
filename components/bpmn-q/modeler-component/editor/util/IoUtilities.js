@@ -7,8 +7,11 @@ import {
 import { getModeler } from "../ModelerHandler";
 import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
 import fetch from "node-fetch";
+import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardware-selection/HardwareSelectionForm";
+import JSZip from "jszip";
 
 const editorConfig = require("../config/EditorConfigManager");
+const quantmeConfig = require("../../extensions/quantme/framework-config/config-manager");
 
 let FormData = require("form-data");
 
@@ -178,11 +181,26 @@ export async function deployWorkflowToCamunda(
     console.info("Adding view with name: ", key);
 
     // add view xml to the body
-    form.append(key, value, {
-      filename: fileName.replace(".bpmn", key + ".xml"),
-      contentType: "text/xml",
-    });
+    const viewBlob = new File(
+      [value],
+      fileName.replace(".bpmn", key + ".xml"),
+      { type: "text/xml" }
+    );
+    form.append(key, viewBlob);
   }
+
+  // add hardware selection form
+  const hardwareSelectionForm = getHardwareSelectionForm(
+    quantmeConfig.getNisqAnalyzerUiEndpoint(),
+    quantmeConfig.getNisqAnalyzerEndpoint(),
+    editorConfig.getCamundaEndpoint()
+  );
+  const hardwareSelectionFormFile = new File(
+    [hardwareSelectionForm],
+    "hardwareSelection.html",
+    { type: "text/html" }
+  );
+  form.append("deployment", hardwareSelectionFormFile);
 
   // make the request and wait for the response of the deployment endpoint
   try {
@@ -321,6 +339,7 @@ export function saveFile() {
   getModeler().saveXML({ format: true }, function (err, xml) {
     if (!err) {
       let oldXml = getModeler().oldXml;
+      let views = getModeler().views;
       if (oldXml !== xml && oldXml !== undefined) {
         // Save the XML
         console.log("Autosaved:", xml);
@@ -329,10 +348,55 @@ export function saveFile() {
         const filename = `${editorConfig
           .getFileName()
           .replace(".bpmn", "")}_autosave_${timestamp}`;
-        saveXmlAsLocalFile(xml, filename);
+        if (views !== undefined) {
+          saveXmlAndViewsAsZip(xml, views, filename);
+        } else {
+          saveXmlAsLocalFile(xml, filename);
+        }
       }
     }
   });
+}
+
+export async function saveXmlAndViewsAsZip(
+  xml,
+  views,
+  zipFileName = editorConfig.getFileName()
+) {
+  // Create a new JSZip instance
+  const zip = new JSZip();
+
+  // Add the actual XML file to the zip
+  zip.file(`${zipFileName}.bpmn`, xml);
+
+  // upload all provided views
+  if (views !== undefined) {
+    for (const [key, value] of Object.entries(views)) {
+      console.info("Adding view with name: ", key);
+      zip.file(key, value);
+    }
+
+    // Generate the zip file asynchronously
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+
+    // Create a File object from the zip blob
+    const zipFile = new File([zipBlob], `${zipFileName}.zip`, {
+      type: "application/zip",
+    });
+
+    // Create a link element to trigger the download
+    const link = document.createElement("a");
+    link.download = `${zipFileName}.zip`;
+    link.href = URL.createObjectURL(zipFile);
+    link.click();
+  }
+
+  // Dispatch the workflow event
+  dispatchWorkflowEvent(
+    workflowEventTypes.SAVED,
+    xml,
+    editorConfig.getFileName()
+  );
 }
 
 function getTimestamp() {

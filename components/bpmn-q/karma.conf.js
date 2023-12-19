@@ -20,7 +20,6 @@ module.exports = function (config) {
       "test/tests/qhana/qhana-plugin-config.spec.js",
       "test/tests/qhana/qhana-service-configs.spec.js",
       "test/tests/quantme/quantme-transformation.spec.js",
-      "test/tests/quantme/data-object-configs.spec.js",
       "test/tests/quantme/quantme-config.spec.js",
       "test/tests/opentosca/opentosca-config.spec.js",
       "test/tests/opentosca/deployment-utils.spec.js",

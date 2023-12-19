@@ -16,6 +16,13 @@
 }
 
 .qwm-btn-primary {
+  color: #fdfdfe;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+  border: solid 1px var(--blue-darken-62);
+  background-color: var(--blue-base-65);
+}
+
+.qwm-btn-config-primary {
   min-width: 120px;
   color: #fdfdfe;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
@@ -46,6 +53,22 @@
   color: rgba(253, 253, 254, 0.8);
 }
 
+.qwm-btn-config-primary:hover {
+  border: solid 1px var(--blue-darken-55);
+  background-color: var(--blue-darken-62);
+}
+
+.qwm-btn-config-primary:active {
+  border: solid 1px var(--blue-darken-48);
+  background-color: var(--blue-darken-55);
+}
+
+.qwm-btn-config-primary:disabled {
+  box-shadow: none;
+  border: solid 1px var(--blue-lighten-82);
+  background-color: var(--blue-lighten-75);
+  color: rgba(253, 253, 254, 0.8);
+}
 .qwm-btn-secondary {
   color: var(--grey-darken-33);
   box-shadow: 0 2px 2px 0 var(--color-000000-opacity-10);

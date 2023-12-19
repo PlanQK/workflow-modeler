@@ -11,9 +11,10 @@
 
 import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
 import { isFlowLikeElement } from "../../../../editor/util/ModellingUtilities";
+import { ON_DEMAND_POLICY, POLICIES } from "../../../opentosca/Constants";
 
 // space between multiple boundary events of a task/subprocess
-let BOUNDARY_EVENT_MARGIN = "10";
+let BOUNDARY_EVENT_MARGIN = "8";
 
 // space between an edge and a corresponding label
 let LABEL_MARGIN = "10";
@@ -71,15 +72,15 @@ function layoutProcess(modeling, elementRegistry, process) {
         }
 
         // boundary events are skipped here, as they are always attached to some task and only this task has to be layouted
-        if (flowElements[i].$type === "bpmn:BoundaryEvent") {
+        if (
+          flowElements[i].$type === "bpmn:BoundaryEvent" ||
+          POLICIES.includes(flowElements[i].$type)
+        ) {
           continue;
         }
 
         let flowElement = elementRegistry.get(flowElements[i].id);
         if (flowElement) {
-          // if (is(flowElement, 'bpmn:DataObjectReference')) {
-          //     continue;
-          // }
           nodes.push(flowElement);
         } else {
           console.log(
@@ -128,7 +129,11 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
 
   // add the boundary events to the new location of the tasks to which they are attached
   for (let boundaryEvent of elementRegistry.getAll()) {
-    if (boundaryEvent.type === "bpmn:BoundaryEvent") {
+    if (
+      boundaryEvent.type === "bpmn:BoundaryEvent" ||
+      POLICIES.includes(boundaryEvent.type)
+    ) {
+      console.log("Found boundary like element: ", boundaryEvent.type);
       // retrieve the required elements from the registry
       let boundaryEventShape = elementRegistry.get(boundaryEvent.id);
       let attachedToElementShape = elementRegistry.get(
@@ -144,24 +149,35 @@ function layoutBoundaryEvents(modeling, elementRegistry) {
           layoutedBoundaries[attachedToElementShape.id];
       }
 
-      // place the boundary events at the bottom right corner of the parent element
-      let bottomOfAttached =
-        attachedToBounds.x - boundaryEventBounds.x + attachedToBounds.width;
-      let offset =
-        (attachedToElementBoundaries.length + 1) *
-        (parseInt(boundaryEventBounds.width) + parseInt(BOUNDARY_EVENT_MARGIN));
-      let to_move_x = bottomOfAttached - offset;
-      let to_move_y =
-        attachedToBounds.y -
-        boundaryEventBounds.y +
-        attachedToBounds.height -
-        boundaryEventBounds.height / 2;
-      modeling.moveShape(boundaryEventShape, { x: to_move_x, y: to_move_y });
+      if (boundaryEvent.type === ON_DEMAND_POLICY) {
+        let to_move_x = attachedToElementShape.x + 65 - boundaryEventBounds.x;
+        let to_move_y =
+          attachedToElementShape.y -
+          boundaryEventBounds.y -
+          boundaryEventBounds.height / 2;
+        modeling.moveShape(boundaryEventShape, { x: to_move_x, y: to_move_y });
+      } else {
+        // place the boundary events at the bottom right corner of the parent element
+        let bottomOfAttached =
+          attachedToBounds.x - boundaryEventBounds.x + attachedToBounds.width;
+        let offset =
+          65 +
+          attachedToElementBoundaries.length *
+            (parseInt(boundaryEventBounds.width) +
+              parseInt(BOUNDARY_EVENT_MARGIN));
+        let to_move_x = bottomOfAttached - offset;
+        let to_move_y =
+          attachedToBounds.y -
+          boundaryEventBounds.y +
+          attachedToBounds.height -
+          boundaryEventBounds.height / 2;
+        modeling.moveShape(boundaryEventShape, { x: to_move_x, y: to_move_y });
 
-      // update list for the next boundary event
-      attachedToElementBoundaries.push(boundaryEventShape.id);
-      layoutedBoundaries[attachedToElementShape.id] =
-        attachedToElementBoundaries;
+        // update list for the next boundary event
+        attachedToElementBoundaries.push(boundaryEventShape.id);
+        layoutedBoundaries[attachedToElementShape.id] =
+          attachedToElementBoundaries;
+      }
 
       // layout the waypoints of the connections of the boundary events
       for (let outgoingConnection of boundaryEvent.outgoing) {

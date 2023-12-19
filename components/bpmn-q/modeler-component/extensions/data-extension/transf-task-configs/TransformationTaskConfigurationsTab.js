@@ -27,6 +27,7 @@ export default function TransformationTaskConfigurationsTab() {
             <td align="right">Configurations Endpoint</td>
             <td align="left">
               <input
+                className="qwm-input"
                 type="string"
                 name="configurationsEndpoint"
                 value={configurationsEndpoint}

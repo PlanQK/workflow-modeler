@@ -58,9 +58,13 @@ export async function uploadCSARToContainer(
         body: JSON.stringify(body),
         headers: { "Content-Type": "application/json" },
       });
+      console.log(
+        "CSAR sent to OpenTOSCA Container. Waiting for build plan..."
+      );
 
       // check successful upload and retrieve corresponding url
       getCSARResult = await getBuildPlanForCSAR(opentoscaEndpoint, csarName);
+      console.log("Retrieved result: ", getCSARResult);
     }
 
     if (!getCSARResult.success) {
@@ -91,6 +95,8 @@ export async function uploadCSARToContainer(
  * @return the status whether the given CSAR is uploaded and the corresponding build plan link if available
  */
 async function getBuildPlanForCSAR(opentoscaEndpoint, csarName) {
+  console.log("Retrieving build plan for CSAR with name: ", csarName);
+
   // get all currently deployed CSARs
   const response = await fetch(opentoscaEndpoint);
   const responseJson = await response.json();
@@ -100,6 +106,7 @@ async function getBuildPlanForCSAR(opentoscaEndpoint, csarName) {
     // no CSARs available
     return { success: false };
   }
+  console.log("Retrieved all currently deployed CSARs: ", deployedCSARs);
 
   for (let i = 0; i < deployedCSARs.length; i++) {
     const deployedCSAR = deployedCSARs[i];
@@ -155,12 +162,20 @@ async function getBuildPlanUrl(csarUrl) {
  *
  * @param csar the details about the CSAR to create an instance from the contained ServiceTemplate
  * @param camundaEngineEndpoint the endpoint of the Camunda engine to bind services using the pulling pattern
+ * @param qprovEndpoint the endpoint of QProv to store provenance data
+ * @param inputParams a set of predfined input parameters to use for the instance creation
  * @return the result of the instance creation (success, endpoint, topic on which the service listens, ...)
  */
-export async function createServiceInstance(csar, camundaEngineEndpoint) {
+export async function createServiceInstance(
+  csar,
+  camundaEngineEndpoint,
+  qprovEndpoint,
+  inputParams
+) {
   const result = { success: false };
 
   const inputParameters = csar.inputParameters;
+  console.log("Required input parameters: ", inputParameters);
   if (csar.type === "pull") {
     // get special parameters that are required to bind services using external tasks / the pulling pattern
     const camundaTopicParam = inputParameters.find(
@@ -186,24 +201,50 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
     result.topicName = topicName;
   }
 
+  // add QProv endpoint for provenance data storage
+  const qprovEndpointParam = inputParameters.find(
+    (param) => param.name === "QProvEndpoint"
+  );
+  if (qprovEndpointParam !== undefined) {
+    console.info(
+      "ServiceTemplate requires QProv Endpoint as input: ",
+      qprovEndpoint
+    );
+    qprovEndpointParam.value = qprovEndpoint;
+  }
+
+  // handle input parameters for completed ServiceTemplates
+  inputParameters.forEach((param) => {
+    if (!param.value) {
+      console.log("Parameter is not yet defined: ", param.name);
+      param.value = inputParams[param.name];
+    }
+  });
+  console.log("Input parameters after adding provided data: ", inputParameters);
+
   // trigger instance creation
   const instanceCreationResponse = await fetch(
     csar.buildPlanUrl + "/instances",
     {
       method: "POST",
       body: JSON.stringify(inputParameters),
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "text/plain" },
     }
   );
-  const instanceCreationResponseJson = await instanceCreationResponse.json();
+  console.log("Received instance creation response");
+  console.log(instanceCreationResponse);
+  const instanceCreationResponseJson = await instanceCreationResponse.text();
 
+  console.log(instanceCreationResponseJson);
   // wait for the service instance to be created
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
+  console.log("Getting service template instance");
   // get service template instance to poll for completness
   let buildPlanResponse = await fetch(
     csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson
   );
+  console.log("Received service template instance");
   let buildPlanResponseJson = await buildPlanResponse.json();
 
   // retry polling 10 times, creation of the build time takes some time
@@ -254,6 +295,8 @@ export async function createServiceInstance(csar, camundaEngineEndpoint) {
 
   result.success = true;
   result.properties = properties;
+  result.buildPlanUrl =
+    csar.buildPlanUrl + "/instances/" + instanceCreationResponseJson;
   return result;
 }
 

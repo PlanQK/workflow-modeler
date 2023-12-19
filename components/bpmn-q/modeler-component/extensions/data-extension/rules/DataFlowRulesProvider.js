@@ -2,14 +2,6 @@ import BpmnRules from "bpmn-js/lib/features/rules/BpmnRules";
 import { is, isAny } from "bpmn-js/lib/features/modeling/util/ModelingUtil";
 import * as consts from "../Constants";
 import { isConnectedWith } from "../../../editor/util/ModellingUtilities";
-import {
-  saveFile,
-  setAutoSaveInterval,
-} from "../../../editor/util/IoUtilities";
-import { getModeler } from "../../../editor/ModelerHandler";
-import ace from "ace-builds";
-import * as editorConfig from "../../../editor/config/EditorConfigManager";
-import { autoSaveFile } from "../../../editor/EditorConstants";
 
 /**
  * Custom rules provider for the DataFlow elements. Extends the BpmnRules.
@@ -33,7 +25,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired during creation of a new connection (while you selected the target of a connection)
      */
-    this.addRule("connection.create", 200000, function (context) {
+    this.addRule("connection.create", 200, function (context) {
       const source = context.source,
         target = context.target;
 
@@ -43,7 +35,7 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a connection between two elements is drawn again, e.g. after dragging an element
      */
-    this.addRule("connection.reconnect", 200000000000, function (context) {
+    this.addRule("connection.reconnect", 200, function (context) {
       const source = context.source,
         target = context.target;
 
@@ -57,49 +49,13 @@ export default class CustomRulesProvider extends BpmnRules {
     /**
      * Fired when a new shape for an element is created
      */
-    this.addRule("shape.create", 200000000000, function (context) {
+    this.addRule("shape.create", 200, function (context) {
       return canCreate(
         context.shape,
         context.target,
         context.source,
         context.position
       );
-    });
-
-    // save every change when the autosave option is on action
-    eventBus.on("commandStack.changed", function () {
-      if (editorConfig.getAutoSaveFileOption() === autoSaveFile.ON_ACTION) {
-        saveFile();
-      }
-    });
-
-    // remove interval when autosave option is on action
-    eventBus.on("autoSaveOptionChanged", function (context) {
-      if (context.autoSaveFileOption === autoSaveFile.ON_ACTION) {
-        clearInterval(getModeler().autosaveIntervalId);
-      } else {
-        setAutoSaveInterval();
-      }
-    });
-
-    // update xml viewer on diagram change
-    eventBus.on("commandStack.changed", function () {
-      let editor = document.getElementById("editor");
-      let aceEditor = ace.edit(editor);
-      let modeler = getModeler();
-      if (modeler) {
-        if (modeler.xml !== undefined) {
-          modeler.oldXml = getModeler().xml;
-          if (getModeler().xml.xml !== undefined)
-            modeler.oldXml = getModeler().xml.xml;
-        }
-        modeler.saveXML({ format: true }).then(function (result) {
-          if (result.xml !== undefined) {
-            result = result.xml;
-          }
-          aceEditor.setValue(result);
-        });
-      }
     });
   }
 

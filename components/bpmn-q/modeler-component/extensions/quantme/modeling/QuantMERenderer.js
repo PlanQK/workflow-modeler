@@ -59,6 +59,23 @@ export default class QuantMERenderer extends BpmnRenderer {
       parentGfx.prepend(groupDef);
     }
 
+    function drawDataObjectSVG(parentGfx, iconID) {
+      let importsvg = getQuantMESVG(iconID);
+      let innerSVGstring = importsvg.svg;
+      let transformDef = importsvg.transform;
+
+      const groupDef = svgCreate("g");
+      svgAttr(groupDef, { transform: transformDef });
+      innerSVG(groupDef, innerSVGstring);
+      let pathElement = parentGfx.querySelector("path");
+      let existingCssText = pathElement.style.cssText;
+      pathElement.style.cssText =
+        existingCssText + " fill-opacity: 0 !important;";
+
+      // draw svg in the background
+      parentGfx.prepend(groupDef);
+    }
+
     function drawPath(parentGfx, d, attrs) {
       attrs = computeStyle(attrs, ["no-fill"], {
         strokeWidth: 2,
@@ -323,6 +340,37 @@ export default class QuantMERenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "TASK_TYPE_VQA");
         return task;
       },
+      [consts.ERROR_CORRECTION_TASK]: function (self, parentGfx, element) {
+        var task = self.renderer("bpmn:Task")(parentGfx, element);
+        drawTaskSVG(parentGfx, "TASK_TYPE_ERROR_CORRECTION");
+        return task;
+      },
+      [consts.QUANTUM_CIRCUIT_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        console.log(task);
+        drawDataObjectSVG(parentGfx, "QUANTUM_CIRCUIT_OBJECT");
+        return task;
+      },
+      [consts.RESULT_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "RESULT_OBJECT");
+        return task;
+      },
+      [consts.EVALUATION_RESULT_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "EVALUATION_RESULT_OBJECT");
+        return task;
+      },
+      [consts.PARAMETRIZATION_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "PARAMETRIZATION_OBJECT");
+        return task;
+      },
+      [consts.INITIAL_STATE_OBJECT]: function (self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataObjectSVG(parentGfx, "INITIAL_STATE_OBJECT");
+        return task;
+      },
     };
 
     setTimeout(function () {
@@ -376,9 +424,6 @@ export default class QuantMERenderer extends BpmnRenderer {
       /* jshint -W040 */
       return h(this, parentNode, element);
     }
-
-    // use parent class for all non QuantME elements
-    return super.drawShape(parentNode, element);
   }
 }
 

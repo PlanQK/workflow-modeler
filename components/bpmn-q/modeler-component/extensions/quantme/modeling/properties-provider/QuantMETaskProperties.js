@@ -3,8 +3,10 @@ import {
   isTextFieldEntryEdited,
   isSelectEntryEdited,
 } from "@bpmn-io/properties-panel";
-import { AlgorithmEntry, AlphaEntry } from "./QuantMEPropertyEntries.js";
 import {
+  AlgorithmEntry,
+  AlphaEntry,
+  AutomatedSelectionEntry,
   CalibrationMethodEntry,
   DNNHiddenLayersEntry,
   EncodingSchemaEntry,
@@ -43,6 +45,11 @@ import {
   RoundedEntry,
   RepetitionsEntry,
   OptimizationEntry,
+  ExecutionResultEntry,
+  ParametrizationEntry,
+  InitialStateEntry,
+  EvaluationResultEntry,
+  ErrorCorrectionMethodEntry,
 } from "./QuantMEPropertyEntries";
 
 /**
@@ -262,6 +269,12 @@ export function HardwareSelectionSubprocessProperties(element) {
       component: SelectionStrategyEntry,
       isEdited: isTextFieldEntryEdited,
     },
+    {
+      id: consts.AUTOMATED_SELECTION,
+      element,
+      component: AutomatedSelectionEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
   ];
 }
 
@@ -450,6 +463,78 @@ export function CuttingResultCombinationTaskEntries(element) {
       id: consts.CUTTING_METHOD,
       element,
       component: CuttingMethodEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function ErrorCorrectionTaskEntries(element) {
+  return [
+    {
+      id: consts.ERROR_CORRECTION_METHOD,
+      element,
+      component: ErrorCorrectionMethodEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function QuantumCircuitObjectEntries(element) {
+  return [
+    {
+      id: consts.QUANTUM_CIRCUIT,
+      element,
+      component: QuantumCircuitEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.PROGRAMMING_LANGUAGE,
+      element,
+      component: ProgrammingLanguageEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function ResultObjectEntries(element) {
+  return [
+    {
+      id: consts.EXECUTION_RESULT,
+      element,
+      component: ExecutionResultEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function EvaluationResultObjectEntries(element) {
+  return [
+    {
+      id: consts.EVALUATION_RESULT,
+      element,
+      component: EvaluationResultEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function ParametrizationObjectEntries(element) {
+  return [
+    {
+      id: consts.PARAMETRIZATION,
+      element,
+      component: ParametrizationEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function InitialStateObjectEntries(element) {
+  return [
+    {
+      id: consts.INITIAL_STATE,
+      element,
+      component: InitialStateEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];
