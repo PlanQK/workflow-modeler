@@ -6,6 +6,8 @@ import { getRootProcess } from "../util/ModellingUtilities";
 import DeploymentSelectionModal from "./DeploymentSelectionModal";
 import {startPlanqkReplacementProcess} from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
 import {startDataFlowReplacementProcess} from "../../extensions/data-extension/transformation/TransformationManager";
+import {checkEnabledStatus} from "../plugin/PluginHandler";
+import {pluginNames} from "../EditorConstants";
 
 /**
  * React button for starting the deployment of the workflow.
@@ -151,7 +153,13 @@ export default function DeploymentButton(props) {
   }
 
   async function onClick() {
-    deploy((await modeler.saveXML({ format: true })).xml);
+    const planqkEnabled = checkEnabledStatus(pluginNames.PLANQK);
+    setWindowOpenDemandSelection(planqkEnabled);
+    console.log("PlanQK enabled: " + planqkEnabled);
+    if (!planqkEnabled) {
+      deploy((await modeler.saveXML({ format: true })).xml);
+    }
+
   }
 
   return (
