@@ -68,46 +68,48 @@ export default function OpenButton() {
   function handleChange(event) {
     const file = event.target.files[0];
 
-    if (file.name.endsWith(".zip")) {
-      // open file and load its content as bpmn diagram in the modeler
-      handleZipFile(file);
-    }
+    if (file) {
+      if (file.name.endsWith(".zip")) {
+        // open file and load its content as bpmn diagram in the modeler
+        handleZipFile(file);
+      }
 
-    if (file.name.endsWith(".bpmn")) {
-      // open file and load its content as bpmn diagram in the modeler
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const xml = e.target.result;
+      if (file.name.endsWith(".bpmn")) {
+        // open file and load its content as bpmn diagram in the modeler
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const xml = e.target.result;
 
-        loadDiagram(xml, getModeler(), false).then((result) => {
-          // save file name in editor configs
-          editorConfig.setFileName(file.name);
+          loadDiagram(xml, getModeler(), false).then((result) => {
+            // save file name in editor configs
+            editorConfig.setFileName(file.name);
 
-          dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, file.name);
+            dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, file.name);
 
-          if (
-            result.warnings &&
-            result.warnings.some((warning) => warning.error)
-          ) {
-            NotificationHandler.getInstance().displayNotification({
-              type: "warning",
-              title: "Loaded Diagram contains Problems",
-              content: `The diagram could not be properly loaded. Maybe it contains modelling elements which are not supported be the currently active plugins.`,
-              duration: 20000,
-            });
-          }
+            if (
+              result.warnings &&
+              result.warnings.some((warning) => warning.error)
+            ) {
+              NotificationHandler.getInstance().displayNotification({
+                type: "warning",
+                title: "Loaded Diagram contains Problems",
+                content: `The diagram could not be properly loaded. Maybe it contains modelling elements which are not supported be the currently active plugins.`,
+                duration: 20000,
+              });
+            }
 
-          if (result.error) {
-            NotificationHandler.getInstance().displayNotification({
-              type: "warning",
-              title: "Unable to load Diagram",
-              content: `During the loading of the diagram some errors occurred: ${result.error}`,
-              duration: 20000,
-            });
-          }
-        });
-      };
-      reader.readAsText(file);
+            if (result.error) {
+              NotificationHandler.getInstance().displayNotification({
+                type: "warning",
+                title: "Unable to load Diagram",
+                content: `During the loading of the diagram some errors occurred: ${result.error}`,
+                duration: 20000,
+              });
+            }
+          });
+        };
+        reader.readAsText(file);
+      }
     }
   }
 
