@@ -437,6 +437,11 @@ export async function matchesQRM(qrm, task) {
 
   // check if QuantME task of the QRM matches the given task
   let matches = taskMatchesDetector(detectorElement, task);
-  console.log("Matching between QRM %s and task with id %s: %s", qrm.qrmUrl, task.id, matches);
+  console.log(
+    "Matching between QRM %s and task with id %s: %s",
+    qrm.qrmUrl,
+    task.id,
+    matches
+  );
   return matches;
 }
