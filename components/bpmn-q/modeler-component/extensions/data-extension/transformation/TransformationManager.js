@@ -191,7 +191,8 @@ export async function startDataFlowReplacementProcess(xml) {
           activity.businessObject,
           businessObject.name,
           "${result}",
-          bpmnFactory);
+          bpmnFactory
+        );
       }
     }
   }

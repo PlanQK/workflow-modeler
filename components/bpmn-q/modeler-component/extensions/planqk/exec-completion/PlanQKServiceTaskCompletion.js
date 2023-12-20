@@ -152,7 +152,7 @@ export async function startPlanqkReplacementProcess(xml) {
 
   const transformedXml = await getXml(modeler, false);
 
-  return { status: "transformed", xml:  transformedXml };
+  return { status: "transformed", xml: transformedXml };
 }
 
 /**
@@ -181,9 +181,15 @@ async function replaceByInteractionSubprocess(
 
   // Ensure that the time definition and error event have unique ids as the id is not updated by Moodle
   const timerDefinitionEventId = "TimerEventDefinition_";
-  replacement = replacement.replace(timerDefinitionEventId, timerDefinitionEventId + task.id);
+  replacement = replacement.replace(
+    timerDefinitionEventId,
+    timerDefinitionEventId + task.id
+  );
   const errorDefinitionEventId = "ErrorEventDefinition_";
-  replacement = replacement.replace(errorDefinitionEventId, errorDefinitionEventId + task.id);
+  replacement = replacement.replace(
+    errorDefinitionEventId,
+    errorDefinitionEventId + task.id
+  );
 
   // get the root process of the replacement fragment
   let replacementProcess = getRootProcess(

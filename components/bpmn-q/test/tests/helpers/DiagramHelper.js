@@ -1,112 +1,113 @@
-const validPlanqkDiagram = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-  "<bpmn2:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:planqk=\"https://platform.planqk.de\" xmlns:dataflow=\"https://github.com/data/transformation\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"sample-diagram\" targetNamespace=\"http://bpmn.io/schema/bpmn\" xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\">\n" +
-  "  <bpmn2:process name=\"Test Process\" id=\"Process_1\" isExecutable=\"true\">\n" +
-  "    <bpmn2:startEvent id=\"StartEvent_1\">\n" +
+const validPlanqkDiagram =
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:planqk="https://platform.planqk.de" xmlns:dataflow="https://github.com/data/transformation" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">\n' +
+  '  <bpmn2:process name="Test Process" id="Process_1" isExecutable="true">\n' +
+  '    <bpmn2:startEvent id="StartEvent_1">\n' +
   "      <bpmn2:outgoing>Flow_0fp0far</bpmn2:outgoing>\n" +
   "    </bpmn2:startEvent>\n" +
-  "    <planqk:serviceTask id=\"Activity_08hlsom\" name=\"ConcatenateService\" subscriptionId=\"c3a27f19-eee6-4072-bcd8-d91a24e184ac\" applicationName=\"MyApp\" tokenEndpoint=\"https://gateway.34.90.225.20.nip.io/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0\" consumerKey=\"xNoQfRlUVeq4Iia0fYR0RTc4Z0ca\" consumerSecret=\"nrWmfTGKofXvpb88xWDGf2BeuyEa\" serviceName=\"ConcatenateService\" serviceEndpoint=\"http://dummy.com/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0\" data=\"${Katze}\" params=\"{}\" result=\"${output}\">\n" +
+  '    <planqk:serviceTask id="Activity_08hlsom" name="ConcatenateService" subscriptionId="c3a27f19-eee6-4072-bcd8-d91a24e184ac" applicationName="MyApp" tokenEndpoint="https://gateway.34.90.225.20.nip.io/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0" consumerKey="xNoQfRlUVeq4Iia0fYR0RTc4Z0ca" consumerSecret="nrWmfTGKofXvpb88xWDGf2BeuyEa" serviceName="ConcatenateService" serviceEndpoint="http://dummy.com/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0" data="${Katze}" params="{}" result="${output}">\n' +
   "      <bpmn2:incoming>Flow_0fp0far</bpmn2:incoming>\n" +
   "      <bpmn2:outgoing>Flow_0u25dtw</bpmn2:outgoing>\n" +
-  "      <bpmn2:property id=\"Property_0zbwkz8\" name=\"__targetRef_placeholder\" />\n" +
-  "      <bpmn2:dataInputAssociation id=\"DataInputAssociation_18ylx4e\">\n" +
+  '      <bpmn2:property id="Property_0zbwkz8" name="__targetRef_placeholder" />\n' +
+  '      <bpmn2:dataInputAssociation id="DataInputAssociation_18ylx4e">\n' +
   "        <bpmn2:sourceRef>DataMapObject_08e8fqr</bpmn2:sourceRef>\n" +
   "        <bpmn2:targetRef>Property_0zbwkz8</bpmn2:targetRef>\n" +
   "      </bpmn2:dataInputAssociation>\n" +
-  "      <bpmn2:dataOutputAssociation id=\"DataOutputAssociation_0kmvxob\">\n" +
+  '      <bpmn2:dataOutputAssociation id="DataOutputAssociation_0kmvxob">\n' +
   "        <bpmn2:targetRef>DataMapObject_0hko1o3</bpmn2:targetRef>\n" +
   "      </bpmn2:dataOutputAssociation>\n" +
   "    </planqk:serviceTask>\n" +
-  "    <planqk:serviceTask id=\"Activity_0hva5kf\" name=\"ConcatenateService\" subscriptionId=\"c3a27f19-eee6-4072-bcd8-d91a24e184ac\" applicationName=\"MyApp\" tokenEndpoint=\"https://gateway.34.90.225.20.nip.io/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0\" consumerKey=\"xNoQfRlUVeq4Iia0fYR0RTc4Z0ca\" consumerSecret=\"nrWmfTGKofXvpb88xWDGf2BeuyEa\" serviceName=\"ConcatenateService\" serviceEndpoint=\"http://dummy.com/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0\" data=\"${Iltis}\" params=\"{}\" result=\"${output}\">\n" +
+  '    <planqk:serviceTask id="Activity_0hva5kf" name="ConcatenateService" subscriptionId="c3a27f19-eee6-4072-bcd8-d91a24e184ac" applicationName="MyApp" tokenEndpoint="https://gateway.34.90.225.20.nip.io/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0" consumerKey="xNoQfRlUVeq4Iia0fYR0RTc4Z0ca" consumerSecret="nrWmfTGKofXvpb88xWDGf2BeuyEa" serviceName="ConcatenateService" serviceEndpoint="http://dummy.com/d0939549-00d4-4084-b1e7-091b3800ce69/concatenateservice/1.0.0" data="${Iltis}" params="{}" result="${output}">\n' +
   "      <bpmn2:incoming>Flow_0u25dtw</bpmn2:incoming>\n" +
   "      <bpmn2:outgoing>Flow_083hc5w</bpmn2:outgoing>\n" +
-  "      <bpmn2:property id=\"Property_1r53til\" name=\"__targetRef_placeholder\" />\n" +
-  "      <bpmn2:dataInputAssociation id=\"DataInputAssociation_02zf73b\">\n" +
+  '      <bpmn2:property id="Property_1r53til" name="__targetRef_placeholder" />\n' +
+  '      <bpmn2:dataInputAssociation id="DataInputAssociation_02zf73b">\n' +
   "        <bpmn2:sourceRef>DataMapObject_00m8wj5</bpmn2:sourceRef>\n" +
   "        <bpmn2:targetRef>Property_1r53til</bpmn2:targetRef>\n" +
   "      </bpmn2:dataInputAssociation>\n" +
   "    </planqk:serviceTask>\n" +
-  "    <bpmn2:endEvent id=\"Event_0woyumi\">\n" +
+  '    <bpmn2:endEvent id="Event_0woyumi">\n' +
   "      <bpmn2:incoming>Flow_083hc5w</bpmn2:incoming>\n" +
   "    </bpmn2:endEvent>\n" +
-  "    <bpmn2:sequenceFlow id=\"Flow_083hc5w\" sourceRef=\"Activity_0hva5kf\" targetRef=\"Event_0woyumi\" />\n" +
-  "    <bpmn2:sequenceFlow id=\"Flow_0u25dtw\" sourceRef=\"Activity_08hlsom\" targetRef=\"Activity_0hva5kf\" />\n" +
-  "    <bpmn2:sequenceFlow id=\"Flow_0fp0far\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_08hlsom\" />\n" +
-  "    <dataflow:dataMapObject id=\"DataMapObject_08e8fqr\" name=\"Input\" dataObjectRef=\"DataObject_1een32o\">\n" +
-  "      <dataflow:keyValueEntry name=\"string_1\" value=\"\" />\n" +
-  "      <dataflow:keyValueEntry name=\"string_2\" value=\"\" />\n" +
+  '    <bpmn2:sequenceFlow id="Flow_083hc5w" sourceRef="Activity_0hva5kf" targetRef="Event_0woyumi" />\n' +
+  '    <bpmn2:sequenceFlow id="Flow_0u25dtw" sourceRef="Activity_08hlsom" targetRef="Activity_0hva5kf" />\n' +
+  '    <bpmn2:sequenceFlow id="Flow_0fp0far" sourceRef="StartEvent_1" targetRef="Activity_08hlsom" />\n' +
+  '    <dataflow:dataMapObject id="DataMapObject_08e8fqr" name="Input" dataObjectRef="DataObject_1een32o">\n' +
+  '      <dataflow:keyValueEntry name="string_1" value="" />\n' +
+  '      <dataflow:keyValueEntry name="string_2" value="" />\n' +
   "    </dataflow:dataMapObject>\n" +
-  "    <bpmn2:dataObject id=\"DataObject_1een32o\" />\n" +
-  "    <dataflow:dataMapObject id=\"DataMapObject_0hko1o3\" name=\"ConcatResult1\" dataObjectRef=\"DataObject_0q9x058\" />\n" +
-  "    <bpmn2:dataObject id=\"DataObject_0q9x058\" />\n" +
-  "    <dataflow:dataMapObject id=\"DataMapObject_00m8wj5\" name=\"Input2\" dataObjectRef=\"DataObject_1v0qtxr\">\n" +
-  "      <dataflow:keyValueEntry name=\"str_2\" value=\"Seppone\" />\n" +
+  '    <bpmn2:dataObject id="DataObject_1een32o" />\n' +
+  '    <dataflow:dataMapObject id="DataMapObject_0hko1o3" name="ConcatResult1" dataObjectRef="DataObject_0q9x058" />\n' +
+  '    <bpmn2:dataObject id="DataObject_0q9x058" />\n' +
+  '    <dataflow:dataMapObject id="DataMapObject_00m8wj5" name="Input2" dataObjectRef="DataObject_1v0qtxr">\n' +
+  '      <dataflow:keyValueEntry name="str_2" value="Seppone" />\n' +
   "    </dataflow:dataMapObject>\n" +
-  "    <bpmn2:dataObject id=\"DataObject_1v0qtxr\" />\n" +
-  "    <dataflow:inputTransformationAssociation id=\"InputTransformationAssociation_18qxe5m\" sourceRef=\"DataMapObject_0hko1o3\" targetRef=\"Activity_0hva5kf\">\n" +
-  "      <dataflow:keyValueEntry name=\"str_1\" value=\" ${ConcatResult1.jsonPath(&#34;$.concatenated&#34;).stringValue()}\" />\n" +
+  '    <bpmn2:dataObject id="DataObject_1v0qtxr" />\n' +
+  '    <dataflow:inputTransformationAssociation id="InputTransformationAssociation_18qxe5m" sourceRef="DataMapObject_0hko1o3" targetRef="Activity_0hva5kf">\n' +
+  '      <dataflow:keyValueEntry name="str_1" value=" ${ConcatResult1.jsonPath(&#34;$.concatenated&#34;).stringValue()}" />\n' +
   "    </dataflow:inputTransformationAssociation>\n" +
   "  </bpmn2:process>\n" +
-  "  <bpmndi:BPMNDiagram id=\"BPMNDiagram_1\">\n" +
-  "    <bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\">\n" +
-  "      <bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\">\n" +
-  "        <dc:Bounds x=\"412\" y=\"240\" width=\"36\" height=\"36\" />\n" +
+  '  <bpmndi:BPMNDiagram id="BPMNDiagram_1">\n' +
+  '    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">\n' +
+  '      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">\n' +
+  '        <dc:Bounds x="412" y="240" width="36" height="36" />\n' +
   "      </bpmndi:BPMNShape>\n" +
-  "      <bpmndi:BPMNShape id=\"Activity_08hlsom_di\" bpmnElement=\"Activity_08hlsom\">\n" +
-  "        <dc:Bounds x=\"540\" y=\"218\" width=\"100\" height=\"80\" />\n" +
+  '      <bpmndi:BPMNShape id="Activity_08hlsom_di" bpmnElement="Activity_08hlsom">\n' +
+  '        <dc:Bounds x="540" y="218" width="100" height="80" />\n' +
   "        <bpmndi:BPMNLabel />\n" +
   "      </bpmndi:BPMNShape>\n" +
-  "      <bpmndi:BPMNShape id=\"Activity_0hva5kf_di\" bpmnElement=\"Activity_0hva5kf\">\n" +
-  "        <dc:Bounds x=\"760\" y=\"218\" width=\"100\" height=\"80\" />\n" +
+  '      <bpmndi:BPMNShape id="Activity_0hva5kf_di" bpmnElement="Activity_0hva5kf">\n' +
+  '        <dc:Bounds x="760" y="218" width="100" height="80" />\n' +
   "        <bpmndi:BPMNLabel />\n" +
   "      </bpmndi:BPMNShape>\n" +
-  "      <bpmndi:BPMNShape id=\"Event_0woyumi_di\" bpmnElement=\"Event_0woyumi\">\n" +
-  "        <dc:Bounds x=\"912\" y=\"240\" width=\"36\" height=\"36\" />\n" +
+  '      <bpmndi:BPMNShape id="Event_0woyumi_di" bpmnElement="Event_0woyumi">\n' +
+  '        <dc:Bounds x="912" y="240" width="36" height="36" />\n' +
   "      </bpmndi:BPMNShape>\n" +
-  "      <bpmndi:BPMNShape id=\"DataMapObject_08e8fqr_di\" bpmnElement=\"DataMapObject_08e8fqr\">\n" +
-  "        <dc:Bounds x=\"572\" y=\"375\" width=\"36\" height=\"50\" />\n" +
+  '      <bpmndi:BPMNShape id="DataMapObject_08e8fqr_di" bpmnElement="DataMapObject_08e8fqr">\n' +
+  '        <dc:Bounds x="572" y="375" width="36" height="50" />\n' +
   "        <bpmndi:BPMNLabel>\n" +
-  "          <dc:Bounds x=\"578\" y=\"432\" width=\"25\" height=\"14\" />\n" +
+  '          <dc:Bounds x="578" y="432" width="25" height="14" />\n' +
   "        </bpmndi:BPMNLabel>\n" +
   "      </bpmndi:BPMNShape>\n" +
-  "      <bpmndi:BPMNShape id=\"DataMapObject_0hko1o3_di\" bpmnElement=\"DataMapObject_0hko1o3\">\n" +
-  "        <dc:Bounds x=\"712\" y=\"375\" width=\"36\" height=\"50\" />\n" +
+  '      <bpmndi:BPMNShape id="DataMapObject_0hko1o3_di" bpmnElement="DataMapObject_0hko1o3">\n' +
+  '        <dc:Bounds x="712" y="375" width="36" height="50" />\n' +
   "        <bpmndi:BPMNLabel>\n" +
-  "          <dc:Bounds x=\"694\" y=\"432\" width=\"73\" height=\"14\" />\n" +
+  '          <dc:Bounds x="694" y="432" width="73" height="14" />\n' +
   "        </bpmndi:BPMNLabel>\n" +
   "      </bpmndi:BPMNShape>\n" +
-  "      <bpmndi:BPMNShape id=\"DataMapObject_00m8wj5_di\" bpmnElement=\"DataMapObject_00m8wj5\">\n" +
-  "        <dc:Bounds x=\"852\" y=\"375\" width=\"36\" height=\"50\" />\n" +
+  '      <bpmndi:BPMNShape id="DataMapObject_00m8wj5_di" bpmnElement="DataMapObject_00m8wj5">\n' +
+  '        <dc:Bounds x="852" y="375" width="36" height="50" />\n' +
   "        <bpmndi:BPMNLabel>\n" +
-  "          <dc:Bounds x=\"856\" y=\"432\" width=\"31\" height=\"14\" />\n" +
+  '          <dc:Bounds x="856" y="432" width="31" height="14" />\n' +
   "        </bpmndi:BPMNLabel>\n" +
   "      </bpmndi:BPMNShape>\n" +
-  "      <bpmndi:BPMNEdge id=\"DataInputAssociation_18ylx4e_di\" bpmnElement=\"DataInputAssociation_18ylx4e\">\n" +
-  "        <di:waypoint x=\"590\" y=\"375\" />\n" +
-  "        <di:waypoint x=\"590\" y=\"298\" />\n" +
+  '      <bpmndi:BPMNEdge id="DataInputAssociation_18ylx4e_di" bpmnElement="DataInputAssociation_18ylx4e">\n' +
+  '        <di:waypoint x="590" y="375" />\n' +
+  '        <di:waypoint x="590" y="298" />\n' +
   "      </bpmndi:BPMNEdge>\n" +
-  "      <bpmndi:BPMNEdge id=\"DataOutputAssociation_0kmvxob_di\" bpmnElement=\"DataOutputAssociation_0kmvxob\">\n" +
-  "        <di:waypoint x=\"631\" y=\"298\" />\n" +
-  "        <di:waypoint x=\"712\" y=\"376\" />\n" +
+  '      <bpmndi:BPMNEdge id="DataOutputAssociation_0kmvxob_di" bpmnElement="DataOutputAssociation_0kmvxob">\n' +
+  '        <di:waypoint x="631" y="298" />\n' +
+  '        <di:waypoint x="712" y="376" />\n' +
   "      </bpmndi:BPMNEdge>\n" +
-  "      <bpmndi:BPMNEdge id=\"Flow_083hc5w_di\" bpmnElement=\"Flow_083hc5w\">\n" +
-  "        <di:waypoint x=\"860\" y=\"258\" />\n" +
-  "        <di:waypoint x=\"912\" y=\"258\" />\n" +
+  '      <bpmndi:BPMNEdge id="Flow_083hc5w_di" bpmnElement="Flow_083hc5w">\n' +
+  '        <di:waypoint x="860" y="258" />\n' +
+  '        <di:waypoint x="912" y="258" />\n' +
   "      </bpmndi:BPMNEdge>\n" +
-  "      <bpmndi:BPMNEdge id=\"Flow_0u25dtw_di\" bpmnElement=\"Flow_0u25dtw\">\n" +
-  "        <di:waypoint x=\"640\" y=\"258\" />\n" +
-  "        <di:waypoint x=\"760\" y=\"258\" />\n" +
+  '      <bpmndi:BPMNEdge id="Flow_0u25dtw_di" bpmnElement="Flow_0u25dtw">\n' +
+  '        <di:waypoint x="640" y="258" />\n' +
+  '        <di:waypoint x="760" y="258" />\n' +
   "      </bpmndi:BPMNEdge>\n" +
-  "      <bpmndi:BPMNEdge id=\"Flow_0fp0far_di\" bpmnElement=\"Flow_0fp0far\">\n" +
-  "        <di:waypoint x=\"448\" y=\"258\" />\n" +
-  "        <di:waypoint x=\"540\" y=\"258\" />\n" +
+  '      <bpmndi:BPMNEdge id="Flow_0fp0far_di" bpmnElement="Flow_0fp0far">\n' +
+  '        <di:waypoint x="448" y="258" />\n' +
+  '        <di:waypoint x="540" y="258" />\n' +
   "      </bpmndi:BPMNEdge>\n" +
-  "      <bpmndi:BPMNEdge id=\"InputTransformationAssociation_18qxe5m_di\" bpmnElement=\"InputTransformationAssociation_18qxe5m\">\n" +
-  "        <di:waypoint x=\"748\" y=\"375\" />\n" +
-  "        <di:waypoint x=\"803\" y=\"298\" />\n" +
+  '      <bpmndi:BPMNEdge id="InputTransformationAssociation_18qxe5m_di" bpmnElement="InputTransformationAssociation_18qxe5m">\n' +
+  '        <di:waypoint x="748" y="375" />\n' +
+  '        <di:waypoint x="803" y="298" />\n' +
   "      </bpmndi:BPMNEdge>\n" +
-  "      <bpmndi:BPMNEdge id=\"DataInputAssociation_02zf73b_di\" bpmnElement=\"DataInputAssociation_02zf73b\">\n" +
-  "        <di:waypoint x=\"859\" y=\"375\" />\n" +
-  "        <di:waypoint x=\"827\" y=\"298\" />\n" +
+  '      <bpmndi:BPMNEdge id="DataInputAssociation_02zf73b_di" bpmnElement="DataInputAssociation_02zf73b">\n' +
+  '        <di:waypoint x="859" y="375" />\n' +
+  '        <di:waypoint x="827" y="298" />\n' +
   "      </bpmndi:BPMNEdge>\n" +
   "    </bpmndi:BPMNPlane>\n" +
   "  </bpmndi:BPMNDiagram>\n" +
@@ -337,8 +338,8 @@ const transformedValidPlanqkDiagram =
   "  </bpmndi:BPMNDiagram>\n" +
   '  <bpmndi:BPMNDiagram id="BPMNDiagram_0y7mvgl">\n' +
   '    <bpmndi:BPMNPlane id="BPMNPlane_1hcq5fl" bpmnElement="Activity_087q8te" />\n' +
-  '  </bpmndi:BPMNDiagram>\n' +
-  '</bpmn2:definitions>\n';
+  "  </bpmndi:BPMNDiagram>\n" +
+  "</bpmn2:definitions>\n";
 
 export const validQuantMEDiagram =
   '<?xml version="1.0" encoding="UTF-8"?> <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:quantme="https://github.com/UST-QuAntiL/QuantME-Quantum4BPMN" id="Definitions_13b49ha" targetNamespace="http://bpmn.io/schema/bpmn" exporter="QuantME Modeler" exporterVersion="4.5.0-nightly.20211129">   <bpmn:process id="analysis-and-rewrite-workflow" isExecutable="true">     <bpmn:startEvent id="StartEvent_1">       <bpmn:extensionElements>         <camunda:formData>           <camunda:formField id="input_url" label="URL to the input data" type="string" />           <camunda:formField id="ibmq_token" label="IBMQ Access Token" type="string" />           <camunda:formField id="ibmq_backend" label="IBMQ Backend" type="string" />         </camunda:formData>       </bpmn:extensionElements>       <bpmn:outgoing>SequenceFlow_0kum1kc</bpmn:outgoing>     </bpmn:startEvent>     <bpmn:sequenceFlow id="SequenceFlow_0kum1kc" sourceRef="StartEvent_1" targetRef="Task_0bysx93" />     <bpmn:serviceTask id="Task_0bysx93" name="Initialize Quantum&#10;K-Means" opentosca:deploymentModelUrl="{{ wineryEndpoint }}/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpull/KMeansInitializerService/?csar">       <bpmn:incoming>SequenceFlow_0kum1kc</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_0gw15u7</bpmn:outgoing>     </bpmn:serviceTask>     <bpmn:sequenceFlow id="SequenceFlow_0gw15u7" sourceRef="Task_0bysx93" targetRef="ExclusiveGateway_1g07eb9" />     <bpmn:exclusiveGateway id="ExclusiveGateway_1g07eb9">       <bpmn:incoming>SequenceFlow_0gw15u7</bpmn:incoming>       <bpmn:incoming>SequenceFlow_00gjpgx</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_0s6m835</bpmn:outgoing>     </bpmn:exclusiveGateway>     <bpmn:sequenceFlow id="SequenceFlow_0s6m835" sourceRef="ExclusiveGateway_1g07eb9" targetRef="Task_0qfiqux" />     <bpmn:sequenceFlow id="SequenceFlow_15qw95r" sourceRef="Task_0qfiqux" targetRef="Task_0lg77kd" />     <bpmn:exclusiveGateway id="ExclusiveGateway_052cifa" name="converged?" camunda:asyncBefore="true">       <bpmn:incoming>SequenceFlow_0fxi83k</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_16yvlag</bpmn:outgoing>       <bpmn:outgoing>SequenceFlow_0591a3g</bpmn:outgoing>     </bpmn:exclusiveGateway>     <bpmn:sequenceFlow id="SequenceFlow_16yvlag" name="No" sourceRef="ExclusiveGateway_052cifa" targetRef="Task_11jwstv">       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${clusteringConverged == \'false\'}</bpmn:conditionExpression>     </bpmn:sequenceFlow>     <bpmn:sequenceFlow id="SequenceFlow_00gjpgx" sourceRef="Task_11jwstv" targetRef="ExclusiveGateway_1g07eb9" />     <bpmn:sequenceFlow id="SequenceFlow_0591a3g" name="Yes" sourceRef="ExclusiveGateway_052cifa" targetRef="Task_0ky02vw">       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${clusteringConverged == \'true\'}</bpmn:conditionExpression>     </bpmn:sequenceFlow>     <bpmn:exclusiveGateway id="ExclusiveGateway_0jbrct6">       <bpmn:incoming>SequenceFlow_1wsvjv1</bpmn:incoming>       <bpmn:incoming>SequenceFlow_0ncbyt5</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_08ni26o</bpmn:outgoing>     </bpmn:exclusiveGateway>     <bpmn:sequenceFlow id="SequenceFlow_1wsvjv1" sourceRef="Task_0ky02vw" targetRef="ExclusiveGateway_0jbrct6" />     <bpmn:sequenceFlow id="SequenceFlow_08ni26o" sourceRef="ExclusiveGateway_0jbrct6" targetRef="Task_1ptc5xw" />     <bpmn:sequenceFlow id="SequenceFlow_08ed0ea" sourceRef="Task_1ptc5xw" targetRef="Task_1mspa9s" />     <bpmn:exclusiveGateway id="ExclusiveGateway_1pzukzt" name="iterations &#62; 30 &#10;or costs &#60; 0.2" camunda:asyncBefore="true">       <bpmn:incoming>SequenceFlow_09l09is</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_0ncbyt5</bpmn:outgoing>       <bpmn:outgoing>SequenceFlow_0vmb89t</bpmn:outgoing>     </bpmn:exclusiveGateway>     <bpmn:sequenceFlow id="SequenceFlow_09l09is" sourceRef="Task_1mspa9s" targetRef="ExclusiveGateway_1pzukzt" />     <bpmn:sequenceFlow id="SequenceFlow_0ncbyt5" name="No" sourceRef="ExclusiveGateway_1pzukzt" targetRef="ExclusiveGateway_0jbrct6">       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${classificationConverged == \'false\'}</bpmn:conditionExpression>     </bpmn:sequenceFlow>     <bpmn:sequenceFlow id="SequenceFlow_0vmb89t" name="Yes" sourceRef="ExclusiveGateway_1pzukzt" targetRef="Task_1vi6pzv">       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${classificationConverged == \'true\'}</bpmn:conditionExpression>     </bpmn:sequenceFlow>     <bpmn:sequenceFlow id="SequenceFlow_1csno8e" sourceRef="Task_06q9rh6" targetRef="EndEvent_08sc4da" />     <bpmn:userTask id="Task_06q9rh6" name="Analyze&#10;Results">       <bpmn:extensionElements>         <camunda:formData>           <camunda:formField id="plotUrl" label="Result Image URL" type="string">             <camunda:properties>               <camunda:property id="Property_1mktdna" />             </camunda:properties>             <camunda:validation>               <camunda:constraint name="readonly" />             </camunda:validation>           </camunda:formField>         </camunda:formData>       </bpmn:extensionElements>       <bpmn:incoming>SequenceFlow_03zrxe7</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_1csno8e</bpmn:outgoing>     </bpmn:userTask>     <bpmn:endEvent id="EndEvent_08sc4da">       <bpmn:incoming>SequenceFlow_1csno8e</bpmn:incoming>     </bpmn:endEvent>     <bpmn:sequenceFlow id="SequenceFlow_0fxi83k" sourceRef="Task_0lg77kd" targetRef="ExclusiveGateway_052cifa" />     <bpmn:serviceTask id="Task_0lg77kd" name="Calculate&#10;New&#10;Centroids" quantme:deploymentModelUrl="{{ wineryEndpoint }}/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpull/KMeansConvergenceService/?csar">       <bpmn:incoming>SequenceFlow_15qw95r</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_0fxi83k</bpmn:outgoing>     </bpmn:serviceTask>     <bpmn:serviceTask id="Task_11jwstv" name="Adapt&#10;Quantum&#10;Circuits" quantme:deploymentModelUrl="{{ wineryEndpoint }}/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpull/KMeansAdaptationService/?csar">       <bpmn:incoming>SequenceFlow_16yvlag</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_00gjpgx</bpmn:outgoing>     </bpmn:serviceTask>     <bpmn:serviceTask id="Task_0ky02vw" name="Initialize Quantum&#10;SVM" quantme:deploymentModelUrl="{{ wineryEndpoint }}/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpull/QSVMInitializerService/?csar">       <bpmn:incoming>SequenceFlow_0591a3g</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_1wsvjv1</bpmn:outgoing>     </bpmn:serviceTask>     <bpmn:serviceTask id="Task_1mspa9s" name="Optimize&#10;Thetas" quantme:deploymentModelUrl="{{ wineryEndpoint }}/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpull/QSVMOptimizerService/?csar">       <bpmn:incoming>SequenceFlow_08ed0ea</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_09l09is</bpmn:outgoing>     </bpmn:serviceTask>     <bpmn:sequenceFlow id="SequenceFlow_03zrxe7" sourceRef="Task_1vi6pzv" targetRef="Task_06q9rh6" />     <bpmn:serviceTask id="Task_1vi6pzv" name="Evaluate Classifier" quantme:deploymentModelUrl="{{ wineryEndpoint }}/servicetemplates/http%253A%252F%252Fquantil.org%252Fquantme%252Fpull/EvaluationService/?csar">       <bpmn:incoming>SequenceFlow_0vmb89t</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_03zrxe7</bpmn:outgoing>     </bpmn:serviceTask>     <quantme:quantumCircuitExecutionTask id="Task_1ptc5xw" name="Execute Quantum&#10;Circuit" provider="ibmq" programmingLanguage="qiskit">       <bpmn:incoming>SequenceFlow_08ni26o</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_08ed0ea</bpmn:outgoing>     </quantme:quantumCircuitExecutionTask>     <quantme:quantumCircuitExecutionTask id="Task_0qfiqux" name="Execute Quantum Circuits" provider="ibmq" programmingLanguage="openqasm">       <bpmn:incoming>SequenceFlow_0s6m835</bpmn:incoming>       <bpmn:outgoing>SequenceFlow_15qw95r</bpmn:outgoing>     </quantme:quantumCircuitExecutionTask>   </bpmn:process>   <bpmndi:BPMNDiagram id="BPMNDiagram_1">     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="analysis-and-rewrite-workflow">       <bpmndi:BPMNEdge id="SequenceFlow_03zrxe7_di" bpmnElement="SequenceFlow_03zrxe7">         <di:waypoint x="1450" y="257" />         <di:waypoint x="1480" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_0fxi83k_di" bpmnElement="SequenceFlow_0fxi83k">         <di:waypoint x="650" y="257" />         <di:waypoint x="675" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_1csno8e_di" bpmnElement="SequenceFlow_1csno8e">         <di:waypoint x="1580" y="257" />         <di:waypoint x="1602" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_0vmb89t_di" bpmnElement="SequenceFlow_0vmb89t">         <di:waypoint x="1305" y="257" />         <di:waypoint x="1350" y="257" />         <bpmndi:BPMNLabel>           <dc:Bounds x="1309" y="239" width="18" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_0ncbyt5_di" bpmnElement="SequenceFlow_0ncbyt5">         <di:waypoint x="1280" y="232" />         <di:waypoint x="1280" y="120" />         <di:waypoint x="940" y="120" />         <di:waypoint x="940" y="232" />         <bpmndi:BPMNLabel>           <dc:Bounds x="1292" y="193" width="15" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_09l09is_di" bpmnElement="SequenceFlow_09l09is">         <di:waypoint x="1220" y="257" />         <di:waypoint x="1255" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_08ed0ea_di" bpmnElement="SequenceFlow_08ed0ea">         <di:waypoint x="1090" y="257" />         <di:waypoint x="1120" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_08ni26o_di" bpmnElement="SequenceFlow_08ni26o">         <di:waypoint x="965" y="257" />         <di:waypoint x="990" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_1wsvjv1_di" bpmnElement="SequenceFlow_1wsvjv1">         <di:waypoint x="880" y="257" />         <di:waypoint x="915" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_0591a3g_di" bpmnElement="SequenceFlow_0591a3g">         <di:waypoint x="725" y="257" />         <di:waypoint x="780" y="257" />         <bpmndi:BPMNLabel>           <dc:Bounds x="734" y="239" width="18" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_00gjpgx_di" bpmnElement="SequenceFlow_00gjpgx">         <di:waypoint x="490" y="120" />         <di:waypoint x="370" y="120" />         <di:waypoint x="370" y="232" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_16yvlag_di" bpmnElement="SequenceFlow_16yvlag">         <di:waypoint x="700" y="232" />         <di:waypoint x="700" y="120" />         <di:waypoint x="590" y="120" />         <bpmndi:BPMNLabel>           <dc:Bounds x="708" y="193" width="15" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_15qw95r_di" bpmnElement="SequenceFlow_15qw95r">         <di:waypoint x="520" y="257" />         <di:waypoint x="550" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_0s6m835_di" bpmnElement="SequenceFlow_0s6m835">         <di:waypoint x="395" y="257" />         <di:waypoint x="420" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_0gw15u7_di" bpmnElement="SequenceFlow_0gw15u7">         <di:waypoint x="320" y="257" />         <di:waypoint x="345" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNEdge id="SequenceFlow_0kum1kc_di" bpmnElement="SequenceFlow_0kum1kc">         <di:waypoint x="188" y="257" />         <di:waypoint x="220" y="257" />       </bpmndi:BPMNEdge>       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">         <dc:Bounds x="152" y="239" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ServiceTask_0jfklh6_di" bpmnElement="Task_0bysx93">         <dc:Bounds x="220" y="217" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ExclusiveGateway_1g07eb9_di" bpmnElement="ExclusiveGateway_1g07eb9" isMarkerVisible="true">         <dc:Bounds x="345" y="232" width="50" height="50" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ExclusiveGateway_052cifa_di" bpmnElement="ExclusiveGateway_052cifa" isMarkerVisible="true">         <dc:Bounds x="675" y="232" width="50" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="671" y="289" width="58" height="14" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ExclusiveGateway_0jbrct6_di" bpmnElement="ExclusiveGateway_0jbrct6" isMarkerVisible="true">         <dc:Bounds x="915" y="232" width="50" height="50" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ExclusiveGateway_1pzukzt_di" bpmnElement="ExclusiveGateway_1pzukzt" isMarkerVisible="true">         <dc:Bounds x="1255" y="232" width="50" height="50" />         <bpmndi:BPMNLabel>           <dc:Bounds x="1244" y="289" width="73" height="27" />         </bpmndi:BPMNLabel>       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="UserTask_1dg3wae_di" bpmnElement="Task_06q9rh6">         <dc:Bounds x="1480" y="217" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="EndEvent_1ruqffc_di" bpmnElement="EndEvent_08sc4da">         <dc:Bounds x="1602" y="239" width="36" height="36" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ServiceTask_1hpv5f5_di" bpmnElement="Task_0lg77kd">         <dc:Bounds x="550" y="217" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ServiceTask_1igyi96_di" bpmnElement="Task_11jwstv">         <dc:Bounds x="490" y="80" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ServiceTask_07lly8e_di" bpmnElement="Task_0ky02vw">         <dc:Bounds x="780" y="217" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ServiceTask_093318x_di" bpmnElement="Task_1mspa9s">         <dc:Bounds x="1120" y="217" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="ServiceTask_1hkb4uw_di" bpmnElement="Task_1vi6pzv">         <dc:Bounds x="1350" y="217" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="QuantumCircuitExecutionTask_123wxlx_di" bpmnElement="Task_1ptc5xw">         <dc:Bounds x="990" y="217" width="100" height="80" />       </bpmndi:BPMNShape>       <bpmndi:BPMNShape id="QuantumCircuitExecutionTask_0ola47b_di" bpmnElement="Task_0qfiqux">         <dc:Bounds x="420" y="217" width="100" height="80" />       </bpmndi:BPMNShape>     </bpmndi:BPMNPlane>   </bpmndi:BPMNDiagram> </bpmn:definitions>';

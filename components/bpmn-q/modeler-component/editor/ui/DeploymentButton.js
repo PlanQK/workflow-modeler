@@ -4,10 +4,10 @@ import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
 import { getRootProcess } from "../util/ModellingUtilities";
 import DeploymentSelectionModal from "./DeploymentSelectionModal";
-import {startPlanqkReplacementProcess} from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
-import {startDataFlowReplacementProcess} from "../../extensions/data-extension/transformation/TransformationManager";
-import {checkEnabledStatus} from "../plugin/PluginHandler";
-import {pluginNames} from "../EditorConstants";
+import { startPlanqkReplacementProcess } from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
+import { startDataFlowReplacementProcess } from "../../extensions/data-extension/transformation/TransformationManager";
+import { checkEnabledStatus } from "../plugin/PluginHandler";
+import { pluginNames } from "../EditorConstants";
 
 /**
  * React button for starting the deployment of the workflow.
@@ -22,12 +22,12 @@ export default function DeploymentButton(props) {
 
   const { modeler } = props;
 
-   /**
+  /**
    * Handle result of the deployment selection dialog
    *
    * @param result the result from the dialog
    */
-   async function handleDeploymentSelection(result) {
+  async function handleDeploymentSelection(result) {
     if (result && result.hasOwnProperty("deploymentLocation")) {
       // get XML of the current workflow
       let xml = (await modeler.saveXML({ format: true })).xml;
@@ -74,13 +74,16 @@ export default function DeploymentButton(props) {
     }
 
     console.log("Transforming workflow to Camunda BPMN");
-    const replaceResult = await startPlanqkReplacementProcess(replaceDataFlowResult.xml);
+    const replaceResult = await startPlanqkReplacementProcess(
+      replaceDataFlowResult.xml
+    );
     if (replaceResult.status === "failed") {
       NotificationHandler.getInstance().displayNotification({
         type: "error",
-      title: "PlanQK Workflow Transformation Failure",
+        title: "PlanQK Workflow Transformation Failure",
         content:
-          "Could not transform PlanQK workflow to Camunda BPMN: " + replaceResult.cause,
+          "Could not transform PlanQK workflow to Camunda BPMN: " +
+          replaceResult.cause,
         duration: 20000,
       });
       return;
@@ -91,19 +94,20 @@ export default function DeploymentButton(props) {
 
     NotificationHandler.getInstance().displayNotification({
       title: "Service Deployment started",
-      content:
-        "Deploying workflow as service to PlanQK.",
+      content: "Deploying workflow as service to PlanQK.",
     });
 
     // Inform PlanQK that a new service must be created
-    const createWorkflowServiceEvent = new CustomEvent("create-workflow-service-event", {
-      bubbles: true,
-      detail: {
-        name: rootElement.name,
-        workflow: replaceResult.xml
-
-      },
-    });
+    const createWorkflowServiceEvent = new CustomEvent(
+      "create-workflow-service-event",
+      {
+        bubbles: true,
+        detail: {
+          name: rootElement.name,
+          workflow: replaceResult.xml,
+        },
+      }
+    );
     document.dispatchEvent(createWorkflowServiceEvent);
   }
 
@@ -159,7 +163,6 @@ export default function DeploymentButton(props) {
     if (!planqkEnabled) {
       deploy((await modeler.saveXML({ format: true })).xml);
     }
-
   }
 
   return (
@@ -175,7 +178,9 @@ export default function DeploymentButton(props) {
         </span>
       </button>
       {windowOpenDeploymentSelection && (
-        <DeploymentSelectionModal onClose={(e) => handleDeploymentSelection(e)} />
+        <DeploymentSelectionModal
+          onClose={(e) => handleDeploymentSelection(e)}
+        />
       )}
     </Fragment>
   );

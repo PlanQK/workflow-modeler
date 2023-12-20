@@ -1,6 +1,9 @@
-import {getAllConfigs, setPluginConfig,} from "../../../modeler-component/editor/plugin/PluginConfigHandler";
-import {createTempModeler} from "../../../modeler-component/editor/ModelerHandler";
-import {loadDiagram} from "../../../modeler-component/editor/util/IoUtilities";
+import {
+  getAllConfigs,
+  setPluginConfig,
+} from "../../../modeler-component/editor/plugin/PluginConfigHandler";
+import { createTempModeler } from "../../../modeler-component/editor/ModelerHandler";
+import { loadDiagram } from "../../../modeler-component/editor/util/IoUtilities";
 import {
   COMPLETE_EXAMPLE_WORKFLOW,
   DOCUMENTATION_WORKFLOW,
@@ -11,13 +14,14 @@ import {
   SPLIT_MERGE_WORKFLOW,
   UNTRANSFORMED_BPMN_WORKFLOW,
 } from "./DataFlowWorkflows";
+import { startDataFlowReplacementProcess } from "../../../modeler-component/extensions/data-extension/transformation/TransformationManager";
+import { expect } from "chai";
 import {
-  startDataFlowReplacementProcess
-} from "../../../modeler-component/extensions/data-extension/transformation/TransformationManager";
-import {expect} from "chai";
-import {getDocumentation, getRootProcess,} from "../../../modeler-component/editor/util/ModellingUtilities";
-import {getAllElementsForProcess} from "../../../modeler-component/editor/util/TransformationUtilities";
-import {testTaskIo} from "../helpers/PropertiesHelper";
+  getDocumentation,
+  getRootProcess,
+} from "../../../modeler-component/editor/util/ModellingUtilities";
+import { getAllElementsForProcess } from "../../../modeler-component/editor/util/TransformationUtilities";
+import { testTaskIo } from "../helpers/PropertiesHelper";
 
 describe("Test the TransformationManager of the data flow extension.", function () {
   describe("Test startDataFlowReplacementProcess()", function () {
@@ -183,7 +187,7 @@ describe("Test the TransformationManager of the data flow extension.", function 
         },
         {
           Out1: "${result}",
-          Out2: "${result}"
+          Out2: "${result}",
         },
         bpmnFactory
       );

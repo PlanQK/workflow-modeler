@@ -9,7 +9,6 @@ const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function DeploymentSelectionModal({ onClose }) {
-
   const onSelectionClose = (value) =>
     onClose({
       deploymentLocation: value,
@@ -25,7 +24,7 @@ export default function DeploymentSelectionModal({ onClose }) {
             <button
               type="button"
               className="qwm-btn qwm-btn-modal"
-              onClick={() =>onSelectionClose("planqk")}
+              onClick={() => onSelectionClose("planqk")}
             >
               PlanQK
             </button>

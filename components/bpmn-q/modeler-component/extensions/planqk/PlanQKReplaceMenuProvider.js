@@ -169,8 +169,7 @@ export default class PlanQKMenuProvider {
     const self = this.modeling;
     const replaceElement = this.replaceElement;
     const oauthInfoByAppMap = this.oauthInfoByAppMap;
-    const tokenUrl =
-      getPluginConfig("planqk").tokenUrl;
+    const tokenUrl = getPluginConfig("planqk").tokenUrl;
 
     /*
          create a replacement menu entry for a subscription which sets the properties of the selected PlanQK service task
