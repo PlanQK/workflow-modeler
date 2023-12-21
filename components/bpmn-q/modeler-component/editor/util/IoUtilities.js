@@ -97,8 +97,8 @@ export async function saveModelerAsLocalFile(
  * @param modeler The bpmn modeler the bpmn diagram is opened in.
  * @returns {Promise<*>} The xml diagram.
  */
-export async function getXml(modeler) {
-  const { xml } = await modeler.saveXML({ format: true });
+export async function getXml(modeler, format = true) {
+  const { xml } = await modeler.saveXML({ format: format });
   return xml;
 }
 
