@@ -31,7 +31,6 @@ export default function DeploymentButton(props) {
     if (result && result.hasOwnProperty("deploymentLocation")) {
       // get XML of the current workflow
       let xml = (await modeler.saveXML({ format: true })).xml;
-      console.log("XML", xml);
       if (result.deploymentLocation === "planqk") {
         deployAsPlanQKService(xml);
       }
@@ -58,6 +57,8 @@ export default function DeploymentButton(props) {
       });
       return;
     }
+
+    console.log("PlanQK BPMN workflow to be transformed:", xml);
 
     console.log("Transforming data flow extension to BPMN");
 
@@ -88,7 +89,7 @@ export default function DeploymentButton(props) {
       });
       return;
     }
-    console.log("Transformed Camunda BPMN XML", xml);
+    console.log("Camunda BPMN resulting from transformation:", xml);
 
     console.log("Deploying workflow as PlanQK service " + rootElement.name);
 
