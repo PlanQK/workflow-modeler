@@ -54,11 +54,13 @@ export default {
             camundaEndpoint: camundaConfig.getCamundaEndpoint(),
           }
         );
-        let combinedResult = await updateQuantMEView(
-          quantumView.xml,
-          transformedXml.xml
-        );
-        modeler.views["view-before-rewriting"] = combinedResult.xml;
+        if (transformedXml.status === "transformed") {
+          let combinedResult = await updateQuantMEView(
+            quantumView.xml,
+            transformedXml.xml
+          );
+          modeler.views["view-before-rewriting"] = combinedResult.xml;
+        }
         return transformedXml;
       }}
     />
