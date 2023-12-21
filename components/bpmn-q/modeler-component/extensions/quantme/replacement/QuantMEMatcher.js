@@ -44,6 +44,7 @@ import {
   QUANTUM_ALGORITHM,
   REPETITIONS,
   ROUNDED,
+  SHOTS,
   TOLERANCE_THRESHOLD,
   WARM_STARTING_METHOD,
 } from "../Constants";
@@ -176,9 +177,9 @@ function matchOracleExpansionTask(detectorElement, task) {
 function matchQuantumCircuitExecutionTask(detectorElement, task) {
   // check if provider, qpu, shots, and programmingLanguage match
   return (
-    matchesProperty(detectorElement.provider, task.provider, false) &&
-    matchesProperty(detectorElement.qpu, task.qpu, false) &&
-    matchesProperty(detectorElement.shots, task.shots, false) &&
+    matchesProperty(detectorElement.provider, task.provider, false, PROVIDER) &&
+    matchesProperty(detectorElement.qpu, task.qpu, false, QPU) &&
+    matchesProperty(detectorElement.shots, task.shots, false, SHOTS) &&
     matchesProperty(
       detectorElement.programmingLanguage,
       task.programmingLanguage,
