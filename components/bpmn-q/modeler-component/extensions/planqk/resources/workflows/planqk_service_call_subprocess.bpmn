@@ -12,10 +12,10 @@
           <camunda:inputParameter name="params" />
           <camunda:inputParameter name="executionState" />
           <camunda:inputParameter name="executionId" />
-          <camunda:inputParameter name="serviceEndpoint"/>
-          <camunda:inputParameter name="tokenEndpoint"/>
-          <camunda:inputParameter name="consumerSecret"/>
-          <camunda:inputParameter name="consumerKey"/>
+          <camunda:inputParameter name="serviceEndpoint" />
+          <camunda:inputParameter name="tokenEndpoint" />
+          <camunda:inputParameter name="consumerSecret" />
+          <camunda:inputParameter name="consumerKey" />
           <camunda:inputParameter name="maxIterations">unbounded</camunda:inputParameter>
         </camunda:inputOutput>
       </semantic:extensionElements>
@@ -23,7 +23,7 @@
         <semantic:outgoing>Flow_080k7s4</semantic:outgoing>
       </semantic:startEvent>
       <semantic:intermediateCatchEvent id="Event_1ajrxt7">
-        <semantic:incoming>Flow_0olr70p</semantic:incoming>
+        <semantic:incoming>Flow_1mqa8yl</semantic:incoming>
         <semantic:outgoing>Flow_15hky8p</semantic:outgoing>
         <semantic:timerEventDefinition id="TimerEventDefinition_">
           <semantic:timeDuration xsi:type="semantic:tFormalExpression">R/PT5S</semantic:timeDuration>
@@ -35,18 +35,6 @@
         <semantic:outgoing>Flow_ServicePending</semantic:outgoing>
         <semantic:outgoing>Flow_171hjar</semantic:outgoing>
       </semantic:exclusiveGateway>
-      <semantic:serviceTask id="Activity_0q3qrfi" name="Get Service Result" camunda:class="de.stoneone.planqk.workflow.serviceimpl.PlanQKServiceResultRetriever">
-        <semantic:incoming>Flow_0tad265</semantic:incoming>
-        <semantic:outgoing>Flow_023j8hf</semantic:outgoing>
-      </semantic:serviceTask>
-      <semantic:serviceTask id="Activity_Call_Service" name="Call Service" camunda:class="de.stoneone.planqk.workflow.serviceimpl.PlanQKServiceCaller">
-        <semantic:incoming>Flow_080k7s4</semantic:incoming>
-        <semantic:outgoing>Flow_0m9kjpk</semantic:outgoing>
-      </semantic:serviceTask>
-      <semantic:serviceTask id="Activity_Polling_Response" name="Poll Service Response" camunda:class="de.stoneone.planqk.workflow.serviceimpl.PlanQKServicePoller">
-        <semantic:incoming>Flow_15hky8p</semantic:incoming>
-        <semantic:outgoing>Flow_ServiceResult</semantic:outgoing>
-      </semantic:serviceTask>
       <semantic:endEvent id="Event_0e35csg" name="End Interaction">
         <semantic:incoming>Flow_023j8hf</semantic:incoming>
       </semantic:endEvent>
@@ -54,9 +42,9 @@
         <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=="SUCCEEDED"}</semantic:conditionExpression>
       </semantic:sequenceFlow>
       <semantic:sequenceFlow id="Flow_15hky8p" sourceRef="Event_1ajrxt7" targetRef="Activity_Polling_Response" />
-      <semantic:sequenceFlow id="Flow_0m9kjpk" sourceRef="Activity_Call_Service" targetRef="Gateway_0df2o5e" />
+      <semantic:sequenceFlow id="Flow_0m9kjpk" sourceRef="Activity_Call_Service" targetRef="Activity_1omupaw" />
       <semantic:sequenceFlow id="Flow_ServiceResult" sourceRef="Activity_Polling_Response" targetRef="Gateway_0t1bksy" />
-      <semantic:sequenceFlow id="Flow_ServicePending" sourceRef="Gateway_0t1bksy" targetRef="Event_1ajrxt7">
+      <semantic:sequenceFlow id="Flow_ServicePending" sourceRef="Gateway_0t1bksy" targetRef="Gateway_0df2o5e">
         <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=='PENDING' || executionState=='RUNNING'}</semantic:conditionExpression>
       </semantic:sequenceFlow>
       <semantic:sequenceFlow id="Flow_080k7s4" sourceRef="Event_1du4ral" targetRef="Activity_Call_Service" />
@@ -66,11 +54,12 @@
       </semantic:sequenceFlow>
       <semantic:endEvent id="Event_0m8b2ic">
         <semantic:incoming>Flow_171hjar</semantic:incoming>
-        <semantic:errorEventDefinition id="ErrorEventDefinition_" errorRef="Error_05i64we"/>
+        <semantic:errorEventDefinition id="ErrorEventDefinition_" errorRef="Error_05i64we" />
       </semantic:endEvent>
       <semantic:exclusiveGateway id="Gateway_0df2o5e">
-        <semantic:incoming>Flow_0m9kjpk</semantic:incoming>
         <semantic:incoming>Flow_ServicePending</semantic:incoming>
+        <semantic:incoming>Flow_ServicePending</semantic:incoming>
+        <semantic:incoming>Flow_1ru72bn</semantic:incoming>
         <semantic:outgoing>Flow_1mqa8yl</semantic:outgoing>
       </semantic:exclusiveGateway>
       <semantic:boundaryEvent id="Event_14ww5d4" attachedToRef="Activity_0q3qrfi">
@@ -82,19 +71,178 @@
         <semantic:incoming>Flow_1q70fl3</semantic:incoming>
         <semantic:errorEventDefinition id="ErrorEventDefinition_1cu7rxr" errorRef="Error_05i64we" />
       </semantic:endEvent>
-      <semantic:sequenceFlow id="Flow_1mqa8yl" sourceRef="Gateway_0df2o5e" targetRef="Activity_0vfhcwr" />
-      <semantic:sequenceFlow id="Flow_0olr70p" sourceRef="Activity_0vfhcwr" targetRef="Event_1ajrxt7" />
-      <semantic:scriptTask id="Activity_0vfhcwr" name="Initialize iterations" scriptFormat="groovy">
-        <semantic:incoming>Flow_1mqa8yl</semantic:incoming>
-        <semantic:outgoing>Flow_0olr70p</semantic:outgoing>
-        <semantic:script>var iterations = execution.getVariable("iterations");
+      <semantic:sequenceFlow id="Flow_1mqa8yl" sourceRef="Gateway_0df2o5e" targetRef="Event_1ajrxt7" />
+      <semantic:scriptTask id="Activity_Call_Service" name="Retrieve Access Token" scriptFormat="groovy">
+        <semantic:incoming>Flow_080k7s4</semantic:incoming>
+        <semantic:outgoing>Flow_0m9kjpk</semantic:outgoing>
+        <semantic:script>import groovy.json.*
+def consumerKey = execution.getVariable("consumerKey");
+def consumerSecret = execution.getVariable("consumerSecret");
+
+def credentials = "${consumerKey}:${consumerSecret}".getBytes('UTF-8').encodeBase64().toString();
+def authorizationHeader = "Basic ${credentials}";
+
+def tokenEndpoint = execution.getVariable("tokenEndpoint");
+def url = new URL(tokenEndpoint)
+def connection = url.openConnection()
+connection.setRequestMethod('POST')
+connection.setRequestProperty('Content-Type', 'application/x-www-form-urlencoded')
+connection.setRequestProperty('Authorization',authorizationHeader)
+connection.doOutput = true
+
+def parameters = [
+    grant_type: 'client_credentials'
+]
+
+def postData = parameters.collect { key, value -&gt; "${URLEncoder.encode(key, 'UTF-8')}=${URLEncoder.encode(value, 'UTF-8')}"
+}.join('&amp;amp;')
+
+try (def writer = new OutputStreamWriter(connection.getOutputStream(), 'UTF-8')) {
+    writer.write(postData)
+}
+
+def responseCode = connection.responseCode
+println "Response Code: ${responseCode}"
+
+if (responseCode == HttpURLConnection.HTTP_OK) {
+    def inputStream = connection.inputStream
+    def response = new Scanner(inputStream).useDelimiter('\\A').next()
+    println "Response Data: ${response}"
+
+def jsonSlurper = new groovy.json.JsonSlurper()
+def parsedJson = jsonSlurper.parseText(response)
+
+def accessToken = parsedJson.access_token
+println "Access Token: $accessToken"
+execution.setVariable("accessToken", accessToken);
+} else {
+    throw new org.camunda.bpm.engine.delegate.BpmnError("Error: ${connection.responseMessage}")
+}</semantic:script>
+      </semantic:scriptTask>
+      <semantic:scriptTask id="Activity_Polling_Response" name="Poll Service Response" scriptFormat="groovy">
+        <semantic:incoming>Flow_15hky8p</semantic:incoming>
+        <semantic:outgoing>Flow_ServiceResult</semantic:outgoing>
+        <semantic:script>import groovy.json.*
+def iterations = execution.getVariable("iterations");
 if(!iterations) {
 iterations = 0;
 execution.setVariable("iterations", iterations)
 }else{
 iterations += 1;
 execution.setVariable("iterations", iterations);
-}</semantic:script>
+}
+
+
+def serviceEndpoint = execution.getVariable("serviceEndpoint");
+def executionId = execution.getVariable("executionId");
+def executionStateEndpoint = serviceEndpoint + "/" + executionId;
+def accessToken = execution.getVariable("accessToken");
+try {
+   println("Polling endpoint " + executionStateEndpoint + " for service state");
+   def get = new URL(executionStateEndpoint).openConnection();
+   get.setRequestMethod("GET");
+   get.setDoOutput(true);
+   get.setRequestProperty("Content-Type", "application/json");
+   get.setRequestProperty("accept", "application/json");
+   get.setRequestProperty("Authorization", "Bearer ${accessToken}")
+   def status = get.getResponseCode();
+   if(status != 200){ 
+      throw new org.camunda.bpm.engine.delegate.BpmnError("Received invalid status code during polling: " + status);
+   }
+   def resultText = get.getInputStream().getText();
+   def slurper = new JsonSlurper();
+   def json = slurper.parseText(resultText);
+   def state = json.get("status");
+   execution.setVariable("executionState", state);
+   println("State of service execution " + executionId + " is " + state);
+  
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + executionStateEndpoint);
+};</semantic:script>
+      </semantic:scriptTask>
+      <semantic:scriptTask id="Activity_0q3qrfi" name="Get Service Result" scriptFormat="groovy">
+        <semantic:incoming>Flow_0tad265</semantic:incoming>
+        <semantic:outgoing>Flow_023j8hf</semantic:outgoing>
+        <semantic:script>import groovy.json.*
+def serviceEndpoint = execution.getVariable("serviceEndpoint");
+def executionId = execution.getVariable("executionId");
+def resultEndpoint = serviceEndpoint + "/" + executionId + "/result";
+println("Retrieving result from endpoint " + resultEndpoint);
+def accessToken = execution.getVariable("accessToken");
+try {
+   def get = new URL(resultEndpoint).openConnection();
+   get.setRequestMethod("GET");
+   get.setDoOutput(true);
+   get.setRequestProperty("Content-Type", "application/json");
+   get.setRequestProperty("accept", "application/json");
+   get.setRequestProperty("Authorization", "Bearer ${accessToken}")
+   def status = get.getResponseCode();
+   if(status != 200){ 
+      throw new org.camunda.bpm.engine.delegate.BpmnError("Received invalid status code during polling: " + status);
+   }
+   def resultText = get.getInputStream().getText();
+   def slurper = new JsonSlurper();
+   def json = slurper.parseText(resultText);
+   println("Result of service execution " + executionId + " retrieved successfully");
+   def result = json.get("result");
+   execution.setVariable("result", result);
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + resultEndpoint);
+};</semantic:script>
+      </semantic:scriptTask>
+      <semantic:sequenceFlow id="Flow_1ru72bn" sourceRef="Activity_1omupaw" targetRef="Gateway_0df2o5e" />
+      <semantic:scriptTask id="Activity_1omupaw" name="Call Service" scriptFormat="groovy">
+        <semantic:incoming>Flow_0m9kjpk</semantic:incoming>
+        <semantic:outgoing>Flow_1ru72bn</semantic:outgoing>
+        <semantic:script>import groovy.json.*
+def inputData = execution.getVariable("data");
+def inputParams = execution.getVariable("params");
+println("Called service with input data " + inputData + " and input params " + inputParams);
+def input = "{\"data\":" +  inputData + ", \"params\":" + inputParams + "}";
+def message = input;
+println "Sending message: " + message;
+def serviceEndpoint = execution.getVariable("serviceEndpoint");
+def accessToken = execution.getVariable("accessToken");
+
+try {
+   def post = new URL(serviceEndpoint).openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("accept", "application/json");
+   post.setRequestProperty("Authorization", "Bearer ${accessToken}")
+   post.getOutputStream().write(message.getBytes("UTF-8"));
+
+   def status = post.getResponseCode();
+   if (status == 201) {
+       def resultText = post.getInputStream().getText();
+       def slurper = new JsonSlurper();
+       def json = slurper.parseText(resultText);
+       def executionId = json.get("id");
+       def state = json.get("status");
+       def createdAt = json.get("createdAt");
+              
+       println("Started service execution " + executionId + " with state " + state + " at " + createdAt);
+       execution.setVariable("executionId", executionId);
+       execution.setVariable("executionState", state);
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while invoking service!");
+   }
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + serviceEndpoint);
+};</semantic:script>
       </semantic:scriptTask>
     </semantic:subProcess>
   </semantic:process>
@@ -104,17 +252,17 @@ execution.setVariable("iterations", iterations);
       <bpmndi:BPMNShape id="Activity_1b6kukx_di" bpmnElement="Activity_1b6kukx" isExpanded="true">
         <dc:Bounds x="-30" y="60" width="1170" height="380" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1du4ral_di" bpmnElement="Event_1du4ral">
+        <dc:Bounds x="-8" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-28" y="275" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ajrxt7_di" bpmnElement="Event_1ajrxt7">
         <dc:Bounds x="532" y="232" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0t1bksy_di" bpmnElement="Gateway_0t1bksy" isMarkerVisible="true">
         <dc:Bounds x="785" y="225" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0q3qrfi_di" bpmnElement="Activity_0q3qrfi">
-        <dc:Bounds x="890" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_Polling_Response_di" bpmnElement="Activity_Polling_Response">
-        <dc:Bounds x="648" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0e35csg_di" bpmnElement="Event_0e35csg">
         <dc:Bounds x="1072" y="232" width="36" height="36" />
@@ -131,21 +279,21 @@ execution.setVariable("iterations", iterations);
       <bpmndi:BPMNShape id="Event_07cqtir_di" bpmnElement="Event_1xa5x1z">
         <dc:Bounds x="1072" y="332" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1du4ral_di" bpmnElement="Event_1du4ral">
-        <dc:Bounds x="-8" y="232" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-28" y="275" width="78" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="Activity_1jzq74u_di" bpmnElement="Activity_Polling_Response">
+        <dc:Bounds x="648" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_Call_Service_di" bpmnElement="Activity_Call_Service">
-        <dc:Bounds x="90" y="210" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1g7r3b2_di" bpmnElement="Activity_0q3qrfi">
+        <dc:Bounds x="890" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0df2o5e_di" bpmnElement="Gateway_0df2o5e" isMarkerVisible="true">
-        <dc:Bounds x="225" y="225" width="50" height="50" />
+        <dc:Bounds x="425" y="225" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1hl5cp0_di" bpmnElement="Activity_0vfhcwr">
-        <dc:Bounds x="310" y="210" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_0k053zx_di" bpmnElement="Activity_Call_Service">
+        <dc:Bounds x="120" y="210" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0czrqe0_di" bpmnElement="Activity_1omupaw">
+        <dc:Bounds x="270" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1strjx3_di" bpmnElement="Event_14ww5d4">
         <dc:Bounds x="942" y="272" width="36" height="36" />
@@ -159,8 +307,8 @@ execution.setVariable("iterations", iterations);
         <di:waypoint x="648" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0m9kjpk_di" bpmnElement="Flow_0m9kjpk">
-        <di:waypoint x="190" y="250" />
-        <di:waypoint x="225" y="250" />
+        <di:waypoint x="220" y="250" />
+        <di:waypoint x="270" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ServiceResult_di" bpmnElement="Flow_ServiceResult">
         <di:waypoint x="748" y="250" />
@@ -169,12 +317,12 @@ execution.setVariable("iterations", iterations);
       <bpmndi:BPMNEdge id="Flow_ServicePending_di" bpmnElement="Flow_ServicePending">
         <di:waypoint x="810" y="225" />
         <di:waypoint x="810" y="170" />
-        <di:waypoint x="250" y="170" />
-        <di:waypoint x="250" y="225" />
+        <di:waypoint x="450" y="170" />
+        <di:waypoint x="450" y="225" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_080k7s4_di" bpmnElement="Flow_080k7s4">
         <di:waypoint x="28" y="250" />
-        <di:waypoint x="90" y="250" />
+        <di:waypoint x="120" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_023j8hf_di" bpmnElement="Flow_023j8hf">
         <di:waypoint x="990" y="250" />
@@ -191,12 +339,12 @@ execution.setVariable("iterations", iterations);
         <di:waypoint x="1072" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mqa8yl_di" bpmnElement="Flow_1mqa8yl">
-        <di:waypoint x="275" y="250" />
-        <di:waypoint x="310" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0olr70p_di" bpmnElement="Flow_0olr70p">
-        <di:waypoint x="410" y="250" />
+        <di:waypoint x="475" y="250" />
         <di:waypoint x="532" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ru72bn_di" bpmnElement="Flow_1ru72bn">
+        <di:waypoint x="370" y="250" />
+        <di:waypoint x="425" y="250" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
