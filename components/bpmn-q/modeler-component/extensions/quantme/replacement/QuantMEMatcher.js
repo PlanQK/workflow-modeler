@@ -33,6 +33,7 @@ export function taskMatchesDetector(detectorElement, task) {
   }
 
   // check for attributes of the different task types
+  console.log("Matching for type: ", task.$type);
   switch (task.$type) {
     case consts.QUANTUM_COMPUTATION_TASK:
       return matchQuantumComputationTask(detectorElement, task);
@@ -435,5 +436,12 @@ export async function matchesQRM(qrm, task) {
   }
 
   // check if QuantME task of the QRM matches the given task
-  return taskMatchesDetector(detectorElement, task);
+  let matches = taskMatchesDetector(detectorElement, task);
+  console.log(
+    "Matching between QRM %s and task with id %s: %s",
+    qrm.qrmUrl,
+    task.id,
+    matches
+  );
+  return matches;
 }

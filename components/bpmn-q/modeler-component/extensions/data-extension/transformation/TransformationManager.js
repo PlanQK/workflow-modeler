@@ -10,7 +10,7 @@ import {
 import {
   addCamundaInputMapParameter,
   addCamundaInputParameter,
-  addCamundaOutputMapParameter,
+  addCamundaOutputParameter,
   addFormField,
   findSequenceFlowConnection,
   getDocumentation,
@@ -187,10 +187,10 @@ export async function startDataFlowReplacementProcess(xml) {
           );
         }
       } else {
-        addCamundaOutputMapParameter(
+        addCamundaOutputParameter(
           activity.businessObject,
           businessObject.name,
-          businessObject.get(consts.CONTENT),
+          "${result}",
           bpmnFactory
         );
       }
@@ -254,26 +254,6 @@ export async function startDataFlowReplacementProcess(xml) {
       status: "failed",
       cause: failureMessage,
     };
-  }
-
-  if (Object.entries(globalProcessVariables).length > 0) {
-    transformationSuccess = createProcessContextVariablesTask(
-      globalProcessVariables,
-      rootProcess,
-      definitions,
-      modeler
-    );
-    if (!transformationSuccess) {
-      const failureMessage =
-        `Replacement of Data modeling construct ${transformationSuccess.failedData.type} with Id ` +
-        transformationSuccess.failedData.id +
-        " failed. Aborting process!";
-      console.log(failureMessage);
-      return {
-        status: "failed",
-        cause: failureMessage,
-      };
-    }
   }
 
   layout(modeling, elementRegistry, rootProcess);
@@ -551,8 +531,6 @@ export function createProcessContextVariablesTask(
   modeler
 ) {
   const elementRegistry = modeler.get("elementRegistry");
-  const bpmnFactory = modeler.get("bpmnFactory");
-  const modeling = modeler.get("modeling");
 
   // add for each process or subprocess a new task to create process variables
   for (let processEntry of Object.entries(processContextVariables)) {
@@ -571,109 +549,9 @@ export function createProcessContextVariablesTask(
       } StartEvents in process ${processId}`
     );
     console.log(startEvents);
-
-    // add ProcessVariablesTask after each start event
-    for (let event of startEvents) {
-      const startEventBo = event.element;
-      const startEventElement = elementRegistry.get(startEventBo.id);
-
-      const newTaskBo = getProcessContextVariablesTask(
-        startEventElement,
-        event.parent,
-        bpmnFactory,
-        modeling,
-        elementRegistry
-      );
-
-      // add camunda map to outputs for each entry
-      for (let processVariable of processContextVariables[processId]) {
-        addCamundaOutputMapParameter(
-          newTaskBo,
-          processVariable.name,
-          processVariable.map,
-          bpmnFactory
-        );
-      }
-    }
   }
 
   return { success: true };
-}
-
-/**
- * Returns the ProcessContextVariables task for the given start event. If such a task already exists it is returned, else
- * this task is created.
- *
- * @param startEventElement The element of the given start event
- * @param parent The parent element of the start event
- * @param bpmnFactory The bpmnFactory to create the new task if necessary.
- * @param modeling the modeling module of the bpmn-js modeler.
- * @param elementRegistry The elementRegistry containing the current elements of the workflow.
- * @return {bpmn:Task} The ProcessContextVariables task for the start event
- */
-function getProcessContextVariablesTask(
-  startEventElement,
-  parent,
-  bpmnFactory,
-  modeling,
-  elementRegistry
-) {
-  const startEventBo = startEventElement.businessObject;
-
-  let processVariablesTaskBo;
-
-  // check if ProcessContextVariables task already exists
-  if (
-    startEventElement.outgoing[0] &&
-    startEventElement.outgoing[0].target &&
-    startEventElement.outgoing[0].target.businessObject.name ===
-      "Create Process Variables [Generated]"
-  ) {
-    processVariablesTaskBo =
-      startEventElement.outgoing[0].target.businessObject;
-  } else {
-    processVariablesTaskBo = bpmnFactory.create("bpmn:Task");
-    processVariablesTaskBo.name = "Create Process Variables [Generated]";
-
-    const outgoingFlowElements = startEventBo.outgoing || [];
-
-    // height difference between the position of the center of a start event and a task
-    const Y_OFFSET_TASK = 19;
-
-    // create new task
-    const newTaskElement = modeling.createShape(
-      {
-        type: "bpmn:Task",
-        businessObject: processVariablesTaskBo,
-      },
-      { x: startEventElement.x, y: startEventElement.y + Y_OFFSET_TASK },
-      parent,
-      {}
-    );
-
-    modeling.updateProperties(newTaskElement, processVariablesTaskBo);
-
-    // move start event to the left to create space for the new task
-    modeling.moveElements([startEventElement], { x: -120, y: 0 });
-
-    // connect new Task with activities which were connected with the start event
-    modeling.connect(startEventElement, newTaskElement, {
-      type: "bpmn:SequenceFlow",
-    });
-    for (let outgoingConnectionBo of outgoingFlowElements) {
-      const outgoingConnectionElement = elementRegistry.get(
-        outgoingConnectionBo.id
-      );
-      const target = outgoingConnectionElement.target;
-
-      modeling.removeConnection(outgoingConnectionElement);
-      modeling.connect(newTaskElement, target, {
-        type: outgoingConnectionElement.type,
-        waypoints: outgoingConnectionElement.waypoints,
-      });
-    }
-  }
-  return processVariablesTaskBo;
 }
 
 /**

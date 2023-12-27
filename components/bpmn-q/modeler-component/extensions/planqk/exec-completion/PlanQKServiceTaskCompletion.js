@@ -150,7 +150,8 @@ export async function startPlanqkReplacementProcess(xml) {
 
   layout(modeling, elementRegistry, rootProcess);
 
-  const transformedXml = await getXml(modeler);
+  const transformedXml = await getXml(modeler, false);
+
   return { status: "transformed", xml: transformedXml };
 }
 
@@ -177,6 +178,18 @@ async function replaceByInteractionSubprocess(
     );
     return false;
   }
+
+  // Ensure that the time definition and error event have unique ids as the id is not updated by Moodle
+  const timerDefinitionEventId = "TimerEventDefinition_";
+  replacement = replacement.replace(
+    timerDefinitionEventId,
+    timerDefinitionEventId + task.id
+  );
+  const errorDefinitionEventId = "ErrorEventDefinition_";
+  replacement = replacement.replace(
+    errorDefinitionEventId,
+    errorDefinitionEventId + task.id
+  );
 
   // get the root process of the replacement fragment
   let replacementProcess = getRootProcess(
@@ -236,8 +249,6 @@ function applyTaskInput2Subprocess(taskBO, subprocessBO, bpmnFactory) {
 
   subProcessIo.inputParameters.push(...taskIo.inputParameters);
 
-  setInputParameter(subprocessBO, "params", taskBO.params, bpmnFactory);
-  setInputParameter(subprocessBO, "data", taskBO.data, bpmnFactory);
   setInputParameter(
     subprocessBO,
     "serviceEndpoint",
