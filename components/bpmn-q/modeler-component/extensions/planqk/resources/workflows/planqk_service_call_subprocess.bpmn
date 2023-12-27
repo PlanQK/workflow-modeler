@@ -8,12 +8,15 @@
     <semantic:subProcess id="Activity_1b6kukx" name="PlanQK Service Interaction" camunda:asyncAfter="true">
       <semantic:extensionElements>
         <camunda:inputOutput>
+          <camunda:inputParameter name="data" />
+          <camunda:inputParameter name="params" />
           <camunda:inputParameter name="executionState" />
           <camunda:inputParameter name="executionId" />
-          <camunda:inputParameter name="serviceEndpoint"></camunda:inputParameter>
-          <camunda:inputParameter name="tokenEndpoint"></camunda:inputParameter>
-          <camunda:inputParameter name="consumerSecret"></camunda:inputParameter>
-          <camunda:inputParameter name="consumerKey"></camunda:inputParameter>
+          <camunda:inputParameter name="serviceEndpoint"/>
+          <camunda:inputParameter name="tokenEndpoint"/>
+          <camunda:inputParameter name="consumerSecret"/>
+          <camunda:inputParameter name="consumerKey"/>
+          <camunda:inputParameter name="maxIterations">unbounded</camunda:inputParameter>
         </camunda:inputOutput>
       </semantic:extensionElements>
       <semantic:startEvent id="Event_1du4ral" name="Start Interaction">
