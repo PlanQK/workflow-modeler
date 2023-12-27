@@ -3,7 +3,7 @@
   <semantic:message id="_1275940932310" />
   <semantic:message id="_1275940932433" />
   <semantic:message id="_1275940932198" />
-  <semantic:error id="Error_05i64we" name="ServiceStateError" errorCode="SERVICE_STATE_ERROR" camunda:errorMessage="Service execution ${executionId} is in state ${executionState}" />
+  <semantic:error id="Error_05i64we" name="ServiceStateIterationsError" errorCode="SERVICE_STATE_ITERATIONS_ERROR" camunda:errorMessage="Service execution ${executionId} is in state ${executionState} and iterations are ${iterations}" />
   <semantic:process id="Process_0m7mgwo" isExecutable="false">
     <semantic:subProcess id="Activity_1b6kukx" name="PlanQK Service Interaction" camunda:asyncAfter="true">
       <semantic:extensionElements>
@@ -45,12 +45,38 @@
       <semantic:sequenceFlow id="Flow_0m9kjpk" sourceRef="Activity_Call_Service" targetRef="Activity_1omupaw" />
       <semantic:sequenceFlow id="Flow_ServiceResult" sourceRef="Activity_Polling_Response" targetRef="Gateway_0t1bksy" />
       <semantic:sequenceFlow id="Flow_ServicePending" sourceRef="Gateway_0t1bksy" targetRef="Gateway_0df2o5e">
-        <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=='PENDING' || executionState=='RUNNING'}</semantic:conditionExpression>
+        <semantic:conditionExpression xsi:type="semantic:tFormalExpression" language="groovy">def executionState = execution.getVariable("executionState");
+def maxIterations = execution.getVariable("maxIterations");
+def iterations = execution.getVariable("iterations");
+
+if ((executionState == "PENDING" || executionState == "RUNNING") &amp;&amp; maxIterations != "unbounded") {
+    if (iterations &lt; maxIterations) {
+        return true;
+    }else{
+return false;
+}
+}else if ((executionState == "PENDING" || executionState== "RUNNING") &amp;&amp; maxIterations == "unbounded") {
+return true;
+}else{
+return false;
+}</semantic:conditionExpression>
       </semantic:sequenceFlow>
       <semantic:sequenceFlow id="Flow_080k7s4" sourceRef="Event_1du4ral" targetRef="Activity_Call_Service" />
       <semantic:sequenceFlow id="Flow_023j8hf" sourceRef="Activity_0q3qrfi" targetRef="Event_0e35csg" />
       <semantic:sequenceFlow id="Flow_171hjar" sourceRef="Gateway_0t1bksy" targetRef="Event_0m8b2ic">
-        <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=="FAILED" || executionState=="UNKNOWN" || (maxIterations !="unbounded" &amp;&amp; iterations&gt;maxIterations)}</semantic:conditionExpression>
+        <semantic:conditionExpression xsi:type="semantic:tFormalExpression" language="groovy">def executionState = execution.getVariable("executionState");
+def maxIterations = execution.getVariable("maxIterations");
+def iterations = execution.getVariable("iterations");
+
+if (executionState == "FAILED" || executionState == "UNKNOWN") {
+  return true;
+}else if (maxIterations != "unbounded") {
+  if(iterations &gt;= maxIterations) {
+    return true;
+  }
+}else{
+  return false;
+}</semantic:conditionExpression>
       </semantic:sequenceFlow>
       <semantic:endEvent id="Event_0m8b2ic">
         <semantic:incoming>Flow_171hjar</semantic:incoming>
@@ -276,21 +302,21 @@ try {
           <dc:Bounds x="855" y="375" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0df2o5e_di" bpmnElement="Gateway_0df2o5e" isMarkerVisible="true">
+        <dc:Bounds x="425" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_07cqtir_di" bpmnElement="Event_1xa5x1z">
         <dc:Bounds x="1072" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k053zx_di" bpmnElement="Activity_Call_Service">
+        <dc:Bounds x="120" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1jzq74u_di" bpmnElement="Activity_Polling_Response">
         <dc:Bounds x="648" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1g7r3b2_di" bpmnElement="Activity_0q3qrfi">
         <dc:Bounds x="890" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0df2o5e_di" bpmnElement="Gateway_0df2o5e" isMarkerVisible="true">
-        <dc:Bounds x="425" y="225" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0k053zx_di" bpmnElement="Activity_Call_Service">
-        <dc:Bounds x="120" y="210" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0czrqe0_di" bpmnElement="Activity_1omupaw">
         <dc:Bounds x="270" y="210" width="100" height="80" />
