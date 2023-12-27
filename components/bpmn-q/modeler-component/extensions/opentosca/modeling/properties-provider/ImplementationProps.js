@@ -118,6 +118,9 @@ export function ImplementationProps(props) {
 }
 
 function extractUrlsFromYaml(content) {
+  // Convert JSON to YAML
+  const yamlData = yaml.dump(content);
+  console.log(yamlData);
   const doc = yaml.load(content);
 
   // Extract URLs from paths

@@ -38,10 +38,10 @@ export function YamlUpload(props) {
   return HeaderButton({
     element,
     id: "upload-yaml-button",
-    text: translate("Upload YAML"),
-    description: "Upload YML",
+    text: translate("Specify Connector"),
+    description: "Specify Connector",
     className: "upload-yaml-button",
-    children: "Upload YAML",
+    children: "Specify Connector",
     onClick,
   });
 }
