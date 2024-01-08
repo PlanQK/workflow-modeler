@@ -30,8 +30,10 @@ export var ALGORITHM_PATTERN = [
   },
   {
     label: "Quantum Approximate Optimization Algorithm",
-    actionName: "replace-with-pattern-quantum-approximate-optimization-algorithm",
-    className: "qwm bpmn-pattern-gate-equantum-approximate-optimization-algorithm-icon",
+    actionName:
+      "replace-with-pattern-quantum-approximate-optimization-algorithm",
+    className:
+      "qwm bpmn-pattern-gate-equantum-approximate-optimization-algorithm-icon",
     target: {
       type: consts.QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM,
     },
@@ -41,7 +43,7 @@ export var ALGORITHM_PATTERN = [
     actionName: "replace-with-pattern-quantum-phase-estimation",
     className: "qwm bpmn-pattern-quantum-phase-estimation-icon",
     target: {
-      type: consts.QUANTUM_PHASE_ESTIMATION
+      type: consts.QUANTUM_PHASE_ESTIMATION,
     },
   },
   {
@@ -59,8 +61,8 @@ export var ALGORITHM_PATTERN = [
     target: {
       type: consts.VARIATIONAL_QUANTUM_EIGENSOLVER,
     },
-  }
-]
+  },
+];
 export var BEHAVIORAL_PATTERN = [
   {
     label: "Orchestrated Execution",
@@ -85,8 +87,8 @@ export var BEHAVIORAL_PATTERN = [
     target: {
       type: consts.PRIORITIZED_EXECUTION,
     },
-  }
-]
+  },
+];
 export var AUGMENTATION_PATTERN = [
   {
     label: "Circuit Cutting",

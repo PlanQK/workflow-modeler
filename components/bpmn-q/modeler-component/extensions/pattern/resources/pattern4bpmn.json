@@ -8,42 +8,42 @@
   "types": [
     {
       "name": "QuantumKernelEstimator",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "AlternatingOperatorAnsatz",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "QuantumApproximateOptimizationAlgorithm",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "QuantumPhaseEstimation",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "VariationalQuantumAlgorithm",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "VariationalQuantumEigensolver",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "OrchestratedExecution",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
-      "name": "PreDeployedExecution",
-      "superClass": ["bpmn:Event"],
+      "name": "PredeployedExecution",
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": [
         {
           "name": "behaviorPatterns",
@@ -54,37 +54,37 @@
     },
     {
       "name": "PrioritizedExecution",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "ErrorCorrection",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "GateErrorMitigation",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "ReadoutErrorMitigation",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "WarmStart",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "CircuitCutting",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     },
     {
       "name": "Pattern",
-      "superClass": ["bpmn:Event"],
+      "superClass": ["bpmn:BoundaryEvent"],
       "properties": []
     }
   ],

@@ -8,39 +8,20 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import {
-  getPropertiesToCopy,
-  insertChildElements,
-  insertShape,
-} from "../../../../editor/util/TransformationUtilities";
-import {
-  getCamundaInputOutput,
-  getDefinitionsFromXml,
-  getRootProcess,
-} from "../../../../editor/util/ModellingUtilities";
-import { getModeler } from "../../../../editor/ModelerHandler";
 import * as quantmeConsts from "../../../quantme/Constants";
-import * as consts from "../../Constants";
 /**
- * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
+ * Replace the given error correction pattern by a quantme error correction task
  */
 export async function replaceErrorCorrectionPattern(
-  subprocess,
+  errorCorrectionPattern,
   parent,
   qrm,
-  modeler,
-  definitions
+  modeler
 ) {
-  console.log(subprocess, parent, qrm);
-  let bpmnReplace = modeler.get("bpmnReplace");
+  console.log(errorCorrectionPattern, parent, qrm);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
-  let em = getModeler().get('elementRegistry');
-  let host = em.get(subprocess.id).host;
-  console.log(host)
-
-  let internHost = elementRegistry.get(host.id);
+  let internHost = elementRegistry.get(errorCorrectionPattern.id).host;
   let errorCorrectionTask = modeling.createShape(
     { type: "quantme:ErrorCorrectionTask" },
     { x: 50, y: 50 },
@@ -49,226 +30,39 @@ export async function replaceErrorCorrectionPattern(
   );
   let startEventBo = elementRegistry.get(errorCorrectionTask.id).businessObject;
   startEventBo.name = "Correct Errors";
-
-  let startEvent = null;
-  let combinePointers = [];
-  let outgoingFlows = [];
-  host.outgoing.forEach((element) => {
-    outgoingFlows.push(element)
-    console.log(element);
-    console.log(element.source)
-    console.log(errorCorrectionTask)
-    modeling.connect(errorCorrectionTask, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
-    console.log("created connection")
-  });
-  for(let i = 0; i< outgoingFlows.length; i++){
-    let flow = elementRegistry.get(outgoingFlows[i].id)
-    modeling.removeConnection(flow);
-  }
-  modeling.connect(internHost, errorCorrectionTask, { type: "bpmn:SequenceFlow" });
-
-  // get host and insert Warm-starting Task & remove event
-  // modeling.removeShape(subprocess);
-  const events = elementRegistry.get(subprocess.id);
-  console.log(events)
-  //modeling.removeShape(elementRegistry.get(subprocess.id));
-  //modeling.removeElements([events]);
-  const pattern = elementRegistry.get(subprocess.id);
-  /** 
-
-  // extract cut & combine elements out of replacement fragement
-  let [replacementElementCut, replacementElementCombine] =
-    await getCuttingReplacementElements(qrm);
-
-  console.log(replacementElementCut, replacementElementCombine);
-
-  // replace QuantumHardwareSelectionSubprocess with traditional subprocess
-  let newSubProcess = bpmnReplace.replaceElement(
-    elementRegistry.get(subprocess.id),
-    { type: "bpmn:SubProcess" }
-  );
-
-  // update the properties of the new element
-  modeling.updateProperties(newSubProcess, getPropertiesToCopy(subprocess));
-  modeling.updateProperties(newSubProcess, {
-    cuttingMethod: undefined,
-    maxSubCircuitWidth: undefined,
-    maxNumberOfCuts: undefined,
-    maxNumSubCircuits: undefined,
-  });
-
-  // retrieve business object of the new element
-  let bo = elementRegistry.get(newSubProcess.id).businessObject;
-  bo.isExpanded = true;
-
-  let attributes = {
-    cuttingMethod: subprocess.cuttingMethod,
-    maxSubCircuitWidth: subprocess.maxSubCircuitWidth,
-    maxNumberOfCuts: subprocess.maxNumberOfCuts,
-    maxNumSubCircuits: subprocess.maxNumSubCircuits,
-  };
-
-  let startEvent = null;
-  let combinePointers = [];
-  bo.flowElements.forEach((element) => {
-    if (element.$type === "bpmn:StartEvent") {
-      startEvent = element;
-    } else if (element.$type === "quantme:QuantumCircuitExecutionTask") {
-      if (
-        element.outgoing[0].targetRef.$type ===
-        "quantme:ReadoutErrorerrorCorrectionTask"
-      ) {
-        combinePointers.push(element.outgoing[0].targetRef);
-      } else {
-        combinePointers.push(element);
-      }
-    }
-  });
-
-  // insert cut task after start event and combine task after circuit execution or REM tasks.
-  insertShapeAt(
-    definitions,
-    newSubProcess,
-    replacementElementCut,
-    startEvent.outgoing[0],
-    modeler,
-    attributes
-  );
-
-  combinePointers.forEach((pointer) => {
-    insertShapeAt(
-      definitions,
-      newSubProcess,
-      replacementElementCombine,
-      pointer.outgoing[0],
-      modeler,
-      attributes
-    );
-  });
-*/
-  return {replacementSuccess: true, flows: outgoingFlows, pattern: pattern};
-}
-
-/**
- * Extract cut and combine elements from QRM
- *
- * @param qrm QRM containing 1 task/subprocess for cutting which is connected to another task/subprocess for combining the results
- * @returns the cut and combine flowElements
- */
-export async function getCuttingReplacementElements(qrm) {
-  // get the root process of the replacement fragment
-  let replacementProcess = getRootProcess(await getDefinitionsFromXml(qrm));
-  let replacementFlowElements = replacementProcess.flowElements;
-  if (replacementFlowElements.length !== 3) {
-    console.log(
-      "Process contains %i flow elements but must contain exactly 3! 1 Cutting task/subprocess, 1 task/subprocess to combine the results, and a sequenceflow defining their order",
-      replacementFlowElements.length
-    );
-    return undefined;
-  }
-
-  console.log(replacementProcess.flowElements);
-  let replacementElementCut = null,
-    replacementElementCombine = null;
-  replacementFlowElements.forEach((element) => {
-    if (element.outgoing) {
-      replacementElementCut = element;
-    } else if (element.incoming) {
-      replacementElementCombine = element;
-    }
-  });
-  return [replacementElementCut, replacementElementCombine];
-}
-
-/**
- *
- * @param definitions the definitions element of the BPMN diagram
- * @param parent the parent element under which the new element should be attached
- * @param newElement the new element to insert
- * @param pointToInsert the sequence flow used as a incoming and outgoing flow for the new element
- * @param modeler the used modler
- * @param inputAttrs map of attributes that should be used as the modeling constructs inputs
- */
-export function insertShapeAt(
-  definitions,
-  parent,
-  newElement,
-  pointToInsert,
-  modeler,
-  inputAttrs
-) {
-  let idMap = {};
-
-  console.log("Inserting shape for element: ", newElement);
-  let bpmnFactory = modeler.get("bpmnFactory");
-  let modeling = modeler.get("modeling");
-  let elementRegistry = modeler.get("elementRegistry");
-
-  let element = modeling.createShape(
-    { type: newElement.$type },
-    { x: 50, y: 50 },
-    parent,
-    {}
-  );
-  modeling.updateProperties(element, getPropertiesToCopy(newElement));
-
-  let modelingConstructBo = elementRegistry.get(element.id).businessObject;
-  let modelingConstructInOut = getCamundaInputOutput(
-    modelingConstructBo,
-    bpmnFactory
-  );
-  for (const [inputKey, inputValue] of Object.entries(inputAttrs)) {
-    modelingConstructInOut.inputParameters.push(
-      bpmnFactory.create("camunda:InputParameter", {
-        name: inputKey,
-        value: inputValue,
-      })
-    );
-  }
-
-  let sourceElement = elementRegistry.get(pointToInsert.sourceRef.id);
-  let targetElement = elementRegistry.get(pointToInsert.targetRef.id);
-  modeling.connect(sourceElement, element, { type: "bpmn:SequenceFlow" });
-  modeling.connect(element, targetElement, { type: "bpmn:SequenceFlow" });
-  let removeEl = elementRegistry.get(pointToInsert.id);
-  modeling.removeConnection(removeEl);
-
-  if (newElement.$type === "bpmn:SubProcess") {
-    // get the shape element related to the subprocess
-    let shape = newElement.di;
-    if (shape && shape.isExpanded) {
-      // expand the new element
-      elementRegistry.get(element.id).businessObject.di.isExpanded = true;
-    }
-  }
-
-  let resultTuple = insertChildElements(
-    definitions,
-    element,
-    newElement,
-    idMap,
-    modeler
-  );
-
-  let success = resultTuple["success"];
-  let artifacts = newElement.artifacts;
-  if (artifacts) {
-    console.log(
-      "Element contains %i artifacts. Adding corresponding shapes...",
-      artifacts.length
-    );
-    for (let i = 0; i < artifacts.length; i++) {
-      let result = insertShape(
-        definitions,
-        element,
-        artifacts[i],
-        idMap,
-        false,
-        modeler
+  let flows = [];
+  if (internHost.type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
+    internHost.incoming.forEach((element) => {
+      flows.push(elementRegistry.get(element.id));
+      modeling.connect(
+        elementRegistry.get(element.source.id),
+        errorCorrectionTask,
+        { type: "bpmn:SequenceFlow" }
       );
-      success = success && result["success"];
-      idMap = result["idMap"];
-    }
+    });
+    modeling.connect(errorCorrectionTask, internHost, {
+      type: "bpmn:SequenceFlow",
+    });
   }
-  return { success: success, idMap: idMap, element: parent };
+  if (internHost.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK) {
+    internHost.outgoing.forEach((element) => {
+      flows.push(element);
+      modeling.connect(
+        errorCorrectionTask,
+        elementRegistry.get(element.target.id),
+        { type: "bpmn:SequenceFlow" }
+      );
+    });
+    for (let i = 0; i < flows.length; i++) {
+      let flow = elementRegistry.get(flows[i].id);
+      modeling.removeConnection(flow);
+    }
+    modeling.connect(internHost, errorCorrectionTask, {
+      type: "bpmn:SequenceFlow",
+    });
+  }
+  const events = elementRegistry.get(errorCorrectionPattern.id);
+  console.log(events);
+  const pattern = elementRegistry.get(errorCorrectionPattern.id);
+  return { replacementSuccess: true, flows: flows, pattern: pattern };
 }

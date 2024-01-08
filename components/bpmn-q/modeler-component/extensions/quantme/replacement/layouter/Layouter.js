@@ -12,6 +12,7 @@
 import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
 import { isFlowLikeElement } from "../../../../editor/util/ModellingUtilities";
 import { ON_DEMAND_POLICY, POLICIES } from "../../../opentosca/Constants";
+import { PATTERNS } from "../../../pattern/Constants";
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = "8";
@@ -74,7 +75,8 @@ function layoutProcess(modeling, elementRegistry, process) {
         // boundary events are skipped here, as they are always attached to some task and only this task has to be layouted
         if (
           flowElements[i].$type === "bpmn:BoundaryEvent" ||
-          POLICIES.includes(flowElements[i].$type)
+          POLICIES.includes(flowElements[i].$type) ||
+          PATTERNS.includes(flowElements[i].$type)
         ) {
           continue;
         }

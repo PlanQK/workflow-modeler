@@ -35,65 +35,117 @@ export default function PatternSelectionModal({
   const [selectedBehavioralPatterns, setSelectedBehavioralPatterns] = useState(
     []
   );
-  const [selectedBehavioralExclusivePattern, setSelectedBehavioralExclusivePattern] = useState(null
-  );
+  const [
+    selectedBehavioralExclusivePattern,
+    setSelectedBehavioralExclusivePattern,
+  ] = useState(null);
+  const [
+    selectedBehavioralExclusivePatternRadioButton,
+    setSelectedBehavioralExclusivePatternRadioButton,
+  ] = useState(false);
   const [selectedAugmentationPatterns, setSelectedAugmentationPatterns] =
     useState([]);
   const [selectedMitigatedPattern, setSelectedMitigitationPatterns] =
     useState(null);
-    const [selectedMitigatedCombinedPattern, setSelectedMitigitationCombinedPattern] =
-    useState([]);
+  const [
+    selectedMitigatedCombinedPattern,
+    setSelectedMitigitationCombinedPattern,
+  ] = useState([]);
+  const [
+    selectedErrorMitigatedPatternRadioButton,
+    setSelectedErrorMitigatedPatternRadioButton,
+  ] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (initialSelectedPattern) {
       setSelectedAlgorithmPattern(initialSelectedPattern.algorithmPattern);
-      const behavioralPattern = initialSelectedPattern.behavioralPattern.find(element => element.name !== "Prioritized Execution");
+      const behavioralPattern = initialSelectedPattern.behavioralPattern.find(
+        (element) => element.name !== "Prioritized Execution"
+      );
 
       if (behavioralPattern) {
         setSelectedBehavioralExclusivePattern(behavioralPattern);
+        setSelectedBehavioralExclusivePatternRadioButton(true);
       }
-      const updatedBehavioralPatterns = initialSelectedPattern.behavioralPattern.filter(element => element.name === "Prioritized Execution");
+      const updatedBehavioralPatterns =
+        initialSelectedPattern.behavioralPattern.filter(
+          (element) => element.name === "Prioritized Execution"
+        );
 
       setSelectedBehavioralPatterns(updatedBehavioralPatterns);
-      console.log(initialSelectedPattern.augmentationPattern)
-      const mitigationErrorPatterns = initialSelectedPattern.augmentationPattern.filter(
-        (pattern) => pattern.name === "Readout Error Mitigation" || pattern.name === "Gate Error Mitigation" || pattern.name === "Error Correction"
-      );
-      if(mitigationErrorPatterns.length > 1){
-        setSelectedMitigitationCombinedPattern(mitigationErrorPatterns)
-      }else{
-        setSelectedMitigitationPatterns(mitigationErrorPatterns[0])
+      console.log(initialSelectedPattern.augmentationPattern);
+      const mitigationErrorPatterns =
+        initialSelectedPattern.augmentationPattern.filter(
+          (pattern) =>
+            pattern.name === "Readout Error Mitigation" ||
+            pattern.name === "Gate Error Mitigation" ||
+            pattern.name === "Error Correction"
+        );
+      if (mitigationErrorPatterns.length > 1) {
+        setSelectedMitigitationCombinedPattern(mitigationErrorPatterns);
+        setSelectedErrorMitigatedPatternRadioButton(true);
+      } else {
+        setSelectedMitigitationPatterns(mitigationErrorPatterns[0]);
+        setSelectedErrorMitigatedPatternRadioButton(true);
       }
       setSelectedAugmentationPatterns(
         initialSelectedPattern.augmentationPattern
       );
 
-      const selectedMitigationIds = mitigationErrorPatterns.flatMap(pattern =>
+      const selectedMitigationIds = mitigationErrorPatterns.flatMap((pattern) =>
         pattern.id ? [pattern.id] : []
       );
-      
-      const selectedCombinedMitigationIds = selectedMitigatedCombinedPattern.flatMap(
-        pattern => (pattern.id ? [pattern.id] : [])
-      );
-      
-      const updatedAugmentationPatterns = initialSelectedPattern.augmentationPattern.filter(
-        pattern =>
-          !selectedMitigationIds.includes(pattern.id) &&
-          !selectedCombinedMitigationIds.includes(pattern.id)
-      );
-      
-      setSelectedAugmentationPatterns(updatedAugmentationPatterns);
 
+      const selectedCombinedMitigationIds =
+        selectedMitigatedCombinedPattern.flatMap((pattern) =>
+          pattern.id ? [pattern.id] : []
+        );
+
+      const updatedAugmentationPatterns =
+        initialSelectedPattern.augmentationPattern.filter(
+          (pattern) =>
+            !selectedMitigationIds.includes(pattern.id) &&
+            !selectedCombinedMitigationIds.includes(pattern.id)
+        );
+
+      setSelectedAugmentationPatterns(updatedAugmentationPatterns);
     }
   }, [initialSelectedPattern]);
+
+  const handleClick = (category) => {
+    if (category === PATTERN_BEHAVIORAL_EXCLUSIVE) {
+      if (selectedBehavioralExclusivePatternRadioButton) {
+        setSelectedBehavioralExclusivePattern(null);
+      }
+      setSelectedBehavioralExclusivePatternRadioButton(
+        !selectedBehavioralExclusivePatternRadioButton
+      );
+    } else if (category === PATTERN_MITIGATION) {
+      if (selectedErrorMitigatedPatternRadioButton) {
+        setSelectedMitigitationPatterns(null);
+        setSelectedAugmentationPatterns([]);
+      }
+      setSelectedErrorMitigatedPatternRadioButton(
+        !selectedErrorMitigatedPatternRadioButton
+      );
+    } else if (category === "combined") {
+      if (selectedErrorMitigatedPatternRadioButton) {
+        setSelectedMitigitationCombinedPattern([]);
+        setSelectedAugmentationPatterns([]);
+      }
+      setSelectedErrorMitigatedPatternRadioButton(
+        !selectedErrorMitigatedPatternRadioButton
+      );
+    }
+  };
 
   const handlePatternSelection = (pattern, category) => {
     if (category === PATTERN_ALGORITHM) {
       setSelectedAlgorithmPattern(pattern);
     } else if (category === PATTERN_BEHAVIORAL) {
       console.log(pattern);
-      console.log(selectedBehavioralPatterns)
+      console.log(selectedBehavioralPatterns);
       setSelectedBehavioralPatterns((prevSelected) => {
         if (prevSelected.includes(pattern)) {
           return prevSelected.filter((selected) => selected !== pattern);
@@ -101,9 +153,10 @@ export default function PatternSelectionModal({
           return [...prevSelected, pattern];
         }
       });
-      console.log(selectedBehavioralPatterns)
+      console.log(selectedBehavioralPatterns);
     } else if (category === PATTERN_BEHAVIORAL_EXCLUSIVE) {
       setSelectedBehavioralExclusivePattern(pattern);
+      setSelectedBehavioralExclusivePatternRadioButton(true);
     } else if (category === PATTERN_AUGMENTATION) {
       console.log("add augmentation");
       setSelectedAugmentationPatterns((prevSelected) => {
@@ -115,51 +168,58 @@ export default function PatternSelectionModal({
       });
     } else if (category === PATTERN_MITIGATION) {
       setSelectedMitigitationPatterns(pattern);
-      handleMitigationCombinedSelection([])
+      handleMitigationCombinedSelection([]);
+      setSelectedErrorMitigatedPatternRadioButton(true);
     }
   };
 
   const handleMitigationCombinedSelection = (patterns) => {
-    console.log("add combined")
-    console.log(selectedMitigatedCombinedPattern)
-    console.log(patterns.length === 0)
-    if(selectedMitigatedCombinedPattern.length > 0){
-      console.log("remove")
-      setSelectedMitigitationCombinedPattern([])
-    }else if(patterns.length === 0){
-      console.log("empty")
-      setSelectedMitigitationCombinedPattern([])
-    }else{
-      console.log("add both")
-      setSelectedMitigitationPatterns(null)
-    setSelectedMitigitationCombinedPattern(patterns);
+    console.log("add combined");
+    console.log(selectedMitigatedCombinedPattern);
+    console.log(patterns.length === 0);
+    if (selectedMitigatedCombinedPattern.length > 0) {
+      console.log("remove");
+      setSelectedMitigitationCombinedPattern([]);
+    } else if (patterns.length === 0) {
+      console.log("empty");
+      setSelectedMitigitationCombinedPattern([]);
+    } else {
+      console.log("add both");
+      setSelectedMitigitationPatterns(null);
+      setSelectedMitigitationCombinedPattern(patterns);
+      setSelectedErrorMitigatedPatternRadioButton(true);
     }
   };
 
   const handleConfirmSelection = () => {
     if (selectedAlgorithmPattern) {
       let combinedAugmentationPatterns = selectedAugmentationPatterns;
-      if(selectedBehavioralExclusivePattern){
-      selectedBehavioralPatterns.push(selectedBehavioralExclusivePattern);
+      if (selectedBehavioralExclusivePattern) {
+        selectedBehavioralPatterns.push(selectedBehavioralExclusivePattern);
       }
-      console.log(selectedAugmentationPatterns)
-      if (selectedMitigatedPattern && !selectedAugmentationPatterns.some(pattern => pattern.id === selectedMitigatedPattern.id)) {
+      console.log(selectedAugmentationPatterns);
+      if (
+        selectedMitigatedPattern &&
+        !selectedAugmentationPatterns.some(
+          (pattern) => pattern.id === selectedMitigatedPattern.id
+        )
+      ) {
         console.log("push");
         selectedAugmentationPatterns.push(selectedMitigatedPattern);
       }
-      console.log(selectedMitigatedCombinedPattern)
+      console.log(selectedMitigatedCombinedPattern);
       if (selectedMitigatedCombinedPattern.length > 0) {
         console.log("concat");
         combinedAugmentationPatterns = selectedAugmentationPatterns.concat(
           selectedMitigatedCombinedPattern.filter(
-            pattern =>
+            (pattern) =>
               !selectedAugmentationPatterns.some(
-                existingPattern => existingPattern.id === pattern.id
+                (existingPattern) => existingPattern.id === pattern.id
               )
           )
         );
       }
-      console.log(selectedAugmentationPatterns)
+      console.log(selectedAugmentationPatterns);
       const selectedPatterns = {
         algorithm: selectedAlgorithmPattern,
         behavioral: selectedBehavioralPatterns,
@@ -184,17 +244,24 @@ export default function PatternSelectionModal({
     (pattern) => pattern.tags && pattern.tags.includes(PATTERN_BEHAVIORAL)
   );
   const mitigationErrorPatterns = patterns.filter(
-    (pattern) => pattern.name === "Readout Error Mitigation" || pattern.name === "Gate Error Mitigation" || pattern.name === "Error Correction"
+    (pattern) =>
+      pattern.name === "Readout Error Mitigation" ||
+      pattern.name === "Gate Error Mitigation" ||
+      pattern.name === "Error Correction"
   );
 
   const mitigationPatterns = patterns.filter(
-    (pattern) => pattern.name === "Readout Error Mitigation" || pattern.name === "Gate Error Mitigation"
+    (pattern) =>
+      pattern.name === "Readout Error Mitigation" ||
+      pattern.name === "Gate Error Mitigation"
   );
   const augmentationPatterns = patterns.filter(
     (pattern) =>
       pattern.tags &&
       pattern.tags.includes(PATTERN_AUGMENTATION) &&
-      !mitigationErrorPatterns.some((mitigationPattern) => mitigationPattern.id === pattern.id)
+      !mitigationErrorPatterns.some(
+        (mitigationPattern) => mitigationPattern.id === pattern.id
+      )
   );
 
   const patternAtlasUIEndpoint = getModeler().config.patternAtlasUIEndpoint;
@@ -304,11 +371,22 @@ export default function PatternSelectionModal({
                   <td>
                     {pattern.name !== "Prioritized Execution" ? (
                       <input
+                        id="behavioral-pattern"
                         name="behavioral-pattern"
                         type="radio"
-                        checked={selectedBehavioralExclusivePattern === pattern || selectedBehavioralPatterns.includes(pattern)}
+                        checked={
+                          (selectedBehavioralExclusivePattern === pattern ||
+                            selectedBehavioralPatterns.includes(pattern)) &&
+                          selectedBehavioralExclusivePatternRadioButton
+                        }
                         onChange={() =>
-                          handlePatternSelection(pattern, PATTERN_BEHAVIORAL_EXCLUSIVE)
+                          handlePatternSelection(
+                            pattern,
+                            PATTERN_BEHAVIORAL_EXCLUSIVE
+                          )
+                        }
+                        onClick={() =>
+                          handleClick(PATTERN_BEHAVIORAL_EXCLUSIVE)
                         }
                       />
                     ) : (
@@ -324,7 +402,6 @@ export default function PatternSelectionModal({
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
         <div>
@@ -398,7 +475,8 @@ export default function PatternSelectionModal({
             <tbody>
               {mitigationErrorPatterns.map((pattern) => (
                 <tr key={pattern.id}>
-                  <td><a
+                  <td>
+                    <a
                       className="pattern-links"
                       href={
                         patternAtlasUIEndpoint +
@@ -411,7 +489,8 @@ export default function PatternSelectionModal({
                       rel="noopener noreferrer"
                     >
                       {pattern.name}
-                    </a></td>
+                    </a>
+                  </td>
                   <td>
                     <img
                       src={pattern.iconUrl}
@@ -423,29 +502,35 @@ export default function PatternSelectionModal({
                     <input
                       type="radio"
                       name="mitigation"
-                      checked={selectedMitigatedPattern === pattern}
+                      checked={
+                        selectedMitigatedPattern === pattern &&
+                        selectedErrorMitigatedPatternRadioButton
+                      }
                       onChange={() =>
                         handlePatternSelection(pattern, PATTERN_MITIGATION)
                       }
+                      onClick={() => handleClick(PATTERN_MITIGATION)}
                     />
                   </td>
                 </tr>
               ))}
               <tr key={"mitigationErrorPatterns"}>
-                <td><a
-                      className="pattern-links"
-                      href={
-                        patternAtlasUIEndpoint +
-                        "/pattern-languages/" +
-                        mitigationPatterns[0].patternLanguageId +
-                        "/" +
-                        mitigationPatterns[0].id
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Gate & Readout Error Mitigation
-                    </a></td>
+                <td>
+                  <a
+                    className="pattern-links"
+                    href={
+                      patternAtlasUIEndpoint +
+                      "/pattern-languages/" +
+                      mitigationPatterns[0].patternLanguageId +
+                      "/" +
+                      mitigationPatterns[0].id
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Gate & Readout Error Mitigation
+                  </a>
+                </td>
                 <td>
                   <img
                     src={mitigationPatterns[0].iconUrl}
@@ -462,35 +547,47 @@ export default function PatternSelectionModal({
                   <input
                     type="radio"
                     name="mitigation"
-                    checked={selectedMitigatedCombinedPattern.includes(mitigationPatterns[0]) && selectedMitigatedCombinedPattern.includes(mitigationPatterns[1])}
-                    onChange={() =>
-                      {handleMitigationCombinedSelection([mitigationPatterns[0], mitigationPatterns[1]]);  }
+                    checked={
+                      selectedMitigatedCombinedPattern.includes(
+                        mitigationPatterns[0]
+                      ) &&
+                      selectedMitigatedCombinedPattern.includes(
+                        mitigationPatterns[1]
+                      ) &&
+                      selectedErrorMitigatedPatternRadioButton
                     }
+                    onChange={() => {
+                      handleMitigationCombinedSelection([
+                        mitigationPatterns[0],
+                        mitigationPatterns[1],
+                      ]);
+                    }}
+                    onClick={() => handleClick("combined")}
                   />
                 </td>
               </tr>
             </tbody>
-            </table>
-            </div>
-            <Footer>
-              <div id="configFormButtons">
-                <button
-                  className="qwm-btn qwm-btn-primary"
-                  onClick={handleConfirmSelection}
-                >
-                  Confirm Selection
-                </button>
+          </table>
+        </div>
+        <Footer>
+          <div id="configFormButtons">
+            <button
+              className="qwm-btn qwm-btn-primary"
+              onClick={handleConfirmSelection}
+            >
+              Confirm Selection
+            </button>
 
-                <button
-                  type="button"
-                  className="qwm-btn qwm-btn-secondary"
-                  onClick={() => onClose()}
-                >
-                  Cancel
-                </button>
-              </div>
-            </Footer>
-          </Body>
-        </Modal>
-        );
+            <button
+              type="button"
+              className="qwm-btn qwm-btn-secondary"
+              onClick={() => onClose()}
+            >
+              Cancel
+            </button>
+          </div>
+        </Footer>
+      </Body>
+    </Modal>
+  );
 }

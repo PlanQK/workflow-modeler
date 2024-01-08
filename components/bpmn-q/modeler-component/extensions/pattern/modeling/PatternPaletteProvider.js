@@ -33,9 +33,7 @@ export default class PatternPaletteProvider {
       "create.pattern": {
         group: "pattern",
         className: "qwm-pattern-icon",
-        title: translate(
-          "Creates a pattern"
-        ),
+        title: translate("Creates a pattern"),
         action: {
           click: createPattern,
           dragstart: createPattern,

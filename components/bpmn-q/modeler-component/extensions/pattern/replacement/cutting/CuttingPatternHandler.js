@@ -8,273 +8,126 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import {
-  getPropertiesToCopy,
-  insertChildElements,
-  insertShape,
-} from "../../../../editor/util/TransformationUtilities";
-import {
-  getCamundaInputOutput,
-  getDefinitionsFromXml,
-  getRootProcess,
-} from "../../../../editor/util/ModellingUtilities";
-import { getModeler } from "../../../../editor/ModelerHandler";
 import * as quantmeConsts from "../../../quantme/Constants";
+import * as consts from "../../Constants";
 /**
- * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
+ * Replace cutting and mitigation pattern by quantme modeling constructs
  */
-export async function replaceCuttingPattern(
-  subprocess,
+export async function replaceCuttingAndMitigationPattern(
+  patternToReplace,
   parent,
   qrm,
-  modeler,
-  definitions
+  modeler
 ) {
-  console.log(subprocess, parent, qrm);
-  let bpmnReplace = modeler.get("bpmnReplace");
+  console.log(patternToReplace, parent, qrm);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
-  let em = getModeler().get('elementRegistry');
-  let host = em.get(subprocess.id).host;
-  console.log(host)
 
-  let internHost = elementRegistry.get(host.id);
-  let cuttingTask = modeling.createShape(
-    { type: quantmeConsts.CIRCUIT_CUTTING_TASK },
-    { x: 50, y: 50 },
-    parent,
-    {}
-  );
+  let host = elementRegistry.get(patternToReplace.id).host;
+  let elementToConnect = host;
+  console.log(host);
+  let containsMitigationPattern = false;
+  let readoutPattern = null;
+  let containsCuttingPattern = false;
+  //let cuttingPattern = null;
+  for (let i = 0; i < host.attachers.length; i++) {
+    let eventType = host.attachers[i].type;
+    console.log(eventType);
+    if (eventType === consts.READOUT_ERROR_MITIGATION) {
+      containsMitigationPattern = true;
+      readoutPattern = host.attachers[i];
+    }
+    if (eventType === consts.CIRCUIT_CUTTING) {
+      containsCuttingPattern = true;
+      //cuttingPattern = host.attachers[i];
+      //if (patternToReplace.type === consts.CIRCUIT_CUTTING) {
+      //  cuttingPattern = pattern;
+      //}
+    }
+  }
 
-  let resultCombinationTaks = modeling.createShape(
-    { type: quantmeConsts.CUTTING_RESULT_COMBINATION_TASK },
-    { x: 50, y: 50 },
-    parent,
-    {}
-  );
-  let startEvent = null;
-  let combinePointers = [];
+  let internHost = host;
   let flows = [];
-  let outgoingFlows = [];
-  host.incoming.forEach((element) => {
-    flows.push(elementRegistry.get(element.id))
-    console.log(element);
-    console.log(element.source)
-    console.log(cuttingTask)
-    modeling.connect(elementRegistry.get(element.source.id), cuttingTask, { type: "bpmn:SequenceFlow" });
-    console.log("created connection")
-  });
-  modeling.connect(cuttingTask, internHost, { type: "bpmn:SequenceFlow" });
-  host.outgoing.forEach((element) => {
-    flows.push(elementRegistry.get(element.id))
-    console.log(element);
-    console.log(element.source)
-    console.log(cuttingTask)
-    modeling.connect(resultCombinationTaks, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
-    console.log("created connection")
-  });
-  modeling.connect(internHost, resultCombinationTaks, { type: "bpmn:SequenceFlow" });
-
-  // get host and insert Warm-starting Task & remove event
-  // modeling.removeShape(subprocess);
-  const pattern = elementRegistry.get(subprocess.id);
-
-  /** 
-
-  // extract cut & combine elements out of replacement fragement
-  let [replacementElementCut, replacementElementCombine] =
-    await getCuttingReplacementElements(qrm);
-
-  console.log(replacementElementCut, replacementElementCombine);
-
-  // replace QuantumHardwareSelectionSubprocess with traditional subprocess
-  let newSubProcess = bpmnReplace.replaceElement(
-    elementRegistry.get(subprocess.id),
-    { type: "bpmn:SubProcess" }
-  );
-
-  // update the properties of the new element
-  modeling.updateProperties(newSubProcess, getPropertiesToCopy(subprocess));
-  modeling.updateProperties(newSubProcess, {
-    cuttingMethod: undefined,
-    maxSubCircuitWidth: undefined,
-    maxNumberOfCuts: undefined,
-    maxNumSubCircuits: undefined,
-  });
-
-  // retrieve business object of the new element
-  let bo = elementRegistry.get(newSubProcess.id).businessObject;
-  bo.isExpanded = true;
-
-  let attributes = {
-    cuttingMethod: subprocess.cuttingMethod,
-    maxSubCircuitWidth: subprocess.maxSubCircuitWidth,
-    maxNumberOfCuts: subprocess.maxNumberOfCuts,
-    maxNumSubCircuits: subprocess.maxNumSubCircuits,
-  };
-
-  let startEvent = null;
-  let combinePointers = [];
-  bo.flowElements.forEach((element) => {
-    if (element.$type === "bpmn:StartEvent") {
-      startEvent = element;
-    } else if (element.$type === "quantme:QuantumCircuitExecutionTask") {
-      if (
-        element.outgoing[0].targetRef.$type ===
-        "quantme:ReadoutErrorMitigationTask"
-      ) {
-        combinePointers.push(element.outgoing[0].targetRef);
-      } else {
-        combinePointers.push(element);
-      }
-    }
-  });
-
-  // insert cut task after start event and combine task after circuit execution or REM tasks.
-  insertShapeAt(
-    definitions,
-    newSubProcess,
-    replacementElementCut,
-    startEvent.outgoing[0],
-    modeler,
-    attributes
-  );
-
-  combinePointers.forEach((pointer) => {
-    insertShapeAt(
-      definitions,
-      newSubProcess,
-      replacementElementCombine,
-      pointer.outgoing[0],
-      modeler,
-      attributes
+  if (containsCuttingPattern) {
+    let cuttingTask = modeling.createShape(
+      { type: quantmeConsts.CIRCUIT_CUTTING_TASK },
+      { x: 50, y: 50 },
+      parent,
+      {}
     );
-  });
-*/
-return {replacementSuccess: true, flows: flows, pattern: pattern};
-}
+    let startEventBo = elementRegistry.get(cuttingTask.id).businessObject;
+    startEventBo.name = "Cut Circuit";
 
-/**
- * Extract cut and combine elements from QRM
- *
- * @param qrm QRM containing 1 task/subprocess for cutting which is connected to another task/subprocess for combining the results
- * @returns the cut and combine flowElements
- */
-export async function getCuttingReplacementElements(qrm) {
-  // get the root process of the replacement fragment
-  let replacementProcess = getRootProcess(await getDefinitionsFromXml(qrm));
-  let replacementFlowElements = replacementProcess.flowElements;
-  if (replacementFlowElements.length !== 3) {
-    console.log(
-      "Process contains %i flow elements but must contain exactly 3! 1 Cutting task/subprocess, 1 task/subprocess to combine the results, and a sequenceflow defining their order",
-      replacementFlowElements.length
+    let resultCombinationTaks = modeling.createShape(
+      { type: quantmeConsts.CUTTING_RESULT_COMBINATION_TASK },
+      { x: 50, y: 50 },
+      parent,
+      {}
     );
-    return undefined;
+    startEventBo = elementRegistry.get(resultCombinationTaks.id).businessObject;
+    startEventBo.name = "Combine Circuits";
+    host.incoming.forEach((element) => {
+      flows.push(elementRegistry.get(element.id));
+      console.log(element);
+      console.log(element.source);
+      console.log(cuttingTask);
+      modeling.connect(elementRegistry.get(element.source.id), cuttingTask, {
+        type: "bpmn:SequenceFlow",
+      });
+      console.log("created connection to cutting task");
+    });
+    modeling.connect(cuttingTask, internHost, { type: "bpmn:SequenceFlow" });
+    console.log(cuttingTask);
+    host.outgoing.forEach((element) => {
+      flows.push(elementRegistry.get(element.id));
+      console.log(element);
+      console.log(element.source);
+      console.log(cuttingTask);
+      //modeling.connect(resultCombinationTaks, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
+      console.log("created connection");
+    });
+    elementToConnect = resultCombinationTaks;
   }
 
-  console.log(replacementProcess.flowElements);
-  let replacementElementCut = null,
-    replacementElementCombine = null;
-  replacementFlowElements.forEach((element) => {
-    if (element.outgoing) {
-      replacementElementCut = element;
-    } else if (element.incoming) {
-      replacementElementCombine = element;
-    }
-  });
-  return [replacementElementCut, replacementElementCombine];
-}
-
-/**
- *
- * @param definitions the definitions element of the BPMN diagram
- * @param parent the parent element under which the new element should be attached
- * @param newElement the new element to insert
- * @param pointToInsert the sequence flow used as a incoming and outgoing flow for the new element
- * @param modeler the used modler
- * @param inputAttrs map of attributes that should be used as the modeling constructs inputs
- */
-export function insertShapeAt(
-  definitions,
-  parent,
-  newElement,
-  pointToInsert,
-  modeler,
-  inputAttrs
-) {
-  let idMap = {};
-
-  console.log("Inserting shape for element: ", newElement);
-  let bpmnFactory = modeler.get("bpmnFactory");
-  let modeling = modeler.get("modeling");
-  let elementRegistry = modeler.get("elementRegistry");
-
-  let element = modeling.createShape(
-    { type: newElement.$type },
-    { x: 50, y: 50 },
-    parent,
-    {}
-  );
-  modeling.updateProperties(element, getPropertiesToCopy(newElement));
-
-  let modelingConstructBo = elementRegistry.get(element.id).businessObject;
-  let modelingConstructInOut = getCamundaInputOutput(
-    modelingConstructBo,
-    bpmnFactory
-  );
-  for (const [inputKey, inputValue] of Object.entries(inputAttrs)) {
-    modelingConstructInOut.inputParameters.push(
-      bpmnFactory.create("camunda:InputParameter", {
-        name: inputKey,
-        value: inputValue,
-      })
+  // modeling.connect(internHost, resultCombinationTaks, { type: "bpmn:SequenceFlow" });
+  if (containsMitigationPattern) {
+    let mitigationTask = modeling.createShape(
+      { type: quantmeConsts.READOUT_ERROR_MITIGATION_TASK },
+      { x: 50, y: 50 },
+      parent,
+      {}
     );
+    let startEventBo = elementRegistry.get(mitigationTask.id).businessObject;
+    startEventBo.name = "Mitigate Errors";
+    modeling.connect(elementToConnect, mitigationTask, {
+      type: "bpmn:SequenceFlow",
+    });
+    host.outgoing.forEach((element) => {
+      flows.push(elementRegistry.get(element.id));
+      console.log(element);
+      console.log(element.source);
+      modeling.connect(mitigationTask, elementRegistry.get(element.target.id), {
+        type: "bpmn:SequenceFlow",
+      });
+      console.log("created connection");
+    });
+    modeling.removeShape(readoutPattern);
   }
-
-  let sourceElement = elementRegistry.get(pointToInsert.sourceRef.id);
-  let targetElement = elementRegistry.get(pointToInsert.targetRef.id);
-  modeling.connect(sourceElement, element, { type: "bpmn:SequenceFlow" });
-  modeling.connect(element, targetElement, { type: "bpmn:SequenceFlow" });
-  let removeEl = elementRegistry.get(pointToInsert.id);
-  modeling.removeConnection(removeEl);
-
-  if (newElement.$type === "bpmn:SubProcess") {
-    // get the shape element related to the subprocess
-    let shape = newElement.di;
-    if (shape && shape.isExpanded) {
-      // expand the new element
-      elementRegistry.get(element.id).businessObject.di.isExpanded = true;
-    }
+  if (containsCuttingPattern && !containsMitigationPattern) {
+    host.outgoing.forEach((element) => {
+      //flows.push(elementRegistry.get(element.id))
+      console.log(element);
+      console.log(element.source);
+      //modeling.connect(elementToConnect, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
+      console.log("created connection2");
+    });
   }
-
-  let resultTuple = insertChildElements(
-    definitions,
-    element,
-    newElement,
-    idMap,
-    modeler
-  );
-
-  let success = resultTuple["success"];
-  let artifacts = newElement.artifacts;
-  if (artifacts) {
-    console.log(
-      "Element contains %i artifacts. Adding corresponding shapes...",
-      artifacts.length
-    );
-    for (let i = 0; i < artifacts.length; i++) {
-      let result = insertShape(
-        definitions,
-        element,
-        artifacts[i],
-        idMap,
-        false,
-        modeler
-      );
-      success = success && result["success"];
-      idMap = result["idMap"];
-    }
+  if (containsCuttingPattern) {
+    modeling.connect(internHost, elementToConnect, {
+      type: "bpmn:SequenceFlow",
+    });
+    console.log(elementToConnect);
   }
-  return { success: success, idMap: idMap, element: parent };
+  const pattern = elementRegistry.get(patternToReplace.id);
+  return { replacementSuccess: true, flows: flows, pattern: pattern };
 }

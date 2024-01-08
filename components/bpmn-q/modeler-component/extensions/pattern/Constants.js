@@ -17,13 +17,16 @@ export const PATTERN = "pattern:Pattern";
 
 export const QUANTUM_KERNEL_ESTIMATOR = "pattern:QuantumKernelEstimator";
 export const ALTERNATING_OPERATOR_ANSATZ = "pattern:AlternatingOperatorAnsatz";
-export const QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM = "pattern:QuantumApproximateOptimizationAlgorithm";
+export const QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM =
+  "pattern:QuantumApproximateOptimizationAlgorithm";
 export const QUANTUM_PHASE_ESTIMATION = "pattern:QuantumPhaseEstimation";
-export const VARIATIONAL_QUANTUM_ALGORITHM = "pattern:VariationalQuantumAlgorithm";
-export const VARIATIONAL_QUANTUM_EIGENSOLVER = "pattern:VariationalQuantumEigensolver";
+export const VARIATIONAL_QUANTUM_ALGORITHM =
+  "pattern:VariationalQuantumAlgorithm";
+export const VARIATIONAL_QUANTUM_EIGENSOLVER =
+  "pattern:VariationalQuantumEigensolver";
 
 export const ORCHESTRATED_EXECUTION = "pattern:OrchestratedExecution";
-export const PRE_DEPLOYED_EXECUTION = "pattern:PreDeployedExecution";
+export const PRE_DEPLOYED_EXECUTION = "pattern:PredeployedExecution";
 export const PRIORITIZED_EXECUTION = "pattern:PrioritizedExecution";
 
 export const ERROR_CORRECTION = "pattern:ErrorCorrection";
@@ -33,3 +36,32 @@ export const WARM_START = "pattern:WarmStart";
 export const CIRCUIT_CUTTING = "pattern:CircuitCutting";
 
 export const PATTERN_MITIGATION = "mitigation";
+
+export const ALGORITHM_PATTERNS = [
+  QUANTUM_KERNEL_ESTIMATOR,
+  ALTERNATING_OPERATOR_ANSATZ,
+  QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM,
+  QUANTUM_PHASE_ESTIMATION,
+  VARIATIONAL_QUANTUM_ALGORITHM,
+  VARIATIONAL_QUANTUM_EIGENSOLVER,
+];
+
+export const BEHAVIORAL_PATTERNS = [
+  ORCHESTRATED_EXECUTION,
+  PRE_DEPLOYED_EXECUTION,
+  PRIORITIZED_EXECUTION,
+];
+
+export const AUGMENTATION_PATTERNS = [
+  ERROR_CORRECTION,
+  GATE_ERROR_MITIGATION,
+  READOUT_ERROR_MITIGATION,
+  WARM_START,
+  CIRCUIT_CUTTING,
+];
+
+export const PATTERNS = [PATTERN].concat(
+  ...ALGORITHM_PATTERNS,
+  ...BEHAVIORAL_PATTERNS,
+  ...AUGMENTATION_PATTERNS
+);

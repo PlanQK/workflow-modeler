@@ -200,7 +200,8 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
       execute: ({ showDeploymentModel }) => {
         const elementsWithDeploymentModel = this.elementRegistry.filter(
           (element) =>
-            element.businessObject.get("opentosca:deploymentModelUrl")
+            element.businessObject.get("opentosca:deploymentModelUrl") !==
+            undefined
         );
         const changed = [];
         for (const element of elementsWithDeploymentModel) {
@@ -274,7 +275,12 @@ export default class OpenTOSCARenderer extends BpmnRenderer {
     let deploymentModelUrl = element.businessObject.get(
       "opentosca:deploymentModelUrl"
     );
-    if (!deploymentModelUrl) return;
+    console.log(deploymentModelUrl);
+    console.log(element);
+    console.log(deploymentModelUrl === undefined);
+    console.log(!deploymentModelUrl);
+    if (!deploymentModelUrl || deploymentModelUrl === undefined) return;
+    console.log("render button");
 
     const button = drawTaskSVG(
       parentGfx,

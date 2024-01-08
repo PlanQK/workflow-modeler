@@ -50,12 +50,7 @@ export default class CustomRulesProvider extends BpmnRules {
      * Fired when a new shape for an element is created
      */
     this.addRule("shape.create", 200, function (context) {
-      return canCreate(
-        context.shape,
-        context.target,
-        context.source,
-        context.position
-      );
+      return canCreate(context.shape, context.target);
     });
   }
 
@@ -213,7 +208,7 @@ export default class CustomRulesProvider extends BpmnRules {
    * @param position The position where the shape should be created
    * @returns {boolean|*|boolean}
    */
-  canCreate(shape, target, source, position) {
+  canCreate(shape, target) {
     console.log("##### can create");
 
     // do not allow insertion of DataMapObjects

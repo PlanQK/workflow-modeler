@@ -12,22 +12,22 @@ import PatternRenderer from "./PatternRenderer";
 import PatternReplaceMenuProvider from "./PatternReplaceMenuProvider";
 import PatternPathMap from "./PatternPathMap";
 import PatternPaletteProvider from "./PatternPaletteProvider";
-import PatternPropertiesProvider from "./properties-provider/PatternPropertiesProvider";
 import PatternRules from "./PatternRules";
+import PatternContextPadProvider from "./PatternContextPadProvider";
 
 export default {
   __init__: [
-    "patternPropertiesProvider",
     "patternRenderer",
     "patternReplaceMenu",
     "patternPathMap",
     "patternPaletteProvider",
     "patternRules",
+    "patternContextPadProvider",
   ],
-  patternPropertiesProvider: ["type", PatternPropertiesProvider],
   patternRenderer: ["type", PatternRenderer],
   patternReplaceMenu: ["type", PatternReplaceMenuProvider],
   patternPathMap: ["type", PatternPathMap],
   patternPaletteProvider: ["type", PatternPaletteProvider],
   patternRules: ["type", PatternRules],
+  patternContextPadProvider: ["type", PatternContextPadProvider],
 };

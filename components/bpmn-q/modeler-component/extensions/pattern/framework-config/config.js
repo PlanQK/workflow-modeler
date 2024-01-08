@@ -13,5 +13,6 @@
 const defaultConfig = {
   patternAtlasEndpoint: process.env.PATTERN_ATLAS_ENDPOINT,
   patternAtlasUIEndpoint: process.env.PATTERN_ATLAS_UI_ENDPOINT,
+  qcAtlasEndpoint: process.env.QC_ATLAS_ENDPOINT,
 };
 export default defaultConfig;

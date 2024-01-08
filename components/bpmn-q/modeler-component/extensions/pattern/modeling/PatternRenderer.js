@@ -37,8 +37,6 @@ export default class PatternRenderer extends BpmnRenderer {
   ) {
     super(config, eventBus, styles, pathMap, canvas, textRenderer, 1001);
 
-    var computeStyle = styles.computeStyle;
-
     function drawTaskSVG(parentGfx, iconID) {
       var importsvg = getPatternSVG(iconID);
       var innerSVGstring = importsvg.svg;
@@ -56,15 +54,11 @@ export default class PatternRenderer extends BpmnRenderer {
     }
 
     this.patternHandlers = {
-      [consts.QUANTUM_KERNEL_ESTIMATOR]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.QUANTUM_KERNEL_ESTIMATOR]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
@@ -78,8 +72,8 @@ export default class PatternRenderer extends BpmnRenderer {
       ) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
@@ -93,23 +87,19 @@ export default class PatternRenderer extends BpmnRenderer {
       ) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM");
         return task;
       },
-      [consts.QUANTUM_PHASE_ESTIMATION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.QUANTUM_PHASE_ESTIMATION]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
@@ -123,8 +113,8 @@ export default class PatternRenderer extends BpmnRenderer {
       ) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
@@ -138,99 +128,75 @@ export default class PatternRenderer extends BpmnRenderer {
       ) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "VARIATIONAL_QUANTUM_EIGENSOLVER");
         return task;
       },
-      [consts.ORCHESTRATED_EXECUTION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.ORCHESTRATED_EXECUTION]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "ORCHESTRATED_EXECUTION");
         return task;
       },
-      [consts.PRE_DEPLOYED_EXECUTION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.PRE_DEPLOYED_EXECUTION]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "PRE_DEPLOYED_EXECUTION");
         return task;
       },
-      [consts.PRIORITIZED_EXECUTION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.PRIORITIZED_EXECUTION]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "PRIORITIZED_EXECUTION");
         return task;
       },
-      [consts.ERROR_CORRECTION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.ERROR_CORRECTION]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "ERROR_CORRECTION");
         return task;
       },
-      [consts.READOUT_ERROR_MITIGATION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.READOUT_ERROR_MITIGATION]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "READOUT_ERROR_MITIGATION");
         return task;
       },
-      [consts.GATE_ERROR_MITIGATION]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.GATE_ERROR_MITIGATION]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
-        console.log(parentGfx)
+          stroke: "none",
+        };
+        console.log(parentGfx);
         element.width = 43;
         element.height = 43;
 
@@ -238,45 +204,33 @@ export default class PatternRenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "GATE_ERROR_MITIGATION");
         return task;
       },
-      [consts.WARM_START]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.WARM_START]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "WARM_START");
         return task;
       },
-      [consts.CIRCUIT_CUTTING]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.CIRCUIT_CUTTING]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "CIRCUIT_CUTTING");
         return task;
       },
-      [consts.PATTERN]: function (
-        self,
-        parentGfx,
-        element
-      ) {
+      [consts.PATTERN]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",
-          stroke: "none"
-        }
+          stroke: "none",
+        };
         element.width = 43;
         element.height = 43;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
@@ -317,29 +271,39 @@ export default class PatternRenderer extends BpmnRenderer {
       return true;
     }
 
-
     // pattern elements can be handled
-    for (var i = 0; i < patternReplaceOptions.ALGORITHM_PATTERN.length; i++) {
-      if (element.type === patternReplaceOptions.ALGORITHM_PATTERN[i].target.type) {
+    for (let i = 0; i < patternReplaceOptions.ALGORITHM_PATTERN.length; i++) {
+      if (
+        element.type === patternReplaceOptions.ALGORITHM_PATTERN[i].target.type
+      ) {
         return true;
       }
     }
 
     // pattern elements can be handled
-    for (var i = 0; i < patternReplaceOptions.BEHAVIORAL_PATTERN.length; i++) {
-      if (element.type === patternReplaceOptions.BEHAVIORAL_PATTERN[i].target.type) {
+    for (let i = 0; i < patternReplaceOptions.BEHAVIORAL_PATTERN.length; i++) {
+      if (
+        element.type === patternReplaceOptions.BEHAVIORAL_PATTERN[i].target.type
+      ) {
         return true;
       }
     }
 
     // pattern elements can be handled
-    for (var i = 0; i < patternReplaceOptions.AUGMENTATION_PATTERN.length; i++) {
-      if (element.type === patternReplaceOptions.AUGMENTATION_PATTERN[i].target.type) {
+    for (
+      let i = 0;
+      i < patternReplaceOptions.AUGMENTATION_PATTERN.length;
+      i++
+    ) {
+      if (
+        element.type ===
+        patternReplaceOptions.AUGMENTATION_PATTERN[i].target.type
+      ) {
         return true;
       }
     }
 
-    if(element.type === consts.PATTERN) {
+    if (element.type === consts.PATTERN) {
       return true;
     }
 

@@ -27,6 +27,9 @@ export default function PatternAtlasConfigTab() {
   const [patternAtlasUIEndpoint, setPatternAtlasUIEndpoint] = useState(
     config.getPatternAtlasUIEndpoint()
   );
+  const [qcAtlasEndpoint, setQcAtlasEndpoint] = useState(
+    config.getQcAtlasEndpoint()
+  );
   const modeler = getModeler();
 
   const editorActions = modeler.get("editorActions");
@@ -51,11 +54,21 @@ export default function PatternAtlasConfigTab() {
     });
   }
 
+  if (!editorActions._actions.hasOwnProperty("qcAtlasEndpointChanged")) {
+    editorActions.register({
+      qcAtlasEndpointChanged: function (qcAtlasEndpoint) {
+        self.modeler.config.qcAtlasEndpoint = qcAtlasEndpoint;
+        eventBus.fire("config.updated", self.modeler.config);
+      },
+    });
+  }
   // save changed config entries on close
   PatternAtlasConfigTab.prototype.onClose = () => {
     modeler.config.patternAtlasEndpoint = patternAtlasEndpoint;
+    modeler.config.qcAtlasEndpoint = qcAtlasEndpoint;
     modeler.config.patternAtlasUIEndpoint = patternAtlasUIEndpoint;
     config.setPatternAtlasEndpoint(patternAtlasEndpoint);
+    config.setQcAtlasEndpoint(qcAtlasEndpoint);
     config.setPatternAtlasUIEndpoint(patternAtlasUIEndpoint);
   };
 
@@ -92,6 +105,18 @@ export default function PatternAtlasConfigTab() {
               />
             </td>
           </tr>
+          <tr className="spaceUnder">
+            <td align="right">QC Atlas Endpoint</td>
+            <td align="left">
+              <input
+                className="qwm-input"
+                type="string"
+                name="qcAtlasEndpoint"
+                value={qcAtlasEndpoint}
+                onChange={(event) => setQcAtlasEndpoint(event.target.value)}
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
     </>
@@ -102,5 +127,6 @@ PatternAtlasConfigTab.prototype.config = () => {
   const modeler = getModeler();
 
   modeler.config.patternAtlasEndpoint = config.getPatternAtlasEndpoint();
+  modeler.config.qcAtlasEndpoint = config.getQcAtlasEndpoint();
   modeler.config.patternAtlasUIEndpoint = config.getPatternAtlasUIEndpoint();
 };

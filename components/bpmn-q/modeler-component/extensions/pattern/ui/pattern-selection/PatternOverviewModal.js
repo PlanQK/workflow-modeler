@@ -12,13 +12,16 @@
 import React, { useCallback, useState } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
 import PatternSelectionModal from "./PatternSelectionModal";
-import { getModeler } from "../../../../editor/ModelerHandler";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function PatternOverviewModal({ onClose, element, commandStack, responseData }) {
+export default function PatternOverviewModal({
+  onClose,
+  element,
+  responseData,
+}) {
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
   const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] =
     useState(false);
@@ -98,19 +101,19 @@ export default function PatternOverviewModal({ onClose, element, commandStack, r
     openAlgorithmicPatternModal();
   };
 
-  const disableButton = () =>{
-    if(element !== undefined){
-      console.log(element)
-      if(element.algorithmPattern !== undefined){
+  const disableButton = () => {
+    if (element !== undefined) {
+      console.log(element);
+      if (element.algorithmPattern !== undefined) {
         return true;
       }
       return false;
-  }
-    if(responseData === null){
+    }
+    if (responseData === null) {
       return true;
-    } 
-  return false;
-}
+    }
+    return false;
+  };
   return (
     <Modal onClose={onClose}>
       <Title>Pattern Selection</Title>
@@ -225,7 +228,9 @@ export default function PatternOverviewModal({ onClose, element, commandStack, r
           <button
             type="button"
             className="qwm-btn qwm-btn-secondary"
-            onClick={() => {setPatterns();onClose(dynamicRows);}}
+            onClick={() => {
+              onClose(dynamicRows);
+            }}
           >
             Done
           </button>

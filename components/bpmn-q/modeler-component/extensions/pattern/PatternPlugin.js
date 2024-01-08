@@ -19,7 +19,8 @@ import TransformationButton from "../../editor/ui/TransformationButton";
 import { startPatternReplacementProcess } from "./replacement/PatternTransformator";
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "../quantme/framework-config/config-manager";
-let patternModdleExtension = require("./resources/pattern.json");
+import { getModeler } from "../../editor/ModelerHandler";
+let patternModdleExtension = require("./resources/pattern4bpmn.json");
 
 /**
  * Plugin Object of the QuantME extension. Used to register the plugin in the plugin handler of the modeler.
@@ -34,14 +35,17 @@ export default {
     },
   ],
   name: "pattern",
-  extensionModule: [ PatternExtensionModule ],
+  extensionModule: [PatternExtensionModule],
   moddleDescription: patternModdleExtension,
   styling: [patternStyles],
   transformExtensionButton: (
     <TransformationButton
       name="Pattern Transformation"
       transformWorkflow={async (xml) => {
-        let currentQRMs = []
+        let modeler = getModeler();
+        modeler.views = modeler.views || {};
+        modeler.views["view-with-patterns"] = xml;
+        let currentQRMs = [];
         return await startPatternReplacementProcess(xml, currentQRMs, {
           nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
           transformationFrameworkEndpoint:
