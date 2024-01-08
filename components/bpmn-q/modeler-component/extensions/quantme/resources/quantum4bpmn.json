@@ -36,6 +36,11 @@
           "name": "selectionStrategy",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "automatedSelection",
+          "isAttr": true,
+          "type": "Boolean"
         }
       ]
     },

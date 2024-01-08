@@ -221,3 +221,28 @@ try {
    throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: " + transformationUrl);
 }
 `;
+
+// script to access the process instance id and to convert the circuit to a file
+export var CONVERT_CIRCUIT = `import org.camunda.bpm.engine.variable.value.FileValue
+import org.camunda.bpm.engine.variable.Variables
+
+def circuit = execution.getVariable("circuit");
+if (circuit instanceof ArrayList) {
+   circuit = circuit.get(0);
+}
+def circuitUrl ="/process-instance/" + execution.getProcessInstanceId() + "/variables/quantum_circuit/data";
+execution.setVariable("circuitUrl", circuitUrl);
+if (circuit instanceof File) {
+   execution.setVariable("quantum_circuit", circuit);
+} else{
+   def file = new File("fragment.tmp");
+   file.write(circuit);
+   FileValue typedFileValue = Variables
+   .fileValue("fragment.tmp")
+   .file(file)
+   .mimeType("text/plain")
+   .encoding("UTF-8")
+   .create();
+   execution.setVariable("quantum_circuit", typedFileValue);
+}
+`;

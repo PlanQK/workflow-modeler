@@ -81,6 +81,7 @@ describe("Test the PlanQKServiceTaskCompletion of the PlanQK extension.", functi
           config: {
             serviceEndpointBaseUrl: "http://dummy.com",
             subscriptions: [sub1, sub2, sub3],
+            tokenUrl: "http://tokenendpoint.com",
             oauthInfoByAppMap: {
               app1: {
                 consumerKey: "app1ConsumerKey",

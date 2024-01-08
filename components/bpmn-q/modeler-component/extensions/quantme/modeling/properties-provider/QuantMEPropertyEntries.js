@@ -11,7 +11,11 @@
 
 import React from "@bpmn-io/properties-panel/preact/compat";
 
-import { TextFieldEntry, SelectEntry } from "@bpmn-io/properties-panel";
+import {
+  TextFieldEntry,
+  SelectEntry,
+  CheckboxEntry,
+} from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
 import { HiddenTextFieldEntry } from "../../../../editor/popup/HiddenTextFieldEntry";
@@ -482,6 +486,35 @@ export function SelectionStrategyEntry({ element }) {
   );
 }
 
+export function AutomatedSelectionEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.automatedSelection;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      automatedSelection: newValue,
+    });
+  };
+
+  return (
+    <CheckboxEntry
+      id={consts.AUTOMATED_SELECTION}
+      label={translate("Automated Selection")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
 export function CalibrationMethodEntry({ element }) {
   const modeling = useService("modeling");
   const translate =

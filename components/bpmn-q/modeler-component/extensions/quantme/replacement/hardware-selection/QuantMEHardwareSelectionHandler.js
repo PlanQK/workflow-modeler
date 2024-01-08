@@ -10,6 +10,7 @@
  */
 
 import {
+  CONVERT_CIRCUIT,
   INVOKE_NISQ_ANALYZER_SCRIPT,
   INVOKE_TRANSFORMATION_SCRIPT,
   RETRIEVE_FRAGMENT_SCRIPT_PREFIX,
@@ -50,6 +51,8 @@ export async function replaceHardwareSelectionSubprocess(
   let commandStack = modeler.get("commandStack");
   let moddle = modeler.get("moddle");
 
+  const automatedSelection = subprocess.automatedSelection;
+
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {
     type: "bpmn:SubProcess",
@@ -61,6 +64,7 @@ export async function replaceHardwareSelectionSubprocess(
     selectionStrategy: undefined,
     providers: undefined,
     simulatorsAllowed: undefined,
+    automatedSelection: undefined,
   });
 
   // retrieve business object of the new element
@@ -99,87 +103,274 @@ export async function replaceHardwareSelectionSubprocess(
   // connect start event and gateway
   modeling.connect(startEvent, splittingGateway, { type: "bpmn:SequenceFlow" });
 
-  // add task to invoke the NISQ Analyzer and connect it
-  let invokeHardwareSelection = createLayoutedShape(
+  if (automatedSelection) {
+    // add task to invoke the NISQ Analyzer and connect it
+    let invokeHardwareSelection = createLayoutedShape(
+      modeling,
+      { type: "bpmn:ScriptTask" },
+      { x: 50, y: 50 },
+      element,
+      {}
+    );
+    let invokeHardwareSelectionBo = elementRegistry.get(
+      invokeHardwareSelection.id
+    ).businessObject;
+    invokeHardwareSelectionBo.name = "Invoke NISQ Analyzer";
+    invokeHardwareSelectionBo.scriptFormat = "groovy";
+    invokeHardwareSelectionBo.script = INVOKE_NISQ_ANALYZER_SCRIPT;
+    invokeHardwareSelectionBo.asyncBefore = true;
+
+    // add NISQ Analyzer endpoint, providers attribute, and simulatorAllowed attribute as input parameters
+    let invokeHardwareSelectionInOut = getCamundaInputOutput(
+      invokeHardwareSelectionBo,
+      bpmnFactory
+    );
+    nisqAnalyzerEndpoint += nisqAnalyzerEndpoint.endsWith("/") ? "" : "/";
+    invokeHardwareSelectionInOut.inputParameters.push(
+      bpmnFactory.create("camunda:InputParameter", {
+        name: "camunda_endpoint",
+        value: camundaEndpoint,
+      })
+    );
+    invokeHardwareSelectionInOut.inputParameters.push(
+      bpmnFactory.create("camunda:InputParameter", {
+        name: "nisq_analyzer_endpoint_qpu_selection",
+        value: nisqAnalyzerEndpoint + consts.NISQ_ANALYZER_QPU_SELECTION_PATH,
+      })
+    );
+    invokeHardwareSelectionInOut.inputParameters.push(
+      bpmnFactory.create("camunda:InputParameter", {
+        name: "providers",
+        value: subprocess.providers,
+      })
+    );
+    invokeHardwareSelectionInOut.inputParameters.push(
+      bpmnFactory.create("camunda:InputParameter", {
+        name: "simulators_allowed",
+        value: subprocess.simulatorsAllowed,
+      })
+    );
+
+    // connect gateway with selection path and add condition
+    let selectionFlow = modeling.connect(
+      splittingGateway,
+      invokeHardwareSelection,
+      { type: "bpmn:SequenceFlow" }
+    );
+    let selectionFlowBo = elementRegistry.get(selectionFlow.id).businessObject;
+    selectionFlowBo.name = "no";
+    let selectionFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
+    selectionFlowCondition.body =
+      '${execution.hasVariable("already_selected") == false || already_selected == false}';
+    selectionFlowBo.conditionExpression = selectionFlowCondition;
+
+    // add task implementing the defined selection strategy and connect it
+    let selectionTask = addSelectionStrategyTask(
+      subprocess.selectionStrategy,
+      element,
+      elementRegistry,
+      modeling
+    );
+    if (selectionTask === undefined) {
+      return false;
+    }
+    let selectionTaskBo = elementRegistry.get(selectionTask.id).businessObject;
+    selectionTaskBo.asyncBefore = true;
+    modeling.connect(invokeHardwareSelection, selectionTask, {
+      type: "bpmn:SequenceFlow",
+    });
+    insertTasks(
+      modeling,
+      elementRegistry,
+      bpmnFactory,
+      commandStack,
+      moddle,
+      element,
+      splittingGateway,
+      selectionTask,
+      hardwareSelectionFragment,
+      transformationFrameworkEndpoint,
+      camundaEndpoint
+    );
+    return true;
+  } else {
+    let task = modeling.createShape(
+      { type: "bpmn:ScriptTask" },
+      { x: 50, y: 50 },
+      element,
+      {}
+    );
+    let taskBo = elementRegistry.get(task.id).businessObject;
+    taskBo.name = "Create Circuit File";
+    taskBo.scriptFormat = "groovy";
+    taskBo.script = CONVERT_CIRCUIT;
+    let flow = modeling.connect(splittingGateway, task, {
+      type: "bpmn:SequenceFlow",
+    });
+    let flowBo = elementRegistry.get(flow.id).businessObject;
+    flowBo.name = "no";
+    let flowCondition = bpmnFactory.create("bpmn:FormalExpression");
+    flowCondition.body =
+      '${execution.hasVariable("already_selected") == false || already_selected == false}';
+    flowBo.conditionExpression = flowCondition;
+    let userHardwareSelection = modeling.createShape(
+      { type: "bpmn:UserTask" },
+      { x: 50, y: 50 },
+      element,
+      {}
+    );
+    let userHardwareSelectionBo = elementRegistry.get(
+      userHardwareSelection.id
+    ).businessObject;
+    userHardwareSelectionBo.name = "Invoke NISQ Analyzer UI";
+    userHardwareSelectionBo.$attrs["camunda:assignee"] = "demo";
+    userHardwareSelectionBo.$attrs["camunda:formKey"] =
+      "embedded:deployment:hardwareSelection.html";
+    modeling.connect(task, userHardwareSelection, {
+      type: "bpmn:SequenceFlow",
+    });
+    insertTasks(
+      modeling,
+      elementRegistry,
+      bpmnFactory,
+      commandStack,
+      moddle,
+      element,
+      splittingGateway,
+      userHardwareSelection,
+      hardwareSelectionFragment,
+      transformationFrameworkEndpoint,
+      camundaEndpoint
+    );
+    return true;
+  }
+}
+
+/**
+ * Add and return a task implementing the given selection strategy
+ */
+function addSelectionStrategyTask(
+  selectionStrategy,
+  parent,
+  elementRegistry,
+  modeling
+) {
+  console.log("Adding task for selection strategy: %s", selectionStrategy);
+
+  if (selectionStrategy === undefined) {
+    return addShortestQueueSelectionStrategy(parent, elementRegistry, modeling);
+  } else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
+    NotificationHandler.getInstance().displayNotification({
+      type: "info",
+      title: "Transformation Unsuccessful!",
+      content:
+        "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
+      duration: 7000,
+    });
+    return undefined;
+  }
+
+  switch (selectionStrategy) {
+    case consts.SELECTION_STRATEGY_SHORTEST_QUEUE_SIZE:
+      return addShortestQueueSelectionStrategy(
+        parent,
+        elementRegistry,
+        modeling
+      );
+    default:
+      console.log("Selection strategy not supported. Aborting!");
+      return undefined;
+  }
+}
+
+/**
+ * Add a task implementing the Shortest-Queue selection strategy
+ */
+function addShortestQueueSelectionStrategy(parent, elementRegistry, modeling) {
+  let task = createLayoutedShape(
     modeling,
     { type: "bpmn:ScriptTask" },
     { x: 50, y: 50 },
-    element,
+    parent,
     {}
   );
-  let invokeHardwareSelectionBo = elementRegistry.get(
-    invokeHardwareSelection.id
-  ).businessObject;
-  invokeHardwareSelectionBo.name = "Invoke NISQ Analyzer";
-  invokeHardwareSelectionBo.scriptFormat = "groovy";
-  invokeHardwareSelectionBo.script = INVOKE_NISQ_ANALYZER_SCRIPT;
-  invokeHardwareSelectionBo.asyncBefore = true;
+  let taskBo = elementRegistry.get(task.id).businessObject;
+  taskBo.name = "Selecting based on Queue Size";
+  taskBo.scriptFormat = "groovy";
+  taskBo.script = SELECT_ON_QUEUE_SIZE_SCRIPT;
+  return task;
+}
 
-  // add NISQ Analyzer endpoint, providers attribute, and simulatorAllowed attribute as input parameters
-  let invokeHardwareSelectionInOut = getCamundaInputOutput(
-    invokeHardwareSelectionBo,
-    bpmnFactory
-  );
-  nisqAnalyzerEndpoint += nisqAnalyzerEndpoint.endsWith("/") ? "" : "/";
-  invokeHardwareSelectionInOut.inputParameters.push(
-    bpmnFactory.create("camunda:InputParameter", {
-      name: "camunda_endpoint",
-      value: camundaEndpoint,
-    })
-  );
-  invokeHardwareSelectionInOut.inputParameters.push(
-    bpmnFactory.create("camunda:InputParameter", {
-      name: "nisq_analyzer_endpoint_qpu_selection",
-      value: nisqAnalyzerEndpoint + consts.NISQ_ANALYZER_QPU_SELECTION_PATH,
-    })
-  );
-  invokeHardwareSelectionInOut.inputParameters.push(
-    bpmnFactory.create("camunda:InputParameter", {
-      name: "providers",
-      value: subprocess.providers,
-    })
-  );
-  invokeHardwareSelectionInOut.inputParameters.push(
-    bpmnFactory.create("camunda:InputParameter", {
-      name: "simulators_allowed",
-      value: subprocess.simulatorsAllowed,
-    })
-  );
+async function getHardwareSelectionFragment(subprocess) {
+  console.log("Extracting workflow fragment from subprocess: ", subprocess);
 
-  // connect gateway with selection path and add condition
-  let selectionFlow = modeling.connect(
-    splittingGateway,
-    invokeHardwareSelection,
-    { type: "bpmn:SequenceFlow" }
-  );
-  let selectionFlowBo = elementRegistry.get(selectionFlow.id).businessObject;
-  selectionFlowBo.name = "no";
-  let selectionFlowCondition = bpmnFactory.create("bpmn:FormalExpression");
-  selectionFlowCondition.body =
-    '${execution.hasVariable("already_selected") == false || already_selected == false}';
-  selectionFlowBo.conditionExpression = selectionFlowCondition;
+  // create new modeler to extract the XML of the workflow fragment
+  let modeler = createTempModeler();
+  let elementRegistry = modeler.get("elementRegistry");
+  let bpmnReplace = modeler.get("bpmnReplace");
+  let modeling = modeler.get("modeling");
 
-  // add task implementing the defined selection strategy and connect it
-  let selectionTask = addSelectionStrategyTask(
-    subprocess.selectionStrategy,
-    element,
-    elementRegistry,
-    modeling
-  );
-  if (selectionTask === undefined) {
-    return false;
+  // initialize the modeler
+  function initializeModeler() {
+    return new Promise((resolve) => {
+      modeler.createDiagram((err, successResponse) => {
+        resolve(successResponse);
+      });
+    });
   }
-  let selectionTaskBo = elementRegistry.get(selectionTask.id).businessObject;
-  selectionTaskBo.asyncBefore = true;
-  modeling.connect(invokeHardwareSelection, selectionTask, {
+
+  await initializeModeler();
+
+  // retrieve root element to add extracted workflow fragment
+  let definitions = modeler.getDefinitions();
+  let rootElement = getRootProcess(definitions);
+  let rootElementBo = elementRegistry.get(rootElement.id);
+
+  // add start and end event to the new process
+  let startEvent = bpmnReplace.replaceElement(
+    elementRegistry.get(rootElement.flowElements[0].id),
+    { type: "bpmn:StartEvent" }
+  );
+  let endEvent = createLayoutedShape(
+    modeling,
+    { type: "bpmn:EndEvent" },
+    { x: 50, y: 50 },
+    rootElementBo,
+    {}
+  );
+
+  // insert given subprocess and connect to start and end event
+  let insertedSubprocess = insertShape(
+    definitions,
+    rootElementBo,
+    subprocess,
+    {},
+    false,
+    modeler
+  ).element;
+  modeling.connect(startEvent, insertedSubprocess, {
     type: "bpmn:SequenceFlow",
   });
+  modeling.connect(insertedSubprocess, endEvent, { type: "bpmn:SequenceFlow" });
 
-  // add task implementing the transformation of the QuantME modeling constructs within the QuantumHardwareSelectionSubprocess
-  console.log(
-    "Adding extracted workflow fragment XML: ",
-    hardwareSelectionFragment
-  );
+  // export xml and remove line breaks
+  let xml = await getXml(modeler);
+  return xml.replace(/(\r\n|\n|\r)/gm, "");
+}
+
+function insertTasks(
+  modeling,
+  elementRegistry,
+  bpmnFactory,
+  commandStack,
+  moddle,
+  element,
+  splittingGateway,
+  task,
+  hardwareSelectionFragment,
+  transformationFrameworkEndpoint,
+  camundaEndpoint
+) {
   let retrieveFragment = createLayoutedShape(
     modeling,
     { type: "bpmn:ScriptTask" },
@@ -197,7 +388,7 @@ export async function replaceHardwareSelectionSubprocess(
     hardwareSelectionFragment +
     RETRIEVE_FRAGMENT_SCRIPT_SUFFIX;
   retrieveFragmentBo.asyncBefore = true;
-  modeling.connect(selectionTask, retrieveFragment, {
+  modeling.connect(task, retrieveFragment, {
     type: "bpmn:SequenceFlow",
   });
 
@@ -316,117 +507,4 @@ export async function replaceHardwareSelectionSubprocess(
   modeling.connect(invokeTransformedFragment, endEvent, {
     type: "bpmn:SequenceFlow",
   });
-  return true;
-}
-
-/**
- * Add and return a task implementing the given selection strategy
- */
-function addSelectionStrategyTask(
-  selectionStrategy,
-  parent,
-  elementRegistry,
-  modeling
-) {
-  console.log("Adding task for selection strategy: %s", selectionStrategy);
-
-  if (selectionStrategy === undefined) {
-    return addShortestQueueSelectionStrategy(parent, elementRegistry, modeling);
-  } else if (!consts.SELECTION_STRATEGY_LIST.includes(selectionStrategy)) {
-    NotificationHandler.getInstance().displayNotification({
-      type: "info",
-      title: "Transformation Unsuccessful!",
-      content:
-        "The chosen selection strategy is not supported. Leave blank to use default strategy: Shortest-Queue",
-      duration: 7000,
-    });
-    return undefined;
-  }
-
-  switch (selectionStrategy) {
-    case consts.SELECTION_STRATEGY_SHORTEST_QUEUE_SIZE:
-      return addShortestQueueSelectionStrategy(
-        parent,
-        elementRegistry,
-        modeling
-      );
-    default:
-      console.log("Selection strategy not supported. Aborting!");
-      return undefined;
-  }
-}
-
-/**
- * Add a task implementing the Shortest-Queue selection strategy
- */
-function addShortestQueueSelectionStrategy(parent, elementRegistry, modeling) {
-  let task = createLayoutedShape(
-    modeling,
-    { type: "bpmn:ScriptTask" },
-    { x: 50, y: 50 },
-    parent,
-    {}
-  );
-  let taskBo = elementRegistry.get(task.id).businessObject;
-  taskBo.name = "Selecting based on Queue Size";
-  taskBo.scriptFormat = "groovy";
-  taskBo.script = SELECT_ON_QUEUE_SIZE_SCRIPT;
-  return task;
-}
-
-async function getHardwareSelectionFragment(subprocess) {
-  console.log("Extracting workflow fragment from subprocess: ", subprocess);
-
-  // create new modeler to extract the XML of the workflow fragment
-  let modeler = createTempModeler();
-  let elementRegistry = modeler.get("elementRegistry");
-  let bpmnReplace = modeler.get("bpmnReplace");
-  let modeling = modeler.get("modeling");
-
-  // initialize the modeler
-  function initializeModeler() {
-    return new Promise((resolve) => {
-      modeler.createDiagram((err, successResponse) => {
-        resolve(successResponse);
-      });
-    });
-  }
-
-  await initializeModeler();
-
-  // retrieve root element to add extracted workflow fragment
-  let definitions = modeler.getDefinitions();
-  let rootElement = getRootProcess(definitions);
-  let rootElementBo = elementRegistry.get(rootElement.id);
-
-  // add start and end event to the new process
-  let startEvent = bpmnReplace.replaceElement(
-    elementRegistry.get(rootElement.flowElements[0].id),
-    { type: "bpmn:StartEvent" }
-  );
-  let endEvent = createLayoutedShape(
-    modeling,
-    { type: "bpmn:EndEvent" },
-    { x: 50, y: 50 },
-    rootElementBo,
-    {}
-  );
-
-  // insert given subprocess and connect to start and end event
-  let insertedSubprocess = insertShape(
-    definitions,
-    rootElementBo,
-    subprocess,
-    {},
-    false,
-    modeler
-  ).element;
-  modeling.connect(startEvent, insertedSubprocess, {
-    type: "bpmn:SequenceFlow",
-  });
-  modeling.connect(insertedSubprocess, endEvent, { type: "bpmn:SequenceFlow" });
-
-  // export xml and remove line breaks
-  let xml = await getXml(modeler);
-  return xml.replace(/(\r\n|\n|\r)/gm, "");
 }

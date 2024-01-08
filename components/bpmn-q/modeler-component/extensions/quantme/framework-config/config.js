@@ -17,6 +17,7 @@ const defaultConfig = {
   wineryEndpoint: process.env.WINERY_ENDPOINT,
   camundaEndpoint: process.env.CAMUNDA_ENDPOINT,
   nisqAnalyzerEndpoint: process.env.NISQ_ANALYZER_ENDPOINT,
+  nisqAnalyzerUiEndpoint: process.env.NISQ_ANALYZER_UI_ENDPOINT,
   qprovEndpoint: process.env.QPROV_ENDPOINT,
   githubToken: process.env.GITHUB_TOKEN,
   transformationFrameworkEndpoint:

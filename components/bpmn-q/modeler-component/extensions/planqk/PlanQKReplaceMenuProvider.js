@@ -169,8 +169,7 @@ export default class PlanQKMenuProvider {
     const self = this.modeling;
     const replaceElement = this.replaceElement;
     const oauthInfoByAppMap = this.oauthInfoByAppMap;
-    const serviceEndpointBaseUrl =
-      getPluginConfig("planqk").serviceEndpointBaseUrl;
+    const tokenUrl = getPluginConfig("planqk").tokenUrl;
 
     /*
          create a replacement menu entry for a subscription which sets the properties of the selected PlanQK service task
@@ -197,16 +196,10 @@ export default class PlanQKMenuProvider {
           subscriptionId: subscription.id,
           applicationName: subscription.application.name,
           serviceName: subscription.api.name,
-          tokenEndpoint: subscription.api.gatewayEndpoint,
+          tokenEndpoint: tokenUrl,
           consumerKey: oAuthInfo.consumerKey,
           consumerSecret: oAuthInfo.consumerSecret,
-          serviceEndpoint:
-            serviceEndpointBaseUrl +
-            subscription.api.context +
-            "/" +
-            subscription.api.version,
-          data: "{}",
-          params: "{}",
+          serviceEndpoint: subscription.api.gatewayEndpoint,
           result: "${output}",
         });
       },
