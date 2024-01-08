@@ -431,6 +431,14 @@ function addQProvEndpoint(rootElement, elementRegistry, modeling, moddle) {
         form = moddle.create("camunda:FormData");
       }
 
+      // remove qprov endpoint and camunda endpoint if they exist
+      const updatedFields = form
+        .get("fields")
+        .filter(
+          (element) =>
+            element.id !== "CAMUNDA_ENDPOINT" && element.id !== "QPROV_ENDPOINT"
+        );
+      form.fields = updatedFields;
       const formFieldCamundaEndpoint = moddle.create("camunda:FormField", {
         defaultValue: getCamundaEndpoint(),
         id: "CAMUNDA_ENDPOINT",
