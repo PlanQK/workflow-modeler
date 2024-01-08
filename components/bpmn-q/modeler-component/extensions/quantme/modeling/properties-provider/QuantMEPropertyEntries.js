@@ -535,7 +535,7 @@ export function CalibrationMethodEntry({ element }) {
   };
 
   const selectOptions = [
-    { value: "fullMatrix", label: "Full Matrix" },
+    { value: "standard", label: "Full Matrix" },
     { value: "tpnm", label: "TPNM" },
     { value: "ctmp", label: "CTMP" },
     { value: "ddot", label: "DDOT" },
@@ -592,7 +592,7 @@ export function MitigationMethodEntry({ element }) {
     else if (isCM && !bo.calibrationMethod) {
       return modeling.updateProperties(element, {
         mitigationMethod: newValue,
-        calibrationMethod: "fullMatrix",
+        calibrationMethod: "standard",
       });
     }
     return modeling.updateProperties(element, {
