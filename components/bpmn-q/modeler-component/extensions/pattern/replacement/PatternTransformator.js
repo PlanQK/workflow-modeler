@@ -65,7 +65,8 @@ export async function startPatternReplacementProcess(xml) {
   // Mitigation have to be handled first since cutting inserts tasks after them
   for (let replacementConstruct of replacementConstructs) {
     if (
-      replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION
+      replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION ||
+      replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION
     ) {
       let { replaced, flows, pattern } = await replaceMitigationPattern(
         replacementConstruct.task,
@@ -93,9 +94,10 @@ export async function startPatternReplacementProcess(xml) {
   }
 
   replacementConstructs = replacementConstructs.filter(
-    (construct) => construct.task.$type !== constants.READOUT_ERROR_MITIGATION && construct.task.$type !== constants.GATE_ERROR_MITIGATION 
+    (construct) =>
+      construct.task.$type !== constants.READOUT_ERROR_MITIGATION &&
+      construct.task.$type !== constants.GATE_ERROR_MITIGATION
   );
-
 
   for (let replacementConstruct of replacementConstructs) {
     let replacementSuccess = false;

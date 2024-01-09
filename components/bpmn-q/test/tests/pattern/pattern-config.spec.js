@@ -17,7 +17,8 @@ describe("Test Pattern ConfigManager", function () {
         {
           name: "pattern",
           config: {
-            patternAtlasEndpoint: "http://test:1977/patternatlas/patternLanguages/af7780d5-1f97-4536-8da7-4194b093ab1d",
+            patternAtlasEndpoint:
+              "http://test:1977/patternatlas/patternLanguages/af7780d5-1f97-4536-8da7-4194b093ab1d",
             patternAtlasUIEndpoint: "http://test:1978",
             qcAtlasEndpoint: "http://test:6626",
           },
@@ -30,9 +31,7 @@ describe("Test Pattern ConfigManager", function () {
       expect(patternConfig.getPatternAtlasUIEndpoint()).to.equal(
         "http://test:1978"
       );
-      expect(patternConfig.getQcAtlasEndpoint()).to.equal(
-        "http://test:6626"
-      );
+      expect(patternConfig.getQcAtlasEndpoint()).to.equal("http://test:6626");
     });
   });
 });
