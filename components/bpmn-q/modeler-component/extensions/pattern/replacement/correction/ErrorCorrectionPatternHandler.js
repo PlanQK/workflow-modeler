@@ -15,10 +15,14 @@ import * as quantmeConsts from "../../../quantme/Constants";
 export async function replaceErrorCorrectionPattern(
   errorCorrectionPattern,
   parent,
-  qrm,
   modeler
 ) {
-  console.log(errorCorrectionPattern, parent, qrm);
+  console.log(
+    "Replace error correction pattern " +
+      errorCorrectionPattern.id +
+      "of parent " +
+      parent.id
+  );
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let internHost = elementRegistry.get(errorCorrectionPattern.id).host;
@@ -61,8 +65,6 @@ export async function replaceErrorCorrectionPattern(
       type: "bpmn:SequenceFlow",
     });
   }
-  const events = elementRegistry.get(errorCorrectionPattern.id);
-  console.log(events);
   const pattern = elementRegistry.get(errorCorrectionPattern.id);
-  return { replacementSuccess: true, flows: flows, pattern: pattern };
+  return { replaced: true, flows: flows, pattern: pattern };
 }

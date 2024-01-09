@@ -16,14 +16,17 @@ import * as consts from "../../Constants";
 export async function replaceMitigationPattern(
   mitigationPattern,
   parent,
-  qrm,
   modeler
 ) {
-  console.log(mitigationPattern, parent, qrm);
+  console.log(
+    "Replace mitigation pattern " +
+      mitigationPattern.id +
+      "of parent " +
+      parent.id
+  );
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let host = elementRegistry.get(mitigationPattern.id).host;
-  console.log(host);
   let type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
   if (mitigationPattern.type === consts.READOUT_ERROR_MITIGATION) {
     type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
@@ -47,5 +50,5 @@ export async function replaceMitigationPattern(
   });
   modeling.connect(internHost, mitigationTask, { type: "bpmn:SequenceFlow" });
   const pattern = elementRegistry.get(mitigationPattern.id);
-  return { replacementSuccess: true, flows: outgoingFlows, pattern: pattern };
+  return { replaced: true, flows: outgoingFlows, pattern: pattern };
 }

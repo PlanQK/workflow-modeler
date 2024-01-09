@@ -12,8 +12,13 @@ import * as quantmeConsts from "../../../quantme/Constants";
 /**
  * Replace the given warm start pattern by a quantme warm starting task
  */
-export async function replaceWarmStart(warmStartPattern, parent, qrm, modeler) {
-  console.log(warmStartPattern, parent, qrm);
+export async function replaceWarmStart(warmStartPattern, parent, modeler) {
+  console.log(
+    "Replace warm start pattern " +
+      warmStartPattern.id +
+      "of parent " +
+      parent.id
+  );
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let host = elementRegistry.get(warmStartPattern.id).host;
@@ -37,7 +42,5 @@ export async function replaceWarmStart(warmStartPattern, parent, qrm, modeler) {
   modeling.connect(warmStartTask, internHost, { type: "bpmn:SequenceFlow" });
 
   const pattern = elementRegistry.get(warmStartPattern.id);
-
-  console.log(pattern);
-  return { replacementSuccess: true, flows: incomingFlows, pattern: pattern };
+  return { replaced: true, flows: incomingFlows, pattern: pattern };
 }
