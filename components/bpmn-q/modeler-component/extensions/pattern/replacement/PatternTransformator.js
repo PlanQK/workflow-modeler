@@ -82,16 +82,17 @@ export async function startPatternReplacementProcess(xml) {
       console.log(pattern);
 
       console.log("Successfully replaced Cutting Subprocess");
-      let updated_xml = await getXml(modeler);
+      //let updated_xml = await getXml(modeler);
       console.log("get xml");
       console.log(updated_xml);
-      modeler = await createTempModelerFromXml(updated_xml);
+      //modeler = await createTempModelerFromXml(updated_xml);
       console.log("uodated modeler");
-      modeling = modeler.get("modeling");
-      elementRegistry = modeler.get("elementRegistry");
+      //modeling = modeler.get("modeling");
+      //elementRegistry = modeler.get("elementRegistry");
       // get root element of the current diagram
-      definitions = modeler.getDefinitions();
-      rootElement = getRootProcess(definitions);
+      //definitions = modeler.getDefinitions();
+      //rootElement = getRootProcess(definitions);
+      modeling.removeElements(flows);
     }
   }
 
@@ -141,6 +142,7 @@ export async function startPatternReplacementProcess(xml) {
   console.log(allFlow);
   let allToDelete = patterns.concat(allFlow);
   console.log("allToDelete");
+  console.log(allToDelete)
   modeling.removeElements(allToDelete);
   console.log("allToDeleteSucessFul");
   // layout diagram after successful transformation

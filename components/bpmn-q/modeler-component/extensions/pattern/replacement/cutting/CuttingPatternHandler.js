@@ -66,18 +66,21 @@ export async function replaceCuttingAndMitigationPattern(
     );
     startEventBo = elementRegistry.get(resultCombinationTaks.id).businessObject;
     startEventBo.name = "Combine Circuits";
+    
     host.incoming.forEach((element) => {
       flows.push(elementRegistry.get(element.id));
-      console.log(element);
-      console.log(element.source);
-      console.log(cuttingTask);
+      //console.log(element);
+      //console.log(element.source);
+      //console.log(cuttingTask);
       modeling.connect(elementRegistry.get(element.source.id), cuttingTask, {
         type: "bpmn:SequenceFlow",
       });
       console.log("created connection to cutting task");
     });
+    
     modeling.connect(cuttingTask, internHost, { type: "bpmn:SequenceFlow" });
     console.log(cuttingTask);
+     
     host.outgoing.forEach((element) => {
       flows.push(elementRegistry.get(element.id));
       console.log(element);
@@ -85,7 +88,7 @@ export async function replaceCuttingAndMitigationPattern(
       console.log(cuttingTask);
       //modeling.connect(resultCombinationTaks, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
       console.log("created connection");
-    });
+    })
     elementToConnect = resultCombinationTaks;
   }
 
@@ -118,7 +121,7 @@ export async function replaceCuttingAndMitigationPattern(
       //flows.push(elementRegistry.get(element.id))
       console.log(element);
       console.log(element.source);
-      //modeling.connect(elementToConnect, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
+      modeling.connect(elementToConnect, elementRegistry.get(element.target.id), { type: "bpmn:SequenceFlow" });
       console.log("created connection2");
     });
   }
