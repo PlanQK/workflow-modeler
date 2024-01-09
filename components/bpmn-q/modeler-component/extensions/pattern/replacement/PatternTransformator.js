@@ -74,7 +74,6 @@ export async function startPatternReplacementProcess(xml) {
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
-      console.log("Successfully replaced Cutting Subprocess");
       modeling.removeElements(flows);
       if (!replaced) {
         console.log(
@@ -92,6 +91,11 @@ export async function startPatternReplacementProcess(xml) {
       }
     }
   }
+
+  replacementConstructs = replacementConstructs.filter(
+    (construct) => construct.task.$type !== constants.READOUT_ERROR_MITIGATION && construct.task.$type !== constants.GATE_ERROR_MITIGATION 
+  );
+
 
   for (let replacementConstruct of replacementConstructs) {
     let replacementSuccess = false;
@@ -128,6 +132,7 @@ export async function startPatternReplacementProcess(xml) {
       patterns.push(pattern);
       replacementSuccess = replaced;
     }
+
     if (!replacementSuccess) {
       console.log(
         "Replacement of Pattern with Id " +
@@ -155,7 +160,7 @@ export async function startPatternReplacementProcess(xml) {
 }
 
 /**
- * Get QuantME tasks from process
+ * Get patterns from process
  */
 export function getPatterns(process, elementRegistry) {
   // retrieve parent object for later replacement
@@ -168,7 +173,7 @@ export function getPatterns(process, elementRegistry) {
     if (flowElement.$type && flowElement.$type.startsWith("pattern:")) {
       patterns.push({ task: flowElement, parent: processBo });
     }
-    // recursively retrieve QuantME tasks if subprocess is found
+    // recursively retrieve patterns if subprocess is found
     if (
       flowElement.$type &&
       (flowElement.$type === "bpmn:SubProcess" ||
