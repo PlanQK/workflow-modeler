@@ -29,6 +29,7 @@ module.exports = function (config) {
       "test/tests/dataflow/data-flow-configurations-endpoint.spec.js",
       "test/tests/dataflow/data-flow-palette.spec.js",
       "test/tests/dataflow/data-flow-replace-menu.spec.js",
+      "test/tests/pattern/pattern-config.spec.js"
     ],
 
     // list of files / patterns to exclude
