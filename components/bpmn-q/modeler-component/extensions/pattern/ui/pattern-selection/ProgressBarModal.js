@@ -31,16 +31,12 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
         let algorithmPatternId = selectedPatterns[j].algorithmPattern.id;
 
         for (let i = 0; i < totalRequests; i++) {
-          console.log(responseData[i]);
           const { id, implementedAlgorithmId, patterns } = responseData[i];
-          console.log(patterns);
           if (patterns !== undefined && patterns.length > 0) {
             const linkedPattern = patterns[0].split("/");
 
             const linkedAlgorithmPatternId =
               linkedPattern[linkedPattern.length - 1];
-            console.log(linkedAlgorithmPatternId);
-            console.log(algorithmPatternId);
             if (algorithmPatternId === linkedAlgorithmPatternId) {
               try {
                 if (implementedAlgorithmId !== undefined) {
@@ -48,22 +44,13 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
                     `Retrieving solution for algorithm ${implementedAlgorithmId} and implementation ${id}`
                   );
                   setCurrentIdIndex(i);
-
-                  console.log(
-                    `${qcAtlasEndpoint}/atlas/algorithms/${implementedAlgorithmId}/implementations/${id}/implementation-packages`
-                  );
                   const response = await fetchDataFromEndpoint(
                     `${qcAtlasEndpoint}/atlas/algorithms/${implementedAlgorithmId}/implementations/${id}/implementation-packages`
                   );
 
-                  console.log(response);
-
                   if (response && response.content.length > 0) {
                     // currently takes the first solution
                     let solutionId = response.content[0].id;
-                    console.log(
-                      `${qcAtlasEndpoint}/atlas/algorithms/${implementedAlgorithmId}/implementations/${id}/implementation-packages/${solutionId}/file/content`
-                    );
                     const solutionPackage = await fetchSolutionFromEndpoint(
                       `${qcAtlasEndpoint}/atlas/algorithms/${implementedAlgorithmId}/implementations/${id}/implementation-packages/${solutionId}/file/content`
                     );
@@ -98,7 +85,6 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
         foundSolution = false;
       }
       setSolutions(fetchedSolutions);
-      console.log("hier");
       setProgress(100);
     };
 
@@ -128,7 +114,6 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
 
       <Footer>
         <div id="hybridLoopAdaptationFormButtons">
-          {/* Add any additional buttons or controls you need */}
           <button
             type="button"
             className="qwm-btn qwm-btn-primary"
