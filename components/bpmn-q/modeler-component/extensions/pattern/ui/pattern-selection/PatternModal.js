@@ -18,7 +18,7 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 export default function PatternModal({ onClose, onCancel }) {
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onCancel}>
       <Title>Pattern Selection</Title>
 
       <Body>
