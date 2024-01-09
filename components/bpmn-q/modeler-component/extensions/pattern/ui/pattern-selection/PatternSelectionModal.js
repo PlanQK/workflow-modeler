@@ -124,7 +124,6 @@ export default function PatternSelectionModal({
     } else if (category === PATTERN_MITIGATION) {
       if (selectedErrorMitigatedPatternRadioButton) {
         setSelectedMitigitationPatterns(null);
-        setSelectedAugmentationPatterns([]);
       }
       setSelectedErrorMitigatedPatternRadioButton(
         !selectedErrorMitigatedPatternRadioButton
