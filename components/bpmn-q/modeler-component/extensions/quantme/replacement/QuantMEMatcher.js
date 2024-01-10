@@ -209,7 +209,7 @@ function matchReadoutErrorMitigationTask(detectorElement, task) {
       false,
       CALIBRATION_METHOD
     ) &&
-    matchesProperty(detectorElement.shots, task.shots, false) &&
+    matchesProperty(detectorElement.shots, task.shots, false, SHOTS) &&
     matchesProperty(
       detectorElement.dnnHiddenLayer,
       task.dnnHiddenLayer,
