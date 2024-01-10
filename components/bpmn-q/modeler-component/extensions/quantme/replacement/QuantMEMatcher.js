@@ -59,13 +59,14 @@ import {
  * @return true if the detector matches the task, false otherwise
  */
 export function taskMatchesDetector(detectorElement, task) {
+  console.log("Matching for task: ", task);
   if (detectorElement.$type !== task.$type) {
     console.log("Types of detector and task do not match!");
     return false;
   }
 
   // check for attributes of the different task types
-  console.log("Matching for type: ", task.$type);
+  console.log("Task and detector are of the same type: ", task.$type);
   switch (task.$type) {
     case consts.QUANTUM_COMPUTATION_TASK:
       return matchQuantumComputationTask(detectorElement, task);
