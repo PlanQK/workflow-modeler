@@ -157,9 +157,6 @@ export function getModdleExtension() {
       extensions[plugin.name] = plugin.moddleDescription;
     }
   }
-
-  console.log("\n Get Moddle Extensions: ");
-  console.log(extensions);
   return extensions;
 }
 
