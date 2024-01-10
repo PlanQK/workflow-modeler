@@ -53,6 +53,7 @@ export async function startPatternReplacementProcess(xml) {
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
   }
+
   attachPatternsToSuitableTasks(
     rootElement,
     elementRegistry,
@@ -63,7 +64,14 @@ export async function startPatternReplacementProcess(xml) {
   replacementConstructs = getPatterns(rootElement, elementRegistry);
 
   // Mitigation have to be handled first since cutting inserts tasks after them
+  // if the general pattern is attached then we add it to the elements to delete
   for (let replacementConstruct of replacementConstructs) {
+    if (
+      replacementConstruct.task.$type === constants.PATTERN
+    ) {
+      const pattern = elementRegistry.get(replacementConstruct.task.id);
+      patterns.push(pattern);
+    }
     if (
       replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION ||
       replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION
@@ -96,10 +104,16 @@ export async function startPatternReplacementProcess(xml) {
   replacementConstructs = replacementConstructs.filter(
     (construct) =>
       construct.task.$type !== constants.READOUT_ERROR_MITIGATION &&
-      construct.task.$type !== constants.GATE_ERROR_MITIGATION
+      construct.task.$type !== constants.GATE_ERROR_MITIGATION &&
+      construct.task.$type !== constants.PATTERN
   );
 
-  for (let replacementConstruct of replacementConstructs) {
+  let augmentationReplacementConstructs = replacementConstructs.filter(
+    (construct) =>
+      constants.AUGMENTATION_PATTERNS.includes(construct.task.$type)
+  );
+
+  for (let replacementConstruct of augmentationReplacementConstructs) {
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.CIRCUIT_CUTTING) {
       let { replaced, flows, pattern } = await replaceCuttingPattern(
