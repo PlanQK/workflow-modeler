@@ -12,18 +12,32 @@ import * as consts from "../Constants";
 import * as quantmeConsts from "../../quantme/Constants";
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   console.log(subprocess);
-  // TODO: find suitable positions
   const patternPrefix = "pattern:";
+  const patternSpacing = 65;
   for (let i = 0; i < patterns.behavioralPattern.length; i++) {
     console.log(patterns.behavioralPattern[i]);
     // get name of pattern by removing whitespaces and replacing hyphens
     let patternName = patterns.behavioralPattern[i].name.replace(/[\s-]/g, "");
     console.log(patternName);
+
+    // Start in the bottom left
+    let patternX = subprocess.x + patternSpacing * i;
+    let patternY = subprocess.y + subprocess.height;
+
+    // If the pattern goes outside the subprocess, adjust the position
+    if (patternX < subprocess.x + subprocess.width) {
+      patternX = subprocess.x;
+      patternY = subprocess.y + subprocess.height - patternSpacing * i;
+    }
+    if (patternY > subprocess.y) {
+      patternX = subprocess.x + patternSpacing * i;
+      patternY = subprocess.y;
+    }
     let pattern = modeling.createShape(
       { type: patternPrefix + patternName },
       {
-        x: subprocess.x + subprocess.width,
-        y: subprocess.y + subprocess.height,
+        x: patternX,
+        y: patternY,
       },
       subprocess,
       { attach: true }
@@ -40,11 +54,17 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
       /[\s-]/g,
       ""
     );
+    let patternX = subprocess.x + patternSpacing * i;
+    let patternY = subprocess.y + subprocess.height;
+    if (patternX > subprocess.x + subprocess.width) {
+      patternX = subprocess.x + patternSpacing * (i - Math.floor((patternX - subprocess.x - subprocess.width) / patternSpacing));
+      patternY += patternSpacing;
+    }
     let pattern = modeling.createShape(
       { type: patternPrefix + patternName },
       {
-        x: subprocess.x + subprocess.width,
-        y: subprocess.y + subprocess.height,
+        x: patternX,
+        y: patternY,
       },
       subprocess,
       { attach: true }
@@ -80,7 +100,7 @@ export function attachPatternsToSuitableConstruct(
     if (!containsPattern) {
       if (
         patternType === consts.WARM_START &&
-        type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
+        (type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK || type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK)
       ) {
         attachPatternToShape(construct, patternType, modeling);
         console.log("added warm_start");
@@ -123,4 +143,25 @@ function attachPatternToShape(shape, patternType, modeling) {
   modeling.updateProperties(pattern, {
     attachedToRef: shape.businessObject,
   });
+}
+
+export function changeIdOfContainedElements(subprocess, parent, modeling, elementRegistry, id) {
+  console.log("change id of contained elements of subprocess", subprocess.id, parent.id, id);
+  console.log(subprocess);
+  for (let i = 0; i < subprocess.children.length; i++) {
+    let child = subprocess.children[i];
+
+    console.log(child)
+    console.log(elementRegistry.get(child.id))
+
+    modeling.updateProperties(elementRegistry.get(child.id), {
+      id: id + "_" + child.id,
+    });
+    child.di.id = id + "_" + child.id + '_di';
+
+    if (child.$type === "bpmn:SubProcess" || child.$type === quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS ||
+      child.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS) {
+      changeIdOfContainedElements(child, child.parent, modeling, elementRegistry, id + "_" + child.id);
+    }
+  }
 }

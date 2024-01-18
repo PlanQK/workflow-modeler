@@ -22,8 +22,7 @@ import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 import { getXml, loadDiagram } from "../../../../editor/util/IoUtilities";
 import { layout } from "../../../quantme/replacement/layouter/Layouter";
 import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
-import { generateRandomLetters } from "../../../quantme/utilities/Utilities";
-import { attachPatternsToSubprocess } from "../../util/PatternUtil";
+import { attachPatternsToSubprocess, changeIdOfContainedElements } from "../../util/PatternUtil";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -122,6 +121,7 @@ export default class PatternSelectionPlugin extends PureComponent {
       let solutionModeler = await createTempModelerFromXml(result[i]);
       let solutionDefinitions = solutionModeler.getDefinitions();
       let solutionElementRegistry = solutionModeler.get("elementRegistry");
+      let solutionModeling = solutionModeler.get("modeling");
       const solutionRootElement = getRootProcess(solutionDefinitions);
       console.log("DAS SOLUTIONROOTElement");
       console.log(solutionRootElement);
@@ -150,7 +150,6 @@ export default class PatternSelectionPlugin extends PureComponent {
             element.id
           ).type;
 
-          // Add your filtering conditions here
           return !(
             elementType === "bpmn:SequenceFlow" ||
             elementCustomType === "bpmn:SequenceFlow"
@@ -170,6 +169,7 @@ export default class PatternSelectionPlugin extends PureComponent {
         });
 
         // Combine the sorted filtered elements with the remaining elements
+        /** 
         const sortedSolutionFlowElements = nonFilteredElements.concat(
           solutionFlowElements.filter((element) => {
             const elementType = solutionElementRegistry.get(element.id).$type;
@@ -177,7 +177,6 @@ export default class PatternSelectionPlugin extends PureComponent {
               element.id
             ).type;
 
-            // Add your conditions for the remaining elements
             return (
               elementType === "bpmn:SequenceFlow" ||
               elementCustomType === "bpmn:SequenceFlow"
@@ -185,10 +184,12 @@ export default class PatternSelectionPlugin extends PureComponent {
           })
         );
 
-        console.log(sortedSolutionFlowElements);
-        console.log(solutionFlowElements);
-        const solutionFlowElementsLength = solutionFlowElements.length;
+        */
+        const sortedSolutionFlowElements = nonFilteredElements;
+        const solutionFlowElementsLength = nonFilteredElements.length;
         let offset = 0;
+        console.log(sortedSolutionFlowElements)
+        console.log(sortedSolutionFlowElements)
 
         for (let j = 0; j < solutionFlowElementsLength; j++) {
           let flowElement = solutionElementRegistry.get(
@@ -216,24 +217,68 @@ export default class PatternSelectionPlugin extends PureComponent {
                 { x: 50 + offset, y: 50 },
                 elementRegistry.get(collapsedSubprocess.id)
               );
+              modeling.updateProperties(elementRegistry.get(updateShape.id), {
+                id: collapsedSubprocess.id + "_" + updateShape.id,
+              });
+            
             } else {
-              // TODO: change id of elements
+              console.log("Flowelement");
+              console.log(flowElement);
+              /** 
+              let flows = [];
+              for(let i = 0; i < flowElement.incoming.length; i++){
+                flows.push(solutionElementRegistry.get(flowElement.incoming[i].id));
+              }
+              for(let i = 0; i < flowElement.outgoing.length; i++){
+                flows.push(solutionElementRegistry.get(flowElement.outgoing[i].id));
+              }
+              
+              solutionModeling.removeElements(flows);
+              */
+              console.log(solutionElementRegistry.get(
+                sortedSolutionFlowElements[j].id
+              ));
+              console.log(flowElement);
+              
+              
               updateShape = modeling.createShape(
                 flowElement,
                 { x: 442 + offset, y: 100 },
                 elementRegistry.get(collapsedSubprocess.id)
               );
+              updateShape.di.id = collapsedSubprocess.id + "_" + updateShape.id + '_di';
+              console.log(updateShape);
+
+              // change id of solution elements since each id must be unique
+              changeIdOfContainedElements(flowElement, collapsedSubprocess, solutionModeling, solutionElementRegistry, collapsedSubprocess.id + "_" + updateShape.id);
               modeling.updateProperties(elementRegistry.get(updateShape.id), {
-                id: generateRandomLetters(5) + updateShape.id,
+                id: collapsedSubprocess.id + "_" + updateShape.id,
               });
+              console.log("added cutting")
+              console.log(updateShape);
             }
             offset += 150;
 
             sourceIdToNewShapeIdMap[sortedSolutionFlowElements[j].id] =
               updateShape.id;
-            // TODO: add function to recursively add subprocess
           }
         }
+
+        solutionFlowElements = solutionRootElement.flowElements.slice();
+
+        // Filter out elements with specific $type and type values
+        const sequenceFlows = solutionFlowElements.filter((element) => {
+          const elementType = solutionElementRegistry.get(element.id).$type;
+          const elementCustomType = solutionElementRegistry.get(
+            element.id
+          ).type;
+
+          return (
+            elementType === "bpmn:SequenceFlow" ||
+            elementCustomType === "bpmn:SequenceFlow"
+          );
+        });
+        console.log(sequenceFlows);
 
         for (let j = 0; j < solutionRootElement.flowElements.length; j++) {
           let flowElement = solutionElementRegistry.get(
@@ -243,6 +288,7 @@ export default class PatternSelectionPlugin extends PureComponent {
             // Retrieve the id of the newly created shape using the map
             let sourceId = sourceIdToNewShapeIdMap[flowElement.source.id];
             let newTargetId = sourceIdToNewShapeIdMap[flowElement.target.id];
+            console.log("connect source " + sourceId + "and target" + newTargetId)
             modeling.connect(
               elementRegistry.get(sourceId),
               elementRegistry.get(newTargetId),
