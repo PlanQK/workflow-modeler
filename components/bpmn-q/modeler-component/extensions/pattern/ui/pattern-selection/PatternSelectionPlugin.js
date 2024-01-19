@@ -18,11 +18,13 @@ import {
   getModeler,
 } from "../../../../editor/ModelerHandler";
 import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
-import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
+import { getExtensionElements, getRootProcess, pushFormField } from "../../../../editor/util/ModellingUtilities";
 import { getXml, loadDiagram } from "../../../../editor/util/IoUtilities";
 import { layout } from "../../../quantme/replacement/layouter/Layouter";
 import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
 import { attachPatternsToSubprocess, changeIdOfContainedElements } from "../../util/PatternUtil";
+import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
+import { getExtension } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -107,7 +109,8 @@ export default class PatternSelectionPlugin extends PureComponent {
     let rootElement = getRootProcess(definitions);
     console.log(rootElement);
 
-    let elementToConnect = rootElement.flowElements[0];
+    let startEvent = rootElement.flowElements[0];
+    let elementToConnect = startEvent;
     console.log(elementToConnect);
     let modeling = modeler.get("modeling");
     let elementRegistry = modeler.get("elementRegistry");
@@ -211,7 +214,9 @@ export default class PatternSelectionPlugin extends PureComponent {
               isExpanded: true,
             });
             let updateShape;
-            if (type !== "quantme:CircuitCuttingSubprocess") {
+
+            // retrieve form fields from start events and add them to the initial start event
+            if (type === "bpmn:StartEvent") {
               updateShape = modeling.createShape(
                 s,
                 { x: 50 + offset, y: 50 },
@@ -220,7 +225,35 @@ export default class PatternSelectionPlugin extends PureComponent {
               modeling.updateProperties(elementRegistry.get(updateShape.id), {
                 id: collapsedSubprocess.id + "_" + updateShape.id,
               });
-            
+              let extensionElements = getExtensionElements(getBusinessObject(startEvent), modeler.get("moddle"));
+              let extensionElementsUpdateShape = getExtensionElements(getBusinessObject(flowElement), solutionModeler.get("moddle"));
+              // get form data extension
+              let form = getExtension(getBusinessObject(startEvent), "camunda:FormData");
+              let formextended = getExtension(getBusinessObject(flowElement), "camunda:FormData");
+              if (formextended) {
+                if (!form) {
+                  form = modeler.get("moddle").create("camunda:FormData");
+                }
+                for (let i = 0; i < formextended.fields.length; i++) {
+                  pushFormField(form, formextended.fields[i]);
+                }
+                extensionElements.values = [form];
+              }
+
+              modeling.updateProperties(elementRegistry.get(startEvent.id), {
+                extensionElements: extensionElements
+              });
+
+            } else if (type !== "quantme:CircuitCuttingSubprocess") {
+              updateShape = modeling.createShape(
+                s,
+                { x: 50 + offset, y: 50 },
+                elementRegistry.get(collapsedSubprocess.id)
+              );
+              modeling.updateProperties(elementRegistry.get(updateShape.id), {
+                id: collapsedSubprocess.id + "_" + updateShape.id,
+              });
+
             } else {
               console.log("Flowelement");
               console.log(flowElement);
@@ -239,8 +272,8 @@ export default class PatternSelectionPlugin extends PureComponent {
                 sortedSolutionFlowElements[j].id
               ));
               console.log(flowElement);
-              
-              
+
+
               updateShape = modeling.createShape(
                 flowElement,
                 { x: 442 + offset, y: 100 },
