@@ -43,14 +43,16 @@ export function synchronousGetRequest(url) {
 }
 
 export function synchronousPostRequest(url, type, body) {
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, false);
-  xhr.setRequestHeader("Content-Type", type);
-  xhr.send(body);
-  if (xhr.status.toString().startsWith("2")) {
-    return xhr;
-  } else {
-    throw new Error("Request failed: " + xhr.statusText);
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, false);
+    xhr.setRequestHeader("Content-Type", type);
+    xhr.send(body);
+    if (xhr.status.toString().startsWith("2")) {
+      return xhr;
+    }
+  } catch (error) {
+    console.log("Request failed to url " + url);
   }
 }
 

@@ -16,6 +16,38 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import * as consts from "../Constants";
 import { isQuantMETask } from "../utilities/Utilities";
+import {
+  ALGORITHM,
+  ALPHA,
+  CALIBRATION_METHOD,
+  CLASSICAL_ALGORTHM,
+  COST_FUNCTION,
+  CUTTING_METHOD,
+  DNN_HIDDEN_LAYER,
+  ENCODING_SCHEMA,
+  ETA,
+  LEARNING_RATE,
+  MAX_AGE,
+  MAX_CM_SIZE,
+  MAX_ITERATIONS,
+  MAX_NUMBER_OF_CUTS,
+  MAX_REM_COSTS,
+  MAX_SUBCIRCUIT_WIDTH,
+  MAXIMUM_NUM_SUBCIRCUITS,
+  MITIGATION_METHOD,
+  NEIGHBORHOOD_RANGE,
+  OBJECTIVE_FUNCTION,
+  OPTIMIZER,
+  PROGRAMMING_LANGUAGE,
+  PROVIDER,
+  QPU,
+  QUANTUM_ALGORITHM,
+  REPETITIONS,
+  ROUNDED,
+  SHOTS,
+  TOLERANCE_THRESHOLD,
+  WARM_STARTING_METHOD,
+} from "../Constants";
 
 /**
  * Check if the given task matches the detector, i.e., has the same QuantME type and matching attributes
@@ -27,13 +59,14 @@ import { isQuantMETask } from "../utilities/Utilities";
  * @return true if the detector matches the task, false otherwise
  */
 export function taskMatchesDetector(detectorElement, task) {
+  console.log("Matching for task: ", task);
   if (detectorElement.$type !== task.$type) {
     console.log("Types of detector and task do not match!");
     return false;
   }
 
   // check for attributes of the different task types
-  console.log("Matching for type: ", task.$type);
+  console.log("Task and detector are of the same type: ", task.$type);
   switch (task.$type) {
     case consts.QUANTUM_COMPUTATION_TASK:
       return matchQuantumComputationTask(detectorElement, task);
@@ -73,8 +106,13 @@ export function taskMatchesDetector(detectorElement, task) {
 function matchQuantumComputationTask(detectorElement, task) {
   // check if algorithm and provider match
   return (
-    matchesProperty(detectorElement.algorithm, task.algorithm, true) &&
-    matchesProperty(detectorElement.provider, task.provider, false)
+    matchesProperty(
+      detectorElement.algorithm,
+      task.algorithm,
+      true,
+      ALGORITHM
+    ) &&
+    matchesProperty(detectorElement.provider, task.provider, false, PROVIDER)
   );
 }
 
@@ -100,12 +138,14 @@ function matchDataPreparationTask(detectorElement, task) {
     matchesProperty(
       detectorElement.encodingSchema,
       task.encodingSchema,
-      true
+      true,
+      ENCODING_SCHEMA
     ) &&
     matchesProperty(
       detectorElement.programmingLanguage,
       task.programmingLanguage,
-      true
+      true,
+      PROGRAMMING_LANGUAGE
     )
   );
 }
@@ -125,7 +165,8 @@ function matchOracleExpansionTask(detectorElement, task) {
     matchesProperty(
       detectorElement.programmingLanguage,
       task.programmingLanguage,
-      true
+      true,
+      PROGRAMMING_LANGUAGE
     ) &&
     matchAlternativeProperties(detectorAlternatives, taskAlternatives)
   );
@@ -137,13 +178,14 @@ function matchOracleExpansionTask(detectorElement, task) {
 function matchQuantumCircuitExecutionTask(detectorElement, task) {
   // check if provider, qpu, shots, and programmingLanguage match
   return (
-    matchesProperty(detectorElement.provider, task.provider, false) &&
-    matchesProperty(detectorElement.qpu, task.qpu, false) &&
-    matchesProperty(detectorElement.shots, task.shots, false) &&
+    matchesProperty(detectorElement.provider, task.provider, false, PROVIDER) &&
+    matchesProperty(detectorElement.qpu, task.qpu, false, QPU) &&
+    matchesProperty(detectorElement.shots, task.shots, false, SHOTS) &&
     matchesProperty(
       detectorElement.programmingLanguage,
       task.programmingLanguage,
-      true
+      true,
+      PROGRAMMING_LANGUAGE
     )
   );
 }
@@ -156,35 +198,55 @@ function matchReadoutErrorMitigationTask(detectorElement, task) {
     matchesProperty(
       detectorElement.mitigationMethod,
       task.mitigationMethod,
-      true
+      true,
+      MITIGATION_METHOD
     ) &&
-    matchesProperty(detectorElement.provider, task.provider, true) &&
-    matchesProperty(detectorElement.qpu, task.qpu, true) &&
+    matchesProperty(detectorElement.provider, task.provider, true, PROVIDER) &&
+    matchesProperty(detectorElement.qpu, task.qpu, true, QPU) &&
     matchesProperty(
       detectorElement.calibrationMethod,
       task.calibrationMethod,
-      false
+      false,
+      CALIBRATION_METHOD
     ) &&
-    matchesProperty(detectorElement.shots, task.shots, false) &&
+    matchesProperty(detectorElement.shots, task.shots, false, SHOTS) &&
     matchesProperty(
       detectorElement.dnnHiddenLayer,
       task.dnnHiddenLayer,
-      false
+      false,
+      DNN_HIDDEN_LAYER
     ) &&
     matchesProperty(
       detectorElement.neighborhoodRange,
       task.neighborhoodRange,
-      false
+      false,
+      NEIGHBORHOOD_RANGE
     ) &&
     matchesProperty(
       detectorElement.objectiveFunction,
       task.objectiveFunction,
-      false
+      false,
+      OBJECTIVE_FUNCTION
     ) &&
-    matchesProperty(detectorElement.optimizer, task.optimizer, false) &&
-    matchesProperty(detectorElement.maxCMSize, task.maxCMSize, false) &&
-    matchesProperty(detectorElement.maxAge, task.maxAge, false) &&
-    matchesProperty(detectorElement.maxREMCosts, task.maxREMCosts, false)
+    matchesProperty(
+      detectorElement.optimizer,
+      task.optimizer,
+      false,
+      OPTIMIZER
+    ) &&
+    matchesProperty(
+      detectorElement.maxCMSize,
+      task.maxCMSize,
+      false,
+      MAX_CM_SIZE
+    ) &&
+    matchesProperty(detectorElement.maxAge, task.maxAge, false, MAX_AGE) &&
+    matchesProperty(
+      detectorElement.maxREMCosts,
+      task.maxREMCosts,
+      false,
+      MAX_REM_COSTS
+    )
   );
 }
 
@@ -198,29 +260,43 @@ function matchVQATask(detectorElement, task) {
       task.algorithmicProblem,
       true
     ) &&
-    matchesProperty(detectorElement.qpu, task.qpu, true) &&
-    matchesProperty(detectorElement.provider, task.provider, true) &&
+    matchesProperty(detectorElement.qpu, task.qpu, true, QPU) &&
+    matchesProperty(detectorElement.provider, task.provider, true, PROVIDER) &&
     matchesProperty(
       detectorElement.quantumAlgorithm,
       task.quantumAlgorithm,
-      true
+      true,
+      QUANTUM_ALGORITHM
     ) &&
-    matchesProperty(detectorElement.optimizer, task.optimizer, true) &&
+    matchesProperty(
+      detectorElement.optimizer,
+      task.optimizer,
+      true,
+      OPTIMIZER
+    ) &&
     matchesProperty(
       detectorElement.objectiveFunction,
       task.objectiveFunction,
-      true
+      true,
+      OBJECTIVE_FUNCTION
     ) &&
-    matchesProperty(detectorElement.cuttingMethod, task.cuttingMethod, false) &&
+    matchesProperty(
+      detectorElement.cuttingMethod,
+      task.cuttingMethod,
+      false,
+      CUTTING_METHOD
+    ) &&
     matchesProperty(
       detectorElement.warmStartingMethod,
       task.warmStartingMethod,
-      false
+      false,
+      WARM_STARTING_METHOD
     ) &&
     matchesProperty(
       detectorElement.mitigationMethod,
       task.mitigationMethod,
-      false
+      false,
+      MITIGATION_METHOD
     )
   );
 }
@@ -233,20 +309,28 @@ function matchWarmStartingTask(detectorElement, task) {
     matchesProperty(
       detectorElement.warmStartingMethod,
       task.warmStartingMethod,
-      true
+      true,
+      WARM_STARTING_METHOD
     ) &&
     matchesProperty(
       detectorElement.quantumAlgorithm,
       task.quantumAlgorithm,
-      false
+      false,
+      QUANTUM_ALGORITHM
     ) &&
     matchesProperty(
       detectorElement.classicalAlgorithm,
       task.classicalAlgorithm,
-      false
+      false,
+      CLASSICAL_ALGORTHM
     ) &&
-    matchesProperty(detectorElement.repetitions, task.repetitions, false) &&
-    matchesProperty(detectorElement.rounded, task.rounded, false)
+    matchesProperty(
+      detectorElement.repetitions,
+      task.repetitions,
+      false,
+      REPETITIONS
+    ) &&
+    matchesProperty(detectorElement.rounded, task.rounded, false, ROUNDED)
   );
 }
 
@@ -255,14 +339,30 @@ function matchWarmStartingTask(detectorElement, task) {
  */
 function matchParameterOptimizationTask(detectorElement, task) {
   return (
-    matchesProperty(detectorElement.optimizer, task.optimizer, true) &&
-    matchesProperty(detectorElement.maxIterations, task.maxIterations, false) &&
+    matchesProperty(
+      detectorElement.optimizer,
+      task.optimizer,
+      true,
+      OPTIMIZER
+    ) &&
+    matchesProperty(
+      detectorElement.maxIterations,
+      task.maxIterations,
+      false,
+      MAX_ITERATIONS
+    ) &&
     matchesProperty(
       detectorElement.toleranceThreshold,
       task.toleranceThreshold,
-      false
+      false,
+      TOLERANCE_THRESHOLD
     ) &&
-    matchesProperty(detectorElement.learningRate, task.learningRate, false)
+    matchesProperty(
+      detectorElement.learningRate,
+      task.learningRate,
+      false,
+      LEARNING_RATE
+    )
   );
 }
 
@@ -274,11 +374,17 @@ function matchResultEvaluationTask(detectorElement, task) {
     matchesProperty(
       detectorElement.objectiveFunction,
       task.objectiveFunction,
-      true
+      true,
+      OBJECTIVE_FUNCTION
     ) &&
-    matchesProperty(detectorElement.costFunction, task.costFunction, true) &&
-    matchesProperty(detectorElement.alpha, task.alpha, false) &&
-    matchesProperty(detectorElement.eta, task.eta, false)
+    matchesProperty(
+      detectorElement.costFunction,
+      task.costFunction,
+      true,
+      COST_FUNCTION
+    ) &&
+    matchesProperty(detectorElement.alpha, task.alpha, false, ALPHA) &&
+    matchesProperty(detectorElement.eta, task.eta, false, ETA)
   );
 }
 
@@ -291,17 +397,20 @@ function matchCircuitCuttingSubprocess(detectorElement, task) {
     matchesProperty(
       detectorElement.maxSubCircuitWidth,
       task.maxSubCircuitWidth,
-      false
+      false,
+      MAX_SUBCIRCUIT_WIDTH
     ) &&
     matchesProperty(
       detectorElement.maxNumberOfCuts,
       task.maxNumberOfCuts,
-      false
+      false,
+      MAX_NUMBER_OF_CUTS
     ) &&
     matchesProperty(
       detectorElement.maxNumSubCircuits,
       task.maxNumSubCircuits,
-      false
+      false,
+      MAXIMUM_NUM_SUBCIRCUITS
     )
   );
 }
@@ -311,21 +420,29 @@ function matchCircuitCuttingSubprocess(detectorElement, task) {
  */
 function matchCircuitCuttingTask(detectorElement, task) {
   return (
-    matchesProperty(detectorElement.cuttingMethod, task.cuttingMethod, true) &&
+    matchesProperty(
+      detectorElement.cuttingMethod,
+      task.cuttingMethod,
+      true,
+      CUTTING_METHOD
+    ) &&
     matchesProperty(
       detectorElement.maxSubCircuitWidth,
       task.maxSubCircuitWidth,
-      false
+      false,
+      MAX_SUBCIRCUIT_WIDTH
     ) &&
     matchesProperty(
       detectorElement.maxNumberOfCuts,
       task.maxNumberOfCuts,
-      false
+      false,
+      MAX_NUMBER_OF_CUTS
     ) &&
     matchesProperty(
       detectorElement.maxNumSubCircuits,
       task.maxNumSubCircuits,
-      false
+      false,
+      MAXIMUM_NUM_SUBCIRCUITS
     )
   );
 }
@@ -337,7 +454,8 @@ function matchCuttingResultCombinationTask(detectorElement, task) {
   return matchesProperty(
     detectorElement.cuttingMethod,
     task.cuttingMethod,
-    true
+    true,
+    CUTTING_METHOD
   );
 }
 
@@ -347,9 +465,22 @@ function matchCuttingResultCombinationTask(detectorElement, task) {
  * @param detectorProperty the value of the detector for a certain attribute
  * @param taskProperty the value of the task for a certain attribute
  * @param required true if the attribute is required, false otherwise
+ * @param propertyName the name of the property to compare
  * @return true if the attribute values of the detector and the task match, false otherwise
  */
-function matchesProperty(detectorProperty, taskProperty, required) {
+function matchesProperty(
+  detectorProperty,
+  taskProperty,
+  required,
+  propertyName
+) {
+  console.log(
+    "Comparing property with name %s: Detector value '%s', task value '%s'",
+    propertyName,
+    detectorProperty,
+    taskProperty
+  );
+
   // the detector has to define the attribute for a matching
   if (detectorProperty === undefined) {
     return false;
