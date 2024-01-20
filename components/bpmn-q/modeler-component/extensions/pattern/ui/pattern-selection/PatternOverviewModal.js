@@ -36,6 +36,7 @@ export default function PatternOverviewModal({
   const closeAlgorithmicPatternModal = () => {
     setAlgorithmicPatternModalOpen(false);
   };
+
   const selectAlgorithmicPattern = useCallback(
     (selectedPattern) => {
       if (editRow !== null) {
@@ -91,6 +92,7 @@ export default function PatternOverviewModal({
   const deleteRow = (index) => {
     const updatedRows = [...dynamicRows];
     updatedRows.splice(index, 1);
+    resetData();
     setDynamicRows(updatedRows);
   };
 
@@ -114,6 +116,14 @@ export default function PatternOverviewModal({
     }
     return false;
   };
+
+  const resetData = () => {
+    setButtonSelectedPatterns({});
+  setAlgorithmicPatternModalOpen(false);
+  setDynamicRows([]);
+  setEditRow(null); // State to store the row being edited
+  setEditRowData(null);
+  }
   return (
     <Modal onClose={onClose}>
       <Title>Pattern Selection</Title>
