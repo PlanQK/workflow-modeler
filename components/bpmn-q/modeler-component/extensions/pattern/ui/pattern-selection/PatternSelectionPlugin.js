@@ -25,6 +25,7 @@ import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
 import { attachPatternsToSubprocess, changeIdOfContainedElements } from "../../util/PatternUtil";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import { getExtension } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import * as quantmeConsts from "../../../quantme/Constants";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -244,7 +245,8 @@ export default class PatternSelectionPlugin extends PureComponent {
                 extensionElements: extensionElements
               });
 
-            } else if (type !== "quantme:CircuitCuttingSubprocess") {
+            } else if (type !== quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS && type !== quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS &&
+              type !== "bpmn:SubProcess") {
               /** 
               updateShape = modeling.createShape(
                 s,

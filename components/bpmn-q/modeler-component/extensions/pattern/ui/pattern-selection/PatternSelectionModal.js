@@ -131,7 +131,6 @@ export default function PatternSelectionModal({
     } else if (category === "combined") {
       if (selectedErrorMitigatedPatternRadioButton) {
         setSelectedMitigitationCombinedPattern([]);
-        setSelectedAugmentationPatterns([]);
       }
       setSelectedErrorMitigatedPatternRadioButton(
         !selectedErrorMitigatedPatternRadioButton
