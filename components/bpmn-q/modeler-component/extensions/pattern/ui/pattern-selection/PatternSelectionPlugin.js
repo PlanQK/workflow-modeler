@@ -245,6 +245,7 @@ export default class PatternSelectionPlugin extends PureComponent {
               });
 
             } else if (type !== "quantme:CircuitCuttingSubprocess") {
+              /** 
               updateShape = modeling.createShape(
                 s,
                 { x: 50 + offset, y: 50 },
@@ -253,6 +254,16 @@ export default class PatternSelectionPlugin extends PureComponent {
               modeling.updateProperties(elementRegistry.get(updateShape.id), {
                 id: collapsedSubprocess.id + "_" + updateShape.id,
               });
+              */
+              updateShape = modeling.createShape(
+                flowElement,
+                { x: 442 + offset, y: 100 },
+                elementRegistry.get(collapsedSubprocess.id)
+              );
+              modeling.updateProperties(elementRegistry.get(updateShape.id), {
+                id: collapsedSubprocess.id + "_" + updateShape.id,
+              });
+              updateShape.di.id = collapsedSubprocess.id + "_" + updateShape.id + '_di';
 
             } else {
               console.log("Flowelement");
