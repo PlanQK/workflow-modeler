@@ -204,11 +204,37 @@ export async function startQuantmeReplacementProcess(
     }
   }
 
+  removeDiagramElements(modeler);
+
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
   let updated_xml = await getXml(modeler);
   console.log(updated_xml);
   return { status: "transformed", xml: updated_xml };
+}
+
+/**
+ * Remove empty plane elements from false collapsed subprocesses.
+ *
+ * @param modeler
+ */
+function removeDiagramElements(modeler) {
+  let definitions = modeler.getDefinitions();
+  let elementsToRemove = [];
+  let diagrams = definitions.diagrams;
+  for (let i = 0; i < diagrams.length; i++) {
+    if (diagrams[i].plane.planeElement == undefined) {
+      elementsToRemove.push(diagrams[i]);
+    }
+  }
+
+  // Remove empty diagram elements from the diagrams array
+  for (let i = 0; i < elementsToRemove.length; i++) {
+    let indexToRemove = diagrams.indexOf(elementsToRemove[i]);
+    if (indexToRemove !== -1) {
+      diagrams.splice(indexToRemove, 1);
+    }
+  }
 }
 
 /**
@@ -220,25 +246,29 @@ export function getQuantMETasks(process, elementRegistry) {
 
   const quantmeTasks = [];
   const flowElements = process.flowElements;
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    if (flowElement.$type && flowElement.$type.startsWith("quantme:")) {
-      quantmeTasks.push({ task: flowElement, parent: processBo });
-    }
+  if (flowElements !== undefined) {
+    for (let i = 0; i < flowElements.length; i++) {
+      let flowElement = flowElements[i];
+      if (flowElement.$type && flowElement.$type.startsWith("quantme:")) {
+        quantmeTasks.push({ task: flowElement, parent: processBo });
+      }
 
-    // recursively retrieve QuantME tasks if subprocess is found
-    if (
-      flowElement.$type &&
-      (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
-    ) {
-      Array.prototype.push.apply(
-        quantmeTasks,
-        getQuantMETasks(flowElement, elementRegistry)
-      );
+      // recursively retrieve QuantME tasks if subprocess is found
+      if (
+        flowElement.$type &&
+        (flowElement.$type === "bpmn:SubProcess" ||
+          flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
+      ) {
+        Array.prototype.push.apply(
+          quantmeTasks,
+          getQuantMETasks(flowElement, elementRegistry)
+        );
+      }
     }
+    return quantmeTasks;
+  } else {
+    return quantmeTasks;
   }
-  return quantmeTasks;
 }
 
 /**
@@ -412,52 +442,55 @@ async function replaceByFragment(
  * @param moddle
  */
 function addQProvEndpoint(rootElement, elementRegistry, modeling, moddle) {
-  for (let flowElement of rootElement.flowElements) {
-    if (flowElement.$type === "bpmn:StartEvent") {
-      let startEvent = elementRegistry.get(flowElement.id);
+  if (rootElement.flowElements !== undefined) {
+    for (let flowElement of rootElement.flowElements) {
+      if (flowElement.$type === "bpmn:StartEvent") {
+        let startEvent = elementRegistry.get(flowElement.id);
 
-      let extensionElements =
-        startEvent.businessObject.get("extensionElements");
+        let extensionElements =
+          startEvent.businessObject.get("extensionElements");
 
-      if (!extensionElements) {
-        extensionElements = moddle.create("bpmn:ExtensionElements");
+        if (!extensionElements) {
+          extensionElements = moddle.create("bpmn:ExtensionElements");
+        }
+
+        let form = extensionElements.get("values").filter(function (elem) {
+          return elem.$type == "camunda:FormData";
+        })[0];
+
+        if (!form) {
+          form = moddle.create("camunda:FormData");
+        }
+
+        // remove qprov endpoint and camunda endpoint if they exist
+        const updatedFields = form
+          .get("fields")
+          .filter(
+            (element) =>
+              element.id !== "CAMUNDA_ENDPOINT" &&
+              element.id !== "QPROV_ENDPOINT"
+          );
+        form.fields = updatedFields;
+        const formFieldCamundaEndpoint = moddle.create("camunda:FormField", {
+          defaultValue: getCamundaEndpoint(),
+          id: "CAMUNDA_ENDPOINT",
+          label: "Camunda Endpoint",
+          type: "string",
+        });
+        form.get("fields").push(formFieldCamundaEndpoint);
+
+        const formFieldQProvEndpoint = moddle.create("camunda:FormField", {
+          defaultValue: getQProvEndpoint(),
+          id: "QPROV_ENDPOINT",
+          label: "QProv Endpoint",
+          type: "string",
+        });
+        form.get("fields").push(formFieldQProvEndpoint);
+
+        modeling.updateProperties(startEvent, {
+          extensionElements: extensionElements,
+        });
       }
-
-      let form = extensionElements.get("values").filter(function (elem) {
-        return elem.$type == "camunda:FormData";
-      })[0];
-
-      if (!form) {
-        form = moddle.create("camunda:FormData");
-      }
-
-      // remove qprov endpoint and camunda endpoint if they exist
-      const updatedFields = form
-        .get("fields")
-        .filter(
-          (element) =>
-            element.id !== "CAMUNDA_ENDPOINT" && element.id !== "QPROV_ENDPOINT"
-        );
-      form.fields = updatedFields;
-      const formFieldCamundaEndpoint = moddle.create("camunda:FormField", {
-        defaultValue: getCamundaEndpoint(),
-        id: "CAMUNDA_ENDPOINT",
-        label: "Camunda Endpoint",
-        type: "string",
-      });
-      form.get("fields").push(formFieldCamundaEndpoint);
-
-      const formFieldQProvEndpoint = moddle.create("camunda:FormField", {
-        defaultValue: getQProvEndpoint(),
-        id: "QPROV_ENDPOINT",
-        label: "QProv Endpoint",
-        type: "string",
-      });
-      form.get("fields").push(formFieldQProvEndpoint);
-
-      modeling.updateProperties(startEvent, {
-        extensionElements: extensionElements,
-      });
     }
   }
 }
