@@ -232,11 +232,16 @@ export default class PatternSelectionPlugin extends PureComponent {
                 // get form data extension
                 let form = getExtension(getBusinessObject(startEvent), "camunda:FormData");
                 let formextended = getExtension(getBusinessObject(flowElement), "camunda:FormData");
+                let script = '';
                 if (formextended) {
                   if (!form) {
                     form = modeler.get("moddle").create("camunda:FormData");
                   }
                   for (let i = 0; i < formextended.fields.length; i++) {
+                    let id = formextended.fields[i].id;
+                    let updatedId = id + updateShape.id;
+                    formextended.fields[i].id = updatedId
+                    script += `def ${updatedId}Value = execution.getVariable("${updatedId}");\n execution.setVariable("${id}", ${updatedId}Value)\n`;
                     pushFormField(form, formextended.fields[i]);
                   }
                   extensionElements.values = [form];
@@ -245,6 +250,43 @@ export default class PatternSelectionPlugin extends PureComponent {
                 modeling.updateProperties(elementRegistry.get(startEvent.id), {
                   extensionElements: extensionElements
                 });
+
+                // if mapping is required then the script task has to inserted and the outgoing flows have to be changed
+                if (script) {
+
+                  let mapFormFieldScriptTask = elementFactory.createShape({
+                    type: "bpmn:ScriptTask"
+                  });
+
+                  let shape = modeling.createShape(
+                    mapFormFieldScriptTask,
+                    { x: 50, y: 50 },
+                    elementRegistry.get(collapsedSubprocess.id)
+                  );
+                  let shapeBo = elementRegistry.get(
+                    shape.id
+                  ).businessObject;
+
+                  shapeBo.name = "Map Form Fields to Execution Variables";
+                  shapeBo.scriptFormat = "groovy";
+                  shapeBo.script = script;
+                  shapeBo.asyncBefore = true;
+
+                  let outgoingFlows = [];
+                  let start = elementRegistry.get(updateShape.id);
+                  flowElement.outgoing.forEach((element) => {
+                    outgoingFlows.push(solutionElementRegistry.get(element.id));
+                    modeling.connect(shape, solutionElementRegistry.get(element.target.id), {
+                      type: "bpmn:SequenceFlow",
+                    });
+                  });
+                  modeling.connect(
+                    start,
+                    shape,
+                    { type: "bpmn:SequenceFlow" }
+                  );
+                  solutionModeling.removeElements(outgoingFlows);
+                }
 
               } else if (type !== quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS && type !== quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS &&
                 type !== "bpmn:SubProcess") {
@@ -385,23 +427,24 @@ export default class PatternSelectionPlugin extends PureComponent {
         elementRegistry.get(endEvent.id),
         { type: "bpmn:SequenceFlow" }
       );
-    }
-    let collapsedXml = await getXml(modeler);
-    loadDiagram(collapsedXml, getModeler());
-    modeler = await createTempModelerFromXml(collapsedXml);
-    elementRegistry = modeler.get("elementRegistry");
-    modeling = modeler.get("modeling");
-    definitions = modeler.getDefinitions();
-    rootElement = getRootProcess(definitions);
 
-    console.log(rootElement);
-    let elements = [];
-    for (let i = 0; i < rootElement.flowElements; i++) {
-      elements.push(elementRegistry.get(rootElement.flowElement[i].id));
+      let collapsedXml = await getXml(modeler);
+      loadDiagram(collapsedXml, getModeler());
+      modeler = await createTempModelerFromXml(collapsedXml);
+      elementRegistry = modeler.get("elementRegistry");
+      modeling = modeler.get("modeling");
+      definitions = modeler.getDefinitions();
+      rootElement = getRootProcess(definitions);
+
+      console.log(rootElement);
+      let elements = [];
+      for (let i = 0; i < rootElement.flowElements; i++) {
+        elements.push(elementRegistry.get(rootElement.flowElement[i].id));
+      }
+      layout(modeling, elementRegistry, rootElement);
+      collapsedXml = await getXml(modeler);
+      loadDiagram(collapsedXml, getModeler());
     }
-    layout(modeling, elementRegistry, rootElement);
-    collapsedXml = await getXml(modeler);
-    loadDiagram(collapsedXml, getModeler());
   }
 
   render() {
