@@ -416,7 +416,7 @@ function matchCircuitCuttingSubprocess(detectorElement, task) {
 }
 
 /**
- * Compare the properties of QuantumCircuitExecutionTasks
+ * Compare the properties of Circuit Cutting Task
  */
 function matchCircuitCuttingTask(detectorElement, task) {
   return (
@@ -425,32 +425,15 @@ function matchCircuitCuttingTask(detectorElement, task) {
       task.cuttingMethod,
       true,
       CUTTING_METHOD
-    ) &&
-    matchesProperty(
-      detectorElement.maxSubCircuitWidth,
-      task.maxSubCircuitWidth,
-      false,
-      MAX_SUBCIRCUIT_WIDTH
-    ) &&
-    matchesProperty(
-      detectorElement.maxNumberOfCuts,
-      task.maxNumberOfCuts,
-      false,
-      MAX_NUMBER_OF_CUTS
-    ) &&
-    matchesProperty(
-      detectorElement.maxNumSubCircuits,
-      task.maxNumSubCircuits,
-      false,
-      MAXIMUM_NUM_SUBCIRCUITS
     )
   );
 }
 
 /**
- * Compare the properties of QuantumCircuitExecutionTasks
+ * Compare the properties of Result Combination Tak
  */
 function matchCuttingResultCombinationTask(detectorElement, task) {
+  console.log(detectorElement.cuttingMethod)
   return matchesProperty(
     detectorElement.cuttingMethod,
     task.cuttingMethod,

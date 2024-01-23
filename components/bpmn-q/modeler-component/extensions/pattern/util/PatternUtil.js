@@ -100,7 +100,7 @@ export function attachPatternsToSuitableConstruct(
     if (!containsPattern) {
       if (
         patternType === consts.WARM_START &&
-        (type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK || type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK)
+        (type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK)
       ) {
         attachPatternToShape(construct, patternType, modeling);
         console.log("added warm_start");

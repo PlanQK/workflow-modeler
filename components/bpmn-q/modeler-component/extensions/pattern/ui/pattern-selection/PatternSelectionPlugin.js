@@ -116,7 +116,7 @@ export default class PatternSelectionPlugin extends PureComponent {
     let modeling = modeler.get("modeling");
     let elementRegistry = modeler.get("elementRegistry");
     modeling.updateProperties(elementRegistry.get(elementToConnect.id), {
-      id: "Test" + elementToConnect.id,
+      id: "Pattern_" + elementToConnect.id,
     });
     let elementFactory = modeler.get("elementFactory");
     if (result) {
