@@ -42,13 +42,19 @@ export async function rewriteWorkflow(
       viewModeler = modeler;
       viewElementRegistry = elementRegistry;
     } else {
+      console.log(modeler.views)
       console.log(
         "View before rewriting already exists. Updating existing view!"
       );
       let existingView = modeler.views["view-before-rewriting"];
       console.log("Existing view has Xml: ", existingView);
-      viewModeler = await createTempModelerFromXml(existingView);
-      viewElementRegistry = viewModeler.get("elementRegistry");
+      if (existingView !== undefined) {
+        viewModeler = await createTempModelerFromXml(existingView);
+        viewElementRegistry = viewModeler.get("elementRegistry");
+      }else{
+        viewModeler = modeler;
+      viewElementRegistry = elementRegistry;
+      }
     }
 
     // adapt process view before export
