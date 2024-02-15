@@ -184,6 +184,7 @@ export async function startPatternReplacementProcess(xml) {
   console.log(optimizationCandidates)
 
   console.log(behaviorReplacementConstructs);
+
   for (let replacementConstruct of behaviorReplacementConstructs) {
     let replacementSuccess = false;
     if (
@@ -194,7 +195,16 @@ export async function startPatternReplacementProcess(xml) {
       replacementSuccess = true;
     }
     if (replacementConstruct.task.$type === constants.PRE_DEPLOYED_EXECUTION) {
+      console.log("Replace pre-deployed execution");
       for (let i = 0; i < optimizationCandidates.length; i++) {
+        console.log(optimizationCandidates[i].entryPoint);
+        let parent = elementRegistry.get(optimizationCandidates[i].entryPoint.id).parent;
+        let attachedPatterns = parent.attachers;
+
+        // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+        const foundElement = attachedPatterns.find(attachedPattern => attachedPattern.type !== replacementConstruct.task.$type);
+        if (!foundElement) {
+        
         optimizationCandidates[i].modeler = modeler;
         let programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(optimizationCandidates[i], modeler.config, getQRMs());
         console.log(programGenerationResult);
@@ -204,6 +214,7 @@ export async function startPatternReplacementProcess(xml) {
           getHybridRuntimeProvenance(),
           programGenerationResult.hybridProgramId
         );
+        }
       }
       const pattern = elementRegistry.get(replacementConstruct.task.id);
       patterns.push(pattern);
@@ -212,6 +223,7 @@ export async function startPatternReplacementProcess(xml) {
     }
 
     if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
+      console.log("Replace prioritized execution");
       // add session task
       for (let i = 0; i < optimizationCandidates.length; i++) {
         optimizationCandidates[i].modeler = modeler;
