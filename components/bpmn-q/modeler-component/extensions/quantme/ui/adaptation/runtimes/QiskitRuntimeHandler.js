@@ -27,6 +27,8 @@ import {
 import { getXml } from "../../../../../editor/util/IoUtilities";
 import { createTempModelerFromXml } from "../../../../../editor/ModelerHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
+import { getWineryEndpoint } from "../../../../opentosca/framework-config/config-manager";
+import { getHybridRuntimeProvenance, getQiskitRuntimeHandlerEndpoint } from "../../../framework-config/config-manager";
 
 /**
  * Generate a Qiskit Runtime program for the given candidate
@@ -59,6 +61,8 @@ export async function getQiskitRuntimeProgramDeploymentModel(
   }
 
   let xml = await getXml(candidate.modeler);
+  console.log("xmlQiskit");
+  console.log(xml);
 
   // transform QuantME tasks within candidate
   let transformationResult = await startQuantmeReplacementProcess(
@@ -79,7 +83,12 @@ export async function getQiskitRuntimeProgramDeploymentModel(
   let rootElement = getRootProcess(modeler.getDefinitions());
 
   // check if transformed XML contains invalid modeling constructs
-  let invalidModelingConstruct = getInvalidModelingConstruct(rootElement);
+  let elementRegistry = modeler.get("elementRegistry");
+  rootElement = elementRegistry.get(rootElement.id);
+  console.log(rootElement)
+  let invalidModelingConstruct = undefined;
+  //getInvalidModelingConstruct(rootElement);
+  console.log(invalidModelingConstruct);
   if (invalidModelingConstruct !== undefined) {
     console.log(
       "Found invalid modeling construct of type: ",
@@ -92,21 +101,25 @@ export async function getQiskitRuntimeProgramDeploymentModel(
     };
   }
 
+  let wineryEndpoint = getWineryEndpoint();
   // check if all service tasks have either a deployment model attached and all script tasks provide the code inline and retrieve the files
   let requiredPrograms = await getRequiredPrograms(
     rootElement,
-    modelerConfig.wineryEndpoint
+    wineryEndpoint
   );
   if (requiredPrograms.error !== undefined) {
     return { error: requiredPrograms.error };
   }
 
+  let qiskitRuntimeHandlerEndpoint = getQiskitRuntimeHandlerEndpoint();
+  let hybridRuntimeProvenance = getHybridRuntimeProvenance();
+
   // invoke handler and return resulting hybrid program or error message
   let runtimeGenerationResult = await invokeQiskitRuntimeHandler(
     candidate,
     requiredPrograms,
-    modelerConfig.qiskitRuntimeHandlerEndpoint,
-    modelerConfig.hybridRuntimeProvenance,
+    qiskitRuntimeHandlerEndpoint,
+    hybridRuntimeProvenance,
     modeler
   );
   if (runtimeGenerationResult.error !== undefined) {
@@ -117,7 +130,7 @@ export async function getQiskitRuntimeProgramDeploymentModel(
   let deploymentModelUrl = await createDeploymentModel(
     candidate,
     runtimeGenerationResult,
-    modelerConfig.wineryEndpoint
+    wineryEndpoint
   );
   if (deploymentModelUrl.error !== undefined) {
     return { error: deploymentModelUrl.error };

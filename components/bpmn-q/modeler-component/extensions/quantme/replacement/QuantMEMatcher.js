@@ -382,9 +382,7 @@ function matchResultEvaluationTask(detectorElement, task) {
       task.costFunction,
       true,
       COST_FUNCTION
-    ) &&
-    matchesProperty(detectorElement.alpha, task.alpha, false, ALPHA) &&
-    matchesProperty(detectorElement.eta, task.eta, false, ETA)
+    )
   );
 }
 

@@ -13,6 +13,7 @@ import lodash from "lodash";
 import generateImage from "../../../../editor/util/camunda-utils/generateImage";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
+import { getXml } from "../../../../editor/util/IoUtilities";
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
@@ -30,7 +31,7 @@ export async function findOptimizationCandidates(modeler) {
   );
 
   // export xml of the current workflow model to enable a later image creation
-  let workflowXml = await modeler.get("bpmnjs").saveXML();
+  let workflowXml = await getXml(modeler);
 
   // get all potential entry points for a hybrid loop
   let entryPoints = findEntryPoints(rootElement);
@@ -61,7 +62,7 @@ export async function findOptimizationCandidates(modeler) {
       // generate visual representation of the candidate using base64
       optimizationCandidate = await visualizeCandidate(
         optimizationCandidate,
-        workflowXml.xml
+        workflowXml
       );
 
       console.log(
@@ -90,7 +91,7 @@ export async function findOptimizationCandidates(modeler) {
  */
 async function visualizeCandidate(optimizationCandidate, workflowXml) {
   console.log("Visualizing optimization candidate: ", optimizationCandidate);
-
+  console.log(workflowXml)
   // create new modeler for the visualization
   let modeler = await createTempModelerFromXml(workflowXml);
   let modeling = modeler.get("modeling");
@@ -121,15 +122,19 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
   // remove all shapes that are not part of the candidate
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
+    console.log(flowElement)
     if (
       !optimizationCandidate.containedElements.some(
         (e) => e.id === flowElement.id
       ) &&
-      flowElement.$type !== "bpmn:SequenceFlow"
+      flowElement.$type !== "bpmn:SequenceFlow" && flowElement.$type !== "pattern:PredeployedExecution"
     ) {
       // remove shape from the modeler
       let element = elementRegistry.get(flowElement.id);
+      console.log(element)
+      if(element !== undefined){
       modeling.removeShape(element);
+      }
     }
   }
   console.log(
@@ -173,6 +178,10 @@ function calculateViewBox(optimizationCandidate, svg, elementRegistry) {
     let element = elementRegistry.get(
       optimizationCandidate.containedElements[i].id
     );
+
+    console.log(optimizationCandidate);
+    console.log(optimizationCandidate.containedElements[i].id)
+    element = optimizationCandidate.containedElements[i].id;
 
     // for sequence flows check the position of each waypoint and label
     if (element.type === "bpmn:SequenceFlow") {
@@ -314,6 +323,7 @@ function findEntryPoints(rootElement) {
  */
 function getXOREntryPoints(rootElement) {
   let entryPoints = [];
+  console.log("find xor entry point ", rootElement)
 
   // search for XOR gateways within the workflow
   const flowElements = rootElement.flowElements;
@@ -331,6 +341,15 @@ function getXOREntryPoints(rootElement) {
         entryPoints.push(flowElement);
       }
     }
+
+    if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
+      console.log("Found subprocess ", flowElement);
+      Array.prototype.push.apply(entryPoints, getXOREntryPoints(flowElement));
+
+      // recursively call method to find optimization candidates
+      
+    }
+    
   }
 
   return entryPoints;

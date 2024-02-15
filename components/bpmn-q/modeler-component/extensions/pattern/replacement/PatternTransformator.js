@@ -19,6 +19,11 @@ import { replaceErrorCorrectionPattern } from "./correction/ErrorCorrectionPatte
 import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
 import * as quantmeConsts from "../../quantme/Constants";
 import { attachPatternsToSuitableConstruct } from "../util/PatternUtil";
+import { findOptimizationCandidates } from "../../quantme/ui/adaptation/CandidateDetector";
+import { getQRMs } from "../../quantme/qrm-manager";
+import { rewriteWorkflow } from "../../quantme/ui/adaptation/WorkflowRewriter";
+import { getQiskitRuntimeProgramDeploymentModel } from "../../quantme/ui/adaptation/runtimes/QiskitRuntimeHandler";
+import { getHybridRuntimeProvenance } from "../../quantme/framework-config/config-manager";
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
  *
@@ -47,8 +52,8 @@ export async function startPatternReplacementProcess(xml) {
   let replacementConstructs = getPatterns(rootElement, elementRegistry);
   console.log(
     "Process contains " +
-      replacementConstructs.length +
-      " patterns to replace..."
+    replacementConstructs.length +
+    " patterns to replace..."
   );
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
@@ -87,8 +92,8 @@ export async function startPatternReplacementProcess(xml) {
       if (!replaced) {
         console.log(
           "Replacement of Pattern with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!"
+          replacementConstruct.task.id +
+          " failed. Aborting process!"
         );
         return {
           status: "failed",
@@ -112,6 +117,10 @@ export async function startPatternReplacementProcess(xml) {
     (construct) =>
       constants.AUGMENTATION_PATTERNS.includes(construct.task.$type)
   );
+
+  let behaviorReplacementConstructs = replacementConstructs.filter(
+    (construct) => constants.BEHAVIORAL_PATTERNS.includes(construct.task.$type)
+  )
 
   for (let replacementConstruct of augmentationReplacementConstructs) {
     let replacementSuccess = false;
@@ -152,8 +161,8 @@ export async function startPatternReplacementProcess(xml) {
     if (!replacementSuccess) {
       console.log(
         "Replacement of Pattern with Id " +
-          replacementConstruct.task.id +
-          " failed. Aborting process!"
+        replacementConstruct.task.id +
+        " failed. Aborting process!"
       );
       return {
         status: "failed",
@@ -165,8 +174,102 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  let elementsToDelete = patterns.concat(allFlow);
+  //let s = await getXml(modeler);
+  //console.log(s);
+  //let tempModeler = await createTempModelerFromXml(s);
+  //console.log(tempModeler)
+  const optimizationCandidates = await findOptimizationCandidates(
+    modeler
+  );
+  console.log(optimizationCandidates)
+
+  console.log(behaviorReplacementConstructs);
+  for (let replacementConstruct of behaviorReplacementConstructs) {
+    let replacementSuccess = false;
+    if (
+      replacementConstruct.task.$type === constants.ORCHESTRATED_EXECUTION
+    ) {
+      const pattern = elementRegistry.get(replacementConstruct.task.id);
+      patterns.push(pattern);
+      replacementSuccess = true;
+    }
+    if (replacementConstruct.task.$type === constants.PRE_DEPLOYED_EXECUTION) {
+      for (let i = 0; i < optimizationCandidates.length; i++) {
+        optimizationCandidates[i].modeler = modeler;
+        let programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(optimizationCandidates[i], modeler.config, getQRMs());
+        console.log(programGenerationResult);
+        let rewritingResult = await rewriteWorkflow(
+          modeler,
+          optimizationCandidates[i],
+          getHybridRuntimeProvenance(),
+          programGenerationResult.hybridProgramId
+        );
+      }
+      const pattern = elementRegistry.get(replacementConstruct.task.id);
+      patterns.push(pattern);
+      console.log("replaced")
+      replacementSuccess = true;
+    }
+
+    if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
+      // add session task
+      for (let i = 0; i < optimizationCandidates.length; i++) {
+        optimizationCandidates[i].modeler = modeler;
+        let programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(optimizationCandidates[i], modeler.config, getQRMs());
+        console.log(programGenerationResult);
+      }
+      const pattern = elementRegistry.get(replacementConstruct.task.id);
+      patterns.push(pattern);
+      replacementSuccess = true;
+    }
+
+    if (!replacementSuccess) {
+      console.log(
+        "Replacement of Pattern with Id " +
+        replacementConstruct.task.id +
+        " failed. Aborting process!"
+      );
+      return {
+        status: "failed",
+        cause:
+          "Replacement of Pattern with Id " +
+          replacementConstruct.task.id +
+          " failed. Aborting process!",
+      };
+    }
+  }
+
+  let elementsToDelete = patterns;
+  //patterns.concat(allFlow);
+  console.log("df");
+  console.log(elementsToDelete)
   modeling.removeElements(elementsToDelete);
+  //layout(modeling, elementRegistry, rootElement);
+  //let s = await getXml(modeler);
+  //console.log(s);
+  //let tempModeler = await createTempModelerFromXml(s);
+  //console.log(tempModeler)
+  //const optimizationCandidates = await findOptimizationCandidates(
+  //  tempModeler
+  //);
+
+  /** 
+    console.log(optimizationCandidates);
+    //console.log(tempModeler);
+    console.log(getHybridRuntimeProvenance())
+    for (let i = 0; i < optimizationCandidates.length; i++) {
+      optimizationCandidates[i].modeler = modeler;
+      let programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(optimizationCandidates[i], modeler.config, getQRMs());
+      console.log(programGenerationResult)
+      let rewritingResult = await rewriteWorkflow(
+        tempModeler,
+        optimizationCandidates[i],
+        getHybridRuntimeProvenance(),
+        programGenerationResult.hybridProgramId
+      );
+    }
+  
+    */
 
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
@@ -195,7 +298,7 @@ export function getPatterns(process, elementRegistry) {
       (flowElement.$type === "bpmn:SubProcess" ||
         flowElement.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS ||
         flowElement.$type ===
-          quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS)
+        quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS)
     ) {
       Array.prototype.push.apply(
         patterns,
@@ -221,35 +324,41 @@ export function attachPatternsToSuitableTasks(
   let shapesToRemove = [];
   for (let j = 0; j < patterns.length; j++) {
     pattern = elementRegistry.get(patterns[j].task.id);
+    console.log(pattern);
     if (pattern !== undefined) {
-      for (let i = 0; i < flowElements.length; i++) {
-        let flowElement = flowElements[i];
+      if (!constants.BEHAVIORAL_PATTERNS.includes(pattern.type)) {
+        for (let i = 0; i < flowElements.length; i++) {
+          let flowElement = flowElements[i];
 
-        if (
-          (flowElement.$type && flowElement.$type === "bpmn:SubProcess") ||
-          (flowElement.type && flowElement.type === "bpmn:SubProcess")
-        ) {
-          attachPatternsToSuitableTasks(
-            flowElement,
-            elementRegistry,
-            patterns,
-            modeling
-          );
 
-          // After processing subprocess, add pattern for later removal
-          if (flowElement.id === pattern.host.id) {
-            shapesToRemove.push(pattern);
+          if (
+            (flowElement.$type && flowElement.$type === "bpmn:SubProcess") ||
+            (flowElement.type && flowElement.type === "bpmn:SubProcess")
+          ) {
+            attachPatternsToSuitableTasks(
+              flowElement,
+              elementRegistry,
+              patterns,
+              modeling
+            );
+
+            // After processing subprocess, add pattern for later removal
+            if (pattern.host !== undefined && pattern.host !== null) {
+              if (flowElement.id === pattern.host.id) {
+                shapesToRemove.push(pattern);
+              }
+            }
+          } else {
+            attachPatternsToSuitableConstruct(
+              elementRegistry.get(flowElement.id),
+              pattern.type,
+              modeling
+            );
           }
-        } else {
-          attachPatternsToSuitableConstruct(
-            elementRegistry.get(flowElement.id),
-            pattern.type,
-            modeling
-          );
         }
+        shapesToRemove.forEach((shape) => modeling.removeShape(shape));
+        shapesToRemove = [];
       }
-      shapesToRemove.forEach((shape) => modeling.removeShape(shape));
-      shapesToRemove = [];
     }
   }
 
