@@ -48,17 +48,18 @@
         <semantic:conditionExpression xsi:type="semantic:tFormalExpression" language="groovy">def executionState = execution.getVariable("executionState");
 def maxIterations = execution.getVariable("maxIterations");
 def iterations = execution.getVariable("iterations");
-
-if ((executionState == "PENDING" || executionState == "RUNNING") &amp;&amp; maxIterations != "unbounded") {
-    if (iterations &lt; maxIterations) {
-        return true;
+if (executionState == "PENDING" || executionState == "RUNNING") {
+    if (maxIterations != "unbounded") {
+        if (iterations &lt; maxIterations.toInteger()) {
+            return true;
+        } else {
+            return false;
+        }
     }else{
-return false;
-}
-}else if ((executionState == "PENDING" || executionState== "RUNNING") &amp;&amp; maxIterations == "unbounded") {
-return true;
-}else{
-return false;
+        return true;
+    }
+} else {
+    return false;
 }</semantic:conditionExpression>
       </semantic:sequenceFlow>
       <semantic:sequenceFlow id="Flow_080k7s4" sourceRef="Event_1du4ral" targetRef="Activity_Call_Service" />
@@ -67,15 +68,14 @@ return false;
         <semantic:conditionExpression xsi:type="semantic:tFormalExpression" language="groovy">def executionState = execution.getVariable("executionState");
 def maxIterations = execution.getVariable("maxIterations");
 def iterations = execution.getVariable("iterations");
-
-if (executionState == "FAILED" || executionState == "UNKNOWN") {
-  return true;
-}else if (maxIterations != "unbounded") {
-  if(iterations &gt;= maxIterations) {
+if (executionState == "UNKNOWN" &amp;&amp; executionState == "FAILED") {
     return true;
-  }
-}else{
-  return false;
+} else if (maxIterations != "unbounded") {
+    if (iterations &gt;= maxIterations.toInteger()) {
+        return true;
+    } else {
+        return false;
+    }
 }</semantic:conditionExpression>
       </semantic:sequenceFlow>
       <semantic:endEvent id="Event_0m8b2ic">
