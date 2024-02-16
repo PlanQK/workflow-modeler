@@ -637,16 +637,25 @@ export default class DeploymentPlugin extends PureComponent {
     }
 
     // get all ServiceTasks with associated deployment model
-    let csarsToDeploy = getServiceTasksToDeploy(
+    let result = getServiceTasksToDeploy(
       getRootProcess(this.modeler.getDefinitions())
     );
-
-    if (csarsToDeploy.length === 0) {
+    const csarsToDeploy = result.csarsToDeploy;
+    const status = result.status;
+    if (status === "failed") {
       NotificationHandler.getInstance().displayNotification({
         type: "info",
-        title: "No ServiceTasks with associated deployment models",
+        title: "Request for completion failed",
         content:
-          "The workflow does not contain ServiceTasks with associated deployment models. No service deployment required!",
+          "The workflow contains service tasks with associated deployment models but the completion request failed!",
+        duration: 20000,
+      });
+    } else if (csarsToDeploy.length === 0) {
+      NotificationHandler.getInstance().displayNotification({
+        type: "info",
+        title: "No service tasks with associated deployment models",
+        content:
+          "The workflow does not contain service tasks with associated deployment models. No service deployment required!",
         duration: 20000,
       });
     }

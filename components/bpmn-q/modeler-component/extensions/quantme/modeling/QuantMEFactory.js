@@ -44,7 +44,7 @@ export default class QuantMEFactory extends BpmnFactory {
     // setting default for selectlist
     if (element.$type === READOUT_ERROR_MITIGATION_TASK) {
       element.mitigationMethod = "matrixInversion";
-      element.calibrationMethod = "fullMatrix";
+      element.calibrationMethod = "standard";
     }
 
     if (element.$type === CIRCUIT_CUTTING_SUBPROCESS) {

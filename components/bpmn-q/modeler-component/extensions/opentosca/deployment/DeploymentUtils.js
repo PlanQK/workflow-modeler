@@ -15,7 +15,7 @@ import {
   synchronousGetRequest,
   synchronousPostRequest,
 } from "../utilities/Utilities";
-import config from "../framework-config/config";
+import { getWineryEndpoint } from "../framework-config/config-manager";
 import { getModeler } from "../../../editor/ModelerHandler";
 
 /**
@@ -59,21 +59,26 @@ export function getServiceTasksToDeploy(startElement) {
           onDemand = false;
         }
 
-        csarsToDeploy.push({
-          serviceTaskIds: [flowElement.id],
-          url: flowElement.deploymentModelUrl,
-          type: getBindingType(flowElement),
-          csarName: getCSARName(flowElement),
-          incomplete: !isCompleteDeploymentModel(
-            flowElement.deploymentModelUrl
-          ),
-          onDemand: onDemand,
-        });
+        const iscomplete = isCompleteDeploymentModel(
+          flowElement.deploymentModelUrl
+        );
+        if (iscomplete !== undefined) {
+          csarsToDeploy.push({
+            serviceTaskIds: [flowElement.id],
+            url: flowElement.deploymentModelUrl,
+            type: getBindingType(flowElement),
+            csarName: getCSARName(flowElement),
+            incomplete: !iscomplete,
+            onDemand: onDemand,
+          });
+        } else {
+          return { csarsToDeploy: [], status: "failed" };
+        }
       }
     }
   }
 
-  return csarsToDeploy;
+  return { csarsToDeploy: csarsToDeploy, status: "successful" };
 }
 
 /**
@@ -104,22 +109,26 @@ export function isDeployableServiceTask(element) {
 }
 
 /**
- * Get the CSAR name from the deployment model URL
+ * Checks if the deployment model of the CSAR is complete.
  *
  * @param deploymentModelUrl
- * @return {*} the CSAR name
+ * @return true if deployment model is complete, otherwise false
  */
 export function isCompleteDeploymentModel(deploymentModelUrl) {
   let url = deploymentModelUrl.split("/?csar")[0];
   url = url.split("/");
   url.shift();
   url = url.join("/");
-  const iscomplete = synchronousPostRequest(
-    config.wineryEndpoint + "/" + url + "/topologytemplate/iscomplete",
+  let iscomplete = synchronousPostRequest(
+    getWineryEndpoint() + "/" + url + "/topologytemplate/iscomplete",
     "text/plain",
     null
-  ).responseText;
-  return iscomplete === "true";
+  );
+  if (iscomplete !== undefined) {
+    iscomplete = iscomplete.responseText;
+    return iscomplete === "true";
+  }
+  return undefined;
 }
 
 export function completeIncompleteDeploymentModel(
@@ -139,7 +148,7 @@ export function completeIncompleteDeploymentModel(
   });
   try {
     return synchronousPostRequest(
-      config.wineryEndpoint + "/" + url + "/topologytemplate/completemodel",
+      getWineryEndpoint() + "/" + url + "/topologytemplate/completemodel",
       "application/json",
       body
     ).getResponseHeader("location");
