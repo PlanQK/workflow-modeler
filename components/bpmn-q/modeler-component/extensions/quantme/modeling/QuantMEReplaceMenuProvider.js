@@ -15,7 +15,7 @@ import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn,
 } from "../../../editor/util/PopupMenuUtilities";
-import * as dataConsts from "../../data-extension/Constants";
+import * as dataConsts from "../../dataflow/Constants";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
 
