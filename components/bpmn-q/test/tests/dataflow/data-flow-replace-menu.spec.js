@@ -5,7 +5,7 @@ import * as dataConsts from "../../../modeler-component/extensions/dataflow/Cons
 import {
   transformationConfigs,
   updateTransformationTaskConfigurations,
-} from "../../../modeler-component/extensions/dataflow/transf-task-configs/TransformationTaskConfigurations";
+} from "../../../modeler-component/extensions/dataflow/configurations/TransformationTaskConfigurations";
 import sinon from "sinon";
 import { THREE_TRANSF_TASK_CONFIGS } from "./TransformationTaskConfigurations";
 

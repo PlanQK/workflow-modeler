@@ -2,9 +2,9 @@ import React from "react";
 
 import DataFlowExtensionModule from "./modeling";
 import TransformationButton from "../../editor/ui/TransformationButton";
-import { startDataFlowReplacementProcess } from "./transformation/TransformationManager";
+import { startDataFlowReplacementProcess } from "./replacement/DataFlowTransformator";
 import DataFlowTab from "./configTabs/DataFlowTab";
-import dataStyles from "./resources/data-flow-styles.css";
+import dataStyles from "./resources/styling/data-flow-styles.css";
 import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import UpdateTransformationTaskConfigurationsButton from "./ui/UpdateTransformationConfigurations";
 import { getModeler } from "../../editor/ModelerHandler";

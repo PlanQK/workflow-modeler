@@ -6,7 +6,7 @@ import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import UpdateQHAnaConfigurationsButton from "./ui/UpdateQHAnaConfigurationsButton";
 import QHAnaConfigurationsTab from "./configTabs/QHAnaConfigurationsTab";
 import { startQHAnaReplacementProcess } from "./replacement/QHAnaTransformationHandler";
-import qhanaStyles from "./resources/qhana-icons.css";
+import qhanaStyles from "./resources/styling/qhana-icons.css";
 
 let qhanaModdleDescriptor = require("./resources/qhana-extension.json");
 

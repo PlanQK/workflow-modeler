@@ -3,7 +3,7 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background-image: url("./icons/diagnostic-pulse-icon.svg");
+  background-image: url("../icons/diagnostic-pulse-icon.svg");
   background-repeat: no-repeat;
   display: inline-block;
   margin-right: 6px;
@@ -14,7 +14,7 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background-image: url("./icons/diagnostic-pulse-icon.svg");
+  background-image: url("../icons/diagnostic-pulse-icon.svg");
   background-repeat: no-repeat;
   display: inline-block;
   margin-right: 10px;
@@ -25,7 +25,7 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background-image: url("./icons/qhana-step.svg");
+  background-image: url("../icons/qhana-step.svg");
   background-repeat: no-repeat;
   display: inline-block;
   float: left;
@@ -37,7 +37,7 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background-image: url("./icons/update-icon.svg");
+  background-image: url("../icons/update-icon.svg");
   background-repeat: no-repeat;
   display: inline-block;
   float: left;

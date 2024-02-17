@@ -14,7 +14,7 @@ import {
   SPLIT_MERGE_WORKFLOW,
   UNTRANSFORMED_BPMN_WORKFLOW,
 } from "./DataFlowWorkflows";
-import { startDataFlowReplacementProcess } from "../../../modeler-component/extensions/dataflow/transformation/TransformationManager";
+import { startDataFlowReplacementProcess } from "../../../modeler-component/extensions/dataflow/replacement/DataFlowTransformator";
 import { expect } from "chai";
 import {
   getDocumentation,

@@ -5,7 +5,7 @@ import { getCamundaEndpoint } from "../config/EditorConfigManager";
 import { getRootProcess } from "../util/ModellingUtilities";
 import DeploymentSelectionModal from "./DeploymentSelectionModal";
 import { startPlanqkReplacementProcess } from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
-import { startDataFlowReplacementProcess } from "../../extensions/dataflow/transformation/TransformationManager";
+import { startDataFlowReplacementProcess } from "../../extensions/dataflow/replacement/DataFlowTransformator";
 import { checkEnabledStatus } from "../plugin/PluginHandler";
 import { pluginNames } from "../EditorConstants";
 
