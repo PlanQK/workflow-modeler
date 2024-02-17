@@ -38,8 +38,8 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background: url("../icons/hybrid-loop-adapation-icon.png") no-repeat
-    center center;
+  background: url("../icons/hybrid-loop-adapation-icon.png") no-repeat center
+    center;
   float: left;
 }
 
@@ -49,8 +49,8 @@
   width: 15px;
   height: 15px;
   background-size: contain;
-  background: url("../icons/worklow-transformation-icon.png") no-repeat
-    center center;
+  background: url("../icons/worklow-transformation-icon.png") no-repeat center
+    center;
   float: left;
 }
 
@@ -113,8 +113,7 @@
 .qwm .bpmn-icon-task-quantum-computation:before {
   content: "";
   display: block;
-  background: url("../icons/menu-icon-quantum-computation-task.png")
-    no-repeat;
+  background: url("../icons/menu-icon-quantum-computation-task.png") no-repeat;
   width: 20px;
   height: 20px;
   float: left;
