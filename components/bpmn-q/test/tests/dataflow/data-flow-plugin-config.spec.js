@@ -1,6 +1,6 @@
 import { setPluginConfig } from "../../../modeler-component/editor/plugin/PluginConfigHandler";
 import { expect } from "chai";
-import * as dataConfig from "../../../modeler-component/extensions/data-extension/config/DataConfigManager";
+import * as dataConfig from "../../../modeler-component/extensions/dataflow/config/DataConfigManager";
 describe("Test DataFlow plugin config", function () {
   describe("Test plugin config of configurations endpoint", function () {
     beforeEach("Reset DataFlow config", function () {

@@ -5,7 +5,7 @@ import {
   getTransformationTaskConfiguration,
   updateTransformationTaskConfigurations,
   transformationConfigs,
-} from "../../../modeler-component/extensions/data-extension/transf-task-configs/TransformationTaskConfigurations";
+} from "../../../modeler-component/extensions/dataflow/transf-task-configs/TransformationTaskConfigurations";
 import {
   THREE_TRANSF_TASK_CONFIGS,
   TWO_TRANSF_TASK_CONFIGS,

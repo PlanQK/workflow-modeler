@@ -3,7 +3,7 @@ import {
   TextFieldEntry,
 } from "@bpmn-io/properties-panel";
 import { useService } from "bpmn-js-properties-panel";
-import * as consts from "../QHAnaConstants";
+import * as consts from "../../Constants";
 
 /**
  * Properties group for the properties panel. Contains entries for all attributes for a QHAna service step task.

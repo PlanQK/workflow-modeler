@@ -3,14 +3,14 @@ import {
   createConfigurationsEntries,
   handleConfigurationsAction,
 } from "../../../editor/configurations/ConfigurationsUtil";
-import * as consts from "../QHAnaConstants";
+import * as consts from "../Constants";
 import { instance as qhanaServiceConfigs } from "../configurations/QHAnaConfigurations";
 import {
   createMenuEntries,
   createMoreOptionsEntryWithReturn,
 } from "../../../editor/util/PopupMenuUtilities";
 import * as qhanaReplaceOptions from "./QHAnaReplaceOptions";
-import * as dataConsts from "../../data-extension/Constants";
+import * as dataConsts from "../../dataflow/Constants";
 import { appendElement } from "../../../editor/util/ModellingUtilities";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";

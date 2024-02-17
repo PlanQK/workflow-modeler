@@ -8,8 +8,7 @@ import {
   getAllElementsInProcess,
   insertShape,
 } from "../../../editor/util/TransformationUtilities";
-import * as consts from "../QHAnaConstants";
-import * as qhanaConsts from "../QHAnaConstants";
+import * as consts from "../Constants";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 
 /**
@@ -156,7 +155,7 @@ async function replaceQHAnaServiceTaskByServiceTask(
   const bpmnFactory = modeler.get("bpmnFactory");
 
   // create a BPMN service task with implementation external
-  const topic = "qhana-plugin." + qhanaServiceTask.get(qhanaConsts.IDENTIFIER);
+  const topic = "qhana-plugin." + qhanaServiceTask.get(consts.IDENTIFIER);
   const newServiceTask = bpmnFactory.create("bpmn:ServiceTask", {
     type: "external",
     topic: topic,

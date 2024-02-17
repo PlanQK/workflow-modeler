@@ -1,4 +1,4 @@
-import * as consts from "../QHAnaConstants";
+import * as consts from "../Constants";
 
 // QHAna replace options for BPMN tasks
 export var TASK = [

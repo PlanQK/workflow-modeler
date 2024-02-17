@@ -1,5 +1,5 @@
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
-import * as consts from "../QHAnaConstants";
+import * as consts from "../Constants";
 import { drawTaskSVG } from "../../../editor/util/RenderUtilities";
 import { getSVG } from "./QHAnaSVGMap";
 

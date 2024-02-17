@@ -7,6 +7,7 @@ import TransformationTaskConfigurationsTab from "./transf-task-configs/Transform
 import dataStyles from "./resources/data-flow-styles.css";
 import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import UpdateTransformationTaskConfigurationsButton from "./ui/UpdateTransformationConfigurations";
+import { getModeler } from "../../editor/ModelerHandler";
 
 let dataflowModdleDescriptor = require("./resources/data-flow-extension.json");
 
@@ -20,7 +21,7 @@ export default {
       subButtons={[<UpdateTransformationTaskConfigurationsButton />]}
       title="DataFlow"
       styleClass="dataflow-plugin-icon"
-      description="Show buttons of the QHAna plugin"
+      description="Show buttons of the DataFlow plugin"
     />,
   ],
   configTabs: [
@@ -37,7 +38,13 @@ export default {
     <TransformationButton
       name="DataFlow Transformation"
       transformWorkflow={async (xml) => {
-        return await startDataFlowReplacementProcess(xml);
+        let modeler = getModeler();
+        // Initialize 'views' as an empty object if it's undefined
+        let views = modeler.views || {};
+        let transformedXml = await startDataFlowReplacementProcess(xml);
+        modeler.views = views;
+
+        return transformedXml;
       }}
     />
   ),

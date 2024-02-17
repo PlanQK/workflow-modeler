@@ -1,5 +1,5 @@
-import QHAnaRenderer from "./rendering/QHAnaRenderer";
-import QHAnaReplaceMenuProvider from "./menu/QHAnaReplaceMenuProvider";
+import QHAnaRenderer from "./QHAnaRenderer";
+import QHAnaReplaceMenuProvider from "./QHAnaReplaceMenuProvider";
 import QHAnaPropertiesProvider from "./properties/QHAnaPropertiesProvider";
 
 export default {

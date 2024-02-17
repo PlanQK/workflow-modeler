@@ -1,11 +1,11 @@
 import { setPluginConfig } from "../../../modeler-component/editor/plugin/PluginConfigHandler";
 import { createTempModeler } from "../../../modeler-component/editor/ModelerHandler";
 import { expect } from "chai";
-import * as dataConsts from "../../../modeler-component/extensions/data-extension/Constants";
+import * as dataConsts from "../../../modeler-component/extensions/dataflow/Constants";
 import {
   transformationConfigs,
   updateTransformationTaskConfigurations,
-} from "../../../modeler-component/extensions/data-extension/transf-task-configs/TransformationTaskConfigurations";
+} from "../../../modeler-component/extensions/dataflow/transf-task-configs/TransformationTaskConfigurations";
 import sinon from "sinon";
 import { THREE_TRANSF_TASK_CONFIGS } from "./TransformationTaskConfigurations";
 

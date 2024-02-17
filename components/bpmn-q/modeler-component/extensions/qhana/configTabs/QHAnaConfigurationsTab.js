@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import * as configManager from "../config/QHAnaConfigManager";
+import * as configManager from "../framework-config/QHAnaConfigManager";
 
 /**
  * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change

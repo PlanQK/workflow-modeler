@@ -1,4 +1,4 @@
-import * as qhanaConsts from "../QHAnaConstants";
+import * as qhanaConsts from "../Constants";
 
 /**
  * Return SVG for the given ID

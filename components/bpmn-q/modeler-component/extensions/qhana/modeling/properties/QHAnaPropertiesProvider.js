@@ -1,9 +1,9 @@
-import ConfigurationsProperties from "../../../editor/configurations/ConfigurationsProperties";
+import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
 import { is } from "bpmn-js/lib/util/ModelUtil";
-import * as consts from "../QHAnaConstants";
-import * as configConsts from "../../../editor/configurations/Constants";
+import * as consts from "../../Constants";
+import * as configConsts from "../../../../editor/configurations/Constants";
 import qhanaServiceStepProperties from "./QHAnaServiceStepProperties";
-import { instance as qhanaServiceConfigs } from "../configurations/QHAnaConfigurations";
+import { instance as qhanaServiceConfigs } from "../../configurations/QHAnaConfigurations";
 
 const LOW_PRIORITY = 500;
 
