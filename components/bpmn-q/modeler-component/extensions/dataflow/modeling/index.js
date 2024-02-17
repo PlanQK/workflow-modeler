@@ -1,8 +1,8 @@
-import DataFlowRenderer from "./rendering/DataFlowRenderer";
-import DataFlowReplaceMenuProvider from "./menu/DataFlowReplaceMenuProvider";
-import DataFlowPaletteProvider from "./palette/DataFlowPaletteProvider";
-import DataFlowRulesProvider from "./rules/DataFlowRulesProvider";
-import DataReplaceConnectionBehavior from "./rules/DataReplaceConnectionBehaviour";
+import DataFlowRenderer from "./DataFlowRenderer";
+import DataFlowReplaceMenuProvider from "./DataFlowReplaceMenuProvider";
+import DataFlowPaletteProvider from "./DataFlowPaletteProvider";
+import DataFlowRulesProvider from "./DataFlowRulesProvider";
+import DataReplaceConnectionBehavior from "./DataReplaceConnectionBehaviour";
 import DataFlowPropertiesProvider from "./properties-panel/DataFlowPropertiesProvider";
 
 export default {

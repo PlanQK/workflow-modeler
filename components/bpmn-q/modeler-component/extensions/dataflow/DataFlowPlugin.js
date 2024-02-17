@@ -1,9 +1,9 @@
 import React from "react";
 
-import DataFlowExtensionModule from "./";
+import DataFlowExtensionModule from "./modeling";
 import TransformationButton from "../../editor/ui/TransformationButton";
 import { startDataFlowReplacementProcess } from "./transformation/TransformationManager";
-import TransformationTaskConfigurationsTab from "./transf-task-configs/TransformationTaskConfigurationsTab";
+import DataFlowTab from "./configTabs/DataFlowTab";
 import dataStyles from "./resources/data-flow-styles.css";
 import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import UpdateTransformationTaskConfigurationsButton from "./ui/UpdateTransformationConfigurations";
@@ -28,7 +28,7 @@ export default {
     {
       tabId: "DataEndpointsTab",
       tabTitle: "Data Flow Plugin",
-      configTab: TransformationTaskConfigurationsTab,
+      configTab: DataFlowTab,
     },
   ],
   extensionModule: DataFlowExtensionModule,

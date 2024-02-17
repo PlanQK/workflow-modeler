@@ -1,6 +1,6 @@
 import ConfigurationsEndpoint from "../../../editor/configurations/ConfigurationEndpoint";
 import * as consts from "../Constants";
-import * as dataConfig from "../config/DataConfigManager";
+import * as dataConfig from "../framework-config/DataConfigManager";
 
 /**
  * Configurations Endpoint Wrapper for loading configurations for transformation tasks.

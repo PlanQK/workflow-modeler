@@ -1,10 +1,10 @@
 import keyValueMap from "./KeyValueMap";
 import { is } from "bpmn-js/lib/util/ModelUtil";
 import { ListGroup } from "@bpmn-io/properties-panel";
-import * as consts from "../Constants";
-import * as configConsts from "../../../editor/configurations/Constants";
-import ConfigurationsProperties from "../../../editor/configurations/ConfigurationsProperties";
-import { getTransformationTaskConfiguration } from "../transf-task-configs/TransformationTaskConfigurations";
+import * as consts from "../../Constants";
+import * as configConsts from "../../../../editor/configurations/Constants";
+import ConfigurationsProperties from "../../../../editor/configurations/ConfigurationsProperties";
+import { getTransformationTaskConfiguration } from "../../configurations/TransformationTaskConfigurations";
 
 const LOW_PRIORITY = 500;
 

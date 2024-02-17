@@ -1,5 +1,5 @@
 import React from "react";
-import { updateTransformationTaskConfigurations } from "../transf-task-configs/TransformationTaskConfigurations";
+import { updateTransformationTaskConfigurations } from "../configurations/TransformationTaskConfigurations";
 
 /**
  * React button component which updates the transformation task configurations when clicked.

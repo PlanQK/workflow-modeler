@@ -7,7 +7,7 @@ import {
 } from "../../../editor/util/PopupMenuUtilities";
 import * as consts from "../Constants";
 import { createConfigurationsEntries } from "../../../editor/configurations/ConfigurationsUtil";
-import { getTransformationTaskConfigurations } from "../transf-task-configs/TransformationTaskConfigurations";
+import { getTransformationTaskConfigurations } from "../configurations/TransformationTaskConfigurations";
 import { replaceConnection } from "../../../editor/util/ModellingUtilities";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";

@@ -1,8 +1,8 @@
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import KeyValueEntry from "./KeyValueEntry";
 import { without } from "min-dash";
-import * as consts from "../Constants";
-import { nextId } from "../../../editor/util/camunda-utils/ElementUtil";
+import * as consts from "../../Constants";
+import { nextId } from "../../../../editor/util/camunda-utils/ElementUtil";
 
 /**
  *  Entry of the properties panel which displays a key value map. Entries can be added or removed over the UI of the

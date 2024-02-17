@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getModeler } from "../../../editor/ModelerHandler";
-import * as dataConfigManager from "../config/DataConfigManager";
+import * as dataConfigManager from "../framework-config/DataConfigManager";
 
 /**
  * React component representing a tab for the configuration modal of the editor.
@@ -8,13 +8,13 @@ import * as dataConfigManager from "../config/DataConfigManager";
  * @return {JSX.Element} The config tab
  * @constructor
  */
-export default function TransformationTaskConfigurationsTab() {
+export default function DataFlowTab() {
   const [configurationsEndpoint, setConfigurationsEndpoint] = useState(
     dataConfigManager.getConfigurationsEndpoint()
   );
 
   // save changed endpoint url if the modal is closed
-  TransformationTaskConfigurationsTab.prototype.onClose = () => {
+  DataFlowTab.prototype.onClose = () => {
     dataConfigManager.setConfigurationsEndpoint(configurationsEndpoint);
   };
 
@@ -43,7 +43,7 @@ export default function TransformationTaskConfigurationsTab() {
   );
 }
 
-TransformationTaskConfigurationsTab.prototype.config = () => {
+DataFlowTab.prototype.config = () => {
   const modeler = getModeler();
 
   modeler.config.transformationTaskConfigurationsEndpointChanged =
