@@ -6,8 +6,8 @@ import PatternPlugin from "../../extensions/pattern/PatternPlugin";
 import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
 import { getAllConfigs } from "./PluginConfigHandler";
 import GeneralTab from "../config/GeneralTab";
-import GitHubTab from "../../extensions/quantme/configTabs/GitHubTab";
-import { pluginNames } from "../EditorConstants";
+import GitHubTab from "../config/GitHubTab";
+import { pluginNames, editorTabs } from "../EditorConstants";
 
 /**
  * Handler for plugins of the modeler. Controls active plugins and the properties they define. Central access point to
@@ -241,4 +241,29 @@ export function getConfigTabs() {
   console.log(configTabs);
 
   return configTabs;
+}
+
+/**
+ * Returns the config tab for a tab id. Each tab id is mapped to exactly one config tab.
+ * @param tabId the tab id to retrieve the config tab
+ * @returns config tab for a specific tab id
+ */
+export function getConfigTab(tabId) {
+  const plugins = getActivePlugins();
+
+  let configTab;
+  if (tabId.includes(editorTabs.GENERAL)) {
+    return [{ tabId: "EditorTab", tabTitle: "General", configTab: GeneralTab }];
+  }
+
+  if (tabId.includes(editorTabs.GITHUB)) {
+    return [{ tabId: "GitHubTab", tabTitle: "GitHub", configTab: GitHubTab }];
+  }
+  for (let plugin of plugins) {
+    if (plugin.name.includes(tabId)) {
+      configTab = plugin.configTabs;
+    }
+  }
+
+  return configTab;
 }

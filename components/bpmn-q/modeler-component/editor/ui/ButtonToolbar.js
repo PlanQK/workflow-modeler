@@ -3,11 +3,10 @@ import SaveButton from "./SaveButton";
 import OpenButton from "./OpenButton";
 import NewDiagramButton from "./NewDiagramButton";
 import DeploymentButton from "./DeploymentButton";
-import ConfigPlugin from "../config/ConfigPlugin";
 import TransformationToolbarButton from "./TransformationToolbarButton";
 import UploadButton from "./UploadButton";
-import ShortcutPlugin from "../shortcut/ShortcutPlugin";
 import XMLViewerButton from "./XMLViewerButton";
+import SaveAsButton from "./SaveAsButton";
 
 /**
  * React component which displays the toolbar of the modeler
@@ -24,14 +23,12 @@ export default function ButtonToolbar(props) {
   return (
     <Fragment>
       <div className="qwm-toolbar">
-        <hr className="qwm-toolbar-splitter" />
         <NewDiagramButton modeler={modeler} />
-        <SaveButton modeler={modeler} />
         <OpenButton />
+        <SaveButton modeler={modeler} />
+        <SaveAsButton modeler={modeler} />
         <UploadButton />
         <XMLViewerButton />
-        <hr className="qwm-toolbar-splitter" />
-        <ConfigPlugin />
         <hr className="qwm-toolbar-splitter" />
         {hasTransformations && (
           <TransformationToolbarButton
@@ -43,7 +40,6 @@ export default function ButtonToolbar(props) {
         <DeploymentButton modeler={modeler} />
         <hr className="qwm-toolbar-splitter" />
         {React.Children.toArray(pluginButtons)}
-        <ShortcutPlugin />
       </div>
     </Fragment>
   );

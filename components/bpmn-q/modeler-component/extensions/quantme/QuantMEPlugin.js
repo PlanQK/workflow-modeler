@@ -1,7 +1,7 @@
 import React from "react";
 
 import QuantMEExtensionModule from "./modeling";
-import QuantMETab from "./configTabs/QuantMETab";
+import QuantMEConfigTab from "./configTabs/QuantMEConfigTab";
 import { getQRMs } from "./qrm-manager";
 import { startQuantmeReplacementProcess } from "./replacement/QuantMETransformator";
 import {
@@ -24,9 +24,9 @@ export default {
   buttons: [<QuantMEPluginButton />],
   configTabs: [
     {
-      tabId: "BPMNTab",
+      tabId: "QuantMETab",
       tabTitle: "QuantME Plugin",
-      configTab: QuantMETab,
+      configTab: QuantMEConfigTab,
     },
   ],
   name: "quantme",

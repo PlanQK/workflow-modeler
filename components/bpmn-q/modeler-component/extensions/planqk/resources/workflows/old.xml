@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<semantic:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="_1275940932088" targetNamespace="http://www.trisotech.com/definitions/_1275940932088" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <semantic:message id="_1275940932310" />
+  <semantic:message id="_1275940932433" />
+  <semantic:message id="_1275940932198" />
+  <semantic:error id="Error_05i64we" name="Error_1ubrv1j" errorCode="Invalid status" />
+  <semantic:process id="Process_0m7mgwo" isExecutable="true">
+    <semantic:subProcess id="Activity_1b6kukx" name="PlanQK Service Interaction" camunda:asyncAfter="true">
+      <semantic:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="maxIterations">unbounded</camunda:inputParameter>
+          <camunda:inputParameter name="params" />
+          <camunda:inputParameter name="data">{"values": [100, 50, 200, 70, 0.69]}</camunda:inputParameter>
+          <camunda:inputParameter name="executionState" />
+          <camunda:inputParameter name="executionId" />
+          <camunda:inputParameter name="serviceEndpoint">https://gateway.platform.planqk.de/30fa7f36-56fd-4714-8a1e-a6ea1e026b21/my-project/1.0.0</camunda:inputParameter>
+          <camunda:inputParameter name="tokenEndpoint">https://gateway.am.platform.planqk.de/token</camunda:inputParameter>
+          <camunda:inputParameter name="consumerSecret"></camunda:inputParameter>
+          <camunda:inputParameter name="consumerKey"></camunda:inputParameter>
+          <camunda:outputParameter name="output">${result}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </semantic:extensionElements>
+      <semantic:startEvent id="Event_1du4ral" name="Start Interaction">
+        <semantic:outgoing>Flow_080k7s4</semantic:outgoing>
+      </semantic:startEvent>
+      <semantic:intermediateCatchEvent id="Event_1ajrxt7">
+        <semantic:incoming>Flow_0olr70p</semantic:incoming>
+        <semantic:outgoing>Flow_15hky8p</semantic:outgoing>
+        <semantic:timerEventDefinition id="TimerEventDefinition_1098ktd">
+          <semantic:timeDuration xsi:type="semantic:tFormalExpression">R/PT5S</semantic:timeDuration>
+        </semantic:timerEventDefinition>
+      </semantic:intermediateCatchEvent>
+      <semantic:exclusiveGateway id="Gateway_0t1bksy">
+        <semantic:incoming>Flow_ServiceResult</semantic:incoming>
+        <semantic:outgoing>Flow_0tad265</semantic:outgoing>
+        <semantic:outgoing>Flow_ServicePending</semantic:outgoing>
+        <semantic:outgoing>Flow_171hjar</semantic:outgoing>
+      </semantic:exclusiveGateway>
+      <semantic:serviceTask id="Activity_0q3qrfi" name="Get Service Result" camunda:class="de.stoneone.planqk.workflow.serviceimpl.PlanQKServiceResultRetriever">
+        <semantic:incoming>Flow_0tad265</semantic:incoming>
+        <semantic:outgoing>Flow_023j8hf</semantic:outgoing>
+      </semantic:serviceTask>
+      <semantic:serviceTask id="Activity_Call_Service" name="Call Service" camunda:class="de.stoneone.planqk.workflow.serviceimpl.PlanQKServiceCaller">
+        <semantic:incoming>Flow_080k7s4</semantic:incoming>
+        <semantic:outgoing>Flow_0m9kjpk</semantic:outgoing>
+      </semantic:serviceTask>
+      <semantic:serviceTask id="Activity_Polling_Response" name="Poll Service Response" camunda:class="de.stoneone.planqk.workflow.serviceimpl.PlanQKServicePoller">
+        <semantic:incoming>Flow_15hky8p</semantic:incoming>
+        <semantic:outgoing>Flow_ServiceResult</semantic:outgoing>
+      </semantic:serviceTask>
+      <semantic:endEvent id="Event_0e35csg" name="End Interaction">
+        <semantic:incoming>Flow_023j8hf</semantic:incoming>
+      </semantic:endEvent>
+      <semantic:sequenceFlow id="Flow_0tad265" sourceRef="Gateway_0t1bksy" targetRef="Activity_0q3qrfi">
+        <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=="SUCCEEDED"}</semantic:conditionExpression>
+      </semantic:sequenceFlow>
+      <semantic:sequenceFlow id="Flow_15hky8p" sourceRef="Event_1ajrxt7" targetRef="Activity_Polling_Response" />
+      <semantic:sequenceFlow id="Flow_0m9kjpk" sourceRef="Activity_Call_Service" targetRef="Gateway_0df2o5e" />
+      <semantic:sequenceFlow id="Flow_ServiceResult" sourceRef="Activity_Polling_Response" targetRef="Gateway_0t1bksy" />
+      <semantic:sequenceFlow id="Flow_ServicePending" sourceRef="Gateway_0t1bksy" targetRef="Gateway_0df2o5e">
+        <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=='PENDING' &amp;&amp; maxIterations != "unbounded" &amp;&amp; iterations &lt; maxIterations}</semantic:conditionExpression>
+      </semantic:sequenceFlow>
+      <semantic:sequenceFlow id="Flow_080k7s4" sourceRef="Event_1du4ral" targetRef="Activity_Call_Service" />
+      <semantic:sequenceFlow id="Flow_023j8hf" sourceRef="Activity_0q3qrfi" targetRef="Event_0e35csg" />
+      <semantic:sequenceFlow id="Flow_171hjar" sourceRef="Gateway_0t1bksy" targetRef="Event_0m8b2ic">
+        <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${executionState=="FAILED" || executionState=="UNKNOWN" || (maxIterations !="unbounded" &amp;&amp; iterations&gt;maxIterations)}</semantic:conditionExpression>
+      </semantic:sequenceFlow>
+      <semantic:endEvent id="Event_0m8b2ic">
+        <semantic:incoming>Flow_171hjar</semantic:incoming>
+        <semantic:errorEventDefinition id="ErrorEventDefinition_1wu3a14" errorRef="Error_0mb9xyt" />
+      </semantic:endEvent>
+      <semantic:exclusiveGateway id="Gateway_0df2o5e">
+        <semantic:incoming>Flow_0m9kjpk</semantic:incoming>
+        <semantic:incoming>Flow_ServicePending</semantic:incoming>
+        <semantic:outgoing>Flow_1mqa8yl</semantic:outgoing>
+      </semantic:exclusiveGateway>
+      <semantic:boundaryEvent id="Event_14ww5d4" attachedToRef="Activity_0q3qrfi">
+        <semantic:outgoing>Flow_1q70fl3</semantic:outgoing>
+        <semantic:errorEventDefinition id="ErrorEventDefinition_0kxdkxv" />
+      </semantic:boundaryEvent>
+      <semantic:sequenceFlow id="Flow_1q70fl3" sourceRef="Event_14ww5d4" targetRef="Event_1xa5x1z" />
+      <semantic:endEvent id="Event_1xa5x1z">
+        <semantic:incoming>Flow_1q70fl3</semantic:incoming>
+        <semantic:errorEventDefinition id="ErrorEventDefinition_1cu7rxr" errorRef="Error_05i64we" />
+      </semantic:endEvent>
+      <semantic:sequenceFlow id="Flow_1mqa8yl" sourceRef="Gateway_0df2o5e" targetRef="Activity_0vfhcwr" />
+      <semantic:sequenceFlow id="Flow_0olr70p" sourceRef="Activity_0vfhcwr" targetRef="Event_1ajrxt7" />
+      <semantic:scriptTask id="Activity_0vfhcwr" name="Initialize iterations" scriptFormat="groovy">
+        <semantic:incoming>Flow_1mqa8yl</semantic:incoming>
+        <semantic:outgoing>Flow_0olr70p</semantic:outgoing>
+        <semantic:script>var iterations = execution.getVariable("iterations");
+if(!iterations) {
+iterations = 0;
+execution.setVariable("iterations", iterations)
+}else{
+iterations += 1;
+execution.setVariable("iterations", iterations);
+}</semantic:script>
+      </semantic:scriptTask>
+    </semantic:subProcess>
+  </semantic:process>
+  <semantic:error id="Error_0mb9xyt" name="Error_25vm6n0" errorCode="Invalid status" />
+  <bpmndi:BPMNDiagram id="Trisotech.Visio-_6" name="Untitled Diagram" documentation="" resolution="96.00000267028808">
+    <bpmndi:BPMNPlane bpmnElement="Process_0m7mgwo">
+      <bpmndi:BPMNShape id="Activity_1b6kukx_di" bpmnElement="Activity_1b6kukx" isExpanded="true">
+        <dc:Bounds x="-30" y="60" width="1170" height="380" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ajrxt7_di" bpmnElement="Event_1ajrxt7">
+        <dc:Bounds x="532" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0t1bksy_di" bpmnElement="Gateway_0t1bksy" isMarkerVisible="true">
+        <dc:Bounds x="785" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q3qrfi_di" bpmnElement="Activity_0q3qrfi">
+        <dc:Bounds x="890" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_Polling_Response_di" bpmnElement="Activity_Polling_Response">
+        <dc:Bounds x="648" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0e35csg_di" bpmnElement="Event_0e35csg">
+        <dc:Bounds x="1072" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1053" y="275" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1oua6vk_di" bpmnElement="Event_0m8b2ic">
+        <dc:Bounds x="892" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="855" y="375" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07cqtir_di" bpmnElement="Event_1xa5x1z">
+        <dc:Bounds x="1072" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1du4ral_di" bpmnElement="Event_1du4ral">
+        <dc:Bounds x="-8" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-28" y="275" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_Call_Service_di" bpmnElement="Activity_Call_Service">
+        <dc:Bounds x="90" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0df2o5e_di" bpmnElement="Gateway_0df2o5e" isMarkerVisible="true">
+        <dc:Bounds x="225" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hl5cp0_di" bpmnElement="Activity_0vfhcwr">
+        <dc:Bounds x="310" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1strjx3_di" bpmnElement="Event_14ww5d4">
+        <dc:Bounds x="942" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0tad265_di" bpmnElement="Flow_0tad265">
+        <di:waypoint x="835" y="250" />
+        <di:waypoint x="890" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15hky8p_di" bpmnElement="Flow_15hky8p">
+        <di:waypoint x="568" y="250" />
+        <di:waypoint x="648" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m9kjpk_di" bpmnElement="Flow_0m9kjpk">
+        <di:waypoint x="190" y="250" />
+        <di:waypoint x="225" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ServiceResult_di" bpmnElement="Flow_ServiceResult">
+        <di:waypoint x="748" y="250" />
+        <di:waypoint x="785" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ServicePending_di" bpmnElement="Flow_ServicePending">
+        <di:waypoint x="810" y="225" />
+        <di:waypoint x="810" y="170" />
+        <di:waypoint x="250" y="170" />
+        <di:waypoint x="250" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_080k7s4_di" bpmnElement="Flow_080k7s4">
+        <di:waypoint x="28" y="250" />
+        <di:waypoint x="90" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_023j8hf_di" bpmnElement="Flow_023j8hf">
+        <di:waypoint x="990" y="250" />
+        <di:waypoint x="1072" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_171hjar_di" bpmnElement="Flow_171hjar">
+        <di:waypoint x="810" y="275" />
+        <di:waypoint x="810" y="350" />
+        <di:waypoint x="892" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q70fl3_di" bpmnElement="Flow_1q70fl3">
+        <di:waypoint x="960" y="308" />
+        <di:waypoint x="960" y="350" />
+        <di:waypoint x="1072" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mqa8yl_di" bpmnElement="Flow_1mqa8yl">
+        <di:waypoint x="275" y="250" />
+        <di:waypoint x="310" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0olr70p_di" bpmnElement="Flow_0olr70p">
+        <di:waypoint x="410" y="250" />
+        <di:waypoint x="532" y="250" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</semantic:definitions>

@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const config = require("../framework-config/config-manager");
+const config = require("../../../editor/config/EditorConfigManager");
 const gitHandler = require("./git-handler");
 
 /**

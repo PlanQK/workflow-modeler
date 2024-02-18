@@ -16,7 +16,7 @@ const {
   validQuantMESubprocessDiagram,
 } = require("../helpers/DiagramHelper");
 const config = require("../../../modeler-component/extensions/quantme/framework-config/config-manager");
-const camundaConfig = require("../../../modeler-component/editor/config/EditorConfigManager");
+const editorConfig = require("../../../modeler-component/editor/config/EditorConfigManager");
 const chai = require("chai");
 const {
   pluginNames,
@@ -27,7 +27,7 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
       setPluginConfig([
         { name: pluginNames.DATAFLOW },
         {
-          name: pluginNames.QUANTME,
+          name: "editor",
           config: {
             githubRepositoryName: "QuantME-UseCases",
             githubUsername: "UST-QuAntiL",
@@ -40,9 +40,9 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
       let qrms = await updateQRMs();
       chai.expect(qrms.length).to.equal(10);
 
-      config.setQRMUserName("UST-QuAntiL");
-      config.setQRMRepositoryName("QuantME-UseCases");
-      config.setQRMRepositoryPath("2023-icwe/part2");
+      editorConfig.setQRMUserName("UST-QuAntiL");
+      editorConfig.setQRMRepositoryName("QuantME-UseCases");
+      editorConfig.setQRMRepositoryPath("2023-icwe/part2");
 
       let qrmMaxCut = await updateQRMs();
       chai.expect(qrmMaxCut.length).to.equal(1);
@@ -55,7 +55,7 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
           nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
           transformationFrameworkEndpoint:
             config.getTransformationFrameworkEndpoint(),
-          camundaEndpoint: camundaConfig.getCamundaEndpoint(),
+          camundaEndpoint: editorConfig.getCamundaEndpoint(),
         }
       );
 
@@ -68,7 +68,7 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
           nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
           transformationFrameworkEndpoint:
             config.getTransformationFrameworkEndpoint(),
-          camundaEndpoint: camundaConfig.getCamundaEndpoint(),
+          camundaEndpoint: editorConfig.getCamundaEndpoint(),
         }
       );
 
@@ -105,7 +105,7 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
           nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
           transformationFrameworkEndpoint:
             config.getTransformationFrameworkEndpoint(),
-          camundaEndpoint: camundaConfig.getCamundaEndpoint(),
+          camundaEndpoint: editorConfig.getCamundaEndpoint(),
         }
       );
 

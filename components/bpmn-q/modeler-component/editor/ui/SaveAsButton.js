@@ -13,11 +13,11 @@ export default function SaveButton(props) {
 
   return (
     <div>
-      <button className="qwm-toolbar-btn" title="Save workflow">
+      <button className="qwm-toolbar-btn" title="Save workflow as...">
         <div style={{ display: "flex" }}>
           <div style={{ display: "flex" }}>
             <span
-              className={"qwm-icon-saving"}
+              className={"qwm-icon-save-as"}
               onClick={() => {
                 saveModelerAsLocalFile(modeler);
               }}
