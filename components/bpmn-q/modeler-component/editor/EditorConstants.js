@@ -37,7 +37,6 @@ export const autoSaveFile = {
 
 // supported save file options
 export const saveFileFormats = {
-  ALL: "all",
   BPMN: ".bpmn",
   PNG: ".png",
   SVG: ".svg",

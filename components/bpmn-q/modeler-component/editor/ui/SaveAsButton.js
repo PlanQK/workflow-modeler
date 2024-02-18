@@ -1,5 +1,5 @@
 import React from "react";
-import { saveModelerAsLocalFile } from "../util/IoUtilities";
+import { saveModelerContentAsLocalFile } from "../util/IoUtilities";
 
 /**
  * React button which saves the current workflow to the users local file system when clicked
@@ -19,7 +19,7 @@ export default function SaveButton(props) {
             <span
               className={"qwm-icon-save-as"}
               onClick={() => {
-                saveModelerAsLocalFile(modeler);
+                saveModelerContentAsLocalFile(modeler);
               }}
             >
               <span className="qwm-indent"></span>
