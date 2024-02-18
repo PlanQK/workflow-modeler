@@ -12,6 +12,7 @@ import * as constants from "../Constants";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import { getRootProcess } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
+import { getQuantMETasks } from "./QuantMETransformator";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -112,36 +113,6 @@ export async function createQuantMEView(xml) {
   return { status: "transformed", xml: view_xml };
 }
 
-/**
- * Get QuantME tasks from process
- */
-export function getQuantMETasks(process, elementRegistry) {
-  // retrieve parent object for later replacement
-  const processBo = elementRegistry.get(process.id);
-
-  const quantmeTasks = [];
-  const flowElements = process.flowElements;
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    if (flowElement.$type && flowElement.$type.startsWith("quantme:")) {
-      quantmeTasks.push({ task: flowElement, parent: processBo });
-    }
-
-    // recursively retrieve QuantME tasks if subprocess is found
-    if (
-      flowElement.$type &&
-      (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
-    ) {
-      Array.prototype.push.apply(
-        quantmeTasks,
-        getQuantMETasks(flowElement, elementRegistry)
-      );
-    }
-  }
-  return quantmeTasks;
-}
-
 export async function updateQuantMEView(quantumViewXml, transformedXml) {
   let modeler = await createTempModelerFromXml(quantumViewXml);
   let transformedXmlModeler = await createTempModelerFromXml(transformedXml);
@@ -181,8 +152,10 @@ export async function updateQuantMEView(quantumViewXml, transformedXml) {
     for (let subprocess of transformedXmlReplacementConstructs) {
       if (flowElement.id === subprocess.id) {
         let containedElements = [];
-        for (let element of subprocess.flowElements) {
-          containedElements.push(element.id);
+        if (subprocess.flowElements !== undefined) {
+          for (let element of subprocess.flowElements) {
+            containedElements.push(element.id);
+          }
         }
 
         let flowElementRegistry = elementRegistry.get(flowElement.id);
@@ -203,21 +176,25 @@ export function getSubProcesses(process, elementRegistry) {
 
   const quantmeTasks = [];
   const flowElements = process.flowElements;
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
+  if (flowElements !== undefined) {
+    for (let i = 0; i < flowElements.length; i++) {
+      let flowElement = flowElements[i];
 
-    // recursively retrieve QuantME tasks if subprocess is found
-    if (
-      flowElement.$type &&
-      (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
-    ) {
-      quantmeTasks.push(flowElement);
-      Array.prototype.push.apply(
-        quantmeTasks,
-        getSubProcesses(flowElement, elementRegistry)
-      );
+      // recursively retrieve QuantME tasks if subprocess is found
+      if (
+        flowElement.$type &&
+        (flowElement.$type === "bpmn:SubProcess" ||
+          flowElement.$type === constants.CIRCUIT_CUTTING_SUBPROCESS)
+      ) {
+        quantmeTasks.push(flowElement);
+        Array.prototype.push.apply(
+          quantmeTasks,
+          getSubProcesses(flowElement, elementRegistry)
+        );
+      }
     }
+    return quantmeTasks;
+  } else {
+    return quantmeTasks;
   }
-  return quantmeTasks;
 }
