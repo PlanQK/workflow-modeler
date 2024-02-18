@@ -102,11 +102,13 @@ export function ImplementationProps(props) {
       // drop down to select endpoint from OpenAPI spec
       if (element.businessObject.yaml !== undefined) {
         const urls = extractUrlsFromYaml(element.businessObject.yaml);
+        const methodUrlList = generateUrlMethodList(element.businessObject.yaml);
         entries.push({
           id: "connector",
           element,
           translate,
           urls,
+          methodUrlList,
           component: Connector,
           isEdited: isTextFieldEntryEdited,
         });
@@ -129,6 +131,33 @@ function extractUrlsFromYaml(content) {
     return `${path}`;
   });
 }
+
+// Function to extract methods for each path
+function extractMethodsForPath(path, paths) {
+  const methods = Object.keys(paths[path] || {});
+
+  return methods;
+};
+
+// Function to generate a list of URLs with their available methods
+function generateUrlMethodList(content) {
+  const urlMethodList = [];
+  const yamlFile = yaml.dump(content);
+  const parsedYaml = yaml.load(content);
+  const paths = Object.keys(parsedYaml.paths);
+  for (const path of paths) {
+    console.log(parsedYaml.paths[path]);
+    console.log(path);
+    console.log(paths)
+    const methods = extractMethodsForPath(path, parsedYaml.paths);
+
+    if (methods.length > 0) {
+      urlMethodList.push({ url: path, methods });
+    }
+  }
+
+  return urlMethodList;
+};
 
 export function JavaClass(props) {
   const {
