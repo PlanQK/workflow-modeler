@@ -1,5 +1,5 @@
 import planqkDataPoolProps from "./DataPoolProperties";
-import * as consts from "../../utilities/Constants";
+import * as consts from "../../../utilities/Constants";
 
 import { is } from "bpmn-js/lib/util/ModelUtil";
 
