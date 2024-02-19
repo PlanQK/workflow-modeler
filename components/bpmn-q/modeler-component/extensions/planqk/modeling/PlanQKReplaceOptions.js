@@ -1,4 +1,4 @@
-import * as consts from "./utilities/Constants";
+import * as consts from "../utilities/Constants";
 
 // replace options for a BPMN task
 export const TASK = [
