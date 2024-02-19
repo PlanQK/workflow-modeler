@@ -33,7 +33,7 @@ export default function ButtonToolbar(props) {
         {hasTransformations && (
           <TransformationToolbarButton
             subButtons={transformButtons}
-            title="Transform Workflow"
+            title="Transformation"
             styleClass="qwm-workflow-transformation-btn"
           />
         )}

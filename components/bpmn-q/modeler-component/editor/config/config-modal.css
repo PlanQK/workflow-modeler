@@ -49,3 +49,7 @@
   min-width: 120px;
   max-height: 263px;
 }
+
+.qwm-innerConfig.active-tab {
+  background-color: rgb(0, 81, 255);
+}

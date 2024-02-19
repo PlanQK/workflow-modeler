@@ -9,7 +9,6 @@
   font-family: Arial, serif;
   font-weight: bold;
   margin: 2px;
-  padding: 8px;
   color: #636363;
 }
 
@@ -275,7 +274,7 @@ nav {
 
 .menu li {
   position: relative;
-  margin: 0;
+  margin: -3px;
 }
 
 .menu a {

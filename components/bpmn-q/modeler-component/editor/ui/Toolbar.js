@@ -11,17 +11,7 @@ import {
 import * as editorConfig from "../config/EditorConfigManager";
 import { saveFileFormats } from "../EditorConstants";
 import ConfigModal from "../config/ConfigModal";
-import GitHubModal from "../config/GitHubModal";
-import {
-  getActivePlugins,
-  getConfigTab,
-  getConfigTabs,
-} from "../plugin/PluginHandler";
-import QHAnaConfigModal from "../../extensions/qhana/configTabs/QHAnaConfigModal";
-import DataConfigModal from "../../extensions/data-extension/config/DataConfigModal";
-import QuantMEConfigModal from "../../extensions/quantme/configTabs/QuantMEConfigModal";
-import OpenTOSCAConfigModal from "../../extensions/opentosca/configTabs/OpenTOSCAConfigModal";
-import PatternConfigModal from "../../extensions/pattern/configTabs/PatternConfigModal";
+import { getActivePlugins, getConfigTabs } from "../plugin/PluginHandler";
 import * as consts from "../EditorConstants";
 import { uploadToGitHub } from "../../extensions/quantme/qrm-manager/git-handler";
 import ConfirmationModal from "./ConfirmationModal";
@@ -320,7 +310,6 @@ export default function Toolbar(props) {
           </ul>
         </nav>
       </header>
-      <hr className="qwm-toolbar-splitter" />
       {showConfirmationModal && (
         <ConfirmationModal
           onClose={handleCancelDiscard}
@@ -334,42 +323,49 @@ export default function Toolbar(props) {
         <ConfigModal
           onClose={() => setConfigModalOpen(false)}
           configTabs={getConfigTabs()}
+          initialTab={consts.editorTabs.GENERAL}
         />
       )}
       {isQHAnaConfigOpen && (
-        <QHAnaConfigModal
-          configTabs={getConfigTab(consts.editorTabs.QHANA)}
+        <ConfigModal
+          configTabs={getConfigTabs()}
           onClose={handleQHAnaClose}
+          initialTab={consts.editorTabs.QHANA}
         />
       )}
       {isGitHubOpen && (
-        <GitHubModal
-          configTabs={getConfigTab(consts.editorTabs.GITHUB)}
+        <ConfigModal
+          configTabs={getConfigTabs()}
           onClose={handleGitHubClose}
+          initialTab={consts.editorTabs.GITHUB}
         />
       )}
       {isDataConfigOpen && (
-        <DataConfigModal
-          configTabs={getConfigTab(consts.editorTabs.DATAFLOW)}
+        <ConfigModal
+          configTabs={getConfigTabs()}
           onClose={handleDataClose}
+          initialTab={consts.editorTabs.DATAFLOW}
         />
       )}
       {isOpenTOSCAOpen && (
-        <OpenTOSCAConfigModal
-          configTabs={getConfigTab(consts.editorTabs.OPENTOSCA)}
+        <ConfigModal
+          configTabs={getConfigTabs()}
           onClose={handleOpenTOSCAClose}
+          initialTab={consts.editorTabs.OPENTOSCA}
         />
       )}
       {isQuantMEConfigOpen && (
-        <QuantMEConfigModal
-          configTabs={getConfigTab(consts.editorTabs.QUANTME)}
+        <ConfigModal
+          configTabs={getConfigTabs()}
           onClose={handleQuantMEClose}
+          initialTab={consts.editorTabs.QUANTME}
         />
       )}
       {isPatternConfigOpen && (
-        <PatternConfigModal
-          configTabs={getConfigTab(consts.editorTabs.PATTERN)}
+        <ConfigModal
+          configTabs={getConfigTabs()}
           onClose={handlePatternClose}
+          initialTab={consts.editorTabs.PATTERN}
         />
       )}
     </Fragment>
