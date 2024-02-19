@@ -17,6 +17,7 @@ import "../../../../editor/config/config-modal.css";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
 import yaml from "js-yaml";
+import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 
 // polyfill upcoming structural components
 const Title = Modal.Title;
@@ -41,6 +42,19 @@ export default function YamlModal(props) {
     console.log(selectedTab);
     console.log(uploadFile);
     console.log(downloadLink);
+    element.businessObject.connectorMethod = undefined;
+    element.businessObject.connectorUrl = undefined;
+    element.businessObject["opentosca:yaml"] = undefined;
+    let connector = getExtensionElementsList(
+      element.businessObject,
+      "camunda:Connector"
+    )[0];
+    console.log(connector);
+    let connectorId = connector.get("camunda:connectorId");
+    console.log(connectorId);
+    if (connectorId !== undefined) {
+      connector.connectorId = undefined;
+    }
     if (selectedTab === "upload" && uploadFile) {
       // Process the uploaded file
       console.log("Uploaded file:", uploadFile);

@@ -24,6 +24,11 @@
           "name": "connectorMethod",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "yaml",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },

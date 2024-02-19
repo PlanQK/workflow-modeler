@@ -54,8 +54,8 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
 
   const get = function () {
     console.log(element);
-    console.log(element.businessObject.get("quantme:connectorUrl"));
-    return element.businessObject.get("quantme:connectorUrl");
+    console.log(element.businessObject.get("opentosca:connectorUrl"));
+    return element.businessObject.get("opentosca:connectorUrl");
   };
 
   const getConnectorUrl = function () {

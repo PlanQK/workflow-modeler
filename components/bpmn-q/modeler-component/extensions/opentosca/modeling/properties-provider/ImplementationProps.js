@@ -105,6 +105,7 @@ export function ImplementationProps(props) {
       // drop down to select endpoint from OpenAPI spec
       if (element.businessObject.yaml !== undefined) {
         const urls = extractUrlsFromYaml(element.businessObject.yaml);
+        console.log(element.businessObject);
 
         if (urls.length > 0) {
           const methodUrlList = generateUrlMethodList(
@@ -122,7 +123,13 @@ export function ImplementationProps(props) {
               element.businessObject,
               "camunda:Connector"
             )[0];
+            console.log(connector);
             let inputOutput = getInputOutput(connector);
+            let connectorId = connector.get("camunda:connectorId");
+            console.log(connectorId);
+
+            console.log(inputOutput);
+
             // remove connector input and output parameters
             if (inputOutput !== undefined) {
               inputOutput.inputParameters = [];
