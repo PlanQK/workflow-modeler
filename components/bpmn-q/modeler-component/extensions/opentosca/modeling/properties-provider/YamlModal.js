@@ -66,10 +66,20 @@ export default function YamlModal(props) {
       if (Object.keys(fileContent).length === 0) {
         NotificationHandler.getInstance().displayNotification({
           type: "warning",
-          title: "Empty file",
+          title: "Empty file or invalid URL",
           content: "The downloaded file is empty or does not contain the expected data.",
           duration: 20000,
         });
+        element.businessObject.yaml = undefined;
+        commandStack.execute("element.updateModdleProperties", {
+          element,
+          moddleElement: element.businessObject,
+          properties: {
+            yaml: undefined,
+          },
+        });
+        
+        onClose();
       } else {
         console.log(fileContent);
 
@@ -84,10 +94,11 @@ export default function YamlModal(props) {
         });
 
         element.businessObject.yaml = yamlData;
+        onClose();
         return;
       }
     }
-    onClose();
+    
   };
 
   return (

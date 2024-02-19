@@ -22,6 +22,7 @@ import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/
 import { YamlUpload } from "./YamlUpload";
 import { Connector } from "./Connector";
 import yaml from "js-yaml";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 const QUANTME_NAMESPACE_PULL = "http://quantil.org/quantme/pull";
 
@@ -102,16 +103,20 @@ export function ImplementationProps(props) {
       // drop down to select endpoint from OpenAPI spec
       if (element.businessObject.yaml !== undefined) {
         const urls = extractUrlsFromYaml(element.businessObject.yaml);
-        const methodUrlList = generateUrlMethodList(element.businessObject.yaml);
-        entries.push({
-          id: "connector",
-          element,
-          translate,
-          urls,
-          methodUrlList,
-          component: Connector,
-          isEdited: isTextFieldEntryEdited,
-        });
+        if (urls.length > 0) {
+          const methodUrlList = generateUrlMethodList(element.businessObject.yaml);
+          entries.push({
+            id: "connector",
+            element,
+            translate,
+            urls,
+            methodUrlList,
+            component: Connector,
+            isEdited: isTextFieldEntryEdited,
+          });
+        }else{
+          element.businessObject.yaml = undefined;
+        }
       }
     }
   }
@@ -125,11 +130,21 @@ function extractUrlsFromYaml(content) {
   console.log(yamlData);
   const doc = yaml.load(content);
 
-  // Extract URLs from paths
-  const paths = Object.keys(doc.paths);
-  return paths.map((path) => {
-    return `${path}`;
-  });
+  if (doc.paths === undefined) {
+    NotificationHandler.getInstance().displayNotification({
+      type: "warning",
+      title: "Empty paths",
+      content: "The specification does not contain paths.",
+      duration: 20000,
+    });
+    return [];
+  } else {
+    // Extract URLs from paths
+    const paths = Object.keys(doc.paths);
+    return paths.map((path) => {
+      return `${path}`;
+    });
+  }
 }
 
 // Function to extract methods for each path
