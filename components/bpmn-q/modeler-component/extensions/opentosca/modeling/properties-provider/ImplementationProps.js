@@ -24,7 +24,6 @@ import { Connector } from "./Connector";
 import yaml from "js-yaml";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import { getInputOutput } from "../../../../editor/util/camunda-utils/InputOutputUtil";
-import { getModeler } from "../../../../editor/ModelerHandler";
 import { resetConnector } from "../../../../editor/util/ModellingUtilities";
 
 const QUANTME_NAMESPACE_PULL = "http://quantil.org/quantme/pull";
@@ -108,21 +107,26 @@ export function ImplementationProps(props) {
         const urls = extractUrlsFromYaml(element.businessObject.yaml);
 
         if (urls.length > 0) {
-          const methodUrlList = generateUrlMethodList(element.businessObject.yaml);
-          const filteredUrls = urls.filter(url => {
-            return methodUrlList.some(entry => { return entry.url === url })
+          const methodUrlList = generateUrlMethodList(
+            element.businessObject.yaml
+          );
+          const filteredUrls = urls.filter((url) => {
+            return methodUrlList.some((entry) => {
+              return entry.url === url;
+            });
           });
           if (filteredUrls.length > 0) {
             console.log(filteredUrls);
             //resetConnector(element);
-            let connector = getExtensionElementsList(element.businessObject, 'camunda:Connector')[0];
+            let connector = getExtensionElementsList(
+              element.businessObject,
+              "camunda:Connector"
+            )[0];
             let inputOutput = getInputOutput(connector);
             // remove connector input and output parameters
             if (inputOutput !== undefined) {
               inputOutput.inputParameters = [];
               inputOutput.outputParameters = [];
-
-
             }
             entries.push({
               id: "connector",
@@ -140,12 +144,12 @@ export function ImplementationProps(props) {
             NotificationHandler.getInstance().displayNotification({
               type: "warning",
               title: "No methods",
-              content: "The specification does contain paths but no corresponding methods are defined.",
+              content:
+                "The specification does contain paths but no corresponding methods are defined.",
               duration: 20000,
             });
           }
         } else {
-
           // reset yaml data
           element.businessObject.yaml = undefined;
           resetConnector(element);
@@ -161,11 +165,11 @@ function extractUrlsFromYaml(content) {
   // Convert JSON to YAML
   const yamlData = yaml.dump(content);
   console.log(yamlData);
-  console.log("davor")
+  console.log("davor");
   const doc = yaml.load(content);
-  console.log("danach")
+  console.log("danach");
   console.log(doc);
-  console.log(doc.paths)
+  console.log(doc.paths);
 
   if (doc.paths === undefined) {
     NotificationHandler.getInstance().displayNotification({
@@ -189,20 +193,19 @@ function extractMethodsForPath(path, paths) {
   const methods = Object.keys(paths[path] || {});
 
   return methods;
-};
+}
 
 // Function to generate a list of URLs with their available methods
 function generateUrlMethodList(content) {
   const urlMethodList = [];
-  const yamlFile = yaml.dump(content);
   const parsedYaml = yaml.load(content);
   const paths = Object.keys(parsedYaml.paths);
   for (const path of paths) {
     console.log(parsedYaml.paths[path]);
     console.log(path);
-    console.log(paths)
+    console.log(paths);
     const methods = extractMethodsForPath(path, parsedYaml.paths);
-    console.log(methods)
+    console.log(methods);
 
     if (methods.length > 0) {
       urlMethodList.push({ url: path, methods });
@@ -210,7 +213,7 @@ function generateUrlMethodList(content) {
   }
 
   return urlMethodList;
-};
+}
 
 export function JavaClass(props) {
   const {

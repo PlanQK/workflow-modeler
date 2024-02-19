@@ -1,6 +1,9 @@
 import { createTempModelerFromXml, getModeler } from "../ModelerHandler";
 import { getInputOutput } from "./camunda-utils/InputOutputUtil";
-import { getExtension, getExtensionElementsList } from "./camunda-utils/ExtensionElementsUtil";
+import {
+  getExtension,
+  getExtensionElementsList,
+} from "./camunda-utils/ExtensionElementsUtil";
 import { is } from "bpmn-js/lib/util/ModelUtil";
 
 /**
@@ -800,8 +803,10 @@ export function isConnectedWith(element, connectedElementType) {
 }
 
 export function resetConnector(element) {
-
-  let connector = getExtensionElementsList(element.businessObject, 'camunda:Connector')[0];
+  let connector = getExtensionElementsList(
+    element.businessObject,
+    "camunda:Connector"
+  )[0];
   let inputOutput = getInputOutput(connector);
   // remove connector input and output parameters
   if (inputOutput !== undefined) {

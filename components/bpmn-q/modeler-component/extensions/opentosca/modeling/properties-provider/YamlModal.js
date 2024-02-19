@@ -32,7 +32,7 @@ const Footer = Modal.Footer;
  */
 export default function YamlModal(props) {
   const [uploadFile, setUploadFile] = useState(null);
-  const [downloadLink, setDownloadLink] = useState('');
+  const [downloadLink, setDownloadLink] = useState("");
   const [selectedTab, setSelectedTab] = useState("upload");
 
   const { onClose, element, commandStack } = props;
@@ -40,7 +40,7 @@ export default function YamlModal(props) {
   const onSubmit = async () => {
     console.log(selectedTab);
     console.log(uploadFile);
-    console.log(downloadLink)
+    console.log(downloadLink);
     if (selectedTab === "upload" && uploadFile) {
       // Process the uploaded file
       console.log("Uploaded file:", uploadFile);
@@ -60,7 +60,6 @@ export default function YamlModal(props) {
       reader.readAsText(uploadFile);
       onClose();
     } else if (selectedTab === "link" && downloadLink !== "") {
-
       // Fetch the file content from the specified download link
       const fileContent = await fetchDataFromEndpoint(downloadLink);
 
@@ -68,7 +67,8 @@ export default function YamlModal(props) {
         NotificationHandler.getInstance().displayNotification({
           type: "warning",
           title: "Empty file or invalid URL",
-          content: "The downloaded file is empty or does not contain the expected data.",
+          content:
+            "The downloaded file is empty or does not contain the expected data.",
           duration: 20000,
         });
         element.businessObject.yaml = undefined;
@@ -79,7 +79,7 @@ export default function YamlModal(props) {
             yaml: undefined,
           },
         });
-        
+
         onClose();
       } else {
         console.log(fileContent);
@@ -99,7 +99,6 @@ export default function YamlModal(props) {
         return;
       }
     }
-    
   };
 
   return (
@@ -124,54 +123,58 @@ export default function YamlModal(props) {
           </div>
         </div>
         <div className="qwm-spaceAbove">
-        {selectedTab === "upload" && (
-          <div
-            className={`tab-content ${selectedTab === "upload" ? "active" : ""
+          {selectedTab === "upload" && (
+            <div
+              className={`tab-content ${
+                selectedTab === "upload" ? "active" : ""
               } upload-tab-content`}
-          >
-            <table>
-              <tbody>
-                <tr className="spaceUnder">
-                  <td align="right">File</td>
-                  <td align="left">
-                    <input
-                      className="file-input-container"
-                      type="file"
-                      accept=".yaml, .yml, .json"
-                      id="fileUpload"
-                      onChange={(e) => {
-                        setUploadFile(e.target.files[0]);
-                      }}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>)}
-        
-        {selectedTab === "link" && (
-          <div
-            className={`tab-content ${selectedTab === "link" ? "active" : ""
+            >
+              <table>
+                <tbody>
+                  <tr className="spaceUnder">
+                    <td align="right">File</td>
+                    <td align="left">
+                      <input
+                        className="file-input-container"
+                        type="file"
+                        accept=".yaml, .yml, .json"
+                        id="fileUpload"
+                        onChange={(e) => {
+                          setUploadFile(e.target.files[0]);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {selectedTab === "link" && (
+            <div
+              className={`tab-content ${
+                selectedTab === "link" ? "active" : ""
               } upload-tab-content`}
-          >
-            <table>
-              <tbody>
-                <tr className="spaceUnder">
-                  <td align="right">Download Link</td>
-                  <td align="left">
-                    <input
-                      type="text"
-                      className="qwm-input"
-                      onChange={(e) => {
-                        setDownloadLink(e.target.value);
-                      }}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>)}
-          </div>
+            >
+              <table>
+                <tbody>
+                  <tr className="spaceUnder">
+                    <td align="right">Download Link</td>
+                    <td align="left">
+                      <input
+                        type="text"
+                        className="qwm-input"
+                        onChange={(e) => {
+                          setDownloadLink(e.target.value);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </Body>
 
       <Footer>
