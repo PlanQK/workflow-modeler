@@ -1,4 +1,4 @@
-import * as consts from "./utilities/Constants";
+import * as consts from "../utilities/Constants";
 
 export default class PlanQKPaletteProvider {
   constructor(bpmnFactory, create, elementFactory, palette, translate) {

@@ -4,8 +4,8 @@ import { deployWorkflowToCamunda } from "../util/IoUtilities";
 import { getCamundaEndpoint } from "../config/EditorConfigManager";
 import { getRootProcess } from "../util/ModellingUtilities";
 import DeploymentSelectionModal from "./DeploymentSelectionModal";
-import { startPlanqkReplacementProcess } from "../../extensions/planqk/exec-completion/PlanQKServiceTaskCompletion";
 import { startDataFlowReplacementProcess } from "../../extensions/dataflow/replacement/DataFlowTransformator";
+import { startPlanqkReplacementProcess } from "../../extensions/planqk/replacement/PlanQKTransformator";
 import { checkEnabledStatus } from "../plugin/PluginHandler";
 import { pluginNames } from "../EditorConstants";
 

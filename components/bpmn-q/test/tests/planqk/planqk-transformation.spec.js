@@ -3,7 +3,7 @@ const {
 } = require("../../../modeler-component/editor/plugin/PluginConfigHandler");
 const {
   startPlanqkReplacementProcess,
-} = require("../../../modeler-component/extensions/planqk/exec-completion/PlanQKServiceTaskCompletion");
+} = require("../../../modeler-component/extensions/planqk/replacement/PlanQKTransformator");
 const { validPlanqkDiagram } = require("../helpers/DiagramHelper");
 const chai = require("chai");
 const app1 = {
