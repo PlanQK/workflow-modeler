@@ -15,6 +15,8 @@ import Modal from "../../../../editor/ui/modal/Modal";
 import "./yaml-modal.css";
 import "../../../../editor/config/config-modal.css";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
+import yaml from "js-yaml";
 
 // polyfill upcoming structural components
 const Title = Modal.Title;
@@ -57,56 +59,33 @@ export default function YamlModal(props) {
       };
       reader.readAsText(uploadFile);
     } else if (selectedTab === "link" && downloadLink !== "") {
-      console.log("los gehts")
+
       // Fetch the file content from the specified download link
-      fetch(downloadLink)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch file. Status: ${response.status}`);
-          }
-          return response.text();
-        })
-        .then(fileContent => {
-          console.log('File content:', fileContent);
+      const fileContent = await fetchDataFromEndpoint(downloadLink);
 
-          // Determine file extension
-          const fileExtension = downloadLink.split('.').pop().toLowerCase();
-
-          // Check if the file is JSON or YAML
-          if (fileExtension === 'json') {
-            console.log('File is JSON');
-            commandStack.execute("element.updateModdleProperties", {
-              element,
-              moddleElement: element.businessObject,
-              properties: {
-                yaml: fileContent,
-              },
-            });
-            element.businessObject.yaml = fileContent;
-          } else if (fileExtension === 'yaml' || fileExtension === 'yml') {
-            element.businessObject.yaml = fileContent;
-            console.log('File is YAML');
-            commandStack.execute("element.updateModdleProperties", {
-              element,
-              moddleElement: element.businessObject,
-              properties: {
-                yaml: fileContent,
-              },
-            });
-          } else {
-            console.error('Unsupported file format');
-            NotificationHandler.getInstance().displayNotification({
-              type: "warning",
-              title: "Unsupported Filetype for Connector",
-              content: "Unsupported file format",
-              duration: 20000,
-            });
-            return;
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching file:', error);
+      if (Object.keys(fileContent).length === 0) {
+        NotificationHandler.getInstance().displayNotification({
+          type: "warning",
+          title: "Empty file",
+          content: "The downloaded file is empty or does not contain the expected data.",
+          duration: 20000,
         });
+      } else {
+        console.log(fileContent);
+
+        // convert json to yaml data
+        const yamlData = yaml.dump(fileContent);
+        commandStack.execute("element.updateModdleProperties", {
+          element,
+          moddleElement: element.businessObject,
+          properties: {
+            yaml: yamlData,
+          },
+        });
+
+        element.businessObject.yaml = yamlData;
+        return;
+      }
     }
     onClose();
   };
