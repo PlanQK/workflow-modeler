@@ -23,6 +23,8 @@ import { YamlUpload } from "./YamlUpload";
 import { Connector } from "./Connector";
 import yaml from "js-yaml";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+import { getInputOutput } from "../../../../editor/util/camunda-utils/InputOutputUtil";
+import { getModeler } from "../../../../editor/ModelerHandler";
 
 const QUANTME_NAMESPACE_PULL = "http://quantil.org/quantme/pull";
 
@@ -114,8 +116,24 @@ export function ImplementationProps(props) {
             component: Connector,
             isEdited: isTextFieldEntryEdited,
           });
-        }else{
+        } else {
+
+          // reset yaml data
           element.businessObject.yaml = undefined;
+
+          let connector = getExtensionElementsList(element.businessObject, 'camunda:Connector')[0];
+          let inputOutput = getInputOutput(connector);
+          // remove connector input and output parameters
+          if (inputOutput !== undefined) {
+            inputOutput.inputParameters = [];
+            inputOutput.outputParameters = [];
+
+            getModeler().get("commandStack").execute("element.updateModdleProperties", {
+              element,
+              moddleElement: element.businessObject,
+              properties: {},
+            });
+          }
         }
       }
     }
@@ -128,7 +146,11 @@ function extractUrlsFromYaml(content) {
   // Convert JSON to YAML
   const yamlData = yaml.dump(content);
   console.log(yamlData);
+  console.log("davor")
   const doc = yaml.load(content);
+  console.log("danach")
+  console.log(doc);
+  console.log(doc.paths)
 
   if (doc.paths === undefined) {
     NotificationHandler.getInstance().displayNotification({

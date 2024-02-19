@@ -58,6 +58,7 @@ export default function YamlModal(props) {
         });
       };
       reader.readAsText(uploadFile);
+      onClose();
     } else if (selectedTab === "link" && downloadLink !== "") {
 
       // Fetch the file content from the specified download link
@@ -122,6 +123,7 @@ export default function YamlModal(props) {
             </div>
           </div>
         </div>
+        <div className="qwm-spaceAbove">
         {selectedTab === "upload" && (
           <div
             className={`tab-content ${selectedTab === "upload" ? "active" : ""
@@ -146,6 +148,7 @@ export default function YamlModal(props) {
               </tbody>
             </table>
           </div>)}
+        
         {selectedTab === "link" && (
           <div
             className={`tab-content ${selectedTab === "link" ? "active" : ""
@@ -168,6 +171,7 @@ export default function YamlModal(props) {
               </tbody>
             </table>
           </div>)}
+          </div>
       </Body>
 
       <Footer>

@@ -306,18 +306,21 @@ function determineOutputParameters(yamlData) {
 
   // Extract the request bodies and their parameters
   for (const methods of Object.values(data.paths)) {
+    console.log(data.paths);
     for (const details of Object.values(methods)) {
+      console.log(details)
       if (details.responses) {
         const response = details.responses;
         // Access the properties of the schema
         // Access the schema referenced by "200"
         const statusCode = "200";
-        let responseStatusCode;
+        let responseStatusCode = statusCode;
 
         if (response[statusCode] === undefined) {
           // If the response for the specified status code is not defined
           // Find another response with a status code starting with 2
           responseStatusCode = Object.keys(response).find((code) => code.startsWith("2"));
+          console.log(responseStatusCode)
         }
 
         if (responseStatusCode !== undefined) {
