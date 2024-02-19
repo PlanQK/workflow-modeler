@@ -14,20 +14,21 @@ import React from "@bpmn-io/properties-panel/preact/compat";
 import { useService } from "bpmn-js-properties-panel";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import { HiddenSelectEntry } from "../../../../editor/popup/HiddenTextFieldEntry";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 const yaml = require("js-yaml");
 /**
  * Entry to display the endpoints of the uploaded openapi specification for BPMN service task.
  */
-export function Connector({ element, translate, urls, methodUrlList }) {
+export function Connector({ element, translate, filteredUrls, methodUrlList }) {
   const modeling = useService("modeling");
   const debounce = useService("debounceInput");
 
   let arrValues = [];
-  for (let i = 0; i < urls.length; i++) {
+  for (let i = 0; i < filteredUrls.length; i++) {
     arrValues.push({
-      label: urls[i],
-      value: urls[i],
+      label: filteredUrls[i],
+      value: filteredUrls[i],
     });
   }
 

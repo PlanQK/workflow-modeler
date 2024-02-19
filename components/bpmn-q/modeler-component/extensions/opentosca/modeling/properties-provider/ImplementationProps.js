@@ -25,6 +25,7 @@ import yaml from "js-yaml";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import { getInputOutput } from "../../../../editor/util/camunda-utils/InputOutputUtil";
 import { getModeler } from "../../../../editor/ModelerHandler";
+import { resetConnector } from "../../../../editor/util/ModellingUtilities";
 
 const QUANTME_NAMESPACE_PULL = "http://quantil.org/quantme/pull";
 
@@ -105,35 +106,49 @@ export function ImplementationProps(props) {
       // drop down to select endpoint from OpenAPI spec
       if (element.businessObject.yaml !== undefined) {
         const urls = extractUrlsFromYaml(element.businessObject.yaml);
+
         if (urls.length > 0) {
           const methodUrlList = generateUrlMethodList(element.businessObject.yaml);
-          entries.push({
-            id: "connector",
-            element,
-            translate,
-            urls,
-            methodUrlList,
-            component: Connector,
-            isEdited: isTextFieldEntryEdited,
+          const filteredUrls = urls.filter(url => {
+            return methodUrlList.some(entry => { return entry.url === url })
           });
+          if (filteredUrls.length > 0) {
+            console.log(filteredUrls);
+            //resetConnector(element);
+            let connector = getExtensionElementsList(element.businessObject, 'camunda:Connector')[0];
+            let inputOutput = getInputOutput(connector);
+            // remove connector input and output parameters
+            if (inputOutput !== undefined) {
+              inputOutput.inputParameters = [];
+              inputOutput.outputParameters = [];
+
+
+            }
+            entries.push({
+              id: "connector",
+              element,
+              translate,
+              filteredUrls,
+              methodUrlList,
+              component: Connector,
+              isEdited: isTextFieldEntryEdited,
+            });
+          } else {
+            // reset yaml data
+            element.businessObject.yaml = undefined;
+            resetConnector(element);
+            NotificationHandler.getInstance().displayNotification({
+              type: "warning",
+              title: "No methods",
+              content: "The specification does contain paths but no corresponding methods are defined.",
+              duration: 20000,
+            });
+          }
         } else {
 
           // reset yaml data
           element.businessObject.yaml = undefined;
-
-          let connector = getExtensionElementsList(element.businessObject, 'camunda:Connector')[0];
-          let inputOutput = getInputOutput(connector);
-          // remove connector input and output parameters
-          if (inputOutput !== undefined) {
-            inputOutput.inputParameters = [];
-            inputOutput.outputParameters = [];
-
-            getModeler().get("commandStack").execute("element.updateModdleProperties", {
-              element,
-              moddleElement: element.businessObject,
-              properties: {},
-            });
-          }
+          resetConnector(element);
         }
       }
     }
@@ -187,6 +202,7 @@ function generateUrlMethodList(content) {
     console.log(path);
     console.log(paths)
     const methods = extractMethodsForPath(path, parsedYaml.paths);
+    console.log(methods)
 
     if (methods.length > 0) {
       urlMethodList.push({ url: path, methods });
