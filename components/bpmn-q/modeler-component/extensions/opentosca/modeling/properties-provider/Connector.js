@@ -14,6 +14,8 @@ import React from "@bpmn-io/properties-panel/preact/compat";
 import { useService } from "bpmn-js-properties-panel";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import { HiddenSelectEntry } from "../../../../editor/popup/HiddenTextFieldEntry";
+import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import { getInputOutput } from "../../../../editor/util/camunda-utils/InputOutputUtil";
 
 const yaml = require("js-yaml");
 /**
@@ -69,6 +71,23 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
   };
 
   const setValue = function (value) {
+    element.businessObject.connectorMethod = undefined;
+
+    let connector = getExtensionElementsList(
+      element.businessObject,
+      "camunda:Connector"
+    )[0];
+    console.log(connector);
+    let inputOutput = getInputOutput(connector);
+
+    console.log(inputOutput);
+
+    // remove connector input and output parameters
+    if (inputOutput !== undefined) {
+      inputOutput.inputParameters = [];
+      inputOutput.outputParameters = [];
+    }
+
     return modeling.updateProperties(element, { connectorUrl: value || "" });
   };
 

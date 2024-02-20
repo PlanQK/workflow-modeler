@@ -131,10 +131,10 @@ export function ImplementationProps(props) {
             console.log(inputOutput);
 
             // remove connector input and output parameters
-            if (inputOutput !== undefined) {
-              inputOutput.inputParameters = [];
-              inputOutput.outputParameters = [];
-            }
+            //if (inputOutput !== undefined) {
+            //  inputOutput.inputParameters = [];
+            //  inputOutput.outputParameters = [];
+            //}
             entries.push({
               id: "connector",
               element,

@@ -18,6 +18,7 @@ import NotificationHandler from "../../../../editor/ui/notifications/Notificatio
 import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
 import yaml from "js-yaml";
 import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import { getInputOutput } from "../../../../editor/util/camunda-utils/InputOutputUtil";
 
 // polyfill upcoming structural components
 const Title = Modal.Title;
@@ -54,6 +55,15 @@ export default function YamlModal(props) {
     console.log(connectorId);
     if (connectorId !== undefined) {
       connector.connectorId = undefined;
+    }
+    let inputOutput = getInputOutput(connector);
+
+    console.log(inputOutput);
+
+    // remove connector input and output parameters
+    if (inputOutput !== undefined) {
+      inputOutput.inputParameters = [];
+      inputOutput.outputParameters = [];
     }
     if (selectedTab === "upload" && uploadFile) {
       // Process the uploaded file
