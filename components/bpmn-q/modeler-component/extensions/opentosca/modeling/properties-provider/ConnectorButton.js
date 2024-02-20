@@ -12,14 +12,14 @@
 import { HeaderButton } from "@bpmn-io/properties-panel";
 import { useService } from "bpmn-js-properties-panel";
 import React from "react";
-import YamlModal from "./YamlModal";
+import ConnectorModal from "./ConnectorModal";
 import { createRoot } from "react-dom/client";
-import "./yaml-modal.css";
+import "./connector-modal.css";
 
 /**
  * Entry to display the button which opens the Yaml Model, a dialog which allows to upload yml files.
  */
-export function YamlUpload(props) {
+export function ConnectorButton(props) {
   const { element } = props;
   const translate = useService("translate");
   const commandStack = useService("commandStack");
@@ -27,7 +27,7 @@ export function YamlUpload(props) {
   const onClick = () => {
     const root = createRoot(document.getElementById("modal-container"));
     root.render(
-      <YamlModal
+      <ConnectorModal
         onClose={() => root.unmount()}
         element={element}
         commandStack={commandStack}
@@ -37,10 +37,10 @@ export function YamlUpload(props) {
 
   return HeaderButton({
     element,
-    id: "upload-yaml-button",
+    id: "specify-connector-button",
     text: translate("Specify Connector"),
     description: "Specify Connector",
-    className: "upload-yaml-button",
+    className: "specify-connector-button",
     children: "Specify Connector",
     onClick,
   });

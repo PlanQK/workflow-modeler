@@ -12,7 +12,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Modal from "../../../../editor/ui/modal/Modal";
-import "./yaml-modal.css";
+import "./connector-modal.css";
 import "../../../../editor/config/config-modal.css";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
@@ -32,7 +32,7 @@ const Footer = Modal.Footer;
  * @returns {JSX.Element} The modal as React component
  * @constructor
  */
-export default function YamlModal(props) {
+export default function ConnectorModal(props) {
   const [uploadFile, setUploadFile] = useState(null);
   const [downloadLink, setDownloadLink] = useState("");
   const [selectedTab, setSelectedTab] = useState("upload");
@@ -40,9 +40,6 @@ export default function YamlModal(props) {
   const { onClose, element, commandStack } = props;
 
   const onSubmit = async () => {
-    console.log(selectedTab);
-    console.log(uploadFile);
-    console.log(downloadLink);
     element.businessObject.connectorMethod = undefined;
     element.businessObject.connectorUrl = undefined;
     element.businessObject["opentosca:yaml"] = undefined;
@@ -50,15 +47,11 @@ export default function YamlModal(props) {
       element.businessObject,
       "camunda:Connector"
     )[0];
-    console.log(connector);
     let connectorId = connector.get("camunda:connectorId");
-    console.log(connectorId);
     if (connectorId !== undefined) {
       connector.connectorId = undefined;
     }
     let inputOutput = getInputOutput(connector);
-
-    console.log(inputOutput);
 
     // remove connector input and output parameters
     if (inputOutput !== undefined) {
@@ -106,8 +99,6 @@ export default function YamlModal(props) {
 
         onClose();
       } else {
-        console.log(fileContent);
-
         // convert json to yaml data
         const yamlData = yaml.dump(fileContent);
         commandStack.execute("element.updateModdleProperties", {

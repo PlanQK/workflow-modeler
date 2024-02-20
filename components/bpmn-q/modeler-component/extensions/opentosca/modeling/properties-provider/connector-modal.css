@@ -1,4 +1,4 @@
-.qwm .upload-yaml-button {
+.qwm .specify-connector-button {
   outline: none;
   background-color: var(--color-grey-225-10-97);
   border: 1px solid var(--color-grey-225-10-75);
@@ -8,7 +8,7 @@
   fill: var(--add-entry-fill-color);
 }
 
-.qwm .upload-yaml-button:hover {
+.qwm .specify-connector-button:hover {
   color: white;
   border: 1px solid white;
   background-color: var(--color-blue-205-100-50);

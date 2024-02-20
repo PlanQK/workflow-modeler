@@ -19,11 +19,10 @@ import { useService } from "bpmn-js-properties-panel";
 import { getImplementationType } from "../../../quantme/utilities/ImplementationTypeHelperExtension";
 import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import { YamlUpload } from "./YamlUpload";
+import { ConnectorButton } from "./ConnectorButton";
 import { Connector } from "./Connector";
 import yaml from "js-yaml";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
-import { getInputOutput } from "../../../../editor/util/camunda-utils/InputOutputUtil";
 import { resetConnector } from "../../../../editor/util/ModellingUtilities";
 
 const QUANTME_NAMESPACE_PULL = "http://quantil.org/quantme/pull";
@@ -95,17 +94,16 @@ export function ImplementationProps(props) {
         encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))
       )
     ) {
-      // field to upload an OpenAPI spec for automated connector generation
+      // field to specify connector (via upload or link)
       entries.push({
-        id: "yamlUpload",
-        component: YamlUpload,
+        id: "specifyConnector",
+        component: ConnectorButton,
         isEdited: isTextFieldEntryEdited,
       });
 
       // drop down to select endpoint from OpenAPI spec
       if (element.businessObject.yaml !== undefined) {
         const urls = extractUrlsFromYaml(element.businessObject.yaml);
-        console.log(element.businessObject);
 
         if (urls.length > 0) {
           const methodUrlList = generateUrlMethodList(
@@ -117,24 +115,6 @@ export function ImplementationProps(props) {
             });
           });
           if (filteredUrls.length > 0) {
-            console.log(filteredUrls);
-            //resetConnector(element);
-            let connector = getExtensionElementsList(
-              element.businessObject,
-              "camunda:Connector"
-            )[0];
-            console.log(connector);
-            let inputOutput = getInputOutput(connector);
-            let connectorId = connector.get("camunda:connectorId");
-            console.log(connectorId);
-
-            console.log(inputOutput);
-
-            // remove connector input and output parameters
-            //if (inputOutput !== undefined) {
-            //  inputOutput.inputParameters = [];
-            //  inputOutput.outputParameters = [];
-            //}
             entries.push({
               id: "connector",
               element,
@@ -170,13 +150,7 @@ export function ImplementationProps(props) {
 
 function extractUrlsFromYaml(content) {
   // Convert JSON to YAML
-  const yamlData = yaml.dump(content);
-  console.log(yamlData);
-  console.log("davor");
   const doc = yaml.load(content);
-  console.log("danach");
-  console.log(doc);
-  console.log(doc.paths);
 
   if (doc.paths === undefined) {
     NotificationHandler.getInstance().displayNotification({
@@ -208,12 +182,7 @@ function generateUrlMethodList(content) {
   const parsedYaml = yaml.load(content);
   const paths = Object.keys(parsedYaml.paths);
   for (const path of paths) {
-    console.log(parsedYaml.paths[path]);
-    console.log(path);
-    console.log(paths);
     const methods = extractMethodsForPath(path, parsedYaml.paths);
-    console.log(methods);
-
     if (methods.length > 0) {
       urlMethodList.push({ url: path, methods });
     }
