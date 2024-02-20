@@ -1,6 +1,6 @@
 import { setPluginConfig } from "../../../modeler-component/editor/plugin/PluginConfigHandler";
 import { expect } from "chai";
-import * as qhanaConfig from "../../../modeler-component/extensions/qhana/config/QHAnaConfigManager";
+import * as qhanaConfig from "../../../modeler-component/extensions/qhana/framework-config/QHAnaConfigManager";
 
 describe("Test QHAna plugin config", function () {
   describe("Test plugin config of QHAna endpoint", function () {

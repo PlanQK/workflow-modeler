@@ -1,6 +1,6 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
-import DataFlowPlugin from "../../extensions/data-extension/DataFlowPlugin";
+import DataFlowPlugin from "../../extensions/dataflow/DataFlowPlugin";
 import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
 import PatternPlugin from "../../extensions/pattern/PatternPlugin";
 import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";

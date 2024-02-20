@@ -14,7 +14,7 @@ import {
   SPLIT_MERGE_WORKFLOW,
   UNTRANSFORMED_BPMN_WORKFLOW,
 } from "./DataFlowWorkflows";
-import { startDataFlowReplacementProcess } from "../../../modeler-component/extensions/data-extension/transformation/TransformationManager";
+import { startDataFlowReplacementProcess } from "../../../modeler-component/extensions/dataflow/replacement/DataFlowTransformator";
 import { expect } from "chai";
 import {
   getDocumentation,
@@ -150,7 +150,9 @@ describe("Test the TransformationManager of the data flow extension.", function 
         /<bpmndi:BPMNDiagram[^>]+>[\s\S]*?<\/bpmndi:BPMNDiagram>/g,
         ""
       );
-
+      console.log(workflowWithoutDiagramElements);
+      console.log("-----------------------------A");
+      console.log(UNTRANSFORMED_BPMN_WORKFLOW);
       expect(workflowWithoutDiagramElements).to.equal(
         UNTRANSFORMED_BPMN_WORKFLOW
       );

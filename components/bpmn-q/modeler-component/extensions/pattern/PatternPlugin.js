@@ -12,7 +12,7 @@
 import React from "react";
 
 import PatternConfigTab from "./configTabs/PatternConfigTab";
-import patternStyles from "./styling/pattern.css";
+import patternStyles from "./resources/styling/pattern.css";
 import PatternPluginButton from "./ui/PatternPluginButton";
 
 /**

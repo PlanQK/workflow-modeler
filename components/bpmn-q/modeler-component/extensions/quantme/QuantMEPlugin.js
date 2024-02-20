@@ -11,7 +11,7 @@ import {
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
-import quantMEStyles from "./styling/quantme.css";
+import quantMEStyles from "./resources/styling/quantme.css";
 import QuantMEPluginButton from "./ui/QuantMEPluginButton";
 import { getModeler } from "../../editor/ModelerHandler";
 

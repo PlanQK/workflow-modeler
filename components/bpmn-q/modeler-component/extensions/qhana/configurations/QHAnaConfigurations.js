@@ -1,6 +1,6 @@
 import ConfigurationsEndpoint from "../../../editor/configurations/ConfigurationEndpoint";
-import * as configManager from "../config/QHAnaConfigManager";
-import * as consts from "../QHAnaConstants";
+import * as configManager from "../framework-config/QHAnaConfigManager";
+import * as consts from "../Constants";
 
 /**
  * Custom ConfigurationsEndpoint for the QHAna Plugin. Extends the ConfigurationsEndpoint to fetch the configurations directly

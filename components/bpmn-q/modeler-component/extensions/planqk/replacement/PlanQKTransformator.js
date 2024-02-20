@@ -10,11 +10,11 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import { insertShape } from "../../../editor/util/TransformationUtilities";
-import * as dataConsts from "../../data-extension/Constants";
+import * as dataConsts from "../../dataflow/Constants";
 import {
   createProcessContextVariablesTask,
   transformDataStoreMap,
-} from "../../data-extension/transformation/TransformationManager";
+} from "../../dataflow/replacement/DataFlowTransformator";
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 
 /**
@@ -56,6 +56,9 @@ export async function startPlanqkReplacementProcess(xml) {
       " Planqk service tasks to replace..."
   );
   let isTransformed = !planqkServiceTasks || !planqkServiceTasks.length;
+  if (isTransformed) {
+    return { status: "transformed", xml: xml };
+  }
 
   // replace each PlanQK Service Task with the subprocess that implements service interaction to retrieve standard-compliant BPMN
   for (let planqkServiceTask of planqkServiceTasks) {
