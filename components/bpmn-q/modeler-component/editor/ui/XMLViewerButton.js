@@ -65,7 +65,7 @@ export default function XMLViewerButton() {
       onClick={() => enableXMLViewer(enabledXMLView)}
     >
       <span className="qwm-icon-xml-viewer">
-        <span className="qwm-indent">XML Viewer</span>
+        <span className="qwm-indent"></span>
       </span>
     </button>
   );

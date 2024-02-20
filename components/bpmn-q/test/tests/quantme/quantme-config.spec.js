@@ -23,9 +23,6 @@ describe("Test QuantME ConfigManager", function () {
             awsRuntimeHandlerEndpoint: "http://test:8890",
             scriptSplitterEndpoint: "http://test:8891",
             scriptSplitterThreshold: 7,
-            githubRepositoryName: "Example-Repo",
-            githubUsername: "userName",
-            githubRepositoryPath: "path/to/repo",
             hybridRuntimeProvenance: "true",
           },
         },
@@ -47,9 +44,6 @@ describe("Test QuantME ConfigManager", function () {
         "http://test:8891"
       );
       expect(quantmeConfig.getScriptSplitterThreshold()).to.equal(7);
-      expect(quantmeConfig.getQRMRepositoryName()).to.equal("Example-Repo");
-      expect(quantmeConfig.getQRMRepositoryUserName()).to.equal("userName");
-      expect(quantmeConfig.getQRMRepositoryPath()).to.equal("path/to/repo");
       expect(quantmeConfig.getHybridRuntimeProvenance()).to.equal(true);
     });
   });

@@ -13,6 +13,7 @@ import "./editor/resources/styling/bpmn-js-token-simulation.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import ButtonToolbar from "./editor/ui/ButtonToolbar";
+import Toolbar from "./editor/ui/Toolbar";
 import {
   createNewDiagram,
   loadDiagram,
@@ -87,6 +88,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
   setInnerHtml() {
     this.innerHTML = `
             <div style="display: flex; flex-direction: column; height: 100%;" class="qwm">
+              <div id="toolbar-container" style="flex-shrink: 0;"></div>
               <div id="button-container" style="flex-shrink: 0;"></div>
               <hr class="qwm-toolbar-splitter" />
               <div id="main-div" style="display: flex; flex: 1; height: 100%">
@@ -294,6 +296,16 @@ export class QuantumWorkflowModeler extends HTMLElement {
     const transformationButtons = getTransformationButtons();
 
     // integrate the React ButtonToolbar into its DOM container
+    const toolbarRoot = createRoot(
+      document.getElementById("toolbar-container")
+    );
+    toolbarRoot.render(
+      <Toolbar
+        modeler={modeler}
+        pluginButtons={getPluginButtons()}
+        transformButtons={transformationButtons}
+      />
+    );
     const root = createRoot(document.getElementById("button-container"));
     root.render(
       <ButtonToolbar
@@ -313,6 +325,9 @@ export class QuantumWorkflowModeler extends HTMLElement {
           modeler.xml = result;
         });
     });
+    if (!modeler.config) {
+      modeler.config = {};
+    }
     if (this.workflowModel) {
       loadDiagram(this.workflowModel, getModeler()).then();
     } else {

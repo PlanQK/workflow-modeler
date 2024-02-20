@@ -9,6 +9,7 @@ import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
 import fetch from "node-fetch";
 import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardware-selection/HardwareSelectionForm";
 import JSZip from "jszip";
+import NotificationHandler from "../ui/notifications/NotificationHandler";
 
 const editorConfig = require("../config/EditorConfigManager");
 const quantmeConfig = require("../../extensions/quantme/framework-config/config-manager");
@@ -42,10 +43,14 @@ export async function saveXmlAsLocalFile(
   xml,
   fileName = editorConfig.getFileName()
 ) {
-  const bpmnFile = await new File([xml], fileName, { type: "text/xml" });
+  let suggestedName = fileName;
+  if (suggestedName.includes(saveFileFormats.BPMN)) {
+    suggestedName = suggestedName.split(saveFileFormats.BPMN)[0];
+  }
+  const bpmnFile = await new File([xml], suggestedName, { type: "text/xml" });
 
   const link = document.createElement("a");
-  link.download = fileName + ".bpmn";
+  link.download = fileName + saveFileFormats.BPMN;
   link.href = URL.createObjectURL(bpmnFile);
   link.click();
 
@@ -66,29 +71,119 @@ export async function saveXmlAsLocalFile(
 export async function saveModelerAsLocalFile(
   modeler,
   fileName = editorConfig.getFileName(),
-  fileFormat = editorConfig.getFileFormat(),
-  openWindow = true
+  fileFormat = editorConfig.getFileFormat()
 ) {
   const xml = await getXml(modeler);
-  if (
-    fileFormat === saveFileFormats.BPMN ||
-    fileFormat === saveFileFormats.ALL
-  ) {
-    if (openWindow) {
-      await openFileDialog(modeler, xml, fileName, saveFileFormats.BPMN);
-    } else {
-      modeler.oldXml = xml;
-      await saveXmlAsLocalFile(xml, fileName);
-    }
+  if (fileFormat === saveFileFormats.ZIP) {
+    await saveAllFilesAsZip(modeler, modeler.views, fileName);
+    modeler.oldXml = xml;
+  }
+
+  if (fileFormat === saveFileFormats.BPMN) {
+    await openFileDialog(modeler, xml, fileName, saveFileFormats.BPMN);
+    modeler.oldXml = xml;
   }
 
   if (
-    fileFormat === saveFileFormats.ALL ||
     fileFormat === saveFileFormats.SVG ||
     fileFormat === saveFileFormats.PNG
   ) {
     await saveWorkflowAsSVG(modeler, fileName, fileFormat);
   }
+}
+
+/**
+ * Saves the workflow as BPMN, SVG, PNG, and the views in a zip.
+ * @param modeler modeler to extract the xml
+ * @param views the views generated during transformation
+ * @param zipFileName the name of the zip
+ */
+export async function saveAllFilesAsZip(
+  modeler,
+  views,
+  zipFileName = editorConfig.getFileName()
+) {
+  let suggestedName = zipFileName;
+  if (suggestedName.includes(saveFileFormats.BPMN)) {
+    suggestedName = suggestedName.split(saveFileFormats.BPMN)[0];
+  }
+
+  const zip = new JSZip();
+  let xml = await getXml(modeler);
+
+  // Add the actual XML file to the zip
+  zip.file(`${suggestedName}.bpmn`, xml);
+
+  if (views !== undefined) {
+    for (const [key, value] of Object.entries(views)) {
+      console.info("Adding view with name: ", key);
+      zip.file(`${key}.bpmn`, value);
+    }
+  }
+
+  // Save SVG as a file in the zip
+  const svg = await modeler.saveSVG({ format: true });
+  zip.file(`${suggestedName}.svg`, svg.svg);
+
+  // Convert SVG to PNG and save as a file in the zip
+  const pngBlob = await convertSvgToPngBlob(svg.svg);
+  zip.file(`${suggestedName}.png`, pngBlob);
+
+  // Generate the zip blob
+  const zipBlob = await zip.generateAsync({ type: "blob" });
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: `${suggestedName}.zip`,
+      types: [
+        {
+          description: "ZIP Files",
+          accept: {
+            "application/zip": [".zip"],
+          },
+        },
+      ],
+    });
+
+    const writable = await handle.createWritable();
+    await writable.write(zipBlob);
+    await writable.close();
+
+    // Dispatch the workflow event
+    dispatchWorkflowEvent(
+      workflowEventTypes.SAVED,
+      xml,
+      editorConfig.getFileName()
+    );
+
+    console.log("ZIP file saved successfully.");
+  } catch (error) {
+    console.error("Error saving ZIP file:", error);
+  }
+}
+
+/**
+ * Convert SVG to PNG Blob
+ * @param {string} svg - SVG content
+ * @returns {Promise<Blob>} - PNG Blob
+ */
+function convertSvgToPngBlob(svg) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = "data:image/svg+xml;base64," + btoa(svg);
+
+    img.onload = function () {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      const context = canvas.getContext("2d");
+      context.drawImage(img, 0, 0);
+
+      canvas.toBlob(function (blob) {
+        resolve(blob);
+      }, "image/png");
+    };
+  });
 }
 
 /**
@@ -168,8 +263,8 @@ export async function deployWorkflowToCamunda(
 
   // add bpmn file ending if not present
   let fileName = workflowName;
-  if (!fileName.endsWith(".bpmn")) {
-    fileName = fileName + ".bpmn";
+  if (!fileName.endsWith(saveFileFormats.BPMN)) {
+    fileName = fileName + saveFileFormats.BPMN;
   }
 
   // add diagram to the body
@@ -183,7 +278,7 @@ export async function deployWorkflowToCamunda(
     // add view xml to the body
     const viewBlob = new File(
       [value],
-      fileName.replace(".bpmn", key + ".xml"),
+      fileName.replace(saveFileFormats.BPMN, key + ".xml"),
       { type: "text/xml" }
     );
     form.append(key, viewBlob);
@@ -334,6 +429,100 @@ export function setAutoSaveInterval(
   }
 }
 
+async function handleZipFile(zipFile) {
+  const zip = await JSZip.loadAsync(zipFile);
+
+  // Iterate over each file in the zip
+  for (const [fileName, file] of Object.entries(zip.files)) {
+    if (
+      fileName.endsWith(saveFileFormats.BPMN) &&
+      !fileName.startsWith("view")
+    ) {
+      const xml = await file.async("text");
+
+      // Open file and load its content as BPMN diagram in the modeler
+      loadDiagram(xml, getModeler(), false).then((result) => {
+        // Save file name in editor configs
+        editorConfig.setFileName(fileName);
+
+        dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, fileName);
+
+        if (
+          result.warnings &&
+          result.warnings.some((warning) => warning.error)
+        ) {
+          NotificationHandler.getInstance().displayNotification({
+            type: "warning",
+            title: "Loaded Diagram contains Problems",
+            content: `The diagram could not be properly loaded. Maybe it contains modelling elements which are not supported by the currently active plugins.`,
+            duration: 20000,
+          });
+        }
+
+        if (result.error) {
+          NotificationHandler.getInstance().displayNotification({
+            type: "warning",
+            title: "Unable to load Diagram",
+            content: `During the loading of the diagram, some errors occurred: ${result.error}`,
+            duration: 20000,
+          });
+        }
+      });
+    } else if (fileName.startsWith("view")) {
+      const xml = await file.async("text");
+      let modeler = getModeler();
+      modeler.views = [];
+      modeler.views[fileName] = xml;
+    }
+  }
+}
+
+export function openFile(file) {
+  if (file) {
+    if (file.name.endsWith(saveFileFormats.ZIP)) {
+      // open file and load its content as bpmn diagram in the modeler
+      handleZipFile(file);
+    }
+
+    if (file.name.endsWith(saveFileFormats.BPMN)) {
+      // open file and load its content as bpmn diagram in the modeler
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const xml = e.target.result;
+
+        loadDiagram(xml, getModeler(), false).then((result) => {
+          // save file name in editor configs
+          editorConfig.setFileName(file.name);
+
+          dispatchWorkflowEvent(workflowEventTypes.LOADED, xml, file.name);
+
+          if (
+            result.warnings &&
+            result.warnings.some((warning) => warning.error)
+          ) {
+            NotificationHandler.getInstance().displayNotification({
+              type: "warning",
+              title: "Loaded Diagram contains Problems",
+              content: `The diagram could not be properly loaded. Maybe it contains modelling elements which are not supported be the currently active plugins.`,
+              duration: 20000,
+            });
+          }
+
+          if (result.error) {
+            NotificationHandler.getInstance().displayNotification({
+              type: "warning",
+              title: "Unable to load Diagram",
+              content: `During the loading of the diagram some errors occurred: ${result.error}`,
+              duration: 20000,
+            });
+          }
+        });
+      };
+      reader.readAsText(file);
+    }
+  }
+}
+
 export function saveFile() {
   // extract the xml and save it to a file
   getModeler().saveXML({ format: true }, function (err, xml) {
@@ -347,7 +536,7 @@ export function saveFile() {
         const timestamp = getTimestamp();
         const filename = `${editorConfig
           .getFileName()
-          .replace(".bpmn", "")}_autosave_${timestamp}`;
+          .replace(saveFileFormats.BPMN, "")}_autosave_${timestamp}`;
         if (views !== undefined) {
           saveXmlAndViewsAsZip(xml, views, filename);
         } else {
@@ -363,33 +552,37 @@ export async function saveXmlAndViewsAsZip(
   views,
   zipFileName = editorConfig.getFileName()
 ) {
+  let suggestedName = zipFileName;
+  if (suggestedName.includes(saveFileFormats.BPMN)) {
+    suggestedName = suggestedName.split(saveFileFormats.BPMN)[0];
+  }
   // Create a new JSZip instance
   const zip = new JSZip();
 
   // Add the actual XML file to the zip
-  zip.file(`${zipFileName}.bpmn`, xml);
+  zip.file(`${suggestedName}.bpmn`, xml);
 
   // upload all provided views
   if (views !== undefined) {
     for (const [key, value] of Object.entries(views)) {
       console.info("Adding view with name: ", key);
-      zip.file(key, value);
+      zip.file(`${key}.bpmn`, value);
     }
-
-    // Generate the zip file asynchronously
-    const zipBlob = await zip.generateAsync({ type: "blob" });
-
-    // Create a File object from the zip blob
-    const zipFile = new File([zipBlob], `${zipFileName}.zip`, {
-      type: "application/zip",
-    });
-
-    // Create a link element to trigger the download
-    const link = document.createElement("a");
-    link.download = `${zipFileName}.zip`;
-    link.href = URL.createObjectURL(zipFile);
-    link.click();
   }
+
+  // Generate the zip file asynchronously
+  const zipBlob = await zip.generateAsync({ type: "blob" });
+
+  // Create a File object from the zip blob
+  const zipFile = new File([zipBlob], `${suggestedName}.zip`, {
+    type: "application/zip",
+  });
+
+  // Create a link element to trigger the download
+  const link = document.createElement("a");
+  link.download = `${suggestedName}.zip`;
+  link.href = URL.createObjectURL(zipFile);
+  link.click();
 
   // Dispatch the workflow event
   dispatchWorkflowEvent(
@@ -410,16 +603,10 @@ export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
       return;
     }
 
-    if (
-      fileFormat === saveFileFormats.ALL ||
-      fileFormat === saveFileFormats.SVG
-    ) {
+    if (fileFormat === saveFileFormats.SVG) {
       openFileDialog(modeler, svg, fileName, saveFileFormats.SVG);
     }
-    if (
-      fileFormat === saveFileFormats.ALL ||
-      fileFormat === saveFileFormats.PNG
-    ) {
+    if (fileFormat === saveFileFormats.PNG) {
       convertSvgToPng(svg, fileName, saveFileFormats.PNG);
     }
   });
@@ -427,7 +614,7 @@ export async function saveWorkflowAsSVG(modeler, fileName, fileFormat) {
 
 // Function to convert SVG to PNG using an external library
 function convertSvgToPng(svg, fileName, fileFormat) {
-  var img = new Image();
+  let img = new Image();
   img.onload = function () {
     var canvas = document.createElement("canvas");
     canvas.width = img.width;
@@ -448,36 +635,43 @@ function downloadPng(pngDataUrl, fileName, fileFormat) {
 
 async function openFileDialog(modeler, content, fileName, fileFormat) {
   let suggestedName = fileName;
-  if (suggestedName.includes(".bpmn")) {
-    suggestedName = fileName.split(".bpmn")[0];
+  if (suggestedName.includes(saveFileFormats.BPMN)) {
+    suggestedName = fileName.split(saveFileFormats.BPMN)[0];
+  }
+  let types = [];
+  if (fileFormat === saveFileFormats.BPMN) {
+    // Display only BPMN file type
+    types = [
+      {
+        description: "BPMN file",
+        accept: { "text/plain": [saveFileFormats.BPMN] },
+      },
+    ];
+  } else if (fileFormat === saveFileFormats.SVG) {
+    // Display only SVG file type
+    types = [
+      {
+        description: "SVG file",
+        accept: { "text/plain": [saveFileFormats.SVG] },
+      },
+    ];
   }
   let fileHandle = await window.showSaveFilePicker({
     startIn: "downloads",
     suggestedName: suggestedName + fileFormat,
-    types: [
-      {
-        description: "BPMN file",
-        accept: { "text/plain": [".bpmn"] },
-      },
-      {
-        description: "SVG file",
-        accept: { "text/plain": [".svg"] },
-      },
-    ],
+    types: types,
   });
+
   writeFile(fileHandle, content);
-  if (
-    fileFormat === saveFileFormats.BPMN ||
-    fileFormat === saveFileFormats.ALL
-  ) {
+  if (fileFormat === saveFileFormats.BPMN) {
     modeler.oldXml = content;
   }
 }
 
 async function openFileUrlDialog(content, fileName, fileFormat) {
   let suggestedName = fileName;
-  if (suggestedName.includes(".bpmn")) {
-    suggestedName = fileName.split(".bpmn")[0];
+  if (suggestedName.includes(saveFileFormats.BPMN)) {
+    suggestedName = fileName.split(saveFileFormats.BPMN)[0];
   }
   let fileHandle = await window.showSaveFilePicker({
     startIn: "downloads",
@@ -502,4 +696,119 @@ async function writeURLToFile(fileHandle, url) {
   const writable = await fileHandle.createWritable();
   const response = await fetch(url);
   await response.body.pipeTo(writable);
+}
+
+/**
+ * Checks if the diagram contains changes that were not saved.
+ */
+export async function checkUnsavedChanges() {
+  try {
+    let oldXml = getModeler().oldXml;
+    const result = await getModeler().saveXML({ format: true });
+    const { xml } = result;
+    if (oldXml !== undefined) {
+      oldXml = oldXml.trim();
+    }
+    if (oldXml !== xml.trim() && oldXml !== undefined) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+/**
+ * Saves the bpmn diagram which is currently opened in the given bpmn modeler as a bpmn file to the locale storage of the user.
+ *
+ * @param modeler The bpmn modeler the bpmn diagram is opened in.
+ * @param fileName The name of the file.
+ * @param fileFormat the format of the file which can be changed by the user
+ */
+export async function saveModelerContentAsLocalFile(
+  modeler,
+  fileName = editorConfig.getFileName(),
+  fileFormat = editorConfig.getFileFormat()
+) {
+  await openSaveAsFileDialog(modeler, fileName, fileFormat);
+}
+
+/**
+ * Opens a file dialog which enables to save the workflow in different file formats.
+ * @param modeler the modeler to extract the xml
+ * @param fileName
+ */
+async function openSaveAsFileDialog(modeler, fileName, fileFormat) {
+  let suggestedName = fileName;
+  if (suggestedName.includes(saveFileFormats.BPMN)) {
+    suggestedName = fileName.split(saveFileFormats.BPMN)[0];
+  }
+  const xml = await getXml(modeler);
+  let fileHandle = await window.showSaveFilePicker({
+    startIn: "downloads",
+    suggestedName: suggestedName + fileFormat,
+    types: [
+      {
+        description: "BPMN file",
+        accept: { "text/plain": [saveFileFormats.BPMN] },
+      },
+      {
+        description: "PNG file",
+        accept: { "text/plain": [saveFileFormats.PNG] },
+      },
+      {
+        description: "SVG file",
+        accept: { "text/plain": [saveFileFormats.SVG] },
+      },
+      {
+        description: "Zip file",
+        accept: { "text/plain": [saveFileFormats.ZIP] },
+      },
+    ],
+  });
+
+  // there exist no direct access to get the selected type so we extract the fileHandle name
+  let type = fileHandle.name;
+  let contentToWrite = xml;
+  if (type.endsWith(saveFileFormats.BPMN)) {
+    modeler.oldXml = xml;
+  }
+  if (fileHandle.name.includes(saveFileFormats.SVG)) {
+    const svg = await modeler.saveSVG({ format: true });
+    contentToWrite = svg.svg;
+  }
+  if (fileHandle.name.includes(saveFileFormats.PNG)) {
+    const svg = await modeler.saveSVG({ format: true });
+    contentToWrite = svg.svg;
+    const pngBlob = await convertSvgToPngBlob(svg.svg);
+    contentToWrite = pngBlob;
+    writeFile(fileHandle, contentToWrite);
+  }
+  if (fileHandle.name.includes(saveFileFormats.ZIP)) {
+    modeler.oldXml = xml;
+    const zip = new JSZip();
+    // add the xml
+    zip.file(`${suggestedName}.bpmn`, xml);
+
+    // if views exist, add them
+    if (modeler.views !== undefined) {
+      for (const [key, value] of Object.entries(modeler.views)) {
+        console.info("Adding view with name: ", key);
+        zip.file(`${key}.bpmn`, value);
+      }
+    }
+
+    // add the svg
+    const svg = await modeler.saveSVG({ format: true });
+    zip.file(`${suggestedName}.svg`, svg.svg);
+
+    // add the png
+    const pngBlob = await convertSvgToPngBlob(svg.svg);
+    zip.file(`${suggestedName}.png`, pngBlob);
+
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    contentToWrite = zipBlob;
+  }
+  writeFile(fileHandle, contentToWrite);
 }

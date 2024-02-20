@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { getModeler } from "../../../editor/ModelerHandler";
-import * as config from "../framework-config/config-manager";
+import { getModeler } from "../ModelerHandler";
+import * as config from "./EditorConfigManager";
 
 /**
  * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change the

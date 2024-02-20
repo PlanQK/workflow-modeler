@@ -55,7 +55,7 @@
 
 .qwm-btn-config-primary:hover {
   border: solid 1px var(--blue-darken-55);
-  background-color: var(--blue-darken-62);
+  background-color: rgb(0, 81, 255);
 }
 
 .qwm-btn-config-primary:active {

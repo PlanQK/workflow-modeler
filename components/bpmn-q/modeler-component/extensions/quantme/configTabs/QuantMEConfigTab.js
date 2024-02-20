@@ -150,6 +150,7 @@ export default function QuantMETab() {
     config.setAWSRuntimeHandlerEndpoint(awsRuntimeHandlerEndpoint);
     config.setHybridRuntimeProvenance(hybridRuntimeProvenance);
     config.setQProvEndpoint(qprovEndpoint);
+    console.log("set values");
   };
 
   return (
