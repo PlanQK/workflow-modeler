@@ -1,8 +1,9 @@
 import {
-  autoSaveFile, pluginNames,
+  autoSaveFile,
+  pluginNames,
   saveFileFormats,
   transformedWorkflowHandlers,
-  workflowEventTypes
+  workflowEventTypes,
 } from "../EditorConstants";
 import { getModeler } from "../ModelerHandler";
 import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
@@ -434,6 +435,7 @@ export function setAutoSaveInterval(
 }
 
 async function handleZipFile(zipFile) {
+  console.log("Importing Zip file: ", zipFile);
   const zip = await JSZip.loadAsync(zipFile);
 
   // Iterate over each file in the zip
@@ -551,7 +553,6 @@ export function saveFile() {
   });
 }
 
-
 /**
  * Saves the workflow, as well as the views and deployment models in a QAA.
  * @param modeler modeler to extract the xml
@@ -588,7 +589,9 @@ export async function saveQAA(
     console.log("OpenTOSCA plugin is enabled. Adding CSARs to QAA...");
 
     // retrieve all CSARs attached to ServiceTasks of the workflow
-    let csarsToDeploy = getServiceTasksToDeploy(getRootProcess(modeler.getDefinitions())).csarsToDeploy;
+    let csarsToDeploy = getServiceTasksToDeploy(
+      getRootProcess(modeler.getDefinitions())
+    ).csarsToDeploy;
     console.log("Retrieved list of CSARs to deploy: ", csarsToDeploy);
 
     // store CSARs within QAA
@@ -608,7 +611,9 @@ export async function saveQAA(
       zip.file(`${value.csarName}`, csar);
     }
   } else {
-    console.log("OpenTOSCA plugin is disabled. Enable plugin to store CSARs attached to workflow activities.");
+    console.log(
+      "OpenTOSCA plugin is disabled. Enable plugin to store CSARs attached to workflow activities."
+    );
   }
 
   // Generate the zip file asynchronously
