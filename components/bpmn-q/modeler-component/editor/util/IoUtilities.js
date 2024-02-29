@@ -1,5 +1,6 @@
 import {
   autoSaveFile,
+  pluginNames,
   saveFileFormats,
   transformedWorkflowHandlers,
   workflowEventTypes,
@@ -10,6 +11,11 @@ import fetch from "node-fetch";
 import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardware-selection/HardwareSelectionForm";
 import JSZip from "jszip";
 import NotificationHandler from "../ui/notifications/NotificationHandler";
+import { checkEnabledStatus } from "../plugin/PluginHandler";
+import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
+import { getRootProcess } from "./ModellingUtilities";
+import { getWineryEndpoint } from "../../extensions/opentosca/framework-config/config-manager";
+import $ from "jquery";
 
 const editorConfig = require("../config/EditorConfigManager");
 const quantmeConfig = require("../../extensions/quantme/framework-config/config-manager");
@@ -115,9 +121,10 @@ export async function saveAllFilesAsZip(
   zip.file(`${suggestedName}.bpmn`, xml);
 
   if (views !== undefined) {
+    const viewsFolder = zip.folder("views");
     for (const [key, value] of Object.entries(views)) {
       console.info("Adding view with name: ", key);
-      zip.file(`${key}.bpmn`, value);
+      viewsFolder.file(`${key}.bpmn`, value);
     }
   }
 
@@ -430,13 +437,18 @@ export function setAutoSaveInterval(
 }
 
 async function handleZipFile(zipFile) {
+  console.log("Importing Zip file: ", zipFile);
   const zip = await JSZip.loadAsync(zipFile);
 
   // Iterate over each file in the zip
-  for (const [fileName, file] of Object.entries(zip.files)) {
+  let files = Object.entries(zip.files);
+  console.log("Zip comprises %i files!", files.length);
+  for (const [fileName, file] of files) {
+    console.log("Importing file with name: ", fileName);
     if (
-      fileName.endsWith(saveFileFormats.BPMN) &&
-      !fileName.startsWith("view")
+      !file.dir &&
+      !fileName.startsWith("views/") &&
+      fileName.endsWith(saveFileFormats.BPMN)
     ) {
       const xml = await file.async("text");
 
@@ -468,11 +480,44 @@ async function handleZipFile(zipFile) {
           });
         }
       });
-    } else if (fileName.startsWith("view")) {
+    } else if (
+      !file.dir &&
+      fileName.startsWith("views/") &&
+      fileName.endsWith(saveFileFormats.BPMN)
+    ) {
       const xml = await file.async("text");
       let modeler = getModeler();
       modeler.views = [];
       modeler.views[fileName] = xml;
+    } else if (
+      !file.dir &&
+      fileName.startsWith("deployment-models/") &&
+      fileName.endsWith(saveFileFormats.CSAR)
+    ) {
+      console.log("Importing CSAR to Winery: ", file);
+      let fileBlob = await file.async("blob");
+      console.log("Extracted blob for Winery upload: ", fileBlob);
+
+      // create body for winery request, avoiding overwriting existing ServiceTemplates
+      const fd = new FormData();
+      fd.append("overwrite", "false");
+      fd.append("file", fileBlob);
+      console.log("Form data for Winery upload: ", fd);
+
+      // Upload CSARs asynchronously
+      $.ajax({
+        type: "POST",
+        url: getWineryEndpoint(),
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function () {
+          console.log(
+            "Successfully uploaded CSAR: %s",
+            file.name.split("/")[1]
+          );
+        },
+      });
     }
   }
 }
@@ -538,7 +583,7 @@ export function saveFile() {
           .getFileName()
           .replace(saveFileFormats.BPMN, "")}_autosave_${timestamp}`;
         if (views !== undefined) {
-          saveXmlAndViewsAsZip(xml, views, filename);
+          saveQAA(xml, views, filename);
         } else {
           saveXmlAsLocalFile(xml, filename);
         }
@@ -547,12 +592,19 @@ export function saveFile() {
   });
 }
 
-export async function saveXmlAndViewsAsZip(
-  xml,
+/**
+ * Saves the workflow, as well as the views and deployment models in a QAA.
+ * @param modeler modeler to extract the xml
+ * @param views the views generated during transformation
+ * @param qaaFileName the name of the QAA
+ */
+export async function saveQAA(
+  modeler,
   views,
-  zipFileName = editorConfig.getFileName()
+  qaaFileName = editorConfig.getFileName()
 ) {
-  let suggestedName = zipFileName;
+  console.log("Storing QAA for workflow with name: ", qaaFileName);
+  let suggestedName = qaaFileName;
   if (suggestedName.includes(saveFileFormats.BPMN)) {
     suggestedName = suggestedName.split(saveFileFormats.BPMN)[0];
   }
@@ -560,14 +612,49 @@ export async function saveXmlAndViewsAsZip(
   const zip = new JSZip();
 
   // Add the actual XML file to the zip
+  let xml = await getXml(modeler);
   zip.file(`${suggestedName}.bpmn`, xml);
 
   // upload all provided views
   if (views !== undefined) {
+    const viewsFolder = zip.folder("views");
     for (const [key, value] of Object.entries(views)) {
       console.info("Adding view with name: ", key);
-      zip.file(`${key}.bpmn`, value);
+      viewsFolder.file(`${key}.bpmn`, value);
     }
+  }
+
+  // Add CSARs to Zip if OpenTOSCA plugin is enabled
+  if (checkEnabledStatus(pluginNames.OPENTOSCA)) {
+    console.log("OpenTOSCA plugin is enabled. Adding CSARs to QAA...");
+    const deploymentModelFolder = zip.folder("deployment-models");
+
+    // retrieve all CSARs attached to ServiceTasks of the workflow
+    let csarsToDeploy = getServiceTasksToDeploy(
+      getRootProcess(modeler.getDefinitions())
+    ).csarsToDeploy;
+    console.log("Retrieved list of CSARs to deploy: ", csarsToDeploy);
+
+    // store CSARs within QAA
+    for (const [, value] of Object.entries(csarsToDeploy)) {
+      console.log("Adding CSAR with name: ", value.csarName);
+
+      // retrieve location and download CSAR
+      let csarUrl = value.url;
+      if (csarUrl.startsWith("{{ wineryEndpoint }}")) {
+        csarUrl = csarUrl.replace("{{ wineryEndpoint }}", getWineryEndpoint());
+      }
+      console.log("Downloading CSAR from URL: ", csarUrl);
+      const csar = await (await fetch(csarUrl)).blob();
+      console.log("CSAR: ", csar);
+
+      // store CSAR in zip file
+      deploymentModelFolder.file(`${value.csarName}`, csar);
+    }
+  } else {
+    console.log(
+      "OpenTOSCA plugin is disabled. Enable plugin to store CSARs attached to workflow activities."
+    );
   }
 
   // Generate the zip file asynchronously
@@ -577,6 +664,7 @@ export async function saveXmlAndViewsAsZip(
   const zipFile = new File([zipBlob], `${suggestedName}.zip`, {
     type: "application/zip",
   });
+  console.log("Successfully created Zip file comprising QAA: ", zipFile);
 
   // Create a link element to trigger the download
   const link = document.createElement("a");
