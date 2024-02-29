@@ -202,7 +202,7 @@ export default class AdaptationPlugin extends PureComponent {
         return;
       } else {
         console.log(
-          "Hybrid program generation successful or not rewuired for session!"
+          "Hybrid program generation successful or not required for session!"
         );
 
         // rewrite the workflow and display the result for the user
