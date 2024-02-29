@@ -1,8 +1,8 @@
 import {
-  autoSaveFile,
+  autoSaveFile, pluginNames,
   saveFileFormats,
   transformedWorkflowHandlers,
-  workflowEventTypes,
+  workflowEventTypes
 } from "../EditorConstants";
 import { getModeler } from "../ModelerHandler";
 import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
@@ -10,6 +10,7 @@ import fetch from "node-fetch";
 import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardware-selection/HardwareSelectionForm";
 import JSZip from "jszip";
 import NotificationHandler from "../ui/notifications/NotificationHandler";
+import { checkEnabledStatus } from "../plugin/PluginHandler";
 
 const editorConfig = require("../config/EditorConfigManager");
 const quantmeConfig = require("../../extensions/quantme/framework-config/config-manager");
@@ -538,7 +539,7 @@ export function saveFile() {
           .getFileName()
           .replace(saveFileFormats.BPMN, "")}_autosave_${timestamp}`;
         if (views !== undefined) {
-          saveXmlAndViewsAsZip(xml, views, filename);
+          saveQAA(xml, views, filename);
         } else {
           saveXmlAsLocalFile(xml, filename);
         }
@@ -547,12 +548,20 @@ export function saveFile() {
   });
 }
 
-export async function saveXmlAndViewsAsZip(
-  xml,
+
+/**
+ * Saves the workflow, as well as the views and deployment models in a QAA.
+ * @param modeler modeler to extract the xml
+ * @param views the views generated during transformation
+ * @param qaaFileName the name of the QAA
+ */
+export async function saveQAA(
+  modeler,
   views,
-  zipFileName = editorConfig.getFileName()
+  qaaFileName = editorConfig.getFileName()
 ) {
-  let suggestedName = zipFileName;
+  console.log("Storing QAA for workflow with name: ", qaaFileName);
+  let suggestedName = qaaFileName;
   if (suggestedName.includes(saveFileFormats.BPMN)) {
     suggestedName = suggestedName.split(saveFileFormats.BPMN)[0];
   }
@@ -560,6 +569,7 @@ export async function saveXmlAndViewsAsZip(
   const zip = new JSZip();
 
   // Add the actual XML file to the zip
+  let xml = await getXml(modeler);
   zip.file(`${suggestedName}.bpmn`, xml);
 
   // upload all provided views
@@ -570,6 +580,15 @@ export async function saveXmlAndViewsAsZip(
     }
   }
 
+  // Add CSARs to Zip if OpenTOSCA plugin is enabled
+  if (checkEnabledStatus(pluginNames.OPENTOSCA)) {
+    console.log("OpenTOSCA plugin is enabled. Adding CSARs to QAA...");
+
+    // TODO: store CSARs
+  } else {
+    console.log("OpenTOSCA plugin is disabled. Enable plugin to store CSARs attached to workflow activities.");
+  }
+
   // Generate the zip file asynchronously
   const zipBlob = await zip.generateAsync({ type: "blob" });
 
@@ -577,6 +596,7 @@ export async function saveXmlAndViewsAsZip(
   const zipFile = new File([zipBlob], `${suggestedName}.zip`, {
     type: "application/zip",
   });
+  console.log("Successfully created Zip file comprising QAA: ", zipFile);
 
   // Create a link element to trigger the download
   const link = document.createElement("a");
