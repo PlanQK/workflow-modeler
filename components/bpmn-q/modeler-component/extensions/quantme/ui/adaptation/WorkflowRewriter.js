@@ -15,6 +15,51 @@ import { getDi } from "bpmn-js/lib/util/ModelUtil";
 import { layout } from "../../replacement/layouter/Layouter";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 
+function createIBMSessionScript() {
+  return `
+import groovy.json.*;
+def qpu = execution.getVariable("qpu");
+def ibmInstance = execution.getVariable("ibmInstance");
+def token = execution.getVariable("ibmToken");
+def auth = "Bearer " + token
+
+def request= JsonOutput.toJson("instance": ibmInstance, "backend": qpu);
+
+try {
+   def post = new URL("https://api.quantum-computing.ibm.com/runtime/sessions").openConnection();
+   post.setRequestMethod("POST");
+   post.setDoOutput(true);
+   post.setRequestProperty("Content-Type", "application/json");
+   post.setRequestProperty("Accept", "application/json");
+   post.setRequestProperty("Authorization", auth);
+   println "Open connection to https://api.quantum-computing.ibm.com/runtime/sessions";
+
+   OutputStreamWriter wr = new OutputStreamWriter(post.getOutputStream());
+   println request;
+   wr.write(request.toString());
+   wr.flush();
+
+   def status = post.getResponseCode();
+   println status;
+   if(status.toString().startsWith("2")){
+       println post.getInputStream();
+       def resultText = post.getInputStream().getText();
+       def slurper = new JsonSlurper();
+       def json = slurper.parseText(resultText);
+       execution.setVariable("ibmSessionId", json.get("id"));
+   }else{
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while creating session!");
+   }
+} catch(org.camunda.bpm.engine.delegate.BpmnError e) {
+   println e.errorCode;
+   throw new org.camunda.bpm.engine.delegate.BpmnError(e.errorCode);
+} catch(Exception e) {
+   println e;
+   throw new org.camunda.bpm.engine.delegate.BpmnError("Unable to connect to given endpoint: https://api.quantum-computing.ibm.com/runtime/sessions");
+};
+`;
+}
+
 /**
  * Rewrite the workflow available within the given modeler using the given optimization candidate
  *
@@ -250,7 +295,7 @@ async function rewriteWorkflowForSession(modeler, candidate) {
   let createSessionBo = elementRegistry.get(createSession.id).businessObject;
   createSessionBo.name = "Create IBM Session";
   createSessionBo.scriptFormat = "groovy";
-  createSessionBo.script = "TODO"; // TODO: add script
+  createSessionBo.script = createIBMSessionScript();
   console.log("Business object of ScriptTask: ", createSessionBo);
 
   // redirect all ingoing edges of the entry point to the newly added ScriptTask
