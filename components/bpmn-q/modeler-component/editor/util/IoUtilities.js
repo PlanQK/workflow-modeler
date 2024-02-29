@@ -439,7 +439,10 @@ async function handleZipFile(zipFile) {
   const zip = await JSZip.loadAsync(zipFile);
 
   // Iterate over each file in the zip
-  for (const [fileName, file] of Object.entries(zip.files)) {
+  let files = Object.entries(zip.files);
+  console.log("Zip comprises %i files!", files.length);
+  for (const [fileName, file] of files) {
+    console.log("Importing file with name: ", fileName);
     if (
       fileName.endsWith(saveFileFormats.BPMN) &&
       !fileName.startsWith("view")
@@ -479,6 +482,10 @@ async function handleZipFile(zipFile) {
       let modeler = getModeler();
       modeler.views = [];
       modeler.views[fileName] = xml;
+    } else if (fileName.endsWith(saveFileFormats.CSAR)) {
+      console.log("Importing CSAR to Winery...");
+
+      // TODO: import CSAR
     }
   }
 }

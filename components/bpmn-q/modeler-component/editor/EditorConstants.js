@@ -41,4 +41,5 @@ export const saveFileFormats = {
   PNG: ".png",
   SVG: ".svg",
   ZIP: ".zip",
+  CSAR: ".csar",
 };
