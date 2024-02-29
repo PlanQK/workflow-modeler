@@ -11,6 +11,9 @@ import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardw
 import JSZip from "jszip";
 import NotificationHandler from "../ui/notifications/NotificationHandler";
 import { checkEnabledStatus } from "../plugin/PluginHandler";
+import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
+import { getRootProcess } from "./ModellingUtilities";
+import { getWineryEndpoint } from "../../extensions/opentosca/framework-config/config-manager";
 
 const editorConfig = require("../config/EditorConfigManager");
 const quantmeConfig = require("../../extensions/quantme/framework-config/config-manager");
@@ -584,7 +587,26 @@ export async function saveQAA(
   if (checkEnabledStatus(pluginNames.OPENTOSCA)) {
     console.log("OpenTOSCA plugin is enabled. Adding CSARs to QAA...");
 
-    // TODO: store CSARs
+    // retrieve all CSARs attached to ServiceTasks of the workflow
+    let csarsToDeploy = getServiceTasksToDeploy(getRootProcess(modeler.getDefinitions())).csarsToDeploy;
+    console.log("Retrieved list of CSARs to deploy: ", csarsToDeploy);
+
+    // store CSARs within QAA
+    for (const [, value] of Object.entries(csarsToDeploy)) {
+      console.log("Adding CSAR with name: ", value.csarName);
+
+      // retrieve location and download CSAR
+      let csarUrl = value.url;
+      if (csarUrl.startsWith("{{ wineryEndpoint }}")) {
+        csarUrl = csarUrl.replace("{{ wineryEndpoint }}", getWineryEndpoint());
+      }
+      console.log("Downloading CSAR from URL: ", csarUrl);
+      const csar = await (await fetch(csarUrl)).blob();
+      console.log("CSAR: ", csar);
+
+      // store CSAR in zip file
+      zip.file(`${value.csarName}`, csar);
+    }
   } else {
     console.log("OpenTOSCA plugin is disabled. Enable plugin to store CSARs attached to workflow activities.");
   }
