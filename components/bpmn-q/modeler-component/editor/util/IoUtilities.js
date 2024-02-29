@@ -15,6 +15,7 @@ import { checkEnabledStatus } from "../plugin/PluginHandler";
 import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
 import { getRootProcess } from "./ModellingUtilities";
 import { getWineryEndpoint } from "../../extensions/opentosca/framework-config/config-manager";
+import $ from "jquery";
 
 const editorConfig = require("../config/EditorConfigManager");
 const quantmeConfig = require("../../extensions/quantme/framework-config/config-manager");
@@ -493,9 +494,30 @@ async function handleZipFile(zipFile) {
       fileName.startsWith("deployment-models/") &&
       fileName.endsWith(saveFileFormats.CSAR)
     ) {
-      console.log("Importing CSAR to Winery...");
+      console.log("Importing CSAR to Winery: ", file);
+      let fileBlob = await file.async("blob");
+      console.log("Extracted blob for Winery upload: ", fileBlob);
 
-      // TODO: import CSAR
+      // create body for winery request, avoiding overwriting existing ServiceTemplates
+      const fd = new FormData();
+      fd.append("overwrite", "false");
+      fd.append("file", fileBlob);
+      console.log("Form data for Winery upload: ", fd);
+
+      // Upload CSARs asynchronously
+      $.ajax({
+        type: "POST",
+        url: getWineryEndpoint(),
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function () {
+          console.log(
+            "Successfully uploaded CSAR: %s",
+            file.name.split("/")[1]
+          );
+        },
+      });
     }
   }
 }
