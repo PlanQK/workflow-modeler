@@ -161,12 +161,16 @@ export default class AdaptationPlugin extends PureComponent {
               getQRMs()
             );
           break;
-        case "AWS Runtime":
+        case "AWS Hybrid Jobs":
           programGenerationResult = await getAWSRuntimeProgramDeploymentModel(
             rewriteCandidate,
             config,
             getQRMs()
           );
+          break;
+        case "IBM Session":
+          // no program generation required for IBM sessions
+          programGenerationResult = {};
           break;
         default:
           programGenerationResult = {
@@ -197,7 +201,9 @@ export default class AdaptationPlugin extends PureComponent {
 
         return;
       } else {
-        console.log("Hybrid program generation successful!");
+        console.log(
+          "Hybrid program generation successful or not rewuired for session!"
+        );
 
         // rewrite the workflow and display the result for the user
         let rewritingResult = await rewriteWorkflow(

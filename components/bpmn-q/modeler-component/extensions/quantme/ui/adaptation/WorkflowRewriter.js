@@ -29,6 +29,14 @@ export async function rewriteWorkflow(
   hybridProgramId
 ) {
   console.log("Starting rewrite for candidate: ", candidate);
+  if (!hybridProgramId) {
+    console.log(
+      "Hybrid program ID is null. Rewriting for session functionality..."
+    );
+
+    return rewriteWorkflowForSession(modeler, candidate);
+  }
+
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
 
@@ -210,6 +218,22 @@ export async function rewriteWorkflow(
 
   // update the graphical visualization in the modeler
   await refreshModeler(modeler);
+  return { result: "success" };
+}
+
+/**
+ * Rewrite the workflow available within the given modeler for the usage of IBM sessions using the given optimization candidate
+ *
+ * @param modeler the modeler containing the workflow to rewrite
+ * @param candidate the candidate to perform the rewrite for
+ */
+function rewriteWorkflowForSession(modeler, candidate) {
+  console.log(
+    "Rewriting the following candidate for usage of an IBM session: ",
+    candidate
+  );
+
+  // TODO
   return { result: "success" };
 }
 
