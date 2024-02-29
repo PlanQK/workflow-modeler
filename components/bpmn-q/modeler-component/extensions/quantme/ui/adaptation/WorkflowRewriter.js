@@ -12,6 +12,8 @@
 import { getXml } from "../../../../editor/util/IoUtilities";
 import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
 import { getDi } from "bpmn-js/lib/util/ModelUtil";
+import { layout } from "../../replacement/layouter/Layouter";
+import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 
 /**
  * Rewrite the workflow available within the given modeler using the given optimization candidate
@@ -34,7 +36,7 @@ export async function rewriteWorkflow(
       "Hybrid program ID is null. Rewriting for session functionality..."
     );
 
-    return rewriteWorkflowForSession(modeler, candidate);
+    return await rewriteWorkflowForSession(modeler, candidate);
   }
 
   let modeling = modeler.get("modeling");
@@ -148,23 +150,13 @@ export async function rewriteWorkflow(
       "hybridJob-" + hybridProgramId + "-activeTask";
   }
 
-  // redirect ingoing sequence flows of the entry point (except sequence flow representing the loop)
-  console.log("Adding ingoing sequence flow to new ServiceTask!");
-  for (let i = 0; i < entryPoint.incoming.length; i++) {
-    let sequenceFlow = entryPoint.incoming[i];
-    console.log(sequenceFlow);
-    if (
-      !candidate.containedElements.filter((e) => e.id === sequenceFlow.id)
-        .length > 0
-    ) {
-      console.log("Connecting ServiceTask with: ", sequenceFlow.source);
-      modeling.connect(
-        elementRegistry.get(sequenceFlow.source.id),
-        invokeHybridRuntime,
-        { type: "bpmn:SequenceFlow" }
-      );
-    }
-  }
+  redirectIngoingFlow(
+    entryPoint,
+    candidate,
+    modeling,
+    elementRegistry,
+    invokeHybridRuntime
+  );
 
   // redirect outgoing sequence flow
   console.log("Adding outgoing sequence flow to new ServiceTask!");
@@ -227,14 +219,83 @@ export async function rewriteWorkflow(
  * @param modeler the modeler containing the workflow to rewrite
  * @param candidate the candidate to perform the rewrite for
  */
-function rewriteWorkflowForSession(modeler, candidate) {
+async function rewriteWorkflowForSession(modeler, candidate) {
+  let modeling = modeler.get("modeling");
+  let elementRegistry = modeler.get("elementRegistry");
   console.log(
     "Rewriting the following candidate for usage of an IBM session: ",
     candidate
   );
 
-  // TODO
+  // get root element of the current diagram
+  const definitions = modeler.getDefinitions();
+  const rootProcess = getRootProcess(definitions);
+
+  // get entry point of the hybrid loop to retrieve ingoing sequence flow
+  let entryPoint = elementRegistry.get(candidate.entryPoint.id);
+  console.log("Entry point: ", entryPoint);
+
+  // retrieve parent of the hybrid loop elements to add replacing script task
+  let parent = elementRegistry.get(entryPoint.parent.id);
+  console.log("Parent element of the hybrid loop: ", parent);
+
+  // add new script task to create session
+  let createSession = modeling.createShape(
+    { type: "bpmn:ScriptTask" },
+    { x: 0, y: 0 },
+    parent,
+    {}
+  );
+  console.log("Added ScriptTask to create session: ", createSession);
+  let createSessionBo = elementRegistry.get(createSession.id).businessObject;
+  createSessionBo.name = "Create IBM Session";
+  createSessionBo.scriptFormat = "groovy";
+  createSessionBo.script = "TODO"; // TODO: add script
+  console.log("Business object of ScriptTask: ", createSessionBo);
+
+  // redirect all ingoing edges of the entry point to the newly added ScriptTask
+  redirectIngoingFlow(
+    entryPoint,
+    candidate,
+    modeling,
+    elementRegistry,
+    createSession
+  );
+
+  // connect task to entry point
+  modeling.connect(createSession, entryPoint, { type: "bpmn:SequenceFlow" });
+
+  // layout newly added elements
+  layout(modeling, elementRegistry, rootProcess);
+
+  // update the graphical visualization in the modeler
+  await refreshModeler(modeler);
   return { result: "success" };
+}
+
+function redirectIngoingFlow(
+  entryPoint,
+  candidate,
+  modeling,
+  elementRegistry,
+  newTask
+) {
+  // redirect ingoing sequence flows of the entry point (except sequence flow representing the loop)
+  console.log("Adding ingoing sequence flow to new task: ", newTask);
+  for (let i = 0; i < entryPoint.incoming.length; i++) {
+    let sequenceFlow = entryPoint.incoming[i];
+    console.log(sequenceFlow);
+    if (
+      !candidate.containedElements.filter((e) => e.id === sequenceFlow.id)
+        .length > 0
+    ) {
+      console.log("Connecting ServiceTask with: ", sequenceFlow.source);
+      modeling.connect(elementRegistry.get(sequenceFlow.source.id), newTask, {
+        type: "bpmn:SequenceFlow",
+      });
+      modeling.removeConnection(sequenceFlow);
+    }
+  }
 }
 
 /**
