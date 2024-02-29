@@ -120,9 +120,10 @@ export async function saveAllFilesAsZip(
   zip.file(`${suggestedName}.bpmn`, xml);
 
   if (views !== undefined) {
+    const viewsFolder = zip.folder("views");
     for (const [key, value] of Object.entries(views)) {
       console.info("Adding view with name: ", key);
-      zip.file(`${key}.bpmn`, value);
+      viewsFolder.file(`${key}.bpmn`, value);
     }
   }
 
@@ -444,8 +445,9 @@ async function handleZipFile(zipFile) {
   for (const [fileName, file] of files) {
     console.log("Importing file with name: ", fileName);
     if (
-      fileName.endsWith(saveFileFormats.BPMN) &&
-      !fileName.startsWith("view")
+      !file.dir &&
+      !fileName.startsWith("views/") &&
+      fileName.endsWith(saveFileFormats.BPMN)
     ) {
       const xml = await file.async("text");
 
@@ -477,12 +479,20 @@ async function handleZipFile(zipFile) {
           });
         }
       });
-    } else if (fileName.startsWith("view")) {
+    } else if (
+      !file.dir &&
+      fileName.startsWith("views/") &&
+      fileName.endsWith(saveFileFormats.BPMN)
+    ) {
       const xml = await file.async("text");
       let modeler = getModeler();
       modeler.views = [];
       modeler.views[fileName] = xml;
-    } else if (fileName.endsWith(saveFileFormats.CSAR)) {
+    } else if (
+      !file.dir &&
+      fileName.startsWith("deployment-models/") &&
+      fileName.endsWith(saveFileFormats.CSAR)
+    ) {
       console.log("Importing CSAR to Winery...");
 
       // TODO: import CSAR
@@ -585,15 +595,17 @@ export async function saveQAA(
 
   // upload all provided views
   if (views !== undefined) {
+    const viewsFolder = zip.folder("views");
     for (const [key, value] of Object.entries(views)) {
       console.info("Adding view with name: ", key);
-      zip.file(`${key}.bpmn`, value);
+      viewsFolder.file(`${key}.bpmn`, value);
     }
   }
 
   // Add CSARs to Zip if OpenTOSCA plugin is enabled
   if (checkEnabledStatus(pluginNames.OPENTOSCA)) {
     console.log("OpenTOSCA plugin is enabled. Adding CSARs to QAA...");
+    const deploymentModelFolder = zip.folder("deployment-models");
 
     // retrieve all CSARs attached to ServiceTasks of the workflow
     let csarsToDeploy = getServiceTasksToDeploy(
@@ -615,7 +627,7 @@ export async function saveQAA(
       console.log("CSAR: ", csar);
 
       // store CSAR in zip file
-      zip.file(`${value.csarName}`, csar);
+      deploymentModelFolder.file(`${value.csarName}`, csar);
     }
   } else {
     console.log(
