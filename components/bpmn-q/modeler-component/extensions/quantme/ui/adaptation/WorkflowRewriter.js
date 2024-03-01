@@ -11,7 +11,7 @@
 
 import { getXml } from "../../../../editor/util/IoUtilities";
 import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
-import { getDi } from "bpmn-js/lib/util/ModelUtil";
+import { getBusinessObject, getDi } from "bpmn-js/lib/util/ModelUtil";
 import { layout } from "../../replacement/layouter/Layouter";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 
@@ -21,7 +21,7 @@ import groovy.json.*;
 def qpu = execution.getVariable("qpu");
 def ibmInstance = execution.getVariable("ibmInstance");
 def token = execution.getVariable("ibmToken");
-def auth = "Bearer " + token
+def auth = "Bearer " + token;
 
 def request= JsonOutput.toJson("instance": ibmInstance, "backend": qpu);
 
@@ -41,13 +41,13 @@ try {
 
    def status = post.getResponseCode();
    println status;
-   if(status.toString().startsWith("2")){
-       println post.getInputStream();
+   if (status.toString().startsWith("2")) {
        def resultText = post.getInputStream().getText();
+       println resultText;
        def slurper = new JsonSlurper();
        def json = slurper.parseText(resultText);
        execution.setVariable("ibmSessionId", json.get("id"));
-   }else{
+   } else {
        throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while creating session!");
    }
 } catch(org.camunda.bpm.engine.delegate.BpmnError e) {
@@ -203,11 +203,17 @@ export async function rewriteWorkflow(
     invokeHybridRuntime
   );
 
+  removeExistingSessionTask(
+    entryPoint,
+    candidate,
+    modeling,
+    invokeHybridRuntime
+  );
+
   // redirect outgoing sequence flow
   console.log("Adding outgoing sequence flow to new ServiceTask!");
   for (let i = 0; i < exitPoint.outgoing.length; i++) {
     let sequenceFlow = exitPoint.outgoing[i];
-    console.log(sequenceFlow);
     if (
       !candidate.containedElements.filter((e) => e.id === sequenceFlow.id)
         .length > 0
@@ -267,6 +273,7 @@ export async function rewriteWorkflow(
 async function rewriteWorkflowForSession(modeler, candidate) {
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
+  let moddle = modeler.get("moddle");
   console.log(
     "Rewriting the following candidate for usage of an IBM session: ",
     candidate
@@ -298,6 +305,8 @@ async function rewriteWorkflowForSession(modeler, candidate) {
   createSessionBo.script = createIBMSessionScript();
   console.log("Business object of ScriptTask: ", createSessionBo);
 
+  removeExistingSessionTask(entryPoint, candidate, modeling, createSession);
+
   // redirect all ingoing edges of the entry point to the newly added ScriptTask
   redirectIngoingFlow(
     entryPoint,
@@ -309,6 +318,7 @@ async function rewriteWorkflowForSession(modeler, candidate) {
 
   // connect task to entry point
   modeling.connect(createSession, entryPoint, { type: "bpmn:SequenceFlow" });
+  addSessionFormFields(rootProcess, elementRegistry, modeling, moddle);
 
   // layout newly added elements
   layout(modeling, elementRegistry, rootProcess);
@@ -329,7 +339,6 @@ function redirectIngoingFlow(
   console.log("Adding ingoing sequence flow to new task: ", newTask);
   for (let i = 0; i < entryPoint.incoming.length; i++) {
     let sequenceFlow = entryPoint.incoming[i];
-    console.log(sequenceFlow);
     if (
       !candidate.containedElements.filter((e) => e.id === sequenceFlow.id)
         .length > 0
@@ -369,4 +378,118 @@ async function refreshModeler(modeler) {
 
   // update the bpmnjs, i.e., the visual representation within the modeler
   await modeler.get("bpmnjs").importXML(xml.xml);
+}
+
+/**
+ * Remove existing session task before adding a new one.
+ *
+ * @param entryPoint the entry point of the optimization candidate
+ * @param candidate the candidate for which the session task should be added
+ * @param modeling the modeling utilities from the modeler
+ * @param newTask the created session task
+ */
+function removeExistingSessionTask(entryPoint, candidate, modeling, newTask) {
+  console.log(
+    "Checking if the ingoing sequence flow is identical to the newly created session task: ",
+    newTask
+  );
+  // Assumption: if existing, the session task is part of an incoming flow for the entry point
+  for (let i = 0; i < entryPoint.incoming.length; i++) {
+    let sequenceFlow = entryPoint.incoming[i];
+    console.log(sequenceFlow);
+    if (
+      !candidate.containedElements.filter((e) => e.id === sequenceFlow.id)
+        .length > 0
+    ) {
+      let source = sequenceFlow.source;
+
+      if (
+        source.type === "bpmn:ScriptTask" &&
+        getBusinessObject(source)
+          .get("script")
+          .includes(createIBMSessionScript())
+      ) {
+        modeling.removeElements([source]);
+      }
+      console.log(newTask);
+
+      if (
+        source.type === "bpmn:ServiceTask" &&
+        getBusinessObject(source).get("deploymentModelUrl") ===
+          getBusinessObject(newTask).get("deploymentModelUrl")
+      ) {
+        modeling.removeElements([source]);
+      }
+    }
+  }
+}
+
+function addSessionFormFields(rootElement, elementRegistry, modeling, moddle) {
+  if (rootElement.flowElements !== undefined) {
+    for (let flowElement of rootElement.flowElements) {
+      if (flowElement.$type === "bpmn:StartEvent") {
+        let startEvent = elementRegistry.get(flowElement.id);
+
+        let extensionElements =
+          startEvent.businessObject.get("extensionElements");
+
+        if (!extensionElements) {
+          extensionElements = moddle.create("bpmn:ExtensionElements");
+        }
+
+        let form = extensionElements.get("values").filter(function (elem) {
+          return elem.$type == "camunda:FormData";
+        })[0];
+
+        if (!form) {
+          form = moddle.create("camunda:FormData");
+        }
+
+        // Check if the fields already exist before adding them, since the existing form fields may contain content
+        const qpuFieldExists = form
+          .get("fields")
+          .some((element) => element.id === "qpu");
+        const ibmInstanceFieldExists = form
+          .get("fields")
+          .some((element) => element.id === "ibmInstance");
+        const ibmTokenFieldExists = form
+          .get("fields")
+          .some((element) => element.id === "ibmToken");
+
+        if (!qpuFieldExists) {
+          const qpuFormField = moddle.create("camunda:FormField", {
+            defaultValue: "",
+            id: "qpu",
+            label: "QPU",
+            type: "string",
+          });
+          form.get("fields").push(qpuFormField);
+        }
+
+        if (!ibmInstanceFieldExists) {
+          const ibmInstanceFormField = moddle.create("camunda:FormField", {
+            defaultValue: "",
+            id: "ibmInstance",
+            label: "IBM Instance (hub/group/project)",
+            type: "string",
+          });
+          form.get("fields").push(ibmInstanceFormField);
+        }
+
+        if (!ibmTokenFieldExists) {
+          const ibmTokenFormField = moddle.create("camunda:FormField", {
+            defaultValue: "",
+            id: "ibmToken",
+            label: "IBM Token",
+            type: "string",
+          });
+          form.get("fields").push(ibmTokenFormField);
+        }
+
+        modeling.updateProperties(startEvent, {
+          extensionElements: extensionElements,
+        });
+      }
+    }
+  }
 }
