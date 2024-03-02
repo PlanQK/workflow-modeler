@@ -6,7 +6,7 @@ import {
   openFile,
   saveAllFilesAsZip,
   saveModelerAsLocalFile,
-  saveXmlAndViewsAsZip,
+  saveQAA,
 } from "../util/IoUtilities";
 import * as editorConfig from "../config/EditorConfigManager";
 import { saveFileFormats } from "../EditorConstants";
@@ -211,14 +211,14 @@ export default function Toolbar(props) {
                     <li>
                       <a
                         onClick={() =>
-                          saveXmlAndViewsAsZip(
-                            modeler.xml,
+                          saveQAA(
+                            modeler,
                             modeler.views,
                             editorConfig.getFileName()
                           )
                         }
                       >
-                        Zip
+                        QAA
                       </a>
                     </li>
                   </ul>
