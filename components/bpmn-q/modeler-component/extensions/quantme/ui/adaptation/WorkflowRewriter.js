@@ -91,19 +91,27 @@ export async function rewriteWorkflow(
   if (provenanceCollectionEnabled) {
     // check if there is already a view from a previous rewrite and update it then, otherwise, add new view
     let viewElementRegistry, viewModeler;
+    console.log("Current views: ", modeler.views);
     if (modeler.views === undefined) {
       console.log("Creating new view!");
       modeler.views = {};
       viewModeler = modeler;
       viewElementRegistry = elementRegistry;
     } else {
-      console.log(
-        "View before rewriting already exists. Updating existing view!"
-      );
-      let existingView = modeler.views["view-before-rewriting"];
-      console.log("Existing view has Xml: ", existingView);
-      viewModeler = await createTempModelerFromXml(existingView);
-      viewElementRegistry = viewModeler.get("elementRegistry");
+      console.log("View element already initialized!");
+      if (modeler.views["view-before-rewriting"] === undefined) {
+        console.log("view-before-rewriting not yet defined, adding new view to existing set!");
+        viewModeler = modeler;
+        viewElementRegistry = elementRegistry;
+      } else {
+        console.log(
+          "View before rewriting already exists. Updating existing view!"
+        );
+        let existingView = modeler.views["view-before-rewriting"];
+        console.log("Existing view has Xml: ", existingView);
+        viewModeler = await createTempModelerFromXml(existingView);
+        viewElementRegistry = viewModeler.get("elementRegistry");
+      }
     }
 
     // adapt process view before export
