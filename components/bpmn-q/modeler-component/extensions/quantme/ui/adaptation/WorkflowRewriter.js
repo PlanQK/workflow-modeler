@@ -100,7 +100,9 @@ export async function rewriteWorkflow(
     } else {
       console.log("View element already initialized!");
       if (modeler.views["view-before-rewriting"] === undefined) {
-        console.log("view-before-rewriting not yet defined, adding new view to existing set!");
+        console.log(
+          "view-before-rewriting not yet defined, adding new view to existing set!"
+        );
         viewModeler = modeler;
         viewElementRegistry = elementRegistry;
       } else {
