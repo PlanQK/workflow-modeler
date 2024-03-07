@@ -40,6 +40,7 @@ export function performAjax(targetUrl, dataToSend) {
       url: targetUrl,
       data: dataToSend,
       processData: false,
+      crossDomain: true,
       contentType: false,
       beforeSend: function () {},
       success: function (data) {

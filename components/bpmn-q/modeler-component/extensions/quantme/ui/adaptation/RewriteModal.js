@@ -62,12 +62,24 @@ export default function RewriteModal({ onClose, candidates }) {
                 </td>
               </tr>
               <tr className="spaceUnder">
-                <td align="right">AWS Runtime</td>
+                <td align="right">AWS Hybrid Jobs</td>
                 <td align="left">
                   <button
                     type="button"
                     className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "AWS Runtime")}
+                    onClick={() => onSubmit(i, "AWS Hybrid Jobs")}
+                  >
+                    Rewrite Workflow
+                  </button>
+                </td>
+              </tr>
+              <tr className="spaceUnder">
+                <td align="right">IBM Session</td>
+                <td align="left">
+                  <button
+                    type="button"
+                    className="qwm-btn qwm-btn-secondary"
+                    onClick={() => onSubmit(i, "IBM Session")}
                   >
                     Rewrite Workflow
                   </button>
@@ -98,7 +110,8 @@ export default function RewriteModal({ onClose, candidates }) {
             src={candidate.candidateImage}
           />
           <h3 className="spaceAbove spaceUnder">
-            The following hybrid runtimes might be used for improved execution:
+            The following hybrid runtimes and sessions might be used for
+            improved execution:
           </h3>
           <table>
             <tbody>
@@ -115,12 +128,24 @@ export default function RewriteModal({ onClose, candidates }) {
                 </td>
               </tr>
               <tr className="spaceUnder">
-                <td align="right">AWS Runtime</td>
+                <td align="right">AWS Hybrid Jobs</td>
                 <td align="left">
                   <button
                     type="button"
                     className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "AWS Runtime")}
+                    onClick={() => onSubmit(i, "AWS Hybrid Jobs")}
+                  >
+                    Rewrite Workflow
+                  </button>
+                </td>
+              </tr>
+              <tr className="spaceUnder">
+                <td align="right">IBM Session</td>
+                <td align="left">
+                  <button
+                    type="button"
+                    className="qwm-btn qwm-btn-secondary"
+                    onClick={() => onSubmit(i, "IBM Session")}
                   >
                     Rewrite Workflow
                   </button>
