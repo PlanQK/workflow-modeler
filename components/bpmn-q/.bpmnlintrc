@@ -5,6 +5,7 @@
   ],
   "rules": {
     "custom/quantme-tasks": "warn",
+    "custom/pre-deployed-pattern-on-demand-policy": "error",
     "custom/subprocess-connected-end-event": "warn",
     "custom/subprocess-required-start-event": "warn",
     "camunda/no-collapsed-sub-processes": "off"
