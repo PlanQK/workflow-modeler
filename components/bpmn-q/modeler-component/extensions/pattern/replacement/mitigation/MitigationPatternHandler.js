@@ -20,29 +20,29 @@ export async function replaceMitigationPattern(
 ) {
   console.log(
     "Replace mitigation pattern " +
-    mitigationPattern.id +
-    "of parent " +
-    parent.id
+      mitigationPattern.id +
+      "of parent " +
+      parent.id
   );
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let host = elementRegistry.get(mitigationPattern.id).host;
-  let type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
 
   // currently no replacement for gate error mitigation pattern
   if (mitigationPattern.$type === consts.GATE_ERROR_MITIGATION) {
-    type = quantmeConsts.READOUT_ERROR_MITIGATION_TASK;
     const pattern = elementRegistry.get(mitigationPattern.id);
     return { replaced: true, flows: [], pattern: pattern };
   } else {
     let internHost = elementRegistry.get(host.id);
     let mitigationTask = modeling.createShape(
-      { type: quantmeConsts.READOUT_ERROR_MITIGATION_TASK},
+      { type: quantmeConsts.READOUT_ERROR_MITIGATION_TASK },
       { x: 50, y: 50 },
       parent,
       {}
     );
-    let readoutMitigationTaskBo = elementRegistry.get(mitigationTask.id).businessObject;
+    let readoutMitigationTaskBo = elementRegistry.get(
+      mitigationTask.id
+    ).businessObject;
     readoutMitigationTaskBo.name = "Mitigate Errors";
     let outgoingFlows = [];
     host.outgoing.forEach((element) => {

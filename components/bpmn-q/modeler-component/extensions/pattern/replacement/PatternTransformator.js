@@ -52,8 +52,8 @@ export async function startPatternReplacementProcess(xml) {
   let replacementConstructs = getPatterns(rootElement, elementRegistry);
   console.log(
     "Process contains " +
-    replacementConstructs.length +
-    " patterns to replace..."
+      replacementConstructs.length +
+      " patterns to replace..."
   );
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
@@ -71,9 +71,7 @@ export async function startPatternReplacementProcess(xml) {
   // Mitigation have to be handled first since cutting inserts tasks after them
   // if the general pattern is attached then we add it to the elements to delete
   for (let replacementConstruct of replacementConstructs) {
-    if (
-      replacementConstruct.task.$type === constants.PATTERN
-    ) {
+    if (replacementConstruct.task.$type === constants.PATTERN) {
       const pattern = elementRegistry.get(replacementConstruct.task.id);
       patterns.push(pattern);
     }
@@ -92,8 +90,8 @@ export async function startPatternReplacementProcess(xml) {
       if (!replaced) {
         console.log(
           "Replacement of Pattern with Id " +
-          replacementConstruct.task.id +
-          " failed. Aborting process!"
+            replacementConstruct.task.id +
+            " failed. Aborting process!"
         );
         return {
           status: "failed",
@@ -120,7 +118,7 @@ export async function startPatternReplacementProcess(xml) {
 
   let behaviorReplacementConstructs = replacementConstructs.filter(
     (construct) => constants.BEHAVIORAL_PATTERNS.includes(construct.task.$type)
-  )
+  );
 
   for (let replacementConstruct of augmentationReplacementConstructs) {
     let replacementSuccess = false;
@@ -161,8 +159,8 @@ export async function startPatternReplacementProcess(xml) {
     if (!replacementSuccess) {
       console.log(
         "Replacement of Pattern with Id " +
-        replacementConstruct.task.id +
-        " failed. Aborting process!"
+          replacementConstruct.task.id +
+          " failed. Aborting process!"
       );
       return {
         status: "failed",
@@ -178,18 +176,14 @@ export async function startPatternReplacementProcess(xml) {
   //console.log(s);
   //let tempModeler = await createTempModelerFromXml(s);
   //console.log(tempModeler)
-  const optimizationCandidates = await findOptimizationCandidates(
-    modeler
-  );
-  console.log(optimizationCandidates)
+  const optimizationCandidates = await findOptimizationCandidates(modeler);
+  console.log(optimizationCandidates);
 
   console.log(behaviorReplacementConstructs);
 
   for (let replacementConstruct of behaviorReplacementConstructs) {
     let replacementSuccess = false;
-    if (
-      replacementConstruct.task.$type === constants.ORCHESTRATED_EXECUTION
-    ) {
+    if (replacementConstruct.task.$type === constants.ORCHESTRATED_EXECUTION) {
       const pattern = elementRegistry.get(replacementConstruct.task.id);
       patterns.push(pattern);
       replacementSuccess = true;
@@ -198,36 +192,51 @@ export async function startPatternReplacementProcess(xml) {
       console.log("Replace pre-deployed execution");
       for (let i = 0; i < optimizationCandidates.length; i++) {
         console.log(optimizationCandidates[i].entryPoint);
-        let parent = elementRegistry.get(optimizationCandidates[i].entryPoint.id).parent;
+        let parent = elementRegistry.get(
+          optimizationCandidates[i].entryPoint.id
+        ).parent;
         let attachedPatterns = parent.attachers;
 
         // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
-        const foundElement = attachedPatterns.find(attachedPattern => attachedPattern.type !== replacementConstruct.task.$type);
-        if (!foundElement) {
-        
-        optimizationCandidates[i].modeler = modeler;
-        let programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(optimizationCandidates[i], modeler.config, getQRMs());
-        console.log(programGenerationResult);
-        let rewritingResult = await rewriteWorkflow(
-          modeler,
-          optimizationCandidates[i],
-          getHybridRuntimeProvenance(),
-          programGenerationResult.hybridProgramId
+        const foundElement = attachedPatterns.find(
+          (attachedPattern) =>
+            attachedPattern.type !== replacementConstruct.task.$type
         );
+        if (!foundElement) {
+          optimizationCandidates[i].modeler = modeler;
+          let programGenerationResult =
+            await getQiskitRuntimeProgramDeploymentModel(
+              optimizationCandidates[i],
+              modeler.config,
+              getQRMs()
+            );
+          console.log(programGenerationResult);
+          await rewriteWorkflow(
+            modeler,
+            optimizationCandidates[i],
+            getHybridRuntimeProvenance(),
+            programGenerationResult.hybridProgramId
+          );
         }
       }
       const pattern = elementRegistry.get(replacementConstruct.task.id);
       patterns.push(pattern);
-      console.log("replaced")
+      console.log("replaced");
       replacementSuccess = true;
     }
 
     if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
       console.log("Replace prioritized execution");
+
       // add session task
       for (let i = 0; i < optimizationCandidates.length; i++) {
         optimizationCandidates[i].modeler = modeler;
-        let programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(optimizationCandidates[i], modeler.config, getQRMs());
+        let programGenerationResult =
+          await getQiskitRuntimeProgramDeploymentModel(
+            optimizationCandidates[i],
+            modeler.config,
+            getQRMs()
+          );
         console.log(programGenerationResult);
       }
       const pattern = elementRegistry.get(replacementConstruct.task.id);
@@ -238,8 +247,8 @@ export async function startPatternReplacementProcess(xml) {
     if (!replacementSuccess) {
       console.log(
         "Replacement of Pattern with Id " +
-        replacementConstruct.task.id +
-        " failed. Aborting process!"
+          replacementConstruct.task.id +
+          " failed. Aborting process!"
       );
       return {
         status: "failed",
@@ -254,7 +263,7 @@ export async function startPatternReplacementProcess(xml) {
   let elementsToDelete = patterns;
   //patterns.concat(allFlow);
   console.log("df");
-  console.log(elementsToDelete)
+  console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
   //layout(modeling, elementRegistry, rootElement);
   //let s = await getXml(modeler);
@@ -310,7 +319,7 @@ export function getPatterns(process, elementRegistry) {
       (flowElement.$type === "bpmn:SubProcess" ||
         flowElement.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS ||
         flowElement.$type ===
-        quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS)
+          quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS)
     ) {
       Array.prototype.push.apply(
         patterns,
@@ -341,7 +350,6 @@ export function attachPatternsToSuitableTasks(
       if (!constants.BEHAVIORAL_PATTERNS.includes(pattern.type)) {
         for (let i = 0; i < flowElements.length; i++) {
           let flowElement = flowElements[i];
-
 
           if (
             (flowElement.$type && flowElement.$type === "bpmn:SubProcess") ||

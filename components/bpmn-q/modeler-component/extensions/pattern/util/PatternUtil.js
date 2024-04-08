@@ -57,7 +57,13 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
     let patternX = subprocess.x + patternSpacing * i;
     let patternY = subprocess.y + subprocess.height;
     if (patternX > subprocess.x + subprocess.width) {
-      patternX = subprocess.x + patternSpacing * (i - Math.floor((patternX - subprocess.x - subprocess.width) / patternSpacing));
+      patternX =
+        subprocess.x +
+        patternSpacing *
+          (i -
+            Math.floor(
+              (patternX - subprocess.x - subprocess.width) / patternSpacing
+            ));
       patternY += patternSpacing;
     }
     let pattern = modeling.createShape(
@@ -87,6 +93,7 @@ export function attachPatternsToSuitableConstruct(
     type = construct.type;
   }
   let containsPattern = false;
+  let containsForbiddenPatternCombinations = false;
   if (construct.attachers !== undefined) {
     for (let i = 0; i < construct.attachers.length; i++) {
       let eventType = construct.attachers[i].type;
@@ -96,11 +103,15 @@ export function attachPatternsToSuitableConstruct(
         containsPattern = true;
       }
     }
+    containsForbiddenPatternCombinations = checkForbiddenPatternCombinations(
+      construct,
+      patternType
+    );
 
-    if (!containsPattern) {
+    if (!containsPattern && !containsForbiddenPatternCombinations) {
       if (
         patternType === consts.WARM_START &&
-        (type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK)
+        type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
       ) {
         attachPatternToShape(construct, patternType, modeling);
         console.log("added warm_start");
@@ -145,23 +156,81 @@ function attachPatternToShape(shape, patternType, modeling) {
   });
 }
 
-export function changeIdOfContainedElements(subprocess, parent, modeling, elementRegistry, id) {
-  console.log("change id of contained elements of subprocess", subprocess.id, parent.id, id);
+export function changeIdOfContainedElements(
+  subprocess,
+  parent,
+  modeling,
+  elementRegistry,
+  id
+) {
+  console.log(
+    "change id of contained elements of subprocess",
+    subprocess.id,
+    parent.id,
+    id
+  );
   console.log(subprocess);
   for (let i = 0; i < subprocess.children.length; i++) {
     let child = subprocess.children[i];
 
-    console.log(child)
-    console.log(elementRegistry.get(child.id))
+    console.log(child);
+    console.log(elementRegistry.get(child.id));
 
     modeling.updateProperties(elementRegistry.get(child.id), {
       id: id + "_" + child.id,
     });
-    child.di.id = id + "_" + child.id + '_di';
+    child.di.id = id + "_" + child.id + "_di";
 
-    if (child.$type === "bpmn:SubProcess" || child.$type === quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS ||
-      child.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS) {
-      changeIdOfContainedElements(child, child.parent, modeling, elementRegistry, id + "_" + child.id);
+    if (
+      child.$type === "bpmn:SubProcess" ||
+      child.$type === quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS ||
+      child.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS
+    ) {
+      changeIdOfContainedElements(
+        child,
+        child.parent,
+        modeling,
+        elementRegistry,
+        id + "_" + child.id
+      );
     }
+  }
+}
+
+/**
+ * Checks whether the attached patterns conflict with the pattern intended to be attached to the construct.
+ * @param construct The construct to which the pattern is intended to be attached.
+ * @param patternType The type of the pattern being considered.
+ * @returns True if there is a conflict, false otherwise.
+ */
+export function checkForbiddenPatternCombinations(construct, patternType) {
+  if (patternType === consts.ERROR_CORRECTION) {
+    const forbiddenPatterns = construct.attachers.filter(
+      (pattern) =>
+        pattern.type === consts.GATE_ERROR_MITIGATION ||
+        pattern.type === consts.READOUT_ERROR_MITIGATION
+    );
+    return forbiddenPatterns.length > 0;
+  }
+  if (
+    patternType === consts.GATE_ERROR_MITIGATION ||
+    patternType === consts.READOUT_ERROR_MITIGATION
+  ) {
+    const forbiddenPatterns = construct.attachers.filter(
+      (pattern) => pattern.type === consts.ERROR_CORRECTION
+    );
+    return forbiddenPatterns.length > 0;
+  }
+  if (patternType === consts.ORCHESTRATED_EXECUTION) {
+    const forbiddenPatterns = construct.attachers.filter(
+      (pattern) => pattern.type === consts.PRE_DEPLOYED_EXECUTION
+    );
+    return forbiddenPatterns.length > 0;
+  }
+  if (patternType === consts.PRE_DEPLOYED_EXECUTION) {
+    const forbiddenPatterns = construct.attachers.filter(
+      (pattern) => pattern.type === consts.ORCHESTRATED_EXECUTION
+    );
+    return forbiddenPatterns.length > 0;
   }
 }

@@ -19,16 +19,15 @@ import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion,
 } from "../../../../opentosca/deployment/OpenTOSCAUtils";
-import {
-  getInvalidModelingConstruct,
-  getRequiredPrograms,
-  getTaskOrder,
-} from "./RuntimeHandlerUtils";
+import { getRequiredPrograms, getTaskOrder } from "./RuntimeHandlerUtils";
 import { getXml } from "../../../../../editor/util/IoUtilities";
 import { createTempModelerFromXml } from "../../../../../editor/ModelerHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import { getWineryEndpoint } from "../../../../opentosca/framework-config/config-manager";
-import { getHybridRuntimeProvenance, getQiskitRuntimeHandlerEndpoint } from "../../../framework-config/config-manager";
+import {
+  getHybridRuntimeProvenance,
+  getQiskitRuntimeHandlerEndpoint,
+} from "../../../framework-config/config-manager";
 
 /**
  * Generate a Qiskit Runtime program for the given candidate
@@ -85,7 +84,7 @@ export async function getQiskitRuntimeProgramDeploymentModel(
   // check if transformed XML contains invalid modeling constructs
   let elementRegistry = modeler.get("elementRegistry");
   rootElement = elementRegistry.get(rootElement.id);
-  console.log(rootElement)
+  console.log(rootElement);
   let invalidModelingConstruct = undefined;
   //getInvalidModelingConstruct(rootElement);
   console.log(invalidModelingConstruct);
@@ -103,10 +102,7 @@ export async function getQiskitRuntimeProgramDeploymentModel(
 
   let wineryEndpoint = getWineryEndpoint();
   // check if all service tasks have either a deployment model attached and all script tasks provide the code inline and retrieve the files
-  let requiredPrograms = await getRequiredPrograms(
-    rootElement,
-    wineryEndpoint
-  );
+  let requiredPrograms = await getRequiredPrograms(rootElement, wineryEndpoint);
   if (requiredPrograms.error !== undefined) {
     return { error: requiredPrograms.error };
   }

@@ -119,11 +119,11 @@ export default function PatternOverviewModal({
 
   const resetData = () => {
     setButtonSelectedPatterns({});
-  setAlgorithmicPatternModalOpen(false);
-  setDynamicRows([]);
-  setEditRow(null); // State to store the row being edited
-  setEditRowData(null);
-  }
+    setAlgorithmicPatternModalOpen(false);
+    setDynamicRows([]);
+    setEditRow(null); // State to store the row being edited
+    setEditRowData(null);
+  };
   return (
     <Modal onClose={onClose}>
       <Title>Pattern Selection</Title>

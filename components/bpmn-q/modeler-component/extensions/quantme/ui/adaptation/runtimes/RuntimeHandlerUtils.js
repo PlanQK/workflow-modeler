@@ -27,6 +27,8 @@ export function getTaskOrder(candidate, modeler) {
   // get entry point from the current modeler
   let elementRegistry = modeler.get("elementRegistry");
   let element = elementRegistry.get(candidate.entryPoint.id).businessObject;
+  console.log(element);
+  console.log(candidate.entryPoint);
 
   // search all tasks before looping gateway
   while (element.id !== candidate.exitPoint.id) {
@@ -37,6 +39,7 @@ export function getTaskOrder(candidate, modeler) {
       beforeLoop.push(element.id);
     }
 
+    console.log(element);
     // get next element
     element = getNextElement(element);
   }
@@ -49,7 +52,7 @@ export function getTaskOrder(candidate, modeler) {
     ) {
       afterLoop.push(element.id);
     }
-
+    console.log(element);
     // get next element
     element = getNextElement(element);
   }
@@ -67,6 +70,14 @@ function getNextElement(element) {
   if (element.$type === "bpmn:SequenceFlow") {
     return element.targetRef;
   } else {
+    if (element.$type === "bpmn:ExclusiveGateway") {
+      let outgoingflow = element.outgoing[0];
+      console.log(outgoingflow);
+      if (outgoingflow.targetRef.$type === "bpmn:EndEvent") {
+        outgoingflow = element.outgoing[1];
+      }
+      return outgoingflow;
+    }
     return element.outgoing[0];
   }
 }
@@ -80,12 +91,20 @@ function getNextElement(element) {
  */
 export async function getRequiredPrograms(rootElement, wineryEndpoint) {
   let requiredProgramsZip = new JSZip();
+  console.log("Get required programs...");
 
-  for (let i = 0; i < rootElement.flowElements.length; i++) {
-    let element = rootElement.flowElements[i];
+  let flowElements = rootElement.flowElements;
+  console.log(flowElements);
+  if (flowElements === undefined) {
+    flowElements = rootElement.children;
+  }
+  console.log(flowElements);
+  for (let i = 0; i < flowElements.length; i++) {
+    let element = flowElements[i];
 
     // service task needs attached deployment model that is accessible through the defined URL
     if (element.$type === "bpmn:ServiceTask") {
+      console.log(element);
       if (element.deploymentModelUrl === undefined) {
         console.log(
           "No deployment model defined for ServiceTask: ",
@@ -182,8 +201,13 @@ export async function getRequiredPrograms(rootElement, wineryEndpoint) {
  * @return the first invalid modeling construct or undefined if all are valid
  */
 export function getInvalidModelingConstruct(rootElement) {
-  for (let i = 0; i < rootElement.flowElements.length; i++) {
-    let element = rootElement.flowElements[i];
+  console.log(rootElement);
+  let flowElements = rootElement.flowElements;
+  if (rootElement.flowElements === undefined) {
+    flowElements = rootElement.children;
+  }
+  for (let i = 0; i < flowElements.length; i++) {
+    let element = flowElements[i];
     if (
       element.$type !== "bpmn:ExclusiveGateway" &&
       element.$type !== "bpmn:SequenceFlow" &&

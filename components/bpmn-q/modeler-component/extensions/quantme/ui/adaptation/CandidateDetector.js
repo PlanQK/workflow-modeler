@@ -91,7 +91,7 @@ export async function findOptimizationCandidates(modeler) {
  */
 async function visualizeCandidate(optimizationCandidate, workflowXml) {
   console.log("Visualizing optimization candidate: ", optimizationCandidate);
-  console.log(workflowXml)
+  console.log(workflowXml);
   // create new modeler for the visualization
   let modeler = await createTempModelerFromXml(workflowXml);
   let modeling = modeler.get("modeling");
@@ -122,18 +122,19 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
   // remove all shapes that are not part of the candidate
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
-    console.log(flowElement)
+    console.log(flowElement);
     if (
       !optimizationCandidate.containedElements.some(
         (e) => e.id === flowElement.id
       ) &&
-      flowElement.$type !== "bpmn:SequenceFlow" && flowElement.$type !== "pattern:PredeployedExecution"
+      flowElement.$type !== "bpmn:SequenceFlow" &&
+      flowElement.$type !== "pattern:PredeployedExecution"
     ) {
       // remove shape from the modeler
       let element = elementRegistry.get(flowElement.id);
-      console.log(element)
-      if(element !== undefined){
-      modeling.removeShape(element);
+      console.log(element);
+      if (element !== undefined) {
+        modeling.removeShape(element);
       }
     }
   }
@@ -180,7 +181,7 @@ function calculateViewBox(optimizationCandidate, svg, elementRegistry) {
     );
 
     console.log(optimizationCandidate);
-    console.log(optimizationCandidate.containedElements[i].id)
+    console.log(optimizationCandidate.containedElements[i].id);
     element = optimizationCandidate.containedElements[i].id;
 
     // for sequence flows check the position of each waypoint and label
@@ -323,7 +324,7 @@ function findEntryPoints(rootElement) {
  */
 function getXOREntryPoints(rootElement) {
   let entryPoints = [];
-  console.log("find xor entry point ", rootElement)
+  console.log("find xor entry point ", rootElement);
 
   // search for XOR gateways within the workflow
   const flowElements = rootElement.flowElements;
@@ -334,6 +335,8 @@ function getXOREntryPoints(rootElement) {
 
       // the gateway should have exactly one outgoing flow representing the control flow of the hybrid loop
       if (flowElement.outgoing.length === 1) {
+        flowElement.$parent = rootElement;
+        console.log(flowElement.$parent);
         console.log(
           "Exclusive gateway is potential entry point: ",
           flowElement
@@ -347,9 +350,7 @@ function getXOREntryPoints(rootElement) {
       Array.prototype.push.apply(entryPoints, getXOREntryPoints(flowElement));
 
       // recursively call method to find optimization candidates
-      
     }
-    
   }
 
   return entryPoints;

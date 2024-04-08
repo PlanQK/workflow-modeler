@@ -18,11 +18,18 @@ import {
   getModeler,
 } from "../../../../editor/ModelerHandler";
 import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
-import { getExtensionElements, getRootProcess, pushFormField } from "../../../../editor/util/ModellingUtilities";
+import {
+  getExtensionElements,
+  getRootProcess,
+  pushFormField,
+} from "../../../../editor/util/ModellingUtilities";
 import { getXml, loadDiagram } from "../../../../editor/util/IoUtilities";
 import { layout } from "../../../quantme/replacement/layouter/Layouter";
 import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
-import { attachPatternsToSubprocess, changeIdOfContainedElements } from "../../util/PatternUtil";
+import {
+  attachPatternsToSubprocess,
+  changeIdOfContainedElements,
+} from "../../util/PatternUtil";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import { getExtension } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import * as quantmeConsts from "../../../quantme/Constants";
@@ -193,8 +200,8 @@ export default class PatternSelectionPlugin extends PureComponent {
           const sortedSolutionFlowElements = nonFilteredElements;
           const solutionFlowElementsLength = nonFilteredElements.length;
           let offset = 0;
-          console.log(sortedSolutionFlowElements)
-          console.log(sortedSolutionFlowElements)
+          console.log(sortedSolutionFlowElements);
+          console.log(sortedSolutionFlowElements);
 
           for (let j = 0; j < solutionFlowElementsLength; j++) {
             let flowElement = solutionElementRegistry.get(
@@ -227,12 +234,20 @@ export default class PatternSelectionPlugin extends PureComponent {
                 modeling.updateProperties(elementRegistry.get(updateShape.id), {
                   id: collapsedSubprocess.id + "_" + updateShape.id,
                 });
-                let extensionElements = getExtensionElements(getBusinessObject(startEvent), modeler.get("moddle"));
-                let extensionElementsUpdateShape = getExtensionElements(getBusinessObject(flowElement), solutionModeler.get("moddle"));
+                let extensionElements = getExtensionElements(
+                  getBusinessObject(startEvent),
+                  modeler.get("moddle")
+                );
                 // get form data extension
-                let form = getExtension(getBusinessObject(startEvent), "camunda:FormData");
-                let formextended = getExtension(getBusinessObject(flowElement), "camunda:FormData");
-                let script = '';
+                let form = getExtension(
+                  getBusinessObject(startEvent),
+                  "camunda:FormData"
+                );
+                let formextended = getExtension(
+                  getBusinessObject(flowElement),
+                  "camunda:FormData"
+                );
+                let script = "";
                 if (formextended) {
                   if (!form) {
                     form = modeler.get("moddle").create("camunda:FormData");
@@ -240,7 +255,7 @@ export default class PatternSelectionPlugin extends PureComponent {
                   for (let i = 0; i < formextended.fields.length; i++) {
                     let id = formextended.fields[i].id;
                     let updatedId = id + updateShape.id;
-                    formextended.fields[i].id = updatedId
+                    formextended.fields[i].id = updatedId;
                     script += `def ${updatedId}Value = execution.getVariable("${updatedId}");\n execution.setVariable("${id}", ${updatedId}Value)\n`;
                     pushFormField(form, formextended.fields[i]);
                   }
@@ -248,14 +263,13 @@ export default class PatternSelectionPlugin extends PureComponent {
                 }
 
                 modeling.updateProperties(elementRegistry.get(startEvent.id), {
-                  extensionElements: extensionElements
+                  extensionElements: extensionElements,
                 });
 
                 // if mapping is required then the script task has to inserted and the outgoing flows have to be changed
                 if (script) {
-
                   let mapFormFieldScriptTask = elementFactory.createShape({
-                    type: "bpmn:ScriptTask"
+                    type: "bpmn:ScriptTask",
                   });
 
                   let shape = modeling.createShape(
@@ -263,9 +277,7 @@ export default class PatternSelectionPlugin extends PureComponent {
                     { x: 50, y: 50 },
                     elementRegistry.get(collapsedSubprocess.id)
                   );
-                  let shapeBo = elementRegistry.get(
-                    shape.id
-                  ).businessObject;
+                  let shapeBo = elementRegistry.get(shape.id).businessObject;
 
                   shapeBo.name = "Map Form Fields to Execution Variables";
                   shapeBo.scriptFormat = "groovy";
@@ -276,20 +288,22 @@ export default class PatternSelectionPlugin extends PureComponent {
                   let start = elementRegistry.get(updateShape.id);
                   flowElement.outgoing.forEach((element) => {
                     outgoingFlows.push(solutionElementRegistry.get(element.id));
-                    modeling.connect(shape, solutionElementRegistry.get(element.target.id), {
-                      type: "bpmn:SequenceFlow",
-                    });
+                    modeling.connect(
+                      shape,
+                      solutionElementRegistry.get(element.target.id),
+                      {
+                        type: "bpmn:SequenceFlow",
+                      }
+                    );
                   });
-                  modeling.connect(
-                    start,
-                    shape,
-                    { type: "bpmn:SequenceFlow" }
-                  );
+                  modeling.connect(start, shape, { type: "bpmn:SequenceFlow" });
                   solutionModeling.removeElements(outgoingFlows);
                 }
-
-              } else if (type !== quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS && type !== quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS &&
-                type !== "bpmn:SubProcess") {
+              } else if (
+                type !== quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS &&
+                type !== quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS &&
+                type !== "bpmn:SubProcess"
+              ) {
                 /** 
                 updateShape = modeling.createShape(
                   s,
@@ -308,8 +322,8 @@ export default class PatternSelectionPlugin extends PureComponent {
                 modeling.updateProperties(elementRegistry.get(updateShape.id), {
                   id: collapsedSubprocess.id + "_" + updateShape.id,
                 });
-                updateShape.di.id = collapsedSubprocess.id + "_" + updateShape.id + '_di';
-
+                updateShape.di.id =
+                  collapsedSubprocess.id + "_" + updateShape.id + "_di";
               } else {
                 console.log("Flowelement");
                 console.log(flowElement);
@@ -324,26 +338,32 @@ export default class PatternSelectionPlugin extends PureComponent {
                 
                 solutionModeling.removeElements(flows);
                 */
-                console.log(solutionElementRegistry.get(
-                  sortedSolutionFlowElements[j].id
-                ));
+                console.log(
+                  solutionElementRegistry.get(sortedSolutionFlowElements[j].id)
+                );
                 console.log(flowElement);
-
 
                 updateShape = modeling.createShape(
                   flowElement,
                   { x: 442 + offset, y: 100 },
                   elementRegistry.get(collapsedSubprocess.id)
                 );
-                updateShape.di.id = collapsedSubprocess.id + "_" + updateShape.id + '_di';
+                updateShape.di.id =
+                  collapsedSubprocess.id + "_" + updateShape.id + "_di";
                 console.log(updateShape);
 
                 // change id of solution elements since each id must be unique
-                changeIdOfContainedElements(flowElement, collapsedSubprocess, solutionModeling, solutionElementRegistry, collapsedSubprocess.id + "_" + updateShape.id);
+                changeIdOfContainedElements(
+                  flowElement,
+                  collapsedSubprocess,
+                  solutionModeling,
+                  solutionElementRegistry,
+                  collapsedSubprocess.id + "_" + updateShape.id
+                );
                 modeling.updateProperties(elementRegistry.get(updateShape.id), {
                   id: collapsedSubprocess.id + "_" + updateShape.id,
                 });
-                console.log("added cutting")
+                console.log("added cutting");
                 console.log(updateShape);
               }
               offset += 150;
@@ -377,7 +397,9 @@ export default class PatternSelectionPlugin extends PureComponent {
               // Retrieve the id of the newly created shape using the map
               let sourceId = sourceIdToNewShapeIdMap[flowElement.source.id];
               let newTargetId = sourceIdToNewShapeIdMap[flowElement.target.id];
-              console.log("connect source " + sourceId + "and target" + newTargetId)
+              console.log(
+                "connect source " + sourceId + "and target" + newTargetId
+              );
               modeling.connect(
                 elementRegistry.get(sourceId),
                 elementRegistry.get(newTargetId),
