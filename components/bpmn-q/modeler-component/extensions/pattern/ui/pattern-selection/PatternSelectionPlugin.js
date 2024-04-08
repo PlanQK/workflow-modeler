@@ -33,6 +33,10 @@ import {
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import { getExtension } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import * as quantmeConsts from "../../../quantme/Constants";
+import {
+  getPatternAtlasEndpoint,
+  getQcAtlasEndpoint,
+} from "../../framework-config/config-manager";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -59,7 +63,7 @@ export default class PatternSelectionPlugin extends PureComponent {
     try {
       console.log(this.modeler.config);
       const response = await fetchDataFromEndpoint(
-        this.modeler.config.patternAtlasEndpoint + "/patterns"
+        getPatternAtlasEndpoint() + "/patterns"
       );
       console.log(response);
 
@@ -86,9 +90,8 @@ export default class PatternSelectionPlugin extends PureComponent {
       console.log("los");
 
       try {
-        console.log(this.modeler.config.qcAtlasEndpoint);
         const implementationsResponse = await fetchDataFromEndpoint(
-          this.modeler.config.qcAtlasEndpoint + "/atlas/implementations"
+          getQcAtlasEndpoint() + "/atlas/implementations"
         );
 
         this.setState({

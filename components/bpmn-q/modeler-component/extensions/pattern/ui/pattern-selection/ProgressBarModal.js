@@ -5,7 +5,7 @@ import {
   fetchSolutionFromEndpoint,
 } from "../../../../editor/util/HttpUtilities";
 import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
-import { getModeler } from "../../../../editor/ModelerHandler";
+import { getQcAtlasEndpoint } from "../../framework-config/config-manager";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -15,8 +15,7 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
   const [progress, setProgress] = useState(0);
   const [currentIdIndex, setCurrentIdIndex] = useState(0);
   const [solutions, setSolutions] = useState([]);
-  const qcAtlasEndpoint = getModeler().config.qcAtlasEndpoint;
-  console.log(getModeler().config);
+  const qcAtlasEndpoint = getQcAtlasEndpoint();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +43,9 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
                     `Retrieving solution for algorithm ${implementedAlgorithmId} and implementation ${id}`
                   );
                   setCurrentIdIndex(i);
+                  console.log(
+                    `${qcAtlasEndpoint}/atlas/algorithms/${implementedAlgorithmId}/implementations/${id}/implementation-packages`
+                  );
                   const response = await fetchDataFromEndpoint(
                     `${qcAtlasEndpoint}/atlas/algorithms/${implementedAlgorithmId}/implementations/${id}/implementation-packages`
                   );
@@ -100,10 +102,10 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
         <div className="spaceUnder">
           <p>
             Retrieving solution for algorithm{" "}
-            {responseData.length > 0 &&
+            {responseData?.length > 0 &&
               responseData[currentIdIndex]?.implementedAlgorithmId}{" "}
             and implementation{" "}
-            {responseData.length > 0 && responseData[currentIdIndex]?.id}
+            {responseData?.length > 0 && responseData[currentIdIndex]?.id}
           </p>
         </div>
         <div
