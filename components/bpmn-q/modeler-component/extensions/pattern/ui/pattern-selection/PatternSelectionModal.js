@@ -18,7 +18,7 @@ import {
   PATTERN_MITIGATION,
   PATTERN_BEHAVIORAL_EXCLUSIVE,
 } from "../../Constants";
-import { getModeler } from "../../../../editor/ModelerHandler";
+import { getPatternAtlasUIEndpoint } from "../../framework-config/config-manager";
 
 const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
@@ -262,7 +262,7 @@ export default function PatternSelectionModal({
       )
   );
 
-  const patternAtlasUIEndpoint = getModeler().config.patternAtlasUIEndpoint;
+  const patternAtlasUIEndpoint = getPatternAtlasUIEndpoint();
   return (
     <Modal onClose={onClose}>
       <Title>Patterns</Title>
