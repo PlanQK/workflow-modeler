@@ -22,7 +22,7 @@ describe("Test plugins", function () {
         expect(getActivePlugins().length).to.equal(0);
       });
 
-      it("Should find 4 active plugins", function () {
+      it("Should find 5 active plugins", function () {
         setPluginConfig([
           { name: pluginNames.DATAFLOW },
           { name: pluginNames.QUANTME },
@@ -33,7 +33,7 @@ describe("Test plugins", function () {
 
         const plugins = getActivePlugins();
 
-        expect(plugins.length).to.equal(4);
+        expect(plugins.length).to.equal(5);
         expect(
           plugins.filter((plugin) => plugin.name === pluginNames.DATAFLOW)
             .length
@@ -53,7 +53,7 @@ describe("Test plugins", function () {
         ).to.equal(1);
       });
 
-      it("Should find 4 active plugins due to dependencies", function () {
+      it("Should find 5 active plugins due to dependencies", function () {
         setPluginConfig([
           { name: pluginNames.DATAFLOW },
           { name: pluginNames.PATTERN },
@@ -62,7 +62,7 @@ describe("Test plugins", function () {
 
         const plugins = getActivePlugins();
 
-        expect(plugins.length).to.equal(4);
+        expect(plugins.length).to.equal(5);
         expect(
           plugins.filter((plugin) => plugin.name === pluginNames.DATAFLOW)
             .length
@@ -76,7 +76,7 @@ describe("Test plugins", function () {
 
         // should be found due to pattern plugin
         expect(
-          plugins.filter((plugin) => plugin.name === pluginNames.OPENTOSCA)
+          plugins.filter((plugin) => plugin.name === pluginNames.QUANTME)
             .length
         ).to.equal(1);
         // should be found due to dependency of quantme plugin
