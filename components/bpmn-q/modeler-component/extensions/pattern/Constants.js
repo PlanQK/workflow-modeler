@@ -35,6 +35,13 @@ export const READOUT_ERROR_MITIGATION = "pattern:ReadoutErrorMitigation";
 export const WARM_START = "pattern:WarmStart";
 export const CIRCUIT_CUTTING = "pattern:CircuitCutting";
 
+export const BIASED_INITIAL_STATE = "pattern:BiasedInitialState";
+export const VARIATIONAL_PARAMETER_TRANSFER =
+  "pattern:VariationalParameterTransfer";
+export const CHAINED_OPTIMIZATION = "pattern:ChainedOptimization";
+export const PRE_TRAINED_FEATURE_EXTRACTOR =
+  "pattern:PreTrainedFeatureExtractor";
+
 export const PATTERN_MITIGATION = "mitigation";
 
 export const ALGORITHM_PATTERNS = [
@@ -52,12 +59,20 @@ export const BEHAVIORAL_PATTERNS = [
   PRIORITIZED_EXECUTION,
 ];
 
+export const WARM_STARTING_PATTERNS = [
+  WARM_START,
+  BIASED_INITIAL_STATE,
+  CHAINED_OPTIMIZATION,
+  PRE_TRAINED_FEATURE_EXTRACTOR,
+  VARIATIONAL_PARAMETER_TRANSFER,
+];
+
 export const AUGMENTATION_PATTERNS = [
   ERROR_CORRECTION,
   GATE_ERROR_MITIGATION,
   READOUT_ERROR_MITIGATION,
-  WARM_START,
   CIRCUIT_CUTTING,
+  ...WARM_STARTING_PATTERNS,
 ];
 
 export const PATTERNS = [PATTERN].concat(

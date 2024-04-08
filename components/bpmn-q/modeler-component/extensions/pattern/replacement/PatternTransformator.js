@@ -134,7 +134,9 @@ export async function startPatternReplacementProcess(xml) {
       replacementSuccess = replaced;
     }
 
-    if (replacementConstruct.task.$type === constants.WARM_START) {
+    if (
+      constants.WARM_STARTING_PATTERNS.includes(replacementConstruct.task.$type)
+    ) {
       let { replaced, flows, pattern } = await replaceWarmStart(
         replacementConstruct.task,
         replacementConstruct.parent,
@@ -260,7 +262,7 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  let elementsToDelete = patterns;
+  let elementsToDelete = patterns.concat(allFlow);
   //patterns.concat(allFlow);
   console.log("df");
   console.log(elementsToDelete);

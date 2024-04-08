@@ -91,6 +91,22 @@ export var BEHAVIORAL_PATTERN = [
 ];
 export var AUGMENTATION_PATTERN = [
   {
+    label: "Biased Initial State",
+    actionName: "replace-with-biased-initial-state",
+    className: "qwm bpmn-pattern-biased-initial-state-icon",
+    target: {
+      type: consts.BIASED_INITIAL_STATE,
+    },
+  },
+  {
+    label: "Chained Optimization",
+    actionName: "replace-with-chained-optimization",
+    className: "qwm bpmn-pattern-chained-optimization-icon",
+    target: {
+      type: consts.CHAINED_OPTIMIZATION,
+    },
+  },
+  {
     label: "Circuit Cutting",
     actionName: "replace-with-circuit-cutting-correction",
     className: "qwm bpmn-pattern-circuit-cutting-icon",
@@ -115,11 +131,27 @@ export var AUGMENTATION_PATTERN = [
     },
   },
   {
+    label: "Pre-Trained Feature Extractor",
+    actionName: "replace-with-pre-trained-feature-extractor",
+    className: "qwm bpmn-pattern-pre-trained-feature-extractor-icon",
+    target: {
+      type: consts.PRE_TRAINED_FEATURE_EXTRACTOR,
+    },
+  },
+  {
     label: "Readout Error Mitigation",
     actionName: "replace-with-pattern-readout-error-mitigation",
     className: "qwm bpmn-pattern-gate-readout-error-mitigation-icon",
     target: {
       type: consts.READOUT_ERROR_MITIGATION,
+    },
+  },
+  {
+    label: "Variational Parameter Transfer",
+    actionName: "replace-with-variational-parameter-transfer",
+    className: "qwm bpmn-pattern-variational-parameter-transfer-icon",
+    target: {
+      type: consts.VARIATIONAL_PARAMETER_TRANSFER,
     },
   },
   {

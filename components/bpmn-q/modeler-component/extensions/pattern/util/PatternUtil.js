@@ -20,7 +20,7 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
     let patternName = patterns.behavioralPattern[i].name.replace(/[\s-]/g, "");
     console.log(patternName);
 
-    // Start in the bottom left
+    // Start in the top left
     let patternX = subprocess.x + patternSpacing * i;
     let patternY = subprocess.y + subprocess.height;
 
@@ -47,6 +47,7 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
     });
   }
 
+  console.log(patterns);
   for (let i = 0; i < patterns.augmentationPattern.length; i++) {
     console.log(patterns.augmentationPattern[i]);
     // get name of pattern and remove whitespace
@@ -54,17 +55,18 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
       /[\s-]/g,
       ""
     );
+    // Start in the bottom left
     let patternX = subprocess.x + patternSpacing * i;
     let patternY = subprocess.y + subprocess.height;
-    if (patternX > subprocess.x + subprocess.width) {
-      patternX =
-        subprocess.x +
-        patternSpacing *
-          (i -
-            Math.floor(
-              (patternX - subprocess.x - subprocess.width) / patternSpacing
-            ));
-      patternY += patternSpacing;
+
+    // If the pattern goes outside the subprocess, adjust the position
+    if (patternX < subprocess.x + subprocess.width) {
+      //patternX = subprocess.x;
+      patternY = subprocess.y + subprocess.height - patternSpacing * i;
+    }
+    if (patternY > subprocess.y) {
+      patternX = subprocess.x + patternSpacing * i;
+      patternY = subprocess.y + subprocess.height;
     }
     let pattern = modeling.createShape(
       { type: patternPrefix + patternName },
@@ -78,6 +80,12 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
     modeling.updateProperties(pattern, {
       attachedToRef: subprocess.businessObject,
     });
+
+    console.log("attached pattern ");
+    console.log(patternName);
+    console.log(patternX);
+    console.log(patternY);
+    console.log(subprocess);
   }
 }
 
@@ -109,8 +117,10 @@ export function attachPatternsToSuitableConstruct(
     );
 
     if (!containsPattern && !containsForbiddenPatternCombinations) {
+      console.log(patternType);
+      console.log(consts.WARM_STARTING_PATTERNS.includes(patternType));
       if (
-        patternType === consts.WARM_START &&
+        consts.WARM_STARTING_PATTERNS.includes(patternType) &&
         type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
       ) {
         attachPatternToShape(construct, patternType, modeling);

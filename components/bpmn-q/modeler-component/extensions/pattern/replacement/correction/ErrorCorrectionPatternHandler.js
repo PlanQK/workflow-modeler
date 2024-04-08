@@ -27,7 +27,7 @@ export async function replaceErrorCorrectionPattern(
   let elementRegistry = modeler.get("elementRegistry");
   let internHost = elementRegistry.get(errorCorrectionPattern.id).host;
   let errorCorrectionTask = modeling.createShape(
-    { type: "quantme:ErrorCorrectionTask" },
+    { type: quantmeConsts.ERROR_CORRECTION_TASK },
     { x: 50, y: 50 },
     parent,
     {}
@@ -47,6 +47,8 @@ export async function replaceErrorCorrectionPattern(
     modeling.connect(errorCorrectionTask, internHost, {
       type: "bpmn:SequenceFlow",
     });
+
+    console.log(flows);
   }
   if (internHost.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK) {
     internHost.outgoing.forEach((element) => {

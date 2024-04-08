@@ -215,6 +215,58 @@ export default class PatternRenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "WARM_START");
         return task;
       },
+      [consts.BIASED_INITIAL_STATE]: function (self, parentGfx, element) {
+        let attrs = {
+          fill: "none",
+          stroke: "none",
+        };
+        element.width = 43;
+        element.height = 43;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "BIASED_INITIAL_STATE");
+        return task;
+      },
+      [consts.PRE_TRAINED_FEATURE_EXTRACTOR]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none",
+        };
+        element.width = 43;
+        element.height = 43;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "PRE_TRAINED_FEATURE_EXTRACTOR");
+        return task;
+      },
+      [consts.CHAINED_OPTIMIZATION]: function (self, parentGfx, element) {
+        let attrs = {
+          fill: "none",
+          stroke: "none",
+        };
+        element.width = 43;
+        element.height = 43;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "CHAINED_OPTIMIZATION");
+        return task;
+      },
+      [consts.VARIATIONAL_PARAMETER_TRANSFER]: function (
+        self,
+        parentGfx,
+        element
+      ) {
+        let attrs = {
+          fill: "none",
+          stroke: "none",
+        };
+        element.width = 43;
+        element.height = 43;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "VARIATIONAL_PARAMETER_TRANSFER");
+        return task;
+      },
       [consts.CIRCUIT_CUTTING]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",

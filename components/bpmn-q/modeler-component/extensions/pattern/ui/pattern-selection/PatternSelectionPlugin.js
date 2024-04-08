@@ -366,7 +366,6 @@ export default class PatternSelectionPlugin extends PureComponent {
                 modeling.updateProperties(elementRegistry.get(updateShape.id), {
                   id: collapsedSubprocess.id + "_" + updateShape.id,
                 });
-                console.log("added cutting");
                 console.log(updateShape);
               }
               offset += 150;

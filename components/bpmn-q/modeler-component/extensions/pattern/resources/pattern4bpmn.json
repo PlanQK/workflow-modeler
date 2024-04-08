@@ -78,6 +78,26 @@
       "properties": []
     },
     {
+      "name": "BiasedInitialState",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "ChainedOptimization",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "VariationalParameterTransfer",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "PreTrainedFeatureExtractor",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
       "name": "CircuitCutting",
       "superClass": ["bpmn:BoundaryEvent"],
       "properties": []

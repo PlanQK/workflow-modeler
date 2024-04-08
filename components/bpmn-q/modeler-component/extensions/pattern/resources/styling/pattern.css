@@ -213,6 +213,42 @@
   display: inline-block;
 }
 
+.qwm .bpmn-pattern-biased-initial-state-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-biased-initial-state-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-variational-parameter-transfer-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-variational-parameter-transfer-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-pre-trained-feature-extractor-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-pre-trained-feature-extractor-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-chained-optimization-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-chained-optimization-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
 /* Add this CSS to your styles or as a separate stylesheet */
 
 .progress-bar-modal {
