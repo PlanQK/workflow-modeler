@@ -86,12 +86,18 @@ export default class PatternReplaceMenuProvider {
    */
   createPatternReplacementOptions(element, attacherTypes) {
     const popupMenu = this.popupMenu;
-    const behavioralPatterns = this.createPatternTypeReplacementOptions(
-      element,
-      quantmeReplaceOptions.BEHAVIORAL_PATTERN,
-      consts.PATTERN_BEHAVIORAL,
-      attacherTypes
-    );
+
+    let behavioralPatterns = {};
+
+    // behavior pattern require optimization candidates, therefore they need to be attached to subprocess
+    if (element.host.type === "bpmn:SubProcess") {
+      behavioralPatterns = this.createPatternTypeReplacementOptions(
+        element,
+        quantmeReplaceOptions.BEHAVIORAL_PATTERN,
+        consts.PATTERN_BEHAVIORAL,
+        attacherTypes
+      );
+    }
     const augmentationPatterns = this.createPatternTypeReplacementOptions(
       element,
       quantmeReplaceOptions.AUGMENTATION_PATTERN,
