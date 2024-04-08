@@ -23,21 +23,21 @@ export default function PatternOverviewModal({
   responseData,
 }) {
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
-  const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] =
+  const [isAlgorithmPatternModalOpen, setAlgorithmPatternModalOpen] =
     useState(false);
   const [dynamicRows, setDynamicRows] = useState([]);
   const [editRow, setEditRow] = useState(null); // State to store the row being edited
   const [editRowData, setEditRowData] = useState(null);
 
-  const openAlgorithmicPatternModal = () => {
-    setAlgorithmicPatternModalOpen(true);
+  const openAlgorithmPatternModal = () => {
+    setAlgorithmPatternModalOpen(true);
   };
 
-  const closeAlgorithmicPatternModal = () => {
-    setAlgorithmicPatternModalOpen(false);
+  const closeAlgorithmPatternModal = () => {
+    setAlgorithmPatternModalOpen(false);
   };
 
-  const selectAlgorithmicPattern = useCallback(
+  const selectAlgorithmPattern = useCallback(
     (selectedPattern) => {
       if (editRow !== null) {
         const updatedRows = [...dynamicRows];
@@ -64,7 +64,7 @@ export default function PatternOverviewModal({
           [newButtonLabel]: [],
         });
       }
-      closeAlgorithmicPatternModal();
+      closeAlgorithmPatternModal();
     },
     [buttonSelectedPatterns, dynamicRows, editRow]
   );
@@ -100,7 +100,7 @@ export default function PatternOverviewModal({
     const rowToEdit = dynamicRows[index];
     setEditRowData(rowToEdit);
     setEditRow(index);
-    openAlgorithmicPatternModal();
+    openAlgorithmPatternModal();
   };
 
   const disableButton = () => {
@@ -119,7 +119,7 @@ export default function PatternOverviewModal({
 
   const resetData = () => {
     setButtonSelectedPatterns({});
-    setAlgorithmicPatternModalOpen(false);
+    setAlgorithmPatternModalOpen(false);
     setDynamicRows([]);
     setEditRow(null); // State to store the row being edited
     setEditRowData(null);
@@ -133,17 +133,17 @@ export default function PatternOverviewModal({
           Selected Patterns{" "}
           <button
             className="qwm-action-add qwm-btn-primary"
-            onClick={openAlgorithmicPatternModal}
+            onClick={openAlgorithmPatternModal}
             disabled={disableButton()}
           >
             +
           </button>
         </h3>
-        {isAlgorithmicPatternModalOpen && (
+        {isAlgorithmPatternModalOpen && (
           <PatternSelectionModal
             patterns={responseData}
-            onSelectPattern={selectAlgorithmicPattern}
-            onClose={closeAlgorithmicPatternModal}
+            onSelectPattern={selectAlgorithmPattern}
+            onClose={closeAlgorithmPatternModal}
             initialSelectedPattern={editRowData !== null ? editRowData : null}
           />
         )}

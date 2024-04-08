@@ -101,11 +101,15 @@ export async function getRequiredPrograms(rootElement, wineryEndpoint) {
   console.log(flowElements);
   for (let i = 0; i < flowElements.length; i++) {
     let element = flowElements[i];
+    console.log(element);
 
     // service task needs attached deployment model that is accessible through the defined URL
-    if (element.$type === "bpmn:ServiceTask") {
+    if (
+      element.$type === "bpmn:ServiceTask" ||
+      element.type === "bpmn:ServiceTask"
+    ) {
       console.log(element);
-      if (element.deploymentModelUrl === undefined) {
+      if (element.businessObject.deploymentModelUrl === undefined) {
         console.log(
           "No deployment model defined for ServiceTask: ",
           element.id
@@ -116,22 +120,35 @@ export async function getRequiredPrograms(rootElement, wineryEndpoint) {
       }
 
       // replace generic placeholder by endpoint of connected Winery
-      let url = element.deploymentModelUrl.replace(
+      let url = element.businessObject.deploymentModelUrl.replace(
         "{{ wineryEndpoint }}",
         wineryEndpoint
       );
 
       // download the deployment model from the given URL
       console.log("Retrieving deployment model from URL: ", url);
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/zip",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
       console.log(response);
+      console.log(response.headers);
       const blob = await response.blob();
+      console.log(blob);
 
       // unzip the retrieved CSAR
       let zip = await new JSZip().loadAsync(blob);
+      console.log("zip");
 
       // get all contained deployment artifacts
       let files = getDeploymentArtifactFiles(zip);
+      console.log(files);
 
       // only one deployment artifact is allowed containing the quantum and classical programs
       if (files.length !== 1) {
