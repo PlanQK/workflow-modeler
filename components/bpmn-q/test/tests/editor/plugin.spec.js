@@ -76,8 +76,7 @@ describe("Test plugins", function () {
 
         // should be found due to pattern plugin
         expect(
-          plugins.filter((plugin) => plugin.name === pluginNames.QUANTME)
-            .length
+          plugins.filter((plugin) => plugin.name === pluginNames.QUANTME).length
         ).to.equal(1);
         // should be found due to dependency of quantme plugin
         expect(
