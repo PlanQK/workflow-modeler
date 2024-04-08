@@ -1,7 +1,7 @@
 import React from "react";
 
 import QuantMEExtensionModule from "./modeling";
-import QuantMETab from "./configTabs/QuantMETab";
+import QuantMEConfigTab from "./configTabs/QuantMEConfigTab";
 import { getQRMs } from "./qrm-manager";
 import { startQuantmeReplacementProcess } from "./replacement/QuantMETransformator";
 import {
@@ -11,7 +11,7 @@ import {
 import * as camundaConfig from "../../editor/config/EditorConfigManager";
 import * as config from "./framework-config/config-manager";
 import TransformationButton from "../../editor/ui/TransformationButton";
-import quantMEStyles from "./styling/quantme.css";
+import quantMEStyles from "./resources/styling/quantme.css";
 import QuantMEPluginButton from "./ui/QuantMEPluginButton";
 import { getModeler } from "../../editor/ModelerHandler";
 
@@ -24,9 +24,9 @@ export default {
   buttons: [<QuantMEPluginButton />],
   configTabs: [
     {
-      tabId: "BPMNTab",
+      tabId: "QuantMETab",
       tabTitle: "QuantME Plugin",
-      configTab: QuantMETab,
+      configTab: QuantMEConfigTab,
     },
   ],
   name: "quantme",

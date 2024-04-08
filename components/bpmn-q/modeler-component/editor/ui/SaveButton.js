@@ -22,7 +22,7 @@ export default function SaveButton(props) {
                 saveModelerAsLocalFile(modeler);
               }}
             >
-              <span className="qwm-indent">Save</span>
+              <span className="qwm-indent"></span>
             </span>
           </div>
         </div>

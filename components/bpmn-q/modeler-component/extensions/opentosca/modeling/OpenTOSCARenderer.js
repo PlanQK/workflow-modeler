@@ -16,7 +16,7 @@ import { createLine } from "diagram-js/lib/util/RenderUtil";
 import BpmnRenderer from "bpmn-js/lib/draw/BpmnRenderer";
 import { getOrientation } from "diagram-js/lib/layout/LayoutUtil";
 
-import buttonIcon from "../resources/show-deployment-button.svg?raw";
+import buttonIcon from "../resources/icons/show-deployment-button.svg?raw";
 import { drawTaskSVG } from "../../../editor/util/RenderUtilities";
 import NotificationHandler from "../../../editor/ui/notifications/NotificationHandler";
 import {

@@ -94,3 +94,31 @@ describe("Test editor functions", function () {
     });
   });
 });
+
+describe("Test ConfigManager", function () {
+  describe("Test endpoints", function () {
+    before("Reset configuration", function () {
+      editorConfig.reset();
+    });
+
+    afterEach("Reset configuration", function () {
+      editorConfig.reset();
+    });
+
+    it("Should configure endpoints", function () {
+      setPluginConfig([
+        {
+          name: "editor",
+          config: {
+            githubRepositoryName: "Example-Repo",
+            githubUsername: "userName",
+            githubRepositoryPath: "path/to/repo",
+          },
+        },
+      ]);
+      expect(editorConfig.getQRMRepositoryName()).to.equal("Example-Repo");
+      expect(editorConfig.getQRMRepositoryUserName()).to.equal("userName");
+      expect(editorConfig.getQRMRepositoryPath()).to.equal("path/to/repo");
+    });
+  });
+});

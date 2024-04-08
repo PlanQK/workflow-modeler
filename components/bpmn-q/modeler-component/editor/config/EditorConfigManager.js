@@ -13,6 +13,14 @@ const defaultConfig = {
   autoSaveFileOption: autoSaveFile.INTERVAL,
   fileFormat: saveFileFormats.BPMN,
   autoSaveIntervalSize: process.env.AUTOSAVE_INTERVAL,
+  githubToken: process.env.GITHUB_TOKEN,
+  githubRepositoryName: process.env.QRM_REPONAME,
+  githubUsername: process.env.QRM_USERNAME,
+  githubRepositoryPath: process.env.QRM_REPOPATH,
+  uploadGithubRepositoryName: process.env.UPLOAD_GITHUB_REPO,
+  uploadGithubRepositoryOwner: process.env.UPLOAD_GITHUB_USER,
+  uploadFileName: process.env.UPLOAD_FILE_NAME,
+  uploadBranchName: process.env.UPLOAD_BRANCH_NAME,
 };
 
 let config = {};
@@ -188,6 +196,190 @@ export function getAutoSaveIntervalSize() {
 export function setAutoSaveIntervalSize(intervalSize) {
   if (intervalSize !== null && intervalSize !== undefined) {
     config.autoSaveIntervalSize = intervalSize;
+  }
+}
+
+/**
+ * Get the local path to the folder in the repository containing the QRMs
+ *
+ * @return {string} the specified repository path
+ */
+export function getQRMRepositoryPath() {
+  if (config.githubRepositoryPath === undefined) {
+    setQRMRepositoryPath(
+      getPluginConfig("editor").githubRepositoryPath ||
+        defaultConfig.githubRepositoryPath
+    );
+  }
+  return config.githubRepositoryPath;
+}
+
+/**
+ * Set the local path to the folder in the repository containing the QRMs
+ *
+ * @param repositoryPath the repository path
+ */
+export function setQRMRepositoryPath(repositoryPath) {
+  if (repositoryPath !== null && repositoryPath !== undefined) {
+    config.githubRepositoryPath = repositoryPath;
+  }
+}
+
+/**
+ * Get the repository name used to access the QRMs
+ *
+ * @return {string} the specified repository name
+ */
+export function getQRMRepositoryName() {
+  if (config.githubRepositoryName === undefined) {
+    setQRMRepositoryName(
+      getPluginConfig("editor").githubRepositoryName ||
+        defaultConfig.githubRepositoryName
+    );
+  }
+  return config.githubRepositoryName;
+}
+
+/**
+ * Set the repository name used to access the QRMs
+ *
+ * @param repositoryName the repository name
+ */
+export function setQRMRepositoryName(repositoryName) {
+  if (repositoryName !== null && repositoryName !== undefined) {
+    config.githubRepositoryName = repositoryName;
+  }
+}
+
+/**
+ * Get the username used to access the QRM repository
+ *
+ * @return {string} the specified username
+ */
+export function getQRMRepositoryUserName() {
+  if (config.githubUsername === undefined) {
+    setQRMUserName(
+      getPluginConfig("editor").githubUsername || defaultConfig.githubUsername
+    );
+  }
+  return config.githubUsername;
+}
+
+/**
+ * Set the username used to access the QRM repository
+ *
+ * @param userName the username
+ */
+export function setQRMUserName(userName) {
+  if (userName !== null && userName !== undefined) {
+    config.githubUsername = userName;
+  }
+}
+
+/**
+ * Get the GitHub token used to access the QRM repository
+ *
+ * @return {string} the specified username
+ */
+export function getGitHubToken() {
+  if (config.githubToken === undefined) {
+    setGitHubToken(
+      getPluginConfig("editor").githubToken || defaultConfig.githubToken
+    );
+  }
+  return config.githubToken;
+}
+
+/**
+ * Set the GitHub token used to access the QRM repository
+ *
+ * @param githubToken the username
+ */
+export function setGitHubToken(githubToken) {
+  if (githubToken !== null && githubToken !== undefined) {
+    config.githubToken = githubToken;
+  }
+}
+
+/**
+ * Get the upload Github Repository Name
+ */
+export function getUploadGithubRepositoryName() {
+  if (config.uploadGithubRepositoryName === undefined) {
+    setUploadGithubRepositoryName(defaultConfig.uploadGithubRepositoryName);
+  }
+  return config.uploadGithubRepositoryName;
+}
+
+/**
+ * Set the upload Github Repositoryname
+ */
+export function setUploadGithubRepositoryName(uploadGithubRepositoryName) {
+  if (
+    uploadGithubRepositoryName !== null &&
+    uploadGithubRepositoryName !== undefined
+  ) {
+    config.uploadGithubRepositoryName = uploadGithubRepositoryName;
+  }
+}
+
+/**
+ * Get the Upload Github Reposítory Owner
+ */
+export function getUploadGithubRepositoryOwner() {
+  if (config.uploadGithubRepositoryOwner === undefined) {
+    setUploadGithubRepositoryOwner(defaultConfig.uploadGithubRepositoryOwner);
+  }
+  return config.uploadGithubRepositoryOwner;
+}
+
+/**
+ * Set the Upload Github Repository User
+ */
+export function setUploadGithubRepositoryOwner(uploadGithubRepositoryOwner) {
+  if (
+    uploadGithubRepositoryOwner !== null &&
+    uploadGithubRepositoryOwner !== undefined
+  ) {
+    config.uploadGithubRepositoryOwner = uploadGithubRepositoryOwner;
+  }
+}
+
+/**
+ * Get the Upload File Name
+ */
+export function getUploadFileName() {
+  if (config.uploadFileName === undefined) {
+    setUploadFileName(defaultConfig.uploadFileName);
+  }
+  return config.uploadFileName;
+}
+
+/**
+ * Set the Upload File Name
+ */
+export function setUploadFileName(uploadFileName) {
+  if (uploadFileName !== null && uploadFileName !== undefined) {
+    config.uploadFileName = uploadFileName;
+  }
+}
+
+/**
+ * Get the Upload Branch Name
+ */
+export function getUploadBranchName() {
+  if (config.uploadBranchName === undefined) {
+    setUploadBranchName(defaultConfig.uploadBranchName);
+  }
+  return config.uploadBranchName;
+}
+
+/**
+ * Set the Upload Branch Name
+ */
+export function setUploadBranchName(uploadBranchName) {
+  if (uploadBranchName !== null && uploadBranchName !== undefined) {
+    config.uploadBranchName = uploadBranchName;
   }
 }
 

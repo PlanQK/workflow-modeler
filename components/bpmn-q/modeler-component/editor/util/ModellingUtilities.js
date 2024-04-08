@@ -1,6 +1,9 @@
-import { createTempModelerFromXml } from "../ModelerHandler";
+import { createTempModelerFromXml, getModeler } from "../ModelerHandler";
 import { getInputOutput } from "./camunda-utils/InputOutputUtil";
-import { getExtension } from "./camunda-utils/ExtensionElementsUtil";
+import {
+  getExtension,
+  getExtensionElementsList,
+} from "./camunda-utils/ExtensionElementsUtil";
 import { is } from "bpmn-js/lib/util/ModelUtil";
 
 /**
@@ -797,4 +800,23 @@ export function isConnectedWith(element, connectedElementType) {
     }
   }
   return false;
+}
+
+export function resetConnector(element) {
+  let connector = getExtensionElementsList(
+    element.businessObject,
+    "camunda:Connector"
+  )[0];
+  let inputOutput = getInputOutput(connector);
+  // remove connector input and output parameters
+  if (inputOutput !== undefined) {
+    inputOutput.inputParameters = [];
+    inputOutput.outputParameters = [];
+
+    getModeler().get("commandStack").execute("element.updateModdleProperties", {
+      element,
+      moddleElement: element.businessObject,
+      properties: {},
+    });
+  }
 }

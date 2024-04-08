@@ -1,8 +1,9 @@
 import React from "react";
 import planqkStyles from "./resources/css/planqk-icons.css";
-import PlanQKExtensionModule from "./";
-import { startPlanqkReplacementProcess } from "./exec-completion/PlanQKServiceTaskCompletion";
+import PlanQKExtensionModule from "./modeling";
+import { startPlanqkReplacementProcess } from "./replacement/PlanQKTransformator";
 import TransformationButton from "../../editor/ui/TransformationButton";
+import { getModeler } from "../../editor/ModelerHandler";
 
 let planqkModdleDescriptor = require("./resources/planqk-service-task-ext.json");
 
@@ -18,7 +19,13 @@ export default {
     <TransformationButton
       name="PlanQK Transformation"
       transformWorkflow={async (xml) => {
-        return await startPlanqkReplacementProcess(xml);
+        let modeler = getModeler();
+        // Initialize 'views' as an empty object if it's undefined
+        let views = modeler.views || {};
+        let transformedXml = await startPlanqkReplacementProcess(xml);
+        modeler.views = views;
+
+        return transformedXml;
       }}
     />
   ),

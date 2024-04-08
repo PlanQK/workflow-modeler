@@ -20,7 +20,7 @@ import * as config from "../framework-config/config-manager";
  * @return {JSX.Element} The tab as a React component
  * @constructor
  */
-export default function PatternAtlasConfigTab() {
+export default function PatternConfigTab() {
   const [patternAtlasEndpoint, setPatternAtlasEndpoint] = useState(
     config.getPatternAtlasEndpoint()
   );
@@ -63,7 +63,7 @@ export default function PatternAtlasConfigTab() {
     });
   }
   // save changed config entries on close
-  PatternAtlasConfigTab.prototype.onClose = () => {
+  PatternConfigTab.prototype.onClose = () => {
     modeler.config.patternAtlasEndpoint = patternAtlasEndpoint;
     modeler.config.qcAtlasEndpoint = qcAtlasEndpoint;
     modeler.config.patternAtlasUIEndpoint = patternAtlasUIEndpoint;
@@ -123,7 +123,7 @@ export default function PatternAtlasConfigTab() {
   );
 }
 
-PatternAtlasConfigTab.prototype.config = () => {
+PatternConfigTab.prototype.config = () => {
   const modeler = getModeler();
 
   modeler.config.patternAtlasEndpoint = config.getPatternAtlasEndpoint();

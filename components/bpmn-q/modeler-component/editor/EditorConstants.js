@@ -8,6 +8,13 @@ export const pluginNames = {
   DATAFLOW: "dataflow",
 };
 
+// names of the editorTabs
+export const editorTabs = {
+  GENERAL: "general",
+  GITHUB: "github",
+  ...pluginNames,
+};
+
 // supported options to handle a transformed workflow
 export const transformedWorkflowHandlers = {
   NEW_TAB: "Open in new Tab",
@@ -30,10 +37,11 @@ export const autoSaveFile = {
 
 // supported save file options
 export const saveFileFormats = {
-  ALL: "all",
   BPMN: ".bpmn",
   PNG: ".png",
   SVG: ".svg",
+  ZIP: ".zip",
+  CSAR: ".csar",
 };
 
 // workflow with a start event to use as template for new workflows

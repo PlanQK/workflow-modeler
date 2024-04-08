@@ -1,12 +1,12 @@
 import React from "react";
 
-import QHAnaExtensionModule from "./";
+import QHAnaExtensionModule from "./modeling";
 import TransformationButton from "../../editor/ui/TransformationButton";
 import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import UpdateQHAnaConfigurationsButton from "./ui/UpdateQHAnaConfigurationsButton";
-import QHAnaConfigurationsTab from "./configurations/QHAnaConfigurationsTab";
-import { startQHAnaReplacementProcess } from "./transformation/QHAnaTransformationHandler";
-import qhanaStyles from "./resources/qhana-icons.css";
+import QHAnaConfigurationsTab from "./configTabs/QHAnaConfigurationsTab";
+import { startQHAnaReplacementProcess } from "./replacement/QHAnaTransformationHandler";
+import qhanaStyles from "./resources/styling/qhana-icons.css";
 
 let qhanaModdleDescriptor = require("./resources/qhana-extension.json");
 

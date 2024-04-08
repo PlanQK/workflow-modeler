@@ -9,9 +9,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../ui/modal/Modal";
 import "./config-modal.css";
+import { getActivePlugins } from "../plugin/PluginHandler";
 
 // polyfill upcoming structural components
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
@@ -27,7 +28,10 @@ const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
  * @returns {JSX.Element} The modal as React component
  * @constructor
  */
-export default function ConfigModal({ onClose, configTabs }) {
+export default function ConfigModal({ onClose, configTabs, initialTab }) {
+  const [activeButtonIndex, setActiveButtonIndex] = useState(
+    configTabs.findIndex((tab) => tab.tabId === initialTab)
+  );
   // return the new values to the config plugin
   const onSubmit = () => {
     // call close callback
@@ -44,14 +48,34 @@ export default function ConfigModal({ onClose, configTabs }) {
 
   // method to enable button functionality by hiding and displaying different div elements
   function openTab(tabName, id) {
-    console.log(id);
     const elements = elementsRootRef.current.children;
 
     for (let i = 0; i < elements.length; i++) {
       elements[i].hidden = true;
     }
     elements[id].hidden = false;
+
+    setActiveButtonIndex(id);
   }
+
+  // Set the initial active tab when the component mounts
+  React.useEffect(() => {
+    const plugins = getActivePlugins();
+    let initialTabIndex = configTabs.findIndex((tab) =>
+      tab.tabId.toLowerCase().includes(initialTab)
+    );
+    for (let plugin of plugins) {
+      if (plugin.name.includes(initialTab)) {
+        let configTab = plugin.configTabs[0];
+        initialTabIndex = configTabs.findIndex((tab) =>
+          tab.tabTitle.includes(configTab.tabTitle)
+        );
+      }
+    }
+    if (initialTabIndex !== -1) {
+      openTab(initialTab, initialTabIndex);
+    }
+  }, [initialTab, configTabs]);
 
   return (
     <Modal onClose={onClose} openTab={openTab}>
@@ -64,8 +88,11 @@ export default function ConfigModal({ onClose, configTabs }) {
               {React.Children.toArray(
                 configTabs.map((tab, index) => (
                   <button
+                    key={index}
                     type="button"
-                    className="qwm-innerConfig qwm-btn-config-primary"
+                    className={`qwm-innerConfig qwm-btn-config-primary ${
+                      index === activeButtonIndex ? "active-tab" : ""
+                    }`}
                     onClick={() => openTab(tab.tabId, index)}
                   >
                     {tab.tabTitle}

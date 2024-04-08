@@ -13,32 +13,85 @@ import { SelectEntry } from "@bpmn-io/properties-panel";
 import React from "@bpmn-io/properties-panel/preact/compat";
 import { useService } from "bpmn-js-properties-panel";
 import { getModeler } from "../../../../editor/ModelerHandler";
+import { HiddenSelectEntry } from "../../../../editor/popup/HiddenFieldEntry";
+import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import { getInputOutput } from "../../../../editor/util/camunda-utils/InputOutputUtil";
 
 const yaml = require("js-yaml");
 /**
  * Entry to display the endpoints of the uploaded openapi specification for BPMN service task.
  */
-export function Connector({ element, translate, urls }) {
+export function Connector({ element, translate, filteredUrls, methodUrlList }) {
   const modeling = useService("modeling");
   const debounce = useService("debounceInput");
 
   let arrValues = [];
-  for (let i = 0; i < urls.length; i++) {
+  for (let i = 0; i < filteredUrls.length; i++) {
     arrValues.push({
-      label: urls[i],
-      value: urls[i],
+      label: filteredUrls[i],
+      value: filteredUrls[i],
     });
+  }
+
+  console.log(methodUrlList);
+  let methods = [];
+  for (let i = 0; i < methodUrlList.length; i++) {
+    console.log(methodUrlList[i]);
+    let url = methodUrlList[i].url;
+    if (url === element.businessObject.connectorUrl) {
+      console.log(methodUrlList[i].methods);
+      for (let method of methodUrlList[i].methods) {
+        methods.push({ label: method, value: method });
+      }
+    }
   }
 
   const selectOptions = function () {
     return arrValues;
   };
 
+  const selectMethodOptions = function () {
+    return methods;
+  };
+
   const get = function () {
-    return element.businessObject.get("quantme:connectorUrl");
+    console.log(element);
+    console.log(element.businessObject.get("opentosca:connectorUrl"));
+    return element.businessObject.get("opentosca:connectorUrl");
+  };
+
+  const getConnectorUrl = function () {
+    console.log(element.businessObject.get("connectorUrl"));
+    return element.businessObject.get("opentosca:connectorMethod");
+  };
+
+  const hidden = function () {
+    let connectorUrl = element.businessObject.connectorUrl;
+    return !(connectorUrl !== undefined);
   };
 
   const setValue = function (value) {
+    element.businessObject.connectorMethod = undefined;
+
+    let connector = getExtensionElementsList(
+      element.businessObject,
+      "camunda:Connector"
+    )[0];
+    console.log(connector);
+    let inputOutput = getInputOutput(connector);
+
+    console.log(inputOutput);
+
+    // remove connector input and output parameters
+    if (inputOutput !== undefined) {
+      inputOutput.inputParameters = [];
+      inputOutput.outputParameters = [];
+    }
+
+    return modeling.updateProperties(element, { connectorUrl: value || "" });
+  };
+
+  const setMethodValue = function (value) {
     const moddle = getModeler().get("moddle");
     const entry = moddle.create(
       "camunda:Entry",
@@ -54,17 +107,19 @@ export function Connector({ element, translate, urls }) {
       definition: map,
       name: "headers",
     });
+
     const methodInputParameter = moddle.create("camunda:InputParameter", {
       name: "method",
-      value: "POST",
+      value: value,
     });
     const urlInputParameter = moddle.create("camunda:InputParameter", {
       name: "url",
-      value: value,
+      value: element.businessObject.connectorUrl,
     });
 
     let endpointParameters = determineInputParameters(
       element.businessObject.yaml,
+      element.businessObject.connectorUrl,
       value
     );
     let scriptValue = constructScript(endpointParameters);
@@ -105,26 +160,33 @@ export function Connector({ element, translate, urls }) {
         ],
       }
     );
-    return modeling.updateProperties(element, { connectorUrl: value || "" });
+    return modeling.updateProperties(element, { connectorMethod: value || "" });
   };
 
   return (
     <>
-      {
-        <SelectEntry
-          id={"connector"}
-          label={translate("Connector Name")}
-          getValue={get}
-          setValue={setValue}
-          getOptions={selectOptions}
-          debounce={debounce}
-        />
-      }
+      <SelectEntry
+        id={"connector"}
+        label={translate("Connector Name")}
+        getValue={get}
+        setValue={setValue}
+        getOptions={selectOptions}
+        debounce={debounce}
+      />
+      <HiddenSelectEntry
+        id={"connector-method"}
+        label={translate("Connector Method")}
+        getValue={getConnectorUrl}
+        setValue={setMethodValue}
+        getOptions={selectMethodOptions}
+        debounce={debounce}
+        hidden={hidden}
+      />
     </>
   );
 }
 
-function determineInputParameters(yamlData, schemePath) {
+function determineInputParameters(yamlData, schemePath, method) {
   // Parse the YAML data
   const data = yaml.load(yamlData);
 
@@ -134,9 +196,11 @@ function determineInputParameters(yamlData, schemePath) {
 
   // Extract the request bodies and their parameters
   for (const [path, methods] of Object.entries(data.paths)) {
-    if (path === schemePath) {
+    console.log(methods);
+    if (path === schemePath && Object.keys(methods).includes(method)) {
       for (const details of Object.values(methods)) {
         if (details.requestBody) {
+          console.log(details.requestBody);
           const requestBody = details.requestBody;
           const content = requestBody.content;
           for (const contentDetails of Object.values(content)) {
@@ -156,8 +220,10 @@ function determineInputParameters(yamlData, schemePath) {
 
     // Access the dynamically determined schema
     const schemaPath = scheme;
+    console.log(schemaPath);
     scheme = getObjectByPath(document, schemaPath);
   }
+
   // Function to access an object property by path
   function getObjectByPath(obj, path) {
     const parts = path.split(".");
@@ -171,8 +237,12 @@ function determineInputParameters(yamlData, schemePath) {
     return currentObj;
   }
 
-  // Access the properties of the schema
-  return Object.keys(scheme.properties);
+  console.log(scheme.properties);
+  if (scheme.properties !== undefined) {
+    return Object.keys(scheme.properties);
+  } else {
+    return [];
+  }
 }
 
 function determineOutputParameters(yamlData) {
@@ -184,32 +254,52 @@ function determineOutputParameters(yamlData) {
 
   // Extract the request bodies and their parameters
   for (const methods of Object.values(data.paths)) {
+    console.log(data.paths);
     for (const details of Object.values(methods)) {
+      console.log(details);
       if (details.responses) {
         const response = details.responses;
         // Access the properties of the schema
         // Access the schema referenced by "200"
         const statusCode = "200";
-        let schema = response[statusCode].content["application/json"].schema;
-        if (schema.$ref) {
-          const schemaPath = schema.$ref.replace("#/", "").replaceAll("/", ".");
-          schema = getObjectByPath2(data, schemaPath);
+        let responseStatusCode = statusCode;
+
+        if (response[statusCode] === undefined) {
+          // If the response for the specified status code is not defined
+          // Find another response with a status code starting with 2
+          responseStatusCode = Object.keys(response).find((code) =>
+            code.startsWith("2")
+          );
+          console.log(responseStatusCode);
         }
-        // Function to access an object property by path
-        // eslint-disable-next-line no-inner-declarations
-        function getObjectByPath2(obj, path) {
-          const parts = path.split(".");
-          let currentObj = obj;
-          for (const part of parts) {
-            if (!currentObj || !currentObj.hasOwnProperty(part)) {
-              return undefined;
-            }
-            currentObj = currentObj[part];
+
+        if (responseStatusCode !== undefined) {
+          let schema =
+            response[responseStatusCode].content["application/json"].schema;
+          if (schema.$ref) {
+            const schemaPath = schema.$ref
+              .replace("#/", "")
+              .replaceAll("/", ".");
+            schema = getObjectByPath2(data, schemaPath);
           }
-          return currentObj;
+          // Function to access an object property by path
+          // eslint-disable-next-line no-inner-declarations
+          function getObjectByPath2(obj, path) {
+            const parts = path.split(".");
+            let currentObj = obj;
+            for (const part of parts) {
+              if (!currentObj || !currentObj.hasOwnProperty(part)) {
+                return undefined;
+              }
+              currentObj = currentObj[part];
+            }
+            return currentObj;
+          }
+          // Access the properties of the schema
+          outputParameters = Object.keys(schema.properties);
         }
-        // Access the properties of the schema
-        outputParameters = Object.keys(schema.properties);
+      } else {
+        return [];
       }
     }
   }

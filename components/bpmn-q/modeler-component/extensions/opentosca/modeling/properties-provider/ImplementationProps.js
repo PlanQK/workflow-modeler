@@ -19,9 +19,11 @@ import { useService } from "bpmn-js-properties-panel";
 import { getImplementationType } from "../../../quantme/utilities/ImplementationTypeHelperExtension";
 import { getServiceTaskLikeBusinessObject } from "../../../../editor/util/camunda-utils/ImplementationTypeUtils";
 import { getExtensionElementsList } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import { YamlUpload } from "./YamlUpload";
+import { ConnectorButton } from "./ConnectorButton";
 import { Connector } from "./Connector";
 import yaml from "js-yaml";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+import { resetConnector } from "../../../../editor/util/ModellingUtilities";
 
 const QUANTME_NAMESPACE_PULL = "http://quantil.org/quantme/pull";
 
@@ -92,24 +94,53 @@ export function ImplementationProps(props) {
         encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PULL))
       )
     ) {
-      // field to upload an OpenAPI spec for automated connector generation
+      // field to specify connector (via upload or link)
       entries.push({
-        id: "yamlUpload",
-        component: YamlUpload,
+        id: "specifyConnector",
+        component: ConnectorButton,
         isEdited: isTextFieldEntryEdited,
       });
 
       // drop down to select endpoint from OpenAPI spec
       if (element.businessObject.yaml !== undefined) {
         const urls = extractUrlsFromYaml(element.businessObject.yaml);
-        entries.push({
-          id: "connector",
-          element,
-          translate,
-          urls,
-          component: Connector,
-          isEdited: isTextFieldEntryEdited,
-        });
+
+        if (urls.length > 0) {
+          const methodUrlList = generateUrlMethodList(
+            element.businessObject.yaml
+          );
+          const filteredUrls = urls.filter((url) => {
+            return methodUrlList.some((entry) => {
+              return entry.url === url;
+            });
+          });
+          if (filteredUrls.length > 0) {
+            entries.push({
+              id: "connector",
+              element,
+              translate,
+              filteredUrls,
+              methodUrlList,
+              component: Connector,
+              isEdited: isTextFieldEntryEdited,
+            });
+          } else {
+            // reset yaml data
+            element.businessObject.yaml = undefined;
+            resetConnector(element);
+            NotificationHandler.getInstance().displayNotification({
+              type: "warning",
+              title: "No methods",
+              content:
+                "The specification does contain paths but no corresponding methods are defined.",
+              duration: 20000,
+            });
+          }
+        } else {
+          // reset yaml data
+          element.businessObject.yaml = undefined;
+          resetConnector(element);
+        }
       }
     }
   }
@@ -118,13 +149,46 @@ export function ImplementationProps(props) {
 }
 
 function extractUrlsFromYaml(content) {
+  // Convert JSON to YAML
   const doc = yaml.load(content);
 
-  // Extract URLs from paths
-  const paths = Object.keys(doc.paths);
-  return paths.map((path) => {
-    return `${path}`;
-  });
+  if (doc.paths === undefined) {
+    NotificationHandler.getInstance().displayNotification({
+      type: "warning",
+      title: "Empty paths",
+      content: "The specification does not contain paths.",
+      duration: 20000,
+    });
+    return [];
+  } else {
+    // Extract URLs from paths
+    const paths = Object.keys(doc.paths);
+    return paths.map((path) => {
+      return `${path}`;
+    });
+  }
+}
+
+// Function to extract methods for each path
+function extractMethodsForPath(path, paths) {
+  const methods = Object.keys(paths[path] || {});
+
+  return methods;
+}
+
+// Function to generate a list of URLs with their available methods
+function generateUrlMethodList(content) {
+  const urlMethodList = [];
+  const parsedYaml = yaml.load(content);
+  const paths = Object.keys(parsedYaml.paths);
+  for (const path of paths) {
+    const methods = extractMethodsForPath(path, parsedYaml.paths);
+    if (methods.length > 0) {
+      urlMethodList.push({ url: path, methods });
+    }
+  }
+
+  return urlMethodList;
 }
 
 export function JavaClass(props) {

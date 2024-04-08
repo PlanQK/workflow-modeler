@@ -18,7 +18,7 @@ import {
 } from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
-import { HiddenTextFieldEntry } from "../../../../editor/popup/HiddenTextFieldEntry";
+import { HiddenTextFieldEntry } from "../../../../editor/popup/HiddenFieldEntry";
 
 /**
  * All entries needed to display the different properties introduced through the QuantME task types. One entry represents one

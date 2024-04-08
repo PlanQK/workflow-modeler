@@ -11,6 +11,7 @@
 
 import fetch from "node-fetch";
 import { getXml } from "../../../editor/util/IoUtilities";
+import NotificationHandler from "../../../editor/ui/notifications/NotificationHandler";
 
 export const uploadToGitHub = async function (modeler) {
   const xmlContent = await getXml(modeler);
@@ -54,6 +55,15 @@ export const uploadToGitHub = async function (modeler) {
     .then((response) => response.json())
     .then((data) => {
       includesBranch = data.some((element) => element.name === branchName);
+    })
+    .catch((error) => {
+      NotificationHandler.getInstance().displayNotification({
+        type: "info",
+        title: "Upload of Workflow failed",
+        content: `Repository ${githubRepo} of user ${githubRepoOwner} not exists or is not accessible.`,
+        duration: 20000,
+      });
+      console.error("Upload failed:", error);
     });
 
   if (!includesBranch) {
@@ -102,9 +112,21 @@ export const uploadToGitHub = async function (modeler) {
       return fetch(updateUrl, updateRequest);
     })
     .then((response) => {
+      NotificationHandler.getInstance().displayNotification({
+        type: "info",
+        title: "Workflow successfully uploaded",
+        content: `Workflow successfully uploaded under repository ${githubRepo} of ${githubRepoOwner}`,
+        duration: 20000,
+      });
       console.log("Upload successful:", response);
     })
     .catch((error) => {
+      NotificationHandler.getInstance().displayNotification({
+        type: "info",
+        title: "Upload of Workflow failed",
+        content: `Workflow successfully deployed under repository ${githubRepo} of ${githubRepoOwner}`,
+        duration: 20000,
+      });
       console.error("Upload failed:", error);
     });
 };

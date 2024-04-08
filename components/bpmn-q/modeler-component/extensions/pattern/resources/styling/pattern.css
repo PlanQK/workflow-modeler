@@ -1,0 +1,256 @@
+@import url("~bpmn-font/dist/css/bpmn-embedded.css");
+
+.qwm .pattern-logo:before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/pattern-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+  padding: 4px 6px;
+  margin-top: -1px;
+}
+
+.actions-column {
+  justify-content: space-between;
+  align-items: center;
+  max-width: 5%;
+}
+
+.qwm .error-message {
+  color: red;
+}
+
+.qwm-select-column {
+  width: 10%; /* Adjust the width as needed */
+  text-align: center; /* Center content horizontally */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qwm-select-column input[type="checkbox"] {
+  margin: 0;
+}
+.qwm-icon-column {
+  width: 50%; /* Adjust the width as needed */
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qwm td input[type="checkbox"] {
+  float: left;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.qwm td input[type="radio"] {
+  float: left;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.qwm td input[type="image"] {
+  float: left;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pattern-links {
+  color: blue;
+  text-decoration: underline;
+}
+
+.qwm-action {
+  min-width: 10px;
+  height: 35px;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.qwm-action-add {
+  min-width: 10px;
+  height: 35px;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  position: absolute;
+  right: 50px;
+  top: 80px;
+}
+
+.qwm .open-pattern-selection:before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/select_icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+}
+
+.qwm .bpmn-pattern-orchestrated-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/orchestrated-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-pre-deployed-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/pre-deployed-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-prioritized-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/priortized-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm-popup-menu-more-options .pattern-logo .djs-popup-entry-name {
+  margin-top: 20px; /* Adjust the margin value as needed */
+}
+
+.djs-popup-results .djs-popup-group .entry[title="Patterns"] .djs-popup-label {
+  margin-top: 1px; /* Adjust the value as per your requirements */
+}
+
+.qwm-pattern-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../resources/pattern-palette.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 11px 8px 11px 10px;
+  outline: none;
+}
+
+.qwm-pattern-icon:hover {
+  filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
+}
+
+.qwm .bpmn-pattern-error-correction-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/error-correction-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-circuit-cutting-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/circuit-cutting-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-circuit-cutting-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/circuit-cutting-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-gate-error-mitigation-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/gate_error_mitigation_icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-gate-readout-error-mitigation-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/readout-error-mitigation-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-warm-start-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../resources/warm-start-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+/* Add this CSS to your styles or as a separate stylesheet */
+
+.progress-bar-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.progress-bar-container {
+  width: 200px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #3498db;
+  animation: progress-bar-animation 2s linear infinite;
+}
+
+.stop-animation {
+  animation: none;
+}
+
+@keyframes progress-bar-animation {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
+}

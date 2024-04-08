@@ -1,12 +1,12 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
-import DataFlowPlugin from "../../extensions/data-extension/DataFlowPlugin";
+import DataFlowPlugin from "../../extensions/dataflow/DataFlowPlugin";
 import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
 import PatternPlugin from "../../extensions/pattern/PatternPlugin";
 import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
 import { getAllConfigs } from "./PluginConfigHandler";
 import GeneralTab from "../config/GeneralTab";
-import GitHubTab from "../../extensions/quantme/configTabs/GitHubTab";
+import GitHubTab from "../config/GitHubTab";
 import { pluginNames } from "../EditorConstants";
 
 /**
@@ -219,7 +219,7 @@ export function getConfigTabs() {
   // add default editor tab to configure editor configs
   let configTabs = [
     {
-      tabId: "EditorTab",
+      tabId: "GeneralTab",
       tabTitle: "General",
       configTab: GeneralTab,
     },

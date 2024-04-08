@@ -41,12 +41,10 @@ export default class Modal extends PureComponent {
   };
 
   componentDidMount() {
-    this.focusTrap.mount();
     this.escapeTrap.mount();
   }
 
   componentWillUnmount() {
-    this.focusTrap.unmount();
     this.escapeTrap.unmount();
   }
 

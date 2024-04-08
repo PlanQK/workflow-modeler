@@ -16,7 +16,7 @@ export default function UploadButton() {
       onClick={() => uploadToGitHub(getModeler())}
     >
       <span className="qwm-icon-upload">
-        <span className="qwm-indent">Upload</span>
+        <span className="qwm-indent" />
       </span>
     </button>
   );

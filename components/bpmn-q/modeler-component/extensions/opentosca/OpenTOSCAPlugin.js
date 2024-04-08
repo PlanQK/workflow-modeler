@@ -1,8 +1,8 @@
 import React from "react";
 
-import OpenTOSCATab from "./configTabs/OpenTOSCATab";
+import OpenTOSCAConfigTab from "./configTabs/OpenTOSCAConfigTab";
 
-import OpenTOSCAStyles from "./styling/opentosca.css";
+import OpenTOSCAStyles from "./resources/styling/opentosca.css";
 import DeploymentPlugin from "./ui/deployment/services/DeploymentPlugin";
 import OpenTOSCAExtensionModule from "./modeling";
 let OpenTOSCAModdleExtension = require("./resources/opentosca4bpmn.json");
@@ -16,7 +16,7 @@ export default {
     {
       tabId: "OpenTOSCAEndpointTab",
       tabTitle: "OpenTOSCA Plugin",
-      configTab: OpenTOSCATab,
+      configTab: OpenTOSCAConfigTab,
     },
   ],
   extensionModule: OpenTOSCAExtensionModule,
