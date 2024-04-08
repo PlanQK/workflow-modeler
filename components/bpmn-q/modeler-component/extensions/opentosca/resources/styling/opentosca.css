@@ -185,7 +185,7 @@
   width: 25px;
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/Policy.svg");
+  background-image: url("../icons/Policy.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }

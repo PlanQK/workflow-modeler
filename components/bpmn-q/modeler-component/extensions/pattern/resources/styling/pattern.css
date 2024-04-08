@@ -111,7 +111,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/orchestrated-execution-thin.svg");
+  background-image: url("../icons/orchestrated-execution-thin.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -120,7 +120,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/pre-deployed-execution-thin.svg");
+  background-image: url("../icons/pre-deployed-execution-thin.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -129,7 +129,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/priortized-execution-thin.svg");
+  background-image: url("../icons/priortized-execution-thin.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -147,7 +147,7 @@
   width: 10px;
   height: 10px;
   background-size: contain;
-  background-image: url("../resources/pattern-palette.svg");
+  background-image: url("../icons/pattern-palette.svg");
   background-repeat: no-repeat;
   display: inline-block;
   margin-top: 10px;
@@ -163,7 +163,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/error-correction-icon.png");
+  background-image: url("../icons/error-correction-icon.png");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -172,7 +172,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/circuit-cutting-icon.svg");
+  background-image: url("../icons/circuit-cutting-icon.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -181,7 +181,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/circuit-cutting-icon.svg");
+  background-image: url("../icons/circuit-cutting-icon.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -190,7 +190,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/gate_error_mitigation_icon.png");
+  background-image: url("../icons/gate_error_mitigation_icon.png");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -199,7 +199,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/readout-error-mitigation-icon.png");
+  background-image: url("../icons/readout-error-mitigation-icon.png");
   background-repeat: no-repeat;
   display: inline-block;
 }
@@ -208,7 +208,7 @@
   content: "";
   height: 15px;
   background-size: contain;
-  background-image: url("../resources/warm-start-icon.svg");
+  background-image: url("../icons/warm-start-icon.svg");
   background-repeat: no-repeat;
   display: inline-block;
 }
