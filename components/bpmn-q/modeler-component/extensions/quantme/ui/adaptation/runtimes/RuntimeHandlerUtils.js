@@ -26,7 +26,15 @@ export function getTaskOrder(candidate, modeler) {
 
   // get entry point from the current modeler
   let elementRegistry = modeler.get("elementRegistry");
-  let element = elementRegistry.get(candidate.entryPoint.id).businessObject;
+  console.log(candidate);
+  console.log(candidate.entryPoint);
+  console.log(modeler);
+  console.log(elementRegistry);
+  console.log(elementRegistry.get(candidate.entryPoint.id));
+  let element = candidate.entryPoint;
+  if (elementRegistry.get(candidate.entryPoint.id) !== undefined) {
+    element = elementRegistry.get(candidate.entryPoint.id).businessObject;
+  }
   console.log(element);
   console.log(candidate.entryPoint);
 
@@ -89,8 +97,11 @@ function getNextElement(element) {
  * @param wineryEndpoint the endpoint of a Winery to load the required deployment models from
  * @return the list of all retrieved files or an error message if the retrieval fails
  */
-export async function getRequiredPrograms(rootElement, wineryEndpoint) {
-  let requiredProgramsZip = new JSZip();
+export async function getRequiredPrograms(
+  rootElement,
+  requiredProgramsZip,
+  wineryEndpoint
+) {
   console.log("Get required programs...");
 
   let flowElements = rootElement.flowElements;
@@ -103,6 +114,14 @@ export async function getRequiredPrograms(rootElement, wineryEndpoint) {
     let element = flowElements[i];
     console.log(element);
 
+    // if elements are inside a subprocess
+    if (
+      element.$type === "bpmn:SubProcess" ||
+      element.type === "bpmn:SubProcess"
+    ) {
+      console.log("Found subprocess:", element.id);
+      await getRequiredPrograms(element, requiredProgramsZip, wineryEndpoint);
+    }
     // service task needs attached deployment model that is accessible through the defined URL
     if (
       element.$type === "bpmn:ServiceTask" ||

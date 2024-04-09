@@ -12,7 +12,10 @@
 import lodash from "lodash";
 import generateImage from "../../../../editor/util/camunda-utils/generateImage";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
-import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
+import {
+  createTempModelerFromXml,
+  getModeler,
+} from "../../../../editor/ModelerHandler";
 import { getXml } from "../../../../editor/util/IoUtilities";
 
 /**
@@ -160,7 +163,7 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
 
   // generate png from svg
   optimizationCandidate.candidateImage = generateImage("png", svg);
-  optimizationCandidate.modeler = modeler;
+  optimizationCandidate.modeler = getModeler();
   return optimizationCandidate;
 }
 
