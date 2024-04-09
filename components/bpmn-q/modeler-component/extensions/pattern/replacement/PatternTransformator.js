@@ -213,12 +213,15 @@ export async function startPatternReplacementProcess(xml) {
               getQRMs()
             );
           console.log(programGenerationResult);
-          await rewriteWorkflow(
-            modeler,
-            optimizationCandidates[i],
-            getHybridRuntimeProvenance(),
-            programGenerationResult.hybridProgramId
-          );
+          // only rewrite workflow if the hybrid program generation was successful
+          if (!programGenerationResult.hybridProgramId) {
+            await rewriteWorkflow(
+              modeler,
+              optimizationCandidates[i],
+              getHybridRuntimeProvenance(),
+              programGenerationResult.hybridProgramId
+            );
+          }
         }
       }
       const pattern = elementRegistry.get(replacementConstruct.task.id);
@@ -230,16 +233,15 @@ export async function startPatternReplacementProcess(xml) {
     if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
       console.log("Replace prioritized execution");
 
-      // add session task
+      // add session task to optimization candidate
       for (let i = 0; i < optimizationCandidates.length; i++) {
         optimizationCandidates[i].modeler = modeler;
-        let programGenerationResult =
-          await getQiskitRuntimeProgramDeploymentModel(
-            optimizationCandidates[i],
-            modeler.config,
-            getQRMs()
-          );
-        console.log(programGenerationResult);
+        await rewriteWorkflow(
+          modeler,
+          optimizationCandidates[i],
+          getHybridRuntimeProvenance(),
+          undefined
+        );
       }
       const pattern = elementRegistry.get(replacementConstruct.task.id);
       patterns.push(pattern);
