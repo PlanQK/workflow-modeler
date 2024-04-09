@@ -58,7 +58,7 @@ export default class ModelerRules extends BpmnRules {
         });
 
         // clear views since they become invalid if changes are applied
-        modeler.views = [];
+        // modeler.views = [];
       }
     });
   }
