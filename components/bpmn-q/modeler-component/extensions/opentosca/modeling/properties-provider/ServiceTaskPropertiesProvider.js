@@ -159,7 +159,7 @@ function createOpenTOSCAGroup(element, translate) {
  *
  * @param element the OpenTOSCA element
  */
-function OpenTOSCAProps(element) {
+export function OpenTOSCAProps(element) {
   switch (element.type) {
     case consts.CLOUD_DEPLOYMENT_MODEL_POLICY:
       return CloudDeploymentModelPolicyEntries(element);
