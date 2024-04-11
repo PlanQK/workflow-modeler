@@ -17,6 +17,7 @@ export default function OpenButton() {
   function handleChange(event) {
     const file = event.target.files[0];
     openFile(file);
+    event.target.value = null;
   }
 
   return (
