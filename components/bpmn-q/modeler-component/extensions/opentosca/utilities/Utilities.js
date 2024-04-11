@@ -124,9 +124,18 @@ export function movePolicies(modeler, newTargetId, policies) {
     });
     policyElement.host = hostElement;
     policyElement.businessObject.$parent = hostElement.businessObject.$parent;
-    hostElement.businessObject.$parent.flowElements.push(policyElement.businessObject);
-    let newElements = hostElement.businessObject.$parent?.$parent?.flowElements?.filter((element) => element.id !== policyElement.businessObject.id);
-    if (newElements !== undefined && newElements.length !== hostElement.businessObject.$parent?.$parent?.flowElements.length){
+    hostElement.businessObject.$parent.flowElements.push(
+      policyElement.businessObject
+    );
+    let newElements =
+      hostElement.businessObject.$parent?.$parent?.flowElements?.filter(
+        (element) => element.id !== policyElement.businessObject.id
+      );
+    if (
+      newElements !== undefined &&
+      newElements.length !==
+        hostElement.businessObject.$parent?.$parent?.flowElements.length
+    ) {
       hostElement.businessObject.$parent.$parent.flowElements = newElements;
     }
 
