@@ -32,7 +32,6 @@ export const PRIORITIZED_EXECUTION = "pattern:PrioritizedExecution";
 export const ERROR_CORRECTION = "pattern:ErrorCorrection";
 export const GATE_ERROR_MITIGATION = "pattern:GateErrorMitigation";
 export const READOUT_ERROR_MITIGATION = "pattern:ReadoutErrorMitigation";
-export const WARM_START = "pattern:WarmStart";
 export const CIRCUIT_CUTTING = "pattern:CircuitCutting";
 
 export const BIASED_INITIAL_STATE = "pattern:BiasedInitialState";
@@ -60,7 +59,6 @@ export const BEHAVIORAL_PATTERNS = [
 ];
 
 export const WARM_STARTING_PATTERNS = [
-  WARM_START,
   BIASED_INITIAL_STATE,
   CHAINED_OPTIMIZATION,
   PRE_TRAINED_FEATURE_EXTRACTOR,

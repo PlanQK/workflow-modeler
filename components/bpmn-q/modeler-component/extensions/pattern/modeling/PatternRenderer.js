@@ -204,17 +204,6 @@ export default class PatternRenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "GATE_ERROR_MITIGATION");
         return task;
       },
-      [consts.WARM_START]: function (self, parentGfx, element) {
-        let attrs = {
-          fill: "none",
-          stroke: "none",
-        };
-        element.width = 43;
-        element.height = 43;
-        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
-        drawTaskSVG(parentGfx, "WARM_START");
-        return task;
-      },
       [consts.BIASED_INITIAL_STATE]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",

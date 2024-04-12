@@ -276,6 +276,11 @@
       "superClass": ["bpmn:Task"],
       "properties": [
         {
+          "name": "warmStartingPattern",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "warmStartingMethod",
           "isAttr": true,
           "type": "String"

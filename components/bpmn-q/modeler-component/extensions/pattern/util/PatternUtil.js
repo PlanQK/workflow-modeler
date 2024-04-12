@@ -45,6 +45,9 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
     modeling.updateProperties(pattern, {
       attachedToRef: subprocess.businessObject,
     });
+    console.log("attached behavior");
+    console.log(patternX);
+    console.log(patternY);
   }
 
   console.log(patterns);
@@ -120,11 +123,18 @@ export function attachPatternsToSuitableConstruct(
       console.log(patternType);
       console.log(consts.WARM_STARTING_PATTERNS.includes(patternType));
       if (
-        consts.WARM_STARTING_PATTERNS.includes(patternType) &&
+        patternType === consts.BIASED_INITIAL_STATE &&
         type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
       ) {
         attachPatternToShape(construct, patternType, modeling);
-        console.log("added warm_start");
+        console.log("added biased initial state");
+      }
+      if (
+        patternType === consts.VARIATIONAL_PARAMETER_TRANSFER &&
+        type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
+      ) {
+        attachPatternToShape(construct, patternType, modeling);
+        console.log("added variational parameter transfer");
       }
       if (
         patternType === consts.ERROR_CORRECTION &&

@@ -1652,3 +1652,57 @@ export function ErrorCorrectionMethodEntry({ element }) {
     />
   );
 }
+
+export function WarmStartingPatternEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.warmStartingPattern;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      warmStartingPattern: newValue,
+    });
+  };
+
+  const selectOptions = [
+    {
+      value: "biasedInitialState",
+      label: "Biased Initial State",
+    },
+    {
+      value: "chainedOptimization",
+      label: "Chained Optimization",
+    },
+    {
+      value: "preTrainedFeatureExtractor",
+      label: "Pre-Trained Feature Extractor",
+    },
+    {
+      value: "variationalParameterTransfer",
+      label: "Variational Parameter Transfer",
+    },
+  ];
+
+  const getOptions = function () {
+    return selectOptions;
+  };
+
+  return (
+    <SelectEntry
+      id={consts.WARM_STARTING_PATTERN}
+      label={translate("Warm-Starting pattern")}
+      getValue={getValue}
+      setValue={setValue}
+      getOptions={getOptions}
+      debounce={debounce}
+    />
+  );
+}

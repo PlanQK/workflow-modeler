@@ -154,12 +154,4 @@ export var AUGMENTATION_PATTERN = [
       type: consts.VARIATIONAL_PARAMETER_TRANSFER,
     },
   },
-  {
-    label: "Warm Start",
-    actionName: "replace-with-pattern-warm-start",
-    className: "qwm bpmn-pattern-warm-start-icon",
-    target: {
-      type: consts.WARM_START,
-    },
-  },
 ];
