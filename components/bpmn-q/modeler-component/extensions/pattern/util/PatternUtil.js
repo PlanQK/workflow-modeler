@@ -160,6 +160,14 @@ export function attachPatternsToSuitableConstruct(
         attachPatternToShape(construct, patternType, modeling);
         console.log("added cutting");
       }
+
+      if (
+        consts.BEHAVIORAL_PATTERNS.includes(patternType) &&
+        type === "bpmn:SubProcess"
+      ) {
+        attachPatternToShape(construct, patternType, modeling);
+        console.log("added behavioral pattern");
+      }
     }
   }
 }

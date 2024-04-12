@@ -178,11 +178,59 @@ export async function startPatternReplacementProcess(xml) {
   //console.log(s);
   //let tempModeler = await createTempModelerFromXml(s);
   //console.log(tempModeler)
-  const optimizationCandidates = await findOptimizationCandidates(modeler);
+  let optimizationCandidates = await findOptimizationCandidates(modeler);
   console.log(optimizationCandidates);
 
   console.log(behaviorReplacementConstructs);
+  for (let replacementConstruct of behaviorReplacementConstructs) {
+    let replacementSuccess = false;
 
+    if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
+      console.log("Replace prioritized execution");
+
+      // add session task to optimization candidate
+      for (let i = 0; i < optimizationCandidates.length; i++) {
+        let parent = elementRegistry.get(
+          optimizationCandidates[i].entryPoint.id
+        ).parent;
+        let attachedPatterns = parent.attachers;
+
+        // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+        const foundElement = attachedPatterns.find(
+          (attachedPattern) =>
+            attachedPattern.type !== replacementConstruct.task.$type
+        );
+        optimizationCandidates[i].modeler = modeler;
+        if (!foundElement) {
+          await rewriteWorkflow(
+            modeler,
+            optimizationCandidates[i],
+            getHybridRuntimeProvenance(),
+            undefined
+          );
+        }
+      }
+      const pattern = elementRegistry.get(replacementConstruct.task.id);
+      patterns.push(pattern);
+      replacementSuccess = true;
+      if (!replacementSuccess) {
+        console.log(
+          "Replacement of Pattern with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!"
+        );
+        return {
+          status: "failed",
+          cause:
+            "Replacement of Pattern with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!",
+        };
+      }
+    }
+  }
+
+  optimizationCandidates = await findOptimizationCandidates(modeler);
   for (let replacementConstruct of behaviorReplacementConstructs) {
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.ORCHESTRATED_EXECUTION) {
@@ -197,14 +245,17 @@ export async function startPatternReplacementProcess(xml) {
         let parent = elementRegistry.get(
           optimizationCandidates[i].entryPoint.id
         ).parent;
+        console.log(parent);
         let attachedPatterns = parent.attachers;
+        console.log(attachedPatterns);
 
         // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
         const foundElement = attachedPatterns.find(
           (attachedPattern) =>
-            attachedPattern.type !== replacementConstruct.task.$type
+            attachedPattern.type === constants.PRIORITIZED_EXECUTION
         );
-        if (!foundElement) {
+        console.log(foundElement);
+        if (foundElement) {
           optimizationCandidates[i].modeler = modeler;
           let programGenerationResult =
             await getQiskitRuntimeProgramDeploymentModel(
@@ -214,38 +265,54 @@ export async function startPatternReplacementProcess(xml) {
             );
           console.log(programGenerationResult);
           // only rewrite workflow if the hybrid program generation was successful
-          if (!programGenerationResult.hybridProgramId) {
+          if (programGenerationResult.hybridProgramId !== undefined) {
             await rewriteWorkflow(
               modeler,
               optimizationCandidates[i],
               getHybridRuntimeProvenance(),
               programGenerationResult.hybridProgramId
             );
+            const pattern = elementRegistry.get(replacementConstruct.task.id);
+            patterns.push(pattern);
+            console.log("replaced");
+            replacementSuccess = true;
           }
         }
       }
-      const pattern = elementRegistry.get(replacementConstruct.task.id);
-      patterns.push(pattern);
-      console.log("replaced");
-      replacementSuccess = true;
     }
-
     if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
       console.log("Replace prioritized execution");
-
-      // add session task to optimization candidate
       for (let i = 0; i < optimizationCandidates.length; i++) {
-        optimizationCandidates[i].modeler = modeler;
-        await rewriteWorkflow(
-          modeler,
-          optimizationCandidates[i],
-          getHybridRuntimeProvenance(),
-          undefined
+        console.log(optimizationCandidates[i].entryPoint);
+        let parent = elementRegistry.get(
+          optimizationCandidates[i].entryPoint.id
+        ).parent;
+        let attachedPatterns = parent.attachers;
+
+        // if no other behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+        const foundElement = attachedPatterns.find(
+          (attachedPattern) =>
+            attachedPattern.type !== replacementConstruct.task.$type
         );
+        if (!foundElement) {
+          optimizationCandidates[i].modeler = modeler;
+          await rewriteWorkflow(
+            modeler,
+            optimizationCandidates[i],
+            getHybridRuntimeProvenance(),
+            undefined
+          );
+          const pattern = elementRegistry.get(replacementConstruct.task.id);
+          patterns.push(pattern);
+          console.log("replaced");
+          replacementSuccess = true;
+        } else {
+          const pattern = elementRegistry.get(replacementConstruct.task.id);
+          patterns.push(pattern);
+          console.log("replaced");
+          replacementSuccess = true;
+        }
       }
-      const pattern = elementRegistry.get(replacementConstruct.task.id);
-      patterns.push(pattern);
-      replacementSuccess = true;
     }
 
     if (!replacementSuccess) {
@@ -351,38 +418,41 @@ export function attachPatternsToSuitableTasks(
     pattern = elementRegistry.get(patterns[j].task.id);
     console.log(pattern);
     if (pattern !== undefined) {
-      if (!constants.BEHAVIORAL_PATTERNS.includes(pattern.type)) {
-        for (let i = 0; i < flowElements.length; i++) {
-          let flowElement = flowElements[i];
+      for (let i = 0; i < flowElements.length; i++) {
+        let flowElement = flowElements[i];
 
-          if (
-            (flowElement.$type && flowElement.$type === "bpmn:SubProcess") ||
-            (flowElement.type && flowElement.type === "bpmn:SubProcess")
-          ) {
-            attachPatternsToSuitableTasks(
-              flowElement,
-              elementRegistry,
-              patterns,
-              modeling
-            );
+        if (
+          (flowElement.$type && flowElement.$type === "bpmn:SubProcess") ||
+          (flowElement.type && flowElement.type === "bpmn:SubProcess")
+        ) {
+          attachPatternsToSuitableConstruct(
+            elementRegistry.get(flowElement.id),
+            pattern.type,
+            modeling
+          );
+          attachPatternsToSuitableTasks(
+            flowElement,
+            elementRegistry,
+            patterns,
+            modeling
+          );
 
-            // After processing subprocess, add pattern for later removal
-            if (pattern.host !== undefined && pattern.host !== null) {
-              if (flowElement.id === pattern.host.id) {
-                shapesToRemove.push(pattern);
-              }
+          // After processing subprocess, add pattern for later removal
+          if (pattern.host !== undefined && pattern.host !== null) {
+            if (flowElement.id === pattern.host.id) {
+              shapesToRemove.push(pattern);
             }
-          } else {
-            attachPatternsToSuitableConstruct(
-              elementRegistry.get(flowElement.id),
-              pattern.type,
-              modeling
-            );
           }
+        } else {
+          attachPatternsToSuitableConstruct(
+            elementRegistry.get(flowElement.id),
+            pattern.type,
+            modeling
+          );
         }
-        shapesToRemove.forEach((shape) => modeling.removeShape(shape));
-        shapesToRemove = [];
       }
+      shapesToRemove.forEach((shape) => modeling.removeShape(shape));
+      shapesToRemove = [];
     }
   }
 
