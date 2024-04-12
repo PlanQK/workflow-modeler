@@ -182,7 +182,7 @@ async function extractSelfserviceApplicationUrl(propertiesUrl) {
   let buildPlanResponse = await fetchDataFromEndpoint(propertiesUrl);
   console.log(buildPlanResponse);
   const selfServiceApplicationUrl = buildPlanResponse.outputs.filter(
-    (x) => x.name === "selfServiceApplicationUrl"
+    (x) => x.name.toLowerCase() === "selfserviceapplicationurl"
   );
   if (
     selfServiceApplicationUrl === undefined ||

@@ -730,6 +730,7 @@ async function openFileDialog(modeler, content, fileName, fileFormat) {
     ];
   }
   let fileHandle = await window.showSaveFilePicker({
+    id: "saveDialogPicker",
     startIn: "downloads",
     suggestedName: suggestedName + fileFormat,
     types: types,

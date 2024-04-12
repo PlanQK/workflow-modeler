@@ -57,8 +57,9 @@ export default class ModelerRules extends BpmnRules {
           aceEditor.setValue(result);
         });
 
-        // clear views since they become invalid if changes are applied
-        modeler.views = [];
+        // TODO Views should be updated when the structure of the underlying wf changes.
+        //  Currently changes are ignored, which may lead to inconsistencies regrading the layouting and token flow
+        // modeler.views = [];
       }
     });
   }
