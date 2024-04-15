@@ -24,6 +24,7 @@ import { getQRMs } from "../../quantme/qrm-manager";
 import { rewriteWorkflow } from "../../quantme/ui/adaptation/WorkflowRewriter";
 import { getQiskitRuntimeProgramDeploymentModel } from "../../quantme/ui/adaptation/runtimes/QiskitRuntimeHandler";
 import { getHybridRuntimeProvenance } from "../../quantme/framework-config/config-manager";
+
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
  *
@@ -58,6 +59,7 @@ export async function startPatternReplacementProcess(xml) {
   if (!replacementConstructs || !replacementConstructs.length) {
     return { status: "transformed", xml: xml };
   }
+  console.log(replacementConstructs);
 
   attachPatternsToSuitableTasks(
     rootElement,
@@ -102,13 +104,40 @@ export async function startPatternReplacementProcess(xml) {
         };
       }
     }
+    if (
+      constants.WARM_STARTING_PATTERNS.includes(replacementConstruct.task.$type)
+    ) {
+      let { replaced, flows, pattern } = await replaceWarmStart(
+        replacementConstruct.task,
+        replacementConstruct.parent,
+        modeler
+      );
+      allFlow = allFlow.concat(flows);
+      patterns.push(pattern);
+      modeling.removeElements(flows);
+      if (!replaced) {
+        console.log(
+          "Replacement of Pattern with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!"
+        );
+        return {
+          status: "failed",
+          cause:
+            "Replacement of Pattern with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!",
+        };
+      }
+    }
   }
 
   replacementConstructs = replacementConstructs.filter(
     (construct) =>
       construct.task.$type !== constants.READOUT_ERROR_MITIGATION &&
       construct.task.$type !== constants.GATE_ERROR_MITIGATION &&
-      construct.task.$type !== constants.PATTERN
+      construct.task.$type !== constants.PATTERN &&
+      !constants.WARM_STARTING_PATTERNS.includes(construct.task.$type)
   );
 
   let augmentationReplacementConstructs = replacementConstructs.filter(
@@ -131,19 +160,6 @@ export async function startPatternReplacementProcess(xml) {
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
       modeling.removeElements(flows);
-      replacementSuccess = replaced;
-    }
-
-    if (
-      constants.WARM_STARTING_PATTERNS.includes(replacementConstruct.task.$type)
-    ) {
-      let { replaced, flows, pattern } = await replaceWarmStart(
-        replacementConstruct.task,
-        replacementConstruct.parent,
-        modeler
-      );
-      allFlow = allFlow.concat(flows);
-      patterns.push(pattern);
       replacementSuccess = replaced;
     }
 
@@ -174,104 +190,33 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  //let s = await getXml(modeler);
-  //console.log(s);
-  //let tempModeler = await createTempModelerFromXml(s);
-  //console.log(tempModeler)
-  let optimizationCandidates = await findOptimizationCandidates(modeler);
-  console.log(optimizationCandidates);
-
-  console.log(behaviorReplacementConstructs);
-  for (let replacementConstruct of behaviorReplacementConstructs) {
-    let replacementSuccess = false;
-
-    if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
-      console.log("Replace prioritized execution");
-
-      // add session task to optimization candidate
-      for (let i = 0; i < optimizationCandidates.length; i++) {
-        let parent = elementRegistry.get(
-          optimizationCandidates[i].entryPoint.id
-        ).parent;
-        let attachedPatterns = parent.attachers;
-
-        // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
-        const foundElement = attachedPatterns.find(
-          (attachedPattern) =>
-            attachedPattern.type !== replacementConstruct.task.$type
-        );
-        optimizationCandidates[i].modeler = modeler;
-        if (!foundElement) {
-          await rewriteWorkflow(
-            modeler,
-            optimizationCandidates[i],
-            getHybridRuntimeProvenance(),
-            undefined
-          );
-        }
-      }
-      const pattern = elementRegistry.get(replacementConstruct.task.id);
-      patterns.push(pattern);
-      replacementSuccess = true;
-      if (!replacementSuccess) {
-        console.log(
-          "Replacement of Pattern with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!"
-        );
-        return {
-          status: "failed",
-          cause:
-            "Replacement of Pattern with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!",
-        };
-      }
-    }
-  }
-
-  optimizationCandidates = await findOptimizationCandidates(modeler);
+  let elementsToDelete = patterns.concat(allFlow);
+  console.log("df");
+  console.log(elementsToDelete);
+  modeling.removeElements(elementsToDelete);
+  const optimizationCandidates = await findOptimizationCandidates(modeler);
   for (let replacementConstruct of behaviorReplacementConstructs) {
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.ORCHESTRATED_EXECUTION) {
-      const pattern = elementRegistry.get(replacementConstruct.task.id);
-      patterns.push(pattern);
-      replacementSuccess = true;
-    }
-    if (replacementConstruct.task.$type === constants.PRE_DEPLOYED_EXECUTION) {
-      console.log("Replace pre-deployed execution");
+      let foundOptimizationCandidate = false;
       for (let i = 0; i < optimizationCandidates.length; i++) {
         console.log(optimizationCandidates[i].entryPoint);
         let parent = elementRegistry.get(
           optimizationCandidates[i].entryPoint.id
         ).parent;
         console.log(parent);
-        let attachedPatterns = parent.attachers;
-        console.log(attachedPatterns);
 
-        // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
-        const foundElement = attachedPatterns.find(
-          (attachedPattern) =>
-            attachedPattern.type === constants.PRIORITIZED_EXECUTION
-        );
-        console.log(foundElement);
-        if (foundElement) {
-          optimizationCandidates[i].modeler = modeler;
-          let programGenerationResult =
-            await getQiskitRuntimeProgramDeploymentModel(
-              optimizationCandidates[i],
-              modeler.config,
-              getQRMs()
-            );
-          console.log(programGenerationResult);
-          // only rewrite workflow if the hybrid program generation was successful
-          if (programGenerationResult.hybridProgramId !== undefined) {
-            await rewriteWorkflow(
-              modeler,
-              optimizationCandidates[i],
-              getHybridRuntimeProvenance(),
-              programGenerationResult.hybridProgramId
-            );
+        if (parent.id === replacementConstruct.task.attachedToRef.id) {
+          foundOptimizationCandidate = true;
+          let attachedPatterns = parent.attachers;
+          console.log(attachedPatterns);
+
+          // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+          const foundElement = attachedPatterns.find(
+            (attachedPattern) =>
+              attachedPattern.type === constants.PRIORITIZED_EXECUTION
+          );
+          if (!foundElement) {
             const pattern = elementRegistry.get(replacementConstruct.task.id);
             patterns.push(pattern);
             console.log("replaced");
@@ -279,39 +224,114 @@ export async function startPatternReplacementProcess(xml) {
           }
         }
       }
+      if (!foundOptimizationCandidate) {
+        const pattern = elementRegistry.get(replacementConstruct.task.id);
+        patterns.push(pattern);
+        replacementSuccess = true;
+      }
+      replacementSuccess = true;
     }
-    if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
-      console.log("Replace prioritized execution");
+    if (replacementConstruct.task.$type === constants.PRE_DEPLOYED_EXECUTION) {
+      console.log("Replace pre-deployed execution");
+      console.log(replacementConstruct);
+      let foundOptimizationCandidate = false;
       for (let i = 0; i < optimizationCandidates.length; i++) {
         console.log(optimizationCandidates[i].entryPoint);
         let parent = elementRegistry.get(
           optimizationCandidates[i].entryPoint.id
         ).parent;
-        let attachedPatterns = parent.attachers;
+        console.log(parent);
+        if (parent.id === replacementConstruct.task.attachedToRef.id) {
+          let attachedPatterns = parent.attachers;
+          console.log(attachedPatterns);
 
-        // if no other behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
-        const foundElement = attachedPatterns.find(
-          (attachedPattern) =>
-            attachedPattern.type !== replacementConstruct.task.$type
-        );
-        if (!foundElement) {
-          optimizationCandidates[i].modeler = modeler;
-          await rewriteWorkflow(
-            modeler,
-            optimizationCandidates[i],
-            getHybridRuntimeProvenance(),
-            undefined
+          // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+          const foundElement = attachedPatterns.find(
+            (attachedPattern) =>
+              attachedPattern.type === constants.PRIORITIZED_EXECUTION
           );
-          const pattern = elementRegistry.get(replacementConstruct.task.id);
-          patterns.push(pattern);
-          console.log("replaced");
-          replacementSuccess = true;
-        } else {
-          const pattern = elementRegistry.get(replacementConstruct.task.id);
-          patterns.push(pattern);
-          console.log("replaced");
-          replacementSuccess = true;
+          console.log(foundElement);
+          if (foundElement) {
+            optimizationCandidates[i].modeler = modeler;
+            let programGenerationResult =
+              await getQiskitRuntimeProgramDeploymentModel(
+                optimizationCandidates[i],
+                modeler.config,
+                getQRMs()
+              );
+            console.log(programGenerationResult);
+            // only rewrite workflow if the hybrid program generation was successful
+            if (programGenerationResult.hybridProgramId !== undefined) {
+              await rewriteWorkflow(
+                modeler,
+                optimizationCandidates[i],
+                getHybridRuntimeProvenance(),
+                programGenerationResult.hybridProgramId
+              );
+              const pattern = elementRegistry.get(replacementConstruct.task.id);
+              patterns.push(pattern);
+              console.log("replaced");
+              const prioPattern = elementRegistry.get(foundElement.id);
+              patterns.push(prioPattern);
+              replacementSuccess = true;
+            }
+          }
         }
+      }
+      if (!foundOptimizationCandidate) {
+        const pattern = elementRegistry.get(replacementConstruct.task.id);
+        patterns.push(pattern);
+        replacementSuccess = true;
+      }
+    }
+    if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
+      console.log("Replace prioritized execution");
+      let foundOptimizationCandidate = false;
+      for (let i = 0; i < optimizationCandidates.length; i++) {
+        console.log(optimizationCandidates[i].entryPoint);
+        let parent = elementRegistry.get(
+          optimizationCandidates[i].entryPoint.id
+        ).parent;
+        if (parent.id === replacementConstruct.task.attachedToRef.id) {
+          let attachedPatterns = parent.attachers;
+          foundOptimizationCandidate = true;
+
+          // if no other behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+          const foundElement = attachedPatterns.find(
+            (attachedPattern) =>
+              attachedPattern.type === constants.ORCHESTRATED_EXECUTION
+          );
+          const foundPreElement = attachedPatterns.find(
+            (attachedPattern) =>
+              attachedPattern.type === constants.PRE_DEPLOYED_EXECUTION
+          );
+          console.log(foundElement);
+          if (!foundPreElement) {
+            optimizationCandidates[i].modeler = modeler;
+            await rewriteWorkflow(
+              modeler,
+              optimizationCandidates[i],
+              getHybridRuntimeProvenance(),
+              undefined
+            );
+            const pattern = elementRegistry.get(replacementConstruct.task.id);
+            patterns.push(pattern);
+            console.log("replaced");
+            console.log(pattern);
+            replacementSuccess = true;
+            if (foundElement) {
+              const orchestratedPattern = elementRegistry.get(foundElement.id);
+              patterns.push(orchestratedPattern);
+            }
+          } else {
+            replacementSuccess = true;
+          }
+        }
+      }
+      if (!foundOptimizationCandidate) {
+        const pattern = elementRegistry.get(replacementConstruct.task.id);
+        patterns.push(pattern);
+        replacementSuccess = true;
       }
     }
 
@@ -319,6 +339,8 @@ export async function startPatternReplacementProcess(xml) {
       console.log(
         "Replacement of Pattern with Id " +
           replacementConstruct.task.id +
+          " of type " +
+          replacementConstruct.task.$type +
           " failed. Aborting process!"
       );
       return {
@@ -331,37 +353,11 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  let elementsToDelete = patterns.concat(allFlow);
+  elementsToDelete = patterns; //.concat(allFlow);
   //patterns.concat(allFlow);
   console.log("df");
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
-  //layout(modeling, elementRegistry, rootElement);
-  //let s = await getXml(modeler);
-  //console.log(s);
-  //let tempModeler = await createTempModelerFromXml(s);
-  //console.log(tempModeler)
-  //const optimizationCandidates = await findOptimizationCandidates(
-  //  tempModeler
-  //);
-
-  /** 
-    console.log(optimizationCandidates);
-    //console.log(tempModeler);
-    console.log(getHybridRuntimeProvenance())
-    for (let i = 0; i < optimizationCandidates.length; i++) {
-      optimizationCandidates[i].modeler = modeler;
-      let programGenerationResult = await getQiskitRuntimeProgramDeploymentModel(optimizationCandidates[i], modeler.config, getQRMs());
-      console.log(programGenerationResult)
-      let rewritingResult = await rewriteWorkflow(
-        tempModeler,
-        optimizationCandidates[i],
-        getHybridRuntimeProvenance(),
-        programGenerationResult.hybridProgramId
-      );
-    }
-  
-    */
 
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
@@ -380,9 +376,27 @@ export function getPatterns(process, elementRegistry) {
   const flowElements = process.flowElements;
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
+    console.log(flowElement);
+    if (flowElement.flowElements !== undefined) {
+      for (let j = 0; j < flowElement.flowElements.length; j++) {
+        let child = flowElement.flowElements[j];
+        if (child.$type && child.$type.startsWith("pattern:")) {
+          console.log("added replacementc", child);
+          console.log(processBo);
+          console.log(flowElement);
+          //patterns.push({ task: child, parent: child.attachedToRef });
+        }
+      }
+    }
 
     if (flowElement.$type && flowElement.$type.startsWith("pattern:")) {
-      patterns.push({ task: flowElement, parent: processBo });
+      //console.log("added replacementc", flowElement)
+      //console.log(processBo)
+      patterns.push({
+        task: flowElement,
+        parent: processBo,
+        attachedToRef: flowElement.attachedToRef,
+      });
     }
     // recursively retrieve patterns if subprocess is found
     if (
@@ -401,6 +415,22 @@ export function getPatterns(process, elementRegistry) {
   return patterns;
 }
 
+/** 
+
+function searchFlowElements(flowElements, condition) {
+  // Check if any child element satisfies the condition
+  const found = flowElements.some(element => {
+    if ((element.$type && element.$type === "bpmn:SubProcess") ||
+      (element.type && element.type === "bpmn:SubProcess")) {
+      // Recursively search through subprocess's flowElements
+      return searchFlowElements(element.flowElements, condition);
+    }
+    return condition(element); // Check the condition for the current element
+  });
+
+  return found;
+}
+*/
 export function attachPatternsToSuitableTasks(
   process,
   elementRegistry,
@@ -414,22 +444,53 @@ export function attachPatternsToSuitableTasks(
 
   let pattern;
   let shapesToRemove = [];
+  //console.log(flowElements)
   for (let j = 0; j < patterns.length; j++) {
+    //let flowElements = patterns[j].parent.flowElements;
+    //if (!flowElements) {
+    // flowElements = process.children;
+    //}
+    console.log(flowElements);
     pattern = elementRegistry.get(patterns[j].task.id);
     console.log(pattern);
+
     if (pattern !== undefined) {
+      console.log(pattern.host);
       for (let i = 0; i < flowElements.length; i++) {
         let flowElement = flowElements[i];
-
+        console.log(patterns[j]);
+        //const exists = patterns[j].attachedToRef.flowElements.some(child => child.id === flowElement.id);
+        /** 
+        const exists = patterns[j].attachedToRef.flowElements.some(child => {
+          if ((child.$type && child.$type === "bpmn:SubProcess") ||
+          (child.type && child.type === "bpmn:SubProcess")) {
+            console.log("check if element exist")
+            console.log(child)
+              // Recursively search through subprocess's flowElements
+              //return searchFlowElements(child.flowElements, f => f.id === child.id);
+              
+              return searchFlowElements(child.flowElements, f => !checkForbiddenPatternCombinations(f, pattern.type));
+          }
+          console.log(flowElement.id);
+          console.log(child.id)
+          return false; // Replace someId with the ID you are checking for
+      });
+      **/
+        const exists = patterns[j].parent.children.some(
+          (child) => child.id === flowElement.id
+        );
         if (
           (flowElement.$type && flowElement.$type === "bpmn:SubProcess") ||
           (flowElement.type && flowElement.type === "bpmn:SubProcess")
         ) {
+          console.log("Subprocess attachment");
+          console.log(flowElement);
           attachPatternsToSuitableConstruct(
             elementRegistry.get(flowElement.id),
             pattern.type,
             modeling
           );
+
           attachPatternsToSuitableTasks(
             flowElement,
             elementRegistry,
@@ -438,23 +499,31 @@ export function attachPatternsToSuitableTasks(
           );
 
           // After processing subprocess, add pattern for later removal
-          if (pattern.host !== undefined && pattern.host !== null) {
+          if (
+            pattern.host !== undefined &&
+            pattern.host !== null &&
+            !constants.BEHAVIORAL_PATTERNS.includes(pattern.type)
+          ) {
             if (flowElement.id === pattern.host.id) {
+              console.log("deleted from", pattern.type, flowElement.id);
               shapesToRemove.push(pattern);
             }
           }
         } else {
-          attachPatternsToSuitableConstruct(
-            elementRegistry.get(flowElement.id),
-            pattern.type,
-            modeling
-          );
+          if (!exists) {
+            attachPatternsToSuitableConstruct(
+              elementRegistry.get(flowElement.id),
+              pattern.type,
+              modeling
+            );
+          }
         }
       }
+      console.log("remove now shapes");
+      console.log(shapesToRemove);
       shapesToRemove.forEach((shape) => modeling.removeShape(shape));
       shapesToRemove = [];
     }
   }
-
   return flowElements;
 }

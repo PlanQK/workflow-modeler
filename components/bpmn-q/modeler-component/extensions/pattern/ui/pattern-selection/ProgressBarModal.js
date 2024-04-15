@@ -22,7 +22,6 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
       console.log("extract now");
       console.log(selectedPatterns);
       const totalRequests = responseData.length;
-      let successfulRequests = 0;
       const fetchedSolutions = [];
       let foundSolution = false;
       for (let j = 0; j < selectedPatterns.length; j++) {
@@ -61,21 +60,13 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
                     fetchedSolutions.push(solutionPackage);
                     foundSolution = true;
                     if (solutionPackage.ok) {
-                      successfulRequests++;
                       fetchedSolutions.push(solutionPackage.content);
                     }
-
-                    const newProgress =
-                      (successfulRequests / totalRequests) * 100;
-                    // Ensure the progress bar is at least 95% filled
-                    const displayProgress = Math.min(newProgress, 95);
-
-                    // Update the progress bar only if the component is still mounted
-                    setProgress(displayProgress);
                   }
                 }
               } catch (error) {
                 console.error("Error fetching data:", error);
+                onClose();
               }
             }
           }
@@ -121,7 +112,7 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
             className="qwm-btn qwm-btn-primary"
             onClick={() => onClose(solutions)}
           >
-            Select Patterns
+            Combine Solutions
           </button>
           <button
             type="button"

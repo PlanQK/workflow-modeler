@@ -14,84 +14,55 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   console.log(subprocess);
   const patternPrefix = "pattern:";
   const patternSpacing = 65;
-  for (let i = 0; i < patterns.behavioralPattern.length; i++) {
-    console.log(patterns.behavioralPattern[i]);
-    // get name of pattern by removing whitespaces and replacing hyphens
-    let patternName = patterns.behavioralPattern[i].name.replace(/[\s-]/g, "");
-    console.log(patternName);
+  let indexPatternOutsideSubprocess = 0;
+  const createPatterns = (patternList, offsetX) => {
+    for (let i = 0; i < patternList.length; i++) {
+      const patternName = patternList[i].name.replace(/[\s-]/g, "");
+      console.log("add pattern", patternName);
 
-    // Start in the top left
-    let patternX = subprocess.x + patternSpacing * i;
-    let patternY = subprocess.y + subprocess.height;
+      let patternX = subprocess.x + patternSpacing * (i + offsetX);
+      let patternY = subprocess.y + subprocess.height;
+      indexPatternOutsideSubprocess = i;
+      // start from the top if x coordinate exceeds subprocess size
+      if (patternX > subprocess.x + subprocess.width) {
+        patternY = subprocess.y;
+        patternX =
+          subprocess.x +
+          patternSpacing * (i - indexPatternOutsideSubprocess - 1 + offsetX);
+      }
 
-    // If the pattern goes outside the subprocess, adjust the position
-    if (patternX < subprocess.x + subprocess.width) {
-      patternX = subprocess.x;
-      patternY = subprocess.y + subprocess.height - patternSpacing * i;
+      console.log(patternX);
+      console.log(patternY);
+      createPattern(
+        modeling,
+        patternPrefix,
+        patternName,
+        patternX,
+        patternY,
+        subprocess
+      );
     }
-    if (patternY > subprocess.y) {
-      patternX = subprocess.x + patternSpacing * i;
-      patternY = subprocess.y;
-    }
-    let pattern = modeling.createShape(
-      { type: patternPrefix + patternName },
-      {
-        x: patternX,
-        y: patternY,
-      },
-      subprocess,
-      { attach: true }
-    );
-    modeling.updateProperties(pattern, {
-      attachedToRef: subprocess.businessObject,
-    });
-    console.log("attached behavior");
-    console.log(patternX);
-    console.log(patternY);
-  }
+  };
 
-  console.log(patterns);
-  for (let i = 0; i < patterns.augmentationPattern.length; i++) {
-    console.log(patterns.augmentationPattern[i]);
-    // get name of pattern and remove whitespace
-    let patternName = patterns.augmentationPattern[i].name.replace(
-      /[\s-]/g,
-      ""
-    );
-    // Start in the bottom left
-    let patternX = subprocess.x + patternSpacing * i;
-    let patternY = subprocess.y + subprocess.height;
-
-    // If the pattern goes outside the subprocess, adjust the position
-    if (patternX < subprocess.x + subprocess.width) {
-      //patternX = subprocess.x;
-      patternY = subprocess.y + subprocess.height - patternSpacing * i;
-    }
-    if (patternY > subprocess.y) {
-      patternX = subprocess.x + patternSpacing * i;
-      patternY = subprocess.y + subprocess.height;
-    }
-    let pattern = modeling.createShape(
-      { type: patternPrefix + patternName },
-      {
-        x: patternX,
-        y: patternY,
-      },
-      subprocess,
-      { attach: true }
-    );
-    modeling.updateProperties(pattern, {
-      attachedToRef: subprocess.businessObject,
-    });
-
-    console.log("attached pattern ");
-    console.log(patternName);
-    console.log(patternX);
-    console.log(patternY);
-    console.log(subprocess);
-  }
+  createPatterns(patterns.behavioralPattern, 0);
+  createPatterns(
+    patterns.augmentationPattern,
+    patterns.behavioralPattern.length
+  );
 }
 
+function createPattern(modeling, patternPrefix, patternName, x, y, subprocess) {
+  const pattern = modeling.createShape(
+    { type: patternPrefix + patternName },
+    { x: x, y: y },
+    subprocess,
+    { attach: true }
+  );
+
+  modeling.updateProperties(pattern, {
+    attachedToRef: subprocess.businessObject,
+  });
+}
 export function attachPatternsToSuitableConstruct(
   construct,
   patternType,
@@ -118,6 +89,7 @@ export function attachPatternsToSuitableConstruct(
       construct,
       patternType
     );
+    console.log(containsForbiddenPatternCombinations);
 
     if (!containsPattern && !containsForbiddenPatternCombinations) {
       console.log(patternType);
@@ -166,10 +138,14 @@ export function attachPatternsToSuitableConstruct(
         type === "bpmn:SubProcess"
       ) {
         attachPatternToShape(construct, patternType, modeling);
+        console.log("attached behavioral pattern");
+        console.log(patternType);
+        console.log(construct);
         console.log("added behavioral pattern");
       }
     }
   }
+  return !containsPattern && !containsForbiddenPatternCombinations;
 }
 
 function attachPatternToShape(shape, patternType, modeling) {
@@ -182,6 +158,7 @@ function attachPatternToShape(shape, patternType, modeling) {
   modeling.updateProperties(pattern, {
     attachedToRef: shape.businessObject,
   });
+  console.log(pattern);
 }
 
 export function changeIdOfContainedElements(
@@ -232,33 +209,41 @@ export function changeIdOfContainedElements(
  * @returns True if there is a conflict, false otherwise.
  */
 export function checkForbiddenPatternCombinations(construct, patternType) {
-  if (patternType === consts.ERROR_CORRECTION) {
-    const forbiddenPatterns = construct.attachers.filter(
-      (pattern) =>
-        pattern.type === consts.GATE_ERROR_MITIGATION ||
-        pattern.type === consts.READOUT_ERROR_MITIGATION
-    );
-    return forbiddenPatterns.length > 0;
+  console.log("attach patternType to construct", patternType, construct.id);
+  console.log(construct);
+  console.log(construct.attachers);
+  if (construct.attachers !== undefined) {
+    if (patternType === consts.ERROR_CORRECTION) {
+      const forbiddenPatterns = construct.attachers.filter(
+        (pattern) =>
+          pattern.type === consts.GATE_ERROR_MITIGATION ||
+          pattern.type === consts.READOUT_ERROR_MITIGATION
+      );
+      return forbiddenPatterns.length > 0;
+    }
+    if (
+      patternType === consts.GATE_ERROR_MITIGATION ||
+      patternType === consts.READOUT_ERROR_MITIGATION
+    ) {
+      const forbiddenPatterns = construct.attachers.filter(
+        (pattern) => pattern.type === consts.ERROR_CORRECTION
+      );
+      return forbiddenPatterns.length > 0;
+    }
+    if (patternType === consts.ORCHESTRATED_EXECUTION) {
+      const forbiddenPatterns = construct.attachers.filter(
+        (pattern) => pattern.type === consts.PRE_DEPLOYED_EXECUTION
+      );
+      return forbiddenPatterns.length > 0;
+    }
+    if (patternType === consts.PRE_DEPLOYED_EXECUTION) {
+      const forbiddenPatterns = construct.attachers.filter(
+        (pattern) => pattern.type === consts.ORCHESTRATED_EXECUTION
+      );
+      console.log(forbiddenPatterns.length > 0);
+      console.log("predeployed attached or not");
+      return forbiddenPatterns.length > 0;
+    }
   }
-  if (
-    patternType === consts.GATE_ERROR_MITIGATION ||
-    patternType === consts.READOUT_ERROR_MITIGATION
-  ) {
-    const forbiddenPatterns = construct.attachers.filter(
-      (pattern) => pattern.type === consts.ERROR_CORRECTION
-    );
-    return forbiddenPatterns.length > 0;
-  }
-  if (patternType === consts.ORCHESTRATED_EXECUTION) {
-    const forbiddenPatterns = construct.attachers.filter(
-      (pattern) => pattern.type === consts.PRE_DEPLOYED_EXECUTION
-    );
-    return forbiddenPatterns.length > 0;
-  }
-  if (patternType === consts.PRE_DEPLOYED_EXECUTION) {
-    const forbiddenPatterns = construct.attachers.filter(
-      (pattern) => pattern.type === consts.ORCHESTRATED_EXECUTION
-    );
-    return forbiddenPatterns.length > 0;
-  }
+  return false;
 }

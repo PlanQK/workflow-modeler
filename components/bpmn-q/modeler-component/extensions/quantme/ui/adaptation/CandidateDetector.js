@@ -99,8 +99,10 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
   let modeler = await createTempModelerFromXml(workflowXml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
+  console.log(elementRegistry);
   let rootElement = getRootProcess(modeler.getDefinitions());
 
+  // to do inside subprocess i guess
   // remove all flows that are not part of the candidate
   const flowElements = lodash.cloneDeep(rootElement.flowElements);
   console.log("Workflow contains %d elements!", flowElements.length);
@@ -183,9 +185,15 @@ function calculateViewBox(optimizationCandidate, svg, elementRegistry) {
       optimizationCandidate.containedElements[i].id
     );
 
+    console.log(element);
+    console.log(elementRegistry);
     console.log(optimizationCandidate);
     console.log(optimizationCandidate.containedElements[i].id);
-    element = optimizationCandidate.containedElements[i].id;
+
+    if (element === undefined) {
+      element = optimizationCandidate.containedElements[i];
+    }
+    console.log(element);
 
     // for sequence flows check the position of each waypoint and label
     if (element.type === "bpmn:SequenceFlow") {
@@ -491,9 +499,10 @@ function containsClassicalTask(candidate) {
   for (let i = 0; i < candidate.containedElements.length; i++) {
     let element = candidate.containedElements[i];
     if (
-      element.$type &&
-      (element.$type === "bpmn:ServiceTask" ||
-        element.$type === "bpmn:ScriptTask")
+      (element.$type &&
+        (element.$type === "bpmn:ServiceTask" ||
+          element.$type === "bpmn:ScriptTask")) ||
+      element.$type.startsWith("quantme:")
     ) {
       return true;
     }
