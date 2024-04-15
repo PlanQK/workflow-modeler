@@ -71,7 +71,8 @@ export default class PatternRules extends RuleProvider {
       if (
         consts.PATTERN.includes(shapeToAttach.type) &&
         target.type !== "bpmn:SubProcess" &&
-        target.type !== quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
+        target.type !== quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK &&
+        target.type !== quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
       ) {
         return false;
       }

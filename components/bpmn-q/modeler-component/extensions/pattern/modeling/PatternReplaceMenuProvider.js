@@ -18,6 +18,7 @@ import {
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
 import * as consts from "../Constants";
+import * as quantmeConsts from "../../quantme/Constants";
 
 /**
  * This class extends the default ReplaceMenuProvider with the newly introduced Pattern task types
@@ -98,7 +99,7 @@ export default class PatternReplaceMenuProvider {
         attacherTypes
       );
     }
-    const augmentationPatterns = this.createPatternTypeReplacementOptions(
+    let augmentationPatterns = this.createPatternTypeReplacementOptions(
       element,
       quantmeReplaceOptions.AUGMENTATION_PATTERN,
       consts.PATTERN_AUGMENTATION,
@@ -156,6 +157,20 @@ export default class PatternReplaceMenuProvider {
     let filteredOptionsBasedOnAttachers = filteredOptions.filter((option) => {
       return !attacherTypes.includes(option.target.type);
     });
+
+    if (element.host.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK) {
+      filteredOptionsBasedOnAttachers =
+        quantmeReplaceOptions.AUGMENTATION_PATTERN.filter((option) => {
+          return option.target.type === consts.BIASED_INITIAL_STATE;
+        });
+    }
+
+    if (element.host.type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
+      filteredOptionsBasedOnAttachers =
+        quantmeReplaceOptions.AUGMENTATION_PATTERN.filter((option) => {
+          return option.target.type !== consts.BIASED_INITIAL_STATE;
+        });
+    }
 
     // error correction is not allowed with error mitigation
     if (

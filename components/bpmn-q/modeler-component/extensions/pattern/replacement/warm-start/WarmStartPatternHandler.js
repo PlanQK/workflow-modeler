@@ -32,6 +32,17 @@ export async function replaceWarmStart(warmStartPattern, parent, modeler) {
   );
   let warmStartTaskBo = elementRegistry.get(warmStartTask.id).businessObject;
   warmStartTaskBo.name = "Warm Start";
+
+  // remove the prefix
+  let warmStartPatternName = warmStartPattern.$type.replace("pattern:", "");
+
+  // first letter to lowerCase
+  warmStartPatternName =
+    warmStartPatternName.charAt(0).toLowerCase() +
+    warmStartPatternName.slice(1);
+  modeling.updateProperties(warmStartTask, {
+    warmStartingPattern: warmStartPatternName,
+  });
   let incomingFlows = [];
   host.incoming.forEach((element) => {
     incomingFlows.push(elementRegistry.get(element.id));

@@ -37,6 +37,7 @@ import {
   getPatternAtlasEndpoint,
   getQcAtlasEndpoint,
 } from "../../framework-config/config-manager";
+import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -87,24 +88,43 @@ export default class PatternSelectionPlugin extends PureComponent {
     if (result && result.length > 0) {
       // If the result is not empty, show the progress bar
       this.setState({ showProgressBar: true });
-      console.log("los");
 
       try {
         const implementationsResponse = await fetchDataFromEndpoint(
           getQcAtlasEndpoint() + "/atlas/implementations"
         );
-
-        this.setState({
-          showProgressBar: true,
-          responseData: implementationsResponse.content,
-          patternOverviewOpen: false,
-        });
+        console.log(implementationsResponse);
+        if (implementationsResponse.content !== undefined) {
+          this.setState({
+            showProgressBar: true,
+            responseData: implementationsResponse.content,
+            patternOverviewOpen: false,
+          });
+        } else {
+          this.setState({
+            showProgressBar: false,
+          });
+          NotificationHandler.getInstance().displayNotification({
+            type: "info",
+            title: "No implementations found",
+            content:
+              "Error when fetching implementations from " +
+              getQcAtlasEndpoint(),
+            duration: 4000,
+          });
+        }
       } catch (error) {
         console.error(
           "Error fetching data from implementations endpoint:",
           error
         );
-        // Handle errors accordingly
+        NotificationHandler.getInstance().displayNotification({
+          type: "info",
+          title: "No implementations found",
+          content:
+            "Error when fetching implementations from " + getQcAtlasEndpoint(),
+          duration: 4000,
+        });
         this.setState({ showProgressBar: false });
       }
     }
