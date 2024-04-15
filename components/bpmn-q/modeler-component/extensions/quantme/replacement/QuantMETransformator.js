@@ -15,10 +15,7 @@ import { addQuantMEInputParameters } from "./InputOutputHandler";
 import * as constants from "../Constants";
 import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
 import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
-import {
-  getPropertiesToCopy,
-  insertShape,
-} from "../../../editor/util/TransformationUtilities";
+import { insertShape } from "../../../editor/util/TransformationUtilities";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
 import {
   getCamundaInputOutput,
@@ -31,6 +28,8 @@ import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
 import { isQuantMETask } from "../utilities/Utilities";
 import { getQProvEndpoint } from "../framework-config/config-manager";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
+import { OpenTOSCAProps } from "../../opentosca/modeling/properties-provider/ServiceTaskPropertiesProvider";
+import * as openToscaConsts from "../../opentosca/Constants";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -392,34 +391,39 @@ async function replaceByFragment(
           flowElements.length
         );
 
-        if (flowElements.length === 1) {
-          // if only one relevant flow element, moce policies
-          movePolicies(modeler, flowElements[0].id, policies);
-        } else {
-          // copy policies for each relevant flow element
-          flowElements.forEach((flowElement) => {
-            console.log("Adding policies to task: ", flowElement);
-            policies.forEach((policy) => {
-              console.log("Adding policy: ", policy);
+        flowElements.forEach((flowElement) => {
+          let task = elementRegistry.get(flowElement.id);
+          console.log("Adding policies to task: ", task);
+          policies.forEach((policy) => {
+            console.log("Adding policy : ", policy);
 
-              let newPolicyShape = modeling.createShape(
-                { type: policy.type },
-                { x: 50, y: 50 },
-                parent,
-                {}
-              );
-              modeling.updateProperties(
-                newPolicyShape,
-                getPropertiesToCopy(policy)
-              );
+            if (policy.type === openToscaConsts.ON_DEMAND_POLICY) {
+              task.businessObject[openToscaConsts.ON_DEMAND] = "true";
+            }
 
-              modeling.updateProperties(newPolicyShape, {
-                attachedToRef: flowElement.businessObject,
+            let newPolicyShape = modeling.createShape(
+              { type: policy.type },
+              { x: 50, y: 50 },
+              task,
+              { attach: true }
+            );
+
+            // extract the properties of for the specific policy type
+            let properties = OpenTOSCAProps(newPolicyShape);
+
+            if (properties !== undefined) {
+              let propertyEntries = {};
+              properties.forEach((propertyEntry) => {
+                let entryId = propertyEntry.id;
+                propertyEntries[entryId] = policy.businessObject[entryId];
               });
-              newPolicyShape.host = flowElement;
-            });
+              modeling.updateProperties(
+                elementRegistry.get(newPolicyShape.id),
+                propertyEntries
+              );
+            }
           });
-        }
+        });
       } else {
         console.log(
           "Type not supported for policy attachment: ",
