@@ -1,21 +1,31 @@
-# Tutorial
+# Using the Pattern Plugin: A Step-by-Step Guide
 
-In the following, it is described how to use the pattern plugin
+Follow these steps to use the Pattern Plugin in the workflow modeler:
 
-1. Start by clicking on the "Pattern Plugin" in your system interface.
+## 1. Access the Plugin
+Begin by clicking on the "Pattern Plugin" within the workflow modeler.
 
-2. Once the plugin opens, look for the "Open Pattern Selection" button.
+## 2. Navigate to Pattern Selection
+Once the plugin interface opens, locate and click on the "Open Pattern Selection" button.
 
-3. In the pattern selection window, you'll find various patterns categorized as QAOA, Algorithm Patterns, and Behavioral Patterns.
+## 3. Browse Available Patterns
+In the pattern selection window, you'll find a variety of patterns organized into categories:
+- Algorithm Patterns
+- Behavioral Patterns
+- Augmentation Patterns
 
-4. Select the "QAOA" pattern to specify the quantum approximate optimization algorithm.
+## 4. Select Algorithm Pattern
+Choose the "Quantum Approximate Optimization Algorithm (QAOA)" from the algorithm patterns list.
 
-5. Additionally, choose a pattern from the "Algorithm Patterns" and "Behavioral Patterns" sections based on your workflow requirements.
+## 5. Choose Augmentation Pattern
+Additionally, select the "Biased Initial State" pattern from the augmentation patterns.
 
-6. Confirm your pattern selection.
+## 6. Confirm Selection
+After making your pattern choices, confirm your selection to proceed.
 
-7. The plugin will automatically check if a solution exists for the chosen patterns.
+## 7. Automatic Solution Check
+The plugin will automatically verify if a solution exists for the selected patterns:
+- If a solution is found, it will be retrieved and integrated into a subprocess.
+- If no solution is found, the subprocess will remain empty, allowing you to start your modeling from scratch.
 
-8. If a solution is found, it will be retrieved and integrated into the subprocess. In case no solution exists, the subprocess will remain empty, allowing you to start your modeling from scratch. If you want to add patterns after your solution then you can drag and drop them from the palette.
-
-9. Then you can transform the workflow.
+**Note**: You can add additional patterns to your solution by dragging and dropping them from the palette.
