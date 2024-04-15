@@ -22,15 +22,12 @@ export default class QuantMERules extends RuleProvider {
     this.addRule("shape.create", 11000, function (context) {
       var shape = context.shape,
         target = context.target;
-      console.log("THIS rule");
       if (
         shape.type.includes("Policy") &&
         !consts.QUANTME_TASKS.includes(target.type)
       ) {
         return false;
       }
-
-      console.log("THIS rule");
     });
 
     function canMove(context) {

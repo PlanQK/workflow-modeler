@@ -44,13 +44,7 @@
     {
       "name": "PredeployedExecution",
       "superClass": ["bpmn:BoundaryEvent"],
-      "properties": [
-        {
-          "name": "behaviorPatterns",
-          "isAttr": true,
-          "type": "String"
-        }
-      ]
+      "properties": []
     },
     {
       "name": "PrioritizedExecution",
