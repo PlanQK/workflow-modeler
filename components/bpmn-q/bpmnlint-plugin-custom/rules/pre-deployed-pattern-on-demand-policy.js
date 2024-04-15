@@ -9,17 +9,18 @@ module.exports = function () {
       return;
     }
 
-    function traverseAndCheck(subprocess) {
+    function checkForOnDemandPolicyInSubprocesses(subprocess) {
       let containsOnDemandPolicy = false;
       const flowElements = subprocess.flowElements || [];
       flowElements.forEach(function (flowElement) {
         if (is(flowElement, "opentosca:OnDemandPolicy")) {
-          policy = flowElement;
+          policies.push(flowElement);
           containsOnDemandPolicy = true;
         }
         if (is(flowElement, "bpmn:SubProcess")) {
           containsOnDemandPolicy =
-            traverseAndCheck(flowElement) || containsOnDemandPolicy;
+            checkForOnDemandPolicyInSubprocesses(flowElement) ||
+            containsOnDemandPolicy;
         }
       });
       return containsOnDemandPolicy;
@@ -27,7 +28,7 @@ module.exports = function () {
 
     let attachedSubprocess = node.attachedToRef.id;
     let parent;
-    let policy;
+    let policies = [];
     const flowElements = node.$parent.flowElements || [];
     flowElements.forEach(function (flowElement) {
       if (flowElement.id === attachedSubprocess) {
@@ -35,7 +36,7 @@ module.exports = function () {
       }
     });
 
-    let containsOnDemandPolicy = traverseAndCheck(parent);
+    let containsOnDemandPolicy = checkForOnDemandPolicyInSubprocesses(parent);
 
     if (containsOnDemandPolicy) {
       reporter.report(
@@ -43,11 +44,13 @@ module.exports = function () {
         "Pre-deployed Pattern and on-demand policy cannot be used together",
         ["eventDefinitions"]
       );
-      reporter.report(
-        policy.id,
-        "Pre-deployed Pattern and on-demand policy cannot be used together",
-        ["eventDefinitions"]
-      );
+      for (let i = 0; i < policies.length; i++) {
+        reporter.report(
+          policies[i].id,
+          "Pre-deployed Pattern and on-demand policy cannot be used together",
+          ["eventDefinitions"]
+        );
+      }
     }
   }
 
