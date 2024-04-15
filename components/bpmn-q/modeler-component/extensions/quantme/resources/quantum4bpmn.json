@@ -272,42 +272,6 @@
       ]
     },
     {
-      "name": "WarmStartingTask",
-      "superClass": ["bpmn:Task"],
-      "properties": [
-        {
-          "name": "warmStartingPattern",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "warmStartingMethod",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "quantumAlgorithm",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "classicalAlgorithm",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "repetitions",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "rounded",
-          "isAttr": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
       "name": "ReadoutErrorMitigationTask",
       "superClass": ["bpmn:Task"],
       "properties": [
@@ -503,35 +467,14 @@
       ]
     },
     {
-      "name": "ResultEvaluationTask",
-      "superClass": ["bpmn:Task"],
-      "properties": [
-        {
-          "name": "objectiveFunction",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "costFunction",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "eta",
-          "isAttr": true,
-          "type": "String"
-        },
-        {
-          "name": "alpha",
-          "isAttr": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
       "name": "WarmStartingTask",
       "superClass": ["bpmn:Task"],
       "properties": [
+        {
+          "name": "warmStartingPattern",
+          "isAttr": true,
+          "type": "String"
+        },
         {
           "name": "warmStartingMethod",
           "isAttr": true,
