@@ -204,15 +204,6 @@
   display: inline-block;
 }
 
-.qwm .bpmn-pattern-warm-start-icon:before {
-  content: "";
-  height: 15px;
-  background-size: contain;
-  background-image: url("../icons/warm-start-icon.svg");
-  background-repeat: no-repeat;
-  display: inline-block;
-}
-
 .qwm .bpmn-pattern-biased-initial-state-icon:before {
   content: "";
   height: 15px;
@@ -249,8 +240,6 @@
   display: inline-block;
 }
 
-/* Add this CSS to your styles or as a separate stylesheet */
-
 .progress-bar-modal {
   position: fixed;
   top: 0;
@@ -275,18 +264,9 @@
 .progress-bar {
   height: 20px;
   background-color: #3498db;
-  animation: progress-bar-animation 2s linear infinite;
+  transition: width 0.5s ease-in-out;
 }
 
 .stop-animation {
   animation: none;
-}
-
-@keyframes progress-bar-animation {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 20px 0;
-  }
 }
