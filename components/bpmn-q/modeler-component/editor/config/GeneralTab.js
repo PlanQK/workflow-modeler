@@ -56,6 +56,11 @@ export default function EditorTab() {
   EditorTab.prototype.onClose = () => {
     modeler.config.camundaEndpoint = camundaEndpoint;
     modeler.config.fileName = fileName;
+    modeler.config.transformedWorkflowHandler = transformedWorkflowHandlers;
+    modeler.config.fileFormat = fileFormat;
+    modeler.config.autoSaveFileOption = autoSaveFileOption;
+    modeler.config.autoSaveIntervalSize = autoSaveIntervalSize;
+
     editorConfig.setCamundaEndpoint(camundaEndpoint);
     editorConfig.setTransformedWorkflowHandler(workflowHandler);
     editorConfig.setAutoSaveFileOption(autoSaveFileOption);
@@ -190,4 +195,9 @@ EditorTab.prototype.config = () => {
 
   modeler.config.camundaEndpoint = editorConfig.getCamundaEndpoint();
   modeler.config.fileName = editorConfig.getFileName();
+  modeler.config.transformedWorkflowHandler =
+    editorConfig.getTransformedWorkflowHandler();
+  modeler.config.fileFormat = editorConfig.getFileFormat();
+  modeler.config.autoSaveFileOption = editorConfig.getAutoSaveFileOption();
+  modeler.config.autoSaveIntervalSize = editorConfig.getAutoSaveIntervalSize();
 };

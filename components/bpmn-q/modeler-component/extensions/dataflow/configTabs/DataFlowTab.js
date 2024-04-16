@@ -13,8 +13,11 @@ export default function DataFlowTab() {
     dataConfigManager.getConfigurationsEndpoint()
   );
 
+  const modeler = getModeler();
+
   // save changed endpoint url if the modal is closed
   DataFlowTab.prototype.onClose = () => {
+    modeler.config.configurationsEndpoint = configurationsEndpoint;
     dataConfigManager.setConfigurationsEndpoint(configurationsEndpoint);
   };
 
@@ -46,6 +49,6 @@ export default function DataFlowTab() {
 DataFlowTab.prototype.config = () => {
   const modeler = getModeler();
 
-  modeler.config.transformationTaskConfigurationsEndpointChanged =
+  modeler.config.configurationsEndpoint =
     dataConfigManager.getConfigurationsEndpoint();
 };
