@@ -316,10 +316,16 @@ export default function QuantMETab() {
 QuantMETab.prototype.config = () => {
   const modeler = getModeler();
 
+  modeler.config.nisqAnalyzerEndpoint = config.getNisqAnalyzerEndpoint();
+  modeler.config.nisqAnalyzerUiEndpoint = config.getNisqAnalyzerUiEndpoint();
   modeler.config.transformationFrameworkEndpoint =
     config.getTransformationFrameworkEndpoint();
   modeler.config.scriptSplitterEndpoint = config.getScriptSplitterEndpoint();
   modeler.config.scriptSplitterThreshold = config.getScriptSplitterThreshold();
+  modeler.config.qiskitRuntimeHandlerEndpoint =
+    config.getQiskitRuntimeHandlerEndpoint();
+  modeler.config.hybridRuntimeProvenance = config.getHybridRuntimeProvenance();
+  modeler.config.awsRuntimeHandlerEndpoint =
+    config.getAWSRuntimeHandlerEndpoint();
   modeler.config.qprovEndpoint = config.getQProvEndpoint();
-  modeler.config.nisqAnalyzerUiEndpoint = config.getNisqAnalyzerUiEndpoint();
 };

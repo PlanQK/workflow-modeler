@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import * as configManager from "../framework-config/QHAnaConfigManager";
+import { getModeler } from "../../../editor/ModelerHandler";
 
 /**
  * React component specifying a tab for the configuration dialog of the modeler. The tab allows the user to change
@@ -15,9 +16,12 @@ export default function QHAnaConfigurationsTab() {
   const [getPluginEndpoint, setGetPluginEndpoint] = useState(
     configManager.getGetPluginsURL()
   );
+  const modeler = getModeler();
 
   // save changed values on close
   QHAnaConfigurationsTab.prototype.onClose = () => {
+    modeler.config.listPluginsEndpoint = listPluginsEndpoint;
+    modeler.config.getGetPluginsURL = getPluginEndpoint;
     configManager.setListPluginsURL(listPluginsEndpoint);
     configManager.setGetPluginsURL(getPluginEndpoint);
   };
@@ -57,4 +61,8 @@ export default function QHAnaConfigurationsTab() {
   );
 }
 
-QHAnaConfigurationsTab.prototype.config = () => {};
+QHAnaConfigurationsTab.prototype.config = () => {
+  const modeler = getModeler();
+  modeler.config.qhanaListPluginsURL = configManager.getListPluginsURL();
+  modeler.config.qhanqGetPluginURL = configManager.getGetPluginsURL();
+};
