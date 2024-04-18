@@ -20,7 +20,7 @@ export default function QuantMETab() {
   const [qiskitRuntimeHandlerEndpoint, setQiskitRuntimeHandlerEndpoint] =
     useState(config.getQiskitRuntimeHandlerEndpoint());
   const [hybridRuntimeProvenance, setHybridRuntimeProvenance] = useState(
-    config.getHybridRuntimeProvenance()
+    config.getHybridRuntimeProvenance() ? true : false
   );
   const [awsRuntimeHandlerEndpoint, setAWSRuntimeHandlerEndpoint] = useState(
     config.getAWSRuntimeHandlerEndpoint()

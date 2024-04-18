@@ -211,7 +211,7 @@ export function setScriptSplitterThreshold(threshold) {
 /**
  * Get the hybrid runtime provenance flag
  *
- * @return {boolean} the current value of the hybrid runtime provenance flag
+ * @return {string} the current value of the hybrid runtime provenance flag
  */
 export function getHybridRuntimeProvenance() {
   if (config.hybridRuntimeProvenance === undefined) {
@@ -233,9 +233,7 @@ export function setHybridRuntimeProvenance(hybridRuntimeProvenance) {
     hybridRuntimeProvenance !== null &&
     hybridRuntimeProvenance !== undefined
   ) {
-    let hybridRuntimeProvenanceBoolean =
-      hybridRuntimeProvenance === "true" ? true : false;
-    config.hybridRuntimeProvenance = hybridRuntimeProvenanceBoolean;
+    config.hybridRuntimeProvenance = hybridRuntimeProvenance;
   }
 }
 

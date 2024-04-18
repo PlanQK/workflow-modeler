@@ -44,7 +44,7 @@ describe("Test QuantME ConfigManager", function () {
         "http://test:8891"
       );
       expect(quantmeConfig.getScriptSplitterThreshold()).to.equal(7);
-      expect(quantmeConfig.getHybridRuntimeProvenance()).to.equal(true);
+      expect(quantmeConfig.getHybridRuntimeProvenance()).to.equal("true");
     });
   });
 });

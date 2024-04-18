@@ -259,21 +259,33 @@ export async function startPatternReplacementProcess(xml) {
                 modeler.config,
                 getQRMs()
               );
-            console.log(programGenerationResult);
-            // only rewrite workflow if the hybrid program generation was successful
-            if (programGenerationResult.hybridProgramId !== undefined) {
-              await rewriteWorkflow(
-                modeler,
-                optimizationCandidates[i],
-                getHybridRuntimeProvenance(),
-                programGenerationResult.hybridProgramId
-              );
-              const pattern = elementRegistry.get(replacementConstruct.task.id);
-              patterns.push(pattern);
-              console.log("replaced");
-              const prioPattern = elementRegistry.get(foundElement.id);
-              patterns.push(prioPattern);
-              replacementSuccess = true;
+            if (programGenerationResult.error !== undefined) {
+              return {
+                status: "failed",
+                cause:
+                  "Replacement of Pattern with Id " +
+                  replacementConstruct.task.id +
+                  " failed. Aborting process!",
+              };
+            } else {
+              console.log(programGenerationResult);
+              // only rewrite workflow if the hybrid program generation was successful
+              if (programGenerationResult.hybridProgramId !== undefined) {
+                await rewriteWorkflow(
+                  modeler,
+                  optimizationCandidates[i],
+                  getHybridRuntimeProvenance(),
+                  programGenerationResult.hybridProgramId
+                );
+                const pattern = elementRegistry.get(
+                  replacementConstruct.task.id
+                );
+                patterns.push(pattern);
+                console.log("replaced");
+                const prioPattern = elementRegistry.get(foundElement.id);
+                patterns.push(prioPattern);
+                replacementSuccess = true;
+              }
             }
           }
         }
@@ -476,9 +488,9 @@ export function attachPatternsToSuitableTasks(
           return false; // Replace someId with the ID you are checking for
       });
       **/
-        const exists = patterns[j].parent.children.some(
-          (child) => child.id === flowElement.id
-        );
+        //const exists = patterns[j].parent.children.some(
+        // (child) => child.id === flowElement.id
+        //);
         if (
           (flowElement.$type && flowElement.$type === "bpmn:SubProcess") ||
           (flowElement.type && flowElement.type === "bpmn:SubProcess")
@@ -510,13 +522,13 @@ export function attachPatternsToSuitableTasks(
             }
           }
         } else {
-          if (!exists) {
-            attachPatternsToSuitableConstruct(
-              elementRegistry.get(flowElement.id),
-              pattern.type,
-              modeling
-            );
-          }
+          //if (!exists) {
+          attachPatternsToSuitableConstruct(
+            elementRegistry.get(flowElement.id),
+            pattern.type,
+            modeling
+          );
+          //}
         }
       }
       console.log("remove now shapes");
