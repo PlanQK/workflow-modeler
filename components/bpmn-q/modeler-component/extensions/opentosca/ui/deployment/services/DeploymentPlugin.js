@@ -563,7 +563,8 @@ export default class DeploymentPlugin extends PureComponent {
               bindingResponse = bindUsingPush(
                 csar,
                 serviceTaskIds[j],
-                this.modeler.get("elementRegistry")
+                this.modeler.get("elementRegistry"),
+                this.modeler
               );
             }
 
