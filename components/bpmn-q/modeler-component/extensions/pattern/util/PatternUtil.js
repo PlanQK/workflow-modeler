@@ -10,7 +10,9 @@
  */
 import * as consts from "../Constants";
 import * as quantmeConsts from "../../quantme/Constants";
+import { computeDimensionsOfElement } from "../../quantme/replacement/layouter/Layouter";
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
+  let dimensions = computeDimensionsOfElement(subprocess);
   console.log(subprocess);
   const patternPrefix = "pattern:";
   const patternSpacing = 65;
@@ -21,10 +23,10 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
       console.log("add pattern", patternName);
 
       let patternX = subprocess.x + patternSpacing * (i + offsetX);
-      let patternY = subprocess.y + subprocess.height;
+      let patternY = subprocess.y + dimensions.height;
       indexPatternOutsideSubprocess = i;
       // start from the top if x coordinate exceeds subprocess size
-      if (patternX > subprocess.x + subprocess.width) {
+      if (patternX > subprocess.x + dimensions.width) {
         patternY = subprocess.y;
         patternX =
           subprocess.x +
