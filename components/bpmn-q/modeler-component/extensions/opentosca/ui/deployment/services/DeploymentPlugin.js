@@ -201,7 +201,7 @@ export default class DeploymentPlugin extends PureComponent {
               break;
           }
         });
-        return foundDedicatedHosting;
+        return !foundDedicatedHosting;
       });
 
       console.log(completeNotDedicatedCsars);
