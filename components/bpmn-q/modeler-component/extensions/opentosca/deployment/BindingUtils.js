@@ -177,7 +177,7 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modele
     }
   }
 
-  const qprovEndpoint= extractQProvEndpoint(csar.buildPlanUrl);
+  const qprovEndpoint= await extractQProvEndpoint(csar.properties);
   let moddle = modeler.get("moddle");
   const rootElement = getRootProcess(modeler.getDefinitions());
   let rootStartEvent = rootElement.flowElements.filter( (flowElement) =>
@@ -213,21 +213,18 @@ async function extractSelfserviceApplicationUrl(propertiesUrl) {
   return selfServiceApplicationUrl[0].value;
 }
 
-async function extractQProvEndpoint(buildPlanUrl) {
-  let buildPlanResponse = await fetchDataFromEndpoint(buildPlanUrl);
-  console.log(buildPlanResponse);
-  const qprovEndpoint = buildPlanResponse.inputs.filter(
-      (x) => x.name.toLowerCase() === "qprovendpoint"
-  );
+async function extractQProvEndpoint(propertiesUrl) {
+  let propertiesResponse = await fetchDataFromEndpoint(propertiesUrl);
+  console.log(propertiesResponse);
+  const qprovEndpoint = propertiesResponse.qProvUrl;
   if (
-      qprovEndpoint === undefined ||
-      qprovEndpoint.length < 1
+      qprovEndpoint === undefined
   ) {
     console.error(
-        "Unable to fetch qprov endpoint from: " + buildPlanUrl
+        "Unable to fetch qprov endpoint from: " + propertiesUrl
     );
     return undefined;
   }
   console.log(qprovEndpoint);
-  return qprovEndpoint[0].value;
+  return qprovEndpoint;
 }
