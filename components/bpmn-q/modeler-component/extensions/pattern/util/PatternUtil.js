@@ -70,6 +70,7 @@ export function attachPatternsToSuitableConstruct(
 ) {
   console.log("attach pattern to suitable modeling construct");
   console.log(construct);
+  if(construct !== undefined){
   let type = construct.$type;
   if (type === undefined) {
     type = construct.type;
@@ -114,7 +115,7 @@ export function attachPatternsToSuitableConstruct(
           type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK)
       ) {
         attachPatternToShape(construct, patternType, modeling);
-        console.log("added error correction");
+        console.log("added error correction", construct.id);
       }
       if (
         (patternType === consts.GATE_ERROR_MITIGATION ||
@@ -122,7 +123,7 @@ export function attachPatternsToSuitableConstruct(
         type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
       ) {
         attachPatternToShape(construct, patternType, modeling);
-        console.log("added mitigation");
+        console.log("added mitigation", construct.id);
       }
 
       if (
@@ -146,6 +147,7 @@ export function attachPatternsToSuitableConstruct(
     }
   }
   return !containsPattern && !containsForbiddenPatternCombinations;
+}
 }
 
 function attachPatternToShape(shape, patternType, modeling) {
