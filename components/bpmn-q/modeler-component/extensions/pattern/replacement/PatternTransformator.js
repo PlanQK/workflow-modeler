@@ -206,7 +206,7 @@ export async function startPatternReplacementProcess(xml) {
         ).parent;
         console.log(parent);
 
-        //if (parent.id === replacementConstruct.task.attachedToRef.id) {
+        if (parent.id === replacementConstruct.task.attachedToRef.id) {
         foundOptimizationCandidate = true;
         let attachedPatterns = parent.attachers;
         console.log(attachedPatterns);
@@ -222,7 +222,7 @@ export async function startPatternReplacementProcess(xml) {
           console.log("replaced");
           replacementSuccess = true;
         }
-        //}
+        }
       }
       if (!foundOptimizationCandidate) {
         const pattern = elementRegistry.get(replacementConstruct.task.id);
@@ -241,7 +241,7 @@ export async function startPatternReplacementProcess(xml) {
           optimizationCandidates[i].entryPoint.id
         ).parent;
         console.log(parent);
-        //if (parent.id === replacementConstruct.task.attachedToRef.id) {
+        if (parent.id === replacementConstruct.task.attachedToRef.id) {
         let attachedPatterns = parent.attachers;
         console.log(attachedPatterns);
 
@@ -288,7 +288,7 @@ export async function startPatternReplacementProcess(xml) {
             }
           }
         }
-        //}
+        }
       }
       if (!foundOptimizationCandidate) {
         const pattern = elementRegistry.get(replacementConstruct.task.id);
@@ -304,7 +304,7 @@ export async function startPatternReplacementProcess(xml) {
         let parent = elementRegistry.get(
           optimizationCandidates[i].entryPoint.id
         ).parent;
-        //if (parent.id === replacementConstruct.task.attachedToRef.id) {
+        if (parent.id === replacementConstruct.task.attachedToRef.id) {
         let attachedPatterns = parent.attachers;
         foundOptimizationCandidate = true;
 
@@ -338,7 +338,7 @@ export async function startPatternReplacementProcess(xml) {
         } else {
           replacementSuccess = true;
         }
-        //}
+        }
       }
       if (!foundOptimizationCandidate) {
         const pattern = elementRegistry.get(replacementConstruct.task.id);
@@ -365,11 +365,11 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  elementsToDelete = patterns; //.concat(allFlow);
+  elementsToDelete = patterns.concat(allFlow);
   //patterns.concat(allFlow);
   console.log("df");
   console.log(elementsToDelete);
-  //modeling.removeElements(elementsToDelete);
+  modeling.removeElements(elementsToDelete);
 
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
@@ -614,9 +614,11 @@ return flowElements;
   console.log(patterns);
   for (let i = 0; i < patterns.length; i++) {
     console.log(patterns[i].task)
-    if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.type)) {
+    if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type)) {
+      console.log(patterns[i].task)
       modeling.removeShape(elementRegistry.get(patterns[i].task.id));
     }
   }
+  console.log(patterns)
   return [];
 }
