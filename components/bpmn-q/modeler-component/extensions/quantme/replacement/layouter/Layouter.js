@@ -450,7 +450,7 @@ function layoutWithDagre(
       task.type === "quantme:HardwareSelectionSubProcess"
     ) {
       const dimensions = computeDimensionsOfElement(task);
-      //task.height = dimensions.height;
+      task.height = dimensions.height;
       task.width = dimensions.width;
     }
     g.setNode(task.id, {
