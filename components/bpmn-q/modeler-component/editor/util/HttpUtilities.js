@@ -17,8 +17,11 @@
  */
 export async function fetchDataFromEndpoint(endpoint) {
   try {
-    const response = await fetch(endpoint, {headers: {
-        "Accept": "application/json",},});
+    const response = await fetch(endpoint, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
