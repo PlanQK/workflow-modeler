@@ -114,7 +114,7 @@ export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
 export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modeler) {
   console.log("binding using push");
   console.log(csar);
-  let selfServiceApplicationUrl = await extractSelfserviceApplicationUrl(csar.buildPlanUrl);
+  let selfServiceApplicationUrl = await extractSelfserviceApplicationUrl(csar.properties);
   console.log(selfServiceApplicationUrl);
   let success = false;
 
@@ -194,25 +194,6 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modele
   return { success: success };
 }
 
-async function extractSelfserviceApplicationUrl(propertiesUrl) {
-  let buildPlanResponse = await fetchDataFromEndpoint(propertiesUrl);
-  console.log(buildPlanResponse);
-  const selfServiceApplicationUrl = buildPlanResponse.outputs.filter(
-    (x) => x.name.toLowerCase() === "selfserviceapplicationurl"
-  );
-  if (
-    selfServiceApplicationUrl === undefined ||
-    selfServiceApplicationUrl.length < 1
-  ) {
-    console.error(
-      "Unable to fetch selfServiceApplicationUrl from: " + propertiesUrl
-    );
-    return undefined;
-  }
-  console.log(selfServiceApplicationUrl);
-  return selfServiceApplicationUrl[0].value;
-}
-
 async function extractQProvEndpoint(propertiesUrl) {
   let propertiesResponse = await fetchDataFromEndpoint(propertiesUrl);
   console.log(propertiesResponse);
@@ -227,4 +208,20 @@ async function extractQProvEndpoint(propertiesUrl) {
   }
   console.log(qprovEndpoint);
   return qprovEndpoint;
+}
+
+async function extractSelfserviceApplicationUrl(propertiesUrl) {
+  let propertiesResponse = await fetchDataFromEndpoint(propertiesUrl);
+  console.log(propertiesResponse);
+  const selfServiceApplicationUrl = propertiesResponse.selfServiceApplicationUrl;
+  if (
+      selfServiceApplicationUrl === undefined
+  ) {
+    console.error(
+        "Unable to fetch selfServiceApplicationUrl endpoint from: " + propertiesUrl
+    );
+    return undefined;
+  }
+  console.log(selfServiceApplicationUrl);
+  return selfServiceApplicationUrl;
 }

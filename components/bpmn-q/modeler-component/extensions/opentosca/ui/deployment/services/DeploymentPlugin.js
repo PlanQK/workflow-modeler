@@ -39,6 +39,9 @@ import {
   DEDICATED_HOSTING_POLICY,
   LOCATION_POLICY,
 } from "../../../Constants";
+import {forEach} from "min-dash";
+import {getOpenTOSCAEndpoint, getWineryEndpoint} from "../../../framework-config/config-manager";
+import {fetchDataFromEndpoint} from "../../../../../editor/util/HttpUtilities";
 
 const defaultState = {
   windowOpenOnDemandDeploymentOverview: false,
@@ -181,13 +184,104 @@ export default class DeploymentPlugin extends PureComponent {
 
       this.csarList = csarList;
 
-      this.setState({
-        windowOpenDeploymentOverview: false,
-        windowOpenDeploymentInput: true,
-        windowOpenDeploymentBinding: false,
-        windowOpenOnDemandDeploymentOverview: false,
-        csarList: csarList,
+      // if services shall be pre-deployed and no dedicated instance policy is attached, check if suitable services are already running
+      // if this is the case - bind them and remove them from the csarList
+      // TODO adjust behavior for multiple tasks with same CSAR that are not all deployed dedicated / non dedicated
+      let completeNotDedicatedCsars = csarList.filter((csar) => !csar.incomplete).filter((csar) => {
+        let policyShapes = getPolicies(this.modeler, csar.serviceTaskIds[0]);
+        let foundDedicatedHosting = false;
+        policyShapes.forEach((policy) => {
+          console.log("Found policy: ", policy);
+          switch (policy.type) {
+            case DEDICATED_HOSTING_POLICY:
+              csar.dedicatedHosting = true;
+              foundDedicatedHosting = true;
+              break;
+            default:
+              break;
+          }
+        });
+        return foundDedicatedHosting;
       });
+
+      console.log(completeNotDedicatedCsars);
+      for (let csar of completeNotDedicatedCsars) {
+        const csarWineryUrl = csar.url.replace("{{ wineryEndpoint }}", getWineryEndpoint()).replace("/?csar", "");
+        const equivalencyUrl =  csarWineryUrl + "/topologytemplate/checkforequivalentcsars?includeSelf=true";
+        let matchingCsarUrls = await fetch(equivalencyUrl, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "text/plain"
+          }
+        }).then(x => x.json());
+        console.log("Found %i matching Csars for %s", matchingCsarUrls.length, csar.csarName);
+        const containerUrl = getOpenTOSCAEndpoint();
+        for (let matchingCsarUrl of matchingCsarUrls) {
+          let urlParts = matchingCsarUrl.split('/');
+          let csarName = urlParts[urlParts.length - 2];
+          console.log("Checking availability for CSAR with name: %s and url %s", csarName, matchingCsarUrl);
+          const containerCsarUrl = containerUrl + "/" + csarName + ".csar";
+          const containerReference = await fetchDataFromEndpoint(containerCsarUrl);
+          console.log(result);
+          const serviceTemplateLink = containerReference._links.servicetemplate.href + "/instances";
+          console.log("Retrieved link to ServiceTemplate: %s", serviceTemplateLink);
+          let instanceReferences = await fetchDataFromEndpoint(serviceTemplateLink);
+          instanceReferences = instanceReferences.service_template_instances;
+
+          for (let serviceTemplateInstance of instanceReferences){
+            console.log("Check instance with Id %i", serviceTemplateInstance.id);
+            if (serviceTemplateInstance.state != "CREATED"){
+              console.log("Instance has invalid state: %s", serviceTemplateInstance.state);
+              continue;
+            }
+
+            console.log("found instance with state CREATED. Extracting selfserviceUrl...");
+            const instancePropertiesLink = serviceTemplateInstance._links.self.href + "/properties";
+            console.log("Retrieving instance properties from URL: %s", instancePropertiesLink);
+            const instancePropertiesUrl = await fetchDataFromEndpoint(instancePropertiesLink);
+            csar.properties = instancePropertiesLink;
+            for (let j = 0; j < csar.serviceTaskIds.length; j++) {
+              let bindingResponse = undefined;
+              if (csar.type === "pull") {
+                bindingResponse = await bindUsingPull(
+                    csar,
+                    csar.serviceTaskIds[j],
+                    this.modeler.get("elementRegistry"),
+                    this.modeler.get("modeling")
+                );
+              } else if (csar.type === "push") {
+                bindingResponse = await bindUsingPush(
+                    csar,
+                    csar.serviceTaskIds[j],
+                    this.modeler.get("elementRegistry"),
+                    this.modeler
+                );
+              }
+              if (bindingResponse !== undefined && bindingResponse.success){
+                csarList = csarList.filter((x => x.csarName !== csar.csarName));
+              }
+            }
+          }
+        }
+      }
+
+      if (csarList.length === 0) {
+        this.setState({
+          windowOpenDeploymentOverview: false,
+          windowOpenDeploymentInput: false,
+          windowOpenDeploymentBinding: false,
+          windowOpenOnDemandDeploymentOverview: false,
+        });
+      } else {
+        this.setState({
+          windowOpenDeploymentOverview: false,
+          windowOpenDeploymentInput: true,
+          windowOpenDeploymentBinding: false,
+          windowOpenOnDemandDeploymentOverview: false,
+          csarList: csarList,
+        });
+      }
       return;
     }
 

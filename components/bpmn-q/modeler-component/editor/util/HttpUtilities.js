@@ -13,12 +13,17 @@
  * Retrieves the Json data from the given endpoint.
  *
  * @param endpoint the endpoint to retrieve the data form
+ * @param method
  * @returns
  */
-export async function fetchDataFromEndpoint(endpoint) {
+export async function fetchDataFromEndpoint(endpoint, method="GET") {
   try {
-    const response = await fetch(endpoint, {headers: {
-        "Accept": "application/json",},});
+    const response = await fetch(endpoint, {
+      method: method,
+      headers: {
+        "Accept": "application/json",
+      }
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
