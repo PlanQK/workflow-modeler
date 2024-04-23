@@ -10,7 +10,7 @@
  */
 import * as config from "../framework-config/config-manager";
 import { fetchDataFromEndpoint } from "../../../editor/util/HttpUtilities";
-import {getRootProcess} from "../../../editor/util/ModellingUtilities";
+import { getRootProcess } from "../../../editor/util/ModellingUtilities";
 
 const QUANTME_NAMESPACE_PULL_ENCODED = encodeURIComponent(
   encodeURIComponent("http://quantil.org/quantme/pull")
@@ -111,10 +111,17 @@ export function bindUsingPull(csar, serviceTaskId, elementRegistry, modeling) {
  * @param elementRegistry the element registry of the modeler to find workflow elements
  * @return {{success: boolean}} true if binding is successful, false otherwise
  */
-export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modeler) {
+export async function bindUsingPush(
+  csar,
+  serviceTaskId,
+  elementRegistry,
+  modeler
+) {
   console.log("binding using push");
   console.log(csar);
-  let selfServiceApplicationUrl = await extractSelfserviceApplicationUrl(csar.properties);
+  let selfServiceApplicationUrl = await extractSelfserviceApplicationUrl(
+    csar.properties
+  );
   console.log(selfServiceApplicationUrl);
   let success = false;
 
@@ -164,12 +171,15 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modele
                 (x) => x.name === "url"
               )[0].value;
             if (selfServiceApplicationUrl.slice(-1) === "/") {
-              selfServiceApplicationUrl = selfServiceApplicationUrl.substring(selfServiceApplicationUrl.length - 1);
+              selfServiceApplicationUrl = selfServiceApplicationUrl.substring(
+                selfServiceApplicationUrl.length - 1
+              );
             }
             if (connectorUrl.slice(0) === "/") {
               connectorUrl = connectorUrl.substring(1, connectorUrl.length);
             }
-            inputParameter.value = selfServiceApplicationUrl + "/" + connectorUrl;
+            inputParameter.value =
+              selfServiceApplicationUrl + "/" + connectorUrl;
             success = true;
           }
         }
@@ -177,12 +187,15 @@ export async function bindUsingPush(csar, serviceTaskId, elementRegistry, modele
     }
   }
 
-  const qprovEndpoint= await extractQProvEndpoint(csar.properties);
+  const qprovEndpoint = await extractQProvEndpoint(csar.properties);
   let moddle = modeler.get("moddle");
   const rootElement = getRootProcess(modeler.getDefinitions());
-  let rootStartEvent = rootElement.flowElements.filter( (flowElement) =>
-      (flowElement.$type === "bpmn:StartEvent"));
-  let formFields = rootStartEvent[0]?.extensionElements?.values.filter(x => x.$type === "camunda:FormData")[0].fields;
+  let rootStartEvent = rootElement.flowElements.filter(
+    (flowElement) => flowElement.$type === "bpmn:StartEvent"
+  );
+  let formFields = rootStartEvent[0]?.extensionElements?.values.filter(
+    (x) => x.$type === "camunda:FormData"
+  )[0].fields;
   const formFieldQProvEndpoint = moddle.create("camunda:FormField", {
     defaultValue: qprovEndpoint,
     id: serviceTaskId + "_qProvUrl",
@@ -198,12 +211,8 @@ async function extractQProvEndpoint(propertiesUrl) {
   let propertiesResponse = await fetchDataFromEndpoint(propertiesUrl);
   console.log(propertiesResponse);
   const qprovEndpoint = propertiesResponse.qProvUrl;
-  if (
-      qprovEndpoint === undefined
-  ) {
-    console.error(
-        "Unable to fetch qprov endpoint from: " + propertiesUrl
-    );
+  if (qprovEndpoint === undefined) {
+    console.error("Unable to fetch qprov endpoint from: " + propertiesUrl);
     return undefined;
   }
   console.log(qprovEndpoint);
@@ -213,12 +222,12 @@ async function extractQProvEndpoint(propertiesUrl) {
 async function extractSelfserviceApplicationUrl(propertiesUrl) {
   let propertiesResponse = await fetchDataFromEndpoint(propertiesUrl);
   console.log(propertiesResponse);
-  const selfServiceApplicationUrl = propertiesResponse.selfServiceApplicationUrl;
-  if (
-      selfServiceApplicationUrl === undefined
-  ) {
+  const selfServiceApplicationUrl =
+    propertiesResponse.selfServiceApplicationUrl;
+  if (selfServiceApplicationUrl === undefined) {
     console.error(
-        "Unable to fetch selfServiceApplicationUrl endpoint from: " + propertiesUrl
+      "Unable to fetch selfServiceApplicationUrl endpoint from: " +
+        propertiesUrl
     );
     return undefined;
   }

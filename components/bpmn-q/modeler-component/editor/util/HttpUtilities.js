@@ -16,13 +16,13 @@
  * @param method
  * @returns
  */
-export async function fetchDataFromEndpoint(endpoint, method="GET") {
+export async function fetchDataFromEndpoint(endpoint, method = "GET") {
   try {
     const response = await fetch(endpoint, {
       method: method,
       headers: {
-        "Accept": "application/json",
-      }
+        Accept: "application/json",
+      },
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);

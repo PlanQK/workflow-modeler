@@ -35,6 +35,7 @@ export async function findOptimizationCandidates(modeler) {
 
   // export xml of the current workflow model to enable a later image creation
   let workflowXml = await getXml(modeler);
+  console.log(workflowXml);
 
   // get all potential entry points for a hybrid loop
   let entryPoints = findEntryPoints(rootElement);
@@ -65,7 +66,8 @@ export async function findOptimizationCandidates(modeler) {
       // generate visual representation of the candidate using base64
       optimizationCandidate = await visualizeCandidate(
         optimizationCandidate,
-        workflowXml
+        workflowXml,
+        modeler
       );
 
       console.log(
@@ -92,17 +94,17 @@ export async function findOptimizationCandidates(modeler) {
  * @param workflowXml the XML of the workflow the candidate belongs to
  * @return the string containing the base64 encoded image
  */
-async function visualizeCandidate(optimizationCandidate, workflowXml) {
+async function visualizeCandidate(optimizationCandidate, workflowXml, modeler) {
   console.log("Visualizing optimization candidate: ", optimizationCandidate);
   console.log(workflowXml);
   // create new modeler for the visualization
-  let modeler = await createTempModelerFromXml(workflowXml);
-  let modeling = modeler.get("modeling");
-  let elementRegistry = modeler.get("elementRegistry");
+  let tempModeler = await createTempModelerFromXml(workflowXml);
+  let modeling = tempModeler.get("modeling");
+  let tempElementRegistry = tempModeler.get("elementRegistry");
   console.log(elementRegistry);
-  let rootElement = getRootProcess(modeler.getDefinitions());
+  let rootElement = getRootProcess(tempModeler.getDefinitions());
+  let elementRegistry = modeler.get("elementRegistry");
 
-  // to do inside subprocess i guess
   // remove all flows that are not part of the candidate
   const flowElements = lodash.cloneDeep(rootElement.flowElements);
   console.log("Workflow contains %d elements!", flowElements.length);
@@ -115,7 +117,7 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
       flowElement.$type === "bpmn:SequenceFlow"
     ) {
       // remove connection from the modeler
-      let element = elementRegistry.get(flowElement.id);
+      let element = tempElementRegistry.get(flowElement.id);
       modeling.removeConnection(element);
     }
   }
@@ -136,7 +138,7 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
       flowElement.$type !== "pattern:PredeployedExecution"
     ) {
       // remove shape from the modeler
-      let element = elementRegistry.get(flowElement.id);
+      let element = tempElementRegistry.get(flowElement.id);
       console.log(element);
       if (element !== undefined) {
         modeling.removeShape(element);

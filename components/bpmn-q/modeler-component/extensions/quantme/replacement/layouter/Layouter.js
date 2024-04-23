@@ -450,7 +450,7 @@ function layoutWithDagre(
       task.type === "quantme:HardwareSelectionSubProcess"
     ) {
       const dimensions = computeDimensionsOfElement(task);
-      //task.height = dimensions.height;
+      task.height = dimensions.height;
       task.width = dimensions.width;
     }
     g.setNode(task.id, {
@@ -505,7 +505,7 @@ function layoutWithDagre(
   });
 }
 
-function computeDimensionsOfElement(element) {
+export function computeDimensionsOfElement(element) {
   let minX = Number.MAX_SAFE_INTEGER;
   let maxX = Number.MIN_SAFE_INTEGER;
   let minY = Number.MAX_SAFE_INTEGER;

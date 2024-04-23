@@ -10,7 +10,9 @@
  */
 import * as consts from "../Constants";
 import * as quantmeConsts from "../../quantme/Constants";
+import { computeDimensionsOfElement } from "../../quantme/replacement/layouter/Layouter";
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
+  let dimensions = computeDimensionsOfElement(subprocess);
   console.log(subprocess);
   const patternPrefix = "pattern:";
   const patternSpacing = 65;
@@ -21,10 +23,10 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
       console.log("add pattern", patternName);
 
       let patternX = subprocess.x + patternSpacing * (i + offsetX);
-      let patternY = subprocess.y + subprocess.height;
+      let patternY = subprocess.y + dimensions.height;
       indexPatternOutsideSubprocess = i;
       // start from the top if x coordinate exceeds subprocess size
-      if (patternX > subprocess.x + subprocess.width) {
+      if (patternX > subprocess.x + dimensions.width) {
         patternY = subprocess.y;
         patternX =
           subprocess.x +
@@ -70,82 +72,84 @@ export function attachPatternsToSuitableConstruct(
 ) {
   console.log("attach pattern to suitable modeling construct");
   console.log(construct);
-  let type = construct.$type;
-  if (type === undefined) {
-    type = construct.type;
-  }
-  let containsPattern = false;
-  let containsForbiddenPatternCombinations = false;
-  if (construct.attachers !== undefined) {
-    for (let i = 0; i < construct.attachers.length; i++) {
-      let eventType = construct.attachers[i].type;
-      console.log(patternType);
-      console.log(eventType);
-      if (patternType === eventType) {
-        containsPattern = true;
-      }
+  if (construct !== undefined) {
+    let type = construct.$type;
+    if (type === undefined) {
+      type = construct.type;
     }
-    containsForbiddenPatternCombinations = checkForbiddenPatternCombinations(
-      construct,
-      patternType
-    );
-    console.log(containsForbiddenPatternCombinations);
-
-    if (!containsPattern && !containsForbiddenPatternCombinations) {
-      console.log(patternType);
-      console.log(consts.WARM_STARTING_PATTERNS.includes(patternType));
-      if (
-        patternType === consts.BIASED_INITIAL_STATE &&
-        type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
-      ) {
-        attachPatternToShape(construct, patternType, modeling);
-        console.log("added biased initial state");
-      }
-      if (
-        patternType === consts.VARIATIONAL_PARAMETER_TRANSFER &&
-        type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
-      ) {
-        attachPatternToShape(construct, patternType, modeling);
-        console.log("added variational parameter transfer");
-      }
-      if (
-        patternType === consts.ERROR_CORRECTION &&
-        (type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK ||
-          type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK)
-      ) {
-        attachPatternToShape(construct, patternType, modeling);
-        console.log("added error correction");
-      }
-      if (
-        (patternType === consts.GATE_ERROR_MITIGATION ||
-          patternType === consts.READOUT_ERROR_MITIGATION) &&
-        type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
-      ) {
-        attachPatternToShape(construct, patternType, modeling);
-        console.log("added mitigation");
-      }
-
-      if (
-        patternType === consts.CIRCUIT_CUTTING &&
-        type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
-      ) {
-        attachPatternToShape(construct, patternType, modeling);
-        console.log("added cutting");
-      }
-
-      if (
-        consts.BEHAVIORAL_PATTERNS.includes(patternType) &&
-        type === "bpmn:SubProcess"
-      ) {
-        attachPatternToShape(construct, patternType, modeling);
-        console.log("attached behavioral pattern");
+    let containsPattern = false;
+    let containsForbiddenPatternCombinations = false;
+    if (construct.attachers !== undefined) {
+      for (let i = 0; i < construct.attachers.length; i++) {
+        let eventType = construct.attachers[i].type;
         console.log(patternType);
-        console.log(construct);
-        console.log("added behavioral pattern");
+        console.log(eventType);
+        if (patternType === eventType) {
+          containsPattern = true;
+        }
+      }
+      containsForbiddenPatternCombinations = checkForbiddenPatternCombinations(
+        construct,
+        patternType
+      );
+      console.log(containsForbiddenPatternCombinations);
+
+      if (!containsPattern && !containsForbiddenPatternCombinations) {
+        console.log(patternType);
+        console.log(consts.WARM_STARTING_PATTERNS.includes(patternType));
+        if (
+          patternType === consts.BIASED_INITIAL_STATE &&
+          type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
+        ) {
+          attachPatternToShape(construct, patternType, modeling);
+          console.log("added biased initial state");
+        }
+        if (
+          patternType === consts.VARIATIONAL_PARAMETER_TRANSFER &&
+          type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
+        ) {
+          attachPatternToShape(construct, patternType, modeling);
+          console.log("added variational parameter transfer");
+        }
+        if (
+          patternType === consts.ERROR_CORRECTION &&
+          (type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK ||
+            type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK)
+        ) {
+          attachPatternToShape(construct, patternType, modeling);
+          console.log("added error correction", construct.id);
+        }
+        if (
+          (patternType === consts.GATE_ERROR_MITIGATION ||
+            patternType === consts.READOUT_ERROR_MITIGATION) &&
+          type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
+        ) {
+          attachPatternToShape(construct, patternType, modeling);
+          console.log("added mitigation", construct.id);
+        }
+
+        if (
+          patternType === consts.CIRCUIT_CUTTING &&
+          type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
+        ) {
+          attachPatternToShape(construct, patternType, modeling);
+          console.log("added cutting");
+        }
+
+        if (
+          consts.BEHAVIORAL_PATTERNS.includes(patternType) &&
+          type === "bpmn:SubProcess"
+        ) {
+          attachPatternToShape(construct, patternType, modeling);
+          console.log("attached behavioral pattern");
+          console.log(patternType);
+          console.log(construct);
+          console.log("added behavioral pattern");
+        }
       }
     }
+    return !containsPattern && !containsForbiddenPatternCombinations;
   }
-  return !containsPattern && !containsForbiddenPatternCombinations;
 }
 
 function attachPatternToShape(shape, patternType, modeling) {

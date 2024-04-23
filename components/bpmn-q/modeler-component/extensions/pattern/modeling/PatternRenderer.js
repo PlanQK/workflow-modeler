@@ -261,8 +261,8 @@ export default class PatternRenderer extends BpmnRenderer {
           fill: "none",
           stroke: "none",
         };
-        element.width = 43;
-        element.height = 43;
+        element.width = 44;
+        element.height = 44;
         var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
         drawTaskSVG(parentGfx, "CIRCUIT_CUTTING");
         return task;
