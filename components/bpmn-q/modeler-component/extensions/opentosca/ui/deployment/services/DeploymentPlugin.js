@@ -252,9 +252,9 @@ export default class DeploymentPlugin extends PureComponent {
           let instanceReferences = await fetchDataFromEndpoint(
             serviceTemplateLink
           );
-          instanceReferences = instanceReferences.service_template_instances;
+          let serviceTemplateInstances = instanceReferences?.service_template_instances ? instanceReferences.service_template_instances : [];
 
-          for (let serviceTemplateInstance of instanceReferences) {
+          for (let serviceTemplateInstance of serviceTemplateInstances) {
             console.log(
               "Check instance with Id %i",
               serviceTemplateInstance.id
@@ -274,9 +274,6 @@ export default class DeploymentPlugin extends PureComponent {
               serviceTemplateInstance._links.self.href + "/properties";
             console.log(
               "Retrieving instance properties from URL: %s",
-              instancePropertiesLink
-            );
-            const instancePropertiesUrl = await fetchDataFromEndpoint(
               instancePropertiesLink
             );
             csar.properties = instancePropertiesLink;
@@ -299,6 +296,7 @@ export default class DeploymentPlugin extends PureComponent {
               }
               if (bindingResponse !== undefined && bindingResponse.success) {
                 csarList = csarList.filter((x) => x.csarName !== csar.csarName);
+                deletePolicies(this.modeler, csar.serviceTaskIds[j]);
               }
             }
             break;
