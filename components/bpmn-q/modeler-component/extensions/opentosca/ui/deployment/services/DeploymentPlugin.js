@@ -262,9 +262,12 @@ export default class DeploymentPlugin extends PureComponent {
                 csarList = csarList.filter((x => x.csarName !== csar.csarName));
               }
             }
+            break;
           }
         }
       }
+
+      this.csarList = csarList;
 
       if (csarList.length === 0) {
         this.setState({
