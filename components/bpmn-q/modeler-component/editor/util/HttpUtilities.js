@@ -21,7 +21,7 @@ export async function fetchDataFromEndpoint(endpoint, method = "GET") {
     const response = await fetch(endpoint, {
       method: method,
       headers: {
-        Accept: "application/json",
+        Accept: ["application/json", "application/hal+json"],
       },
     });
     if (!response.ok) {
