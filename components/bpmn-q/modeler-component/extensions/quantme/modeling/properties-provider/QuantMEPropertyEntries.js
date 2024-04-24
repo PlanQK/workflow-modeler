@@ -944,7 +944,6 @@ export function MaxSubCircuitWidthEntry({ element }) {
   };
 
   const hidden = function () {
-    let cuttingMethod = element.businessObject.cuttingMethod;
     return false;
   };
 
@@ -980,7 +979,6 @@ export function MaxNumberOfCutsEntry({ element }) {
   };
 
   const hidden = function () {
-    let cuttingMethod = element.businessObject.cuttingMethod;
     return false;
   };
 
@@ -1016,7 +1014,6 @@ export function MaxNumberSubcircuitsEntry({ element }) {
   };
 
   const hidden = function () {
-    let cuttingMethod = element.businessObject.cuttingMethod;
     return false;
   };
 
