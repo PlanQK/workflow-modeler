@@ -79,6 +79,7 @@ export const MAX_NUMBER_OF_CUTS = "maxNumberOfCuts";
 export const MAXIMUM_NUM_SUBCIRCUITS = "maxNumSubCircuits";
 export const AUTOMATED_SELECTION = "automatedSelection";
 export const ERROR_CORRECTION_METHOD = "errorCorrectionMethod";
+export const WARM_STARTING_PATTERN = "warmStartingPattern";
 
 export const EXECUTION_RESULT = "executionResult";
 export const EVALUATION_RESULT = "evaluationResult";
@@ -133,6 +134,7 @@ export const QUANTME_ATTRIBUTES = [
   MAX_SUBCIRCUIT_WIDTH,
   MAX_NUMBER_OF_CUTS,
   MAXIMUM_NUM_SUBCIRCUITS,
+  WARM_STARTING_PATTERN,
 ];
 
 export const QUANTME_TASKS = [

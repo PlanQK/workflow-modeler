@@ -24,6 +24,7 @@ let defaultConfig = {
     "http://localhost:1977/patternatlas/patternLanguages/af7780d5-1f97-4536-8da7-4194b093ab1d",
   PATTERN_ATLAS_UI_ENDPOINT: "http://localhost:1978",
   PROVENANCE_COLLECTION: "false",
+  QC_ATLAS_ENDPOINT: "http://localhost:6626",
   QHANA_GET_PLUGIN_URL: "http://localhost:5006/api/plugins/",
   QHANA_LIST_PLUGINS_URL: "http://localhost:5006/api/plugins/?item-count=100",
   QISKIT_RUNTIME_HANDLER_ENDPOINT: "http://localhost:8889",

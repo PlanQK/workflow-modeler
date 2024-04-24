@@ -1,0 +1,107 @@
+{
+  "name": "Pattern",
+  "uri": "https://github.com/UST-QuAntiL/Pattern",
+  "prefix": "pattern",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "QuantumKernelEstimator",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "AlternatingOperatorAnsatz",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "QuantumApproximateOptimizationAlgorithm",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "QuantumPhaseEstimation",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "VariationalQuantumAlgorithm",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "VariationalQuantumEigensolver",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "OrchestratedExecution",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "PredeployedExecution",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "PrioritizedExecution",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "ErrorCorrection",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "GateErrorMitigation",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "ReadoutErrorMitigation",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "WarmStart",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "BiasedInitialState",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "ChainedOptimization",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "VariationalParameterTransfer",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "PreTrainedFeatureExtractor",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "CircuitCutting",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    },
+    {
+      "name": "Pattern",
+      "superClass": ["bpmn:BoundaryEvent"],
+      "properties": []
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}

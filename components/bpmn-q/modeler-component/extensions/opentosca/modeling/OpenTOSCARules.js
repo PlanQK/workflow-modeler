@@ -19,16 +19,15 @@ export default class OpenTOSCARules extends RuleProvider {
     this.modeling = modeling;
 
     this.addRule("shape.create", 10000, function (context) {
-      var shape = context.shape,
-        target = context.target;
+      let shape = context.shape;
 
-      if (shape.type.includes("Policy") && target.type !== "bpmn:ServiceTask") {
+      if (shape.type.includes("Policy")) {
         return false;
       }
     });
 
     function canMove(context) {
-      var target = context.target;
+      let target = context.target;
 
       if (target != undefined) {
         if (context.shapes[0].type.includes("Policy")) {

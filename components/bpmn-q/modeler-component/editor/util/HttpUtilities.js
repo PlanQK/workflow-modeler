@@ -13,15 +13,35 @@
  * Retrieves the Json data from the given endpoint.
  *
  * @param endpoint the endpoint to retrieve the data form
+ * @param method
  * @returns
  */
-export async function fetchDataFromEndpoint(endpoint) {
+export async function fetchDataFromEndpoint(endpoint, method = "GET") {
+  try {
+    const response = await fetch(endpoint, {
+      method: method,
+      headers: {
+        Accept: ["application/json", "application/hal+json"],
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return {};
+  }
+}
+
+export async function fetchSolutionFromEndpoint(endpoint) {
   try {
     const response = await fetch(endpoint);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    return await response.json();
+    const data = await response.text();
+    return data;
   } catch (error) {
     console.error("Error fetching data:", error);
     return {};

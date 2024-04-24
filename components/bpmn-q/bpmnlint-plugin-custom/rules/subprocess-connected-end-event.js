@@ -20,7 +20,6 @@ module.exports = function () {
   }
 
   function check(node, reporter) {
-    console.log(node);
     if (!isAny(node, ["bpmn:SubProcess"])) {
       return;
     }

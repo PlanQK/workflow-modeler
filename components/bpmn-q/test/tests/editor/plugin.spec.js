@@ -22,17 +22,18 @@ describe("Test plugins", function () {
         expect(getActivePlugins().length).to.equal(0);
       });
 
-      it("Should find 4 active plugins", function () {
+      it("Should find 5 active plugins", function () {
         setPluginConfig([
           { name: pluginNames.DATAFLOW },
           { name: pluginNames.QUANTME },
           { name: pluginNames.OPENTOSCA },
           { name: pluginNames.PLANQK },
+          { name: pluginNames.PATTERN },
         ]);
 
         const plugins = getActivePlugins();
 
-        expect(plugins.length).to.equal(4);
+        expect(plugins.length).to.equal(5);
         expect(
           plugins.filter((plugin) => plugin.name === pluginNames.DATAFLOW)
             .length
@@ -47,29 +48,36 @@ describe("Test plugins", function () {
         expect(
           plugins.filter((plugin) => plugin.name === pluginNames.PLANQK).length
         ).to.equal(1);
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.PATTERN).length
+        ).to.equal(1);
       });
 
-      it("Should find 4 active plugins due to dependencies", function () {
+      it("Should find 5 active plugins due to dependencies", function () {
         setPluginConfig([
           { name: pluginNames.DATAFLOW },
-          { name: pluginNames.QUANTME },
+          { name: pluginNames.PATTERN },
           { name: pluginNames.PLANQK },
         ]);
 
         const plugins = getActivePlugins();
 
-        expect(plugins.length).to.equal(4);
+        expect(plugins.length).to.equal(5);
         expect(
           plugins.filter((plugin) => plugin.name === pluginNames.DATAFLOW)
             .length
         ).to.equal(1);
         expect(
-          plugins.filter((plugin) => plugin.name === pluginNames.QUANTME).length
+          plugins.filter((plugin) => plugin.name === pluginNames.PATTERN).length
         ).to.equal(1);
         expect(
           plugins.filter((plugin) => plugin.name === pluginNames.PLANQK).length
         ).to.equal(1);
 
+        // should be found due to pattern plugin
+        expect(
+          plugins.filter((plugin) => plugin.name === pluginNames.QUANTME).length
+        ).to.equal(1);
         // should be found due to dependency of quantme plugin
         expect(
           plugins.filter((plugin) => plugin.name === pluginNames.OPENTOSCA)
@@ -85,15 +93,17 @@ describe("Test plugins", function () {
           { name: pluginNames.QUANTME },
           { name: pluginNames.OPENTOSCA },
           { name: pluginNames.PLANQK },
+          { name: pluginNames.PATTERN },
         ]);
 
         const modules = getAdditionalModules();
         const extensions = getModdleExtension();
 
-        expect(modules.length).to.equal(4);
+        expect(modules.length).to.equal(5);
         expect(extensions[pluginNames.DATAFLOW]).to.not.be.undefined;
         expect(extensions[pluginNames.QUANTME]).to.not.be.undefined;
         expect(extensions[pluginNames.OPENTOSCA]).to.not.be.undefined;
+        expect(extensions[pluginNames.PLANQK]).to.not.be.undefined;
         expect(extensions[pluginNames.PLANQK]).to.not.be.undefined;
       });
     });

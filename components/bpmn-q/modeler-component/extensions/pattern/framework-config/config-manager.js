@@ -57,6 +57,29 @@ export function setPatternAtlasUIEndpoint(patternAtlasUIEndpoint) {
     config.patternAtlasUIEndpoint = patternAtlasUIEndpoint;
   }
 }
+
+/**
+ * Get the endpoint of the connected Qc Atlas
+ */
+export function getQcAtlasEndpoint() {
+  if (config.qcAtlasEndpoint === undefined) {
+    setQcAtlasEndpoint(
+      getPluginConfig("pattern").qcAtlasEndpoint ||
+        defaultConfig.qcAtlasEndpoint
+    );
+  }
+  return config.qcAtlasEndpoint;
+}
+
+/**
+ * Set the endpoint of the connected Qc Atlas
+ */
+export function setQcAtlasEndpoint(qcAtlasEndpoint) {
+  if (qcAtlasEndpoint !== null && qcAtlasEndpoint !== undefined) {
+    config.qcAtlasEndpoint = qcAtlasEndpoint;
+  }
+}
+
 /**
  * Reset all saved endpoints and configuration values back to default or the value of the respective plugin config
  * by setting this.comfig to an empty js object.

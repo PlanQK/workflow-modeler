@@ -17,22 +17,27 @@ const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function PatternOverviewModal({ onClose, responseData }) {
+export default function PatternOverviewModal({
+  onClose,
+  element,
+  responseData,
+}) {
   const [buttonSelectedPatterns, setButtonSelectedPatterns] = useState({});
-  const [isAlgorithmicPatternModalOpen, setAlgorithmicPatternModalOpen] =
+  const [isAlgorithmPatternModalOpen, setAlgorithmPatternModalOpen] =
     useState(false);
   const [dynamicRows, setDynamicRows] = useState([]);
   const [editRow, setEditRow] = useState(null); // State to store the row being edited
   const [editRowData, setEditRowData] = useState(null);
 
-  const openAlgorithmicPatternModal = () => {
-    setAlgorithmicPatternModalOpen(true);
+  const openAlgorithmPatternModal = () => {
+    setAlgorithmPatternModalOpen(true);
   };
 
-  const closeAlgorithmicPatternModal = () => {
-    setAlgorithmicPatternModalOpen(false);
+  const closeAlgorithmPatternModal = () => {
+    setAlgorithmPatternModalOpen(false);
   };
-  const selectAlgorithmicPattern = useCallback(
+
+  const selectAlgorithmPattern = useCallback(
     (selectedPattern) => {
       if (editRow !== null) {
         const updatedRows = [...dynamicRows];
@@ -59,7 +64,7 @@ export default function PatternOverviewModal({ onClose, responseData }) {
           [newButtonLabel]: [],
         });
       }
-      closeAlgorithmicPatternModal();
+      closeAlgorithmPatternModal();
     },
     [buttonSelectedPatterns, dynamicRows, editRow]
   );
@@ -87,6 +92,7 @@ export default function PatternOverviewModal({ onClose, responseData }) {
   const deleteRow = (index) => {
     const updatedRows = [...dynamicRows];
     updatedRows.splice(index, 1);
+    resetData();
     setDynamicRows(updatedRows);
   };
 
@@ -94,9 +100,30 @@ export default function PatternOverviewModal({ onClose, responseData }) {
     const rowToEdit = dynamicRows[index];
     setEditRowData(rowToEdit);
     setEditRow(index);
-    openAlgorithmicPatternModal();
+    openAlgorithmPatternModal();
   };
 
+  const disableButton = () => {
+    if (element !== undefined) {
+      console.log(element);
+      if (element.algorithmPattern !== undefined) {
+        return true;
+      }
+      return false;
+    }
+    if (responseData === null) {
+      return true;
+    }
+    return false;
+  };
+
+  const resetData = () => {
+    setButtonSelectedPatterns({});
+    setAlgorithmPatternModalOpen(false);
+    setDynamicRows([]);
+    setEditRow(null); // State to store the row being edited
+    setEditRowData(null);
+  };
   return (
     <Modal onClose={onClose}>
       <Title>Pattern Selection</Title>
@@ -106,17 +133,17 @@ export default function PatternOverviewModal({ onClose, responseData }) {
           Selected Patterns{" "}
           <button
             className="qwm-action-add qwm-btn-primary"
-            onClick={openAlgorithmicPatternModal}
-            disabled={responseData === null}
+            onClick={openAlgorithmPatternModal}
+            disabled={disableButton()}
           >
             +
           </button>
         </h3>
-        {isAlgorithmicPatternModalOpen && (
+        {isAlgorithmPatternModalOpen && (
           <PatternSelectionModal
             patterns={responseData}
-            onSelectPattern={selectAlgorithmicPattern}
-            onClose={closeAlgorithmicPatternModal}
+            onSelectPattern={selectAlgorithmPattern}
+            onClose={closeAlgorithmPatternModal}
             initialSelectedPattern={editRowData !== null ? editRowData : null}
           />
         )}
@@ -211,7 +238,9 @@ export default function PatternOverviewModal({ onClose, responseData }) {
           <button
             type="button"
             className="qwm-btn qwm-btn-secondary"
-            onClick={() => onClose(dynamicRows)}
+            onClick={() => {
+              onClose(dynamicRows);
+            }}
           >
             Done
           </button>

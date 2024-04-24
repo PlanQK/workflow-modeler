@@ -11,6 +11,7 @@
 
 import $ from "jquery";
 import { ON_DEMAND_POLICY, POLICIES } from "../Constants";
+import * as config from "../framework-config/config-manager";
 
 export function performAjax(targetUrl, dataToSend) {
   return new Promise(function (resolve, reject) {
@@ -145,5 +146,24 @@ export function movePolicies(modeler, newTargetId, policies) {
         onDemand: true,
       });
     }
+  });
+}
+
+export function injectWineryEndpoint(modeler, taskId) {
+  let elementRegistry = modeler.get("elementRegistry");
+  let modeling = modeler.get("modeling");
+  let task = elementRegistry.get(taskId);
+  let deploymentModelUrl = task.businessObject.get(
+    "opentosca:deploymentModelUrl"
+  );
+  if (deploymentModelUrl.startsWith("{{ wineryEndpoint }}")) {
+    deploymentModelUrl = deploymentModelUrl.replace(
+      "{{ wineryEndpoint }}",
+      config.getWineryEndpoint()
+    );
+  }
+  modeling.updateProperties(task, {
+    "opentosca:deploymentModelUrl": deploymentModelUrl,
+    "opentosca:isDeployedAndBound": true,
   });
 }

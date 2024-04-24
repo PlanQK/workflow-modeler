@@ -12,6 +12,7 @@
 import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
 import { isFlowLikeElement } from "../../../../editor/util/ModellingUtilities";
 import { ON_DEMAND_POLICY, POLICIES } from "../../../opentosca/Constants";
+import { PATTERNS } from "../../../pattern/Constants";
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = "8";
@@ -74,7 +75,8 @@ function layoutProcess(modeling, elementRegistry, process) {
         // boundary events are skipped here, as they are always attached to some task and only this task has to be layouted
         if (
           flowElements[i].$type === "bpmn:BoundaryEvent" ||
-          POLICIES.includes(flowElements[i].$type)
+          POLICIES.includes(flowElements[i].$type) ||
+          PATTERNS.includes(flowElements[i].$type)
         ) {
           continue;
         }
@@ -441,6 +443,16 @@ function layoutWithDagre(
   console.log("Adding %i tasks to the graph for layouting: ", tasks.length);
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
+    console.log(task.type);
+    if (
+      task.type === "bpmn:SubProcess" ||
+      task.type === "quantme:CircuitCuttingSubProcess" ||
+      task.type === "quantme:HardwareSelectionSubProcess"
+    ) {
+      const dimensions = computeDimensionsOfElement(task);
+      task.height = dimensions.height;
+      task.width = dimensions.width;
+    }
     g.setNode(task.id, {
       label: task.id,
       width: task.width,
@@ -491,4 +503,39 @@ function layoutWithDagre(
       element.waypoints = waypoints;
     }
   });
+}
+
+export function computeDimensionsOfElement(element) {
+  let minX = Number.MAX_SAFE_INTEGER;
+  let maxX = Number.MIN_SAFE_INTEGER;
+  let minY = Number.MAX_SAFE_INTEGER;
+  let maxY = Number.MIN_SAFE_INTEGER;
+
+  console.log(element);
+
+  element.children.forEach((child) => {
+    console.log("Get children x of child ", child.id);
+    if (child.di && child.di.bounds) {
+      const childX = child.di.bounds.x;
+      const childY = child.di.bounds.y;
+      console.log(minX);
+      minX = Math.min(minX, childX);
+      minY = Math.min(minY, childY);
+      console.log(childX);
+      console.log(maxX);
+      maxX = Math.max(maxX, childX + child.di.bounds.width);
+      maxY = Math.max(maxY, childY + child.di.bounds.height);
+      console.log(childX + child.di.bounds.width);
+      console.log(childY + child.di.bounds.height);
+      console.log(maxY);
+    }
+  });
+  console.log(maxX);
+  console.log(minX);
+  // the elements start not with the subprocess.x so we need to adjust the width
+  // add a little padding
+  const subprocessWidth = maxX - element.x - minX + 30;
+  const subprocessHeight = maxY - element.y + 10;
+
+  return { width: subprocessWidth, height: subprocessHeight };
 }

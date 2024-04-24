@@ -11,7 +11,10 @@
 
 import * as opentoscaReplaceOptions from "./OpenTOSCAReplaceOptions";
 import { is } from "bpmn-js/lib/util/ModelUtil";
-import { createMenuEntries } from "../../../editor/util/PopupMenuUtilities";
+import {
+  createMenuEntries,
+  createMoreOptionsEntryWithReturn,
+} from "../../../editor/util/PopupMenuUtilities";
 import { filter } from "min-dash";
 import { isDifferentType } from "bpmn-js/lib/features/popup-menu/util/TypeUtil";
 
@@ -42,9 +45,10 @@ export default class OpenTOSCAReplaceMenuProvider {
 
   getPopupMenuEntries(element) {
     const self = this;
+    const popupMenu = this.popupMenu;
     return function (entries) {
       // add additional elements to replace policies
-      if (is(element, "bpmn:Event")) {
+      if (is(element, "bpmn:Event") && !element.type.startsWith("pattern")) {
         if (element.host !== undefined) {
           let attachers = element.host.attachers;
           let attacherTypes = [];
@@ -77,7 +81,18 @@ export default class OpenTOSCAReplaceMenuProvider {
             self.translate,
             self.bpmnReplace.replaceElement
           );
-          return Object.assign(policyEntries, entries);
+          console.log("policyEntr");
+
+          return {
+            ["replace-by-more-options"]: createMoreOptionsEntryWithReturn(
+              element,
+              "Policies",
+              "Policies",
+              popupMenu,
+              policyEntries,
+              "bpmn-icon-policy"
+            ),
+          };
         }
       }
 

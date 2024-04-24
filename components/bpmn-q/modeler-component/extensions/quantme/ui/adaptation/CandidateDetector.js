@@ -12,7 +12,11 @@
 import lodash from "lodash";
 import generateImage from "../../../../editor/util/camunda-utils/generateImage";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
-import { createTempModelerFromXml } from "../../../../editor/ModelerHandler";
+import {
+  createTempModelerFromXml,
+  getModeler,
+} from "../../../../editor/ModelerHandler";
+import { getXml } from "../../../../editor/util/IoUtilities";
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
@@ -30,7 +34,8 @@ export async function findOptimizationCandidates(modeler) {
   );
 
   // export xml of the current workflow model to enable a later image creation
-  let workflowXml = await modeler.get("bpmnjs").saveXML();
+  let workflowXml = await getXml(modeler);
+  console.log(workflowXml);
 
   // get all potential entry points for a hybrid loop
   let entryPoints = findEntryPoints(rootElement);
@@ -61,7 +66,8 @@ export async function findOptimizationCandidates(modeler) {
       // generate visual representation of the candidate using base64
       optimizationCandidate = await visualizeCandidate(
         optimizationCandidate,
-        workflowXml.xml
+        workflowXml,
+        modeler
       );
 
       console.log(
@@ -88,14 +94,16 @@ export async function findOptimizationCandidates(modeler) {
  * @param workflowXml the XML of the workflow the candidate belongs to
  * @return the string containing the base64 encoded image
  */
-async function visualizeCandidate(optimizationCandidate, workflowXml) {
+async function visualizeCandidate(optimizationCandidate, workflowXml, modeler) {
   console.log("Visualizing optimization candidate: ", optimizationCandidate);
-
+  console.log(workflowXml);
   // create new modeler for the visualization
-  let modeler = await createTempModelerFromXml(workflowXml);
-  let modeling = modeler.get("modeling");
+  let tempModeler = await createTempModelerFromXml(workflowXml);
+  let modeling = tempModeler.get("modeling");
+  let tempElementRegistry = tempModeler.get("elementRegistry");
+  console.log(elementRegistry);
+  let rootElement = getRootProcess(tempModeler.getDefinitions());
   let elementRegistry = modeler.get("elementRegistry");
-  let rootElement = getRootProcess(modeler.getDefinitions());
 
   // remove all flows that are not part of the candidate
   const flowElements = lodash.cloneDeep(rootElement.flowElements);
@@ -109,7 +117,7 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
       flowElement.$type === "bpmn:SequenceFlow"
     ) {
       // remove connection from the modeler
-      let element = elementRegistry.get(flowElement.id);
+      let element = tempElementRegistry.get(flowElement.id);
       modeling.removeConnection(element);
     }
   }
@@ -121,15 +129,20 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
   // remove all shapes that are not part of the candidate
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
+    console.log(flowElement);
     if (
       !optimizationCandidate.containedElements.some(
         (e) => e.id === flowElement.id
       ) &&
-      flowElement.$type !== "bpmn:SequenceFlow"
+      flowElement.$type !== "bpmn:SequenceFlow" &&
+      flowElement.$type !== "pattern:PredeployedExecution"
     ) {
       // remove shape from the modeler
-      let element = elementRegistry.get(flowElement.id);
-      modeling.removeShape(element);
+      let element = tempElementRegistry.get(flowElement.id);
+      console.log(element);
+      if (element !== undefined) {
+        modeling.removeShape(element);
+      }
     }
   }
   console.log(
@@ -154,7 +167,7 @@ async function visualizeCandidate(optimizationCandidate, workflowXml) {
 
   // generate png from svg
   optimizationCandidate.candidateImage = generateImage("png", svg);
-  optimizationCandidate.modeler = modeler;
+  optimizationCandidate.modeler = getModeler();
   return optimizationCandidate;
 }
 
@@ -173,6 +186,16 @@ function calculateViewBox(optimizationCandidate, svg, elementRegistry) {
     let element = elementRegistry.get(
       optimizationCandidate.containedElements[i].id
     );
+
+    console.log(element);
+    console.log(elementRegistry);
+    console.log(optimizationCandidate);
+    console.log(optimizationCandidate.containedElements[i].id);
+
+    if (element === undefined) {
+      element = optimizationCandidate.containedElements[i];
+    }
+    console.log(element);
 
     // for sequence flows check the position of each waypoint and label
     if (element.type === "bpmn:SequenceFlow") {
@@ -314,6 +337,7 @@ function findEntryPoints(rootElement) {
  */
 function getXOREntryPoints(rootElement) {
   let entryPoints = [];
+  console.log("find xor entry point ", rootElement);
 
   // search for XOR gateways within the workflow
   const flowElements = rootElement.flowElements;
@@ -324,12 +348,21 @@ function getXOREntryPoints(rootElement) {
 
       // the gateway should have exactly one outgoing flow representing the control flow of the hybrid loop
       if (flowElement.outgoing.length === 1) {
+        flowElement.$parent = rootElement;
+        console.log(flowElement.$parent);
         console.log(
           "Exclusive gateway is potential entry point: ",
           flowElement
         );
         entryPoints.push(flowElement);
       }
+    }
+
+    if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
+      console.log("Found subprocess ", flowElement);
+      Array.prototype.push.apply(entryPoints, getXOREntryPoints(flowElement));
+
+      // recursively call method to find optimization candidates
     }
   }
 
@@ -468,9 +501,10 @@ function containsClassicalTask(candidate) {
   for (let i = 0; i < candidate.containedElements.length; i++) {
     let element = candidate.containedElements[i];
     if (
-      element.$type &&
-      (element.$type === "bpmn:ServiceTask" ||
-        element.$type === "bpmn:ScriptTask")
+      (element.$type &&
+        (element.$type === "bpmn:ServiceTask" ||
+          element.$type === "bpmn:ScriptTask")) ||
+      element.$type.startsWith("quantme:")
     ) {
       return true;
     }

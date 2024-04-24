@@ -26,7 +26,17 @@ export function getTaskOrder(candidate, modeler) {
 
   // get entry point from the current modeler
   let elementRegistry = modeler.get("elementRegistry");
-  let element = elementRegistry.get(candidate.entryPoint.id).businessObject;
+  console.log(candidate);
+  console.log(candidate.entryPoint);
+  console.log(modeler);
+  console.log(elementRegistry);
+  console.log(elementRegistry.get(candidate.entryPoint.id));
+  let element = candidate.entryPoint;
+  if (elementRegistry.get(candidate.entryPoint.id) !== undefined) {
+    element = elementRegistry.get(candidate.entryPoint.id).businessObject;
+  }
+  console.log(element);
+  console.log(candidate.entryPoint);
 
   // search all tasks before looping gateway
   while (element.id !== candidate.exitPoint.id) {
@@ -37,6 +47,7 @@ export function getTaskOrder(candidate, modeler) {
       beforeLoop.push(element.id);
     }
 
+    console.log(element);
     // get next element
     element = getNextElement(element);
   }
@@ -49,7 +60,7 @@ export function getTaskOrder(candidate, modeler) {
     ) {
       afterLoop.push(element.id);
     }
-
+    console.log(element);
     // get next element
     element = getNextElement(element);
   }
@@ -67,6 +78,14 @@ function getNextElement(element) {
   if (element.$type === "bpmn:SequenceFlow") {
     return element.targetRef;
   } else {
+    if (element.$type === "bpmn:ExclusiveGateway") {
+      let outgoingflow = element.outgoing[0];
+      console.log(outgoingflow);
+      if (outgoingflow.targetRef.$type === "bpmn:EndEvent") {
+        outgoingflow = element.outgoing[1];
+      }
+      return outgoingflow;
+    }
     return element.outgoing[0];
   }
 }
@@ -78,15 +97,38 @@ function getNextElement(element) {
  * @param wineryEndpoint the endpoint of a Winery to load the required deployment models from
  * @return the list of all retrieved files or an error message if the retrieval fails
  */
-export async function getRequiredPrograms(rootElement, wineryEndpoint) {
-  let requiredProgramsZip = new JSZip();
+export async function getRequiredPrograms(
+  rootElement,
+  requiredProgramsZip,
+  wineryEndpoint
+) {
+  console.log("Get required programs...");
 
-  for (let i = 0; i < rootElement.flowElements.length; i++) {
-    let element = rootElement.flowElements[i];
+  let flowElements = rootElement.flowElements;
+  console.log(flowElements);
+  if (flowElements === undefined) {
+    flowElements = rootElement.children;
+  }
+  console.log(flowElements);
+  for (let i = 0; i < flowElements.length; i++) {
+    let element = flowElements[i];
+    console.log(element);
 
+    // if elements are inside a subprocess
+    if (
+      element.$type === "bpmn:SubProcess" ||
+      element.type === "bpmn:SubProcess"
+    ) {
+      console.log("Found subprocess:", element.id);
+      await getRequiredPrograms(element, requiredProgramsZip, wineryEndpoint);
+    }
     // service task needs attached deployment model that is accessible through the defined URL
-    if (element.$type === "bpmn:ServiceTask") {
-      if (element.deploymentModelUrl === undefined) {
+    if (
+      element.$type === "bpmn:ServiceTask" ||
+      element.type === "bpmn:ServiceTask"
+    ) {
+      console.log(element);
+      if (element.businessObject.deploymentModelUrl === undefined) {
         console.log(
           "No deployment model defined for ServiceTask: ",
           element.id
@@ -97,22 +139,35 @@ export async function getRequiredPrograms(rootElement, wineryEndpoint) {
       }
 
       // replace generic placeholder by endpoint of connected Winery
-      let url = element.deploymentModelUrl.replace(
+      let url = element.businessObject.deploymentModelUrl.replace(
         "{{ wineryEndpoint }}",
         wineryEndpoint
       );
 
       // download the deployment model from the given URL
       console.log("Retrieving deployment model from URL: ", url);
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/zip",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
       console.log(response);
+      console.log(response.headers);
       const blob = await response.blob();
+      console.log(blob);
 
       // unzip the retrieved CSAR
       let zip = await new JSZip().loadAsync(blob);
+      console.log("zip");
 
       // get all contained deployment artifacts
       let files = getDeploymentArtifactFiles(zip);
+      console.log(files);
 
       // only one deployment artifact is allowed containing the quantum and classical programs
       if (files.length !== 1) {
@@ -182,8 +237,13 @@ export async function getRequiredPrograms(rootElement, wineryEndpoint) {
  * @return the first invalid modeling construct or undefined if all are valid
  */
 export function getInvalidModelingConstruct(rootElement) {
-  for (let i = 0; i < rootElement.flowElements.length; i++) {
-    let element = rootElement.flowElements[i];
+  console.log(rootElement);
+  let flowElements = rootElement.flowElements;
+  if (rootElement.flowElements === undefined) {
+    flowElements = rootElement.children;
+  }
+  for (let i = 0; i < flowElements.length; i++) {
+    let element = flowElements[i];
     if (
       element.$type !== "bpmn:ExclusiveGateway" &&
       element.$type !== "bpmn:SequenceFlow" &&

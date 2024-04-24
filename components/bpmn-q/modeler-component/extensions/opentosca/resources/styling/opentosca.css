@@ -178,3 +178,14 @@
   background-repeat: no-repeat;
   display: inline-block;
 }
+
+.qwm .bpmn-icon-policy:before {
+  content: "";
+  margin-top: 1px;
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/Policy.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}

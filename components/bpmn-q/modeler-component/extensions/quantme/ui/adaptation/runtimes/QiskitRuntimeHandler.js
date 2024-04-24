@@ -19,14 +19,16 @@ import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion,
 } from "../../../../opentosca/deployment/OpenTOSCAUtils";
-import {
-  getInvalidModelingConstruct,
-  getRequiredPrograms,
-  getTaskOrder,
-} from "./RuntimeHandlerUtils";
+import { getRequiredPrograms, getTaskOrder } from "./RuntimeHandlerUtils";
 import { getXml } from "../../../../../editor/util/IoUtilities";
 import { createTempModelerFromXml } from "../../../../../editor/ModelerHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
+import { getWineryEndpoint } from "../../../../opentosca/framework-config/config-manager";
+import {
+  getHybridRuntimeProvenance,
+  getQiskitRuntimeHandlerEndpoint,
+} from "../../../framework-config/config-manager";
+import JSZip from "jszip";
 
 /**
  * Generate a Qiskit Runtime program for the given candidate
@@ -57,8 +59,10 @@ export async function getQiskitRuntimeProgramDeploymentModel(
       };
     }
   }
-
+  console.log(candidate);
   let xml = await getXml(candidate.modeler);
+  console.log("xmlQiskit");
+  console.log(xml);
 
   // transform QuantME tasks within candidate
   let transformationResult = await startQuantmeReplacementProcess(
@@ -73,13 +77,18 @@ export async function getQiskitRuntimeProgramDeploymentModel(
         "Unable to transform QuantME tasks within the candidates. Please provide valid QRMs!",
     };
   }
-
+  console.log(transformationResult);
   // import transformed XML to the modeler
   let modeler = await createTempModelerFromXml(transformationResult.xml);
   let rootElement = getRootProcess(modeler.getDefinitions());
 
   // check if transformed XML contains invalid modeling constructs
-  let invalidModelingConstruct = getInvalidModelingConstruct(rootElement);
+  let elementRegistry = modeler.get("elementRegistry");
+  rootElement = elementRegistry.get(rootElement.id);
+  console.log(rootElement);
+  let invalidModelingConstruct = undefined;
+  //getInvalidModelingConstruct(rootElement);
+  console.log(invalidModelingConstruct);
   if (invalidModelingConstruct !== undefined) {
     console.log(
       "Found invalid modeling construct of type: ",
@@ -92,21 +101,29 @@ export async function getQiskitRuntimeProgramDeploymentModel(
     };
   }
 
+  let wineryEndpoint = getWineryEndpoint();
+  let requiredProgramsZip = new JSZip();
   // check if all service tasks have either a deployment model attached and all script tasks provide the code inline and retrieve the files
   let requiredPrograms = await getRequiredPrograms(
     rootElement,
-    modelerConfig.wineryEndpoint
+    requiredProgramsZip,
+    wineryEndpoint
   );
+  console.log(requiredPrograms);
   if (requiredPrograms.error !== undefined) {
     return { error: requiredPrograms.error };
   }
+
+  let qiskitRuntimeHandlerEndpoint = getQiskitRuntimeHandlerEndpoint();
+  console.log(qiskitRuntimeHandlerEndpoint);
+  let hybridRuntimeProvenance = getHybridRuntimeProvenance();
 
   // invoke handler and return resulting hybrid program or error message
   let runtimeGenerationResult = await invokeQiskitRuntimeHandler(
     candidate,
     requiredPrograms,
-    modelerConfig.qiskitRuntimeHandlerEndpoint,
-    modelerConfig.hybridRuntimeProvenance,
+    qiskitRuntimeHandlerEndpoint,
+    hybridRuntimeProvenance,
     modeler
   );
   if (runtimeGenerationResult.error !== undefined) {
@@ -117,7 +134,7 @@ export async function getQiskitRuntimeProgramDeploymentModel(
   let deploymentModelUrl = await createDeploymentModel(
     candidate,
     runtimeGenerationResult,
-    modelerConfig.wineryEndpoint
+    wineryEndpoint
   );
   if (deploymentModelUrl.error !== undefined) {
     return { error: deploymentModelUrl.error };

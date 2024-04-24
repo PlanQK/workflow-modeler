@@ -16,9 +16,9 @@ const Title = Modal.Title || (({ children }) => <h4>{children}</h4>);
 const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
-export default function PatternModal({ onClose }) {
+export default function PatternModal({ onClose, onCancel }) {
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onCancel}>
       <Title>Pattern Selection</Title>
 
       <Body>
@@ -53,7 +53,7 @@ export default function PatternModal({ onClose }) {
           <button
             type="button"
             className="qwm-btn qwm-btn-secondary"
-            onClick={() => onClose()}
+            onClick={() => onCancel()}
           >
             Cancel
           </button>

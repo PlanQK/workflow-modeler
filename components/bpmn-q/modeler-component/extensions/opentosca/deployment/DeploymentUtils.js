@@ -104,7 +104,8 @@ export function isDeployableServiceTask(element) {
     element.$type &&
     element.$type === "bpmn:ServiceTask" &&
     element.deploymentModelUrl &&
-    getBindingType(element) !== undefined
+    getBindingType(element) !== undefined &&
+    !element.$attrs["opentosca:isDeployedAndBound"]
   );
 }
 

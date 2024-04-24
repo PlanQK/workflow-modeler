@@ -50,6 +50,7 @@ import {
   InitialStateEntry,
   EvaluationResultEntry,
   ErrorCorrectionMethodEntry,
+  WarmStartingPatternEntry,
 } from "./QuantMEPropertyEntries";
 
 /**
@@ -424,6 +425,12 @@ export function VariationalQuantumAlgorithmTaskEntries(element) {
 export function WarmStartingTaskEntries(element) {
   // add providers, simulatorsAllowed, and selectionStrategy attributes
   return [
+    {
+      id: consts.WARM_STARTING_PATTERN,
+      element,
+      component: WarmStartingPatternEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
     {
       id: consts.WARM_STARTING_METHOD,
       element,

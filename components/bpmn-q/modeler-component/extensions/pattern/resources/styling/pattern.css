@@ -9,6 +9,8 @@
   background-repeat: no-repeat;
   display: inline-block;
   float: left;
+  padding: 4px 6px;
+  margin-top: -1px;
 }
 
 .actions-column {
@@ -103,4 +105,168 @@
   background-repeat: no-repeat;
   display: inline-block;
   float: left;
+}
+
+.qwm .bpmn-pattern-orchestrated-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/orchestrated-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-pre-deployed-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/pre-deployed-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-prioritized-execution-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/priortized-execution-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm-popup-menu-more-options .pattern-logo .djs-popup-entry-name {
+  margin-top: 20px; /* Adjust the margin value as needed */
+}
+
+.djs-popup-results .djs-popup-group .entry[title="Patterns"] .djs-popup-label {
+  margin-top: 1px; /* Adjust the value as per your requirements */
+}
+
+.qwm-pattern-icon:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/pattern-palette.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 11px 8px 11px 10px;
+  outline: none;
+}
+
+.qwm-pattern-icon:hover {
+  filter: invert(0.5) sepia(1) hue-rotate(165deg) saturate(4) brightness(1);
+}
+
+.qwm .bpmn-pattern-error-correction-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/error-correction-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-circuit-cutting-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/circuit-cutting-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-circuit-cutting-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/circuit-cutting-icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-gate-error-mitigation-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/gate_error_mitigation_icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-gate-readout-error-mitigation-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/readout-error-mitigation-icon.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-biased-initial-state-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-biased-initial-state-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-variational-parameter-transfer-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-variational-parameter-transfer-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-pre-trained-feature-extractor-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-pre-trained-feature-extractor-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.qwm .bpmn-pattern-chained-optimization-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/warm-start-chained-optimization-thin.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.progress-bar-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.progress-bar-container {
+  width: 200px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #3498db;
+  transition: width 0.5s ease-in-out;
+}
+
+.stop-animation {
+  animation: none;
 }

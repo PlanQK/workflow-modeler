@@ -18,14 +18,12 @@ import * as consts from "../Constants";
 import { isQuantMETask } from "../utilities/Utilities";
 import {
   ALGORITHM,
-  ALPHA,
   CALIBRATION_METHOD,
   CLASSICAL_ALGORTHM,
   COST_FUNCTION,
   CUTTING_METHOD,
   DNN_HIDDEN_LAYER,
   ENCODING_SCHEMA,
-  ETA,
   LEARNING_RATE,
   MAX_AGE,
   MAX_CM_SIZE,
@@ -382,9 +380,7 @@ function matchResultEvaluationTask(detectorElement, task) {
       task.costFunction,
       true,
       COST_FUNCTION
-    ) &&
-    matchesProperty(detectorElement.alpha, task.alpha, false, ALPHA) &&
-    matchesProperty(detectorElement.eta, task.eta, false, ETA)
+    )
   );
 }
 
@@ -416,41 +412,22 @@ function matchCircuitCuttingSubprocess(detectorElement, task) {
 }
 
 /**
- * Compare the properties of QuantumCircuitExecutionTasks
+ * Compare the properties of Circuit Cutting Task
  */
 function matchCircuitCuttingTask(detectorElement, task) {
-  return (
-    matchesProperty(
-      detectorElement.cuttingMethod,
-      task.cuttingMethod,
-      true,
-      CUTTING_METHOD
-    ) &&
-    matchesProperty(
-      detectorElement.maxSubCircuitWidth,
-      task.maxSubCircuitWidth,
-      false,
-      MAX_SUBCIRCUIT_WIDTH
-    ) &&
-    matchesProperty(
-      detectorElement.maxNumberOfCuts,
-      task.maxNumberOfCuts,
-      false,
-      MAX_NUMBER_OF_CUTS
-    ) &&
-    matchesProperty(
-      detectorElement.maxNumSubCircuits,
-      task.maxNumSubCircuits,
-      false,
-      MAXIMUM_NUM_SUBCIRCUITS
-    )
+  return matchesProperty(
+    detectorElement.cuttingMethod,
+    task.cuttingMethod,
+    true,
+    CUTTING_METHOD
   );
 }
 
 /**
- * Compare the properties of QuantumCircuitExecutionTasks
+ * Compare the properties of Result Combination Tak
  */
 function matchCuttingResultCombinationTask(detectorElement, task) {
+  console.log(detectorElement.cuttingMethod);
   return matchesProperty(
     detectorElement.cuttingMethod,
     task.cuttingMethod,

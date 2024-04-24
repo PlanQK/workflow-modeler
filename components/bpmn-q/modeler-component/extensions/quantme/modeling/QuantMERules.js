@@ -22,7 +22,6 @@ export default class QuantMERules extends RuleProvider {
     this.addRule("shape.create", 11000, function (context) {
       var shape = context.shape,
         target = context.target;
-
       if (
         shape.type.includes("Policy") &&
         !consts.QUANTME_TASKS.includes(target.type)
