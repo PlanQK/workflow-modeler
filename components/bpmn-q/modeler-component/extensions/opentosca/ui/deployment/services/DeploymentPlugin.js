@@ -286,6 +286,14 @@ export default class DeploymentPlugin extends PureComponent {
             );
             csar.properties = instancePropertiesLink;
             for (let j = 0; j < csar.serviceTaskIds.length; j++) {
+              let elementRegistry = this.modeler.get("elementRegistry");
+              let task = elementRegistry.get(csar.serviceTaskIds[j]);
+              let isDeployedAndBound = task.businessObject.get(
+                "opentosca:isDeployedAndBound"
+              );
+              if (isDeployedAndBound) {
+                continue;
+              }
               let bindingResponse = undefined;
               if (csar.type === "pull") {
                 bindingResponse = await bindUsingPull(
@@ -800,7 +808,8 @@ export default class DeploymentPlugin extends PureComponent {
     } else if (csarsToDeploy.length === 0) {
       NotificationHandler.getInstance().displayNotification({
         type: "info",
-        title: "No service tasks with associated deployment models",
+        title:
+          "No service tasks with associated deployment models that are not deployed",
         content:
           "The workflow does not contain service tasks with associated deployment models. No service deployment required!",
         duration: 20000,

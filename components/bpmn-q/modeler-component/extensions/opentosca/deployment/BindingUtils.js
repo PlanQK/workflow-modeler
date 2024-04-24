@@ -170,12 +170,16 @@ export async function bindUsingPush(
               connectorElement[0].inputOutput.inputParameters.filter(
                 (x) => x.name === "url"
               )[0].value;
-            if (selfServiceApplicationUrl.slice(-1) === "/") {
+            if (
+              selfServiceApplicationUrl.charAt(
+                selfServiceApplicationUrl.length - 1
+              ) === "/"
+            ) {
               selfServiceApplicationUrl = selfServiceApplicationUrl.substring(
                 selfServiceApplicationUrl.length - 1
               );
             }
-            if (connectorUrl.slice(0) === "/") {
+            if (connectorUrl.charAt(0) === "/") {
               connectorUrl = connectorUrl.substring(1, connectorUrl.length);
             }
             inputParameter.value =

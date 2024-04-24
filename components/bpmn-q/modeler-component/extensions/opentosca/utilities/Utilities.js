@@ -164,5 +164,6 @@ export function injectWineryEndpoint(modeler, taskId) {
   }
   modeling.updateProperties(task, {
     "opentosca:deploymentModelUrl": deploymentModelUrl,
+    "opentosca:isDeployedAndBound": true,
   });
 }
