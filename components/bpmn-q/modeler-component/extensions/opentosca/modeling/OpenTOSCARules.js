@@ -20,9 +20,11 @@ export default class OpenTOSCARules extends RuleProvider {
 
     function updateOnDemandStatus(elements, isOnDemand) {
       elements?.forEach((element) => {
-        if (element.type === consts.ON_DEMAND_POLICY) {
+        if (element?.type === consts.ON_DEMAND_POLICY) {
           let host = element.host;
-          host.businessObject.onDemand = isOnDemand;
+          if (host !== null) {
+            host.businessObject.onDemand = isOnDemand;
+          }
         }
       });
     }

@@ -61,7 +61,7 @@ export function synchronousPostRequest(url, type, body) {
  *
  * @param modeler the modeler to which the ServiceTask belongs to
  * @param serviceTaskId the ID of the ServiceTask
- * @returns {{}} the list of retrived policies
+ * @returns {{}} the list of retrieved policies
  */
 export function getPolicies(modeler, serviceTaskId) {
   console.log("Retrieving policies for ServiceTask with ID: ", serviceTaskId);
@@ -145,5 +145,6 @@ export function movePolicies(modeler, newTargetId, policies) {
         onDemand: true,
       });
     }
+    policy.di.id = policy.id + "_di";
   });
 }

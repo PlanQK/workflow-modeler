@@ -325,7 +325,7 @@ async function replaceByFragment(
   let policies = getPolicies(modeler, task.id);
   console.log("Found %i polices attached to QuantME task!", policies.length);
   let attachersPlaceholder;
-  if (policies.length > 0) {
+  if (policies.length > 0 && replacementElement.$type !== "bpmn:SubProcess") {
     attachersPlaceholder = modeling.createShape(
       { type: "bpmn:Task" },
       { x: 50, y: 50 },
@@ -367,71 +367,74 @@ async function replaceByFragment(
         "Replacement was ServiceTask or QuantME task. Attaching policies..."
       );
       movePolicies(modeler, resultShape.id, policies);
-    } else {
-      if (resultShape.businessObject.$type === "bpmn:SubProcess") {
-        console.log(
-          "Attaching policies within subprocess: ",
-          resultShape.businessObject
-        );
-
-        // get flow elements to check if they support policy attachment
-        let flowElements = resultShape.businessObject.flowElements;
-        console.log(
-          "Subprocess contains %i flow elements...",
-          flowElements.length
-        );
-        flowElements = flowElements.filter(
-          (flowElement) =>
-            (flowElement.$type === "bpmn:ServiceTask" &&
-              flowElement.deploymentModelUrl) ||
-            flowElement.$type.startsWith("quantme:")
-        );
-        console.log(
-          "Found %i ServiceTasks or QuantME tasks...",
-          flowElements.length
-        );
-
-        flowElements.forEach((flowElement) => {
-          let task = elementRegistry.get(flowElement.id);
-          console.log("Adding policies to task: ", task);
-          policies.forEach((policy) => {
-            console.log("Adding policy : ", policy);
-
-            if (policy.type === openToscaConsts.ON_DEMAND_POLICY) {
-              task.businessObject[openToscaConsts.ON_DEMAND] = "true";
-            }
-
-            let newPolicyShape = modeling.createShape(
-              { type: policy.type },
-              { x: 50, y: 50 },
-              task,
-              { attach: true }
-            );
-
-            // extract the properties of for the specific policy type
-            let properties = OpenTOSCAProps(newPolicyShape);
-
-            if (properties !== undefined) {
-              let propertyEntries = {};
-              properties.forEach((propertyEntry) => {
-                let entryId = propertyEntry.id;
-                propertyEntries[entryId] = policy.businessObject[entryId];
-              });
-              modeling.updateProperties(
-                elementRegistry.get(newPolicyShape.id),
-                propertyEntries
-              );
-            }
-          });
-        });
-      } else {
-        console.log(
-          "Type not supported for policy attachment: ",
-          resultShape.businessObject.$type
-        );
-      }
     }
-    modeling.removeShape(attachersPlaceholder);
+
+    let attachers = attachersPlaceholder.attachers;
+
+    // if all policies are moved to the new target
+    if (attachers.length == 0) {
+      modeling.removeShape(attachersPlaceholder);
+    }
+  }
+
+  if (resultShape.businessObject.$type === "bpmn:SubProcess") {
+    console.log(
+      "Attaching policies within subprocess: ",
+      resultShape.businessObject
+    );
+
+    // get flow elements to check if they support policy attachment
+    let flowElements = resultShape.businessObject.flowElements;
+    console.log("Subprocess contains %i flow elements...", flowElements.length);
+    flowElements = flowElements.filter(
+      (flowElement) =>
+        (flowElement.$type === "bpmn:ServiceTask" &&
+          flowElement.deploymentModelUrl) ||
+        flowElement.$type.startsWith("quantme:")
+    );
+    console.log(
+      "Found %i ServiceTasks or QuantME tasks...",
+      flowElements.length
+    );
+
+    flowElements.forEach((flowElement) => {
+      let task = elementRegistry.get(flowElement.id);
+      console.log("Adding policies to task: ", task);
+      policies.forEach((policy) => {
+        console.log("Adding policy : ", policy);
+
+        if (policy.type === openToscaConsts.ON_DEMAND_POLICY) {
+          task.businessObject[openToscaConsts.ON_DEMAND] = "true";
+        }
+
+        let newPolicyShape = modeling.createShape(
+          { type: policy.type },
+          { x: 50, y: 50 },
+          task,
+          { attach: true }
+        );
+
+        // extract the properties of for the specific policy type
+        let properties = OpenTOSCAProps(newPolicyShape);
+
+        if (properties !== undefined) {
+          let propertyEntries = {};
+          properties.forEach((propertyEntry) => {
+            let entryId = propertyEntry.id;
+            propertyEntries[entryId] = policy.businessObject[entryId];
+          });
+          modeling.updateProperties(
+            elementRegistry.get(newPolicyShape.id),
+            propertyEntries
+          );
+        }
+      });
+    });
+  } else {
+    console.log(
+      "Type not supported for policy attachment: ",
+      resultShape.businessObject.$type
+    );
   }
 
   return result["success"];
