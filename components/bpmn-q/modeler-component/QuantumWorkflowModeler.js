@@ -22,6 +22,7 @@ import {
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
 import { createModeler, getModeler } from "./editor/ModelerHandler";
 import {
+  getConfigTabs,
   getPluginButtons,
   getTransformationButtons,
 } from "./editor/plugin/PluginHandler";
@@ -327,6 +328,10 @@ export class QuantumWorkflowModeler extends HTMLElement {
     });
     if (!modeler.config) {
       modeler.config = {};
+      let configTabs = getConfigTabs();
+      for (let tab of configTabs) {
+        tab.configTab.prototype.config();
+      }
     }
     if (this.workflowModel) {
       loadDiagram(this.workflowModel, getModeler()).then();

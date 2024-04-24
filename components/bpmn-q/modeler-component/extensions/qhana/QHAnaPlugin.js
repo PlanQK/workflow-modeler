@@ -4,7 +4,7 @@ import QHAnaExtensionModule from "./modeling";
 import TransformationButton from "../../editor/ui/TransformationButton";
 import ExtensibleButton from "../../editor/ui/ExtensibleButton";
 import UpdateQHAnaConfigurationsButton from "./ui/UpdateQHAnaConfigurationsButton";
-import QHAnaConfigurationsTab from "./configTabs/QHAnaConfigurationsTab";
+import QHAnaConfigTab from "./configTabs/QHAnaConfigTab";
 import { startQHAnaReplacementProcess } from "./replacement/QHAnaTransformationHandler";
 import qhanaStyles from "./resources/styling/qhana-icons.css";
 
@@ -27,7 +27,7 @@ export default {
     {
       tabId: "QHAnaEndpointsTab",
       tabTitle: "QHAna Plugin",
-      configTab: QHAnaConfigurationsTab,
+      configTab: QHAnaConfigTab,
     },
   ],
   extensionModule: QHAnaExtensionModule,
