@@ -201,26 +201,29 @@ export async function startPatternReplacementProcess(xml) {
       let foundOptimizationCandidate = false;
       for (let i = 0; i < optimizationCandidates.length; i++) {
         console.log(optimizationCandidates[i].entryPoint);
-        let parent = elementRegistry.get(
+        let elementParent = elementRegistry.get(
           optimizationCandidates[i].entryPoint.id
-        ).parent;
-        console.log(parent);
+        );
+        if (elementParent !== undefined) {
+          let parent = elementParent.parent;
+          console.log(parent);
 
-        if (parent.id === replacementConstruct.task.attachedToRef.id) {
-          foundOptimizationCandidate = true;
-          let attachedPatterns = parent.attachers;
-          console.log(attachedPatterns);
+          if (parent.id === replacementConstruct.task.attachedToRef.id) {
+            foundOptimizationCandidate = true;
+            let attachedPatterns = parent.attachers;
+            console.log(attachedPatterns);
 
-          // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
-          const foundElement = attachedPatterns.find(
-            (attachedPattern) =>
-              attachedPattern.type === constants.PRIORITIZED_EXECUTION
-          );
-          if (!foundElement) {
-            const pattern = elementRegistry.get(replacementConstruct.task.id);
-            patterns.push(pattern);
-            console.log("replaced");
-            replacementSuccess = true;
+            // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+            const foundElement = attachedPatterns.find(
+              (attachedPattern) =>
+                attachedPattern.type === constants.PRIORITIZED_EXECUTION
+            );
+            if (!foundElement) {
+              const pattern = elementRegistry.get(replacementConstruct.task.id);
+              patterns.push(pattern);
+              console.log("replaced");
+              replacementSuccess = true;
+            }
           }
         }
       }
@@ -237,54 +240,56 @@ export async function startPatternReplacementProcess(xml) {
       let foundOptimizationCandidate = false;
       for (let i = 0; i < optimizationCandidates.length; i++) {
         console.log(optimizationCandidates[i].entryPoint);
-        let parent = elementRegistry.get(
+        let elementParent = elementRegistry.get(
           optimizationCandidates[i].entryPoint.id
-        ).parent;
-        console.log(parent);
-        if (parent.id === replacementConstruct.task.attachedToRef.id) {
-          let attachedPatterns = parent.attachers;
-          console.log(attachedPatterns);
+        );
+        if (elementParent !== undefined) {
+          let parent = elementParent.parent;
+          if (parent.id === replacementConstruct.task.attachedToRef.id) {
+            let attachedPatterns = parent.attachers;
+            console.log(attachedPatterns);
 
-          // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
-          const foundElement = attachedPatterns.find(
-            (attachedPattern) =>
-              attachedPattern.type === constants.PRIORITIZED_EXECUTION
-          );
-          console.log(foundElement);
-          if (foundElement) {
-            optimizationCandidates[i].modeler = modeler;
-            let programGenerationResult =
-              await getQiskitRuntimeProgramDeploymentModel(
-                optimizationCandidates[i],
-                modeler.config,
-                getQRMs()
-              );
-            if (programGenerationResult.error !== undefined) {
-              return {
-                status: "failed",
-                cause:
-                  "Replacement of Pattern with Id " +
-                  replacementConstruct.task.id +
-                  " failed. Aborting process!",
-              };
-            } else {
-              console.log(programGenerationResult);
-              // only rewrite workflow if the hybrid program generation was successful
-              if (programGenerationResult.hybridProgramId !== undefined) {
-                await rewriteWorkflow(
-                  modeler,
+            // if another behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+            const foundElement = attachedPatterns.find(
+              (attachedPattern) =>
+                attachedPattern.type === constants.PRIORITIZED_EXECUTION
+            );
+            console.log(foundElement);
+            if (foundElement) {
+              optimizationCandidates[i].modeler = modeler;
+              let programGenerationResult =
+                await getQiskitRuntimeProgramDeploymentModel(
                   optimizationCandidates[i],
-                  getHybridRuntimeProvenance(),
-                  programGenerationResult.hybridProgramId
+                  modeler.config,
+                  getQRMs()
                 );
-                const pattern = elementRegistry.get(
-                  replacementConstruct.task.id
-                );
-                patterns.push(pattern);
-                console.log("replaced");
-                const prioPattern = elementRegistry.get(foundElement.id);
-                patterns.push(prioPattern);
-                replacementSuccess = true;
+              if (programGenerationResult.error !== undefined) {
+                return {
+                  status: "failed",
+                  cause:
+                    "Replacement of Pattern with Id " +
+                    replacementConstruct.task.id +
+                    " failed. Aborting process!",
+                };
+              } else {
+                console.log(programGenerationResult);
+                // only rewrite workflow if the hybrid program generation was successful
+                if (programGenerationResult.hybridProgramId !== undefined) {
+                  await rewriteWorkflow(
+                    modeler,
+                    optimizationCandidates[i],
+                    getHybridRuntimeProvenance(),
+                    programGenerationResult.hybridProgramId
+                  );
+                  const pattern = elementRegistry.get(
+                    replacementConstruct.task.id
+                  );
+                  patterns.push(pattern);
+                  console.log("replaced");
+                  const prioPattern = elementRegistry.get(foundElement.id);
+                  patterns.push(prioPattern);
+                  replacementSuccess = true;
+                }
               }
             }
           }
@@ -301,42 +306,47 @@ export async function startPatternReplacementProcess(xml) {
       let foundOptimizationCandidate = false;
       for (let i = 0; i < optimizationCandidates.length; i++) {
         console.log(optimizationCandidates[i].entryPoint);
-        let parent = elementRegistry.get(
+        let elementParent = elementRegistry.get(
           optimizationCandidates[i].entryPoint.id
-        ).parent;
-        if (parent.id === replacementConstruct.task.attachedToRef.id) {
-          let attachedPatterns = parent.attachers;
-          foundOptimizationCandidate = true;
+        );
+        if (elementParent !== undefined) {
+          let parent = elementParent.parent;
+          if (parent.id === replacementConstruct.task.attachedToRef.id) {
+            let attachedPatterns = parent.attachers;
+            foundOptimizationCandidate = true;
 
-          // if no other behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
-          const foundElement = attachedPatterns.find(
-            (attachedPattern) =>
-              attachedPattern.type === constants.ORCHESTRATED_EXECUTION
-          );
-          const foundPreElement = attachedPatterns.find(
-            (attachedPattern) =>
-              attachedPattern.type === constants.PRE_DEPLOYED_EXECUTION
-          );
-          console.log(foundElement);
-          if (!foundPreElement) {
-            optimizationCandidates[i].modeler = modeler;
-            await rewriteWorkflow(
-              modeler,
-              optimizationCandidates[i],
-              getHybridRuntimeProvenance(),
-              undefined
+            // if no other behavioral pattern is attached inside the subprocess, then the replacement strategy for this pattern is applied
+            const foundElement = attachedPatterns.find(
+              (attachedPattern) =>
+                attachedPattern.type === constants.ORCHESTRATED_EXECUTION
             );
-            const pattern = elementRegistry.get(replacementConstruct.task.id);
-            patterns.push(pattern);
-            console.log("replaced");
-            console.log(pattern);
-            replacementSuccess = true;
-            if (foundElement) {
-              const orchestratedPattern = elementRegistry.get(foundElement.id);
-              patterns.push(orchestratedPattern);
+            const foundPreElement = attachedPatterns.find(
+              (attachedPattern) =>
+                attachedPattern.type === constants.PRE_DEPLOYED_EXECUTION
+            );
+            console.log(foundElement);
+            if (!foundPreElement) {
+              optimizationCandidates[i].modeler = modeler;
+              await rewriteWorkflow(
+                modeler,
+                optimizationCandidates[i],
+                getHybridRuntimeProvenance(),
+                undefined
+              );
+              const pattern = elementRegistry.get(replacementConstruct.task.id);
+              patterns.push(pattern);
+              console.log("replaced");
+              console.log(pattern);
+              replacementSuccess = true;
+              if (foundElement) {
+                const orchestratedPattern = elementRegistry.get(
+                  foundElement.id
+                );
+                patterns.push(orchestratedPattern);
+              }
+            } else {
+              replacementSuccess = true;
             }
-          } else {
-            replacementSuccess = true;
           }
         }
       }
