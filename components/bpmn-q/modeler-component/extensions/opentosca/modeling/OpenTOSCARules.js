@@ -18,6 +18,25 @@ export default class OpenTOSCARules extends RuleProvider {
     super(eventBus);
     this.modeling = modeling;
 
+    function updateOnDemandStatus(elements, isOnDemand) {
+      elements?.forEach((element) => {
+        if (element?.type === consts.ON_DEMAND_POLICY) {
+          let host = element.host;
+          if (host !== null) {
+            host.businessObject.onDemand = isOnDemand;
+          }
+        }
+      });
+    }
+
+    eventBus.on("commandStack.elements.delete.preExecute", function (context) {
+      updateOnDemandStatus(context.context.elements, false);
+    });
+
+    eventBus.on("commandStack.elements.delete.reverted", function (context) {
+      updateOnDemandStatus(context.context.elements, true);
+    });
+
     this.addRule("shape.create", 10000, function (context) {
       let shape = context.shape;
 
