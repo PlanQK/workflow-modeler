@@ -33,7 +33,11 @@ import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
 import ExtensibleButton from "../../../../../editor/ui/ExtensibleButton";
 import { loadDiagram } from "../../../../../editor/util/IoUtilities";
 import { startOnDemandReplacementProcess } from "../../../replacement/OnDemandTransformator";
-import { deletePolicies, getPolicies } from "../../../utilities/Utilities";
+import {
+  deletePolicies,
+  getPolicies,
+  injectWineryEndpoint,
+} from "../../../utilities/Utilities";
 import {
   CLOUD_DEPLOYMENT_MODEL_POLICY,
   DEDICATED_HOSTING_POLICY,
@@ -45,6 +49,7 @@ import {
   getWineryEndpoint,
 } from "../../../framework-config/config-manager";
 import { fetchDataFromEndpoint } from "../../../../../editor/util/HttpUtilities";
+import * as config from "../../../framework-config/config-manager";
 
 const defaultState = {
   windowOpenOnDemandDeploymentOverview: false,
@@ -252,7 +257,10 @@ export default class DeploymentPlugin extends PureComponent {
           let instanceReferences = await fetchDataFromEndpoint(
             serviceTemplateLink
           );
-          let serviceTemplateInstances = instanceReferences?.service_template_instances ? instanceReferences.service_template_instances : [];
+          let serviceTemplateInstances =
+            instanceReferences?.service_template_instances
+              ? instanceReferences.service_template_instances
+              : [];
 
           for (let serviceTemplateInstance of serviceTemplateInstances) {
             console.log(
@@ -297,6 +305,7 @@ export default class DeploymentPlugin extends PureComponent {
               if (bindingResponse !== undefined && bindingResponse.success) {
                 csarList = csarList.filter((x) => x.csarName !== csar.csarName);
                 deletePolicies(this.modeler, csar.serviceTaskIds[j]);
+                injectWineryEndpoint(this.modeler, csar.serviceTaskIds[j]);
               }
             }
             break;
@@ -728,6 +737,9 @@ export default class DeploymentPlugin extends PureComponent {
                 windowOpenOnDemandDeploymentOverview: false,
               });
               return;
+            } // on successful binding replace wineryendpoint in deploymentmodelurl
+            else {
+              injectWineryEndpoint(this.modeler, serviceTaskIds[j]);
             }
           }
         } else {
