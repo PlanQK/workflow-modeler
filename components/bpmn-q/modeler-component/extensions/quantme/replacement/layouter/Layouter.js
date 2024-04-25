@@ -13,6 +13,10 @@ import { getDi, is } from "bpmn-js/lib/util/ModelUtil";
 import { isFlowLikeElement } from "../../../../editor/util/ModellingUtilities";
 import { ON_DEMAND_POLICY, POLICIES } from "../../../opentosca/Constants";
 import { PATTERNS } from "../../../pattern/Constants";
+import {
+  CIRCUIT_CUTTING_SUBPROCESS,
+  QUANTUM_HARDWARE_SELECTION_SUBPROCESS,
+} from "../../Constants";
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = "8";
@@ -58,8 +62,8 @@ function layoutProcess(modeling, elementRegistry, process) {
         if (
           [
             "bpmn:SubProcess",
-            "quantme:QuantumHardwareSelectionSubprocess",
-            "quantme:CircuitCuttingSubprocess",
+            QUANTUM_HARDWARE_SELECTION_SUBPROCESS,
+            CIRCUIT_CUTTING_SUBPROCESS,
           ].includes(flowElements[i].$type)
         ) {
           console.log(
@@ -446,12 +450,13 @@ function layoutWithDagre(
     console.log(task.type);
     if (
       task.type === "bpmn:SubProcess" ||
-      task.type === "quantme:CircuitCuttingSubProcess" ||
-      task.type === "quantme:HardwareSelectionSubProcess"
+      task.type === CIRCUIT_CUTTING_SUBPROCESS ||
+      task.type === QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
-      const dimensions = computeDimensionsOfElement(task);
+      const dimensions = computeDimensionsOfSubprocess(task);
       task.height = dimensions.height;
       task.width = dimensions.width;
+      changeAttachersCoordinates(task);
     }
     g.setNode(task.id, {
       label: task.id,
@@ -503,39 +508,73 @@ function layoutWithDagre(
       element.waypoints = waypoints;
     }
   });
+  for (let i = 0; i < tasks.length; i++) {
+    let task = tasks[i];
+    console.log(task.type);
+    if (
+      task.type === "bpmn:SubProcess" ||
+      task.type === CIRCUIT_CUTTING_SUBPROCESS ||
+      task.type === QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+    ) {
+      changeAttachersCoordinates(task);
+    }
+  }
 }
 
-export function computeDimensionsOfElement(element) {
+/**
+ * Computes the dimensions (width and height) of a subprocess based on its children's positions and sizes.
+ * @param subprocess - The subprocess object containing children
+ * @returns the computed width and height of the subprocess.
+ */
+export function computeDimensionsOfSubprocess(subprocess) {
+  console.log("compute dimensions for subprocess ", subprocess.id);
   let minX = Number.MAX_SAFE_INTEGER;
   let maxX = Number.MIN_SAFE_INTEGER;
   let minY = Number.MAX_SAFE_INTEGER;
   let maxY = Number.MIN_SAFE_INTEGER;
+  console.log(subprocess);
 
-  console.log(element);
-
-  element.children.forEach((child) => {
-    console.log("Get children x of child ", child.id);
+  subprocess.children.forEach((child) => {
+    console.log("Get coordinates of child ", child.id);
     if (child.di && child.di.bounds) {
       const childX = child.di.bounds.x;
       const childY = child.di.bounds.y;
-      console.log(minX);
       minX = Math.min(minX, childX);
       minY = Math.min(minY, childY);
-      console.log(childX);
-      console.log(maxX);
       maxX = Math.max(maxX, childX + child.di.bounds.width);
       maxY = Math.max(maxY, childY + child.di.bounds.height);
-      console.log(childX + child.di.bounds.width);
-      console.log(childY + child.di.bounds.height);
-      console.log(maxY);
     }
   });
-  console.log(maxX);
-  console.log(minX);
+
+  subprocess.attachers.forEach((attacher) => {
+    console.log("Get coordinates of attacher", attacher.id);
+    const attacherX = attacher.x;
+    const attacherY = attacher.y;
+    minX = Math.min(minX, attacherX);
+    minY = Math.min(minY, attacherY);
+    maxX = Math.max(maxX, attacherX + attacher.width);
+    maxY = Math.max(maxY, attacherY + attacher.height);
+  });
+
   // the elements start not with the subprocess.x so we need to adjust the width
   // add a little padding
-  const subprocessWidth = maxX - element.x - minX + 30;
-  const subprocessHeight = maxY - element.y + 10;
+  const subprocessWidth = maxX - subprocess.x - minX + 30;
+  const subprocessHeight = maxY - subprocess.y + 10;
 
   return { width: subprocessWidth, height: subprocessHeight };
+}
+
+/**
+ * Updates the y coordinate of attachers within a subprocess based on their types.
+ * @param subprocess - The subprocess object containing attachers.
+ */
+export function changeAttachersCoordinates(subprocess) {
+  let attachers = subprocess.attachers;
+  for (let i = 0; i < attachers.length; i++) {
+    // attach pattern again at the bottom
+    if (PATTERNS.includes(attachers[i].type)) {
+      let patternY = subprocess.y + subprocess.height - 20;
+      attachers[i].y = patternY;
+    }
+  }
 }
