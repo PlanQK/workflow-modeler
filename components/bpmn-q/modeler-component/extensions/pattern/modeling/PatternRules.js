@@ -92,6 +92,21 @@ export default class PatternRules extends RuleProvider {
         }
       }
 
+      if (
+        attachedElementTypesWithPolicy === 1 &&
+        target.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
+      ) {
+        return false;
+      }
+
+      if (target.type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
+        // we cannot attach behavioral pattern to any task
+        attachedElementTypesWithPolicy += consts.BEHAVIORAL_PATTERNS.length;
+
+        // we cannot attach the biased initial state
+        attachedElementTypesWithPolicy += 1;
+      }
+
       for (let i = 0; i < target.attachers.length; i++) {
         if (specificPolicies.includes(target.attachers[i].type)) {
           specificPolicies = specificPolicies.filter(
@@ -139,8 +154,7 @@ export default class PatternRules extends RuleProvider {
       }
       if (
         shapeToAttach.type.includes("pattern") &&
-        (target.type === "bpmn:ServiceTask" ||
-          target.type === "bpmn:SubProcess")
+        target.type === "bpmn:SubProcess"
       ) {
         return true;
       }

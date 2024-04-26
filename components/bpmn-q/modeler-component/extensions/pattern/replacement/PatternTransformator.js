@@ -479,40 +479,44 @@ export function attachPatternsToSuitableTasks(
 
       // contains all flowElements of the parent and its children
       let children = new Set();
-      patterns[j].attachedToRef.flowElements.forEach((flowElement) =>
-        children.add(flowElement.id)
-      );
+      let hostFlowElements = patterns[j].attachedToRef.flowElements;
+      if (hostFlowElements !== undefined) {
+        hostFlowElements.forEach((flowElement) => children.add(flowElement.id));
 
-      patterns[j].attachedToRef.flowElements.forEach((child) => {
-        if (
-          (child.$type && child.$type === "bpmn:SubProcess") ||
-          (child.type && child.type === "bpmn:SubProcess")
-        ) {
-          // Recursively retrieve the subprocess's flowElements
-          let subProcessFlowElements = retrieveFlowElements(
-            child.flowElements,
-            elementRegistry
-          );
-          subProcessFlowElements.forEach((flowElement) =>
-            children.add(flowElement)
-          );
-        }
-      });
+        hostFlowElements.forEach((child) => {
+          if (
+            (child.$type && child.$type === "bpmn:SubProcess") ||
+            (child.type && child.type === "bpmn:SubProcess")
+          ) {
+            // Recursively retrieve the subprocess's flowElements
+            let subProcessFlowElements = retrieveFlowElements(
+              child.flowElements,
+              elementRegistry
+            );
+            subProcessFlowElements.forEach((flowElement) =>
+              children.add(flowElement)
+            );
+          }
+        });
 
-      children.values().forEach((id) => {
-        attachPatternsToSuitableConstruct(
-          elementRegistry.get(id),
-          pattern.type,
-          modeling
-        );
-      });
+        children.values().forEach((id) => {
+          attachPatternsToSuitableConstruct(
+            elementRegistry.get(id),
+            pattern.type,
+            modeling
+          );
+        });
+      }
     }
   }
 
   for (let i = 0; i < patterns.length; i++) {
-    // behavioral patterns are deleted after acting on the optimization candidate
-    if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type)) {
-      modeling.removeShape(elementRegistry.get(patterns[i].task.id));
+    let hostFlowElements = patterns[i].attachedToRef.flowElements;
+    if (hostFlowElements !== undefined) {
+      // behavioral patterns are deleted after acting on the optimization candidate
+      if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type)) {
+        modeling.removeShape(elementRegistry.get(patterns[i].task.id));
+      }
     }
   }
 }

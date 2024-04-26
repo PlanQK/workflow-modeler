@@ -159,17 +159,19 @@ export default class PatternReplaceMenuProvider {
     });
 
     if (element.host.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK) {
-      filteredOptionsBasedOnAttachers =
-        quantmeReplaceOptions.AUGMENTATION_PATTERN.filter((option) => {
+      filteredOptionsBasedOnAttachers = filteredOptionsBasedOnAttachers.filter(
+        (option) => {
           return option.target.type === consts.BIASED_INITIAL_STATE;
-        });
+        }
+      );
     }
 
     if (element.host.type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
-      filteredOptionsBasedOnAttachers =
-        quantmeReplaceOptions.AUGMENTATION_PATTERN.filter((option) => {
+      filteredOptionsBasedOnAttachers = filteredOptionsBasedOnAttachers.filter(
+        (option) => {
           return option.target.type !== consts.BIASED_INITIAL_STATE;
-        });
+        }
+      );
     }
 
     // error correction is not allowed with error mitigation
