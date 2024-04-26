@@ -330,6 +330,13 @@ export default class DeploymentPlugin extends PureComponent {
           windowOpenDeploymentBinding: false,
           windowOpenOnDemandDeploymentOverview: false,
         });
+        NotificationHandler.getInstance().displayNotification({
+          type: "info",
+          title: "Service instances successfully bound",
+          content:
+            "All service tasks requiring deployment, have successfully been bound to existing service instances.",
+          duration: 8000,
+        });
       } else {
         this.setState({
           windowOpenDeploymentOverview: false,
