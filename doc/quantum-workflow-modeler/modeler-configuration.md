@@ -14,6 +14,8 @@ In the following, all environment variables that can be used to customize the wo
 
 * ```ENABLE_DATA_FLOW_PLUGIN``` (default: 'true'): Defines if the Data Flow plugin is enabled.
 
+* ```ENABLE_PATTERN_PLUGIN``` (default: 'true'): Defines if the Pattern plugin is enabled.
+
 * ```ENABLE_PLANQK_PLUGIN``` (default: 'true'): Defines if the PlanQK plugin is enabled.
 
 * ```ENABLE_QHANA_PLUGIN``` (default: 'true'): Defines if the QHAna plugin is enabled.
@@ -27,6 +29,12 @@ In the following, all environment variables that can be used to customize the wo
 * ```NISQ_ANALYZER_ENDPOINT``` (default: 'http://localhost:8098/nisq-analyzer'): Defines the endpoint of the [NISQ Analyzer](https://github.com/UST-QuAntiL/nisq-analyzer) to enable an automated hardware selection.
 
 * ```OPENTOSCA_ENDPOINT``` (default: 'http://localhost:1337/csars'): Defines the endpoint of the OpenTOSCA container to deploy services with.
+
+* ```PATTERN_ATLAS_ENDPOINT``` (default: 'http://localhost:1977/patternatlas/patternLanguages/af7780d5-1f97-4536-8da7-4194b093ab1d'): Defines the endpoint of the Pattern Atlas.
+
+* ```PATTERN_ATLAS_UI_ENDPOINT``` (default: 'http://localhost:1978'): Defines the endpoint of the Pattern Atlas UI.
+
+* ```QC_ATLAS_ENDPOINT``` (default: 'http://localhost:6626'): Defines the endpoint of the QC Atlas.
 
 * ```QISKIT_RUNTIME_HANDLER_ENDPOINT``` (default: 'http://localhost:8889'): Defines the endpoint of the [Qiskit Runtime Handler](https://github.com/UST-QuAntiL/qiskit-runtime-handler) which enables the automatic generation of hybrid programs from Qiskit programs.
 
