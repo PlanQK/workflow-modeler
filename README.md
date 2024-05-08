@@ -99,7 +99,7 @@ modelerComponent.pluginConfigs = [
         name: "planqk",
     },
     {
-        name: "qhana",
+        name: "pattern",
     }
 ]
 ```
