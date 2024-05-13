@@ -44,7 +44,7 @@ export default {
       transformWorkflow={async (xml) => {
         let modeler = getModeler();
         modeler.views = modeler.views || {};
-        modeler.views["view-with-patterns"] = xml;
+        //modeler.views["view-with-patterns"] = xml;
         let currentQRMs = [];
         return await startPatternReplacementProcess(xml, currentQRMs, {
           nisqAnalyzerEndpoint: config.getNisqAnalyzerEndpoint(),
