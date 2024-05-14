@@ -204,26 +204,9 @@ export default class PatternSelectionPlugin extends PureComponent {
           });
 
           // Combine the sorted filtered elements with the remaining elements
-          /** 
-          const sortedSolutionFlowElements = nonFilteredElements.concat(
-            solutionFlowElements.filter((element) => {
-              const elementType = solutionElementRegistry.get(element.id).$type;
-              const elementCustomType = solutionElementRegistry.get(
-                element.id
-              ).type;
-  
-              return (
-                elementType === "bpmn:SequenceFlow" ||
-                elementCustomType === "bpmn:SequenceFlow"
-              );
-            })
-          );
-  
-          */
           const sortedSolutionFlowElements = nonFilteredElements;
           const solutionFlowElementsLength = nonFilteredElements.length;
           let offset = 0;
-          console.log(sortedSolutionFlowElements);
           console.log(sortedSolutionFlowElements);
 
           for (let j = 0; j < solutionFlowElementsLength; j++) {

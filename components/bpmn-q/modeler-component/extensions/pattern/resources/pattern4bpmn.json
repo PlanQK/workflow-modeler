@@ -101,7 +101,7 @@
       "superClass": ["bpmn:BoundaryEvent"],
       "properties": [
         {
-          "name": "PatternId",
+          "name": "patternId",
           "isAttr": true,
           "type": "String"
         }

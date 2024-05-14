@@ -13,7 +13,7 @@ import * as quantmeConsts from "../../quantme/Constants";
 import { computeDimensionsOfSubprocess } from "../../quantme/replacement/layouter/Layouter";
 import * as constants from "../Constants";
 import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
-import { PATTERN_PREFIX } from "../Constants";
+import { PATTERN_ID, PATTERN_PREFIX } from "../Constants";
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
   console.log(subprocess);
@@ -21,11 +21,18 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   const createPatterns = (patternList, offsetX) => {
     for (let i = 0; i < patternList.length; i++) {
       const patternName = patternList[i].name.replace(/[\s-]/g, "");
-      console.log("add pattern", patternName);
+      console.log("Adding pattern: ", patternList[i]);
 
       let patternX = subprocess.x + patternSpacing * (i + offsetX);
       let patternY = subprocess.y + dimensions.height;
-      createPattern(modeling, patternName, patternX, patternY, subprocess);
+      createPattern(
+        modeling,
+        patternName,
+        patternList[i].id,
+        patternX,
+        patternY,
+        subprocess
+      );
     }
   };
 
@@ -36,7 +43,7 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   );
 }
 
-function createPattern(modeling, patternName, x, y, subprocess) {
+function createPattern(modeling, patternName, patternId, x, y, subprocess) {
   const pattern = modeling.createShape(
     { type: PATTERN_PREFIX + patternName },
     { x: x, y: y },
@@ -46,7 +53,9 @@ function createPattern(modeling, patternName, x, y, subprocess) {
 
   modeling.updateProperties(pattern, {
     attachedToRef: subprocess.businessObject,
+    [PATTERN_ID]: patternId,
   });
+  console.log("Added new pattern: ", pattern);
 }
 export function attachPatternsToSuitableConstruct(
   construct,
