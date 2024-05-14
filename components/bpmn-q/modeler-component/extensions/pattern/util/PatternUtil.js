@@ -261,3 +261,15 @@ export function removeAlgorithmAndAugmentationPatterns(
     }
   }
 }
+
+/**
+ * Get the solution for the given pattern
+ *
+ * @param id the ID of the solution to retrieve the pattern for
+ */
+export function getSolutionForPattern(id) {
+  console.log("Retrieving solution for pattern with ID: ", id);
+
+  // TODO
+  return undefined;
+}

@@ -22,6 +22,7 @@ import { replaceErrorCorrectionPattern } from "./correction/ErrorCorrectionPatte
 import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
 import {
   attachPatternsToSuitableConstruct,
+  getSolutionForPattern,
   removeAlgorithmAndAugmentationPatterns,
 } from "../util/PatternUtil";
 import { findOptimizationCandidates } from "../../quantme/ui/adaptation/CandidateDetector";
@@ -156,6 +157,12 @@ export async function startPatternReplacementProcess(xml) {
   );
 
   for (let replacementConstruct of augmentationReplacementConstructs) {
+    console.log("Replacing augmentation pattern: ", replacementConstruct);
+
+    // retrieve solution for pattern to enable correct configuration
+    let concreteSolution = getSolutionForPattern(replacementConstruct.id);
+    console.log("Solution: ", concreteSolution);
+
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.CIRCUIT_CUTTING) {
       let { replaced, flows, pattern } = await replaceCuttingPattern(

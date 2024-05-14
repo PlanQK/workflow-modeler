@@ -8,98 +8,104 @@
   "types": [
     {
       "name": "QuantumKernelEstimator",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "AlternatingOperatorAnsatz",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "QuantumApproximateOptimizationAlgorithm",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "QuantumPhaseEstimation",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "VariationalQuantumAlgorithm",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "VariationalQuantumEigensolver",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "OrchestratedExecution",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "PredeployedExecution",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "PrioritizedExecution",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "ErrorCorrection",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "GateErrorMitigation",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "ReadoutErrorMitigation",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "WarmStart",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "BiasedInitialState",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "ChainedOptimization",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "VariationalParameterTransfer",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "PreTrainedFeatureExtractor",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "CircuitCutting",
-      "superClass": ["bpmn:BoundaryEvent"],
+      "superClass": ["pattern:Pattern"],
       "properties": []
     },
     {
       "name": "Pattern",
       "superClass": ["bpmn:BoundaryEvent"],
-      "properties": []
+      "properties": [
+        {
+          "name": "PatternId",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "enumerations": [],
