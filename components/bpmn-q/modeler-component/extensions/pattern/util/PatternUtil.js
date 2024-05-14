@@ -14,6 +14,7 @@ import { computeDimensionsOfSubprocess } from "../../quantme/replacement/layoute
 import * as constants from "../Constants";
 import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
 import { PATTERN_ID, PATTERN_PREFIX } from "../Constants";
+import { getQcAtlasEndpoint } from "../framework-config/config-manager";
 
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
@@ -307,6 +308,10 @@ export function removeAlgorithmAndAugmentationPatterns(
  */
 export function getSolutionForPattern(id) {
   console.log("Retrieving solution for pattern with ID: ", id);
+
+  const qcAtlasEndpoint = getQcAtlasEndpoint();
+  let endpoint = qcAtlasEndpoint + "/TODO/" + id;
+  console.log("Retrieving solutions from URL: ", endpoint);
 
   // TODO
   return undefined;

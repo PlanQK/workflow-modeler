@@ -101,7 +101,6 @@ async function visualizeCandidate(optimizationCandidate, workflowXml, modeler) {
   let tempModeler = await createTempModelerFromXml(workflowXml);
   let modeling = tempModeler.get("modeling");
   let tempElementRegistry = tempModeler.get("elementRegistry");
-  console.log(elementRegistry);
   let rootElement = getRootProcess(tempModeler.getDefinitions());
   let elementRegistry = modeler.get("elementRegistry");
 
