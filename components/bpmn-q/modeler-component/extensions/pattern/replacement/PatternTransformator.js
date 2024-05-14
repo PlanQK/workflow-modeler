@@ -466,11 +466,6 @@ export function attachPatternsToSuitableTasks(
   patterns,
   modeling
 ) {
-  let flowElements = process.flowElements;
-  if (!flowElements) {
-    flowElements = process.children;
-  }
-
   let pattern;
   for (let j = 0; j < patterns.length; j++) {
     pattern = elementRegistry.get(patterns[j].task.id);
