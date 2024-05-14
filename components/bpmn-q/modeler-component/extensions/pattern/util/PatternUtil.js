@@ -200,9 +200,7 @@ export function changeIdOfContainedElements(
  * @returns True if there is a conflict, false otherwise.
  */
 export function checkForbiddenPatternCombinations(construct, patternType) {
-  console.log("attach patternType to construct", patternType, construct.id);
-  console.log(construct);
-  console.log(construct.attachers);
+  console.log("Checking if patternType " + patternType + " can be attached to construct: ", construct);
   if (construct.attachers !== undefined) {
     if (patternType === consts.ERROR_CORRECTION) {
       const forbiddenPatterns = construct.attachers.filter(
