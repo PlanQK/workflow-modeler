@@ -12,6 +12,7 @@ import * as consts from "../Constants";
 import * as quantmeConsts from "../../quantme/Constants";
 import { computeDimensionsOfSubprocess } from "../../quantme/replacement/layouter/Layouter";
 import * as constants from "../Constants";
+import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
   console.log(subprocess);
@@ -179,11 +180,7 @@ export function changeIdOfContainedElements(
     });
     child.di.id = id + "_" + child.id + "_di";
 
-    if (
-      child.$type === "bpmn:SubProcess" ||
-      child.$type === quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS ||
-      child.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS
-    ) {
+    if (isQuantMESubprocess(child)) {
       changeIdOfContainedElements(
         child,
         child.parent,
