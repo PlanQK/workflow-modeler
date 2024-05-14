@@ -32,12 +32,12 @@ import {
 } from "../../util/PatternUtil";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import { getExtension } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import * as quantmeConsts from "../../../quantme/Constants";
 import {
   getPatternAtlasEndpoint,
   getQcAtlasEndpoint,
 } from "../../framework-config/config-manager";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
+import { isQuantMESubprocess } from "../../../quantme/utilities/Utilities";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -322,21 +322,7 @@ export default class PatternSelectionPlugin extends PureComponent {
                   modeling.connect(start, shape, { type: "bpmn:SequenceFlow" });
                   solutionModeling.removeElements(outgoingFlows);
                 }
-              } else if (
-                type !== quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS &&
-                type !== quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS &&
-                type !== "bpmn:SubProcess"
-              ) {
-                /** 
-                updateShape = modeling.createShape(
-                  s,
-                  { x: 50 + offset, y: 50 },
-                  elementRegistry.get(collapsedSubprocess.id)
-                );
-                modeling.updateProperties(elementRegistry.get(updateShape.id), {
-                  id: collapsedSubprocess.id + "_" + updateShape.id,
-                });
-                */
+              } else if (!isQuantMESubprocess(flowElement)) {
                 updateShape = modeling.createShape(
                   flowElement,
                   { x: 442 + offset, y: 100 },

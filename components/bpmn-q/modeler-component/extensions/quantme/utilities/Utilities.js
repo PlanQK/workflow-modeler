@@ -10,6 +10,7 @@
  */
 
 import $ from "jquery";
+import * as quantmeConsts from "../Constants";
 
 /**
  * Check if the given task is a QuantME task
@@ -51,4 +52,17 @@ export function performAjax(targetUrl, dataToSend) {
       },
     });
   });
+}
+
+/**
+ * Checks if the given element is a subprocess or not
+ *
+ * @param element the element to check
+ */
+export function isQuantMESubprocess(element) {
+  return (
+    element.$type === "bpmn:SubProcess" ||
+    element.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS ||
+    element.$type === quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+  );
 }

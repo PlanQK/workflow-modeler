@@ -20,7 +20,6 @@ import { replaceWarmStart } from "./warm-start/WarmStartPatternHandler";
 import { replaceCuttingPattern } from "./cutting/CuttingPatternHandler";
 import { replaceErrorCorrectionPattern } from "./correction/ErrorCorrectionPatternHandler";
 import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
-import * as quantmeConsts from "../../quantme/Constants";
 import {
   attachPatternsToSuitableConstruct,
   removeAlgorithmAndAugmentationPatterns,
@@ -30,6 +29,7 @@ import { getQRMs } from "../../quantme/qrm-manager";
 import { rewriteWorkflow } from "../../quantme/ui/adaptation/WorkflowRewriter";
 import { getQiskitRuntimeProgramDeploymentModel } from "../../quantme/ui/adaptation/runtimes/QiskitRuntimeHandler";
 import { getHybridRuntimeProvenance } from "../../quantme/framework-config/config-manager";
+import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
 
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
@@ -137,7 +137,7 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  let replacementConstructs = replacementConstructs.filter(
+  let replacementConstructs = containedPatterns.filter(
     (construct) =>
       construct.task.$type !== constants.READOUT_ERROR_MITIGATION &&
       construct.task.$type !== constants.GATE_ERROR_MITIGATION &&
@@ -411,13 +411,7 @@ export function getPatterns(process, elementRegistry) {
     }
 
     // recursively retrieve patterns if subprocess is found
-    if (
-      flowElement.$type &&
-      (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS ||
-        flowElement.$type ===
-          quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS)
-    ) {
+    if (flowElement.$type && isQuantMESubprocess(flowElement)) {
       Array.prototype.push.apply(
         patterns,
         getPatterns(flowElement, elementRegistry)
