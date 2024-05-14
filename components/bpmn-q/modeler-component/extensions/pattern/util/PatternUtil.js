@@ -200,41 +200,46 @@ export function changeIdOfContainedElements(
  * @returns True if there is a conflict, false otherwise.
  */
 export function checkForbiddenPatternCombinations(construct, patternType) {
-  console.log("Checking if patternType " + patternType + " can be attached to construct: ", construct);
+  console.log(
+    "Checking if patternType " +
+      patternType +
+      " can be attached to construct: ",
+    construct
+  );
+
+  // set of patterns that are unsuitable for combination with given pattern
+  let forbiddenPatterns = [];
+
   if (construct.attachers !== undefined) {
     if (patternType === consts.ERROR_CORRECTION) {
-      const forbiddenPatterns = construct.attachers.filter(
+      forbiddenPatterns = construct.attachers.filter(
         (pattern) =>
           pattern.type === consts.GATE_ERROR_MITIGATION ||
           pattern.type === consts.READOUT_ERROR_MITIGATION
       );
-      return forbiddenPatterns.length > 0;
     }
     if (
       patternType === consts.GATE_ERROR_MITIGATION ||
       patternType === consts.READOUT_ERROR_MITIGATION
     ) {
-      const forbiddenPatterns = construct.attachers.filter(
+      forbiddenPatterns = construct.attachers.filter(
         (pattern) => pattern.type === consts.ERROR_CORRECTION
       );
-      return forbiddenPatterns.length > 0;
     }
     if (patternType === consts.ORCHESTRATED_EXECUTION) {
-      const forbiddenPatterns = construct.attachers.filter(
+      forbiddenPatterns = construct.attachers.filter(
         (pattern) => pattern.type === consts.PRE_DEPLOYED_EXECUTION
       );
-      return forbiddenPatterns.length > 0;
     }
     if (patternType === consts.PRE_DEPLOYED_EXECUTION) {
-      const forbiddenPatterns = construct.attachers.filter(
+      forbiddenPatterns = construct.attachers.filter(
         (pattern) => pattern.type === consts.ORCHESTRATED_EXECUTION
       );
-      console.log(forbiddenPatterns.length > 0);
-      console.log("predeployed attached or not");
-      return forbiddenPatterns.length > 0;
     }
   }
-  return false;
+
+  console.log("Set of forbidden patterns: ", forbiddenPatterns);
+  return forbiddenPatterns.length > 0;
 }
 
 /**
