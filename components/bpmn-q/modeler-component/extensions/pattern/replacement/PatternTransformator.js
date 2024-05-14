@@ -434,7 +434,7 @@ function retrieveFlowElements(flowElements, elementRegistry) {
       (element.type && element.type === "bpmn:SubProcess")
     ) {
       console.log("searchFlow", element.id);
-      // Recursively search through subprocess's children or flowElements
+      // Recursively search through subprocesses children or flowElements
       let childrenOrFlowElements = element.children;
       if (element.children === undefined) {
         childrenOrFlowElements = element.flowElements;
