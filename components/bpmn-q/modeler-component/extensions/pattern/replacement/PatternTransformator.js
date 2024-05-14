@@ -466,9 +466,8 @@ export function attachPatternsToSuitableTasks(
   patterns,
   modeling
 ) {
-  let pattern;
   for (let j = 0; j < patterns.length; j++) {
-    pattern = elementRegistry.get(patterns[j].task.id);
+    let pattern = elementRegistry.get(patterns[j].task.id);
 
     if (pattern !== undefined) {
       console.log("Start with attachment of pattern ", pattern.id);
