@@ -197,6 +197,7 @@ export function changeIdOfContainedElements(
 
 /**
  * Checks whether the attached patterns conflict with the pattern intended to be attached to the construct.
+ *
  * @param construct The construct to which the pattern is intended to be attached.
  * @param patternType The type of the pattern being considered.
  * @returns True if there is a conflict, false otherwise.
@@ -242,7 +243,7 @@ export function checkForbiddenPatternCombinations(construct, patternType) {
 }
 
 /**
- * TODO
+ * Remove augmentation and algorithm patterns if they are successfully replaced by a corresponding task
  *
  * @param patterns the set of pattern to work on
  * @param modeling the modeling to remove shapes from the workflow

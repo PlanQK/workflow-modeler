@@ -21,7 +21,6 @@ import * as quantmeConsts from "../../quantme/Constants";
 import {
   attachPatternsToSuitableConstruct,
   removeAlgorithmAndAugmentationPatterns,
-  removeBehavioralPatterns
 } from "../util/PatternUtil";
 import { findOptimizationCandidates } from "../../quantme/ui/adaptation/CandidateDetector";
 import { getQRMs } from "../../quantme/qrm-manager";
