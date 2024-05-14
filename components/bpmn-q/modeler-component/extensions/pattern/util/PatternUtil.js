@@ -151,7 +151,7 @@ function attachPatternToShape(shape, patternType, modeling) {
   modeling.updateProperties(pattern, {
     attachedToRef: shape.businessObject,
   });
-  console.log(pattern);
+  console.log("Added new modeling construct for pattern: ", pattern);
 }
 
 export function changeIdOfContainedElements(
@@ -243,24 +243,27 @@ export function checkForbiddenPatternCombinations(construct, patternType) {
 }
 
 /**
- * Remove augmentation and algorithm patterns if they are successfully replaced by a corresponding task
+ * Remove augmentation and algorithm patterns if they are successfully attached to a corresponding task
  *
  * @param patterns the set of pattern to work on
  * @param modeling the modeling to remove shapes from the workflow
  * @param elementRegistry the element registry to access elements of the workflow
  */
-export function removeAlgorithmAndAugmentationPatterns(patterns, modeling, elementRegistry) {
+export function removeAlgorithmAndAugmentationPatterns(
+  patterns,
+  modeling,
+  elementRegistry
+) {
   for (let i = 0; i < patterns.length; i++) {
     let hostFlowElements = patterns[i].attachedToRef.flowElements;
 
     // check if pattern is attached to a flow element of the workflow
     if (hostFlowElements !== undefined) {
-
       // behavioral patterns are deleted after acting on the optimization candidate
       if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type)) {
         modeling.removeShape(elementRegistry.get(patterns[i].task.id));
       }
-    } else{
+    } else {
       console.warn("Pattern not attached to flow element: ", patterns[i]);
     }
   }

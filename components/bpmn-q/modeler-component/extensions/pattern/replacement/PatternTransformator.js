@@ -55,9 +55,7 @@ export async function startPatternReplacementProcess(xml) {
   // get all patterns from the process
   let containedPatterns = getPatterns(rootElement, elementRegistry);
   console.log(
-    "Process contains " +
-    containedPatterns.length +
-      " patterns to replace..."
+    "Process contains " + containedPatterns.length + " patterns to replace..."
   );
   if (!containedPatterns || !containedPatterns.length) {
     console.log("No patterns to replace, terminating transformation...");
