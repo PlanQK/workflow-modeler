@@ -7,6 +7,15 @@ import {
 import { is } from "bpmn-js/lib/util/ModelUtil";
 
 /**
+ * Get the type of a given element
+ *
+ * @param element the element to retrieve the type for
+ */
+export function getType(element) {
+  return element.$type ? element.$type : element.type;
+}
+
+/**
  * Create a camunda form filed for the given form field data.
  *
  * @param elementID The ID of the given element.

@@ -11,7 +11,10 @@
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import * as constants from "../Constants";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
-import { getRootProcess } from "../../../editor/util/ModellingUtilities";
+import {
+  getRootProcess,
+  getType,
+} from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { replaceWarmStart } from "./warm-start/WarmStartPatternHandler";
 import { replaceCuttingPattern } from "./cutting/CuttingPatternHandler";
@@ -429,10 +432,7 @@ function retrieveFlowElements(flowElements, elementRegistry) {
 
   flowElements.forEach((flowElement) => {
     let element = elementRegistry.get(flowElement.id);
-    if (
-      (element.$type && element.$type === "bpmn:SubProcess") ||
-      (element.type && element.type === "bpmn:SubProcess")
-    ) {
+    if (getType(element) && getType(element) === "bpmn:SubProcess") {
       console.log("searchFlow", element.id);
       // Recursively search through subprocesses children or flowElements
       let childrenOrFlowElements = element.children;
