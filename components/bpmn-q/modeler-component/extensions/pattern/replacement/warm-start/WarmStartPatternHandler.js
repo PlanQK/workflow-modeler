@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
+import { PATTERN_PREFIX } from "../../Constants";
 /**
  * Replace the given warm start pattern by a quantme warm starting task
  */
@@ -34,7 +35,7 @@ export async function replaceWarmStart(warmStartPattern, parent, modeler) {
   warmStartTaskBo.name = "Warm Start";
 
   // remove the prefix
-  let warmStartPatternName = warmStartPattern.$type.replace("pattern:", "");
+  let warmStartPatternName = warmStartPattern.$type.replace(PATTERN_PREFIX, "");
 
   // first letter to lowerCase
   warmStartPatternName =

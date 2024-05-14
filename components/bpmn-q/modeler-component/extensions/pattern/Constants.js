@@ -15,6 +15,8 @@ export const PATTERN_AUGMENTATION = "augmentation";
 
 export const PATTERN = "pattern:Pattern";
 
+export const PATTERN_PREFIX = "pattern:";
+
 export const QUANTUM_KERNEL_ESTIMATOR = "pattern:QuantumKernelEstimator";
 export const ALTERNATING_OPERATOR_ANSATZ = "pattern:AlternatingOperatorAnsatz";
 export const QUANTUM_APPROXIMATE_OPTIMIZATION_ALGORITHM =

@@ -30,6 +30,7 @@ import { rewriteWorkflow } from "../../quantme/ui/adaptation/WorkflowRewriter";
 import { getQiskitRuntimeProgramDeploymentModel } from "../../quantme/ui/adaptation/runtimes/QiskitRuntimeHandler";
 import { getHybridRuntimeProvenance } from "../../quantme/framework-config/config-manager";
 import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
+import { PATTERN_PREFIX } from "../Constants";
 
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
@@ -402,7 +403,7 @@ export function getPatterns(process, elementRegistry) {
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
     console.log(flowElement);
-    if (flowElement.$type && flowElement.$type.startsWith("pattern:")) {
+    if (flowElement.$type && flowElement.$type.startsWith(PATTERN_PREFIX)) {
       patterns.push({
         task: flowElement,
         parent: processBo,
