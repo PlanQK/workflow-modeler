@@ -16,6 +16,11 @@ jobs:
         image: planqk/workflow-engine-test:latest
         ports:
           - 8090:8090
+      pattern-atlas-api:
+        image: patternatlas/pattern-atlas-api:latest
+        ports:
+          - 1978:80
+
 
     steps:
       - uses: actions/checkout@v3
