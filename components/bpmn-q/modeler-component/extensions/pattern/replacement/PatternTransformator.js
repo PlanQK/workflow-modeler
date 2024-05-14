@@ -18,7 +18,11 @@ import { replaceCuttingPattern } from "./cutting/CuttingPatternHandler";
 import { replaceErrorCorrectionPattern } from "./correction/ErrorCorrectionPatternHandler";
 import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
 import * as quantmeConsts from "../../quantme/Constants";
-import { attachPatternsToSuitableConstruct } from "../util/PatternUtil";
+import {
+  attachPatternsToSuitableConstruct,
+  removeAlgorithmAndAugmentationPatterns,
+  removeBehavioralPatterns
+} from "../util/PatternUtil";
 import { findOptimizationCandidates } from "../../quantme/ui/adaptation/CandidateDetector";
 import { getQRMs } from "../../quantme/qrm-manager";
 import { rewriteWorkflow } from "../../quantme/ui/adaptation/WorkflowRewriter";
@@ -483,7 +487,7 @@ export function attachPatternsToSuitableTasks(
             (child.$type && child.$type === "bpmn:SubProcess") ||
             (child.type && child.type === "bpmn:SubProcess")
           ) {
-            // Recursively retrieve the subprocess's flowElements
+            // Recursively retrieve the subprocesses flowElements
             let subProcessFlowElements = retrieveFlowElements(
               child.flowElements,
               elementRegistry
@@ -505,13 +509,6 @@ export function attachPatternsToSuitableTasks(
     }
   }
 
-  for (let i = 0; i < patterns.length; i++) {
-    let hostFlowElements = patterns[i].attachedToRef.flowElements;
-    if (hostFlowElements !== undefined) {
-      // behavioral patterns are deleted after acting on the optimization candidate
-      if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type)) {
-        modeling.removeShape(elementRegistry.get(patterns[i].task.id));
-      }
-    }
-  }
+  // remove all contained algorithm and augmentation patterns after applying them to the workflow
+  removeAlgorithmAndAugmentationPatterns(patterns, modeling, elementRegistry);
 }
