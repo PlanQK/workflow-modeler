@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
+
 /**
  * Replace the given error correction pattern by a quantme error correction task
  */

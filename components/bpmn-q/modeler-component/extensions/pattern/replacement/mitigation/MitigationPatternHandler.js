@@ -10,6 +10,7 @@
  */
 import * as quantmeConsts from "../../../quantme/Constants";
 import * as consts from "../../Constants";
+
 /**
  * Replace the given mitigation by a quantme modeling construct
  */

@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
+
 /**
  * Replace the cutting pattern by quantme modeling constructs
  */

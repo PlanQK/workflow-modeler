@@ -10,6 +10,7 @@
  */
 import * as quantmeConsts from "../../../quantme/Constants";
 import { PATTERN_PREFIX } from "../../Constants";
+
 /**
  * Replace the given warm start pattern by a quantme warm starting task
  */
