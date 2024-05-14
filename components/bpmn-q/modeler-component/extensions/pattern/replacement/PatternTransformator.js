@@ -133,7 +133,7 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  replacementConstructs = replacementConstructs.filter(
+  let replacementConstructs = replacementConstructs.filter(
     (construct) =>
       construct.task.$type !== constants.READOUT_ERROR_MITIGATION &&
       construct.task.$type !== constants.GATE_ERROR_MITIGATION &&
