@@ -22,6 +22,7 @@ import { replaceErrorCorrectionPattern } from "./correction/ErrorCorrectionPatte
 import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
 import {
   attachPatternsToSuitableConstruct,
+  findPatternIdByName,
   getSolutionForPattern,
   removeAlgorithmAndAugmentationPatterns,
 } from "../util/PatternUtil";
@@ -159,13 +160,21 @@ export async function startPatternReplacementProcess(xml) {
   for (let replacementConstruct of augmentationReplacementConstructs) {
     console.log("Replacing augmentation pattern: ", replacementConstruct);
 
+    let patternId = replacementConstruct.task.patternId;
+    if (!patternId) {
+      console.log(
+        "Pattern ID undefined. Trying to retrieve via pattern name..."
+      );
+      patternId = await findPatternIdByName(replacementConstruct.task.$type);
+      console.log("Retrieved pattern ID: ", patternId);
+    }
+
     // retrieve solution for pattern to enable correct configuration
-    let concreteSolution = getSolutionForPattern(
-      replacementConstruct.task.patternId
-    );
+    let concreteSolution = getSolutionForPattern(patternId);
     console.log("Solution: ", concreteSolution);
 
     // TODO: load detector from solution and configure inserted task
+    // TODO: incorporate augmentation patterns handled above
 
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.CIRCUIT_CUTTING) {

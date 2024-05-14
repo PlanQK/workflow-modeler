@@ -14,7 +14,11 @@ import { computeDimensionsOfSubprocess } from "../../quantme/replacement/layoute
 import * as constants from "../Constants";
 import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
 import { PATTERN_ID, PATTERN_PREFIX } from "../Constants";
-import { getQcAtlasEndpoint } from "../framework-config/config-manager";
+import {
+  getPatternAtlasEndpoint,
+  getQcAtlasEndpoint,
+} from "../framework-config/config-manager";
+import { fetchDataFromEndpoint } from "../../../editor/util/HttpUtilities";
 
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
@@ -315,4 +319,42 @@ export function getSolutionForPattern(id) {
 
   // TODO
   return undefined;
+}
+
+/**
+ * Retrieve the ID of a pattern with the given type from the Pattern Atlas
+ *
+ * @param patternType the type of the pattern to retrieve the ID for
+ */
+export async function findPatternIdByName(patternType) {
+  console.log("Retrieving pattern ID by pattern type: ", patternType);
+  let patternName = patternType.split(":")[1];
+  console.log("Pattern name: ", patternName);
+
+  // retrieve all available patterns
+  console.log(
+    "Retrieving patterns from URL: ",
+    getPatternAtlasEndpoint() + "/patterns"
+  );
+  const response = await fetchDataFromEndpoint(
+    getPatternAtlasEndpoint() + "/patterns"
+  );
+  console.log("Response: ", response);
+  let patterns = response._embedded.patternModels;
+  console.log("Available patterns: ", patterns);
+
+  // search pattern with given name
+  let filteredPatterns = patterns.filter(
+    (pattern) =>
+      patternName.toUpperCase() === pattern.name.replace(" ", "").toUpperCase()
+  );
+  console.log("Patterns with given type: ", filteredPatterns);
+
+  // take the first solution if there are multiple
+  if (!filteredPatterns || filteredPatterns.length < 1) {
+    console.warn("Unable to retrieve pattern with name: ", patternName);
+    return undefined;
+  } else {
+    return filteredPatterns[0].id;
+  }
 }
