@@ -40,7 +40,7 @@ export async function startPatternReplacementProcess(xml) {
   // get root element of the current diagram
   let definitions = modeler.getDefinitions();
   let rootElement = getRootProcess(definitions);
-  console.log(rootElement);
+  console.log("Root element for pattern transformation: ", rootElement);
   if (typeof rootElement === "undefined") {
     console.log("Unable to retrieve root process element from definitions!");
     return {
@@ -50,29 +50,30 @@ export async function startPatternReplacementProcess(xml) {
   }
 
   // get all patterns from the process
-  let replacementConstructs = getPatterns(rootElement, elementRegistry);
+  let containedPatterns = getPatterns(rootElement, elementRegistry);
   console.log(
     "Process contains " +
-      replacementConstructs.length +
+    containedPatterns.length +
       " patterns to replace..."
   );
-  if (!replacementConstructs || !replacementConstructs.length) {
+  if (!containedPatterns || !containedPatterns.length) {
+    console.log("No patterns to replace, terminating transformation...");
     return { status: "transformed", xml: xml };
   }
-  console.log(replacementConstructs);
+  console.log("Patterns to replace: ", containedPatterns);
 
   attachPatternsToSuitableTasks(
     rootElement,
     elementRegistry,
-    replacementConstructs,
+    containedPatterns,
     modeling
   );
 
-  replacementConstructs = getPatterns(rootElement, elementRegistry);
+  containedPatterns = getPatterns(rootElement, elementRegistry);
 
   // Mitigation have to be handled first since cutting inserts tasks after them
   // if the general pattern is attached then we add it to the elements to delete
-  for (let replacementConstruct of replacementConstructs) {
+  for (let replacementConstruct of containedPatterns) {
     if (replacementConstruct.task.$type === constants.PATTERN) {
       const pattern = elementRegistry.get(replacementConstruct.task.id);
       patterns.push(pattern);
