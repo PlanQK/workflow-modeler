@@ -13,7 +13,7 @@ import * as quantmeConsts from "../../quantme/Constants";
 import { computeDimensionsOfSubprocess } from "../../quantme/replacement/layouter/Layouter";
 import * as constants from "../Constants";
 import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
-import * as Constants from "constants";
+import { PATTERN_PREFIX } from "../Constants";
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
   console.log(subprocess);
@@ -38,7 +38,7 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
 
 function createPattern(modeling, patternName, x, y, subprocess) {
   const pattern = modeling.createShape(
-    { type: Constants.PATTERN_PREFIX + patternName },
+    { type: PATTERN_PREFIX + patternName },
     { x: x, y: y },
     subprocess,
     { attach: true }
