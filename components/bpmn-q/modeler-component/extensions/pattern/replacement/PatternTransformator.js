@@ -160,8 +160,12 @@ export async function startPatternReplacementProcess(xml) {
     console.log("Replacing augmentation pattern: ", replacementConstruct);
 
     // retrieve solution for pattern to enable correct configuration
-    let concreteSolution = getSolutionForPattern(replacementConstruct.id);
+    let concreteSolution = getSolutionForPattern(
+      replacementConstruct.task.patternId
+    );
     console.log("Solution: ", concreteSolution);
+
+    // TODO: load detector from solution and configure inserted task
 
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.CIRCUIT_CUTTING) {
@@ -500,7 +504,7 @@ export function attachPatternsToSuitableTasks(
         children.values().forEach((id) => {
           attachPatternsToSuitableConstruct(
             elementRegistry.get(id),
-            pattern.type,
+            pattern,
             modeling
           );
         });

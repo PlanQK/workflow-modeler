@@ -14,6 +14,7 @@ import { computeDimensionsOfSubprocess } from "../../quantme/replacement/layoute
 import * as constants from "../Constants";
 import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
 import { PATTERN_ID, PATTERN_PREFIX } from "../Constants";
+
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
   console.log(subprocess);
@@ -27,7 +28,7 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
       let patternY = subprocess.y + dimensions.height;
       createPattern(
         modeling,
-        patternName,
+        PATTERN_PREFIX + patternName,
         patternList[i].id,
         patternX,
         patternY,
@@ -43,27 +44,29 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   );
 }
 
-function createPattern(modeling, patternName, patternId, x, y, subprocess) {
+function createPattern(modeling, patternName, patternId, x, y, parent) {
+  console.log("Adding pattern with name: ", patternName);
   const pattern = modeling.createShape(
-    { type: PATTERN_PREFIX + patternName },
+    { type: patternName },
     { x: x, y: y },
-    subprocess,
+    parent,
     { attach: true }
   );
 
   modeling.updateProperties(pattern, {
-    attachedToRef: subprocess.businessObject,
+    attachedToRef: parent.businessObject,
     [PATTERN_ID]: patternId,
   });
   console.log("Added new pattern: ", pattern);
 }
 export function attachPatternsToSuitableConstruct(
   construct,
-  patternType,
+  pattern,
   modeling
 ) {
-  console.log("attach pattern to suitable modeling construct");
-  console.log(construct);
+  console.log("Attaching pattern to suitable modeling construct: ", construct);
+  console.log("Pattern to attach: ", pattern);
+  let patternType = pattern.type;
   if (construct !== undefined) {
     let type = construct.$type;
     if (type === undefined) {
@@ -93,14 +96,28 @@ export function attachPatternsToSuitableConstruct(
           patternType === consts.BIASED_INITIAL_STATE &&
           type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK
         ) {
-          attachPatternToShape(construct, patternType, modeling);
+          createPattern(
+            modeling,
+            patternType,
+            pattern.businessObject.patternId,
+            construct.x + construct.width,
+            construct.y + construct.height,
+            construct
+          );
           console.log("added biased initial state");
         }
         if (
           patternType === consts.VARIATIONAL_PARAMETER_TRANSFER &&
           type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
         ) {
-          attachPatternToShape(construct, patternType, modeling);
+          createPattern(
+            modeling,
+            patternType,
+            pattern.businessObject.patternId,
+            construct.x + construct.width,
+            construct.y + construct.height,
+            construct
+          );
           console.log("added variational parameter transfer");
         }
         if (
@@ -108,7 +125,14 @@ export function attachPatternsToSuitableConstruct(
           (type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK ||
             type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK)
         ) {
-          attachPatternToShape(construct, patternType, modeling);
+          createPattern(
+            modeling,
+            patternType,
+            pattern.businessObject.patternId,
+            construct.x + construct.width,
+            construct.y + construct.height,
+            construct
+          );
           console.log("added error correction", construct.id);
         }
         if (
@@ -116,7 +140,14 @@ export function attachPatternsToSuitableConstruct(
             patternType === consts.READOUT_ERROR_MITIGATION) &&
           type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
         ) {
-          attachPatternToShape(construct, patternType, modeling);
+          createPattern(
+            modeling,
+            patternType,
+            pattern.businessObject.patternId,
+            construct.x + construct.width,
+            construct.y + construct.height,
+            construct
+          );
           console.log("added mitigation", construct.id);
         }
 
@@ -124,7 +155,14 @@ export function attachPatternsToSuitableConstruct(
           patternType === consts.CIRCUIT_CUTTING &&
           type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
         ) {
-          attachPatternToShape(construct, patternType, modeling);
+          createPattern(
+            modeling,
+            patternType,
+            pattern.businessObject.patternId,
+            construct.x + construct.width,
+            construct.y + construct.height,
+            construct
+          );
           console.log("added cutting");
         }
 
@@ -132,29 +170,20 @@ export function attachPatternsToSuitableConstruct(
           consts.BEHAVIORAL_PATTERNS.includes(patternType) &&
           type === "bpmn:SubProcess"
         ) {
-          attachPatternToShape(construct, patternType, modeling);
+          createPattern(
+            modeling,
+            patternType,
+            pattern.businessObject.patternId,
+            construct.x + construct.width,
+            construct.y + construct.height,
+            construct
+          );
           console.log("attached behavioral pattern");
-          console.log(patternType);
-          console.log(construct);
-          console.log("added behavioral pattern");
         }
       }
     }
     return !containsPattern && !containsForbiddenPatternCombinations;
   }
-}
-
-function attachPatternToShape(shape, patternType, modeling) {
-  let pattern = modeling.createShape(
-    { type: patternType },
-    { x: shape.x + shape.width, y: shape.y + shape.height },
-    shape,
-    { attach: true }
-  );
-  modeling.updateProperties(pattern, {
-    attachedToRef: shape.businessObject,
-  });
-  console.log("Added new modeling construct for pattern: ", pattern);
 }
 
 export function changeIdOfContainedElements(
