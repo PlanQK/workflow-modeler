@@ -126,11 +126,6 @@ export default class PatternReplaceMenuProvider {
       return {};
     }
 
-    //Object.assign(
-    // behavioralPatterns,
-    // augmentationPatterns
-    //);
-
     return {
       ["replace-by-more-options"]: createMoreOptionsEntryWithReturn(
         element,

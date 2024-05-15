@@ -17,6 +17,7 @@ import {
   getModeler,
 } from "../../../../editor/ModelerHandler";
 import { getXml } from "../../../../editor/util/IoUtilities";
+import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../../Constants";
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
@@ -477,7 +478,7 @@ function containsQuantumCircuitExecutionTask(candidate) {
     let element = candidate.containedElements[i];
     if (
       element.$type &&
-      element.$type === "quantme:QuantumCircuitExecutionTask"
+      element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK
     ) {
       return true;
     }

@@ -11,6 +11,7 @@
 
 import $ from "jquery";
 import * as quantmeConsts from "../Constants";
+import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../Constants";
 
 /**
  * Check if the given task is a QuantME task
@@ -30,7 +31,7 @@ export function isQuantMETask(task) {
  */
 export function getQuantumCircuitExecutionTasks(modelingElements) {
   return modelingElements.filter(
-    (element) => element.$type === "quantme:QuantumCircuitExecutionTask"
+    (element) => element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK
   );
 }
 
