@@ -20,6 +20,11 @@ jobs:
       ### End of Workflow Deployment Test Setup ###
 
       ### Pattern-based Test Setup ###
+      db:
+        image: planqk/db-test:v1.0.0
+        ports:
+          - 5060:5060
+
       pattern-atlas-api:
         image: patternatlas/pattern-atlas-api:v1.9.0
         ports:
