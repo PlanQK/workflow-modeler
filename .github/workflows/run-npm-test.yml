@@ -17,6 +17,12 @@ jobs:
         image: planqk/workflow-engine-test:v1.0.0
         ports:
           - 8090:8090
+        env:
+          POSTGRES_USERS: 'planqk:planqk|patternatlas:patternatlas|qprov:qprov'
+          POSTGRES_DATABASES: 'planqk:planqk|patternatlas:patternatlas|qprov:qprov'
+          QC_ATLAS_CONTENT_REPOSITORY_BRANCH: 'master'
+          ATLAS_DB: planqk
+          PATTERNATLAS_DB: patternatlas
       ### End of Workflow Deployment Test Setup ###
 
       ### Pattern-based Test Setup ###
