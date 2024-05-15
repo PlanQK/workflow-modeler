@@ -35,6 +35,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
         .expect(transformationResult.xml)
         .to.contain("<quantme:readoutErrorMitigationTask");
 
+      console.log("Evaluating resulting XML!");
       const modeler = await instantiateModeler(transformationResult.xml);
       const elements = modeler.get("elementRegistry").getAll();
       for (let element of elements) {
@@ -74,6 +75,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
             .expect(element.outgoing[0].target.type)
             .to.equal(RESULT_EVALUATION_TASK);
         }
+        console.log("Pattern test terminated!");
       }
     });
   });
