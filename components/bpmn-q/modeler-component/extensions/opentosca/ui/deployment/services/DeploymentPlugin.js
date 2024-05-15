@@ -43,13 +43,11 @@ import {
   DEDICATED_HOSTING_POLICY,
   LOCATION_POLICY,
 } from "../../../Constants";
-import { forEach } from "min-dash";
 import {
   getOpenTOSCAEndpoint,
   getWineryEndpoint,
 } from "../../../framework-config/config-manager";
 import { fetchDataFromEndpoint } from "../../../../../editor/util/HttpUtilities";
-import * as config from "../../../framework-config/config-manager";
 
 const defaultState = {
   windowOpenOnDemandDeploymentOverview: false,
