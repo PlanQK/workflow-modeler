@@ -476,10 +476,7 @@ function getOptimizationCandidate(candidate) {
 function containsQuantumCircuitExecutionTask(candidate) {
   for (let i = 0; i < candidate.containedElements.length; i++) {
     let element = candidate.containedElements[i];
-    if (
-      element.$type &&
-      element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK
-    ) {
+    if (element.$type && element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK) {
       return true;
     }
   }

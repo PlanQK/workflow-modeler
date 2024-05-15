@@ -19,6 +19,7 @@ import {
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
 import { HiddenTextFieldEntry } from "../../../../editor/popup/HiddenFieldEntry";
+import { READOUT_ERROR_MITIGATION_TASK } from "../../Constants";
 
 /**
  * All entries needed to display the different properties introduced through the QuantME task types. One entry represents one
@@ -740,7 +741,7 @@ export function ObjectiveFunctionEntry({ element }) {
 
   const hidden = function () {
     let taskType = element.businessObject.$type;
-    if (taskType === "quantme:ReadoutErrorMitigationTask") {
+    if (taskType === READOUT_ERROR_MITIGATION_TASK) {
       let mitigationMethod = element.businessObject.mitigationMethod;
       return !(mitigationMethod === "geneticBasedREM");
     } else {
