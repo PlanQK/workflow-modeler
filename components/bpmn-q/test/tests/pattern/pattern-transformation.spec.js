@@ -15,7 +15,7 @@ const {
 const { instantiateModeler } = require("../helpers/ModelerHelper");
 describe("Test the PatternTransformator of the Pattern extension.", function () {
   describe("Transformation of Pattern extensions", function () {
-    it("should replace all patterns by quantme modeling constructs", async function () {
+    it("should replace all patterns by quantme modeling constructs", async function (done) {
       const transformationResult = await startPatternReplacementProcess(
         validPatternDiagram
       );
@@ -76,6 +76,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
             .to.equal(RESULT_EVALUATION_TASK);
         }
         console.log("Pattern test terminated!");
+        done();
       }
     });
   });
