@@ -14,10 +14,7 @@ import React, { useEffect } from "react";
 
 // polyfill upcoming structural components
 import Modal from "../../../../../editor/ui/modal/Modal";
-import { fetch } from "whatwg-fetch";
 import config from "../../../framework-config/config";
-import { forEach } from "min-dash";
-import { useState } from "diagram-js/lib/ui";
 import { synchronousGetRequest } from "../../../utilities/Utilities";
 
 const Title = Modal.Title || (({ children }) => <h2>{children}</h2>);
