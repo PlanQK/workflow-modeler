@@ -17,9 +17,20 @@ jobs:
         ports:
           - 8090:8090
       pattern-atlas-api:
-        image: patternatlas/pattern-atlas-api:latest
+        image: patternatlas/pattern-atlas-api:v1.9.0
         ports:
           - 1978:80
+        env:
+          JDBC_DATABASE_URL: db
+          JDBC_DATABASE_USERNAME: patternatlas
+          JDBC_DATABASE_PASSWORD: patternatlas
+          JDBC_DATABASE_PORT: 5060
+          DB_INIT_USER: patternatlas
+          DB_INIT_PASSWORD: patternatlas
+          JDBC_DATABASE_NAME: patternatlas
+          PATTERN_ATLAS_FETCH_INITIAL_DATA: 'true'
+          HAL_EXPLORER: 'false'
+          SPRING_PROFILES_ACTIVE: docker
 
 
     steps:
