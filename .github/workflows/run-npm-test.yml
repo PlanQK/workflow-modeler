@@ -16,6 +16,8 @@ jobs:
         image: planqk/workflow-engine-test:latest
         ports:
           - 8090:8090
+
+      ### Pattern-based Test Setup ###
       pattern-atlas-api:
         image: patternatlas/pattern-atlas-api:v1.9.0
         ports:
@@ -31,6 +33,18 @@ jobs:
           PATTERN_ATLAS_FETCH_INITIAL_DATA: 'true'
           HAL_EXPLORER: 'false'
           SPRING_PROFILES_ACTIVE: docker
+
+      qc-atlas:
+        image: planqk/atlas:v3.1.3
+        ports:
+          - "6626:6626"
+        env:
+          POSTGRES_HOSTNAME: db
+          POSTGRES_PORT: 5060
+          POSTGRES_USER: planqk
+          POSTGRES_PASSWORD: planqk
+          POSTGRES_DB: planqk
+      ### End of Pattern-based Test Setup ###
 
 
     steps:
