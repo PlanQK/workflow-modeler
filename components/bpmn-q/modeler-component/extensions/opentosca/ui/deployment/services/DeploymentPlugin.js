@@ -265,7 +265,7 @@ export default class DeploymentPlugin extends PureComponent {
               "Check instance with Id %i",
               serviceTemplateInstance.id
             );
-            if (serviceTemplateInstance.state != "CREATED") {
+            if (serviceTemplateInstance.state !== "CREATED") {
               console.log(
                 "Instance has invalid state: %s",
                 serviceTemplateInstance.state

@@ -448,7 +448,7 @@ function addSessionFormFields(rootElement, elementRegistry, modeling, moddle) {
         }
 
         let form = extensionElements.get("values").filter(function (elem) {
-          return elem.$type == "camunda:FormData";
+          return elem.$type === "camunda:FormData";
         })[0];
 
         if (!form) {

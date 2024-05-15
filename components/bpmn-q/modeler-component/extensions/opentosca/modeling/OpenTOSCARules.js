@@ -48,7 +48,7 @@ export default class OpenTOSCARules extends RuleProvider {
     function canMove(context) {
       let target = context.target;
 
-      if (target != undefined) {
+      if (target !== undefined) {
         if (context.shapes[0].type.includes("Policy")) {
           return false;
         }
