@@ -21,7 +21,6 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler) {
   let elementRegistry = modeler.get("elementRegistry");
 
   let host = elementRegistry.get(cuttingPattern.id).host;
-  let elementToConnect = host;
   let flows = [];
   let cuttingTask = modeling.createShape(
     { type: quantmeConsts.CIRCUIT_CUTTING_TASK },
@@ -58,9 +57,7 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler) {
       { type: "bpmn:SequenceFlow" }
     );
   });
-  elementToConnect = resultCombinationTaks;
-
-  modeling.connect(host, elementToConnect, {
+  modeling.connect(host, resultCombinationTaks, {
     type: "bpmn:SequenceFlow",
   });
 
