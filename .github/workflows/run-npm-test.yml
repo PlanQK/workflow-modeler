@@ -12,10 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      ### Workflow Deployment Test Setup ###
       workflow-test-engine:
-        image: planqk/workflow-engine-test:latest
+        image: planqk/workflow-engine-test:v1.0.0
         ports:
           - 8090:8090
+      ### End of Workflow Deployment Test Setup ###
 
       ### Pattern-based Test Setup ###
       pattern-atlas-api:
