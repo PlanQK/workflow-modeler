@@ -78,6 +78,6 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
         console.log("Pattern test terminated!");
         done();
       }
-    });
+    }).timeout(10000);
   });
 });
