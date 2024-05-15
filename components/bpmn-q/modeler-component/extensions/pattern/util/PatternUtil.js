@@ -340,7 +340,6 @@ export async function findPatternIdByName(patternType) {
     getPatternAtlasEndpoint() + "/patterns"
   );
   console.log("Response: ", response);
-  console.log("Status code: ", response.status);
   let patterns = response._embedded.patternModels;
   console.log("Available patterns: ", patterns);
 
