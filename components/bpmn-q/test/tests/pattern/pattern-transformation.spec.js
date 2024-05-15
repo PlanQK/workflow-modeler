@@ -76,6 +76,8 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
             .to.equal(RESULT_EVALUATION_TASK);
         }
         console.log("Pattern test terminated!");
+
+        // TODO: add transformation + check result
       }
     }).timeout(10000);
   });
