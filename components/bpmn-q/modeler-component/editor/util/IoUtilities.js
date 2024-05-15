@@ -291,6 +291,7 @@ export async function deployWorkflowToCamunda(
 
   // make the request and wait for the response of the deployment endpoint
   try {
+    console.log("Deploying to Camunda Engine: ", editorConfig.getCamundaEndpoint() + "/deployment/create");
     const response = await fetch(
       editorConfig.getCamundaEndpoint() + "/deployment/create",
       {
