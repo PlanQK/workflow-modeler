@@ -360,9 +360,9 @@ function getXOREntryPoints(rootElement) {
 
     if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
       console.log("Found subprocess ", flowElement);
-      Array.prototype.push.apply(entryPoints, getXOREntryPoints(flowElement));
 
       // recursively call method to find optimization candidates
+      Array.prototype.push.apply(entryPoints, getXOREntryPoints(flowElement));
     }
   }
 
