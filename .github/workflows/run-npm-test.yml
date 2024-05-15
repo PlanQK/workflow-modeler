@@ -37,7 +37,7 @@ jobs:
       qc-atlas:
         image: planqk/atlas:v3.1.3
         ports:
-          - "6626:6626"
+          - 6626:6626
         env:
           POSTGRES_HOSTNAME: db
           POSTGRES_PORT: 5060
