@@ -39,9 +39,6 @@ export default class AdaptationPlugin extends PureComponent {
 
     this.handleAdaptationClosed = this.handleAdaptationClosed.bind(this);
     this.handleRewriteClosed = this.handleRewriteClosed.bind(this);
-
-    // get QuantME component from the backend, e.g., to retrieve current QRMs
-    this.quantME = "";
   }
 
   async handleAdaptationClosed(result) {
