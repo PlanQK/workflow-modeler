@@ -28,7 +28,7 @@ jobs:
       pattern-atlas-api:
         image: patternatlas/pattern-atlas-api:v1.9.0
         ports:
-          - 1978:80
+          - 1977:1977
         env:
           JDBC_DATABASE_URL: db
           JDBC_DATABASE_USERNAME: patternatlas
