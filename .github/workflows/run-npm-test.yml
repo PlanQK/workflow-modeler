@@ -21,7 +21,7 @@ jobs:
 
       ### Pattern-based Test Setup ###
       db:
-        image: planqk/db-test:v1.0.0
+        image: planqk/db-test:v1.1.0
         ports:
           - 5060:5060
 
