@@ -9,6 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import $ from "jquery";
+
 /**
  * Retrieves the Json data from the given endpoint.
  *
@@ -46,4 +48,24 @@ export async function fetchSolutionFromEndpoint(endpoint) {
     console.error("Error fetching data:", error);
     return {};
   }
+}
+
+export function performAjax(targetUrl, dataToSend) {
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      type: "POST",
+      url: targetUrl,
+      data: dataToSend,
+      processData: false,
+      crossDomain: true,
+      contentType: false,
+      beforeSend: function () {},
+      success: function (data) {
+        resolve(data);
+      },
+      error: function (err) {
+        reject(err);
+      },
+    });
+  });
 }

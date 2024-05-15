@@ -9,7 +9,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import $ from "jquery";
 import * as quantmeConsts from "../Constants";
 import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../Constants";
 
@@ -33,26 +32,6 @@ export function getQuantumCircuitExecutionTasks(modelingElements) {
   return modelingElements.filter(
     (element) => element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK
   );
-}
-
-export function performAjax(targetUrl, dataToSend) {
-  return new Promise(function (resolve, reject) {
-    $.ajax({
-      type: "POST",
-      url: targetUrl,
-      data: dataToSend,
-      processData: false,
-      crossDomain: true,
-      contentType: false,
-      beforeSend: function () {},
-      success: function (data) {
-        resolve(data);
-      },
-      error: function (err) {
-        reject(err);
-      },
-    });
-  });
 }
 
 /**

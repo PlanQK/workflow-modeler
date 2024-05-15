@@ -10,10 +10,7 @@
  */
 
 import { fetch } from "whatwg-fetch";
-import {
-  getQuantumCircuitExecutionTasks,
-  performAjax,
-} from "../../../utilities/Utilities";
+import { getQuantumCircuitExecutionTasks } from "../../../utilities/Utilities";
 import { startQuantmeReplacementProcess } from "../../../replacement/QuantMETransformator";
 import {
   createNewArtifactTemplate,
@@ -26,6 +23,7 @@ import {
 } from "./RuntimeHandlerUtils";
 import { createTempModelerFromXml } from "../../../../../editor/ModelerHandler";
 import { getRootProcess } from "../../../../../editor/util/ModellingUtilities";
+import { performAjax } from "../../../../../editor/util/HttpUtilities";
 
 /**
  * Generate a AWS Runtime program for the given candidate
