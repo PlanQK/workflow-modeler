@@ -19,6 +19,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
       const transformationResult = await startPatternReplacementProcess(
         validPatternDiagram
       );
+      console.log("Pattern replacement terminated!");
 
       chai.expect(transformationResult.status).to.equal("transformed");
       chai

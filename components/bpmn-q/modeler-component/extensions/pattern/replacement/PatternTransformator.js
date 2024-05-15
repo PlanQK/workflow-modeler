@@ -214,10 +214,14 @@ export async function startPatternReplacementProcess(xml) {
           " failed. Aborting process!",
       };
     }
+    console.log(
+      "Successfully replaced augmentation pattern with id: ",
+      replacementConstruct.task.id
+    );
   }
 
   let elementsToDelete = patterns.concat(allFlow);
-  console.log("df");
+  console.log("Applying behavioral patterns...");
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
   const optimizationCandidates = await findOptimizationCandidates(modeler);
