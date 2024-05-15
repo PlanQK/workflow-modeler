@@ -31,7 +31,9 @@ describe("Test Pattern ConfigManager", function () {
       expect(patternConfig.getPatternAtlasUIEndpoint()).to.equal(
         "http://localhost:1978"
       );
-      expect(patternConfig.getQcAtlasEndpoint()).to.equal("http://localhost:6626");
+      expect(patternConfig.getQcAtlasEndpoint()).to.equal(
+        "http://localhost:6626"
+      );
     });
   });
 });
