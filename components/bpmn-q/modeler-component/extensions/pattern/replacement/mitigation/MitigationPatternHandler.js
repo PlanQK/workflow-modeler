@@ -10,8 +10,8 @@
  */
 import * as quantmeConsts from "../../../quantme/Constants";
 import * as consts from "../../Constants";
-import {QuantMEProps} from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
-import {copyQuantMEProperties} from "../../util/PatternUtil";
+import { QuantMEProps } from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import { copyQuantMEProperties } from "../../util/PatternUtil";
 
 /**
  * Replace the given mitigation by a quantme modeling construct
@@ -29,7 +29,8 @@ export async function replaceMitigationPattern(
       parent.id
   );
 
-  const remDetector = matchingDetectorMap[quantmeConsts.READOUT_ERROR_MITIGATION_TASK];
+  const remDetector =
+    matchingDetectorMap[quantmeConsts.READOUT_ERROR_MITIGATION_TASK];
   let propertiesREM = QuantMEProps(remDetector);
 
   let modeling = modeler.get("modeling");

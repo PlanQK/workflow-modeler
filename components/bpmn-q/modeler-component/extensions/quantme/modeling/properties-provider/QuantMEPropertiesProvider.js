@@ -21,7 +21,7 @@ import {
   ErrorCorrectionTaskEntries,
 } from "./QuantMETaskProperties";
 import { DeploymentModelProps } from "./DeploymentModelProps";
-import {getType} from "../../../../editor/util/ModellingUtilities";
+import { getType } from "../../../../editor/util/ModellingUtilities";
 
 const LOW_PRIORITY = 600;
 

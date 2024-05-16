@@ -92,7 +92,7 @@ export async function startPatternReplacementProcess(xml) {
       let patternId = replacementConstruct.task.patternId;
       if (!patternId) {
         console.log(
-            "Pattern ID undefined. Trying to retrieve via pattern name..."
+          "Pattern ID undefined. Trying to retrieve via pattern name..."
         );
         patternId = await findPatternIdByName(replacementConstruct.task.$type);
         console.log("Retrieved pattern ID: ", patternId);
@@ -100,7 +100,11 @@ export async function startPatternReplacementProcess(xml) {
 
       // retrieve solution for pattern to enable correct configuration
       let matchingDetectorMap = await getSolutionForPattern(patternId);
-      console.log("matchingDetectorMap for pattern: ", matchingDetectorMap, patternId);
+      console.log(
+        "matchingDetectorMap for pattern: ",
+        matchingDetectorMap,
+        patternId
+      );
 
       let { replaced, flows, pattern } = await replaceMitigationPattern(
         replacementConstruct.task,
@@ -129,11 +133,10 @@ export async function startPatternReplacementProcess(xml) {
     if (
       constants.WARM_STARTING_PATTERNS.includes(replacementConstruct.task.$type)
     ) {
-
       let patternId = replacementConstruct.task.patternId;
       if (!patternId) {
         console.log(
-            "Pattern ID undefined. Trying to retrieve via pattern name..."
+          "Pattern ID undefined. Trying to retrieve via pattern name..."
         );
         patternId = await findPatternIdByName(replacementConstruct.task.$type);
         console.log("Retrieved pattern ID: ", patternId);
@@ -141,7 +144,11 @@ export async function startPatternReplacementProcess(xml) {
 
       // retrieve solution for pattern to enable correct configuration
       let matchingDetectorMap = await getSolutionForPattern(patternId);
-      console.log("matchingDetectorMap for pattern: ", matchingDetectorMap, patternId);
+      console.log(
+        "matchingDetectorMap for pattern: ",
+        matchingDetectorMap,
+        patternId
+      );
 
       let { replaced, flows, pattern } = await replaceWarmStart(
         replacementConstruct.task,
@@ -200,7 +207,11 @@ export async function startPatternReplacementProcess(xml) {
 
     // retrieve solution for pattern to enable correct configuration
     let matchingDetectorMap = await getSolutionForPattern(patternId);
-    console.log("matchingDetectorMap for pattern: ", matchingDetectorMap, patternId);
+    console.log(
+      "matchingDetectorMap for pattern: ",
+      matchingDetectorMap,
+      patternId
+    );
     // TODO: load detector from solution and configure inserted task
     // TODO: incorporate augmentation patterns handled above
 

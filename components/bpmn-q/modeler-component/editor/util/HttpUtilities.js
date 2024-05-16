@@ -18,7 +18,11 @@ import $ from "jquery";
  * @param method
  * @returns
  */
-export async function fetchDataFromEndpoint(endpoint, method = "GET", acceptHeader = ["application/json", "application/hal+json"]) {
+export async function fetchDataFromEndpoint(
+  endpoint,
+  method = "GET",
+  acceptHeader = ["application/json", "application/hal+json"]
+) {
   try {
     const response = await fetch(endpoint, {
       method: method,

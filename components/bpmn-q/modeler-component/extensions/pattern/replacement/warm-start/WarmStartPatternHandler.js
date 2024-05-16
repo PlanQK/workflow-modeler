@@ -10,20 +10,26 @@
  */
 import * as quantmeConsts from "../../../quantme/Constants";
 import { PATTERN_PREFIX } from "../../Constants";
-import {QuantMEProps} from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
-import {copyQuantMEProperties} from "../../util/PatternUtil";
+import { QuantMEProps } from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import { copyQuantMEProperties } from "../../util/PatternUtil";
 
 /**
  * Replace the given warm start pattern by a quantme warm starting task
  */
-export async function replaceWarmStart(warmStartPattern, parent, modeler, matchingDetectorMap) {
+export async function replaceWarmStart(
+  warmStartPattern,
+  parent,
+  modeler,
+  matchingDetectorMap
+) {
   console.log(
     "Replace warm start pattern " +
       warmStartPattern.id +
       "of parent " +
       parent.id
   );
-  const warmstartingDetector = matchingDetectorMap[quantmeConsts.WARM_STARTING_TASK];
+  const warmstartingDetector =
+    matchingDetectorMap[quantmeConsts.WARM_STARTING_TASK];
   let propertiesWarmStart = QuantMEProps(warmstartingDetector);
 
   let modeling = modeler.get("modeling");
@@ -37,7 +43,12 @@ export async function replaceWarmStart(warmStartPattern, parent, modeler, matchi
     parent,
     {}
   );
-  copyQuantMEProperties(propertiesWarmStart, warmstartingDetector, warmStartTask, modeler);
+  copyQuantMEProperties(
+    propertiesWarmStart,
+    warmstartingDetector,
+    warmStartTask,
+    modeler
+  );
   let warmStartTaskBo = elementRegistry.get(warmStartTask.id).businessObject;
   warmStartTaskBo.name = "Warm Start";
 

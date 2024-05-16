@@ -9,14 +9,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
-import {QuantMEProps} from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
-import {copyQuantMEProperties} from "../../util/PatternUtil";
-
+import { QuantMEProps } from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import { copyQuantMEProperties } from "../../util/PatternUtil";
 
 /**
  * Replace the cutting pattern by quantme modeling constructs
  */
-export async function replaceCuttingPattern(cuttingPattern, parent, modeler, matchingDetectorMap) {
+export async function replaceCuttingPattern(
+  cuttingPattern,
+  parent,
+  modeler,
+  matchingDetectorMap
+) {
   console.log(
     "Replace cutting pattern " + cuttingPattern.id + "of parent " + parent.id
   );
@@ -25,8 +29,10 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler, mat
 
   let host = elementRegistry.get(cuttingPattern.id).host;
 
-  const cuttingDetector = matchingDetectorMap[quantmeConsts.CIRCUIT_CUTTING_TASK];
-  const combinationDetector = matchingDetectorMap[quantmeConsts.CUTTING_RESULT_COMBINATION_TASK];
+  const cuttingDetector =
+    matchingDetectorMap[quantmeConsts.CIRCUIT_CUTTING_TASK];
+  const combinationDetector =
+    matchingDetectorMap[quantmeConsts.CUTTING_RESULT_COMBINATION_TASK];
   let propertiesCutting = QuantMEProps(cuttingDetector);
   let propertiesCombination = QuantMEProps(combinationDetector);
 
@@ -38,8 +44,12 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler, mat
     {}
   );
 
-  copyQuantMEProperties(propertiesCutting, cuttingDetector, cuttingTask, modeler);
-
+  copyQuantMEProperties(
+    propertiesCutting,
+    cuttingDetector,
+    cuttingTask,
+    modeler
+  );
 
   let startEventBo = elementRegistry.get(cuttingTask.id).businessObject;
   startEventBo.name = "Cut Circuit";
@@ -50,7 +60,12 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler, mat
     parent,
     {}
   );
-  copyQuantMEProperties(propertiesCombination, combinationDetector, resultCombinationTask, modeler);
+  copyQuantMEProperties(
+    propertiesCombination,
+    combinationDetector,
+    resultCombinationTask,
+    modeler
+  );
 
   startEventBo = elementRegistry.get(resultCombinationTask.id).businessObject;
   startEventBo.name = "Combine Circuits";

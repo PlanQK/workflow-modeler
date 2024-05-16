@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
-import {QuantMEProps} from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
-import {copyQuantMEProperties} from "../../util/PatternUtil";
+import { QuantMEProps } from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import { copyQuantMEProperties } from "../../util/PatternUtil";
 
 /**
  * Replace the given error correction pattern by a quantme error correction task
