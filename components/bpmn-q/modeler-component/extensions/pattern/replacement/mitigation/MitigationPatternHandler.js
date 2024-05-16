@@ -10,6 +10,8 @@
  */
 import * as quantmeConsts from "../../../quantme/Constants";
 import * as consts from "../../Constants";
+import {QuantMEProps} from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import {copyQuantMEProperties} from "../../util/PatternUtil";
 
 /**
  * Replace the given mitigation by a quantme modeling construct
@@ -17,7 +19,8 @@ import * as consts from "../../Constants";
 export async function replaceMitigationPattern(
   mitigationPattern,
   parent,
-  modeler
+  modeler,
+  matchingDetectorMap
 ) {
   console.log(
     "Replace mitigation pattern " +
@@ -25,6 +28,10 @@ export async function replaceMitigationPattern(
       "of parent " +
       parent.id
   );
+
+  const remDetector = matchingDetectorMap[quantmeConsts.READOUT_ERROR_MITIGATION_TASK];
+  let propertiesREM = QuantMEProps(remDetector);
+
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let host = elementRegistry.get(mitigationPattern.id).host;
@@ -41,6 +48,7 @@ export async function replaceMitigationPattern(
       parent,
       {}
     );
+    copyQuantMEProperties(propertiesREM, remDetector, mitigationTask, modeler);
     let readoutMitigationTaskBo = elementRegistry.get(
       mitigationTask.id
     ).businessObject;

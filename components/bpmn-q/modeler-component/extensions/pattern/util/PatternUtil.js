@@ -9,16 +9,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as consts from "../Constants";
-import * as quantmeConsts from "../../quantme/Constants";
-import { computeDimensionsOfSubprocess } from "../../quantme/replacement/layouter/Layouter";
 import * as constants from "../Constants";
-import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
-import { PATTERN_ID, PATTERN_PREFIX } from "../Constants";
-import {
-  getPatternAtlasEndpoint,
-  getQcAtlasEndpoint,
-} from "../framework-config/config-manager";
-import { fetchDataFromEndpoint } from "../../../editor/util/HttpUtilities";
+import {PATTERN_ID, PATTERN_PREFIX} from "../Constants";
+import * as quantmeConsts from "../../quantme/Constants";
+import {computeDimensionsOfSubprocess} from "../../quantme/replacement/layouter/Layouter";
+import {isQuantMESubprocess} from "../../quantme/utilities/Utilities";
+import {getPatternAtlasEndpoint, getQcAtlasEndpoint,} from "../framework-config/config-manager";
+import {fetchDataFromEndpoint} from "../../../editor/util/HttpUtilities";
+import JSZip from "jszip";
+import {saveFileFormats} from "../../../editor/EditorConstants";
+import {createTempModelerFromXml} from "../../../editor/ModelerHandler";
+import {getRootProcess} from "../../../editor/util/ModellingUtilities";
 
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
@@ -305,20 +306,69 @@ export function removeAlgorithmAndAugmentationPatterns(
   }
 }
 
+async function retrieveTaskTypeSolutionMap(files, taskTypeSolutionMap) {
+  for (const [fileName, file] of files) {
+    console.log("Searching file with name: ", fileName);
+    if (!file.dir && fileName.endsWith(saveFileFormats.ZIP)){
+      console.log("ZIP detected");
+      let zip = await JSZip.loadAsync(await file.async("blob"));
+      const retrievedSolutionMap = await retrieveTaskTypeSolutionMap(Object.entries(zip.files), taskTypeSolutionMap);
+      taskTypeSolutionMap = Object.assign({}, taskTypeSolutionMap, retrievedSolutionMap);
+    }
+    if (fileName.endsWith("detector.bpmn")) {
+      console.log("Identified detector with name ", fileName);
+      let tempModeler = await createTempModelerFromXml(await file.async("text"));
+      let rootElement = getRootProcess(tempModeler.getDefinitions());
+      if (rootElement.flowElements.length !== 1) {
+        console.warn("Detector invalid - Detector must contain exactly 1 modeling construct");
+        continue;
+      }
+      taskTypeSolutionMap[rootElement.flowElements[0].$type] = rootElement.flowElements[0];
+
+    }
+  }
+  console.log("taskTypeSolutionMap ", taskTypeSolutionMap);
+  return taskTypeSolutionMap;
+}
+
 /**
  * Get the solution for the given pattern
  *
  * @param id the ID of the solution to retrieve the pattern for
  */
-export function getSolutionForPattern(id) {
+export async function getSolutionForPattern(id) {
   console.log("Retrieving solution for pattern with ID: ", id);
 
   const qcAtlasEndpoint = getQcAtlasEndpoint();
-  let endpoint = qcAtlasEndpoint + "/TODO/" + id;
-  console.log("Retrieving solutions from URL: ", endpoint);
+  const qcAtlasSolutionEndpoint = qcAtlasEndpoint + "/atlas/solutions";
+  console.log("Retrieving solutions from URL: ", qcAtlasSolutionEndpoint);
+  let listOfSolutions = await fetchDataFromEndpoint(qcAtlasSolutionEndpoint);
+  console.log("Retrieved solutions: {}", listOfSolutions);
+  listOfSolutions = listOfSolutions.content.filter( (solution) =>
+      id === solution.patternId && "QRM" === solution.solutionType);
+  console.log("Retrieved matching solutions: {}", listOfSolutions);
 
-  // TODO
-  return undefined;
+
+  if (!listOfSolutions || listOfSolutions.length < 1) {
+    console.warn("Unable to find QRM-based solution for pattern: ", id);
+    return undefined;
+  } else {
+    const qrmSolutionEndpoint = qcAtlasSolutionEndpoint + "/" + listOfSolutions[0].id + "/file/content";
+    console.log("Retrieving QRM from URL: ", qrmSolutionEndpoint);
+    const qrm = await fetch(qrmSolutionEndpoint);
+    let blob = await qrm.blob();
+
+    console.log("Found QRM with content {}", blob);
+    let zip = await JSZip.loadAsync(blob);
+
+    // Iterate over each file in the zip
+    let files = Object.entries(zip.files);
+    console.log("Zip comprises %i files!", files.length);
+
+    let taskTypeSolutionMap = await retrieveTaskTypeSolutionMap(files, {});
+    console.log(taskTypeSolutionMap);
+    return taskTypeSolutionMap;
+  }
 }
 
 /**
@@ -356,5 +406,24 @@ export async function findPatternIdByName(patternType) {
     return undefined;
   } else {
     return filteredPatterns[0].id;
+  }
+}
+
+export function copyQuantMEProperties(quantMEProperties, sourceTask, targetTask, modeler){
+  let modeling = modeler.get("modeling");
+  let elementRegistry = modeler.get("elementRegistry");
+  if (quantMEProperties !== undefined) {
+    let propertyEntries = {};
+    quantMEProperties.forEach((propertyEntry) => {
+      let entryId = propertyEntry.id;
+      let entry = sourceTask[entryId];
+      entry = entry !== undefined && entry.includes(",") ? entry.split(",")[0] : entry;
+      propertyEntries[entryId] = entry;
+    });
+    console.log("properties", propertyEntries);
+    modeling.updateProperties(
+        elementRegistry.get(targetTask.id),
+        propertyEntries
+    );
   }
 }

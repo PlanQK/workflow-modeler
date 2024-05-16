@@ -89,10 +89,24 @@ export async function startPatternReplacementProcess(xml) {
       replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION ||
       replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION
     ) {
+      let patternId = replacementConstruct.task.patternId;
+      if (!patternId) {
+        console.log(
+            "Pattern ID undefined. Trying to retrieve via pattern name..."
+        );
+        patternId = await findPatternIdByName(replacementConstruct.task.$type);
+        console.log("Retrieved pattern ID: ", patternId);
+      }
+
+      // retrieve solution for pattern to enable correct configuration
+      let matchingDetectorMap = await getSolutionForPattern(patternId);
+      console.log("matchingDetectorMap for pattern: ", matchingDetectorMap, patternId);
+
       let { replaced, flows, pattern } = await replaceMitigationPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
@@ -115,10 +129,25 @@ export async function startPatternReplacementProcess(xml) {
     if (
       constants.WARM_STARTING_PATTERNS.includes(replacementConstruct.task.$type)
     ) {
+
+      let patternId = replacementConstruct.task.patternId;
+      if (!patternId) {
+        console.log(
+            "Pattern ID undefined. Trying to retrieve via pattern name..."
+        );
+        patternId = await findPatternIdByName(replacementConstruct.task.$type);
+        console.log("Retrieved pattern ID: ", patternId);
+      }
+
+      // retrieve solution for pattern to enable correct configuration
+      let matchingDetectorMap = await getSolutionForPattern(patternId);
+      console.log("matchingDetectorMap for pattern: ", matchingDetectorMap, patternId);
+
       let { replaced, flows, pattern } = await replaceWarmStart(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
@@ -170,9 +199,8 @@ export async function startPatternReplacementProcess(xml) {
     }
 
     // retrieve solution for pattern to enable correct configuration
-    let concreteSolution = getSolutionForPattern(patternId);
-    console.log("Solution: ", concreteSolution);
-
+    let matchingDetectorMap = await getSolutionForPattern(patternId);
+    console.log("matchingDetectorMap for pattern: ", matchingDetectorMap, patternId);
     // TODO: load detector from solution and configure inserted task
     // TODO: incorporate augmentation patterns handled above
 
@@ -181,7 +209,8 @@ export async function startPatternReplacementProcess(xml) {
       let { replaced, flows, pattern } = await replaceCuttingPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
@@ -193,7 +222,8 @@ export async function startPatternReplacementProcess(xml) {
       let { replaced, flows, pattern } = await replaceErrorCorrectionPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);

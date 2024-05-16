@@ -9,11 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
+import {QuantMEProps} from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import {copyQuantMEProperties} from "../../util/PatternUtil";
+
 
 /**
  * Replace the cutting pattern by quantme modeling constructs
  */
-export async function replaceCuttingPattern(cuttingPattern, parent, modeler) {
+export async function replaceCuttingPattern(cuttingPattern, parent, modeler, matchingDetectorMap) {
   console.log(
     "Replace cutting pattern " + cuttingPattern.id + "of parent " + parent.id
   );
@@ -21,6 +24,12 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler) {
   let elementRegistry = modeler.get("elementRegistry");
 
   let host = elementRegistry.get(cuttingPattern.id).host;
+
+  const cuttingDetector = matchingDetectorMap[quantmeConsts.CIRCUIT_CUTTING_TASK];
+  const combinationDetector = matchingDetectorMap[quantmeConsts.CUTTING_RESULT_COMBINATION_TASK];
+  let propertiesCutting = QuantMEProps(cuttingDetector);
+  let propertiesCombination = QuantMEProps(combinationDetector);
+
   let flows = [];
   let cuttingTask = modeling.createShape(
     { type: quantmeConsts.CIRCUIT_CUTTING_TASK },
@@ -28,16 +37,22 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler) {
     parent,
     {}
   );
+
+  copyQuantMEProperties(propertiesCutting, cuttingDetector, cuttingTask, modeler);
+
+
   let startEventBo = elementRegistry.get(cuttingTask.id).businessObject;
   startEventBo.name = "Cut Circuit";
 
-  let resultCombinationTaks = modeling.createShape(
+  let resultCombinationTask = modeling.createShape(
     { type: quantmeConsts.CUTTING_RESULT_COMBINATION_TASK },
     { x: 50, y: 50 },
     parent,
     {}
   );
-  startEventBo = elementRegistry.get(resultCombinationTaks.id).businessObject;
+  copyQuantMEProperties(propertiesCombination, combinationDetector, resultCombinationTask, modeler);
+
+  startEventBo = elementRegistry.get(resultCombinationTask.id).businessObject;
   startEventBo.name = "Combine Circuits";
 
   host.incoming.forEach((element) => {
@@ -52,12 +67,12 @@ export async function replaceCuttingPattern(cuttingPattern, parent, modeler) {
   host.outgoing.forEach((element) => {
     flows.push(elementRegistry.get(element.id));
     modeling.connect(
-      resultCombinationTaks,
+      resultCombinationTask,
       elementRegistry.get(element.target.id),
       { type: "bpmn:SequenceFlow" }
     );
   });
-  modeling.connect(host, resultCombinationTaks, {
+  modeling.connect(host, resultCombinationTask, {
     type: "bpmn:SequenceFlow",
   });
 

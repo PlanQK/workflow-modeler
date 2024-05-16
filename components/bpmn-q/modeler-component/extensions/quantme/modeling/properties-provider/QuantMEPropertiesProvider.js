@@ -21,6 +21,7 @@ import {
   ErrorCorrectionTaskEntries,
 } from "./QuantMETaskProperties";
 import { DeploymentModelProps } from "./DeploymentModelProps";
+import {getType} from "../../../../editor/util/ModellingUtilities";
 
 const LOW_PRIORITY = 600;
 
@@ -95,8 +96,9 @@ function createQuantMEGroup(element, translate) {
  *
  * @param element the QuantME element
  */
-function QuantMEProps(element) {
-  switch (element.type) {
+export function QuantMEProps(element) {
+  console.log("Element for props: ", element);
+  switch (getType(element)) {
     case consts.QUANTUM_COMPUTATION_TASK:
       return QuantumComputationTaskProperties(element);
 
