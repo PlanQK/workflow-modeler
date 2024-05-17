@@ -411,7 +411,8 @@ export async function findPatternIdByName(patternType) {
   // search pattern with given name
   let filteredPatterns = patterns.filter(
     (pattern) =>
-      patternName.toUpperCase() === pattern.name.replaceAll(" ", "").toUpperCase()
+      patternName.toUpperCase() ===
+      pattern.name.replaceAll(" ", "").toUpperCase()
   );
   console.log("Patterns with given type: ", filteredPatterns);
 
