@@ -10,7 +10,7 @@
  */
 
 import { fetch } from "whatwg-fetch";
-import { performAjax } from "../utilities/Utilities";
+import { performAjax } from "../../../editor/util/HttpUtilities";
 
 /**
  * Upload the CSAR located at the given URL to the connected OpenTOSCA Container and return the corresponding URL and required input parameters

@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import $ from "jquery";
+import * as quantmeConsts from "../Constants";
+import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../Constants";
 
 /**
  * Check if the given task is a QuantME task
@@ -29,26 +30,19 @@ export function isQuantMETask(task) {
  */
 export function getQuantumCircuitExecutionTasks(modelingElements) {
   return modelingElements.filter(
-    (element) => element.$type === "quantme:QuantumCircuitExecutionTask"
+    (element) => element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK
   );
 }
 
-export function performAjax(targetUrl, dataToSend) {
-  return new Promise(function (resolve, reject) {
-    $.ajax({
-      type: "POST",
-      url: targetUrl,
-      data: dataToSend,
-      processData: false,
-      crossDomain: true,
-      contentType: false,
-      beforeSend: function () {},
-      success: function (data) {
-        resolve(data);
-      },
-      error: function (err) {
-        reject(err);
-      },
-    });
-  });
+/**
+ * Checks if the given element is a subprocess or not
+ *
+ * @param element the element to check
+ */
+export function isQuantMESubprocess(element) {
+  return (
+    element.$type === "bpmn:SubProcess" ||
+    element.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS ||
+    element.$type === quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+  );
 }

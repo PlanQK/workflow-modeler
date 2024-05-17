@@ -8,6 +8,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+import { pluginNames } from "../../../editor/EditorConstants";
+import { checkEnabledStatus } from "../../../editor/plugin/PluginHandler";
 
 const qrmHandler = require("./qrm-handler");
 
@@ -29,11 +31,16 @@ export const updateQRMs = async function () {
   try {
     QRMs = await qrmHandler.getCurrentQRMs();
     console.log("Found " + QRMs.length + " QRMs.");
-    return QRMs;
   } catch (error) {
     console.log("Error while updating QRMs in backend: " + error);
     throw error;
   }
+  const patternEnabled = checkEnabledStatus(pluginNames.PATTERN);
+  if (patternEnabled) {
+    console.log("loadedQRMs", QRMs);
+    QRMs = QRMs.concat(await qrmHandler.getPatternSolutionQRMs());
+  }
+  return QRMs;
 };
 
 /**

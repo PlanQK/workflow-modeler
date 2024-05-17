@@ -50,7 +50,8 @@ const ProgressBarModal = ({ responseData, selectedPatterns, onClose }) => {
                   );
 
                   if (response && response.content.length > 0) {
-                    // currently takes the first solution
+                    // currently takes the first concrete solution
+
                     let solutionId = response.content[0].id;
                     const solutionPackage = await fetchSolutionFromEndpoint(
                       `${qcAtlasEndpoint}/atlas/algorithms/${implementedAlgorithmId}/implementations/${id}/implementation-packages/${solutionId}/file/content`

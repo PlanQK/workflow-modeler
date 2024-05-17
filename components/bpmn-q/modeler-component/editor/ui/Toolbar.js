@@ -39,19 +39,19 @@ export default function Toolbar(props) {
   // retrieve all active plugins to identify also the dependency plugins
   const activePlugins = getActivePlugins();
   const patternEnabled = activePlugins.some(
-    (p) => p.name == consts.pluginNames.PATTERN
+    (p) => p.name === consts.pluginNames.PATTERN
   );
   const quantmeEnabled = activePlugins.some(
-    (p) => p.name == consts.pluginNames.QUANTME
+    (p) => p.name === consts.pluginNames.QUANTME
   );
   const qhanaEnabled = activePlugins.some(
-    (p) => p.name == consts.pluginNames.QHANA
+    (p) => p.name === consts.pluginNames.QHANA
   );
   const opentoscaEnabled = activePlugins.some(
-    (p) => p.name == consts.pluginNames.OPENTOSCA
+    (p) => p.name === consts.pluginNames.OPENTOSCA
   );
   const dataflowEnabled = activePlugins.some(
-    (p) => p.name == consts.pluginNames.DATAFLOW
+    (p) => p.name === consts.pluginNames.DATAFLOW
   );
 
   const handleShortcutClick = () => {

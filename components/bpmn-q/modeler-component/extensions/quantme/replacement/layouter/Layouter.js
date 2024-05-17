@@ -17,6 +17,7 @@ import {
   CIRCUIT_CUTTING_SUBPROCESS,
   QUANTUM_HARDWARE_SELECTION_SUBPROCESS,
 } from "../../Constants";
+import { isQuantMESubprocess } from "../../utilities/Utilities";
 
 // space between multiple boundary events of a task/subprocess
 let BOUNDARY_EVENT_MARGIN = "8";
@@ -447,7 +448,6 @@ function layoutWithDagre(
   console.log("Adding %i tasks to the graph for layouting: ", tasks.length);
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
-    console.log(task.type);
     if (
       task.type === "bpmn:SubProcess" ||
       task.type === CIRCUIT_CUTTING_SUBPROCESS ||
@@ -510,12 +510,7 @@ function layoutWithDagre(
   });
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
-    console.log(task.type);
-    if (
-      task.type === "bpmn:SubProcess" ||
-      task.type === CIRCUIT_CUTTING_SUBPROCESS ||
-      task.type === QUANTUM_HARDWARE_SELECTION_SUBPROCESS
-    ) {
+    if (isQuantMESubprocess(task)) {
       changeAttachersCoordinates(task);
     }
   }
@@ -535,7 +530,6 @@ export function computeDimensionsOfSubprocess(subprocess) {
   console.log(subprocess);
 
   subprocess.children.forEach((child) => {
-    console.log("Get coordinates of child ", child.id);
     if (child.di && child.di.bounds) {
       const childX = child.di.bounds.x;
       const childY = child.di.bounds.y;

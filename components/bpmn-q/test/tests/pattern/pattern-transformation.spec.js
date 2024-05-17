@@ -19,6 +19,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
       const transformationResult = await startPatternReplacementProcess(
         validPatternDiagram
       );
+      console.log("Pattern replacement terminated!");
 
       chai.expect(transformationResult.status).to.equal("transformed");
       chai
@@ -34,6 +35,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
         .expect(transformationResult.xml)
         .to.contain("<quantme:readoutErrorMitigationTask");
 
+      console.log("Evaluating resulting XML!");
       const modeler = await instantiateModeler(transformationResult.xml);
       const elements = modeler.get("elementRegistry").getAll();
       for (let element of elements) {
@@ -44,6 +46,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
             .to.equal(QUANTUM_CIRCUIT_LOADING_TASK);
         }
         if (element.type === CIRCUIT_CUTTING_TASK) {
+          console.log("Checking configuration of cutting task: ", element);
           chai.expect(element.incoming.length).to.equal(1);
           chai
             .expect(element.incoming[0].source.type)
@@ -52,6 +55,9 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
           chai
             .expect(element.outgoing[0].target.type)
             .to.equal(QUANTUM_CIRCUIT_EXECUTION_TASK);
+          chai
+            .expect(element.businessObject.cuttingMethod)
+            .to.equal("knitting toolbox");
         }
         if (element.type === CUTTING_RESULT_COMBINATION_TASK) {
           chai.expect(element.incoming.length).to.equal(1);
@@ -62,6 +68,9 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
           chai
             .expect(element.outgoing[0].target.type)
             .to.equal(READOUT_ERROR_MITIGATION_TASK);
+          chai
+            .expect(element.businessObject.cuttingMethod)
+            .to.equal("knitting toolbox");
         }
         if (element.type === READOUT_ERROR_MITIGATION_TASK) {
           chai.expect(element.incoming.length).to.equal(1);
@@ -73,7 +82,10 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
             .expect(element.outgoing[0].target.type)
             .to.equal(RESULT_EVALUATION_TASK);
         }
+        console.log("Pattern test terminated!");
+
+        // TODO: add transformation + check result
       }
-    });
+    }).timeout(10000);
   });
 });

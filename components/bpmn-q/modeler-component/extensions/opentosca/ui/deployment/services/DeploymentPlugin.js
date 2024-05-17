@@ -43,13 +43,11 @@ import {
   DEDICATED_HOSTING_POLICY,
   LOCATION_POLICY,
 } from "../../../Constants";
-import { forEach } from "min-dash";
 import {
   getOpenTOSCAEndpoint,
   getWineryEndpoint,
 } from "../../../framework-config/config-manager";
 import { fetchDataFromEndpoint } from "../../../../../editor/util/HttpUtilities";
-import * as config from "../../../framework-config/config-manager";
 
 const defaultState = {
   windowOpenOnDemandDeploymentOverview: false,
@@ -267,7 +265,7 @@ export default class DeploymentPlugin extends PureComponent {
               "Check instance with Id %i",
               serviceTemplateInstance.id
             );
-            if (serviceTemplateInstance.state != "CREATED") {
+            if (serviceTemplateInstance.state !== "CREATED") {
               console.log(
                 "Instance has invalid state: %s",
                 serviceTemplateInstance.state

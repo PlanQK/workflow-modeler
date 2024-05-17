@@ -13,6 +13,7 @@ import RuleProvider from "diagram-js/lib/features/rules/RuleProvider";
 import * as consts from "../Constants";
 import * as quantmeConsts from "../../quantme/Constants";
 import { getBoundaryAttachment as isBoundaryAttachment } from "bpmn-js/lib/features/snapping/BpmnSnappingUtil";
+import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../../quantme/Constants";
 export default class PatternRules extends RuleProvider {
   constructor(eventBus, modeling) {
     super(eventBus);
@@ -28,7 +29,7 @@ export default class PatternRules extends RuleProvider {
     function canMove(context) {
       let target = context.target;
 
-      if (target != undefined) {
+      if (target !== undefined) {
         if (context.shapes[0].type.includes("pattern")) {
           return false;
         }
@@ -161,7 +162,7 @@ export default class PatternRules extends RuleProvider {
 
       if (
         shapeToAttach.type.includes("pattern:Pattern") &&
-        (target.type === "quantme:QuantumCircuitExecutionTask" ||
+        (target.type === QUANTUM_CIRCUIT_EXECUTION_TASK ||
           target.type === "quantme:QuantumCircuitLoadingTask")
       ) {
         return true;

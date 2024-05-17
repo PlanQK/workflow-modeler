@@ -7,117 +7,12 @@ import {
 import { is } from "bpmn-js/lib/util/ModelUtil";
 
 /**
- * Returns all start events of the workflow defined by the process businessObject
+ * Get the type of a given element
  *
- * @param processBo The process businessObject containing the workflow
- * @returns {*[]} All found start event elements of the workflow.
+ * @param element the element to retrieve the type for
  */
-export function getStartEvents(processBo) {
-  return processBo.flowElements.filter(
-    (element) => element.$type === "bpmn:StartEvent"
-  );
-}
-
-/**
- * Adds a Camunda execution listener to the given element which creates the given process variable.
- *
- * @param element The element to add the execution listener to.
- * @param moddle The moddle module of the current bpmn-js modeler.
- * @param processVariable The process variable which should be created through the executionn listener
- */
-export function addExecutionListener(element, moddle, processVariable) {
-  // create the execution listener for the process variable
-  const listener = {
-    event: "start",
-    expression:
-      '${execution.setVariable("' +
-      processVariable.name +
-      '", ' +
-      processVariable.value +
-      ")}",
-  };
-
-  const elementBo = element.businessObject;
-  let extensionElements = elementBo.extensionElements;
-
-  // create new extension element if needed
-  if (!extensionElements) {
-    extensionElements = moddle.create("bpmn:ExtensionElements");
-  }
-
-  if (!extensionElements.values) {
-    extensionElements.values = [];
-  }
-
-  // add execution listener to the extension element of the element
-  extensionElements.values.push(
-    moddle.create("camunda:ExecutionListener", listener)
-  );
-  elementBo.extensionElements = extensionElements;
-}
-
-/**
- * Add the data of the given key value map as properties to a created Camunda form field. The form field is added to the given
- * element.
- *
- * @param elementID The ID of the given element.
- * @param name Name of the form field
- * @param keyValueMap The key value map
- * @param elementRegistry The elementRegistry of the bpmn-js modeler
- * @param moddle The moddle module of the bpmn-js modeler
- * @param modeling The modeling module of the bpmn-js modeler
- */
-export function addFormFieldForMap(
-  elementID,
-  name,
-  keyValueMap,
-  elementRegistry,
-  moddle,
-  modeling
-) {
-  // create the properties of the form field
-  let formFieldData = {
-    defaultValue: "",
-    id: name.replace(/\s+/g, "_"),
-    label: name,
-    type: "string",
-  };
-
-  // create the form field for the key value map
-  addFormFieldDataForMap(
-    elementID,
-    formFieldData,
-    keyValueMap,
-    elementRegistry,
-    moddle,
-    modeling
-  );
-}
-
-/**
- * Add the data of the given key value map as properties to a created Camunda form field defined by the given form field
- * data. The form field is added to the given element.
- *
- * @param elementID The ID of the given element.
- * @param formFieldData The given form field data.
- * @param keyValueMap The key value map
- * @param elementRegistry The elementRegistry of the bpmn-js modeler
- * @param moddle The moddle module of the bpmn-js modeler
- * @param modeling The modeling module of the bpmn-js modeler
- */
-export function addFormFieldDataForMap(
-  elementID,
-  formFieldData,
-  keyValueMap,
-  elementRegistry,
-  moddle,
-  modeling
-) {
-  // create camunda properties for each entry of the key value map
-  formFieldData.properties = createCamundaProperties(keyValueMap, moddle);
-
-  // create form field for form field data
-  addFormField(elementID, formFieldData, elementRegistry, moddle, modeling);
+export function getType(element) {
+  return element.$type ? element.$type : element.type;
 }
 
 /**

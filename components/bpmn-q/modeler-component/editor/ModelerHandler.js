@@ -53,23 +53,6 @@ export function createModeler(containerId, propertiesParentId) {
 }
 
 /**
- * Create a new modeler object with the Camunda extensions but no custom extensions
- *
- * @return the created modeler
- */
-export function createPlainModeler() {
-  return new BpmnModeler({
-    additionalModules: [CamundaExtensionModule],
-    keyboard: {
-      bindTo: document,
-    },
-    moddleExtensions: {
-      camunda: camundaModdleDescriptor,
-    },
-  });
-}
-
-/**
  * Creates a modeler with all additional modules and extension moddles from all active plugins which is not
  * saved in as the current modeler instance
  *
@@ -81,17 +64,6 @@ export function createTempModeler() {
     keyboard: {
       bindTo: document,
     },
-    moddleExtensions: getExtensions(),
-  });
-}
-
-/**
- * Create a Modeler with only Camunda native extensions and no additional modules
- *
- * @returns the created bpmn-js modeler
- */
-export function createLightweightModeler() {
-  return new BpmnModeler({
     moddleExtensions: getExtensions(),
   });
 }

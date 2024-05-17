@@ -9,16 +9,29 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
+import { PATTERN_PREFIX } from "../../Constants";
+import { QuantMEProps } from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import { copyQuantMEProperties } from "../../util/PatternUtil";
+
 /**
  * Replace the given warm start pattern by a quantme warm starting task
  */
-export async function replaceWarmStart(warmStartPattern, parent, modeler) {
+export async function replaceWarmStart(
+  warmStartPattern,
+  parent,
+  modeler,
+  matchingDetectorMap
+) {
   console.log(
     "Replace warm start pattern " +
       warmStartPattern.id +
       "of parent " +
       parent.id
   );
+  const warmstartingDetector =
+    matchingDetectorMap[quantmeConsts.WARM_STARTING_TASK];
+  let propertiesWarmStart = QuantMEProps(warmstartingDetector);
+
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let host = elementRegistry.get(warmStartPattern.id).host;
@@ -30,11 +43,17 @@ export async function replaceWarmStart(warmStartPattern, parent, modeler) {
     parent,
     {}
   );
+  copyQuantMEProperties(
+    propertiesWarmStart,
+    warmstartingDetector,
+    warmStartTask,
+    modeler
+  );
   let warmStartTaskBo = elementRegistry.get(warmStartTask.id).businessObject;
   warmStartTaskBo.name = "Warm Start";
 
   // remove the prefix
-  let warmStartPatternName = warmStartPattern.$type.replace("pattern:", "");
+  let warmStartPatternName = warmStartPattern.$type.replace(PATTERN_PREFIX, "");
 
   // first letter to lowerCase
   warmStartPatternName =

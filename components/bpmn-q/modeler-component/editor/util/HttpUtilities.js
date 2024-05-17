@@ -9,6 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import $ from "jquery";
+
 /**
  * Retrieves the Json data from the given endpoint.
  *
@@ -16,12 +18,16 @@
  * @param method
  * @returns
  */
-export async function fetchDataFromEndpoint(endpoint, method = "GET") {
+export async function fetchDataFromEndpoint(
+  endpoint,
+  method = "GET",
+  acceptHeader = ["application/json", "application/hal+json"]
+) {
   try {
     const response = await fetch(endpoint, {
       method: method,
       headers: {
-        Accept: ["application/json", "application/hal+json"],
+        Accept: acceptHeader,
       },
     });
     if (!response.ok) {
@@ -46,4 +52,24 @@ export async function fetchSolutionFromEndpoint(endpoint) {
     console.error("Error fetching data:", error);
     return {};
   }
+}
+
+export function performAjax(targetUrl, dataToSend) {
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      type: "POST",
+      url: targetUrl,
+      data: dataToSend,
+      processData: false,
+      crossDomain: true,
+      contentType: false,
+      beforeSend: function () {},
+      success: function (data) {
+        resolve(data);
+      },
+      error: function (err) {
+        reject(err);
+      },
+    });
+  });
 }

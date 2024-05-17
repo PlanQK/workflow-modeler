@@ -139,9 +139,9 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
     inputParameters.push(urlInputParameter);
     inputParameters.push(payloadInputParameter);
 
-    let outputParameters = [];
-
-    outputParameters = determineOutputParameters(element.businessObject.yaml);
+    let outputParameters = determineOutputParameters(
+      element.businessObject.yaml
+    );
     let camundaOutputParameters =
       constructCamundaOutputParameters(outputParameters);
 

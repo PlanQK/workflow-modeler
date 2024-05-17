@@ -17,6 +17,7 @@ import {
   getModeler,
 } from "../../../../editor/ModelerHandler";
 import { getXml } from "../../../../editor/util/IoUtilities";
+import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../../Constants";
 
 /**
  * Find candidates within the current workflow model that can be executed efficiently using a hybrid runtime
@@ -101,7 +102,6 @@ async function visualizeCandidate(optimizationCandidate, workflowXml, modeler) {
   let tempModeler = await createTempModelerFromXml(workflowXml);
   let modeling = tempModeler.get("modeling");
   let tempElementRegistry = tempModeler.get("elementRegistry");
-  console.log(elementRegistry);
   let rootElement = getRootProcess(tempModeler.getDefinitions());
   let elementRegistry = modeler.get("elementRegistry");
 
@@ -360,9 +360,9 @@ function getXOREntryPoints(rootElement) {
 
     if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
       console.log("Found subprocess ", flowElement);
-      Array.prototype.push.apply(entryPoints, getXOREntryPoints(flowElement));
 
       // recursively call method to find optimization candidates
+      Array.prototype.push.apply(entryPoints, getXOREntryPoints(flowElement));
     }
   }
 
@@ -476,10 +476,7 @@ function getOptimizationCandidate(candidate) {
 function containsQuantumCircuitExecutionTask(candidate) {
   for (let i = 0; i < candidate.containedElements.length; i++) {
     let element = candidate.containedElements[i];
-    if (
-      element.$type &&
-      element.$type === "quantme:QuantumCircuitExecutionTask"
-    ) {
+    if (element.$type && element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK) {
       return true;
     }
   }

@@ -222,7 +222,7 @@ function removeDiagramElements(modeler) {
   let elementsToRemove = [];
   let diagrams = definitions.diagrams;
   for (let i = 0; i < diagrams.length; i++) {
-    if (diagrams[i].plane.planeElement == undefined) {
+    if (diagrams[i].plane.planeElement === undefined) {
       elementsToRemove.push(diagrams[i]);
     }
   }
@@ -372,7 +372,7 @@ async function replaceByFragment(
     let attachers = attachersPlaceholder.attachers;
 
     // if all policies are moved to the new target
-    if (attachers.length == 0) {
+    if (attachers.length === 0) {
       modeling.removeShape(attachersPlaceholder);
     }
   }
@@ -462,7 +462,7 @@ function addQProvEndpoint(rootElement, elementRegistry, modeling, moddle) {
         }
 
         let form = extensionElements.get("values").filter(function (elem) {
-          return elem.$type == "camunda:FormData";
+          return elem.$type === "camunda:FormData";
         })[0];
 
         if (!form) {

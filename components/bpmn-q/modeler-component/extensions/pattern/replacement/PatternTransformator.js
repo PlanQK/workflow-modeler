@@ -11,19 +11,28 @@
 import { layout } from "../../quantme/replacement/layouter/Layouter";
 import * as constants from "../Constants";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
-import { getRootProcess } from "../../../editor/util/ModellingUtilities";
+import {
+  getRootProcess,
+  getType,
+} from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { replaceWarmStart } from "./warm-start/WarmStartPatternHandler";
 import { replaceCuttingPattern } from "./cutting/CuttingPatternHandler";
 import { replaceErrorCorrectionPattern } from "./correction/ErrorCorrectionPatternHandler";
 import { replaceMitigationPattern } from "./mitigation/MitigationPatternHandler";
-import * as quantmeConsts from "../../quantme/Constants";
-import { attachPatternsToSuitableConstruct } from "../util/PatternUtil";
+import {
+  attachPatternsToSuitableConstruct,
+  findPatternIdByName,
+  getSolutionForPattern,
+  removeAlgorithmAndAugmentationPatterns,
+} from "../util/PatternUtil";
 import { findOptimizationCandidates } from "../../quantme/ui/adaptation/CandidateDetector";
 import { getQRMs } from "../../quantme/qrm-manager";
 import { rewriteWorkflow } from "../../quantme/ui/adaptation/WorkflowRewriter";
 import { getQiskitRuntimeProgramDeploymentModel } from "../../quantme/ui/adaptation/runtimes/QiskitRuntimeHandler";
 import { getHybridRuntimeProvenance } from "../../quantme/framework-config/config-manager";
+import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
+import { PATTERN_PREFIX } from "../Constants";
 
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
@@ -40,7 +49,7 @@ export async function startPatternReplacementProcess(xml) {
   // get root element of the current diagram
   let definitions = modeler.getDefinitions();
   let rootElement = getRootProcess(definitions);
-  console.log(rootElement);
+  console.log("Root element for pattern transformation: ", rootElement);
   if (typeof rootElement === "undefined") {
     console.log("Unable to retrieve root process element from definitions!");
     return {
@@ -50,29 +59,28 @@ export async function startPatternReplacementProcess(xml) {
   }
 
   // get all patterns from the process
-  let replacementConstructs = getPatterns(rootElement, elementRegistry);
+  let containedPatterns = getPatterns(rootElement, elementRegistry);
   console.log(
-    "Process contains " +
-      replacementConstructs.length +
-      " patterns to replace..."
+    "Process contains " + containedPatterns.length + " patterns to replace..."
   );
-  if (!replacementConstructs || !replacementConstructs.length) {
+  if (!containedPatterns || !containedPatterns.length) {
+    console.log("No patterns to replace, terminating transformation...");
     return { status: "transformed", xml: xml };
   }
-  console.log(replacementConstructs);
+  console.log("Patterns to replace: ", containedPatterns);
 
   attachPatternsToSuitableTasks(
     rootElement,
     elementRegistry,
-    replacementConstructs,
+    containedPatterns,
     modeling
   );
 
-  replacementConstructs = getPatterns(rootElement, elementRegistry);
+  containedPatterns = getPatterns(rootElement, elementRegistry);
 
   // Mitigation have to be handled first since cutting inserts tasks after them
   // if the general pattern is attached then we add it to the elements to delete
-  for (let replacementConstruct of replacementConstructs) {
+  for (let replacementConstruct of containedPatterns) {
     if (replacementConstruct.task.$type === constants.PATTERN) {
       const pattern = elementRegistry.get(replacementConstruct.task.id);
       patterns.push(pattern);
@@ -81,10 +89,28 @@ export async function startPatternReplacementProcess(xml) {
       replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION ||
       replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION
     ) {
+      let patternId = replacementConstruct.task.patternId;
+      if (!patternId) {
+        console.log(
+          "Pattern ID undefined. Trying to retrieve via pattern name..."
+        );
+        patternId = await findPatternIdByName(replacementConstruct.task.$type);
+        console.log("Retrieved pattern ID: ", patternId);
+      }
+
+      // retrieve solution for pattern to enable correct configuration
+      let matchingDetectorMap = await getSolutionForPattern(patternId);
+      console.log(
+        "matchingDetectorMap for pattern: ",
+        matchingDetectorMap,
+        patternId
+      );
+
       let { replaced, flows, pattern } = await replaceMitigationPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
@@ -107,10 +133,28 @@ export async function startPatternReplacementProcess(xml) {
     if (
       constants.WARM_STARTING_PATTERNS.includes(replacementConstruct.task.$type)
     ) {
+      let patternId = replacementConstruct.task.patternId;
+      if (!patternId) {
+        console.log(
+          "Pattern ID undefined. Trying to retrieve via pattern name..."
+        );
+        patternId = await findPatternIdByName(replacementConstruct.task.$type);
+        console.log("Retrieved pattern ID: ", patternId);
+      }
+
+      // retrieve solution for pattern to enable correct configuration
+      let matchingDetectorMap = await getSolutionForPattern(patternId);
+      console.log(
+        "matchingDetectorMap for pattern: ",
+        matchingDetectorMap,
+        patternId
+      );
+
       let { replaced, flows, pattern } = await replaceWarmStart(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
@@ -132,7 +176,7 @@ export async function startPatternReplacementProcess(xml) {
     }
   }
 
-  replacementConstructs = replacementConstructs.filter(
+  let replacementConstructs = containedPatterns.filter(
     (construct) =>
       construct.task.$type !== constants.READOUT_ERROR_MITIGATION &&
       construct.task.$type !== constants.GATE_ERROR_MITIGATION &&
@@ -150,12 +194,32 @@ export async function startPatternReplacementProcess(xml) {
   );
 
   for (let replacementConstruct of augmentationReplacementConstructs) {
+    console.log("Replacing augmentation pattern: ", replacementConstruct);
+
+    let patternId = replacementConstruct.task.patternId;
+    if (!patternId) {
+      console.log(
+        "Pattern ID undefined. Trying to retrieve via pattern name..."
+      );
+      patternId = await findPatternIdByName(replacementConstruct.task.$type);
+      console.log("Retrieved pattern ID: ", patternId);
+    }
+
+    // retrieve solution for pattern to enable correct configuration
+    let matchingDetectorMap = await getSolutionForPattern(patternId);
+    console.log(
+      "matchingDetectorMap for pattern: ",
+      matchingDetectorMap,
+      patternId
+    );
+
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.CIRCUIT_CUTTING) {
       let { replaced, flows, pattern } = await replaceCuttingPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
@@ -167,7 +231,8 @@ export async function startPatternReplacementProcess(xml) {
       let { replaced, flows, pattern } = await replaceErrorCorrectionPattern(
         replacementConstruct.task,
         replacementConstruct.parent,
-        modeler
+        modeler,
+        matchingDetectorMap
       );
       allFlow = allFlow.concat(flows);
       patterns.push(pattern);
@@ -188,10 +253,14 @@ export async function startPatternReplacementProcess(xml) {
           " failed. Aborting process!",
       };
     }
+    console.log(
+      "Successfully replaced augmentation pattern with id: ",
+      replacementConstruct.task.id
+    );
   }
 
   let elementsToDelete = patterns.concat(allFlow);
-  console.log("df");
+  console.log("Applying behavioral patterns...");
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
   const optimizationCandidates = await findOptimizationCandidates(modeler);
@@ -397,7 +466,7 @@ export function getPatterns(process, elementRegistry) {
   for (let i = 0; i < flowElements.length; i++) {
     let flowElement = flowElements[i];
     console.log(flowElement);
-    if (flowElement.$type && flowElement.$type.startsWith("pattern:")) {
+    if (flowElement.$type && flowElement.$type.startsWith(PATTERN_PREFIX)) {
       patterns.push({
         task: flowElement,
         parent: processBo,
@@ -406,13 +475,7 @@ export function getPatterns(process, elementRegistry) {
     }
 
     // recursively retrieve patterns if subprocess is found
-    if (
-      flowElement.$type &&
-      (flowElement.$type === "bpmn:SubProcess" ||
-        flowElement.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS ||
-        flowElement.$type ===
-          quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS)
-    ) {
+    if (flowElement.$type && isQuantMESubprocess(flowElement)) {
       Array.prototype.push.apply(
         patterns,
         getPatterns(flowElement, elementRegistry)
@@ -427,12 +490,9 @@ function retrieveFlowElements(flowElements, elementRegistry) {
 
   flowElements.forEach((flowElement) => {
     let element = elementRegistry.get(flowElement.id);
-    if (
-      (element.$type && element.$type === "bpmn:SubProcess") ||
-      (element.type && element.type === "bpmn:SubProcess")
-    ) {
+    if (getType(element) && getType(element) === "bpmn:SubProcess") {
       console.log("searchFlow", element.id);
-      // Recursively search through subprocess's children or flowElements
+      // Recursively search through subprocesses children or flowElements
       let childrenOrFlowElements = element.children;
       if (element.children === undefined) {
         childrenOrFlowElements = element.flowElements;
@@ -465,14 +525,8 @@ export function attachPatternsToSuitableTasks(
   patterns,
   modeling
 ) {
-  let flowElements = process.flowElements;
-  if (!flowElements) {
-    flowElements = process.children;
-  }
-
-  let pattern;
   for (let j = 0; j < patterns.length; j++) {
-    pattern = elementRegistry.get(patterns[j].task.id);
+    let pattern = elementRegistry.get(patterns[j].task.id);
 
     if (pattern !== undefined) {
       console.log("Start with attachment of pattern ", pattern.id);
@@ -488,7 +542,7 @@ export function attachPatternsToSuitableTasks(
             (child.$type && child.$type === "bpmn:SubProcess") ||
             (child.type && child.type === "bpmn:SubProcess")
           ) {
-            // Recursively retrieve the subprocess's flowElements
+            // Recursively retrieve the subprocesses flowElements
             let subProcessFlowElements = retrieveFlowElements(
               child.flowElements,
               elementRegistry
@@ -502,7 +556,7 @@ export function attachPatternsToSuitableTasks(
         children.values().forEach((id) => {
           attachPatternsToSuitableConstruct(
             elementRegistry.get(id),
-            pattern.type,
+            pattern,
             modeling
           );
         });
@@ -510,13 +564,6 @@ export function attachPatternsToSuitableTasks(
     }
   }
 
-  for (let i = 0; i < patterns.length; i++) {
-    let hostFlowElements = patterns[i].attachedToRef.flowElements;
-    if (hostFlowElements !== undefined) {
-      // behavioral patterns are deleted after acting on the optimization candidate
-      if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type)) {
-        modeling.removeShape(elementRegistry.get(patterns[i].task.id));
-      }
-    }
-  }
+  // remove all contained algorithm and augmentation patterns after applying them to the workflow
+  removeAlgorithmAndAugmentationPatterns(patterns, modeling, elementRegistry);
 }

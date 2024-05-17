@@ -40,7 +40,7 @@ export default function XMLViewerButton() {
 
       // Dynamically set the value of the editor
       let xml = getModeler().xml;
-      if (xml.xml != undefined) {
+      if (xml.xml !== undefined) {
         xml = xml.xml;
       }
       aceEditor.setValue(xml);

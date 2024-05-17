@@ -9,13 +9,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import * as quantmeConsts from "../../../quantme/Constants";
+import { QuantMEProps } from "../../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
+import { copyQuantMEProperties } from "../../util/PatternUtil";
+
 /**
  * Replace the given error correction pattern by a quantme error correction task
  */
 export async function replaceErrorCorrectionPattern(
   errorCorrectionPattern,
   parent,
-  modeler
+  modeler,
+  matchingDetectorMap
 ) {
   console.log(
     "Replace error correction pattern " +
@@ -23,6 +27,10 @@ export async function replaceErrorCorrectionPattern(
       "of parent " +
       parent.id
   );
+
+  const ecDetector = matchingDetectorMap[quantmeConsts.ERROR_CORRECTION_TASK];
+  let propertiesEC = QuantMEProps(ecDetector);
+
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let internHost = elementRegistry.get(errorCorrectionPattern.id).host;
@@ -32,6 +40,7 @@ export async function replaceErrorCorrectionPattern(
     parent,
     {}
   );
+  copyQuantMEProperties(propertiesEC, ecDetector, errorCorrectionTask, modeler);
   let startEventBo = elementRegistry.get(errorCorrectionTask.id).businessObject;
   startEventBo.name = "Correct Errors";
   let flows = [];

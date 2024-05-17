@@ -19,6 +19,10 @@ import {
   getDefinitionsFromXml,
   getRootProcess,
 } from "../../../../editor/util/ModellingUtilities";
+import {
+  QUANTUM_CIRCUIT_EXECUTION_TASK,
+  READOUT_ERROR_MITIGATION_TASK,
+} from "../../Constants";
 /**
  * Replace the given QuantumHardwareSelectionSubprocess by a native subprocess orchestrating the hardware selection
  */
@@ -71,10 +75,9 @@ export async function replaceCuttingSubprocess(
   bo.flowElements.forEach((element) => {
     if (element.$type === "bpmn:StartEvent") {
       startEvent = element;
-    } else if (element.$type === "quantme:QuantumCircuitExecutionTask") {
+    } else if (element.$type === QUANTUM_CIRCUIT_EXECUTION_TASK) {
       if (
-        element.outgoing[0].targetRef.$type ===
-        "quantme:ReadoutErrorMitigationTask"
+        element.outgoing[0].targetRef.$type === READOUT_ERROR_MITIGATION_TASK
       ) {
         combinePointers.push(element.outgoing[0].targetRef);
       } else {

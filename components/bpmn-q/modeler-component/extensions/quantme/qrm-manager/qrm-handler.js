@@ -8,6 +8,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+import { getQcAtlasEndpoint } from "../../pattern/framework-config/config-manager";
+import { fetchDataFromEndpoint } from "../../../editor/util/HttpUtilities";
+import JSZip from "jszip";
+import { saveFileFormats } from "../../../editor/EditorConstants";
 
 const config = require("../../../editor/config/EditorConfigManager");
 const gitHandler = require("./git-handler");
@@ -113,4 +117,88 @@ async function getQRM(userName, repoName, qrmUrl, token) {
     detector: await gitHandler.getFileContent(detectorUrl),
     replacement: await gitHandler.getFileContent(replacementUrl),
   };
+}
+
+export async function getPatternSolutionQRMs() {
+  const qcAtlasEndpoint = getQcAtlasEndpoint();
+  const qcAtlasSolutionEndpoint = qcAtlasEndpoint + "/atlas/solutions";
+  console.log("Retrieving solutions from URL: ", qcAtlasSolutionEndpoint);
+  let listOfSolutions = await fetchDataFromEndpoint(qcAtlasSolutionEndpoint);
+  console.log("Retrieved solutions: {}", listOfSolutions);
+  listOfSolutions = listOfSolutions.content.filter(
+    (solution) => "QRM" === solution.solutionType
+  );
+  console.log("Retrieved matching solutions: {}", listOfSolutions);
+
+  let QRMs = [];
+  if (!listOfSolutions || listOfSolutions.length < 1) {
+    console.log("Unable to find QRM-based solutions in Pattern Repository");
+    return [];
+  } else {
+    console.log("Found %i solutions", listOfSolutions.length);
+    for (let solution of listOfSolutions) {
+      const qrmSolutionEndpoint =
+        qcAtlasSolutionEndpoint + "/" + solution.id + "/file/content";
+      console.log("Retrieving QRM from URL: ", qrmSolutionEndpoint);
+      const qrm = await fetch(qrmSolutionEndpoint);
+      let blob = await qrm.blob();
+
+      console.log("Found QRM with content {}", blob);
+      let zip = await JSZip.loadAsync(blob);
+
+      // Iterate over each file in the zip
+      let files = Object.entries(zip.files);
+      console.log("Zip comprises %i files!", files.length);
+
+      let patternQRMs = await retrievePatternSolutionQRMs(files, [], solution);
+      console.log("Retrieved the following pattern QRMs", patternQRMs);
+      QRMs = QRMs.concat(patternQRMs);
+    }
+  }
+  return QRMs;
+}
+
+async function retrievePatternSolutionQRMs(files, qrmList, solution) {
+  let filesInDirectory = {};
+  for (const [fileName, file] of files) {
+    console.log("Searching file with name: ", fileName);
+    if (!file.dir && fileName.endsWith(saveFileFormats.ZIP)) {
+      console.log("ZIP detected");
+      let zip = await JSZip.loadAsync(await file.async("blob"));
+      qrmList = await retrievePatternSolutionQRMs(
+        Object.entries(zip.files),
+        qrmList,
+        solution
+      );
+    }
+    if (fileName.endsWith("detector.bpmn")) {
+      console.log("Identified detector with name ", fileName);
+      filesInDirectory["detector"] = await file.async("text");
+    }
+    if (fileName.endsWith("replacement.bpmn")) {
+      console.log("Identified replacement with name ", fileName);
+      filesInDirectory["replacement"] = await file.async("text");
+    }
+  }
+  if (filesInDirectory["replacement"] && filesInDirectory["detector"]) {
+    console.log({
+      qrmUrl:
+        "QRM from solutions for patternID: " +
+        solution.patternId +
+        ", with Id: " +
+        solution.id,
+      detector: filesInDirectory["detector"],
+      replacement: filesInDirectory["replacement"],
+    });
+    qrmList.push({
+      qrmUrl:
+        "QRM from solutions for patternID: " +
+        solution.patternId +
+        ", with Id: " +
+        solution.id,
+      detector: filesInDirectory["detector"],
+      replacement: filesInDirectory["replacement"],
+    });
+  }
+  return qrmList;
 }

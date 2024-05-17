@@ -11,10 +11,7 @@
 
 import { fetch } from "whatwg-fetch";
 import { startQuantmeReplacementProcess } from "../../../replacement/QuantMETransformator";
-import {
-  getQuantumCircuitExecutionTasks,
-  performAjax,
-} from "../../../utilities/Utilities";
+import { getQuantumCircuitExecutionTasks } from "../../../utilities/Utilities";
 import {
   createNewArtifactTemplate,
   createNewServiceTemplateVersion,
@@ -29,6 +26,7 @@ import {
   getQiskitRuntimeHandlerEndpoint,
 } from "../../../framework-config/config-manager";
 import JSZip from "jszip";
+import { performAjax } from "../../../../../editor/util/HttpUtilities";
 
 /**
  * Generate a Qiskit Runtime program for the given candidate

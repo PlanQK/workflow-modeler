@@ -33,7 +33,7 @@ export default class QuantMERules extends RuleProvider {
     function canMove(context) {
       var target = context.target;
 
-      if (target != undefined) {
+      if (target !== undefined) {
         if (context.shapes[0].type.includes("Policy")) {
           return false;
         }

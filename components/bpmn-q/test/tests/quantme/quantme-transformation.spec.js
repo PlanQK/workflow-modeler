@@ -5,7 +5,6 @@ const {
   deployWorkflowToCamunda,
 } = require("../../../modeler-component/editor/util/IoUtilities");
 const {
-  updateQRMs,
   resetQRMs,
 } = require("../../../modeler-component/extensions/quantme/qrm-manager");
 const {
@@ -21,6 +20,9 @@ const chai = require("chai");
 const {
   pluginNames,
 } = require("../../../modeler-component/editor/EditorConstants");
+const {
+  getCurrentQRMs,
+} = require("../../../modeler-component/extensions/quantme/qrm-manager/qrm-handler");
 describe("Test the QuantMETransformator of the QuantME extension.", function () {
   describe("Transformation of QuantME extensions", function () {
     it("should create a valid native workflow model after two transformations", async function () {
@@ -37,14 +39,14 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
       ]);
       this.timeout(60000);
 
-      let qrms = await updateQRMs();
+      let qrms = await getCurrentQRMs();
       chai.expect(qrms.length).to.equal(10);
 
       editorConfig.setQRMUserName("UST-QuAntiL");
       editorConfig.setQRMRepositoryName("QuantME-UseCases");
       editorConfig.setQRMRepositoryPath("2023-icwe/part2");
 
-      let qrmMaxCut = await updateQRMs();
+      let qrmMaxCut = await getCurrentQRMs();
       chai.expect(qrmMaxCut.length).to.equal(1);
       let allQrms = qrms.concat(qrmMaxCut);
 

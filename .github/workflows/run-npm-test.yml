@@ -12,10 +12,55 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      ### Workflow Deployment Test Setup ###
       workflow-test-engine:
-        image: planqk/workflow-engine-test:latest
+        image: planqk/workflow-engine-test:v1.0.0
         ports:
           - 8090:8090
+      ### End of Workflow Deployment Test Setup ###
+
+      ### Pattern-based Test Setup ###
+      db:
+        image: planqk/db-test:v1.1.0
+        ports:
+          - 5060:5060
+        env:
+          POSTGRES_USERS: 'planqk:planqk|patternatlas:patternatlas|qprov:qprov'
+          POSTGRES_DATABASES: 'planqk:planqk|patternatlas:patternatlas|qprov:qprov'
+          QC_ATLAS_CONTENT_REPOSITORY_BRANCH: 'master'
+          ATLAS_DB: planqk
+          PATTERNATLAS_DB: patternatlas
+
+      pattern-atlas-api:
+        image: patternatlas/pattern-atlas-api:v1.9.0
+        ports:
+          - 1977:1977
+        env:
+          JDBC_DATABASE_URL: db
+          JDBC_DATABASE_USERNAME: patternatlas
+          JDBC_DATABASE_PASSWORD: patternatlas
+          JDBC_DATABASE_PORT: 5060
+          DB_INIT_USER: patternatlas
+          DB_INIT_PASSWORD: patternatlas
+          LATEX_RENDERER_HOST_NAME: latex-renderer
+          LATEX_RENDERER_PORT: 5030
+          JDBC_DATABASE_NAME: patternatlas
+          PATTERN_ATLAS_FETCH_INITIAL_DATA: 'true'
+          HAL_EXPLORER: 'false'
+          SPRING_PROFILES_ACTIVE: docker
+
+      qc-atlas:
+        image: planqk/atlas:v3.1.4
+        ports:
+          - 6626:6626
+        env:
+          POSTGRES_HOSTNAME: db
+          POSTGRES_PORT: 5060
+          POSTGRES_USER: planqk
+          POSTGRES_PASSWORD: planqk
+          POSTGRES_DB: planqk
+      ### End of Pattern-based Test Setup ###
+
 
     steps:
       - uses: actions/checkout@v3
