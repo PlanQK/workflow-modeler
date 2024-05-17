@@ -21,6 +21,7 @@ const chai = require("chai");
 const {
   pluginNames,
 } = require("../../../modeler-component/editor/EditorConstants");
+const { getCurrentQRMs } = require("../../../modeler-component/extensions/quantme/qrm-manager/qrm-handler");
 describe("Test the QuantMETransformator of the QuantME extension.", function () {
   describe("Transformation of QuantME extensions", function () {
     it("should create a valid native workflow model after two transformations", async function () {
@@ -37,7 +38,7 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
       ]);
       this.timeout(60000);
 
-      let qrms = await updateQRMs();
+      let qrms = await getCurrentQRMs();
       chai.expect(qrms.length).to.equal(10);
 
       editorConfig.setQRMUserName("UST-QuAntiL");
