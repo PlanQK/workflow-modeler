@@ -54,6 +54,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
           chai
             .expect(element.outgoing[0].target.type)
             .to.equal(QUANTUM_CIRCUIT_EXECUTION_TASK);
+          chai.expect(element.cuttingMethod).to.equal("knitting toolbox");
         }
         if (element.type === CUTTING_RESULT_COMBINATION_TASK) {
           chai.expect(element.incoming.length).to.equal(1);
@@ -64,6 +65,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
           chai
             .expect(element.outgoing[0].target.type)
             .to.equal(READOUT_ERROR_MITIGATION_TASK);
+          chai.expect(element.cuttingMethod).to.equal("knitting toolbox");
         }
         if (element.type === READOUT_ERROR_MITIGATION_TASK) {
           chai.expect(element.incoming.length).to.equal(1);
