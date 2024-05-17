@@ -28,7 +28,6 @@ export const getQRMs = function () {
  */
 export const updateQRMs = async function () {
   console.log("Updating QRMs in backend.");
-  let QRMs = [];
   try {
     QRMs = await qrmHandler.getCurrentQRMs();
     console.log("Found " + QRMs.length + " QRMs.");
