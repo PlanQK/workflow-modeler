@@ -5,7 +5,6 @@ const {
   deployWorkflowToCamunda,
 } = require("../../../modeler-component/editor/util/IoUtilities");
 const {
-  updateQRMs,
   resetQRMs,
 } = require("../../../modeler-component/extensions/quantme/qrm-manager");
 const {
@@ -47,7 +46,7 @@ describe("Test the QuantMETransformator of the QuantME extension.", function () 
       editorConfig.setQRMRepositoryName("QuantME-UseCases");
       editorConfig.setQRMRepositoryPath("2023-icwe/part2");
 
-      let qrmMaxCut = await updateQRMs();
+      let qrmMaxCut = await getCurrentQRMs();
       chai.expect(qrmMaxCut.length).to.equal(1);
       let allQrms = qrms.concat(qrmMaxCut);
 
