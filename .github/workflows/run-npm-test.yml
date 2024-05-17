@@ -50,7 +50,7 @@ jobs:
           SPRING_PROFILES_ACTIVE: docker
 
       qc-atlas:
-        image: planqk/atlas:v3.1.3
+        image: planqk/atlas:v3.1.4
         ports:
           - 6626:6626
         env:
