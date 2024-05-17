@@ -46,6 +46,7 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
             .to.equal(QUANTUM_CIRCUIT_LOADING_TASK);
         }
         if (element.type === CIRCUIT_CUTTING_TASK) {
+          console.log("Checking configuration of cutting task: ", element);
           chai.expect(element.incoming.length).to.equal(1);
           chai
             .expect(element.incoming[0].source.type)
