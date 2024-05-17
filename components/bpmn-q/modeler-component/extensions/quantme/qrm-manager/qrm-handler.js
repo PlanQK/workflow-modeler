@@ -8,10 +8,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-import {getQcAtlasEndpoint} from "../../pattern/framework-config/config-manager";
-import {fetchDataFromEndpoint} from "../../../editor/util/HttpUtilities";
+import { getQcAtlasEndpoint } from "../../pattern/framework-config/config-manager";
+import { fetchDataFromEndpoint } from "../../../editor/util/HttpUtilities";
 import JSZip from "jszip";
-import {saveFileFormats} from "../../../editor/EditorConstants";
+import { saveFileFormats } from "../../../editor/EditorConstants";
 
 const config = require("../../../editor/config/EditorConfigManager");
 const gitHandler = require("./git-handler");
@@ -119,14 +119,14 @@ async function getQRM(userName, repoName, qrmUrl, token) {
   };
 }
 
-export async function getPatternSolutionQRMs(){
+export async function getPatternSolutionQRMs() {
   const qcAtlasEndpoint = getQcAtlasEndpoint();
   const qcAtlasSolutionEndpoint = qcAtlasEndpoint + "/atlas/solutions";
   console.log("Retrieving solutions from URL: ", qcAtlasSolutionEndpoint);
   let listOfSolutions = await fetchDataFromEndpoint(qcAtlasSolutionEndpoint);
   console.log("Retrieved solutions: {}", listOfSolutions);
   listOfSolutions = listOfSolutions.content.filter(
-      (solution) => "QRM" === solution.solutionType
+    (solution) => "QRM" === solution.solutionType
   );
   console.log("Retrieved matching solutions: {}", listOfSolutions);
 
@@ -136,9 +136,9 @@ export async function getPatternSolutionQRMs(){
     return [];
   } else {
     console.log("Found %i solutions", listOfSolutions.length);
-    for (let solution of listOfSolutions){
+    for (let solution of listOfSolutions) {
       const qrmSolutionEndpoint =
-          qcAtlasSolutionEndpoint + "/" + solution.id + "/file/content";
+        qcAtlasSolutionEndpoint + "/" + solution.id + "/file/content";
       console.log("Retrieving QRM from URL: ", qrmSolutionEndpoint);
       const qrm = await fetch(qrmSolutionEndpoint);
       let blob = await qrm.blob();
@@ -158,7 +158,6 @@ export async function getPatternSolutionQRMs(){
   return QRMs;
 }
 
-
 async function retrievePatternSolutionQRMs(files, qrmList, solution) {
   let filesInDirectory = {};
   for (const [fileName, file] of files) {
@@ -167,30 +166,38 @@ async function retrievePatternSolutionQRMs(files, qrmList, solution) {
       console.log("ZIP detected");
       let zip = await JSZip.loadAsync(await file.async("blob"));
       qrmList = await retrievePatternSolutionQRMs(
-          Object.entries(zip.files),
-          qrmList,
-          solution
+        Object.entries(zip.files),
+        qrmList,
+        solution
       );
     }
     if (fileName.endsWith("detector.bpmn")) {
       console.log("Identified detector with name ", fileName);
-      filesInDirectory['detector'] =  await file.async("text");
+      filesInDirectory["detector"] = await file.async("text");
     }
     if (fileName.endsWith("replacement.bpmn")) {
       console.log("Identified replacement with name ", fileName);
-      filesInDirectory['replacement'] = await file.async("text");
+      filesInDirectory["replacement"] = await file.async("text");
     }
   }
-  if (filesInDirectory['replacement'] && filesInDirectory['detector']) {
+  if (filesInDirectory["replacement"] && filesInDirectory["detector"]) {
     console.log({
-      qrmUrl: "QRM from solutions for patternID: " + solution.patternId + ", with Id: " + solution.id,
-      detector: filesInDirectory['detector'],
-      replacement: filesInDirectory['replacement'],
+      qrmUrl:
+        "QRM from solutions for patternID: " +
+        solution.patternId +
+        ", with Id: " +
+        solution.id,
+      detector: filesInDirectory["detector"],
+      replacement: filesInDirectory["replacement"],
     });
     qrmList.push({
-      qrmUrl: "QRM from solutions for patternID: " + solution.patternId + ", with Id: " + solution.id,
-      detector: filesInDirectory['detector'],
-      replacement: filesInDirectory['replacement'],
+      qrmUrl:
+        "QRM from solutions for patternID: " +
+        solution.patternId +
+        ", with Id: " +
+        solution.id,
+      detector: filesInDirectory["detector"],
+      replacement: filesInDirectory["replacement"],
     });
   }
   return qrmList;
