@@ -212,8 +212,6 @@ export async function startPatternReplacementProcess(xml) {
       matchingDetectorMap,
       patternId
     );
-    // TODO: load detector from solution and configure inserted task
-    // TODO: incorporate augmentation patterns handled above
 
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.CIRCUIT_CUTTING) {
