@@ -553,7 +553,7 @@ export function attachPatternsToSuitableTasks(
           }
         });
 
-        children.values().forEach((id) => {
+        children.forEach((id) => {
           attachPatternsToSuitableConstruct(
             elementRegistry.get(id),
             pattern,
