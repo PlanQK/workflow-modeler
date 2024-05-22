@@ -35,6 +35,11 @@ export function addQuantMEInputParameters(
     if (!QUANTME_ATTRIBUTES.includes(name)) {
       continue;
     }
+    // remove * introduced by pattern plugin
+    if (propertiesToCopy[name] === "*") {
+      console.log("Remove * from properties for property %s", name);
+      continue;
+    }
 
     // create the input parameter with the QuantME attribute name and the value of the replaced task
     inputOutputExtension.inputParameters.push(
