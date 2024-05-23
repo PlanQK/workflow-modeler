@@ -63,11 +63,11 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
           chai.expect(element.incoming.length).to.equal(1);
           chai
             .expect(element.incoming[0].source.type)
-            .to.equal(QUANTUM_CIRCUIT_EXECUTION_TASK);
-          chai.expect(element.outgoing.length).to.equal(1);
+            .to.equal(READOUT_ERROR_MITIGATION_TASK);
           chai
             .expect(element.outgoing[0].target.type)
-            .to.equal(READOUT_ERROR_MITIGATION_TASK);
+            .to.equal(RESULT_EVALUATION_TASK);
+          chai.expect(element.outgoing.length).to.equal(1);
           chai
             .expect(element.businessObject.cuttingMethod)
             .to.equal("knitting toolbox");
@@ -76,11 +76,11 @@ describe("Test the PatternTransformator of the Pattern extension.", function () 
           chai.expect(element.incoming.length).to.equal(1);
           chai
             .expect(element.incoming[0].source.type)
-            .to.equal(CUTTING_RESULT_COMBINATION_TASK);
+            .to.equal(QUANTUM_CIRCUIT_EXECUTION_TASK);
           chai.expect(element.outgoing.length).to.equal(1);
           chai
             .expect(element.outgoing[0].target.type)
-            .to.equal(RESULT_EVALUATION_TASK);
+            .to.equal(CUTTING_RESULT_COMBINATION_TASK);
         }
         console.log("Pattern test terminated!");
 
