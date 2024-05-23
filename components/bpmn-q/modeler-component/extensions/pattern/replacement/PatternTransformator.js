@@ -81,55 +81,6 @@ export async function startPatternReplacementProcess(xml) {
   // Mitigation have to be handled first since cutting inserts tasks after them
   // if the general pattern is attached then we add it to the elements to delete
   for (let replacementConstruct of containedPatterns) {
-    if (replacementConstruct.task.$type === constants.PATTERN) {
-      const pattern = elementRegistry.get(replacementConstruct.task.id);
-      patterns.push(pattern);
-    }
-    if (
-      replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION ||
-      replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION
-    ) {
-      let patternId = replacementConstruct.task.patternId;
-      if (!patternId) {
-        console.log(
-          "Pattern ID undefined. Trying to retrieve via pattern name..."
-        );
-        patternId = await findPatternIdByName(replacementConstruct.task.$type);
-        console.log("Retrieved pattern ID: ", patternId);
-      }
-
-      // retrieve solution for pattern to enable correct configuration
-      let matchingDetectorMap = await getSolutionForPattern(patternId);
-      console.log(
-        "matchingDetectorMap for pattern: ",
-        matchingDetectorMap,
-        patternId
-      );
-
-      let { replaced, flows, pattern } = await replaceMitigationPattern(
-        replacementConstruct.task,
-        replacementConstruct.parent,
-        modeler,
-        matchingDetectorMap
-      );
-      allFlow = allFlow.concat(flows);
-      patterns.push(pattern);
-      modeling.removeElements(flows);
-      if (!replaced) {
-        console.log(
-          "Replacement of Pattern with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!"
-        );
-        return {
-          status: "failed",
-          cause:
-            "Replacement of Pattern with Id " +
-            replacementConstruct.task.id +
-            " failed. Aborting process!",
-        };
-      }
-    }
     if (
       constants.WARM_STARTING_PATTERNS.includes(replacementConstruct.task.$type)
     ) {
@@ -178,8 +129,6 @@ export async function startPatternReplacementProcess(xml) {
 
   let replacementConstructs = containedPatterns.filter(
     (construct) =>
-      construct.task.$type !== constants.READOUT_ERROR_MITIGATION &&
-      construct.task.$type !== constants.GATE_ERROR_MITIGATION &&
       construct.task.$type !== constants.PATTERN &&
       !constants.WARM_STARTING_PATTERNS.includes(construct.task.$type)
   );
@@ -214,6 +163,39 @@ export async function startPatternReplacementProcess(xml) {
     );
 
     let replacementSuccess = false;
+    if (
+      replacementConstruct.task.$type === constants.READOUT_ERROR_MITIGATION ||
+      replacementConstruct.task.$type === constants.GATE_ERROR_MITIGATION
+    ) {
+      let patternId = replacementConstruct.task.patternId;
+      if (!patternId) {
+        console.log(
+          "Pattern ID undefined. Trying to retrieve via pattern name..."
+        );
+        patternId = await findPatternIdByName(replacementConstruct.task.$type);
+        console.log("Retrieved pattern ID: ", patternId);
+      }
+
+      // retrieve solution for pattern to enable correct configuration
+      let matchingDetectorMap = await getSolutionForPattern(patternId);
+      console.log(
+        "matchingDetectorMap for pattern: ",
+        matchingDetectorMap,
+        patternId
+      );
+
+      let { replaced, flows, pattern } = await replaceMitigationPattern(
+        replacementConstruct.task,
+        replacementConstruct.parent,
+        modeler,
+        matchingDetectorMap
+      );
+      allFlow = allFlow.concat(flows);
+      patterns.push(pattern);
+      modeling.removeElements(flows);
+      replacementSuccess = replaced;
+    }
+
     if (replacementConstruct.task.$type === constants.CIRCUIT_CUTTING) {
       let { replaced, flows, pattern } = await replaceCuttingPattern(
         replacementConstruct.task,
