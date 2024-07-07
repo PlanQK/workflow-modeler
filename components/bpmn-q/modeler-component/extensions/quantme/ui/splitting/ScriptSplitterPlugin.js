@@ -196,6 +196,7 @@ export default class AdaptationPlugin extends PureComponent {
 
         let rewritingResult = await rewriteWorkflow(
           this.modeler,
+          this.modeler.config,
           rewriteCandidate,
           programGenerationResult.hybridProgramBlob,
           programGenerationResult.pollingAgentBlob
@@ -246,10 +247,10 @@ export default class AdaptationPlugin extends PureComponent {
           <button
             type="button"
             className="qwm-toolbar-btn"
-            title="Open menu to analyse and improve hybrid loops"
+            title="Open menu to split scripts"
             onClick={() => this.setState({ adaptationOpen: true })}
           >
-            <span className="split-scripts">
+            <span className="splitter-icon">
               <span className="qwm-indent">Split Scripts</span>
             </span>
           </button>

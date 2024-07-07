@@ -38,9 +38,7 @@ import { performAjax } from "../../../../../editor/util/HttpUtilities";
  * @return the updated candidate with the URL to the deployment model for the generated Qiskit Runtime program or an error message if the generation fails
  */
 export async function getQiskitRuntimeProgramDeploymentModel(
-  candidate,
-  modelerConfig,
-  qrms
+  candidate
 ) {
   console.log("Create solution package")
   // check if all contained QuantumCircuitExecutionTasks belong to an execution with IBMQ as provider

@@ -35,6 +35,7 @@ const OPENTOSCA_NAMESPACE_NODETYPE = "http://opentosca.org/nodetypes";
  */
 export async function rewriteWorkflow(
   modeler,
+  config,
   candidate,
   programsBlob,
   workflowBlob
@@ -116,11 +117,11 @@ export async function rewriteWorkflow(
        "{http://opentosca.org/artifacttypes}DockerContainerArtifact", zipName, id, QUANTME_NAMESPACE_PULL);
       let deploymentModelUrl = deploymentModelUrlResult.deploymentModelUrl;
 
-      //let nodeType = await createNodeType(id + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
+      let nodeType = await createNodeType(id + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
       //console.log(nodeType)
-      //let res = await updateNodeType(id + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
+      let res = await updateNodeType(id + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
       //console.log(res);
-      //serviceTemplate = await updateServiceTemplate(id, QUANTME_NAMESPACE_PULL);
+      serviceTemplate = await updateServiceTemplate(id, QUANTME_NAMESPACE_PULL);
       //console.log(serviceTemplate);
 
       // update deploymentmodelurl of service tasks
@@ -138,17 +139,17 @@ export async function rewriteWorkflow(
         let folderName = id;
         let detector = await createDetector(activity);
         console.log(detector);
-        //let replacement = await createReplacement(deploymentModelUrl);
+        let replacement = await createReplacement(deploymentModelUrl);
         //console.log(replacement);
   
-        //qrms.push({folderName: id, "detector": detector, "replacement": replacement})
+        qrms.push({folderName: id, "detector": detector, "replacement": replacement})
 
-        //uploadMultipleToGitHub(modeler, qrms);
+        uploadMultipleToGitHub(config, qrms);
 
       }
     }
-
-    return { result: "success" };
+    let xml = await getXml(modeler);
+    return { result: "success", xml: xml };
   } catch (error) {
     console.error('Error parsing blob:', error);
   }

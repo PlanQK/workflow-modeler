@@ -125,7 +125,7 @@ export default function GitHubTab() {
     modeler.config.uploadGithubRepositoryOwner = uploadGithubOwner;
     modeler.config.uploadFileName = uploadFileName;
     modeler.config.uploadBranchName = uploadBranchName;
-    modeler.config.uploadGithubRepoPath = uploadGithubRepositoryPath;
+    modeler.config.uploadGithubRepositoryPath = uploadGithubRepositoryPath;
 
     config.setUploadGithubRepositoryName(uploadGithubRepositoryName);
     config.setUploadGithubRepositoryOwner(uploadGithubOwner);

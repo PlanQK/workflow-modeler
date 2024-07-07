@@ -243,12 +243,12 @@ async function createNewBranch(
   }
 }
 
-export const uploadMultipleToGitHub = async function (modeler, qrms) {
-  const githubRepoOwner = modeler.config.uploadGithubRepositoryOwner;
-  const githubRepo = modeler.config.uploadGithubRepositoryName;
-  const githubRepoPath = modeler.config.uploadGithubRepositoryPath;
-  const githubToken = modeler.config.githubToken;
-  let branchName = modeler.config.uploadBranchName;
+export const uploadMultipleToGitHub = async function (config, qrms) {
+  const githubRepoOwner = config.uploadGithubRepositoryOwner;
+  const githubRepo = config.uploadGithubRepositoryName;
+  const githubRepoPath = config.uploadGithubRepositoryPath;
+  const githubToken = config.githubToken;
+  let branchName = config.uploadBranchName;
   let defaultBranch = "main";
   const accessToken = githubToken;
 
@@ -307,14 +307,18 @@ export const uploadMultipleToGitHub = async function (modeler, qrms) {
   }
 
   for (const { folderName, detector, replacement } of qrms) {
+    // Ensure folder path exists
+    const folderPath = `${githubRepoPath}/${folderName}`;
+    //await createPathIfNotExist(folderPath);
+
     // Encode the detector and replacement BPMN content as Base64 strings
     const encodedDetector = btoa(detector);
     const encodedReplacement = btoa(replacement);
+    await createFolder(githubRepoOwner, githubRepo, githubRepoPath+ "/" + folderName, "create folder", accessToken);
 
     // Construct the API URLs for detector and replacement files
-    const detectorUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/${githubRepoPath}/contents/${folderName}/detector.bpmn?ref=${branchName}`;
-    const replacementUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/${githubRepoPath}/contents/${folderName}/replacement.bpmn?ref=${branchName}`;
-
+    const detectorUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${githubRepoPath}/${folderName}/detector.bpmn?ref=${branchName}`;
+    const replacementUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${githubRepoPath}/${folderName}/replacement.bpmn?ref=${branchName}`;
     // Function to upload a file to GitHub
     const uploadFile = async (apiUrl, content, fileType) => {
       await fetch(apiUrl, request)
@@ -375,3 +379,37 @@ export const uploadMultipleToGitHub = async function (modeler, qrms) {
     await uploadFile(replacementUrl, encodedReplacement, 'replacement.bpmn');
   }
 };
+
+
+async function createFolder(owner, repo, path, message, token) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}/.gitkeep`;
+  const content = ""; // Empty content for .gitkeep file
+  const base64Content = btoa(content); // Encode content to base64
+
+  const body = {
+    message: message,
+    content: base64Content
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Authorization": `token ${token}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`Folder created at: ${data.content.path}`);
+    } else {
+      const errorData = await response.json();
+      console.error("Error creating folder:", errorData);
+    }
+  } catch (error) {
+    console.error("Network error:", error);
+  }
+}

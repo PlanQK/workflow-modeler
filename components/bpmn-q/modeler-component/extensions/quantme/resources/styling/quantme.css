@@ -528,3 +528,14 @@
   background-repeat: no-repeat;
   display: inline-block;
 }
+
+.qwm .splitter-icon:before {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 17px;
+  background-size: contain;
+  background: url("../icons/splitter-icon.png") no-repeat center center;
+  background-size: contain;
+  float: left;
+}

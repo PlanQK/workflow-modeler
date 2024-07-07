@@ -42,6 +42,10 @@ import {
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 //import { invokeScriptSplitter, splitWorkflow } from "../../../quantme/replacement/splitter/ScriptSplitterHandler";
 import { getScriptSplitterEndpoint } from "../../../quantme/framework-config/config-manager";
+import { findSplittingCandidates } from "../../../quantme/ui/splitting/CandidateDetector";
+import { getQiskitRuntimeProgramDeploymentModel } from "../../../quantme/ui/splitting/runtimes/QiskitRuntimeHandler";
+import { rewriteWorkflow } from "../../../quantme/ui/splitting/WorkflowRewriter";
+import { getQRMs } from "../../../quantme/qrm-manager";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -140,7 +144,7 @@ export default class PatternSelectionPlugin extends PureComponent {
   async handlePatternSolutionClosed(result) {
     console.log("retrieved solutions");
     console.log(result);
-    this.setState({ showProgressBar: false });
+    
     let xml = INITIAL_DIAGRAM_XML;
     let modeler = await createTempModelerFromXml(xml);
     let definitions = modeler.getDefinitions();
@@ -170,9 +174,29 @@ export default class PatternSelectionPlugin extends PureComponent {
         console.log(solutionRootElement);
         console.log(this.state.patterns[i]);
         // first search, then split
-        // also upload qrms and deployment models
-        //let scriptTasks = searchScriptTasks(solutionRootElement, solutionElementRegistry);
         let updatedSolution = result[i];
+       
+        const splittingCandidates = await findSplittingCandidates(
+          solutionModeler
+        );
+        let rewritingResult;
+        for (let j = 0; j < splittingCandidates.length; j++) {
+           let scriptTask = splittingCandidates[i];
+           let programGenerationResult =
+            await getQiskitRuntimeProgramDeploymentModel(
+              scriptTask
+            );
+            rewritingResult = await rewriteWorkflow(
+              solutionModeler,
+              this.modeler.config,
+              scriptTask,
+              programGenerationResult.hybridProgramBlob,
+              programGenerationResult.pollingAgentBlob
+            );
+        }
+           //updatedSolution = splitWorkflow(solution, scriptTasks[i].id, solutionPackage, getScriptSplitterEndpoint());
+         //}
+        
         //for (let j = 0; j < scriptTasks.length; j++) {
          // let solutionPackage = scriptTasks.script;
 
@@ -183,6 +207,9 @@ export default class PatternSelectionPlugin extends PureComponent {
         //if (updatedSolution.error) {
           //fail or take old solution?
         //}
+        if(rewritingResult.xml !== undefined){
+          updatedSolution = rewritingResult.xml;
+        }
         solutionModeler = await createTempModelerFromXml(updatedSolution);
 
         solutionDefinitions = solutionModeler.getDefinitions();
@@ -264,8 +291,9 @@ export default class PatternSelectionPlugin extends PureComponent {
       layout(modeling, elementRegistry, rootElement);
       collapsedXml = await getXml(modeler);
       loadDiagram(collapsedXml, getModeler());
-      const elapsedTime = Date.now() - this.progressBarStartTime; // Calculate elapsed time
+      const elapsedTime = Date.now() - this.progressBarStartTime;
       console.log(`Time taken for step B: ${elapsedTime}ms`); // Log the elapsed time
+      this.setState({ showProgressBar: false });
     }
   }
 
