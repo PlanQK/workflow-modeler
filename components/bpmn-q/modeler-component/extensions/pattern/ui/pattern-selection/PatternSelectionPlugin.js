@@ -20,32 +20,22 @@ import {
 import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
 import {
   copyElementsToParent,
-  getExtensionElements,
   getRootProcess,
-  pushFormField,
 } from "../../../../editor/util/ModellingUtilities";
 import { getXml, loadDiagram } from "../../../../editor/util/IoUtilities";
 import { layout } from "../../../quantme/replacement/layouter/Layouter";
-import { EMPTY_DIAGRAM_XML, INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
+import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
 import {
   attachPatternsToSubprocess,
-  changeIdOfContainedElements,
-  searchScriptTasks,
 } from "../../util/PatternUtil";
-import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
-import { getExtension } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
-import * as quantmeConsts from "../../../quantme/Constants";
 import {
   getPatternAtlasEndpoint,
   getQcAtlasEndpoint,
 } from "../../framework-config/config-manager";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
-//import { invokeScriptSplitter, splitWorkflow } from "../../../quantme/replacement/splitter/ScriptSplitterHandler";
-import { getScriptSplitterEndpoint } from "../../../quantme/framework-config/config-manager";
 import { findSplittingCandidates } from "../../../quantme/ui/splitting/CandidateDetector";
-import { getQiskitRuntimeProgramDeploymentModel } from "../../../quantme/ui/splitting/runtimes/QiskitRuntimeHandler";
 import { rewriteWorkflow } from "../../../quantme/ui/splitting/WorkflowRewriter";
-import { getQRMs } from "../../../quantme/qrm-manager";
+import { invokeScriptSplitter } from "../../../quantme/ui/splitting/splitter/ScriptSplitterHandler";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -183,7 +173,7 @@ export default class PatternSelectionPlugin extends PureComponent {
         for (let j = 0; j < splittingCandidates.length; j++) {
            let scriptTask = splittingCandidates[i];
            let programGenerationResult =
-            await getQiskitRuntimeProgramDeploymentModel(
+            await invokeScriptSplitter(
               scriptTask
             );
             rewritingResult = await rewriteWorkflow(
@@ -194,19 +184,7 @@ export default class PatternSelectionPlugin extends PureComponent {
               programGenerationResult.pollingAgentBlob
             );
         }
-           //updatedSolution = splitWorkflow(solution, scriptTasks[i].id, solutionPackage, getScriptSplitterEndpoint());
-         //}
-        
-        //for (let j = 0; j < scriptTasks.length; j++) {
-         // let solutionPackage = scriptTasks.script;
-
-          //updatedSolution = splitWorkflow(solution, scriptTasks[i].id, solutionPackage, getScriptSplitterEndpoint());
-        //}
-
-        //let updatedSolution = splitScriptTasks(scriptTasks);
-        //if (updatedSolution.error) {
-          //fail or take old solution?
-        //}
+    
         if(rewritingResult.xml !== undefined){
           updatedSolution = rewritingResult.xml;
         }

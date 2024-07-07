@@ -19,8 +19,8 @@ const Body = Modal.Body || (({ children }) => <div>{children}</div>);
 const Footer = Modal.Footer || (({ children }) => <div>{children}</div>);
 
 /**
- * React component which contains a modal to analyze the current workflow for hybrid loops
- * and improve it if necessary.
+ * React component which contains a modal to analyze the current workflow for splitting candidates
+ * and split it if necessary.
  *
  * @param onClose Callback called when the modal is closed
  * @return {JSX.Element}
@@ -42,24 +42,17 @@ export default function ScriptSplitterModal({ onClose }) {
 
   return (
     <Modal onClose={onClose}>
-      <Title>Split of Scripts of and Rewrite</Title>
+      <Title>Split of Scripts</Title>
 
       <Body>
         <h3 className="spaceUnder">
           This wizard guides you through the analysis and rewrite process for
-          quantum workflows to benefit from hybrid runtimes.
+          script tasks to benefit from workflows.
         </h3>
         <div className="spaceUnder">
-          The hybrid loop detection analyzes the workflow to find loops
-          consisting of quantum and classical processing, which can be executed
-          more efficiently using hybrid runtimes. Thereby, it displays possible
-          optimization candidates and enables rewriting the workflow to invoke a
-          hybrid runtime instead of orchestrating the loop. Further information,
-          as well as current restrictions, can be found in the{" "}
-          <a href="https://github.com/UST-QuAntiL/QuantME-TransformationFramework/tree/develop/docs/quantme/Analysis-and-Rewrite">
-            documentation
-          </a>
-          .
+        Implementations in the quantum computing domain are typically realized utilizing script-based languages, such as Python and Rust.
+        However, script-based languages do not provide the sophisticated functionalities of mature workflow engines.
+        Therefore, suitable splitting candidates are detected and then rewritten.
         </div>
         <div hidden={true} ref={noCandidateDivRef}>
           Unable to find suitable splitting candidates within the workflow.
@@ -68,7 +61,7 @@ export default function ScriptSplitterModal({ onClose }) {
       </Body>
 
       <Footer>
-        <div id="hybridLoopAdaptationFormButtons">
+        <div id="splittingFormButtons">
           <button
             ref={analysisButtonRef}
             type="submit"

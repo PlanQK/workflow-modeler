@@ -8,8 +8,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import lodash from "lodash";
 import generateImage from "../../../../editor/util/camunda-utils/generateImage";
 import { getRootProcess } from "../../../../editor/util/ModellingUtilities";
 import {
@@ -48,19 +46,17 @@ export async function findSplittingCandidates(modeler) {
   let splittingCandidates = [];
   for (let i = 0; i < scriptTasks.length; i++) {
     let scriptTask = scriptTasks[i];
-    
-      // generate visual representation of the candidate using base64
-      let splittingCandidate = await visualizeCandidate(
-        scriptTask,
-        workflowXml,
-        modeler
-      );
 
-      console.log(
-        "Found valid optimization candidate: ",
-        splittingCandidate
-      );
-      splittingCandidates.push(splittingCandidate);
+    // generate visual representation of the candidate using base64
+    let splittingCandidate = await visualizeCandidate(
+      scriptTask
+    );
+
+    console.log(
+      "Found valid optimization candidate: ",
+      splittingCandidate
+    );
+    splittingCandidates.push(splittingCandidate);
   }
 
   // return all valid splitting candidates
@@ -70,11 +66,10 @@ export async function findSplittingCandidates(modeler) {
 /**
  * Generate an image representing the candidate encoded using base64
  *
- * @param splittingCandidate the candidate to visualize
- * @param workflowXml the XML of the workflow the candidate belongs to
+ * @param splittingCandidate the candidate to visualizec
  * @return the string containing the base64 encoded image
  */
-async function visualizeCandidate(splittingCandidate, workflowXml, modeler) {
+async function visualizeCandidate(splittingCandidate) {
   console.log("Visualizing splitting candidate: ", splittingCandidate);
 
   // create new modeler for the visualization
@@ -83,19 +78,16 @@ async function visualizeCandidate(splittingCandidate, workflowXml, modeler) {
   let elementFactory = tempModeler.get("elementFactory");
   let tempElementRegistry = tempModeler.get("elementRegistry");
   let rootElement = getRootProcess(tempModeler.getDefinitions());
-  let elementRegistry = modeler.get("elementRegistry");
-  console.log(splittingCandidate);
 
-  // remove all flows that are not part of the candidate
   let bpmnElement = elementFactory.createShape({ type: splittingCandidate.$type });
   let element = modeling.createShape(
-                bpmnElement,
-                { x: 100, y: 100 },
-                tempElementRegistry.get(rootElement.id)
-            );
-            modeling.updateProperties(tempElementRegistry.get(element.id), {
-              name: splittingCandidate.name,
-          });
+    bpmnElement,
+    { x: 100, y: 100 },
+    tempElementRegistry.get(rootElement.id)
+  );
+  modeling.updateProperties(tempElementRegistry.get(element.id), {
+    name: splittingCandidate.name,
+  });
 
   // export the candidate as svg
   function saveSvgWrapper() {
@@ -109,7 +101,7 @@ async function visualizeCandidate(splittingCandidate, workflowXml, modeler) {
   let svg = await saveSvgWrapper();
 
   // calculate view box for the SVG
-  svg = calculateViewBox(tempElementRegistry.get(element.id), svg, elementRegistry);
+  svg = calculateViewBox(tempElementRegistry.get(element.id), svg);
 
   // generate png from svg
   splittingCandidate.candidateImage = generateImage("png", svg);
@@ -122,10 +114,9 @@ async function visualizeCandidate(splittingCandidate, workflowXml, modeler) {
  *
  * @param splittingCandidate the splitting candidate to calculate the view box for
  * @param svg the svg to update the view box to visualize the splitting candidate
- * @param elementRegistry element registry of the modeler containing the complete workflow to access all contained elements
  * @return the updated svg with the calculated view box
  */
-function calculateViewBox(splittingCandidate, svg, elementRegistry) {
+function calculateViewBox(splittingCandidate, svg) {
   // search for the modeling elements with the minimal and maximal x and y values
   let result = {};
   console.log(splittingCandidate)
@@ -135,68 +126,27 @@ function calculateViewBox(splittingCandidate, svg, elementRegistry) {
   console.log("Maximum x value for candidate: ", result.maxX);
   console.log("Maximum y value for candidate: ", result.maxY);
 
-  let width = splittingCandidate.width +20;
-  let height = splittingCandidate.height+20;
-  let x = splittingCandidate.x -10;
-  let y = splittingCandidate.y -10;
-  
-    // calculate view box and add a margin of 10 to the min/max values
-    //x = result.minX - 10;
-    //y = result.minY - 10;
-    //width = result.maxX - result.minX + 20;
-    //height = result.maxY - result.minY + 20;
-  
+  let width = splittingCandidate.width + 20;
+  let height = splittingCandidate.height + 20;
+  let x = splittingCandidate.x - 10;
+  let y = splittingCandidate.y - 10;
 
   return svg.replace(
     '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="0" height="0" viewBox="0 0 0 0" version="1.1">',
     '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' +
-      width +
-      '" height="' +
-      height +
-      '" viewBox="' +
-      x +
-      " " +
-      y +
-      " " +
-      width +
-      " " +
-      height +
-      '" version="1.1">'
+    width +
+    '" height="' +
+    height +
+    '" viewBox="' +
+    x +
+    " " +
+    y +
+    " " +
+    width +
+    " " +
+    height +
+    '" version="1.1">'
   );
-}
-
-/**
- * Update the view box coordinates with the coordinates of the given element if they provide higher/lower values for max/min
- *
- * @param coordindates the current view box coordinates, i.e., the min/max for x and y
- * @param element the element to check if it provides new coordinates for the view box
- * @return the updated view box coordinates
- */
-function updateViewBoxCoordinates(coordindates, element) {
-  if (coordindates.minX === undefined || coordindates.minX > element.x) {
-    coordindates.minX = element.x;
-  }
-
-  if (coordindates.minY === undefined || coordindates.minY > element.y) {
-    coordindates.minY = element.y;
-  }
-
-  // max x and y also incorporate the width of the current element
-  if (
-    coordindates.maxX === undefined ||
-    coordindates.maxX < element.x + element.width
-  ) {
-    coordindates.maxX = element.x + element.width;
-  }
-
-  if (
-    coordindates.maxY === undefined ||
-    coordindates.maxY < element.y + element.height
-  ) {
-    coordindates.maxY = element.y + element.height;
-  }
-
-  return coordindates;
 }
 
 /**

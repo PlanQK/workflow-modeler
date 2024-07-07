@@ -13,14 +13,13 @@
 import AdaptationModal from "./AdaptationModal";
 import { findSplittingCandidates } from "./CandidateDetector";
 import RewriteModal from "./RewriteModal";
-import { getQiskitRuntimeProgramDeploymentModel } from "./runtimes/QiskitRuntimeHandler";
-import { extractServiceZips, rewriteWorkflow } from "./WorkflowRewriter";
+import { rewriteWorkflow } from "./WorkflowRewriter";
 import React, { PureComponent } from "react";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
 import { getQRMs } from "../../qrm-manager";
 import config from "../../framework-config/config";
-import { createServiceTemplate } from "../../../opentosca/deployment/WineryUtils";
+import { invokeScriptSplitter } from "./splitter/ScriptSplitterHandler";
 
 const defaultState = {
   adaptationOpen: false,
@@ -51,31 +50,31 @@ export default class AdaptationPlugin extends PureComponent {
       // hide analysis button
       result.refs.analysisButtonRef.current.hidden = true;
 
-      // get all optimization candidates within the workflow model
+      // get all splitting candidates within the workflow model
       const analysisStartDate = Date.now();
-      const optimizationCandidates = await findSplittingCandidates(
+      const splittingCandidates = await findSplittingCandidates(
         this.modeler
       );
       console.log(
-        "Searching for optimization candidates took: %d ms",
+        "Searching for splitting candidates took: %d ms",
         Date.now() - analysisStartDate
       );
 
       if (
-        optimizationCandidates === undefined ||
-        optimizationCandidates.length === 0
+        splittingCandidates === undefined ||
+        splittingCandidates.length === 0
       ) {
-        console.log("Unable to find suitable optimization candidates!");
+        console.log("Unable to find suitable splitting candidates!");
 
         // visualize error message
         result.refs.noCandidateDivRef.current.hidden = false;
       } else {
         console.log(
-          "Found %d optimization candidates within the workflow!",
-          optimizationCandidates.length
+          "Found %d splitting candidates within the workflow!",
+          splittingCandidates.length
         );
 
-        this.candidateList = optimizationCandidates;
+        this.candidateList = splittingCandidates;
         this.setState({ adaptationOpen: false, rewriteOpen: true });
       }
     } else {
@@ -93,9 +92,9 @@ export default class AdaptationPlugin extends PureComponent {
       result.hasOwnProperty("rewriteCandidateId")
     ) {
       console.log(
-        "Rewriting started for candidate with ID %d and for runtime: ",
+        "Rewriting started for candidate with ID %d: ",
         result.rewriteCandidateId,
-        result.runtimeName
+        result.scriptSplitterName
       );
 
       // get reference to the button triggering the current rewrite
@@ -106,9 +105,9 @@ export default class AdaptationPlugin extends PureComponent {
       let runtimeLines = runtimeTable.children[0].children;
       let otherButtons = [];
       for (let runtimeLine of runtimeLines) {
-        // check if table line corresponding to runtime is found
+        // check if table line corresponding to script splitter is found
         let button = runtimeLine.children[1].children[0];
-        if (runtimeLine.children[0].innerText === result.runtimeName) {
+        if (runtimeLine.children[0].innerText === result.scriptSplitterName) {
           // get the button reference
           rewriteButton = button;
         } else {
@@ -144,16 +143,16 @@ export default class AdaptationPlugin extends PureComponent {
         otherButton.disabled = true;
       }
 
-      // track start time of hybrid program generation and workflow rewrite
+      // track start time of splitting process and workflow rewrite
       const rewriteStartDate = Date.now();
 
       let rewriteCandidate = result.candidates[result.rewriteCandidateId];
       let programGenerationResult;
-      switch (result.runtimeName) {
+      switch (result.scriptSplitterName) {
         case "Script Splitter":
-          console.log("Start script splitter")
+          console.log("Invoke script splitter")
           programGenerationResult =
-            await getQiskitRuntimeProgramDeploymentModel(
+            await invokeScriptSplitter(
               rewriteCandidate,
               config,
               getQRMs()
@@ -163,14 +162,14 @@ export default class AdaptationPlugin extends PureComponent {
           programGenerationResult = {
             error:
               "Unable to find suitable script splitter for: " +
-              result.runtimeName,
+              result.scriptSplitterName,
           };
       }
 
       // check if hybrid program generation was successful
       if (programGenerationResult.error) {
         console.log(
-          "Hybrid program generation failed with error: ",
+          "Splitting process failed with error: ",
           programGenerationResult.error
         );
 
@@ -189,17 +188,16 @@ export default class AdaptationPlugin extends PureComponent {
         return;
       } else {
         console.log(
-          "Hybrid program generation successful or not required for session!"
+          "Splitting process successful!"
         );
 
         // rewrite the workflow and display the result for the user
-
         let rewritingResult = await rewriteWorkflow(
           this.modeler,
           this.modeler.config,
           rewriteCandidate,
-          programGenerationResult.hybridProgramBlob,
-          programGenerationResult.pollingAgentBlob
+          programGenerationResult.programsBlob,
+          programGenerationResult.workflowBlob
         );
 
         if (rewritingResult.error) {

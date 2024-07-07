@@ -113,12 +113,12 @@ export default function RewriteModal({ onClose, candidates }) {
   let candidatesRootRef = React.createRef();
   let buttonsRootRef = React.createRef();
 
-  const onSubmit = (i, runtimeName) =>
+  const onSubmit = (i, scriptSplitterName) =>
     onClose({
       rewriteStarted: true,
       rewriteCandidateId: i,
       candidates: candidates,
-      runtimeName: runtimeName,
+      scriptSplitterName: scriptSplitterName,
       candidatesRootRef: candidatesRootRef,
     });
 

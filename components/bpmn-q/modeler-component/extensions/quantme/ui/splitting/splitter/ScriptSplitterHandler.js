@@ -9,199 +9,38 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { layout } from "../../../replacement/layouter/Layouter";
-import { createTempModelerFromXml, getModeler } from "../../../../../editor/ModelerHandler";
+import { createTempModelerFromXml } from "../../../../../editor/ModelerHandler";
 import { getExtensionElements, getRootProcess, pushFormField } from "../../../../../editor/util/ModellingUtilities";
-import { getXml, loadDiagram } from "../../../../../editor/util/IoUtilities";
+import { getXml } from "../../../../../editor/util/IoUtilities";
 import { EMPTY_DIAGRAM_XML } from "../../../../../editor/EditorConstants";
 import { getExtension } from "../../../../../editor/util/camunda-utils/ExtensionElementsUtil";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
+import {
+    getScriptSplitterEndpoint,
+} from "../../../framework-config/config-manager";
+import JSZip from "jszip";
+import { performAjax } from "../../../../../editor/util/HttpUtilities";
 
-const jsonData2 = [
-    {
-        "id": "StartEvent_1",
-        "type": "bpmn:StartEvent",
-        "parameters": [
-            "backend"
-        ]
-    },
-    {
-        "id": "Activity_1",
-        "name": "Initialize variables",
-        "type": "bpmn:ServiceTask",
-        "file": "0_init",
-        "return_variables": [
-            "backend4",
-            "currentIteration"
-        ],
-        "parameters": [
-            "backend"
-        ]
-    },
-    {
-        "id": "SequenceFlow_1",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "StartEvent_1",
-        "targetRef": "Activity_1"
-    },
-    {
-        "id": "ExclusiveGateway_1",
-        "type": "bpmn:ExclusiveGateway"
-    },
-    {
-        "id": "SequenceFlow_2",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "Activity_1",
-        "targetRef": "ExclusiveGateway_1"
-    },
-    {
-        "id": "Activity_2",
-        "name": "Update iterations",
-        "type": "bpmn:ServiceTask",
-        "file": "1_init",
-        "return_variables": [
-            "currentIteration"
-        ],
-        "parameters": [
-            "currentIteration"
-        ]
-    },
-    {
-        "id": "SequenceFlow_3",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "ExclusiveGateway_1",
-        "targetRef": "Activity_2"
-    },
-    {
-        "id": "Activity_3",
-        "name": "Execute Circuits",
-        "type": "quantme:QuantumCircuitExecutionTask",
-        "file": "2_Circuit_Execution",
-        "return_variables": [
-            "cluster_mapping"
-        ],
-        "parameters": [
-            "circuits_string",
-            "ibmq_token",
-            "ibmq_backend",
-            "backend4"
-        ]
-    },
-    {
-        "id": "SequenceFlow_4",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "Activity_2",
-        "targetRef": "Activity_3"
-    },
-    {
-        "id": "Activity_4",
-        "name": "Evaluate Results",
-        "type": "quantme:ResultEvaluationTask",
-        "file": "3_Result_Evaluation",
-        "return_variables": [
-            "clusteringConverged",
-            "new_centroids",
-            "iterations"
-        ],
-        "parameters": [
-            "cluster_mapping",
-            "data",
-            "centroids",
-            "iterations"
-        ]
-    },
-    {
-        "id": "SequenceFlow_5",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "Activity_3",
-        "targetRef": "Activity_4"
-    },
-    {
-        "id": "ExclusiveGateway_2",
-        "name": "not clusteringConverged == 'false'?",
-        "type": "bpmn:ExclusiveGateway"
-    },
-    {
-        "id": "SequenceFlow_6",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "Activity_4",
-        "targetRef": "ExclusiveGateway_2"
-    },
-    {
-        "id": "Activity_5",
-        "name": "Optimize Parameters",
-        "type": "quantme:ParameterOptimizationTask",
-        "file": "4_Parameter_Optimization",
-        "return_variables": [
-            "circuits_string"
-        ],
-        "parameters": [
-            "centroids",
-            "data"
-        ]
-    },
-    {
-        "id": "SequenceFlow_7",
-        "name": "no",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "ExclusiveGateway_2",
-        "targetRef": "Activity_5"
-    },
-    {
-        "id": "ExclusiveGateway_3",
-        "name": "currentIteration <= 50?",
-        "type": "bpmn:ExclusiveGateway"
-    },
-    {
-        "id": "SequenceFlow_8",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "Activity_5",
-        "targetRef": "ExclusiveGateway_3"
-    },
-    {
-        "id": "SequenceFlow_9",
-        "name": "yes",
-        "type": "bpmn:SequenceFlow",
-        "condition": "${currentIterations <= 50}",
-        "sourceRef": "ExclusiveGateway_3",
-        "targetRef": "ExclusiveGateway_1"
-    },
-    {
-        "id": "ExclusiveGateway_4",
-        "type": "bpmn:ExclusiveGateway"
-    },
-    {
-        "id": "SequenceFlow_10",
-        "name": "yes",
-        "type": "bpmn:SequenceFlow",
-        "condition": "${not clusteringConverged == 'false'}",
-        "sourceRef": "ExclusiveGateway_2",
-        "targetRef": "ExclusiveGateway_4"
-    },
-    {
-        "id": "SequenceFlow_8",
-        "name": "no",
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "ExclusiveGateway_3",
-        "targetRef": "ExclusiveGateway_4"
-    },
-    {
-        "id": "EndEvent_1",
-        "type": "bpmn:EndEvent"
-    },
-    {
-        "type": "bpmn:SequenceFlow",
-        "sourceRef": "ExclusiveGateway_4",
-        "targetRef": "EndEvent_1"
-    }
-]
+/**
+ * Creates for each item of the json a workflow element and its properties are copied.
+ * 
+ * @param modeler the modeler to create the elements
+ * @param jsonData the script splitter result
+ */
+export async function createBpmnElements(modeler, jsonData) {
+    let definitions = modeler.getDefinitions();
+    let rootElement = getRootProcess(definitions);
+    let modeling = modeler.get("modeling");
+    let elementRegistry = modeler.get("elementRegistry");
+    let elementFactory = modeler.get("elementFactory");
 
-export async function createBpmnElements(elementRegistry, modeling, elementFactory, rootElement, modeler, jsonData) {
     let sourceIdToNewShapeIdMap = {};
     let quantmeData = {};
     jsonData.forEach(item => {
         console.log(item)
 
         let element;
+
         if (item.type !== "bpmn:SequenceFlow") {
             let bpmnElement = elementFactory.createShape({ type: item.type });
             bpmnElement.businessObject.id = item.id;
@@ -213,11 +52,11 @@ export async function createBpmnElements(elementRegistry, modeling, elementFacto
             element.di.id =
                 item.id + "_di";
             sourceIdToNewShapeIdMap[item.id] = bpmnElement.id;
-            element.businessObject.name = item.label;
+            if (item.label !== "") {
+                element.businessObject.name = item.label;
+            }
         }
 
-
-        // Set additional properties
         if (item.parameters) {
             if (item.type === "bpmn:StartEvent") {
 
@@ -239,8 +78,7 @@ export async function createBpmnElements(elementRegistry, modeling, elementFacto
                     for (let i = 0; i < item.parameters.length; i++) {
                         let id = item.parameters[i];
                         let updatedId = id + startEvent.id;
-                        //formextended.fields[i].id = updatedId;
-                        var formField = modeler.get("moddle").create('camunda:FormField', { 'defaultValue': '', 'id': updatedId, 'label': id, 'type': 'string' });
+                        let formField = modeler.get("moddle").create('camunda:FormField', { 'defaultValue': '', 'id': updatedId, 'label': id, 'type': 'string' });
                         formextended.get("fields").push(formField);
                         pushFormField(form, formextended.fields[i]);
                     }
@@ -253,40 +91,20 @@ export async function createBpmnElements(elementRegistry, modeling, elementFacto
             }
         }
         if (item.type.includes("quantme:")) {
-
-            let startEvent = element;
             quantmeData[item.id] = {
                 id: item.id,
-                file: item.file // Assuming `file` is the property you want to store
+                file: item.file
             };
-
-            // create detector and replacement & upload later
         }
         if (item.type === "bpmn:ServiceTask") {
-
-            let startEvent = element;
             element.businessObject.$attrs["opentosca:deploymentModelUrl"] = item.file;
-
-            // set deploymentmodel url
-        }
-
-        if (item.type === "bpmn:ExclusiveGateway") {
-
-            let startEvent = element;
-            element.businessObject.name = item.name;
-
-            // set label
         }
 
         if (item.type === "bpmn:SequenceFlow") {
 
-            let startEvent = element;
             let sourceId = sourceIdToNewShapeIdMap[item.sourceRef];
             let newTargetId = sourceIdToNewShapeIdMap[item.targetRef];
-            console.log(item.sourceRef);
-            console.log(sourceIdToNewShapeIdMap)
-            console.log(sourceId)
-            console.log(elementRegistry.get(sourceId))
+
             elementFactory.createConnection({
                 type: "bpmn:SequenceFlow",
                 source: elementRegistry.get(sourceId),
@@ -303,124 +121,72 @@ export async function createBpmnElements(elementRegistry, modeling, elementFacto
                     item.condition;
                 flow.businessObject.conditionExpression = selectionFlowCondition;
             }
-            // assumption is that the gateway has exactly two outgoing flows
-            let source = elementRegistry.get(sourceId);
-            console.log(source);
-            if (source.type === "bpmn:ExclusiveGatway") {
-                let outgoingFlows = source.outgoing;
-                console.log(outgoingFlows);
-                for (let i = 0; i < outgoingFlows.length; i++) {
-                    let outgoingFlow = outgoingFlows[i];
-                    console.log(outgoingFlow);
-                    if (outgoingFlow.businessObject.name === "") {
-                        outgoingFlow.businessObject.name = "No";
-                        console.log(outgoingFlow)
-                    }
-                }
-            }
-
-            flow.businessObject.name = item.name;
         }
-        console.log(rootElement)
-
     });
 
     console.log(await getXml(modeler))
 }
 
 /**
- * Initiate the replacement process for the patterns that are contained in the current process model
+ * Initiate the rewrite process of the script splitter result.
  *
- * @param xml the BPMN diagram in XML format
+ * @param xml the BPMN diagram
  */
 export async function rewriteJsonToWorkflow(jsonData) {
-    let xml = EMPTY_DIAGRAM_XML;
+    const xml = EMPTY_DIAGRAM_XML;
     let modeler = await createTempModelerFromXml(xml);
-    let definitions = modeler.getDefinitions();
-    let rootElement = getRootProcess(definitions);
-    console.log(rootElement);
 
-    //let startEvent = rootElement.flowElements[0];
-    //let elementToConnect = startEvent;
-    //console.log(elementToConnect);
-    let modeling = modeler.get("modeling");
-    let elementRegistry = modeler.get("elementRegistry");
-    let elementFactory = modeler.get("elementFactory");
-    createBpmnElements(elementRegistry, modeling, elementFactory, rootElement, modeler, jsonData);
-    let collapsedXml = await getXml(modeler);
-    //loadDiagram(collapsedXml, getModeler());
+    createBpmnElements(modeler, jsonData);
+    const collapsedXml = await getXml(modeler);
 
     modeler = await createTempModelerFromXml(collapsedXml);
-    elementRegistry = modeler.get("elementRegistry");
-    modeling = modeler.get("modeling");
-    definitions = modeler.getDefinitions();
-    rootElement = getRootProcess(definitions);
+    const elementRegistry = modeler.get("elementRegistry");
+    const modeling = modeler.get("modeling");
+    const definitions = modeler.getDefinitions();
+    const rootElement = getRootProcess(definitions);
     layout(modeling, elementRegistry, rootElement);
-    let updated_xml = await getXml(modeler);
+    const updated_xml = await getXml(modeler);
     console.log(updated_xml);
     return { status: "transformed", xml: updated_xml }
-
 }
 
 /**
- * 
- * @param xml 
- * @param scriptTaskId 
- * @param solutionPackage 
- * @param scriptSplitterEndpoint 
- * @returns the solution
- */
-export async function splitWorkflow(xml, scriptTaskId,
-    solutionPackage,
-    scriptSplitterEndpoint
-) {
-
-    let scriptSplitterResult = await invokeScriptSplitter(
-        solutionPackage,
-        scriptSplitterEndpoint
-    );
-    if (scriptSplitterResult.error !== undefined) {
-        return { error: scriptSplitterResult.error };
-    }
-    let workflowResult = await rewriteJsonToWorkflow(xml);
-    let workflow = workflowResult.xml;
-    combineWorkflowWithScriptSplitter();
-    return { "xml": workflow, "artifacts": scriptSplitterResult.programsBlob }
-}
-
-/**
- * Generate a Qiskit Runtime program for the given candidate using the given set of quantum and classical programs
+ * Invokes the script splitter and polls for the programs and workflow file.
  *
- * @param solutionPackage the programs that have to be merged into the Qiskit Runtime program
- * @param scriptSplitterEndpoint the endpoint of the external Qiskit Runtime Handler performing the program generation
- * @return the generated Qiskit Runtime program if successful, an error message otherwise
+ * @param candidate the candidate to generate the workflow for
+ * @return the script splitter result or an error message if the process fails
  */
 export async function invokeScriptSplitter(
-    solutionPackage,
-    scriptSplitterEndpoint
+    candidate
 ) {
+    let script = candidate.script;
+    let requirements = candidate.requirements;
+    let zip = new JSZip();
 
-    // create request containing information about the candidate and sent to Qiskit Runtime handler
-    // eslint-disable-next-line no-undef
-    console.log("script: " + solutionPackage);
+    // Add the script and requirements to the zip
+    zip.file('script.py', script);
+    zip.file('requirements.txt', requirements);
+
     const fd = new FormData();
-    fd.append("script", solutionPackage);
+    // Generate the zip file as a blob
+    const content = await zip.generateAsync({ type: 'blob' })
+    fd.append('script', content, 'required_programs.zip');
     try {
+        const scriptSplitterEndpoint = getScriptSplitterEndpoint();
         let generationResult = await performAjax(
             scriptSplitterEndpoint +
-            "/qc-script-splitter/api/v1.0/split-qc-script",
+            "/qc-script-splitter/api/v1.0/split-implementation",
             fd
         );
 
         // get location of the task object to poll
         if (!generationResult["Location"]) {
             return {
-                error: "Received invalid response from Script Splitter.",
+                error: "Received invalid response from Qiskit Runtime handler.",
             };
         }
-        let taskLocation =
-            scriptSplitterEndpoint + generationResult["Location"];
-
+        let taskLocation = scriptSplitterEndpoint + generationResult["Location"];
+        console.log(taskLocation)
         // poll for task completion
         console.log("Polling for task completion at URL: ", taskLocation);
         let complete = false;
@@ -445,31 +211,29 @@ export async function invokeScriptSplitter(
         console.log("Polling result after completion or timeout: ", result);
         if (result["complete"] === false) {
             return {
-                error: "Script splitter did not complete until timeout!",
+                error: "Splitting of script did not complete until timeout!",
             };
         }
         if (result["error"]) {
             return { error: result["error"] };
         }
 
-        // extract endpoint for the generated programs
-        let programsUrl = scriptSplitterEndpoint + result["programs"];
-
-        // extract endpoint for the generated json
-        let workflowJson = scriptSplitterEndpoint + result["workflowJson"];
+        // extract endpoint for the generated hybrid program and the related polling agent
+        let programsUrl = scriptSplitterEndpoint + result["programsUrl"];
+        let workflowUrl = scriptSplitterEndpoint + result["workflowUrl"];
 
         // download and return files
         console.log("Downloading programs from URL: ", programsUrl);
         let response = await fetch(programsUrl);
         let programsBlob = await response.blob();
-
-        console.log("Downloading json for workflow rewrite from URL: ", workflowJson);
-        response = await fetch(workflowJson);
-        console.log("Successfully downloaded resulting hybrid program and agent!");
+        console.log("Downloading workflow file from URL: ", workflowUrl);
+        response = await fetch(workflowUrl);
+        let pollingAgentBlob = await response.blob();
+        console.log("Successfully downloaded resulting programs and workflow!");
         return {
             programsBlob: programsBlob,
-            workflowJson: workflowJson,
-            scriptSplitterResultId: result["id"],
+            workflowBlob: pollingAgentBlob,
+            splittingId: result["id"],
         };
     } catch (e) {
         return {
@@ -477,4 +241,5 @@ export async function invokeScriptSplitter(
                 "Unable to connect to the Script Splitter.\nPlease check the endpoint!",
         };
     }
+
 }
