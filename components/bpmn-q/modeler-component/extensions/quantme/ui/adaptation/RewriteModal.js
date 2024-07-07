@@ -45,7 +45,8 @@ export default function RewriteModal({ onClose, candidates }) {
             src={candidate.candidateImage}
           />
           <h3 className="spaceAbove spaceUnder">
-            The following hybrid runtimes might be used for improved execution:
+          The following hybrid runtimes and sessions might be used for
+          improved execution:
           </h3>
           <table>
             <tbody>
