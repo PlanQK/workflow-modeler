@@ -517,7 +517,7 @@ function layoutWithDagre(
 }
 
 /**
- * Computes the dimensions (width and height) of a subprocess based on its children's positions and sizes.
+ * Computes the width and height of a subprocess based on its children's positions and sizes.
  * @param subprocess - The subprocess object containing children
  * @returns the computed width and height of the subprocess.
  */
@@ -530,6 +530,7 @@ export function computeDimensionsOfSubprocess(subprocess) {
   console.log(subprocess);
 
   subprocess.children.forEach((child) => {
+    console.log(child);
     if (child.di && child.di.bounds) {
       const childX = child.di.bounds.x;
       const childY = child.di.bounds.y;
@@ -553,6 +554,7 @@ export function computeDimensionsOfSubprocess(subprocess) {
   // the elements start not with the subprocess.x so we need to adjust the width
   // add a little padding
   const subprocessWidth = maxX - subprocess.x - minX + 30;
+  
   const subprocessHeight = maxY - subprocess.y + 10;
 
   return { width: subprocessWidth, height: subprocessHeight };

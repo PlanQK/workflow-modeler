@@ -51,6 +51,7 @@ import {
   EvaluationResultEntry,
   ErrorCorrectionMethodEntry,
   WarmStartingPatternEntry,
+  RequirementsEntry
 } from "./QuantMEPropertyEntries";
 
 /**
@@ -542,6 +543,17 @@ export function InitialStateObjectEntries(element) {
       id: consts.INITIAL_STATE,
       element,
       component: InitialStateEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function ScriptTaskEntries(element) {
+  return [
+    {
+      id: consts.REQUIREMENTS,
+      element,
+      component: RequirementsEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

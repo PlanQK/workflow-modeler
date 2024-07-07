@@ -39,6 +39,7 @@ let defaultConfig = {
   UPLOAD_BRANCH_NAME: "",
   UPLOAD_FILE_NAME: "workflow",
   UPLOAD_GITHUB_REPO: "",
+  UPLOAD_GITHUB_REPOPATH: "qrms",
   UPLOAD_GITHUB_USER: "",
   WINERY_ENDPOINT: "http://localhost:8080/winery",
 };

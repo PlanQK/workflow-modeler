@@ -69,15 +69,19 @@ export async function startPatternReplacementProcess(xml) {
   }
   console.log("Patterns to replace: ", containedPatterns);
 
+  console.log("Begin of measurement for step C: ");
+  let startTime = Date.now();
   attachPatternsToSuitableTasks(
     rootElement,
     elementRegistry,
     containedPatterns,
     modeling
   );
-
+  console.log("End of measurement for step C: ", Date.now()-startTime);
   containedPatterns = getPatterns(rootElement, elementRegistry);
 
+  console.log("Begin of step E:");
+  startTime = Date.now();
   // Mitigation have to be handled first since cutting inserts tasks after them
   // if the general pattern is attached then we add it to the elements to delete
   for (let replacementConstruct of containedPatterns) {
@@ -136,10 +140,6 @@ export async function startPatternReplacementProcess(xml) {
   let augmentationReplacementConstructs = replacementConstructs.filter(
     (construct) =>
       constants.AUGMENTATION_PATTERNS.includes(construct.task.$type)
-  );
-
-  let behaviorReplacementConstructs = replacementConstructs.filter(
-    (construct) => constants.BEHAVIORAL_PATTERNS.includes(construct.task.$type)
   );
 
   for (let replacementConstruct of augmentationReplacementConstructs) {
@@ -245,6 +245,12 @@ export async function startPatternReplacementProcess(xml) {
   console.log("Applying behavioral patterns...");
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
+  console.log("End of measurement of step E: ", Date.now()-startTime);
+  let behaviorReplacementConstructs = replacementConstructs.filter(
+    (construct) => constants.BEHAVIORAL_PATTERNS.includes(construct.task.$type)
+  );
+  console.log("Begin of measurement of step F: ");
+  startTime = Date.now();
   const optimizationCandidates = await findOptimizationCandidates(modeler);
   for (let replacementConstruct of behaviorReplacementConstructs) {
     let replacementSuccess = false;
@@ -429,6 +435,7 @@ export async function startPatternReplacementProcess(xml) {
   elementsToDelete = patterns.concat(allFlow);
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
+  console.log("End of measurement of step F: ", Date.now()-startTime);
 
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);

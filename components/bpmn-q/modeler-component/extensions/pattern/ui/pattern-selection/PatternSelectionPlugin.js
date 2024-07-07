@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Institute of Architecture of Application Systems -
+ * Copyright (c) 2023 Institute of Architecture of Application Systems -
  * University of Stuttgart
  *
  * This program and the accompanying materials are made available under the
@@ -19,25 +19,29 @@ import {
 } from "../../../../editor/ModelerHandler";
 import { fetchDataFromEndpoint } from "../../../../editor/util/HttpUtilities";
 import {
+  copyElementsToParent,
   getExtensionElements,
   getRootProcess,
   pushFormField,
 } from "../../../../editor/util/ModellingUtilities";
 import { getXml, loadDiagram } from "../../../../editor/util/IoUtilities";
 import { layout } from "../../../quantme/replacement/layouter/Layouter";
-import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
+import { EMPTY_DIAGRAM_XML, INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
 import {
   attachPatternsToSubprocess,
   changeIdOfContainedElements,
+  searchScriptTasks,
 } from "../../util/PatternUtil";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import { getExtension } from "../../../../editor/util/camunda-utils/ExtensionElementsUtil";
+import * as quantmeConsts from "../../../quantme/Constants";
 import {
   getPatternAtlasEndpoint,
   getQcAtlasEndpoint,
 } from "../../framework-config/config-manager";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
-import { isQuantMESubprocess } from "../../../quantme/utilities/Utilities";
+//import { invokeScriptSplitter, splitWorkflow } from "../../../quantme/replacement/splitter/ScriptSplitterHandler";
+import { getScriptSplitterEndpoint } from "../../../quantme/framework-config/config-manager";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -58,6 +62,7 @@ export default class PatternSelectionPlugin extends PureComponent {
       this.handlePatternSolutionClosed.bind(this);
 
     this.state = defaultState;
+    this.progressBarStartTime = null; 
   }
 
   async fetchData() {
@@ -87,7 +92,9 @@ export default class PatternSelectionPlugin extends PureComponent {
 
     if (result && result.length > 0) {
       // If the result is not empty, show the progress bar
+      this.progressBarStartTime = Date.now()
       this.setState({ showProgressBar: true });
+
 
       try {
         const implementationsResponse = await fetchDataFromEndpoint(
@@ -154,13 +161,34 @@ export default class PatternSelectionPlugin extends PureComponent {
         const solution = result[i];
 
         let solutionModeler = await createTempModelerFromXml(result[i]);
+
         let solutionDefinitions = solutionModeler.getDefinitions();
         let solutionElementRegistry = solutionModeler.get("elementRegistry");
         let solutionModeling = solutionModeler.get("modeling");
-        const solutionRootElement = getRootProcess(solutionDefinitions);
+        let solutionRootElement = getRootProcess(solutionDefinitions);
         console.log("DAS SOLUTIONROOTElement");
         console.log(solutionRootElement);
         console.log(this.state.patterns[i]);
+        // first search, then split
+        // also upload qrms and deployment models
+        //let scriptTasks = searchScriptTasks(solutionRootElement, solutionElementRegistry);
+        let updatedSolution = result[i];
+        //for (let j = 0; j < scriptTasks.length; j++) {
+         // let solutionPackage = scriptTasks.script;
+
+          //updatedSolution = splitWorkflow(solution, scriptTasks[i].id, solutionPackage, getScriptSplitterEndpoint());
+        //}
+
+        //let updatedSolution = splitScriptTasks(scriptTasks);
+        //if (updatedSolution.error) {
+          //fail or take old solution?
+        //}
+        solutionModeler = await createTempModelerFromXml(updatedSolution);
+
+        solutionDefinitions = solutionModeler.getDefinitions();
+        solutionElementRegistry = solutionModeler.get("elementRegistry");
+        solutionModeling = solutionModeler.get("modeling");
+        solutionRootElement = getRootProcess(solutionDefinitions);
         let collapsedSubprocess = elementFactory.createShape({
           type: "bpmn:SubProcess",
           isExpanded: true,
@@ -174,230 +202,9 @@ export default class PatternSelectionPlugin extends PureComponent {
         modeling.updateProperties(shape, {
           name: this.state.patterns[i].algorithmPattern.name,
         });
-        let sourceIdToNewShapeIdMap = {};
+        
         if (solution !== INITIAL_DIAGRAM_XML) {
-          let solutionFlowElements = solutionRootElement.flowElements.slice();
-
-          // Filter out elements with specific $type and type values
-          const nonFilteredElements = solutionFlowElements.filter((element) => {
-            const elementType = solutionElementRegistry.get(element.id).$type;
-            const elementCustomType = solutionElementRegistry.get(
-              element.id
-            ).type;
-
-            return !(
-              elementType === "bpmn:SequenceFlow" ||
-              elementCustomType === "bpmn:SequenceFlow"
-            );
-          });
-
-          // Sort the filtered elements based on the 'x' property
-          nonFilteredElements.sort((a, b) => {
-            const elementA = solutionElementRegistry.get(a.id);
-            const elementB = solutionElementRegistry.get(b.id);
-
-            console.log(
-              `Comparing ${elementA.id} (${elementA.x}) with ${elementB.id} (${elementB.x})`
-            );
-
-            return elementA.x - elementB.x;
-          });
-
-          // Combine the sorted filtered elements with the remaining elements
-          const sortedSolutionFlowElements = nonFilteredElements;
-          const solutionFlowElementsLength = nonFilteredElements.length;
-          let offset = 0;
-          console.log(sortedSolutionFlowElements);
-
-          for (let j = 0; j < solutionFlowElementsLength; j++) {
-            let flowElement = solutionElementRegistry.get(
-              sortedSolutionFlowElements[j].id
-            );
-
-            if (
-              flowElement.$type !== "bpmn:SequenceFlow" &&
-              flowElement.type !== "bpmn:SequenceFlow"
-            ) {
-              let type = flowElement.$type;
-              if (type === undefined) {
-                type = flowElement.type;
-              }
-              let s = elementFactory.createShape({
-                type: type,
-                x: 0,
-                y: 0,
-                isExpanded: true,
-              });
-              let updateShape;
-
-              // retrieve form fields from start events and add them to the initial start event
-              if (type === "bpmn:StartEvent") {
-                updateShape = modeling.createShape(
-                  s,
-                  { x: 50 + offset, y: 50 },
-                  elementRegistry.get(collapsedSubprocess.id)
-                );
-                modeling.updateProperties(elementRegistry.get(updateShape.id), {
-                  id: collapsedSubprocess.id + "_" + updateShape.id,
-                });
-                let extensionElements = getExtensionElements(
-                  getBusinessObject(startEvent),
-                  modeler.get("moddle")
-                );
-                // get form data extension
-                let form = getExtension(
-                  getBusinessObject(startEvent),
-                  "camunda:FormData"
-                );
-                let formextended = getExtension(
-                  getBusinessObject(flowElement),
-                  "camunda:FormData"
-                );
-                let script = "";
-                if (formextended) {
-                  if (!form) {
-                    form = modeler.get("moddle").create("camunda:FormData");
-                  }
-                  for (let i = 0; i < formextended.fields.length; i++) {
-                    let id = formextended.fields[i].id;
-                    let updatedId = id + updateShape.id;
-                    formextended.fields[i].id = updatedId;
-                    script += `def ${updatedId}Value = execution.getVariable("${updatedId}");\n execution.setVariable("${id}", ${updatedId}Value)\n`;
-                    pushFormField(form, formextended.fields[i]);
-                  }
-                  extensionElements.values = [form];
-                }
-
-                modeling.updateProperties(elementRegistry.get(startEvent.id), {
-                  extensionElements: extensionElements,
-                });
-
-                // if mapping is required then the script task has to inserted and the outgoing flows have to be changed
-                if (script) {
-                  let mapFormFieldScriptTask = elementFactory.createShape({
-                    type: "bpmn:ScriptTask",
-                  });
-
-                  let shape = modeling.createShape(
-                    mapFormFieldScriptTask,
-                    { x: 50, y: 50 },
-                    elementRegistry.get(collapsedSubprocess.id)
-                  );
-                  let shapeBo = elementRegistry.get(shape.id).businessObject;
-
-                  shapeBo.name = "Map Form Fields to Execution Variables";
-                  shapeBo.scriptFormat = "groovy";
-                  shapeBo.script = script;
-                  shapeBo.asyncBefore = true;
-
-                  let outgoingFlows = [];
-                  let start = elementRegistry.get(updateShape.id);
-                  flowElement.outgoing.forEach((element) => {
-                    outgoingFlows.push(solutionElementRegistry.get(element.id));
-                    modeling.connect(
-                      shape,
-                      solutionElementRegistry.get(element.target.id),
-                      {
-                        type: "bpmn:SequenceFlow",
-                      }
-                    );
-                  });
-                  modeling.connect(start, shape, { type: "bpmn:SequenceFlow" });
-                  solutionModeling.removeElements(outgoingFlows);
-                }
-              } else if (!isQuantMESubprocess(flowElement)) {
-                updateShape = modeling.createShape(
-                  flowElement,
-                  { x: 442 + offset, y: 100 },
-                  elementRegistry.get(collapsedSubprocess.id)
-                );
-                modeling.updateProperties(elementRegistry.get(updateShape.id), {
-                  id: collapsedSubprocess.id + "_" + updateShape.id,
-                });
-                updateShape.di.id =
-                  collapsedSubprocess.id + "_" + updateShape.id + "_di";
-              } else {
-                console.log("Flowelement");
-                console.log(flowElement);
-                /** 
-                let flows = [];
-                for(let i = 0; i < flowElement.incoming.length; i++){
-                  flows.push(solutionElementRegistry.get(flowElement.incoming[i].id));
-                }
-                for(let i = 0; i < flowElement.outgoing.length; i++){
-                  flows.push(solutionElementRegistry.get(flowElement.outgoing[i].id));
-                }
-                
-                solutionModeling.removeElements(flows);
-                */
-                console.log(
-                  solutionElementRegistry.get(sortedSolutionFlowElements[j].id)
-                );
-                console.log(flowElement);
-
-                updateShape = modeling.createShape(
-                  flowElement,
-                  { x: 442 + offset, y: 100 },
-                  elementRegistry.get(collapsedSubprocess.id)
-                );
-                updateShape.di.id =
-                  collapsedSubprocess.id + "_" + updateShape.id + "_di";
-                console.log(updateShape);
-
-                // change id of solution elements since each id must be unique
-                changeIdOfContainedElements(
-                  flowElement,
-                  collapsedSubprocess,
-                  solutionModeling,
-                  solutionElementRegistry,
-                  collapsedSubprocess.id + "_" + updateShape.id
-                );
-                modeling.updateProperties(elementRegistry.get(updateShape.id), {
-                  id: collapsedSubprocess.id + "_" + updateShape.id,
-                });
-                console.log(updateShape);
-              }
-              offset += 150;
-
-              sourceIdToNewShapeIdMap[sortedSolutionFlowElements[j].id] =
-                updateShape.id;
-            }
-          }
-
-          solutionFlowElements = solutionRootElement.flowElements.slice();
-
-          // Filter out elements with specific $type and type values
-          const sequenceFlows = solutionFlowElements.filter((element) => {
-            const elementType = solutionElementRegistry.get(element.id).$type;
-            const elementCustomType = solutionElementRegistry.get(
-              element.id
-            ).type;
-
-            return (
-              elementType === "bpmn:SequenceFlow" ||
-              elementCustomType === "bpmn:SequenceFlow"
-            );
-          });
-          console.log(sequenceFlows);
-
-          for (let j = 0; j < solutionRootElement.flowElements.length; j++) {
-            let flowElement = solutionElementRegistry.get(
-              solutionRootElement.flowElements[j].id
-            );
-            if (flowElement.type === "bpmn:SequenceFlow") {
-              // Retrieve the id of the newly created shape using the map
-              let sourceId = sourceIdToNewShapeIdMap[flowElement.source.id];
-              let newTargetId = sourceIdToNewShapeIdMap[flowElement.target.id];
-              console.log(
-                "connect source " + sourceId + "and target" + newTargetId
-              );
-              modeling.connect(
-                elementRegistry.get(sourceId),
-                elementRegistry.get(newTargetId),
-                { type: "bpmn:SequenceFlow" }
-              );
-            }
-          }
+          copyElementsToParent(solutionRootElement, collapsedSubprocess, startEvent, solutionModeler, modeler);
         } else {
           let collapsedSubprocessStartEvent = elementFactory.createShape({
             type: "bpmn:StartEvent",
@@ -450,13 +257,15 @@ export default class PatternSelectionPlugin extends PureComponent {
       rootElement = getRootProcess(definitions);
 
       console.log(rootElement);
-      let elements = [];
-      for (let i = 0; i < rootElement.flowElements; i++) {
-        elements.push(elementRegistry.get(rootElement.flowElement[i].id));
-      }
+      //let elements = [];
+      //for (let i = 0; i < rootElement.flowElements; i++) {
+        //elements.push(elementRegistry.get(rootElement.flowElement[i].id));
+      //}
       layout(modeling, elementRegistry, rootElement);
       collapsedXml = await getXml(modeler);
       loadDiagram(collapsedXml, getModeler());
+      const elapsedTime = Date.now() - this.progressBarStartTime; // Calculate elapsed time
+      console.log(`Time taken for step B: ${elapsedTime}ms`); // Log the elapsed time
     }
   }
 

@@ -9,8 +9,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { EMPTY_DIAGRAM_XML } from "../../../editor/EditorConstants";
+import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
+import { getXml } from "../../../editor/util/IoUtilities";
+import { getRootProcess } from "../../../editor/util/ModellingUtilities";
+import { copyQuantMEProperties } from "../../pattern/util/PatternUtil";
 import * as quantmeConsts from "../Constants";
 import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../Constants";
+import { QuantMEProps } from "../modeling/properties-provider/QuantMEPropertiesProvider";
 
 /**
  * Check if the given task is a QuantME task
@@ -45,4 +51,59 @@ export function isQuantMESubprocess(element) {
     element.$type === quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS ||
     element.$type === quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
   );
+}
+
+/**
+ * Creates the detector of an element.
+ *
+ * @param element the element to create the detector
+ */
+export async function createDetector(elementToCopy) {
+  const tempModeler = await createTempModelerFromXml(EMPTY_DIAGRAM_XML);
+  const definitions = tempModeler.getDefinitions();
+  const rootElement = getRootProcess(definitions);
+  const modeling = tempModeler.get("modeling");
+  const elementFactory = tempModeler.get("elementFactory");
+  const elementRegistry = tempModeler.get("elementRegistry");
+  const element = elementFactory.createShape({
+    type: elementToCopy.type
+  });
+  const shape = modeling.createShape(
+    element,
+    { x: 50, y: 50 },
+    elementRegistry.get(rootElement.id)
+  );
+
+  const propertiesToCopy = QuantMEProps(elementToCopy);
+  copyQuantMEProperties(propertiesToCopy, elementToCopy, shape, tempModeler);
+
+  const detector = await getXml(tempModeler);
+  return detector;
+}
+
+/**
+ * Creates the replacement of an element. Currently, it creates a service task with the deploymentModelUrl.
+ *
+ * @param deploymentModelUrl the deploymentModelUrl of the replacement
+ */
+export async function createReplacement(deploymentModelUrl) {
+  const tempModeler = await createTempModelerFromXml(EMPTY_DIAGRAM_XML);
+  const definitions = tempModeler.getDefinitions();
+  const rootElement = getRootProcess(definitions);
+  const modeling = tempModeler.get("modeling");
+  const elementFactory = tempModeler.get("elementFactory");
+  const elementRegistry = tempModeler.get("elementRegistry");
+  const serviceTask = elementFactory.createShape({
+    type: "bpmn:ServiceTask"
+  });
+  const shape = modeling.createShape(
+    serviceTask,
+    { x: 50, y: 50 },
+    elementRegistry.get(rootElement.id)
+  );
+  modeling.updateProperties(elementRegistry.get(shape.id), {
+    deploymentModelUrl: deploymentModelUrl,
+  });
+  const replacement = await getXml(tempModeler);
+  return replacement;
 }

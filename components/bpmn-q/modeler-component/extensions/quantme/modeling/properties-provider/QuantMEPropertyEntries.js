@@ -15,6 +15,7 @@ import {
   TextFieldEntry,
   SelectEntry,
   CheckboxEntry,
+  TextAreaEntry,
 } from "@bpmn-io/properties-panel";
 import * as consts from "../../Constants";
 import { useService } from "bpmn-js-properties-panel";
@@ -1700,6 +1701,37 @@ export function WarmStartingPatternEntry({ element }) {
       getValue={getValue}
       setValue={setValue}
       getOptions={getOptions}
+      debounce={debounce}
+    />
+  );
+}
+
+export function RequirementsEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.requirements;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      requirements: newValue,
+    });
+  };
+
+  return (
+    <TextAreaEntry
+      id={consts.REQUIREMENTS}
+      element={element}
+      label={translate("Requirements")}
+      getValue={getValue}
+      setValue={setValue}
       debounce={debounce}
     />
   );

@@ -609,6 +609,17 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "ScriptTask",
+      "extends": ["bpmn:ScriptTask"],
+      "properties": [
+        {
+          "name": "requirements",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "enumerations": [],

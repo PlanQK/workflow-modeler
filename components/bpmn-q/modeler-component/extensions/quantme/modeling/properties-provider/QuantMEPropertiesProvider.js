@@ -22,8 +22,11 @@ import {
 } from "./QuantMETaskProperties";
 import { DeploymentModelProps } from "./DeploymentModelProps";
 import { getType } from "../../../../editor/util/ModellingUtilities";
+import { RequirementsEntry } from "./QuantMEPropertyEntries";
+import { isTextFieldEntryEdited } from "@bpmn-io/properties-panel";
 
-const LOW_PRIORITY = 600;
+const LOW_PRIORITY = 100;
+const SCRIPT_GROUP_ID = "CamundaPlatform__Script";
 
 /**
  * A provider with a `#getGroups(element)` method that exposes groups for a diagram element.
@@ -55,6 +58,19 @@ export default function QuantMEPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
+
+      // add the requirements field to the script group
+      if (element.type === "bpmn:ScriptTask") {
+        let scriptGroup = groups.find(group => group.id === SCRIPT_GROUP_ID);
+        scriptGroup.entries.push({
+          id: "requirements",
+          element,
+          component: RequirementsEntry,
+          isEdited: isTextFieldEntryEdited,
+        });
+      }
+
+
       // add properties of QuantME tasks to panel
       if (element.type && element.type.startsWith("quantme:")) {
         groups.unshift(createQuantMEGroup(element, translate));

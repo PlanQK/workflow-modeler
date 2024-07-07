@@ -200,7 +200,7 @@ export function changeIdOfContainedElements(
   parent,
   modeling,
   elementRegistry,
-  id
+  id, oldToNewIdMap
 ) {
   console.log(
     "change id of contained elements of subprocess",
@@ -214,7 +214,7 @@ export function changeIdOfContainedElements(
 
     console.log(child);
     console.log(elementRegistry.get(child.id));
-
+    oldToNewIdMap[child.id] = id * "_" + child.id;
     modeling.updateProperties(elementRegistry.get(child.id), {
       id: id + "_" + child.id,
     });
