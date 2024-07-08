@@ -75,7 +75,8 @@ export async function createDetector(elementToCopy) {
   );
 
   const propertiesToCopy = QuantMEProps(elementToCopy);
-  copyQuantMEProperties(propertiesToCopy, elementToCopy, shape, tempModeler);
+  console.log(propertiesToCopy);
+  copyQuantMEProperties(propertiesToCopy, elementToCopy, shape, tempModeler, true);
 
   const detector = await getXml(tempModeler);
   return detector;

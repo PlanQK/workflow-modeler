@@ -429,13 +429,15 @@ export function copyQuantMEProperties(
   quantMEProperties,
   sourceTask,
   targetTask,
-  modeler
+  modeler,
+  detectorCreation
 ) {
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   if (quantMEProperties !== undefined) {
     let propertyEntries = {};
     quantMEProperties.forEach((propertyEntry) => {
+      console.log(propertyEntry)
       let entryId = propertyEntry.id;
       let entry = sourceTask[entryId];
       entry =
@@ -443,6 +445,14 @@ export function copyQuantMEProperties(
           ? entry.split(",")[0]
           : entry;
       propertyEntries[entryId] = entry;
+      // set all properties to *
+      if(detectorCreation){
+        propertyEntries[entryId] = "*";
+        // delete one property since it is exclusive
+        if(sourceTask.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK){
+          delete propertyEntries[quantmeConsts.QUANTUM_CIRCUIT] ;
+        }
+      }
     });
     console.log("properties", propertyEntries);
     modeling.updateProperties(

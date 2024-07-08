@@ -124,6 +124,8 @@ function matchQuantumCircuitLoadingTask(detectorElement, task) {
     detectorElement.url,
   ];
   let taskAlternatives = [task.quantumCircuit, task.url];
+  console.log(detectorAlternatives);
+  console.log(taskAlternatives);
   return matchAlternativeProperties(detectorAlternatives, taskAlternatives);
 }
 
@@ -511,8 +513,8 @@ function matchAlternativeProperties(detectorProperties, taskProperties) {
   // search the task property that is set
   let taskAlternative = undefined;
   let detectorAlternative = undefined;
-  for (let i = 0; i < taskProperties.length; i++) {
-    if (taskProperties[i] !== undefined) {
+  for (let i = 0; i < detectorProperties.length; i++) {
+    if (detectorProperties[i] !== undefined || taskProperties[i] !== undefined) {
       // only one of the alternative properties must be set for the task
       if (taskAlternative !== undefined) {
         console.log(
@@ -524,7 +526,8 @@ function matchAlternativeProperties(detectorProperties, taskProperties) {
       detectorAlternative = detectorProperties[i];
     }
   }
-
+  console.log(detectorAlternative);
+  console.log(taskAlternative)
   // check if the found alternative property matches the detector
   return matchesProperty(detectorAlternative, taskAlternative, true);
 }
