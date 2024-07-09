@@ -17,7 +17,7 @@ import { createNewServiceTemplateVersion, createNewArtifactTemplate } from "./Op
 const QUANTME_NAMESPACE_PUSH = "http://quantil.org/quantme/push";
 
 const nodeTypeDefinition = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Definitions targetNamespace="http://opentosca.org/nodetypes" id="winery-defs-for_otntyIgeneral-NodetypeToReplaceContainer" xmlns="http://docs.oasis-open.org/tosca/ns/2011/12" xmlns:yml="http://docs.oasis-open.org/tosca/ns/simple/yaml/1.3" xmlns:selfservice="http://www.eclipse.org/winery/model/selfservice" xmlns:winery="http://www.opentosca.org/winery/extensions/tosca/2013/02/12" xmlns:researchobject="http://www.eclipse.org/winery/model/researchobject" xmlns:testwineryopentoscaorg="http://test.winery.opentosca.org">
+<Definitions targetNamespace="http://opentosca.org/nodetypes" id="winery-defs-for_otntyIgeneral-NodetypeToReplace" xmlns="http://docs.oasis-open.org/tosca/ns/2011/12" xmlns:yml="http://docs.oasis-open.org/tosca/ns/simple/yaml/1.3" xmlns:selfservice="http://www.eclipse.org/winery/model/selfservice" xmlns:winery="http://www.opentosca.org/winery/extensions/tosca/2013/02/12" xmlns:researchobject="http://www.eclipse.org/winery/model/researchobject" xmlns:testwineryopentoscaorg="http://test.winery.opentosca.org">
     <NodeType name="NodetypeToReplaceContainer" abstract="no" final="no" targetNamespace="http://opentosca.org/nodetypes">
         <DerivedFrom typeRef="nodetypes:DockerContainer" xmlns:nodetypes="http://opentosca.org/nodetypes"/>
         <winery:PropertiesDefinition elementname="Properties" namespace="http://opentosca.org/nodetypes/propertiesdefinition/winery">
@@ -52,7 +52,7 @@ const topologyTemplateDefinition = `<Definitions targetNamespace="http://quantil
                     </otntyIproperties:DockerEngine_Properties>
                 </Properties>
             </NodeTemplate>
-            <NodeTemplate name="NodetypeToReplaceContainer" minInstances="1" maxInstances="1" type="nodetypes:NodetypeToReplaceContainer" id="NodetypeToReplaceContainer" winery:x="775" winery:y="102" xmlns:nodetypes="http://opentosca.org/nodetypes">
+            <NodeTemplate name="NodetypeToReplaceContainer" minInstances="1" maxInstances="1" type="nodetypes:NodetypeToReplaceContainer" id="NodetypeToReplaceContainer_0" winery:x="775" winery:y="102" xmlns:nodetypes="http://opentosca.org/nodetypes">
                 <Properties>
                     <otntypdInodetypes:Properties xmlns:otntypdInodetypes="http://opentosca.org/nodetypes/propertiesdefinition/winery">
                         <otntypdInodetypes:Port/>
@@ -68,7 +68,7 @@ const topologyTemplateDefinition = `<Definitions targetNamespace="http://quantil
                 </DeploymentArtifacts>
             </NodeTemplate>
             <RelationshipTemplate name="HostedOn" type="ToscaBaseTypes:HostedOn" id="con_HostedOn_0" xmlns:ToscaBaseTypes="http://docs.oasis-open.org/tosca/ns/2011/12/ToscaBaseTypes">
-                <SourceElement ref="NodetypeToReplaceContainer"/>
+                <SourceElement ref="NodetypeToReplaceContainer_0"/>
                 <TargetElement ref="DockerEngine_0"/>
             </RelationshipTemplate>
         </TopologyTemplate>
@@ -511,7 +511,7 @@ export async function loadTopology(deploymentModelUrl) {
  * @param wineryEndpoint endpoint of the Winery instance to create the deployment model
  * @return the URL of the generated deployment model, or an error if the generation failed
  */
-export async function createDeploymentModel(programBlobs, wineryEndpoint, localNamePrefix, artifactTemplateNamespace, artifactType, fileName,serviceTemplateName, serviceTemplateNamespace) {
+export async function createDeploymentModel(programBlobs, wineryEndpoint, localNamePrefix, artifactTemplateNamespace, artifactType, fileName, serviceTemplateURL) {
   // create a new ArtifactTemplate and upload the agent file (the agent currently also contains the program and we deploy them together)
   let artifactName = await createNewArtifactTemplate(
     wineryEndpoint,
@@ -523,14 +523,14 @@ export async function createDeploymentModel(programBlobs, wineryEndpoint, localN
   );
 
   // create new ServiceTemplate for the hybrid program by adding a new version of the predefined template
-  let serviceTemplateURL = await createNewServiceTemplateVersion(
-    wineryEndpoint,
-    serviceTemplateName,
-    serviceTemplateNamespace
-  );
-  if (serviceTemplateURL.error !== undefined) {
-    return { error: serviceTemplateURL.error };
-  }
+  //let serviceTemplateURL = await createNewServiceTemplateVersion(
+   // wineryEndpoint,
+    //serviceTemplateName,
+    //serviceTemplateNamespace
+  //);
+  //if (serviceTemplateURL.error !== undefined) {
+   // return { error: serviceTemplateURL.error };
+  //}
 
   // update DA reference within the created ServiceTemplate version
   let getTemplateXmlResult = await fetch(serviceTemplateURL + "xml");

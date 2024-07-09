@@ -103,24 +103,30 @@ export async function rewriteWorkflow(
       const zipName = deploymentModels[i].filename.split('/')[1];
 
       // match with generated id by subprocess
-      let id = idMap[oldActivityId];
+      let id = idMap[oldActivityId]
+      let idwinery = id.replaceAll("_", "");
+
       console.log(id);
 
 
       // first create service template with the new activity id
-      let serviceTemplate = await createServiceTemplate(id, QUANTME_NAMESPACE_PULL);
+      let serviceTemplate = await createServiceTemplate(idwinery, QUANTME_NAMESPACE_PULL);
       console.log(serviceTemplate)
+      const versionUrl =
+    getWineryEndpoint() +
+    "/servicetemplates/" +
+    serviceTemplate;
 
       // create the deployment model containing the implementation
-      let deploymentModelUrlResult = await createDeploymentModel(deploymentModels[i].serviceZipContent, getWineryEndpoint(), id + "_DA", "http://quantil.org/quantme/pull/artifacttemplates",
-       "{http://opentosca.org/artifacttypes}DockerContainerArtifact", zipName, id, QUANTME_NAMESPACE_PULL);
+      let deploymentModelUrlResult = await createDeploymentModel(deploymentModels[i].serviceZipContent, getWineryEndpoint(), idwinery + "_DA", "http://opentosca.org/artifacttemplates",
+       "{http://opentosca.org/artifacttypes}DockerContainerArtifact", zipName, versionUrl);
       let deploymentModelUrl = deploymentModelUrlResult.deploymentModelUrl;
 
       // create the nodetype to add it to the created service template
-       await createNodeType(id + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
-      await updateNodeType(id + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
-      serviceTemplate = await updateServiceTemplate(id, QUANTME_NAMESPACE_PULL);
-      //console.log(serviceTemplate);
+      await createNodeType(idwinery + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
+      await updateNodeType(idwinery + "Container", OPENTOSCA_NAMESPACE_NODETYPE);
+      serviceTemplate = await updateServiceTemplate(idwinery, QUANTME_NAMESPACE_PULL);
+      console.log(serviceTemplate);
 
       // update deploymentModelUrl of service tasks since it has the id of the script splitter result
       let activity = elementRegistry.get(id);
