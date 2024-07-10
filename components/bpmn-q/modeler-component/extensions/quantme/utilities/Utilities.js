@@ -74,6 +74,11 @@ export async function createDetector(elementToCopy) {
     elementRegistry.get(rootElement.id)
   );
 
+  modeling.updateProperties(elementRegistry.get(shape.id), {
+    id: elementToCopy.id,
+  });
+  shape.di.id = elementToCopy.id + "_di";
+
   const propertiesToCopy = QuantMEProps(elementToCopy);
   console.log(propertiesToCopy);
   copyQuantMEProperties(propertiesToCopy, elementToCopy, shape, tempModeler, true);
@@ -107,4 +112,16 @@ export async function createReplacement(deploymentModelUrl) {
   });
   const replacement = await getXml(tempModeler);
   return replacement;
+}
+
+export async function generateQrms(activities){
+  
+  let qrms = [];
+  for(let i= 0; i< activities.length; i++){
+    let activity = activities[i].activity;
+  let detector = await createDetector(activity);
+  let replacement = await createReplacement(activities[i].deploymentModelUrl);
+  qrms.push({folderName: activities[i].folderName, "detector": detector, "replacement": replacement})
+  }
+  return qrms;
 }

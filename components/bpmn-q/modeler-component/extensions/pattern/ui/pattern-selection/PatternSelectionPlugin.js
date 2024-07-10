@@ -209,7 +209,7 @@ export default class PatternSelectionPlugin extends PureComponent {
         });
         
         if (solution !== INITIAL_DIAGRAM_XML) {
-          copyElementsToParent(solutionRootElement, collapsedSubprocess, startEvent, solutionModeler, modeler);
+          copyElementsToParent(solutionRootElement, collapsedSubprocess, startEvent, solutionModeler, modeler, qrms);
         } else {
           let collapsedSubprocessStartEvent = elementFactory.createShape({
             type: "bpmn:StartEvent",

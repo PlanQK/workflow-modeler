@@ -718,7 +718,7 @@ export function resetConnector(element) {
   }
 }
 
-export function copyElementsToParent(oldRootElement, collapsedSubprocess, startEvent, tempModeler, modeler) {
+export function copyElementsToParent(oldRootElement, collapsedSubprocess, startEvent, tempModeler, modeler, qrms) {
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let elementFactory = modeler.get("elementFactory");
@@ -810,6 +810,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
             form = modeler.get("moddle").create("camunda:FormData");
           }
           for (let i = 0; i < formextended.fields.length; i++) {
+            console.log(formextended.fields[i]);
             let id = formextended.fields[i].id;
             let updatedId = id + updateShape.id;
             formextended.fields[i].id = updatedId;
@@ -900,6 +901,13 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
         modeling.updateProperties(elementRegistry.get(updateShape.id), {
           id: collapsedSubprocess.id + "_" + updateShape.id,
         });
+        for(let i= 0; i< qrms.activities.length; i++){
+          if(flowElement.id === qrms.activities[i].activity.id){
+            qrms.activities[i].activity = updateShape;
+            let deploymentModelUrl = qrms.activities[i].deploymentModelUrl;
+            qrms.activities[i].deploymentModelUrl = deploymentModelUrl.replace(flowElement.id, updateShape.id);
+          }
+        }
         console.log(updateShape);
       }
       offset += 150;
@@ -949,6 +957,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
         selectionFlowCondition.body =
           flowElement.businessObject.conditionExpression.body;
         flow.businessObject.conditionExpression = selectionFlowCondition;
+        flow.businessObject.name = flowElement.name;
       }
     }
   }

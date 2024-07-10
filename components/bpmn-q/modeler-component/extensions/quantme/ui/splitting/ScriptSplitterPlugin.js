@@ -20,6 +20,8 @@ import NotificationHandler from "../../../../editor/ui/notifications/Notificatio
 import { getQRMs } from "../../qrm-manager";
 import config from "../../framework-config/config";
 import { invokeScriptSplitter } from "./splitter/ScriptSplitterHandler";
+import { generateQrms } from "../../utilities/Utilities";
+import { uploadMultipleToGitHub } from "../../qrm-manager/git-handler";
 
 const defaultState = {
   adaptationOpen: false,
@@ -222,6 +224,13 @@ export default class AdaptationPlugin extends PureComponent {
             "Rewriting workflow successfully after %d ms!",
             Date.now() - rewriteStartDate
           );
+
+          let qrmsActivities = rewritingResult.qrms;
+          let qrmsToUpload = await generateQrms(qrmsActivities);
+          console.log(qrmsToUpload)
+
+          // upload the generated QRMS to the upload repository
+          uploadMultipleToGitHub(this.modeler.config, qrmsToUpload);
 
           // display success in modal
           rewriteButton.title = programGenerationResult.error;
