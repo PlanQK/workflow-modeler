@@ -78,7 +78,7 @@ export async function createBpmnElements(modeler, jsonData) {
                     for (let i = 0; i < item.parameters.length; i++) {
                         let id = item.parameters[i];
                         let updatedId = id + startEvent.id;
-                        let formField = modeler.get("moddle").create('camunda:FormField', { 'defaultValue': '', 'id': updatedId, 'label': id, 'type': 'string' });
+                        let formField = modeler.get("moddle").create('camunda:FormField', { 'defaultValue': '', 'id': id, 'label': id, 'type': 'string' });
                         formextended.get("fields").push(formField);
                         pushFormField(form, formextended.fields[i]);
                     }
