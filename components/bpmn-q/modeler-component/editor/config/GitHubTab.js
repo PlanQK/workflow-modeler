@@ -296,4 +296,5 @@ GitHubTab.prototype.config = () => {
     config.getUploadGithubRepositoryOwner();
   modeler.config.uploadFileName = config.getUploadFileName();
   modeler.config.uploadBranchName = config.getUploadBranchName();
+  modeler.config.uploadGithubRepositoryPath = config.getUploadGithubRepositoryPath();
 };
