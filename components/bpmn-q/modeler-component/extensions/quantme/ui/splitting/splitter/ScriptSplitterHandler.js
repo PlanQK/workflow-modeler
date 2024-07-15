@@ -22,6 +22,7 @@ import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import { getScriptSplitterEndpoint } from "../../../framework-config/config-manager";
 import JSZip from "jszip";
 import { performAjax } from "../../../../../editor/util/HttpUtilities";
+import * as consts from "../../../Constants";
 
 /**
  * Creates for each item of the json a workflow element and its properties are copied.
@@ -101,6 +102,9 @@ export async function createBpmnElements(modeler, jsonData) {
         id: item.id,
         file: item.file,
       };
+      if(item.type.includes(consts.QUANTUM_CIRCUIT_EXECUTION_TASK)){
+        element.businessObject.$attrs[consts.PROVIDER] = "ibm";
+      }
     }
     if (item.type === "bpmn:ServiceTask") {
       element.businessObject.$attrs["opentosca:deploymentModelUrl"] = item.file;

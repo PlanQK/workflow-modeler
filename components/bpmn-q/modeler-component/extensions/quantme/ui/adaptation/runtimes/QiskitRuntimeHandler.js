@@ -46,14 +46,14 @@ export async function getQiskitRuntimeProgramDeploymentModel(
     candidate.containedElements
   );
   for (let i = 0; i < quantumCircuitExecutionTasks.length; i++) {
-    if (quantumCircuitExecutionTasks[i].provider.toUpperCase() !== "IBMQ") {
+    if (quantumCircuitExecutionTasks[i].provider.toUpperCase().contains("IBM")) {
       console.log(
-        "Found QuantumCircuitExecutionTask with provider different than IBMQ: ",
+        "Found QuantumCircuitExecutionTask with provider different than IBM: ",
         quantumCircuitExecutionTasks[i].provider
       );
       return {
         error:
-          "Only QuantumCircuitExecutionTasks with provider IBMQ supported for Qiskit Runtime!",
+          "Only QuantumCircuitExecutionTasks with provider IBM supported for Qiskit Runtime!",
       };
     }
   }
@@ -241,13 +241,14 @@ async function invokeQiskitRuntimeHandler(
   // eslint-disable-next-line no-undef
   console.log("beforeLoop: " + beforeLoop);
   console.log("afterLoop: " + afterLoop);
-  console.log("loopCondition: " + candidate.expression.body);
+  let condition = candidate.expression.body.replace("&&", "and");
+  console.log("loopCondition: " + condition);
   console.log("requiredPrograms: " + requiredPrograms.programs);
   console.log("provenanceCollection: " + provenanceCollection);
   const fd = new FormData();
   fd.append("beforeLoop", beforeLoop);
   fd.append("afterLoop", afterLoop);
-  fd.append("loopCondition", candidate.expression.body);
+  fd.append("loopCondition", condition);
   fd.append("requiredPrograms", requiredPrograms.programs);
   fd.append("provenanceCollection", provenanceCollection);
   try {
