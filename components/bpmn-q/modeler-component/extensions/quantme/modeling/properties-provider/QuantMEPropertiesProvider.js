@@ -58,10 +58,9 @@ export default function QuantMEPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
-
       // add the requirements field to the script group
       if (element.type === "bpmn:ScriptTask") {
-        let scriptGroup = groups.find(group => group.id === SCRIPT_GROUP_ID);
+        let scriptGroup = groups.find((group) => group.id === SCRIPT_GROUP_ID);
         scriptGroup.entries.push({
           id: "requirements",
           element,
@@ -69,7 +68,6 @@ export default function QuantMEPropertiesProvider(
           isEdited: isTextFieldEntryEdited,
         });
       }
-
 
       // add properties of QuantME tasks to panel
       if (element.type && element.type.startsWith("quantme:")) {

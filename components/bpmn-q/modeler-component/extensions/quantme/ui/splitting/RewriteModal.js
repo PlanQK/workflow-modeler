@@ -86,7 +86,7 @@ export default function RewriteModal({ onClose, candidates }) {
             src={candidate.candidateImage}
           />
           <h3 className="spaceAbove spaceUnder">
-          The following script task can be split:
+            The following script task can be split:
           </h3>
           <table>
             <tbody>

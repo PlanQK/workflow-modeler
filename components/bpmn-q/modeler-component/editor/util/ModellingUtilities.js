@@ -718,7 +718,14 @@ export function resetConnector(element) {
   }
 }
 
-export function copyElementsToParent(oldRootElement, collapsedSubprocess, startEvent, tempModeler, modeler, qrms) {
+export function copyElementsToParent(
+  oldRootElement,
+  collapsedSubprocess,
+  startEvent,
+  tempModeler,
+  modeler,
+  qrms
+) {
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   let elementFactory = modeler.get("elementFactory");
@@ -732,9 +739,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
   // Filter out elements with specific $type and type values
   const nonFilteredElements = solutionFlowElements.filter((element) => {
     const elementType = tempElementRegistry.get(element.id).$type;
-    const elementCustomType = tempElementRegistry.get(
-      element.id
-    ).type;
+    const elementCustomType = tempElementRegistry.get(element.id).type;
 
     return !(
       elementType === "bpmn:SequenceFlow" ||
@@ -761,9 +766,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
   console.log(sortedSolutionFlowElements);
 
   for (let j = 0; j < solutionFlowElementsLength; j++) {
-    let flowElement = tempElementRegistry.get(
-      sortedSolutionFlowElements[j].id
-    );
+    let flowElement = tempElementRegistry.get(sortedSolutionFlowElements[j].id);
 
     if (
       flowElement.$type !== "bpmn:SequenceFlow" &&
@@ -809,17 +812,17 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
           if (!form) {
             form = modeler.get("moddle").create("camunda:FormData");
           }
-          if(formextended.fields !== undefined){
-          for (let i = 0; i < formextended.fields.length; i++) {
-            console.log(formextended.fields[i]);
-            let id = formextended.fields[i].id;
-            let updatedId = id + updateShape.id;
-            formextended.fields[i].id = updatedId;
-            script += `def ${updatedId}Value = execution.getVariable("${updatedId}");\n execution.setVariable("${id}", ${updatedId}Value)\n`;
-            pushFormField(form, formextended.fields[i]);
+          if (formextended.fields !== undefined) {
+            for (let i = 0; i < formextended.fields.length; i++) {
+              console.log(formextended.fields[i]);
+              let id = formextended.fields[i].id;
+              let updatedId = id + updateShape.id;
+              formextended.fields[i].id = updatedId;
+              script += `def ${updatedId}Value = execution.getVariable("${updatedId}");\n execution.setVariable("${id}", ${updatedId}Value)\n`;
+              pushFormField(form, formextended.fields[i]);
+            }
+            extensionElements.values = [form];
           }
-          extensionElements.values = [form];
-        }
         }
 
         modeling.updateProperties(elementRegistry.get(startEvent.id), {
@@ -864,23 +867,20 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
         type !== quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS &&
         type !== "bpmn:SubProcess"
       ) {
-
         updateShape = modeling.createShape(
           flowElement,
           { x: 442 + offset, y: 100 },
           elementRegistry.get(collapsedSubprocess.id)
         );
-        oldToNewIdMap[flowElement.id] = collapsedSubprocess.id + "_" + updateShape.id;
+        oldToNewIdMap[flowElement.id] =
+          collapsedSubprocess.id + "_" + updateShape.id;
         modeling.updateProperties(elementRegistry.get(updateShape.id), {
           id: collapsedSubprocess.id + "_" + updateShape.id,
         });
         updateShape.di.id =
           collapsedSubprocess.id + "_" + updateShape.id + "_di";
       } else {
-
-        console.log(
-          tempElementRegistry.get(sortedSolutionFlowElements[j].id)
-        );
+        console.log(tempElementRegistry.get(sortedSolutionFlowElements[j].id));
         console.log(flowElement);
 
         updateShape = modeling.createShape(
@@ -898,22 +898,26 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
           collapsedSubprocess,
           tempModeling,
           tempElementRegistry,
-          collapsedSubprocess.id + "_" + updateShape.id, oldToNewIdMap
+          collapsedSubprocess.id + "_" + updateShape.id,
+          oldToNewIdMap
         );
         modeling.updateProperties(elementRegistry.get(updateShape.id), {
           id: collapsedSubprocess.id + "_" + updateShape.id,
         });
-        console.log(qrms)
-        if(qrms.length > 0){
-        for(let i= 0; i< qrms[i].length; i++){
-          if(flowElement.id === qrms[i].activity.id){
-            qrms[i].activity = updateShape;
-            let deploymentModelUrl = qrms[i].deploymentModelUrl;
-            qrms[i].deploymentModelUrl = deploymentModelUrl.replace(flowElement.id, updateShape.id);
+        console.log(qrms);
+        if (qrms.length > 0) {
+          for (let i = 0; i < qrms[i].length; i++) {
+            if (flowElement.id === qrms[i].activity.id) {
+              qrms[i].activity = updateShape;
+              let deploymentModelUrl = qrms[i].deploymentModelUrl;
+              qrms[i].deploymentModelUrl = deploymentModelUrl.replace(
+                flowElement.id,
+                updateShape.id
+              );
+            }
           }
+          console.log(updateShape);
         }
-        console.log(updateShape);
-      }
       }
       offset += 150;
 
@@ -927,9 +931,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
   // Filter out elements with specific $type and type values
   const sequenceFlows = solutionFlowElements.filter((element) => {
     const elementType = tempElementRegistry.get(element.id).$type;
-    const elementCustomType = tempElementRegistry.get(
-      element.id
-    ).type;
+    const elementCustomType = tempElementRegistry.get(element.id).type;
 
     return (
       elementType === "bpmn:SequenceFlow" ||
@@ -948,9 +950,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
       // Retrieve the id of the newly created shape using the map
       let sourceId = sourceIdToNewShapeIdMap[flowElement.source.id];
       let newTargetId = sourceIdToNewShapeIdMap[flowElement.target.id];
-      console.log(
-        "connect source " + sourceId + "and target" + newTargetId
-      );
+      console.log("connect source " + sourceId + "and target" + newTargetId);
       let flow = modeling.connect(
         elementRegistry.get(sourceId),
         elementRegistry.get(newTargetId),
@@ -958,7 +958,9 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
       );
       console.log(flowElement);
       if (flowElement.businessObject.conditionExpression) {
-        let selectionFlowCondition = modeler.get("bpmnFactory").create("bpmn:FormalExpression");
+        let selectionFlowCondition = modeler
+          .get("bpmnFactory")
+          .create("bpmn:FormalExpression");
         selectionFlowCondition.body =
           flowElement.businessObject.conditionExpression.body;
         flow.businessObject.conditionExpression = selectionFlowCondition;

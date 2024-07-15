@@ -64,8 +64,8 @@ export function taskMatchesDetector(detectorElement, task, idMatching) {
   }
 
   // necessary for the script splitter qrms
-  if(idMatching){
-    if(detectorElement.id !== task.id){
+  if (idMatching) {
+    if (detectorElement.id !== task.id) {
       return false;
     }
   }
@@ -521,7 +521,10 @@ function matchAlternativeProperties(detectorProperties, taskProperties) {
   let taskAlternative = undefined;
   let detectorAlternative = undefined;
   for (let i = 0; i < detectorProperties.length; i++) {
-    if (detectorProperties[i] !== undefined || taskProperties[i] !== undefined) {
+    if (
+      detectorProperties[i] !== undefined ||
+      taskProperties[i] !== undefined
+    ) {
       // only one of the alternative properties must be set for the task
       if (taskAlternative !== undefined) {
         console.log(
@@ -534,7 +537,7 @@ function matchAlternativeProperties(detectorProperties, taskProperties) {
     }
   }
   console.log(detectorAlternative);
-  console.log(taskAlternative)
+  console.log(taskAlternative);
   // check if the found alternative property matches the detector
   return matchesProperty(detectorAlternative, taskAlternative, true);
 }
@@ -545,7 +548,7 @@ export async function matchesQRM(qrm, task, idMatching) {
   // check whether the detector is valid and contains exactly one QuantME task
   let rootProcess = getRootProcess(await getDefinitionsFromXml(qrm.detector));
   let detectorElement = getSingleFlowElement(rootProcess);
-  console.log(detectorElement)
+  console.log(detectorElement);
   if (detectorElement === undefined || !isQuantMETask(detectorElement)) {
     console.log(
       "Unable to retrieve QuantME task from detector: ",

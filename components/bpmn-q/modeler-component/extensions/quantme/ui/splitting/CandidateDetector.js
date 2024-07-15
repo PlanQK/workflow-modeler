@@ -38,24 +38,16 @@ export async function findSplittingCandidates(modeler) {
 
   // we currently restrict the script task language to python
   let scriptTasks = findScriptTasks(rootElement, "python");
-  console.log(
-    "Found %d script tasks for splitting",
-    scriptTasks.length
-  );
+  console.log("Found %d script tasks for splitting", scriptTasks.length);
 
   let splittingCandidates = [];
   for (let i = 0; i < scriptTasks.length; i++) {
     let scriptTask = scriptTasks[i];
 
     // generate visual representation of the candidate using base64
-    let splittingCandidate = await visualizeCandidate(
-      scriptTask
-    );
+    let splittingCandidate = await visualizeCandidate(scriptTask);
 
-    console.log(
-      "Found valid optimization candidate: ",
-      splittingCandidate
-    );
+    console.log("Found valid optimization candidate: ", splittingCandidate);
     splittingCandidates.push(splittingCandidate);
   }
 
@@ -79,7 +71,9 @@ async function visualizeCandidate(splittingCandidate) {
   let tempElementRegistry = tempModeler.get("elementRegistry");
   let rootElement = getRootProcess(tempModeler.getDefinitions());
 
-  let bpmnElement = elementFactory.createShape({ type: splittingCandidate.$type });
+  let bpmnElement = elementFactory.createShape({
+    type: splittingCandidate.$type,
+  });
   let element = modeling.createShape(
     bpmnElement,
     { x: 100, y: 100 },
@@ -119,7 +113,7 @@ async function visualizeCandidate(splittingCandidate) {
 function calculateViewBox(splittingCandidate, svg) {
   // search for the modeling elements with the minimal and maximal x and y values
   let result = {};
-  console.log(splittingCandidate)
+  console.log(splittingCandidate);
 
   console.log("Minimum x value for candidate: ", splittingCandidate.minX);
   console.log("Minimum y value for candidate: ", splittingCandidate.minY);
@@ -134,18 +128,18 @@ function calculateViewBox(splittingCandidate, svg) {
   return svg.replace(
     '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="0" height="0" viewBox="0 0 0 0" version="1.1">',
     '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' +
-    width +
-    '" height="' +
-    height +
-    '" viewBox="' +
-    x +
-    " " +
-    y +
-    " " +
-    width +
-    " " +
-    height +
-    '" version="1.1">'
+      width +
+      '" height="' +
+      height +
+      '" viewBox="' +
+      x +
+      " " +
+      y +
+      " " +
+      width +
+      " " +
+      height +
+      '" version="1.1">'
   );
 }
 
@@ -157,10 +151,14 @@ function calculateViewBox(splittingCandidate, svg) {
  * @return the list of script tasks that need to be split
  */
 function findScriptTasks(rootElement, language) {
-  let scriptTaks = [];
-  Array.prototype.push.apply(scriptTaks, getScriptTasks(rootElement, language));
+  let scriptTasks = [];
+  Array.prototype.push.apply(
+    scriptTasks,
+    getScriptTasks(rootElement, language, scriptTasks)
+  );
+  console.log(scriptTasks);
 
-  return scriptTaks;
+  return scriptTasks;
 }
 
 /**
@@ -169,7 +167,7 @@ function findScriptTasks(rootElement, language) {
  * @param rootElement the root element of the workflow model
  * @return the list of XOR gateways
  */
-function getScriptTasks(rootElement, language) {
+function getScriptTasks(rootElement, language, splittingCandidates) {
   let scriptTasks = [];
   console.log("find script tasks inside ", rootElement);
 
@@ -179,14 +177,17 @@ function getScriptTasks(rootElement, language) {
     if (flowElement.$type && flowElement.$type === "bpmn:ScriptTask") {
       console.log("Found script task: ", flowElement);
 
+      // Check if the script task is already in splittingCandidates
+      console.log(splittingCandidates);
+      const isCandidate = splittingCandidates.some(
+        (candidate) => candidate.id === flowElement.id
+      );
+
       // return only the script task which the script splitter is able to split
-      if (flowElement.scriptFormat === language) {
+      if (flowElement.scriptFormat === language && !isCandidate) {
         flowElement.$parent = rootElement;
         console.log(flowElement.$parent);
-        console.log(
-          "Script task is found: ",
-          flowElement
-        );
+        console.log("Script task is found: ", flowElement);
         scriptTasks.push(flowElement);
       }
     }
@@ -195,7 +196,10 @@ function getScriptTasks(rootElement, language) {
       console.log("Found subprocess ", flowElement);
 
       // recursively call method to find optimization candidates
-      Array.prototype.push.apply(scriptTasks, getScriptTasks(flowElement, language));
+      Array.prototype.push.apply(
+        scriptTasks,
+        getScriptTasks(flowElement, language)
+      );
     }
   }
 

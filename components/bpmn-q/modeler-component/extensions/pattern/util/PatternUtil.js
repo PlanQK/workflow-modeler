@@ -200,7 +200,8 @@ export function changeIdOfContainedElements(
   parent,
   modeling,
   elementRegistry,
-  id, oldToNewIdMap
+  id,
+  oldToNewIdMap
 ) {
   console.log(
     "change id of contained elements of subprocess",
@@ -437,7 +438,7 @@ export function copyQuantMEProperties(
   if (quantMEProperties !== undefined) {
     let propertyEntries = {};
     quantMEProperties.forEach((propertyEntry) => {
-      console.log(propertyEntry)
+      console.log(propertyEntry);
       let entryId = propertyEntry.id;
       let entry = sourceTask[entryId];
       entry =
@@ -446,11 +447,11 @@ export function copyQuantMEProperties(
           : entry;
       propertyEntries[entryId] = entry;
       // set all properties to *
-      if(detectorCreation){
+      if (detectorCreation) {
         propertyEntries[entryId] = "*";
         // delete one property since it is exclusive
-        if(sourceTask.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK){
-          delete propertyEntries[quantmeConsts.QUANTUM_CIRCUIT] ;
+        if (sourceTask.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK) {
+          delete propertyEntries[quantmeConsts.QUANTUM_CIRCUIT];
         }
       }
     });

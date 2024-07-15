@@ -30,7 +30,11 @@ export default function QuantMEPluginButton() {
 
   return (
     <ExtensibleButton
-      subButtons={[<AdaptationPlugin />, <ScriptSplitterPlugin />, <QuantMEController />]}
+      subButtons={[
+        <AdaptationPlugin />,
+        <ScriptSplitterPlugin />,
+        <QuantMEController />,
+      ]}
       title="QuantME"
       styleClass="quantme-logo"
       description="Show buttons of the QuantME plugin"

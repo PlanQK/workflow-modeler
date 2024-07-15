@@ -50,9 +50,11 @@ export default function ScriptSplitterModal({ onClose }) {
           script tasks to benefit from workflows.
         </h3>
         <div className="spaceUnder">
-        Implementations in the quantum computing domain are typically realized utilizing script-based languages, such as Python and Rust.
-        However, script-based languages do not provide the sophisticated functionalities of mature workflow engines.
-        Therefore, suitable splitting candidates are detected and then rewritten.
+          Implementations in the quantum computing domain are typically realized
+          utilizing script-based languages, such as Python and Rust. However,
+          script-based languages do not provide the sophisticated
+          functionalities of mature workflow engines. Therefore, suitable
+          splitting candidates are detected and then rewritten.
         </div>
         <div hidden={true} ref={noCandidateDivRef}>
           Unable to find suitable splitting candidates within the workflow.

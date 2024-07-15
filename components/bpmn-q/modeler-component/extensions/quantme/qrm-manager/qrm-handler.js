@@ -10,7 +10,7 @@
  */
 import { getQcAtlasEndpoint } from "../../pattern/framework-config/config-manager";
 import { fetchDataFromEndpoint } from "../../../editor/util/HttpUtilities";
-import JSZip, { folder } from "jszip";
+import JSZip from "jszip";
 import { saveFileFormats } from "../../../editor/EditorConstants";
 
 const config = require("../../../editor/config/EditorConfigManager");
@@ -33,12 +33,20 @@ export const getCurrentQRMs = async function () {
   } = config;
 
   const repoPath = getQRMRepositoryPath().replace(/^\/|\/$/g, "");
-  const uploadRepoPath = getUploadGithubRepositoryPath().replace(/^\/|\/$/g, "");
+  const uploadRepoPath = getUploadGithubRepositoryPath().replace(
+    /^\/|\/$/g,
+    ""
+  );
   const githubToken = getGitHubToken();
 
   const fetchFolders = async (username, repository, path) => {
     try {
-      return await gitHandler.getFoldersInRepository(username, repository, path, githubToken);
+      return await gitHandler.getFoldersInRepository(
+        username,
+        repository,
+        path,
+        githubToken
+      );
     } catch (error) {
       throw new Error(
         `Unable to load QRMs from Github repository with username '${username}', repository name '${repository}', and path '${path}'. ${error}. Please adapt the configuration for a suited repository!`
@@ -51,13 +59,27 @@ export const getCurrentQRMs = async function () {
     fetchFolders(getQRMRepositoryUserName(), getQRMRepositoryName(), repoPath),
   ];
 
-  if (getUploadGithubRepositoryOwner() !== '' && getUploadGithubRepositoryName() !== '') {
-    folderFetchPromises.push(fetchFolders(getUploadGithubRepositoryOwner(), getUploadGithubRepositoryName(), uploadRepoPath));
+  if (
+    getUploadGithubRepositoryOwner() !== "" &&
+    getUploadGithubRepositoryName() !== ""
+  ) {
+    folderFetchPromises.push(
+      fetchFolders(
+        getUploadGithubRepositoryOwner(),
+        getUploadGithubRepositoryName(),
+        uploadRepoPath
+      )
+    );
   }
 
-  const [folders, uploadRepoFolders = []] = await Promise.all(folderFetchPromises);
+  const [folders, uploadRepoFolders = []] = await Promise.all(
+    folderFetchPromises
+  );
 
-  console.log("Found %i folders with QRM candidates!", folders.length + uploadRepoFolders.length);
+  console.log(
+    "Found %i folders with QRM candidates!",
+    folders.length + uploadRepoFolders.length
+  );
 
   const retrieveQRM = async (username, repository, folder) => {
     const qrm = await getQRM(username, repository, folder, githubToken);
@@ -73,18 +95,18 @@ export const getCurrentQRMs = async function () {
   const qrmPromises = allFolders.map((folder, index) => {
     const isUploadRepo = index >= folders.length;
     return retrieveQRM(
-      isUploadRepo ? getUploadGithubRepositoryOwner() : getQRMRepositoryUserName(),
+      isUploadRepo
+        ? getUploadGithubRepositoryOwner()
+        : getQRMRepositoryUserName(),
       isUploadRepo ? getUploadGithubRepositoryName() : getQRMRepositoryName(),
       folder
     );
   });
 
-  const QRMs = (await Promise.all(qrmPromises)).filter(qrm => qrm !== null);
+  const QRMs = (await Promise.all(qrmPromises)).filter((qrm) => qrm !== null);
 
   return QRMs;
 };
-
-
 
 /**
  * Check whether the QRM at the given URL is valid and return it or otherwise null

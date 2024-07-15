@@ -554,7 +554,7 @@ export function computeDimensionsOfSubprocess(subprocess) {
   // the elements start not with the subprocess.x so we need to adjust the width
   // add a little padding
   const subprocessWidth = maxX - subprocess.x - minX + 30;
-  
+
   const subprocessHeight = maxY - subprocess.y + 10;
 
   return { width: subprocessWidth, height: subprocessHeight };

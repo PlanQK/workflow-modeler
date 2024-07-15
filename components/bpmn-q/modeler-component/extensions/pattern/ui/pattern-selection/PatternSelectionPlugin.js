@@ -25,9 +25,7 @@ import {
 import { getXml, loadDiagram } from "../../../../editor/util/IoUtilities";
 import { layout } from "../../../quantme/replacement/layouter/Layouter";
 import { INITIAL_DIAGRAM_XML } from "../../../../editor/EditorConstants";
-import {
-  attachPatternsToSubprocess,
-} from "../../util/PatternUtil";
+import { attachPatternsToSubprocess } from "../../util/PatternUtil";
 import {
   getPatternAtlasEndpoint,
   getQcAtlasEndpoint,
@@ -58,7 +56,7 @@ export default class PatternSelectionPlugin extends PureComponent {
       this.handlePatternSolutionClosed.bind(this);
 
     this.state = defaultState;
-    this.progressBarStartTime = null; 
+    this.progressBarStartTime = null;
   }
 
   async fetchData() {
@@ -88,9 +86,8 @@ export default class PatternSelectionPlugin extends PureComponent {
 
     if (result && result.length > 0) {
       // If the result is not empty, show the progress bar
-      this.progressBarStartTime = Date.now()
+      this.progressBarStartTime = Date.now();
       this.setState({ showProgressBar: true });
-
 
       try {
         const implementationsResponse = await fetchDataFromEndpoint(
@@ -136,7 +133,7 @@ export default class PatternSelectionPlugin extends PureComponent {
   async handlePatternSolutionClosed(result) {
     console.log("retrieved solutions");
     console.log(result);
-    
+
     let xml = INITIAL_DIAGRAM_XML;
     let modeler = await createTempModelerFromXml(xml);
     let definitions = modeler.getDefinitions();
@@ -159,49 +156,43 @@ export default class PatternSelectionPlugin extends PureComponent {
         let solutionModeler = await createTempModelerFromXml(result[i]);
 
         let solutionDefinitions = solutionModeler.getDefinitions();
-        let solutionElementRegistry = solutionModeler.get("elementRegistry");
-        let solutionModeling = solutionModeler.get("modeling");
+        //let solutionElementRegistry = solutionModeler.get("elementRegistry");
+        //let solutionModeling = solutionModeler.get("modeling");
         let solutionRootElement = getRootProcess(solutionDefinitions);
         console.log("DAS SOLUTIONROOTElement");
         console.log(solutionRootElement);
         console.log(this.state.patterns[i]);
         // first search, then split
         let updatedSolution = result[i];
-       
+
         const splittingCandidates = await findSplittingCandidates(
           solutionModeler
         );
         let rewritingResult;
         for (let j = 0; j < splittingCandidates.length; j++) {
-           let scriptTask = splittingCandidates[j];
-           console.log("Script Task", scriptTask)
-           let programGenerationResult =
-            await invokeScriptSplitter(
-              scriptTask
-            );
-            rewritingResult = await rewriteWorkflow(
-              solutionModeler,
-              this.modeler.config,
-              scriptTask,
-              programGenerationResult.programsBlob,
-              programGenerationResult.workflowBlob
-            );
-            console.log(rewritingResult)
+          let scriptTask = splittingCandidates[j];
+          console.log("Script Task", scriptTask);
+          let programGenerationResult = await invokeScriptSplitter(scriptTask);
+          rewritingResult = await rewriteWorkflow(
+            solutionModeler,
+            this.modeler.config,
+            scriptTask,
+            programGenerationResult.programsBlob,
+            programGenerationResult.workflowBlob
+          );
+          console.log(rewritingResult);
         }
-        let qrms = [];
-        let qrmsActivities =[];
+        let qrmsActivities = [];
         console.log(rewritingResult);
-        if(rewritingResult && rewritingResult.xml !== undefined){
+        if (rewritingResult && rewritingResult.xml !== undefined) {
           updatedSolution = rewritingResult.xml;
           qrmsActivities = rewritingResult.qrms;
-          
-          
         }
         solutionModeler = await createTempModelerFromXml(updatedSolution);
 
         solutionDefinitions = solutionModeler.getDefinitions();
-        solutionElementRegistry = solutionModeler.get("elementRegistry");
-        solutionModeling = solutionModeler.get("modeling");
+        //solutionElementRegistry = solutionModeler.get("elementRegistry");
+        //solutionModeling = solutionModeler.get("modeling");
         solutionRootElement = getRootProcess(solutionDefinitions);
         let collapsedSubprocess = elementFactory.createShape({
           type: "bpmn:SubProcess",
@@ -216,16 +207,23 @@ export default class PatternSelectionPlugin extends PureComponent {
         modeling.updateProperties(shape, {
           name: this.state.patterns[i].algorithmPattern.name,
         });
-        
+
         if (solution !== INITIAL_DIAGRAM_XML) {
-          copyElementsToParent(solutionRootElement, collapsedSubprocess, startEvent, solutionModeler, modeler, qrmsActivities);
-          if(qrmsActivities.length> 0){
+          copyElementsToParent(
+            solutionRootElement,
+            collapsedSubprocess,
+            startEvent,
+            solutionModeler,
+            modeler,
+            qrmsActivities
+          );
+          if (qrmsActivities.length > 0) {
             let qrmsToUpload = await generateQrms(qrmsActivities);
-            console.log(qrmsToUpload)
-      
+            console.log(qrmsToUpload);
+
             // upload the generated QRMS to the upload repository
             uploadMultipleToGitHub(this.modeler.config, qrmsToUpload);
-            }
+          }
         } else {
           let collapsedSubprocessStartEvent = elementFactory.createShape({
             type: "bpmn:StartEvent",
@@ -280,7 +278,7 @@ export default class PatternSelectionPlugin extends PureComponent {
       console.log(rootElement);
       //let elements = [];
       //for (let i = 0; i < rootElement.flowElements; i++) {
-        //elements.push(elementRegistry.get(rootElement.flowElement[i].id));
+      //elements.push(elementRegistry.get(rootElement.flowElement[i].id));
       //}
       layout(modeling, elementRegistry, rootElement);
       collapsedXml = await getXml(modeler);
@@ -288,7 +286,6 @@ export default class PatternSelectionPlugin extends PureComponent {
       const elapsedTime = Date.now() - this.progressBarStartTime;
       console.log(`Time taken for step B: ${elapsedTime}ms`); // Log the elapsed time
       this.setState({ showProgressBar: false });
-      
     }
   }
 

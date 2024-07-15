@@ -51,7 +51,7 @@ import {
   EvaluationResultEntry,
   ErrorCorrectionMethodEntry,
   WarmStartingPatternEntry,
-  RequirementsEntry
+  RequirementsEntry,
 } from "./QuantMEPropertyEntries";
 
 /**

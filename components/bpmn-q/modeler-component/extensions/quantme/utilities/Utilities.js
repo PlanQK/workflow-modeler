@@ -66,7 +66,7 @@ export async function createDetector(elementToCopy) {
   const elementFactory = tempModeler.get("elementFactory");
   const elementRegistry = tempModeler.get("elementRegistry");
   const element = elementFactory.createShape({
-    type: elementToCopy.type
+    type: elementToCopy.type,
   });
   const shape = modeling.createShape(
     element,
@@ -81,7 +81,13 @@ export async function createDetector(elementToCopy) {
 
   const propertiesToCopy = QuantMEProps(elementToCopy);
   console.log(propertiesToCopy);
-  copyQuantMEProperties(propertiesToCopy, elementToCopy, shape, tempModeler, true);
+  copyQuantMEProperties(
+    propertiesToCopy,
+    elementToCopy,
+    shape,
+    tempModeler,
+    true
+  );
 
   const detector = await getXml(tempModeler);
   return detector;
@@ -100,7 +106,7 @@ export async function createReplacement(deploymentModelUrl) {
   const elementFactory = tempModeler.get("elementFactory");
   const elementRegistry = tempModeler.get("elementRegistry");
   const serviceTask = elementFactory.createShape({
-    type: "bpmn:ServiceTask"
+    type: "bpmn:ServiceTask",
   });
   const shape = modeling.createShape(
     serviceTask,
@@ -114,14 +120,17 @@ export async function createReplacement(deploymentModelUrl) {
   return replacement;
 }
 
-export async function generateQrms(activities){
-  
+export async function generateQrms(activities) {
   let qrms = [];
-  for(let i= 0; i< activities.length; i++){
+  for (let i = 0; i < activities.length; i++) {
     let activity = activities[i].activity;
-  let detector = await createDetector(activity);
-  let replacement = await createReplacement(activities[i].deploymentModelUrl);
-  qrms.push({folderName: activities[i].folderName, "detector": detector, "replacement": replacement})
+    let detector = await createDetector(activity);
+    let replacement = await createReplacement(activities[i].deploymentModelUrl);
+    qrms.push({
+      folderName: activities[i].folderName,
+      detector: detector,
+      replacement: replacement,
+    });
   }
   return qrms;
 }

@@ -307,14 +307,17 @@ export const uploadMultipleToGitHub = async function (config, qrms) {
   }
 
   for (const { folderName, detector, replacement } of qrms) {
-    // Ensure folder path exists
-    const folderPath = `${githubRepoPath}/${folderName}`;
-    //await createPathIfNotExist(folderPath);
-
     // Encode the detector and replacement BPMN content as Base64 strings
     const encodedDetector = btoa(detector);
     const encodedReplacement = btoa(replacement);
-    await createFolder(githubRepoOwner, githubRepo, githubRepoPath+ "/" + folderName, "create folder", accessToken);
+
+    await createFolder(
+      githubRepoOwner,
+      githubRepo,
+      githubRepoPath + "/" + folderName,
+      "create folder",
+      accessToken
+    );
 
     // Construct the API URLs for detector and replacement files
     const detectorUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${githubRepoPath}/${folderName}/detector.bpmn?ref=${branchName}`;
@@ -328,7 +331,7 @@ export const uploadMultipleToGitHub = async function (config, qrms) {
           let sha = null;
           if (fileData.message !== "Not Found") {
             sha = fileData.sha;
-            updateUrl = apiUrl.replace(`?ref=${branchName}`, '');
+            updateUrl = apiUrl.replace(`?ref=${branchName}`, "");
           }
 
           const commitMessage = `Update ${fileType} file in ${folderName}`;
@@ -360,7 +363,7 @@ export const uploadMultipleToGitHub = async function (config, qrms) {
             });
             console.log("Upload successful:", response);
           } else {
-            throw new Error('Failed to upload file');
+            throw new Error("Failed to upload file");
           }
         })
         .catch((error) => {
@@ -375,11 +378,10 @@ export const uploadMultipleToGitHub = async function (config, qrms) {
     };
 
     // Upload detector and replacement files
-    await uploadFile(detectorUrl, encodedDetector, 'detector.bpmn');
-    await uploadFile(replacementUrl, encodedReplacement, 'replacement.bpmn');
+    await uploadFile(detectorUrl, encodedDetector, "detector.bpmn");
+    await uploadFile(replacementUrl, encodedReplacement, "replacement.bpmn");
   }
 };
-
 
 async function createFolder(owner, repo, path, message, token) {
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}/.gitkeep`;
@@ -388,18 +390,18 @@ async function createFolder(owner, repo, path, message, token) {
 
   const body = {
     message: message,
-    content: base64Content
+    content: base64Content,
   };
 
   try {
     const response = await fetch(url, {
       method: "PUT",
       headers: {
-        "Authorization": `token ${token}`,
-        "Accept": "application/vnd.github.v3+json",
-        "Content-Type": "application/json"
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.ok) {

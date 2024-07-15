@@ -12,7 +12,7 @@
 import * as config from "../framework-config/config-manager";
 import { getWineryEndpoint } from "../framework-config/config-manager";
 import { fetch } from "whatwg-fetch";
-import { createNewServiceTemplateVersion, createNewArtifactTemplate } from "./OpenTOSCAUtils";
+import { createNewArtifactTemplate } from "./OpenTOSCAUtils";
 
 const QUANTME_NAMESPACE_PUSH = "http://quantil.org/quantme/push";
 
@@ -511,7 +511,15 @@ export async function loadTopology(deploymentModelUrl) {
  * @param wineryEndpoint endpoint of the Winery instance to create the deployment model
  * @return the URL of the generated deployment model, or an error if the generation failed
  */
-export async function createDeploymentModel(programBlobs, wineryEndpoint, localNamePrefix, artifactTemplateNamespace, artifactType, fileName, serviceTemplateURL) {
+export async function createDeploymentModel(
+  programBlobs,
+  wineryEndpoint,
+  localNamePrefix,
+  artifactTemplateNamespace,
+  artifactType,
+  fileName,
+  serviceTemplateURL
+) {
   // create a new ArtifactTemplate and upload the agent file (the agent currently also contains the program and we deploy them together)
   let artifactName = await createNewArtifactTemplate(
     wineryEndpoint,
@@ -524,12 +532,12 @@ export async function createDeploymentModel(programBlobs, wineryEndpoint, localN
 
   // create new ServiceTemplate for the hybrid program by adding a new version of the predefined template
   //let serviceTemplateURL = await createNewServiceTemplateVersion(
-   // wineryEndpoint,
-    //serviceTemplateName,
-    //serviceTemplateNamespace
+  // wineryEndpoint,
+  //serviceTemplateName,
+  //serviceTemplateNamespace
   //);
   //if (serviceTemplateURL.error !== undefined) {
-   // return { error: serviceTemplateURL.error };
+  // return { error: serviceTemplateURL.error };
   //}
 
   // update DA reference within the created ServiceTemplate version
@@ -572,30 +580,55 @@ export async function createNodeType(name, namespace) {
 
 export async function updateNodeType(name, namespace) {
   const nodetype = nodeTypeDefinition.replaceAll("NodetypeToReplace", name);
-  console.log(getWineryEndpoint()+"/nodetypes/"+encodeURIComponent(encodeURIComponent(namespace))+"/"+ name);
+  console.log(
+    getWineryEndpoint() +
+      "/nodetypes/" +
+      encodeURIComponent(encodeURIComponent(namespace)) +
+      "/" +
+      name
+  );
   console.log(nodetype);
-  const response = await fetch(`${getWineryEndpoint()}/nodetypes/${encodeURIComponent(encodeURIComponent(namespace))}/${name}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/xml",
-      Accept: "text/plain",
-    },
-    body: nodetype,
-  });
+  const response = await fetch(
+    `${getWineryEndpoint()}/nodetypes/${encodeURIComponent(
+      encodeURIComponent(namespace)
+    )}/${name}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/xml",
+        Accept: "text/plain",
+      },
+      body: nodetype,
+    }
+  );
   return response.text();
 }
 
 export async function updateServiceTemplate(name, namespace) {
-  const topologyTemplate = topologyTemplateDefinition.replaceAll("NodetypeToReplace", name);
-  console.log(getWineryEndpoint()+"/servicetemplates/"+encodeURIComponent(encodeURIComponent(namespace))+"/"+ name);
+  const topologyTemplate = topologyTemplateDefinition.replaceAll(
+    "NodetypeToReplace",
+    name
+  );
+  console.log(
+    getWineryEndpoint() +
+      "/servicetemplates/" +
+      encodeURIComponent(encodeURIComponent(namespace)) +
+      "/" +
+      name
+  );
   console.log(topologyTemplate);
-  const response = await fetch(`${getWineryEndpoint()}/servicetemplates/${encodeURIComponent(encodeURIComponent(namespace))}/${name}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/xml",
-      Accept: "text/plain",
-    },
-    body: topologyTemplate,
-  });
+  const response = await fetch(
+    `${getWineryEndpoint()}/servicetemplates/${encodeURIComponent(
+      encodeURIComponent(namespace)
+    )}/${name}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/xml",
+        Accept: "text/plain",
+      },
+      body: topologyTemplate,
+    }
+  );
   return response.text();
 }

@@ -276,7 +276,7 @@ export function getQuantMETasks(process, elementRegistry) {
 async function getMatchingQRM(task, currentQRMs) {
   console.log("Number of available QRMs: ", currentQRMs.length);
   console.log(task);
-  console.log(currentQRMs)
+  console.log(currentQRMs);
 
   // check if a QRM can be found with the same id
   for (let i = 0; i < currentQRMs.length; i++) {

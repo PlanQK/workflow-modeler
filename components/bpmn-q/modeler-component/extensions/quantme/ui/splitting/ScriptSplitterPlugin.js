@@ -54,9 +54,7 @@ export default class AdaptationPlugin extends PureComponent {
 
       // get all splitting candidates within the workflow model
       const analysisStartDate = Date.now();
-      const splittingCandidates = await findSplittingCandidates(
-        this.modeler
-      );
+      const splittingCandidates = await findSplittingCandidates(this.modeler);
       console.log(
         "Searching for splitting candidates took: %d ms",
         Date.now() - analysisStartDate
@@ -152,13 +150,12 @@ export default class AdaptationPlugin extends PureComponent {
       let programGenerationResult;
       switch (result.scriptSplitterName) {
         case "Script Splitter":
-          console.log("Invoke script splitter")
-          programGenerationResult =
-            await invokeScriptSplitter(
-              rewriteCandidate,
-              config,
-              getQRMs()
-            );
+          console.log("Invoke script splitter");
+          programGenerationResult = await invokeScriptSplitter(
+            rewriteCandidate,
+            config,
+            getQRMs()
+          );
           break;
         default:
           programGenerationResult = {
@@ -189,9 +186,7 @@ export default class AdaptationPlugin extends PureComponent {
 
         return;
       } else {
-        console.log(
-          "Splitting process successful!"
-        );
+        console.log("Splitting process successful!");
 
         // rewrite the workflow and display the result for the user
         let rewritingResult = await rewriteWorkflow(
@@ -227,7 +222,7 @@ export default class AdaptationPlugin extends PureComponent {
 
           let qrmsActivities = rewritingResult.qrms;
           let qrmsToUpload = await generateQrms(qrmsActivities);
-          console.log(qrmsToUpload)
+          console.log(qrmsToUpload);
 
           // upload the generated QRMS to the upload repository
           uploadMultipleToGitHub(this.modeler.config, qrmsToUpload);
