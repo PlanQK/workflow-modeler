@@ -173,7 +173,8 @@ export default class PatternSelectionPlugin extends PureComponent {
         );
         let rewritingResult;
         for (let j = 0; j < splittingCandidates.length; j++) {
-           let scriptTask = splittingCandidates[i];
+           let scriptTask = splittingCandidates[j];
+           console.log("Script Task", scriptTask)
            let programGenerationResult =
             await invokeScriptSplitter(
               scriptTask
@@ -182,16 +183,18 @@ export default class PatternSelectionPlugin extends PureComponent {
               solutionModeler,
               this.modeler.config,
               scriptTask,
-              programGenerationResult.hybridProgramBlob,
-              programGenerationResult.pollingAgentBlob
+              programGenerationResult.programsBlob,
+              programGenerationResult.workflowBlob
             );
+            console.log(rewritingResult)
         }
         let qrms = [];
         let qrmsActivities =[];
+        console.log(rewritingResult);
         if(rewritingResult && rewritingResult.xml !== undefined){
           updatedSolution = rewritingResult.xml;
           qrmsActivities = rewritingResult.qrms;
-  
+          
           
         }
         solutionModeler = await createTempModelerFromXml(updatedSolution);

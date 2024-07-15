@@ -903,12 +903,13 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
         modeling.updateProperties(elementRegistry.get(updateShape.id), {
           id: collapsedSubprocess.id + "_" + updateShape.id,
         });
+        console.log(qrms)
         if(qrms.length > 0){
-        for(let i= 0; i< qrms.activities.length; i++){
-          if(flowElement.id === qrms.activities[i].activity.id){
-            qrms.activities[i].activity = updateShape;
-            let deploymentModelUrl = qrms.activities[i].deploymentModelUrl;
-            qrms.activities[i].deploymentModelUrl = deploymentModelUrl.replace(flowElement.id, updateShape.id);
+        for(let i= 0; i< qrms[i].length; i++){
+          if(flowElement.id === qrms[i].activity.id){
+            qrms[i].activity = updateShape;
+            let deploymentModelUrl = qrms[i].deploymentModelUrl;
+            qrms[i].deploymentModelUrl = deploymentModelUrl.replace(flowElement.id, updateShape.id);
           }
         }
         console.log(updateShape);
