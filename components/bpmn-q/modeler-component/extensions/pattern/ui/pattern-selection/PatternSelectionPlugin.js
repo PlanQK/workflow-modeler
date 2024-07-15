@@ -169,6 +169,7 @@ export default class PatternSelectionPlugin extends PureComponent {
           solutionModeler
         );
         let rewritingResult;
+        let activities = []
         for (let j = 0; j < splittingCandidates.length; j++) {
           let scriptTask = splittingCandidates[j];
           console.log("Script Task", scriptTask);
@@ -181,12 +182,13 @@ export default class PatternSelectionPlugin extends PureComponent {
             programGenerationResult.workflowBlob
           );
           console.log(rewritingResult);
+          activities =  activities.concat(rewritingResult.qrms);
         }
         let qrmsActivities = [];
         console.log(rewritingResult);
         if (rewritingResult && rewritingResult.xml !== undefined) {
           updatedSolution = rewritingResult.xml;
-          qrmsActivities = rewritingResult.qrms;
+          qrmsActivities = activities;
         }
         solutionModeler = await createTempModelerFromXml(updatedSolution);
 
@@ -209,7 +211,7 @@ export default class PatternSelectionPlugin extends PureComponent {
         });
 
         if (solution !== INITIAL_DIAGRAM_XML) {
-          copyElementsToParent(
+          let result = copyElementsToParent(
             solutionRootElement,
             collapsedSubprocess,
             startEvent,
@@ -217,6 +219,7 @@ export default class PatternSelectionPlugin extends PureComponent {
             modeler,
             qrmsActivities
           );
+          qrmsActivities = result.qrmActivities;
           if (qrmsActivities.length > 0) {
             let qrmsToUpload = await generateQrms(qrmsActivities);
             console.log(qrmsToUpload);

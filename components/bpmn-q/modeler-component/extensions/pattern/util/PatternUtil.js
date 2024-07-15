@@ -201,7 +201,7 @@ export function changeIdOfContainedElements(
   modeling,
   elementRegistry,
   id,
-  oldToNewIdMap
+  oldToNewIdMap, qrms
 ) {
   console.log(
     "change id of contained elements of subprocess",
@@ -215,11 +215,27 @@ export function changeIdOfContainedElements(
 
     console.log(child);
     console.log(elementRegistry.get(child.id));
-    oldToNewIdMap[child.id] = id * "_" + child.id;
+    oldToNewIdMap[child.id] = id + "_" + child.id;
     modeling.updateProperties(elementRegistry.get(child.id), {
       id: id + "_" + child.id,
     });
     child.di.id = id + "_" + child.id + "_di";
+    console.log(qrms);
+
+    if (qrms.length > 0) {
+      for (let j = 0; j < qrms.length; j++) {
+        let activityId = id + "_" + qrms[j].activity.id;
+        console.log(activityId)
+        if (child.id === activityId) {
+          qrms[j].activity = child;
+          //let deploymentModelUrl = qrms[i].deploymentModelUrl;
+          //qrms[i].deploymentModelUrl = deploymentModelUrl.replace(
+            //flowElement.id,
+            //child.id
+          //);
+        }
+      }
+    }
 
     if (isQuantMESubprocess(child)) {
       changeIdOfContainedElements(
@@ -227,10 +243,12 @@ export function changeIdOfContainedElements(
         child.parent,
         modeling,
         elementRegistry,
-        id + "_" + child.id
+        id + "_" + child.id, qrms
       );
     }
   }
+
+  return qrms;
 }
 
 /**

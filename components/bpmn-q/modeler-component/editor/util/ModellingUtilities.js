@@ -893,21 +893,23 @@ export function copyElementsToParent(
         console.log(updateShape);
 
         // change id of solution elements since each id must be unique
-        changeIdOfContainedElements(
+        qrms = changeIdOfContainedElements(
           flowElement,
           collapsedSubprocess,
           tempModeling,
           tempElementRegistry,
           collapsedSubprocess.id + "_" + updateShape.id,
-          oldToNewIdMap
+          oldToNewIdMap, qrms
         );
         modeling.updateProperties(elementRegistry.get(updateShape.id), {
           id: collapsedSubprocess.id + "_" + updateShape.id,
         });
+        console.log(updateShape)
         console.log(qrms);
         if (qrms.length > 0) {
-          for (let i = 0; i < qrms[i].length; i++) {
+          for (let i = 0; i < qrms.length; i++) {
             if (flowElement.id === qrms[i].activity.id) {
+              console.log(updateShape)
               qrms[i].activity = updateShape;
               let deploymentModelUrl = qrms[i].deploymentModelUrl;
               qrms[i].deploymentModelUrl = deploymentModelUrl.replace(
@@ -968,5 +970,5 @@ export function copyElementsToParent(
       }
     }
   }
-  return oldToNewIdMap;
+  return {idMap: oldToNewIdMap, qrmActivities: qrms}
 }
