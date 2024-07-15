@@ -169,7 +169,7 @@ export default class PatternSelectionPlugin extends PureComponent {
           solutionModeler
         );
         let rewritingResult;
-        let activities = []
+        let activities = [];
         for (let j = 0; j < splittingCandidates.length; j++) {
           let scriptTask = splittingCandidates[j];
           console.log("Script Task", scriptTask);
@@ -182,7 +182,7 @@ export default class PatternSelectionPlugin extends PureComponent {
             programGenerationResult.workflowBlob
           );
           console.log(rewritingResult);
-          activities =  activities.concat(rewritingResult.qrms);
+          activities = activities.concat(rewritingResult.qrms);
         }
         let qrmsActivities = [];
         console.log(rewritingResult);

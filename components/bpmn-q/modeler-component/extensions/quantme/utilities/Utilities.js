@@ -17,6 +17,8 @@ import { copyQuantMEProperties } from "../../pattern/util/PatternUtil";
 import * as quantmeConsts from "../Constants";
 import { QUANTUM_CIRCUIT_EXECUTION_TASK } from "../Constants";
 import { QuantMEProps } from "../modeling/properties-provider/QuantMEPropertiesProvider";
+import { getQRMs, updateQRMs } from "../qrm-manager";
+import { uploadMultipleToGitHub } from "../qrm-manager/git-handler";
 
 /**
  * Check if the given task is a QuantME task
@@ -133,4 +135,23 @@ export async function generateQrms(activities) {
     });
   }
   return qrms;
+}
+
+export async function handleQrmUpload(qrmsActivities, modeler) {
+  let qrmsToUpload = await generateQrms(qrmsActivities);
+  console.log(qrmsToUpload);
+
+  console.log(qrmsToUpload);
+  let numQRMsPreUpload = getQRMs().length;
+  console.log("QRMs pre upload: {}", getQRMs());
+
+  // upload the generated QRMS to the upload repository
+  await uploadMultipleToGitHub(modeler.config, qrmsToUpload);
+
+  while (numQRMsPreUpload >= getQRMs().length) {
+    console.log("Waiting for QRM update - before {}", numQRMsPreUpload);
+    console.log("Numbers of QRMs {}", getQRMs());
+    await new Promise((r) => setTimeout(r, 8000));
+    await updateQRMs();
+  }
 }

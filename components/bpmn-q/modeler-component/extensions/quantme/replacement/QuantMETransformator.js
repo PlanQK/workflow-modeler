@@ -16,7 +16,10 @@ import * as constants from "../Constants";
 import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
 import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
 import { insertShape } from "../../../editor/util/TransformationUtilities";
-import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
+import {
+  createTempModelerFromXml,
+  getModeler,
+} from "../../../editor/ModelerHandler";
 import {
   getCamundaInputOutput,
   getDefinitionsFromXml,
@@ -25,11 +28,15 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
-import { isQuantMETask } from "../utilities/Utilities";
+import { handleQrmUpload, isQuantMETask } from "../utilities/Utilities";
 import { getQProvEndpoint } from "../framework-config/config-manager";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 import { OpenTOSCAProps } from "../../opentosca/modeling/properties-provider/ServiceTaskPropertiesProvider";
 import * as openToscaConsts from "../../opentosca/Constants";
+import { findSplittingCandidates } from "../ui/splitting/CandidateDetector";
+import { invokeScriptSplitter } from "../ui/splitting/splitter/ScriptSplitterHandler";
+import { getQRMs } from "../qrm-manager";
+import { rewriteWorkflow } from "../ui/splitting/WorkflowRewriter";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -202,8 +209,28 @@ export async function startQuantmeReplacementProcess(
       };
     }
   }
-
   removeDiagramElements(modeler);
+  const splittingCandidates = await findSplittingCandidates(modeler);
+  if (splittingCandidates.length > 0) {
+    let qrmActivities = [];
+    for (let i = 0; i < splittingCandidates.length; i++) {
+      let programGenerationResult = await invokeScriptSplitter(
+        splittingCandidates[i],
+        modeler.config,
+        getQRMs()
+      );
+      let rewritingResult = await rewriteWorkflow(
+        modeler,
+        modeler.config,
+        splittingCandidates[i],
+        programGenerationResult.programsBlob,
+        programGenerationResult.workflowBlob
+      );
+      qrmActivities.concat(rewritingResult.qrms);
+    }
+
+    await handleQrmUpload(qrmActivities, getModeler());
+  }
 
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);

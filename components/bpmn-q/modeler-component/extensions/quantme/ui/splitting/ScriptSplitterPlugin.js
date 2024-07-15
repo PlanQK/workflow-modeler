@@ -17,11 +17,10 @@ import { rewriteWorkflow } from "./WorkflowRewriter";
 import React, { PureComponent } from "react";
 import { getModeler } from "../../../../editor/ModelerHandler";
 import NotificationHandler from "../../../../editor/ui/notifications/NotificationHandler";
-import {getQRMs, updateQRMs} from "../../qrm-manager";
+import { getQRMs } from "../../qrm-manager";
 import config from "../../framework-config/config";
 import { invokeScriptSplitter } from "./splitter/ScriptSplitterHandler";
-import { generateQrms } from "../../utilities/Utilities";
-import { uploadMultipleToGitHub } from "../../qrm-manager/git-handler";
+import { handleQrmUpload } from "../../utilities/Utilities";
 
 const defaultState = {
   adaptationOpen: false,
@@ -220,31 +219,7 @@ export default class AdaptationPlugin extends PureComponent {
             Date.now() - rewriteStartDate
           );
 
-          let qrmsActivities = rewritingResult.qrms;
-          let qrmsToUpload = await generateQrms(qrmsActivities);
-          console.log(qrmsToUpload);
-
-          console.log(qrmsToUpload);
-
-          let numQRMsPreUpload = getQRMs().length;
-          console.log("QRMs pre upload: {}", getQRMs());
-
-          // upload the generated QRMS to the upload repository
-          await uploadMultipleToGitHub(this.modeler.config, qrmsToUpload);
-
-          // display success in modal
-          rewriteButton.title = programGenerationResult.error;
-          rewriteButton.innerText = "Rewrite successful!";
-          rewriteButton.className =
-              rewriteButton.className + " rewrite-successful-button";
-
-          while (numQRMsPreUpload >= getQRMs().length){
-
-            console.log("Waiting for QRM update - before {}", numQRMsPreUpload);
-            console.log("Numbers of QRMs {}", getQRMs());
-            await new Promise(r => setTimeout(r, 8000));
-            await updateQRMs();
-          }
+          await handleQrmUpload(rewritingResult.qrms, this.modeler);
 
           // display success in modal
           rewriteButton.title = programGenerationResult.error;

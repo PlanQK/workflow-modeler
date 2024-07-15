@@ -78,14 +78,12 @@ export async function createBpmnElements(modeler, jsonData) {
           }
           for (let i = 0; i < item.parameters.length; i++) {
             let id = item.parameters[i];
-            let formField = modeler
-              .get("moddle")
-              .create("camunda:FormField", {
-                defaultValue: "",
-                id: id,
-                label: id,
-                type: "string",
-              });
+            let formField = modeler.get("moddle").create("camunda:FormField", {
+              defaultValue: "",
+              id: id,
+              label: id,
+              type: "string",
+            });
             formextended.get("fields").push(formField);
             pushFormField(form, formextended.fields[i]);
           }
@@ -102,7 +100,7 @@ export async function createBpmnElements(modeler, jsonData) {
         id: item.id,
         file: item.file,
       };
-      if(item.type.includes(consts.QUANTUM_CIRCUIT_EXECUTION_TASK)){
+      if (item.type.includes(consts.QUANTUM_CIRCUIT_EXECUTION_TASK)) {
         element.businessObject.$attrs[consts.PROVIDER] = "ibm";
       }
     }
