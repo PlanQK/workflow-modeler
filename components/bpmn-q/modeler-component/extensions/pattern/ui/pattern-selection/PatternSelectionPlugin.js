@@ -36,6 +36,8 @@ import NotificationHandler from "../../../../editor/ui/notifications/Notificatio
 import { findSplittingCandidates } from "../../../quantme/ui/splitting/CandidateDetector";
 import { rewriteWorkflow } from "../../../quantme/ui/splitting/WorkflowRewriter";
 import { invokeScriptSplitter } from "../../../quantme/ui/splitting/splitter/ScriptSplitterHandler";
+import { generateQrms } from "../../../quantme/utilities/Utilities";
+import { uploadMultipleToGitHub } from "../../../quantme/qrm-manager/git-handler";
 
 const defaultState = {
   patternOverviewOpen: false,
@@ -184,9 +186,13 @@ export default class PatternSelectionPlugin extends PureComponent {
               programGenerationResult.pollingAgentBlob
             );
         }
-    
-        if(rewritingResult.xml !== undefined){
+        let qrms = [];
+        let qrmsActivities =[];
+        if(rewritingResult && rewritingResult.xml !== undefined){
           updatedSolution = rewritingResult.xml;
+          qrmsActivities = rewritingResult.qrms;
+  
+          
         }
         solutionModeler = await createTempModelerFromXml(updatedSolution);
 
@@ -209,7 +215,14 @@ export default class PatternSelectionPlugin extends PureComponent {
         });
         
         if (solution !== INITIAL_DIAGRAM_XML) {
-          copyElementsToParent(solutionRootElement, collapsedSubprocess, startEvent, solutionModeler, modeler, qrms);
+          copyElementsToParent(solutionRootElement, collapsedSubprocess, startEvent, solutionModeler, modeler, qrmsActivities);
+          if(qrmsActivities.length> 0){
+            let qrmsToUpload = await generateQrms(qrmsActivities);
+            console.log(qrmsToUpload)
+      
+            // upload the generated QRMS to the upload repository
+            uploadMultipleToGitHub(this.modeler.config, qrmsToUpload);
+            }
         } else {
           let collapsedSubprocessStartEvent = elementFactory.createShape({
             type: "bpmn:StartEvent",
@@ -272,6 +285,7 @@ export default class PatternSelectionPlugin extends PureComponent {
       const elapsedTime = Date.now() - this.progressBarStartTime;
       console.log(`Time taken for step B: ${elapsedTime}ms`); // Log the elapsed time
       this.setState({ showProgressBar: false });
+      
     }
   }
 

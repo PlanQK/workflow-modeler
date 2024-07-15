@@ -809,6 +809,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
           if (!form) {
             form = modeler.get("moddle").create("camunda:FormData");
           }
+          if(formextended.fields !== undefined){
           for (let i = 0; i < formextended.fields.length; i++) {
             console.log(formextended.fields[i]);
             let id = formextended.fields[i].id;
@@ -818,6 +819,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
             pushFormField(form, formextended.fields[i]);
           }
           extensionElements.values = [form];
+        }
         }
 
         modeling.updateProperties(elementRegistry.get(startEvent.id), {
@@ -901,6 +903,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
         modeling.updateProperties(elementRegistry.get(updateShape.id), {
           id: collapsedSubprocess.id + "_" + updateShape.id,
         });
+        if(qrms.length > 0){
         for(let i= 0; i< qrms.activities.length; i++){
           if(flowElement.id === qrms.activities[i].activity.id){
             qrms.activities[i].activity = updateShape;
@@ -909,6 +912,7 @@ export function copyElementsToParent(oldRootElement, collapsedSubprocess, startE
           }
         }
         console.log(updateShape);
+      }
       }
       offset += 150;
 
