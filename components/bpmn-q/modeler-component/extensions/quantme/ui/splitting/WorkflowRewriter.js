@@ -43,7 +43,6 @@ const OPENTOSCA_NAMESPACE_NODETYPE = "http://opentosca.org/nodetypes";
  */
 export async function rewriteWorkflow(
   modeler,
-  config,
   candidate,
   programsBlob,
   workflowBlob

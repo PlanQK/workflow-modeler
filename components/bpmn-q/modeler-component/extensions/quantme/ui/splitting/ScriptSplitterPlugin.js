@@ -146,23 +146,7 @@ export default class AdaptationPlugin extends PureComponent {
       const rewriteStartDate = Date.now();
 
       let rewriteCandidate = result.candidates[result.rewriteCandidateId];
-      let programGenerationResult;
-      switch (result.scriptSplitterName) {
-        case "Script Splitter":
-          console.log("Invoke script splitter");
-          programGenerationResult = await invokeScriptSplitter(
-            rewriteCandidate,
-            config,
-            getQRMs()
-          );
-          break;
-        default:
-          programGenerationResult = {
-            error:
-              "Unable to find suitable script splitter for: " +
-              result.scriptSplitterName,
-          };
-      }
+      let programGenerationResult = await this.invokeScriptSplitterForCandidate(rewriteCandidate, result.scriptSplitterName );
 
       // check if hybrid program generation was successful
       if (programGenerationResult.error) {
@@ -190,7 +174,6 @@ export default class AdaptationPlugin extends PureComponent {
         // rewrite the workflow and display the result for the user
         let rewritingResult = await rewriteWorkflow(
           this.modeler,
-          this.modeler.config,
           rewriteCandidate,
           programGenerationResult.programsBlob,
           programGenerationResult.workflowBlob
@@ -235,6 +218,27 @@ export default class AdaptationPlugin extends PureComponent {
     this.setState({ rewriteOpen: false });
   }
 
+
+  async invokeScriptSplitterForCandidate(rewriteCandidate, scriptSplitterName){
+    let programGenerationResult;
+    switch (scriptSplitterName) {
+      case "Script Splitter":
+        console.log("Invoke script splitter");
+        programGenerationResult = await invokeScriptSplitter(
+            rewriteCandidate,
+            config,
+            getQRMs()
+        );
+        break;
+      default:
+        programGenerationResult = {
+          error:
+              "Unable to find suitable script splitter for: " +
+              scriptSplitterName,
+        };
+    }
+    return programGenerationResult;
+  }
   render() {
     // render loop analysis button and pop-up menu
     return (
@@ -264,3 +268,4 @@ export default class AdaptationPlugin extends PureComponent {
     );
   }
 }
+

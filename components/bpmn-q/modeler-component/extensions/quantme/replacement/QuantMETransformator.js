@@ -221,7 +221,6 @@ export async function startQuantmeReplacementProcess(
       );
       let rewritingResult = await rewriteWorkflow(
         modeler,
-        modeler.config,
         splittingCandidates[i],
         programGenerationResult.programsBlob,
         programGenerationResult.workflowBlob

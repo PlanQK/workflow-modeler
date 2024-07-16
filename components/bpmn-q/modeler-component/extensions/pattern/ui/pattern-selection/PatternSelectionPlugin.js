@@ -176,7 +176,6 @@ export default class PatternSelectionPlugin extends PureComponent {
           let programGenerationResult = await invokeScriptSplitter(scriptTask);
           rewritingResult = await rewriteWorkflow(
             solutionModeler,
-            this.modeler.config,
             scriptTask,
             programGenerationResult.programsBlob,
             programGenerationResult.workflowBlob
