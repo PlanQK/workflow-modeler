@@ -210,8 +210,12 @@ export async function startQuantmeReplacementProcess(
     }
   }
   removeDiagramElements(modeler);
+
+  console.log("Searching for splitting candidates after transformation");
   const splittingCandidates = await findSplittingCandidates(modeler);
   if (splittingCandidates.length > 0) {
+    console.log("Found {} splitting candidates after transformation", splittingCandidates.length);
+    console.log(splittingCandidates)
     let qrmActivities = [];
     for (let i = 0; i < splittingCandidates.length; i++) {
       let programGenerationResult = await invokeScriptSplitter(

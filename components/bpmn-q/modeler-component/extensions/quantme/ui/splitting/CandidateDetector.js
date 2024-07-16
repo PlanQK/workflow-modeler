@@ -198,7 +198,7 @@ function getScriptTasks(rootElement, language, splittingCandidates) {
       // recursively call method to find optimization candidates
       Array.prototype.push.apply(
         scriptTasks,
-        getScriptTasks(flowElement, language)
+        getScriptTasks(flowElement, language, splittingCandidates)
       );
     }
   }
