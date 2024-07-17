@@ -96,10 +96,15 @@ export async function rewriteWorkflow(
       element,
       modeling,
       elementRegistry,
-      collapsedSubprocess
+      collapsedSubprocess,
+        elementFactory
     );
 
+    console.log("Vielleicht ein Deadlock????");
+
     modeling.removeShape(element);
+
+    console.log("Doch kein Deadlock!!!");
 
     await refreshModeler(modeler);
     definitions = modeler.getDefinitions();
@@ -178,22 +183,32 @@ export async function rewriteWorkflow(
   }
 }
 
-function redirectIngoingFlow(entryPoint, modeling, elementRegistry, newTask) {
+function redirectIngoingFlow(entryPoint, modeling, elementRegistry, newTask, elementFactory) {
   // redirect ingoing sequence flows of the entry point (except sequence flow representing the loop)
   console.log("Adding ingoing sequence flow to new task: ", newTask);
+  console.log(elementRegistry.get(newTask.id));
+  console.log("Entrypoint: ", entryPoint);
   for (let i = 0; i < entryPoint.incoming.length; i++) {
     let sequenceFlow = entryPoint.incoming[i];
-    modeling.connect(elementRegistry.get(sequenceFlow.source.id), newTask, {
+    console.log("sequence flow{}",sequenceFlow.source.id);
+    elementFactory.createConnection({
       type: "bpmn:SequenceFlow",
+      source: elementRegistry.get(sequenceFlow.source.id),
+      target: elementRegistry.get(newTask.id),
     });
+    console.log("Deadlock!!!!");
     modeling.removeConnection(sequenceFlow);
   }
 
+  console.log("Outgoing length: " + entryPoint.outgoing.length);
   for (let i = 0; i < entryPoint.outgoing.length; i++) {
     let sequenceFlow = entryPoint.outgoing[i];
-    modeling.connect(newTask, elementRegistry.get(sequenceFlow.target.id), {
+    elementFactory.createConnection({
       type: "bpmn:SequenceFlow",
+      source: elementRegistry.get(newTask.id),
+      target: elementRegistry.get(sequenceFlow.target.id),
     });
+    console.log("Outgoing connection...");
     modeling.removeConnection(sequenceFlow);
   }
 }

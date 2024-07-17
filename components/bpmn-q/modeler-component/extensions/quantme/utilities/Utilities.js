@@ -148,10 +148,13 @@ export async function handleQrmUpload(qrmsActivities, modeler) {
   // upload the generated QRMS to the upload repository
   await uploadMultipleToGitHub(modeler.config, qrmsToUpload);
 
-  while (numQRMsPreUpload >= getQRMs().length) {
+  let tries = 0;
+  while (numQRMsPreUpload >= getQRMs().length && tries < 10) {
     console.log("Waiting for QRM update - before {}", numQRMsPreUpload);
     console.log("Numbers of QRMs {}", getQRMs());
+    console.log("Iteration {}", tries);
     await new Promise((r) => setTimeout(r, 8000));
     await updateQRMs();
+    tries ++;
   }
 }
