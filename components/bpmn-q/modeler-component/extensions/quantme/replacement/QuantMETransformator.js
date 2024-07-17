@@ -50,6 +50,7 @@ export async function startQuantmeReplacementProcess(
   currentQRMs,
   endpointConfig
 ) {
+  let startTimeStepG = Date.now();
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
@@ -239,6 +240,8 @@ export async function startQuantmeReplacementProcess(
   layout(modeling, elementRegistry, rootElement);
   let updated_xml = await getXml(modeler);
   console.log(updated_xml);
+  const elapsedTimeStepG = Date.now() - startTimeStepG;
+  console.log(`Time taken for step G: ${elapsedTimeStepG}ms`);
   return { status: "transformed", xml: updated_xml };
 }
 

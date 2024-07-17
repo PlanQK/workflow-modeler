@@ -251,7 +251,11 @@ export async function startPatternReplacementProcess(xml) {
   );
   console.log("Begin of measurement of step F: ");
   startTime = Date.now();
-  const optimizationCandidates = await findOptimizationCandidates(modeler);
+  let  optimizationCandidates = [];
+  if (behaviorReplacementConstructs.length !== 0 ) {
+    optimizationCandidates = await findOptimizationCandidates(modeler);
+  }
+
   for (let replacementConstruct of behaviorReplacementConstructs) {
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.ORCHESTRATED_EXECUTION) {

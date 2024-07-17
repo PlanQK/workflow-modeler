@@ -86,7 +86,6 @@ export default class PatternSelectionPlugin extends PureComponent {
 
     if (result && result.length > 0) {
       // If the result is not empty, show the progress bar
-      this.progressBarStartTime = Date.now();
       this.setState({ showProgressBar: true });
 
       try {
@@ -133,6 +132,7 @@ export default class PatternSelectionPlugin extends PureComponent {
   async handlePatternSolutionClosed(result) {
     console.log("retrieved solutions");
     console.log(result);
+    this.progressBarStartTime = Date.now();
 
     let xml = INITIAL_DIAGRAM_XML;
     let modeler = await createTempModelerFromXml(xml);
