@@ -77,7 +77,7 @@ export async function startPatternReplacementProcess(xml) {
     containedPatterns,
     modeling
   );
-  console.log("End of measurement for step C: ", Date.now() - startTime);
+  console.log(`Time taken for step C: ${Date.now() - startTime}ms`);
   containedPatterns = getPatterns(rootElement, elementRegistry);
 
   console.log("Begin of step E:");
@@ -245,7 +245,7 @@ export async function startPatternReplacementProcess(xml) {
   console.log("Applying behavioral patterns...");
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
-  console.log("End of measurement of step E: ", Date.now() - startTime);
+  console.log(`Time taken for step E: ${Date.now() - startTime}ms`);
   let behaviorReplacementConstructs = replacementConstructs.filter(
     (construct) => constants.BEHAVIORAL_PATTERNS.includes(construct.task.$type)
   );
@@ -435,7 +435,7 @@ export async function startPatternReplacementProcess(xml) {
   elementsToDelete = patterns.concat(allFlow);
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
-  console.log("End of measurement of step F: ", Date.now() - startTime);
+  console.log(`Time taken for step F: ${Date.now() - startTime}ms`);
 
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
