@@ -123,26 +123,6 @@ export function getAdditionalModules() {
 }
 
 /**
- * Returns all css style modules the active plugins define in their styling property as an array.
- *
- * @returns {*[]} Array of css style modules defined by the active plugins.
- */
-export function getStyles() {
-  let styles = [];
-
-  // load css styles of the active plugins
-  for (let plugin of getActivePlugins()) {
-    if (plugin.styling) {
-      styles = styles.concat(plugin.styling);
-    }
-  }
-
-  console.log("\n Get Plugin Styling");
-  console.log(styles);
-  return styles;
-}
-
-/**
  * Returns an objects with all moddle extensions for the bpmn-js modeler the active plugins define in their moddleDescription property.
  * The returned object contains a property for each plugin with its name and the moddle extension as value.
  *
