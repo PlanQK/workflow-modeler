@@ -78,7 +78,7 @@ export async function rewriteWorkflow(
     modeling.createShape(
       collapsedSubprocess,
       { x: 50, y: 50 },
-      elementRegistry.get(rootElement.id)
+      parent
     );
 
     let copyResult = copyElementsToParent(
@@ -100,12 +100,7 @@ export async function rewriteWorkflow(
         elementFactory
     );
 
-    console.log("Vielleicht ein Deadlock????");
-
     modeling.removeShape(element);
-
-    console.log("Doch kein Deadlock!!!");
-
     await refreshModeler(modeler);
     definitions = modeler.getDefinitions();
     rootElement = getRootProcess(definitions);
@@ -183,32 +178,22 @@ export async function rewriteWorkflow(
   }
 }
 
-function redirectIngoingFlow(entryPoint, modeling, elementRegistry, newTask, elementFactory) {
+function redirectIngoingFlow(entryPoint, modeling, elementRegistry, newTask) {
   // redirect ingoing sequence flows of the entry point (except sequence flow representing the loop)
   console.log("Adding ingoing sequence flow to new task: ", newTask);
-  console.log(elementRegistry.get(newTask.id));
-  console.log("Entrypoint: ", entryPoint);
   for (let i = 0; i < entryPoint.incoming.length; i++) {
     let sequenceFlow = entryPoint.incoming[i];
-    console.log("sequence flow{}",sequenceFlow.source.id);
-    elementFactory.createConnection({
+    modeling.connect(elementRegistry.get(sequenceFlow.source.id), newTask, {
       type: "bpmn:SequenceFlow",
-      source: elementRegistry.get(sequenceFlow.source.id),
-      target: elementRegistry.get(newTask.id),
     });
-    console.log("Deadlock!!!!");
     modeling.removeConnection(sequenceFlow);
   }
 
-  console.log("Outgoing length: " + entryPoint.outgoing.length);
   for (let i = 0; i < entryPoint.outgoing.length; i++) {
     let sequenceFlow = entryPoint.outgoing[i];
-    elementFactory.createConnection({
+    modeling.connect(newTask, elementRegistry.get(sequenceFlow.target.id), {
       type: "bpmn:SequenceFlow",
-      source: elementRegistry.get(newTask.id),
-      target: elementRegistry.get(sequenceFlow.target.id),
     });
-    console.log("Outgoing connection...");
     modeling.removeConnection(sequenceFlow);
   }
 }
