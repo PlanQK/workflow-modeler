@@ -230,7 +230,7 @@ export async function startQuantmeReplacementProcess(
         programGenerationResult.programsBlob,
         programGenerationResult.workflowBlob
       );
-      qrmActivities.concat(rewritingResult.qrms);
+      qrmActivities = qrmActivities.concat(rewritingResult.qrms);
     }
 
     await handleQrmUpload(qrmActivities, getModeler());
