@@ -34,7 +34,7 @@ import NotificationHandler from "../../../../editor/ui/notifications/Notificatio
 import { findSplittingCandidates } from "../../../quantme/ui/splitting/CandidateDetector";
 import { rewriteWorkflow } from "../../../quantme/ui/splitting/WorkflowRewriter";
 import { invokeScriptSplitter } from "../../../quantme/ui/splitting/splitter/ScriptSplitterHandler";
-import { generateQrms } from "../../../quantme/utilities/Utilities";
+import {generateQrms, handleQrmUpload} from "../../../quantme/utilities/Utilities";
 import { uploadMultipleToGitHub } from "../../../quantme/qrm-manager/git-handler";
 
 const defaultState = {
@@ -220,11 +220,8 @@ export default class PatternSelectionPlugin extends PureComponent {
           );
           qrmsActivities = result.qrmActivities;
           if (qrmsActivities.length > 0) {
-            let qrmsToUpload = await generateQrms(qrmsActivities);
-            console.log(qrmsToUpload);
+            handleQrmUpload(qrmsActivities, this.modeler);
 
-            // upload the generated QRMS to the upload repository
-            uploadMultipleToGitHub(this.modeler.config, qrmsToUpload);
           }
         } else {
           let collapsedSubprocessStartEvent = elementFactory.createShape({
