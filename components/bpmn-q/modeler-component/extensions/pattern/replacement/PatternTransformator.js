@@ -252,8 +252,8 @@ export async function startPatternReplacementProcess(xml) {
   );
   console.log("Begin of measurement of step F: ");
   startTime = Date.now();
-  let  optimizationCandidates = [];
-  if (behaviorReplacementConstructs.length !== 0 ) {
+  let optimizationCandidates = [];
+  if (behaviorReplacementConstructs.length !== 0) {
     optimizationCandidates = await findOptimizationCandidates(modeler);
   }
 
@@ -296,7 +296,7 @@ export async function startPatternReplacementProcess(xml) {
       }
       replacementSuccess = true;
       optimizationCandidates = await findOptimizationCandidates(modeler);
-      console.log("optimization candidates: ", optimizationCandidates)
+      console.log("optimization candidates: ", optimizationCandidates);
     }
     if (replacementConstruct.task.$type === constants.PRE_DEPLOYED_EXECUTION) {
       console.log("Replace pre-deployed execution");
@@ -449,14 +449,14 @@ export async function startPatternReplacementProcess(xml) {
 
   // remove duplicate patterns from elementsToDelete
   let elementsToDeleteNoDuplicates = [];
-  for (let i = 0; i < elementsToDelete.length; i++){
+  for (let i = 0; i < elementsToDelete.length; i++) {
     let contains = false;
-    for (let j = 0; j < elementsToDeleteNoDuplicates.length; j++){
-      if (elementsToDeleteNoDuplicates[j].id ===  elementsToDelete[i].id ) {
+    for (let j = 0; j < elementsToDeleteNoDuplicates.length; j++) {
+      if (elementsToDeleteNoDuplicates[j].id === elementsToDelete[i].id) {
         contains = true;
       }
     }
-    if (!contains && elementsToDelete[i].parent !== null){
+    if (!contains && elementsToDelete[i].parent !== null) {
       elementsToDeleteNoDuplicates.push(elementsToDelete[i]);
     }
   }

@@ -75,11 +75,7 @@ export async function rewriteWorkflow(
       isExpanded: true,
     });
 
-    modeling.createShape(
-      collapsedSubprocess,
-      { x: 50, y: 50 },
-      parent
-    );
+    modeling.createShape(collapsedSubprocess, { x: 50, y: 50 }, parent);
 
     let copyResult = copyElementsToParent(
       tempRootElement,
@@ -97,7 +93,7 @@ export async function rewriteWorkflow(
       modeling,
       elementRegistry,
       collapsedSubprocess,
-        elementFactory
+      elementFactory
     );
 
     modeling.removeShape(element);

@@ -146,7 +146,10 @@ export default class AdaptationPlugin extends PureComponent {
       const rewriteStartDate = Date.now();
 
       let rewriteCandidate = result.candidates[result.rewriteCandidateId];
-      let programGenerationResult = await this.invokeScriptSplitterForCandidate(rewriteCandidate, result.scriptSplitterName );
+      let programGenerationResult = await this.invokeScriptSplitterForCandidate(
+        rewriteCandidate,
+        result.scriptSplitterName
+      );
 
       // check if hybrid program generation was successful
       if (programGenerationResult.error) {
@@ -218,23 +221,22 @@ export default class AdaptationPlugin extends PureComponent {
     this.setState({ rewriteOpen: false });
   }
 
-
-  async invokeScriptSplitterForCandidate(rewriteCandidate, scriptSplitterName){
+  async invokeScriptSplitterForCandidate(rewriteCandidate, scriptSplitterName) {
     let programGenerationResult;
     switch (scriptSplitterName) {
       case "Script Splitter":
         console.log("Invoke script splitter");
         programGenerationResult = await invokeScriptSplitter(
-            rewriteCandidate,
-            config,
-            getQRMs()
+          rewriteCandidate,
+          config,
+          getQRMs()
         );
         break;
       default:
         programGenerationResult = {
           error:
-              "Unable to find suitable script splitter for: " +
-              scriptSplitterName,
+            "Unable to find suitable script splitter for: " +
+            scriptSplitterName,
         };
     }
     return programGenerationResult;
@@ -268,4 +270,3 @@ export default class AdaptationPlugin extends PureComponent {
     );
   }
 }
-

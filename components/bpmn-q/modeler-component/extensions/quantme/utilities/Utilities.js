@@ -155,6 +155,6 @@ export async function handleQrmUpload(qrmsActivities, modeler) {
     console.log("Iteration {}", tries);
     await new Promise((r) => setTimeout(r, 8000));
     await updateQRMs();
-    tries ++;
+    tries++;
   }
 }

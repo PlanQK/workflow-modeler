@@ -12,7 +12,7 @@ import fetch from "node-fetch";
 import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardware-selection/HardwareSelectionForm";
 import JSZip from "jszip";
 import NotificationHandler from "../ui/notifications/NotificationHandler";
-import {checkEnabledStatus, getActivePlugins} from "../plugin/PluginHandler";
+import { getActivePlugins } from "../plugin/PluginHandler";
 import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
 import { getRootProcess } from "./ModellingUtilities";
 import { getWineryEndpoint } from "../../extensions/opentosca/framework-config/config-manager";
@@ -618,7 +618,7 @@ export async function saveQAA(
   let openToscaActive = false;
   for (let plugin of getActivePlugins()) {
     console.log(plugin.name);
-    if (plugin.name  === pluginNames.OPENTOSCA){
+    if (plugin.name === pluginNames.OPENTOSCA) {
       openToscaActive = true;
     }
   }
