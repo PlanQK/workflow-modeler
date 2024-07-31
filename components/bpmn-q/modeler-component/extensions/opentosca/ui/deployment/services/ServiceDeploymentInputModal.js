@@ -200,7 +200,8 @@ export default function ServiceDeploymentInputModal({ onClose, initValues }) {
           inputParam.name === "instanceDataAPIUrl" ||
           inputParam.name === "CorrelationID" ||
           inputParam.name === "csarEntrypoint" ||
-          inputParam.name === "planCallbackAddress_invoker"
+          inputParam.name === "planCallbackAddress_invoker" ||
+          inputParam.name === "containerApiAddress"
         ) {
           paramsToRetrieve.push({ hidden: true, inputParam: inputParam });
           continue;

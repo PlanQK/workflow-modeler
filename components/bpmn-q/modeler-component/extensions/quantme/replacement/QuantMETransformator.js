@@ -16,7 +16,10 @@ import * as constants from "../Constants";
 import { replaceHardwareSelectionSubprocess } from "./hardware-selection/QuantMEHardwareSelectionHandler";
 import { replaceCuttingSubprocess } from "./circuit-cutting/QuantMECuttingHandler";
 import { insertShape } from "../../../editor/util/TransformationUtilities";
-import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
+import {
+  createTempModelerFromXml,
+  getModeler,
+} from "../../../editor/ModelerHandler";
 import {
   getCamundaInputOutput,
   getDefinitionsFromXml,
@@ -25,11 +28,15 @@ import {
 } from "../../../editor/util/ModellingUtilities";
 import { getXml } from "../../../editor/util/IoUtilities";
 import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
-import { isQuantMETask } from "../utilities/Utilities";
+import { handleQrmUpload, isQuantMETask } from "../utilities/Utilities";
 import { getQProvEndpoint } from "../framework-config/config-manager";
 import { getCamundaEndpoint } from "../../../editor/config/EditorConfigManager";
 import { OpenTOSCAProps } from "../../opentosca/modeling/properties-provider/ServiceTaskPropertiesProvider";
 import * as openToscaConsts from "../../opentosca/Constants";
+import { findSplittingCandidates } from "../ui/splitting/CandidateDetector";
+import { invokeScriptSplitter } from "../ui/splitting/splitter/ScriptSplitterHandler";
+import { getQRMs } from "../qrm-manager";
+import { rewriteWorkflow } from "../ui/splitting/WorkflowRewriter";
 
 /**
  * Initiate the replacement process for the QuantME tasks that are contained in the current process model
@@ -43,6 +50,7 @@ export async function startQuantmeReplacementProcess(
   currentQRMs,
   endpointConfig
 ) {
+  let startTimeStepG = Date.now();
   let modeler = await createTempModelerFromXml(xml);
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
@@ -202,13 +210,41 @@ export async function startQuantmeReplacementProcess(
       };
     }
   }
-
   removeDiagramElements(modeler);
+
+  console.log("Searching for splitting candidates after transformation");
+  const splittingCandidates = await findSplittingCandidates(modeler);
+  if (splittingCandidates.length > 0) {
+    console.log(
+      "Found {} splitting candidates after transformation",
+      splittingCandidates.length
+    );
+    console.log(splittingCandidates);
+    let qrmActivities = [];
+    for (let i = 0; i < splittingCandidates.length; i++) {
+      let programGenerationResult = await invokeScriptSplitter(
+        splittingCandidates[i],
+        modeler.config,
+        getQRMs()
+      );
+      let rewritingResult = await rewriteWorkflow(
+        modeler,
+        splittingCandidates[i],
+        programGenerationResult.programsBlob,
+        programGenerationResult.workflowBlob
+      );
+      qrmActivities = qrmActivities.concat(rewritingResult.qrms);
+    }
+
+    await handleQrmUpload(qrmActivities, getModeler());
+  }
 
   // layout diagram after successful transformation
   layout(modeling, elementRegistry, rootElement);
   let updated_xml = await getXml(modeler);
   console.log(updated_xml);
+  const elapsedTimeStepG = Date.now() - startTimeStepG;
+  console.log(`Time taken for step G: ${elapsedTimeStepG}ms`);
   return { status: "transformed", xml: updated_xml };
 }
 
@@ -275,9 +311,17 @@ export function getQuantMETasks(process, elementRegistry) {
  */
 async function getMatchingQRM(task, currentQRMs) {
   console.log("Number of available QRMs: ", currentQRMs.length);
+  console.log(task);
+  console.log(currentQRMs);
 
+  // check if a QRM can be found with the same id
   for (let i = 0; i < currentQRMs.length; i++) {
-    if (await matchesQRM(currentQRMs[i], task)) {
+    if (await matchesQRM(currentQRMs[i], task, true)) {
+      return currentQRMs[i];
+    }
+  }
+  for (let i = 0; i < currentQRMs.length; i++) {
+    if (await matchesQRM(currentQRMs[i], task, false)) {
       return currentQRMs[i];
     }
   }

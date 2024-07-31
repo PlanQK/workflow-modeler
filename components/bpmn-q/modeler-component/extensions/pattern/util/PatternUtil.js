@@ -200,7 +200,9 @@ export function changeIdOfContainedElements(
   parent,
   modeling,
   elementRegistry,
-  id
+  id,
+  oldToNewIdMap,
+  qrms
 ) {
   console.log(
     "change id of contained elements of subprocess",
@@ -214,11 +216,27 @@ export function changeIdOfContainedElements(
 
     console.log(child);
     console.log(elementRegistry.get(child.id));
-
+    oldToNewIdMap[child.id] = id + "_" + child.id;
     modeling.updateProperties(elementRegistry.get(child.id), {
       id: id + "_" + child.id,
     });
     child.di.id = id + "_" + child.id + "_di";
+    console.log(qrms);
+
+    if (qrms.length > 0) {
+      for (let j = 0; j < qrms.length; j++) {
+        let activityId = id + "_" + qrms[j].activity.id;
+        console.log(activityId);
+        if (child.id === activityId) {
+          qrms[j].activity = child;
+          //let deploymentModelUrl = qrms[i].deploymentModelUrl;
+          //qrms[i].deploymentModelUrl = deploymentModelUrl.replace(
+          //flowElement.id,
+          //child.id
+          //);
+        }
+      }
+    }
 
     if (isQuantMESubprocess(child)) {
       changeIdOfContainedElements(
@@ -226,10 +244,13 @@ export function changeIdOfContainedElements(
         child.parent,
         modeling,
         elementRegistry,
-        id + "_" + child.id
+        id + "_" + child.id,
+        qrms
       );
     }
   }
+
+  return qrms;
 }
 
 /**
@@ -429,13 +450,15 @@ export function copyQuantMEProperties(
   quantMEProperties,
   sourceTask,
   targetTask,
-  modeler
+  modeler,
+  detectorCreation
 ) {
   let modeling = modeler.get("modeling");
   let elementRegistry = modeler.get("elementRegistry");
   if (quantMEProperties !== undefined) {
     let propertyEntries = {};
     quantMEProperties.forEach((propertyEntry) => {
+      console.log(propertyEntry);
       let entryId = propertyEntry.id;
       let entry = sourceTask[entryId];
       entry =
@@ -443,6 +466,14 @@ export function copyQuantMEProperties(
           ? entry.split(",")[0]
           : entry;
       propertyEntries[entryId] = entry;
+      // set all properties to *
+      if (detectorCreation) {
+        propertyEntries[entryId] = "*";
+        // delete one property since it is exclusive
+        if (sourceTask.type === quantmeConsts.QUANTUM_CIRCUIT_LOADING_TASK) {
+          delete propertyEntries[quantmeConsts.QUANTUM_CIRCUIT];
+        }
+      }
     });
     console.log("properties", propertyEntries);
     modeling.updateProperties(

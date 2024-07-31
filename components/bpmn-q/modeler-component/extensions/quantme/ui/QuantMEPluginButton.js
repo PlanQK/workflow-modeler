@@ -1,5 +1,6 @@
 import React from "react";
 import AdaptationPlugin from "./adaptation/AdaptationPlugin";
+import ScriptSplitterPlugin from "./splitting/ScriptSplitterPlugin";
 import QuantMEController from "./control/QuantMEController";
 import ExtensibleButton from "../../../editor/ui/ExtensibleButton";
 import NotificationHandler from "../../../editor/ui/notifications/NotificationHandler";
@@ -29,7 +30,11 @@ export default function QuantMEPluginButton() {
 
   return (
     <ExtensibleButton
-      subButtons={[<AdaptationPlugin />, <QuantMEController />]}
+      subButtons={[
+        <AdaptationPlugin />,
+        <ScriptSplitterPlugin />,
+        <QuantMEController />,
+      ]}
       title="QuantME"
       styleClass="quantme-logo"
       description="Show buttons of the QuantME plugin"

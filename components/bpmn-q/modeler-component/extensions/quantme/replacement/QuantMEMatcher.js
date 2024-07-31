@@ -56,11 +56,18 @@ import {
  * @param task the task to check
  * @return true if the detector matches the task, false otherwise
  */
-export function taskMatchesDetector(detectorElement, task) {
+export function taskMatchesDetector(detectorElement, task, idMatching) {
   console.log("Matching for task: ", task);
   if (detectorElement.$type !== task.$type) {
     console.log("Types of detector and task do not match!");
     return false;
+  }
+
+  // necessary for the script splitter qrms
+  if (idMatching) {
+    if (detectorElement.id !== task.id) {
+      return false;
+    }
   }
 
   // check for attributes of the different task types
@@ -124,6 +131,8 @@ function matchQuantumCircuitLoadingTask(detectorElement, task) {
     detectorElement.url,
   ];
   let taskAlternatives = [task.quantumCircuit, task.url];
+  console.log(detectorAlternatives);
+  console.log(taskAlternatives);
   return matchAlternativeProperties(detectorAlternatives, taskAlternatives);
 }
 
@@ -511,8 +520,11 @@ function matchAlternativeProperties(detectorProperties, taskProperties) {
   // search the task property that is set
   let taskAlternative = undefined;
   let detectorAlternative = undefined;
-  for (let i = 0; i < taskProperties.length; i++) {
-    if (taskProperties[i] !== undefined) {
+  for (let i = 0; i < detectorProperties.length; i++) {
+    if (
+      detectorProperties[i] !== undefined ||
+      taskProperties[i] !== undefined
+    ) {
       // only one of the alternative properties must be set for the task
       if (taskAlternative !== undefined) {
         console.log(
@@ -524,17 +536,19 @@ function matchAlternativeProperties(detectorProperties, taskProperties) {
       detectorAlternative = detectorProperties[i];
     }
   }
-
+  console.log(detectorAlternative);
+  console.log(taskAlternative);
   // check if the found alternative property matches the detector
   return matchesProperty(detectorAlternative, taskAlternative, true);
 }
 
-export async function matchesQRM(qrm, task) {
+export async function matchesQRM(qrm, task, idMatching) {
   console.log("Matching QRM %s and task with id %s!", qrm.qrmUrl, task.id);
 
   // check whether the detector is valid and contains exactly one QuantME task
   let rootProcess = getRootProcess(await getDefinitionsFromXml(qrm.detector));
   let detectorElement = getSingleFlowElement(rootProcess);
+  console.log(detectorElement);
   if (detectorElement === undefined || !isQuantMETask(detectorElement)) {
     console.log(
       "Unable to retrieve QuantME task from detector: ",
@@ -544,7 +558,7 @@ export async function matchesQRM(qrm, task) {
   }
 
   // check if QuantME task of the QRM matches the given task
-  let matches = taskMatchesDetector(detectorElement, task);
+  let matches = taskMatchesDetector(detectorElement, task, idMatching);
   console.log(
     "Matching between QRM %s and task with id %s: %s",
     qrm.qrmUrl,

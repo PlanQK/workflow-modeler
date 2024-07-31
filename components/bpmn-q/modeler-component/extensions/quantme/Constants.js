@@ -86,6 +86,8 @@ export const EVALUATION_RESULT = "evaluationResult";
 export const INITIAL_STATE = "initialState";
 export const PARAMETRIZATION = "parametrization";
 
+export const REQUIREMENTS = "requirements";
+
 // endpoint paths of connected services
 export const NISQ_ANALYZER_QPU_SELECTION_PATH = "nisq-analyzer/qpu-selection";
 

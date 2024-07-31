@@ -4,7 +4,9 @@ import {
   getExtension,
   getExtensionElementsList,
 } from "./camunda-utils/ExtensionElementsUtil";
-import { is } from "bpmn-js/lib/util/ModelUtil";
+import { getBusinessObject, is } from "bpmn-js/lib/util/ModelUtil";
+import * as quantmeConsts from "../../extensions/quantme/Constants";
+import { changeIdOfContainedElements } from "../../extensions/pattern/util/PatternUtil";
 
 /**
  * Get the type of a given element
@@ -714,4 +716,260 @@ export function resetConnector(element) {
       properties: {},
     });
   }
+}
+
+export function copyElementsToParent(
+  oldRootElement,
+  collapsedSubprocess,
+  startEvent,
+  tempModeler,
+  modeler,
+  qrms
+) {
+  let modeling = modeler.get("modeling");
+  let elementRegistry = modeler.get("elementRegistry");
+  let elementFactory = modeler.get("elementFactory");
+  let sourceIdToNewShapeIdMap = {};
+  let oldToNewIdMap = {};
+  let solutionFlowElements = oldRootElement.flowElements.slice();
+
+  let tempElementRegistry = tempModeler.get("elementRegistry");
+  let tempModeling = tempModeler.get("modeling");
+
+  // Filter out elements with specific $type and type values
+  const nonFilteredElements = solutionFlowElements.filter((element) => {
+    const elementType = tempElementRegistry.get(element.id).$type;
+    const elementCustomType = tempElementRegistry.get(element.id).type;
+
+    return !(
+      elementType === "bpmn:SequenceFlow" ||
+      elementCustomType === "bpmn:SequenceFlow"
+    );
+  });
+
+  // Sort the filtered elements based on the 'x' property
+  nonFilteredElements.sort((a, b) => {
+    const elementA = tempElementRegistry.get(a.id);
+    const elementB = tempElementRegistry.get(b.id);
+
+    console.log(
+      `Comparing ${elementA.id} (${elementA.x}) with ${elementB.id} (${elementB.x})`
+    );
+
+    return elementA.x - elementB.x;
+  });
+
+  const sortedSolutionFlowElements = nonFilteredElements;
+  const solutionFlowElementsLength = nonFilteredElements.length;
+  let offset = 0;
+  console.log(sortedSolutionFlowElements);
+  console.log(sortedSolutionFlowElements);
+
+  for (let j = 0; j < solutionFlowElementsLength; j++) {
+    let flowElement = tempElementRegistry.get(sortedSolutionFlowElements[j].id);
+
+    if (
+      flowElement.$type !== "bpmn:SequenceFlow" &&
+      flowElement.type !== "bpmn:SequenceFlow"
+    ) {
+      let type = flowElement.$type;
+      if (type === undefined) {
+        type = flowElement.type;
+      }
+      let s = elementFactory.createShape({
+        type: type,
+        x: 0,
+        y: 0,
+        isExpanded: true,
+      });
+      let updateShape;
+
+      // retrieve form fields from start events and add them to the initial start event
+      if (type === "bpmn:StartEvent") {
+        updateShape = modeling.createShape(
+          s,
+          { x: 50 + offset, y: 50 },
+          elementRegistry.get(collapsedSubprocess.id)
+        );
+        modeling.updateProperties(elementRegistry.get(updateShape.id), {
+          id: collapsedSubprocess.id + "_" + updateShape.id,
+        });
+        let extensionElements = getExtensionElements(
+          getBusinessObject(startEvent),
+          modeler.get("moddle")
+        );
+        // get form data extension
+        let form = getExtension(
+          getBusinessObject(startEvent),
+          "camunda:FormData"
+        );
+        let formextended = getExtension(
+          getBusinessObject(flowElement),
+          "camunda:FormData"
+        );
+        let script = "";
+        if (formextended) {
+          if (!form) {
+            form = modeler.get("moddle").create("camunda:FormData");
+          }
+          if (formextended.fields !== undefined) {
+            for (let i = 0; i < formextended.fields.length; i++) {
+              console.log(formextended.fields[i]);
+              let id = formextended.fields[i].id;
+              let updatedId = id + updateShape.id;
+              formextended.fields[i].id = updatedId;
+              script += `def ${updatedId}Value = execution.getVariable("${updatedId}");\n execution.setVariable("${id}", ${updatedId}Value)\n`;
+              pushFormField(form, formextended.fields[i]);
+            }
+            extensionElements.values = [form];
+          }
+        }
+
+        modeling.updateProperties(elementRegistry.get(startEvent.id), {
+          extensionElements: extensionElements,
+        });
+
+        // if mapping is required then the script task has to inserted and the outgoing flows have to be changed
+        if (script) {
+          let mapFormFieldScriptTask = elementFactory.createShape({
+            type: "bpmn:ScriptTask",
+          });
+
+          let shape = modeling.createShape(
+            mapFormFieldScriptTask,
+            { x: 50 + offset, y: 50 },
+            elementRegistry.get(collapsedSubprocess.id)
+          );
+          let shapeBo = elementRegistry.get(shape.id).businessObject;
+
+          shapeBo.name = "Map Form Fields to Execution Variables";
+          shapeBo.scriptFormat = "groovy";
+          shapeBo.script = script;
+          shapeBo.asyncBefore = true;
+
+          let outgoingFlows = [];
+          let start = elementRegistry.get(updateShape.id);
+          flowElement.outgoing.forEach((element) => {
+            outgoingFlows.push(tempElementRegistry.get(element.id));
+            modeling.connect(
+              shape,
+              tempElementRegistry.get(element.target.id),
+              {
+                type: "bpmn:SequenceFlow",
+              }
+            );
+          });
+          modeling.connect(start, shape, { type: "bpmn:SequenceFlow" });
+          tempModeling.removeElements(outgoingFlows);
+        }
+      } else if (
+        type !== quantmeConsts.CIRCUIT_CUTTING_SUBPROCESS &&
+        type !== quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS &&
+        type !== "bpmn:SubProcess"
+      ) {
+        updateShape = modeling.createShape(
+          flowElement,
+          { x: 442 + offset, y: 100 },
+          elementRegistry.get(collapsedSubprocess.id)
+        );
+        oldToNewIdMap[flowElement.id] =
+          collapsedSubprocess.id + "_" + updateShape.id;
+        modeling.updateProperties(elementRegistry.get(updateShape.id), {
+          id: collapsedSubprocess.id + "_" + updateShape.id,
+        });
+        updateShape.di.id =
+          collapsedSubprocess.id + "_" + updateShape.id + "_di";
+      } else {
+        console.log(tempElementRegistry.get(sortedSolutionFlowElements[j].id));
+        console.log(flowElement);
+
+        updateShape = modeling.createShape(
+          flowElement,
+          { x: 442 + offset, y: 100 },
+          elementRegistry.get(collapsedSubprocess.id)
+        );
+        updateShape.di.id =
+          collapsedSubprocess.id + "_" + updateShape.id + "_di";
+        console.log(updateShape);
+
+        // change id of solution elements since each id must be unique
+        qrms = changeIdOfContainedElements(
+          flowElement,
+          collapsedSubprocess,
+          tempModeling,
+          tempElementRegistry,
+          collapsedSubprocess.id + "_" + updateShape.id,
+          oldToNewIdMap,
+          qrms
+        );
+        modeling.updateProperties(elementRegistry.get(updateShape.id), {
+          id: collapsedSubprocess.id + "_" + updateShape.id,
+        });
+        console.log(updateShape);
+        console.log(qrms);
+        if (qrms.length > 0) {
+          for (let i = 0; i < qrms.length; i++) {
+            if (flowElement.id === qrms[i].activity.id) {
+              console.log(updateShape);
+              qrms[i].activity = updateShape;
+              let deploymentModelUrl = qrms[i].deploymentModelUrl;
+              qrms[i].deploymentModelUrl = deploymentModelUrl.replace(
+                flowElement.id,
+                updateShape.id
+              );
+            }
+          }
+          console.log(updateShape);
+        }
+      }
+      offset += 150;
+
+      sourceIdToNewShapeIdMap[sortedSolutionFlowElements[j].id] =
+        updateShape.id;
+    }
+  }
+
+  solutionFlowElements = oldRootElement.flowElements.slice();
+
+  // Filter out elements with specific $type and type values
+  const sequenceFlows = solutionFlowElements.filter((element) => {
+    const elementType = tempElementRegistry.get(element.id).$type;
+    const elementCustomType = tempElementRegistry.get(element.id).type;
+
+    return (
+      elementType === "bpmn:SequenceFlow" ||
+      elementCustomType === "bpmn:SequenceFlow"
+    );
+  });
+  console.log(sequenceFlows);
+
+  for (let j = 0; j < oldRootElement.flowElements.length; j++) {
+    let flowElement = tempElementRegistry.get(
+      oldRootElement.flowElements[j].id
+    );
+
+    if (flowElement.type === "bpmn:SequenceFlow") {
+      console.log(flowElement);
+      // Retrieve the id of the newly created shape using the map
+      let sourceId = sourceIdToNewShapeIdMap[flowElement.source.id];
+      let newTargetId = sourceIdToNewShapeIdMap[flowElement.target.id];
+      console.log("connect source " + sourceId + "and target" + newTargetId);
+      let flow = modeling.connect(
+        elementRegistry.get(sourceId),
+        elementRegistry.get(newTargetId),
+        { type: "bpmn:SequenceFlow" }
+      );
+      console.log(flowElement);
+      if (flowElement.businessObject.conditionExpression) {
+        let selectionFlowCondition = modeler
+          .get("bpmnFactory")
+          .create("bpmn:FormalExpression");
+        selectionFlowCondition.body =
+          flowElement.businessObject.conditionExpression.body;
+        flow.businessObject.conditionExpression = selectionFlowCondition;
+        flow.businessObject.name = flowElement.name;
+      }
+    }
+  }
+  return { idMap: oldToNewIdMap, qrmActivities: qrms };
 }

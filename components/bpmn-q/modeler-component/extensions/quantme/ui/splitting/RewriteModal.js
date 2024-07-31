@@ -45,42 +45,17 @@ export default function RewriteModal({ onClose, candidates }) {
             src={candidate.candidateImage}
           />
           <h3 className="spaceAbove spaceUnder">
-            The following hybrid runtimes and sessions might be used for
-            improved execution:
+            The following script task can be split:
           </h3>
           <table>
             <tbody>
               <tr className="spaceUnder">
-                <td align="right">Qiskit Runtime</td>
+                <td align="right">Script Splitter</td>
                 <td align="left">
                   <button
                     type="button"
                     className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "Qiskit Runtime")}
-                  >
-                    Rewrite Workflow
-                  </button>
-                </td>
-              </tr>
-              <tr className="spaceUnder">
-                <td align="right">AWS Hybrid Jobs</td>
-                <td align="left">
-                  <button
-                    type="button"
-                    className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "AWS Hybrid Jobs")}
-                  >
-                    Rewrite Workflow
-                  </button>
-                </td>
-              </tr>
-              <tr className="spaceUnder">
-                <td align="right">IBM Session</td>
-                <td align="left">
-                  <button
-                    type="button"
-                    className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "IBM Session")}
+                    onClick={() => onSubmit(i, "Script Splitter")}
                   >
                     Rewrite Workflow
                   </button>
@@ -111,42 +86,17 @@ export default function RewriteModal({ onClose, candidates }) {
             src={candidate.candidateImage}
           />
           <h3 className="spaceAbove spaceUnder">
-            The following hybrid runtimes and sessions might be used for
-            improved execution:
+            The following script task can be split:
           </h3>
           <table>
             <tbody>
               <tr className="spaceUnder">
-                <td align="right">Qiskit Runtime</td>
+                <td align="right">Script Splitter</td>
                 <td align="left">
                   <button
                     type="button"
                     className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "Qiskit Runtime")}
-                  >
-                    Rewrite Workflow
-                  </button>
-                </td>
-              </tr>
-              <tr className="spaceUnder">
-                <td align="right">AWS Hybrid Jobs</td>
-                <td align="left">
-                  <button
-                    type="button"
-                    className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "AWS Hybrid Jobs")}
-                  >
-                    Rewrite Workflow
-                  </button>
-                </td>
-              </tr>
-              <tr className="spaceUnder">
-                <td align="right">IBM Session</td>
-                <td align="left">
-                  <button
-                    type="button"
-                    className="qwm-btn qwm-btn-secondary"
-                    onClick={() => onSubmit(i, "IBM Session")}
+                    onClick={() => onSubmit(i, "Script Splitter")}
                   >
                     Rewrite Workflow
                   </button>
@@ -163,12 +113,12 @@ export default function RewriteModal({ onClose, candidates }) {
   let candidatesRootRef = React.createRef();
   let buttonsRootRef = React.createRef();
 
-  const onSubmit = (i, runtimeName) =>
+  const onSubmit = (i, scriptSplitterName) =>
     onClose({
       rewriteStarted: true,
       rewriteCandidateId: i,
       candidates: candidates,
-      runtimeName: runtimeName,
+      scriptSplitterName: scriptSplitterName,
       candidatesRootRef: candidatesRootRef,
     });
 

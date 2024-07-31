@@ -19,6 +19,7 @@ const defaultConfig = {
   githubRepositoryPath: process.env.QRM_REPOPATH,
   uploadGithubRepositoryName: process.env.UPLOAD_GITHUB_REPO,
   uploadGithubRepositoryOwner: process.env.UPLOAD_GITHUB_USER,
+  uploadGithubRepositoryPath: process.env.UPLOAD_GITHUB_REPOPATH,
   uploadFileName: process.env.UPLOAD_FILE_NAME,
   uploadBranchName: process.env.UPLOAD_BRANCH_NAME,
 };
@@ -380,6 +381,32 @@ export function getUploadBranchName() {
 export function setUploadBranchName(uploadBranchName) {
   if (uploadBranchName !== null && uploadBranchName !== undefined) {
     config.uploadBranchName = uploadBranchName;
+  }
+}
+
+/**
+ * Get the local path to the folder in the repository containing the QRMs
+ *
+ * @return {string} the specified repository path
+ */
+export function getUploadGithubRepositoryPath() {
+  if (config.uploadGithubRepositoryPath === undefined) {
+    setUploadGithubRepositoryPath(
+      getPluginConfig("editor").uploadGithubRepositoryPath ||
+        defaultConfig.uploadGithubRepositoryPath
+    );
+  }
+  return config.uploadGithubRepositoryPath;
+}
+
+/**
+ * Set the local path to the folder in the repository containing the QRMs
+ *
+ * @param repositoryPath the repository path
+ */
+export function setUploadGithubRepositoryPath(repositoryPath) {
+  if (repositoryPath !== null && repositoryPath !== undefined) {
+    config.uploadGithubRepositoryPath = repositoryPath;
   }
 }
 

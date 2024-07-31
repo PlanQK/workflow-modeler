@@ -32,6 +32,9 @@ export default function GitHubTab() {
   const [uploadBranchName, setUploadBranchName] = useState(
     config.getUploadBranchName()
   );
+  const [uploadGithubRepositoryPath, setUploadGithubRepositoryPath] = useState(
+    config.getUploadGithubRepositoryPath
+  );
   const modeler = getModeler();
 
   const editorActions = modeler.get("editorActions");
@@ -104,6 +107,14 @@ export default function GitHubTab() {
     });
   }
 
+  if (!editorActions._actions.hasOwnProperty("uploadGithubRepoPathChanged")) {
+    editorActions.register({
+      uploadGithubRepoPathChanged: function (uploadGithubRepoPath) {
+        self.modeler.config.uploadGithubRepositoryPath = uploadGithubRepoPath;
+      },
+    });
+  }
+
   // save changed config entries on close
   GitHubTab.prototype.onClose = () => {
     modeler.config.githubRepositoryName = githubRepositoryName;
@@ -114,6 +125,7 @@ export default function GitHubTab() {
     modeler.config.uploadGithubRepositoryOwner = uploadGithubOwner;
     modeler.config.uploadFileName = uploadFileName;
     modeler.config.uploadBranchName = uploadBranchName;
+    modeler.config.uploadGithubRepositoryPath = uploadGithubRepositoryPath;
 
     config.setUploadGithubRepositoryName(uploadGithubRepositoryName);
     config.setUploadGithubRepositoryOwner(uploadGithubOwner);
@@ -123,6 +135,7 @@ export default function GitHubTab() {
     config.setQRMUserName(githubUsername);
     config.setQRMRepositoryPath(githubRepositoryPath);
     config.setGitHubToken(githubToken);
+    config.setUploadGithubRepositoryPath(uploadGithubRepositoryPath);
   };
 
   return (
@@ -238,6 +251,20 @@ export default function GitHubTab() {
             </td>
           </tr>
           <tr className="spaceUnder">
+            <td align="right">GitHub Repository Path:</td>
+            <td align="left">
+              <input
+                className="qwm-input"
+                type="string"
+                name="uploadGithubRepositoryPath"
+                value={uploadGithubRepositoryPath}
+                onChange={(event) =>
+                  setUploadGithubRepositoryPath(event.target.value)
+                }
+              />
+            </td>
+          </tr>
+          <tr className="spaceUnder">
             <td align="right">Workflow File Name:</td>
             <td align="left">
               <input
@@ -269,4 +296,6 @@ GitHubTab.prototype.config = () => {
     config.getUploadGithubRepositoryOwner();
   modeler.config.uploadFileName = config.getUploadFileName();
   modeler.config.uploadBranchName = config.getUploadBranchName();
+  modeler.config.uploadGithubRepositoryPath =
+    config.getUploadGithubRepositoryPath();
 };

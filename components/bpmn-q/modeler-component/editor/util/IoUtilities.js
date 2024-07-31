@@ -12,7 +12,7 @@ import fetch from "node-fetch";
 import getHardwareSelectionForm from "../../extensions/quantme/replacement/hardware-selection/HardwareSelectionForm";
 import JSZip from "jszip";
 import NotificationHandler from "../ui/notifications/NotificationHandler";
-import { checkEnabledStatus } from "../plugin/PluginHandler";
+import { getActivePlugins } from "../plugin/PluginHandler";
 import { getServiceTasksToDeploy } from "../../extensions/opentosca/deployment/DeploymentUtils";
 import { getRootProcess } from "./ModellingUtilities";
 import { getWineryEndpoint } from "../../extensions/opentosca/framework-config/config-manager";
@@ -592,6 +592,7 @@ export async function saveQAA(
   views,
   qaaFileName = editorConfig.getFileName()
 ) {
+  let startTimeStepH = Date.now();
   console.log("Storing QAA for workflow with name: ", qaaFileName);
   let suggestedName = qaaFileName;
   if (suggestedName.includes(saveFileFormats.BPMN)) {
@@ -614,7 +615,15 @@ export async function saveQAA(
   }
 
   // Add CSARs to Zip if OpenTOSCA plugin is enabled
-  if (checkEnabledStatus(pluginNames.OPENTOSCA)) {
+  let openToscaActive = false;
+  for (let plugin of getActivePlugins()) {
+    console.log(plugin.name);
+    if (plugin.name === pluginNames.OPENTOSCA) {
+      openToscaActive = true;
+    }
+  }
+
+  if (openToscaActive) {
     console.log("OpenTOSCA plugin is enabled. Adding CSARs to QAA...");
     const deploymentModelFolder = zip.folder("deployment-models");
 
@@ -634,7 +643,9 @@ export async function saveQAA(
         csarUrl = csarUrl.replace("{{ wineryEndpoint }}", getWineryEndpoint());
       }
       console.log("Downloading CSAR from URL: ", csarUrl);
-      const csar = await (await fetch(csarUrl)).blob();
+      const result = await fetch(csarUrl);
+      console.log(result);
+      const csar = await result.blob();
       console.log("CSAR: ", csar);
 
       // store CSAR in zip file
@@ -667,6 +678,8 @@ export async function saveQAA(
     xml,
     editorConfig.getFileName()
   );
+  const elapsedTimeStepH = Date.now() - startTimeStepH;
+  console.log(`Time taken for step H: ${elapsedTimeStepH}ms`);
 }
 
 function getTimestamp() {

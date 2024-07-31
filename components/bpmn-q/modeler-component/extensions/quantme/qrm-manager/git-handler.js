@@ -242,3 +242,176 @@ async function createNewBranch(
     console.error(error);
   }
 }
+
+export const uploadMultipleToGitHub = async function (config, qrms) {
+  const githubRepoOwner = config.uploadGithubRepositoryOwner;
+  const githubRepo = config.uploadGithubRepositoryName;
+  const githubRepoPath = config.uploadGithubRepositoryPath;
+  const githubToken = config.githubToken;
+  let branchName = config.uploadBranchName;
+  let defaultBranch = "main";
+  const accessToken = githubToken;
+
+  const request = {
+    headers: {
+      Authorization: `Token ${accessToken}`,
+    },
+  };
+
+  // Retrieve the default branch name from the repository URL
+  const apiRepositoryUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}`;
+
+  // Set the branch name to the default branch name if no branch name is specified
+  await fetch(apiRepositoryUrl, request)
+    .then((response) => response.json())
+    .then((data) => {
+      defaultBranch = data.default_branch;
+      if (branchName === "") {
+        branchName = defaultBranch;
+      }
+    });
+
+  // Check if the branch exists
+  let includesBranch = false;
+  const apiBranchUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/branches`;
+  await fetch(apiBranchUrl, request)
+    .then((response) => response.json())
+    .then((data) => {
+      includesBranch = data.some((element) => element.name === branchName);
+    })
+    .catch((error) => {
+      NotificationHandler.getInstance().displayNotification({
+        type: "info",
+        title: "Upload of Workflow failed",
+        content: `Repository ${githubRepo} of user ${githubRepoOwner} does not exist or is not accessible.`,
+        duration: 20000,
+      });
+      console.error("Upload failed:", error);
+    });
+
+  if (!includesBranch) {
+    const apiBranchShaUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/branches/${defaultBranch}`;
+    let sha = "";
+    await fetch(apiBranchShaUrl, request)
+      .then((response) => response.json())
+      .then((data) => {
+        sha = data.commit.sha;
+      });
+    await createNewBranch(
+      githubRepoOwner,
+      githubRepo,
+      githubToken,
+      branchName,
+      sha
+    );
+  }
+
+  for (const { folderName, detector, replacement } of qrms) {
+    // Encode the detector and replacement BPMN content as Base64 strings
+    const encodedDetector = btoa(detector);
+    const encodedReplacement = btoa(replacement);
+
+    await createFolder(
+      githubRepoOwner,
+      githubRepo,
+      githubRepoPath + "/" + folderName,
+      "create folder",
+      accessToken
+    );
+
+    // Construct the API URLs for detector and replacement files
+    const detectorUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${githubRepoPath}/${folderName}/detector.bpmn?ref=${branchName}`;
+    const replacementUrl = `https://api.github.com/repos/${githubRepoOwner}/${githubRepo}/contents/${githubRepoPath}/${folderName}/replacement.bpmn?ref=${branchName}`;
+    // Function to upload a file to GitHub
+    const uploadFile = async (apiUrl, content, fileType) => {
+      await fetch(apiUrl, request)
+        .then((response) => response.json())
+        .then((fileData) => {
+          let updateUrl = apiUrl;
+          let sha = null;
+          if (fileData.message !== "Not Found") {
+            sha = fileData.sha;
+            updateUrl = apiUrl.replace(`?ref=${branchName}`, "");
+          }
+
+          const commitMessage = `Update ${fileType} file in ${folderName}`;
+
+          const updateRequest = {
+            method: "PUT",
+            headers: {
+              Authorization: `Token ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: commitMessage,
+              content: content,
+              sha: sha,
+              branch: branchName,
+            }),
+          };
+
+          // Update the file
+          return fetch(updateUrl, updateRequest);
+        })
+        .then((response) => {
+          if (response.ok) {
+            NotificationHandler.getInstance().displayNotification({
+              type: "info",
+              title: "Workflow successfully uploaded",
+              content: `Workflow ${fileType} successfully uploaded under repository ${githubRepo} of ${githubRepoOwner}`,
+              duration: 20000,
+            });
+            console.log("Upload successful:", response);
+          } else {
+            throw new Error("Failed to upload file");
+          }
+        })
+        .catch((error) => {
+          NotificationHandler.getInstance().displayNotification({
+            type: "info",
+            title: "Upload of Workflow failed",
+            content: `Failed to upload ${fileType} in ${folderName} under repository ${githubRepo} of ${githubRepoOwner}`,
+            duration: 20000,
+          });
+          console.error("Upload failed:", error);
+        });
+    };
+
+    // Upload detector and replacement files
+    await uploadFile(detectorUrl, encodedDetector, "detector.bpmn");
+    await uploadFile(replacementUrl, encodedReplacement, "replacement.bpmn");
+  }
+};
+
+async function createFolder(owner, repo, path, message, token) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}/.gitkeep`;
+  const content = ""; // Empty content for .gitkeep file
+  const base64Content = btoa(content); // Encode content to base64
+
+  const body = {
+    message: message,
+    content: base64Content,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`Folder created at: ${data.content.path}`);
+    } else {
+      const errorData = await response.json();
+      console.error("Error creating folder:", errorData);
+    }
+  } catch (error) {
+    console.error("Network error:", error);
+  }
+}

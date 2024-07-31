@@ -22,48 +22,88 @@ const gitHandler = require("./git-handler");
  * @returns {Promise<[QRM]>} an array with the current QRMs
  */
 export const getCurrentQRMs = async function () {
-  // get all folders of the defined QRM repository which could contain a QRM
-  let folders = [];
-  let repoPath = config.getQRMRepositoryPath().replace(/^\/|\/$/g, "");
-  let QRMs = [];
+  const {
+    getQRMRepositoryUserName,
+    getQRMRepositoryName,
+    getQRMRepositoryPath,
+    getUploadGithubRepositoryOwner,
+    getUploadGithubRepositoryName,
+    getUploadGithubRepositoryPath,
+    getGitHubToken,
+  } = config;
 
-  try {
-    folders = await gitHandler.getFoldersInRepository(
-      config.getQRMRepositoryUserName(),
-      config.getQRMRepositoryName(),
-      repoPath,
-      config.getGitHubToken()
-    );
-  } catch (error) {
-    throw (
-      "Unable to load QRMs from Github repository with username '" +
-      config.getQRMRepositoryUserName() +
-      "', repository name '" +
-      config.getQRMRepositoryName() +
-      "', and path '" +
-      config.getQRMRepositoryPath() +
-      "'. " +
-      error +
-      ". Please adapt the configuration for a suited repository!"
-    );
-  }
+  const repoPath = getQRMRepositoryPath().replace(/^\/|\/$/g, "");
+  const uploadRepoPath = getUploadGithubRepositoryPath().replace(
+    /^\/|\/$/g,
+    ""
+  );
+  const githubToken = getGitHubToken();
 
-  // filter invalid folders and retrieve QRMs
-  console.log("Found %i folders with QRM candidates!", folders.length);
-
-  for (let i = 0; i < folders.length; i++) {
-    let qrm = await getQRM(
-      config.getQRMRepositoryUserName(),
-      config.getQRMRepositoryName(),
-      folders[i],
-      config.getGitHubToken()
-    );
-    if (qrm != null) {
-      QRMs.push(qrm);
-    } else {
-      console.log("Folder %s does not contain a valid QRM!", folders[i]);
+  const fetchFolders = async (username, repository, path) => {
+    try {
+      return await gitHandler.getFoldersInRepository(
+        username,
+        repository,
+        path,
+        githubToken
+      );
+    } catch (error) {
+      throw new Error(
+        `Unable to load QRMs from Github repository with username '${username}', repository name '${repository}', and path '${path}'. ${error}. Please adapt the configuration for a suited repository!`
+      );
     }
+  };
+
+  // Conditionally include the second fetch
+  const folderFetchPromises = [
+    fetchFolders(getQRMRepositoryUserName(), getQRMRepositoryName(), repoPath),
+  ];
+
+  if (
+    getUploadGithubRepositoryOwner() !== "" &&
+    getUploadGithubRepositoryName() !== ""
+  ) {
+    folderFetchPromises.push(
+      fetchFolders(
+        getUploadGithubRepositoryOwner(),
+        getUploadGithubRepositoryName(),
+        uploadRepoPath
+      )
+    );
   }
+
+  const [folders, uploadRepoFolders = []] = await Promise.all(
+    folderFetchPromises
+  );
+
+  console.log(
+    "Found %i folders with QRM candidates!",
+    folders.length + uploadRepoFolders.length
+  );
+
+  const retrieveQRM = async (username, repository, folder) => {
+    const qrm = await getQRM(username, repository, folder, githubToken);
+    if (qrm) {
+      return qrm;
+    } else {
+      console.log("Folder %s does not contain a valid QRM!", folder);
+      return null;
+    }
+  };
+
+  const allFolders = [...folders, ...uploadRepoFolders];
+  const qrmPromises = allFolders.map((folder, index) => {
+    const isUploadRepo = index >= folders.length;
+    return retrieveQRM(
+      isUploadRepo
+        ? getUploadGithubRepositoryOwner()
+        : getQRMRepositoryUserName(),
+      isUploadRepo ? getUploadGithubRepositoryName() : getQRMRepositoryName(),
+      folder
+    );
+  });
+
+  const QRMs = (await Promise.all(qrmPromises)).filter((qrm) => qrm !== null);
 
   return QRMs;
 };
