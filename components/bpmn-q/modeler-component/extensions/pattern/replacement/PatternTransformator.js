@@ -79,6 +79,7 @@ export async function startPatternReplacementProcess(xml) {
   );
   console.log(`Time taken for step C: ${Date.now() - startTime}ms`);
   containedPatterns = getPatterns(rootElement, elementRegistry);
+  console.log(containedPatterns);
 
   console.log("Begin of step E:");
   startTime = Date.now();
@@ -294,6 +295,8 @@ export async function startPatternReplacementProcess(xml) {
         replacementSuccess = true;
       }
       replacementSuccess = true;
+      optimizationCandidates = await findOptimizationCandidates(modeler);
+      console.log("optimization candidates: ", optimizationCandidates)
     }
     if (replacementConstruct.task.$type === constants.PRE_DEPLOYED_EXECUTION) {
       console.log("Replace pre-deployed execution");
@@ -361,6 +364,8 @@ export async function startPatternReplacementProcess(xml) {
         patterns.push(pattern);
         replacementSuccess = true;
       }
+      optimizationCandidates = await findOptimizationCandidates(modeler);
+      console.log("optimization candidates: ", optimizationCandidates);
     }
     if (replacementConstruct.task.$type === constants.PRIORITIZED_EXECUTION) {
       console.log("Replace prioritized execution");
@@ -413,9 +418,12 @@ export async function startPatternReplacementProcess(xml) {
       }
       if (!foundOptimizationCandidate) {
         const pattern = elementRegistry.get(replacementConstruct.task.id);
+        console.log("no optimization candidate found", pattern);
         patterns.push(pattern);
         replacementSuccess = true;
       }
+      optimizationCandidates = await findOptimizationCandidates(modeler);
+      console.log("optimization candidates: ", optimizationCandidates);
     }
 
     if (!replacementSuccess) {
@@ -438,7 +446,24 @@ export async function startPatternReplacementProcess(xml) {
 
   elementsToDelete = patterns.concat(allFlow);
   console.log(elementsToDelete);
-  modeling.removeElements(elementsToDelete);
+
+  // remove duplicate patterns from elementsToDelete
+  let elementsToDeleteNoDuplicates = [];
+  for (let i = 0; i < elementsToDelete.length; i++){
+    let contains = false;
+    for (let j = 0; j < elementsToDeleteNoDuplicates.length; j++){
+      if (elementsToDeleteNoDuplicates[j].id ===  elementsToDelete[i].id ) {
+        contains = true;
+      }
+    }
+    if (!contains && elementsToDelete[i].parent !== null){
+      elementsToDeleteNoDuplicates.push(elementsToDelete[i]);
+    }
+  }
+
+  console.log("remove elements: ");
+  console.log(elementsToDeleteNoDuplicates);
+  modeling.removeElements(elementsToDeleteNoDuplicates);
   console.log(`Time taken for step F: ${Date.now() - startTime}ms`);
 
   // layout diagram after successful transformation
@@ -545,7 +570,7 @@ export function attachPatternsToSuitableTasks(
             );
           }
         });
-
+        console.log(children);
         children.forEach((id) => {
           attachPatternsToSuitableConstruct(
             elementRegistry.get(id),

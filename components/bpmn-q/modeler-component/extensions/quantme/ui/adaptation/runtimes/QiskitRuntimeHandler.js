@@ -47,7 +47,7 @@ export async function getQiskitRuntimeProgramDeploymentModel(
   );
   for (let i = 0; i < quantumCircuitExecutionTasks.length; i++) {
     if (
-      quantumCircuitExecutionTasks[i].provider.toUpperCase().includes("IBM")
+      !quantumCircuitExecutionTasks[i].provider.toUpperCase().includes("IBM")
     ) {
       console.log(
         "Found QuantumCircuitExecutionTask with provider different than IBM: ",

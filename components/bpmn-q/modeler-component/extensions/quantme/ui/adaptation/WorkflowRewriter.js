@@ -270,7 +270,8 @@ export async function rewriteWorkflow(
   }
 
   // update the graphical visualization in the modeler
-  await refreshModeler(modeler);
+  // TODO: might destroy manual runtime rewrite
+  // await refreshModeler(modeler);
   return { result: "success" };
 }
 
