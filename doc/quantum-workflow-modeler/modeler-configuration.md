@@ -38,9 +38,7 @@ In the following, all environment variables that can be used to customize the wo
 
 * ```QISKIT_RUNTIME_HANDLER_ENDPOINT``` (default: 'http://localhost:8889'): Defines the endpoint of the [Qiskit Runtime Handler](https://github.com/UST-QuAntiL/qiskit-runtime-handler) which enables the automatic generation of hybrid programs from Qiskit programs.
 
-* ```QHANA_GET_PLUGIN_URL``` (default: 'http://localhost:5006/api/plugins/'): Defines the plugin url for QHAna.
-
-* ```QHANA_LIST_PLUGINS_URL``` (default: 'http://localhost:5006/api/plugins/?item-count=100'): Defines the plugin list url for QHAna.
+* ```QHANA_PLUGIN_REGISTRY_URL``` (default: 'http://localhost:5006/api/'): Defines the url of the plugin registry api for QHAna.
 
 * ```QProv_ENDPOINT``` (default: 'http://localhost:8099/qprov'): Defines the endpoint of [QProv](https://github.com/UST-QuAntiL/qprov) to store and retrieve provenance data.
 
