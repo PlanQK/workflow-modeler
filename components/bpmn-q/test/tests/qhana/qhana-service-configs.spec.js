@@ -39,9 +39,10 @@ describe("Test QHAnaConfigurations", function () {
 
         sinon.assert.calledOnce(fetchStub);
 
-        expect(configurations.length).to.equal(2);
-        expect(configurations[0].name).to.equal("Aggregators");
-        expect(configurations[1].name).to.equal("Ultimate Aggregators");
+        expect(configurations.length).to.equal(3);
+        expect(configurations[0].name).to.equal("CUSTOM");
+        expect(configurations[1].name).to.equal("Aggregators");
+        expect(configurations[2].name).to.equal("Ultimate Aggregators");
       });
     });
 

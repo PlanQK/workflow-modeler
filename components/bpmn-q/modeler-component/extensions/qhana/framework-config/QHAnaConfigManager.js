@@ -29,7 +29,6 @@ export function getPluginRegistryURL() {
  */
 export function setPluginRegistryURL(url) {
   if (url !== null && url !== undefined) {
-    // remove trailing slashes
-    config.qhanaPluginRegistryURL = url.replace(/\/$/, "");
+    config.qhanaPluginRegistryURL = url;
   }
 }
