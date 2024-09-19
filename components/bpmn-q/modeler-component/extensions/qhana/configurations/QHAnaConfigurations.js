@@ -2,6 +2,56 @@ import ConfigurationsEndpoint from "../../../editor/configurations/Configuration
 import * as configManager from "../framework-config/QHAnaConfigManager";
 import * as consts from "../Constants";
 
+const CUSTOM_PLUGIN_CONFIG = {
+  name: "CUSTOM",
+  id: "CUSTOM",
+  description: "",
+  appliesTo: "qhana:QHAnaServiceTask",
+  groupLabel: "Service Properties",
+  attributes: [
+    {
+      name: "identifier",
+      label: "Identifier",
+      type: "string",
+      value: "",
+      editable: "true",
+      bindTo: {
+        name: "qhanaIdentifier",
+      },
+    },
+    {
+      name: "version",
+      label: "Version",
+      type: "string",
+      value: "",
+      editable: "true",
+      bindTo: {
+        name: "qhanaVersion",
+      },
+    },
+    {
+      name: "name",
+      label: "Title",
+      type: "string",
+      value: "CUSTOM",
+      editable: "true",
+      bindTo: {
+        name: "qhanaName",
+      },
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "string",
+      value: "",
+      editable: "true",
+      bindTo: {
+        name: "qhanaDescription",
+      },
+    },
+  ],
+};
+
 /**
  * Custom ConfigurationsEndpoint for the QHAna Plugin. Extends the ConfigurationsEndpoint to fetch the configurations directly
  * from the QHAna plugin registry.
@@ -90,7 +140,10 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
    * Returns all Configurations for QHAna service tasks which are saved in this endpoint.
    */
   getQHAnaServiceConfigurations() {
-    return this.getConfigurations(consts.QHANA_SERVICE_TASK);
+    return [
+      CUSTOM_PLUGIN_CONFIG,
+      ...this.getConfigurations(consts.QHANA_SERVICE_TASK)
+    ];
   }
 
   /**
@@ -100,6 +153,9 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
    * @return {*}
    */
   getQHAnaServiceConfiguration(id) {
+    if (id === "CUSTOM") {
+      return CUSTOM_PLUGIN_CONFIG;
+    }
     return this.getConfiguration(id);
   }
 
