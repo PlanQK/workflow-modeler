@@ -62,7 +62,7 @@ export default class BlockMEReplaceMenuProvider {
       if (
         isAny(element, ["bpmn:DataObjectReference", dataConsts.DATA_MAP_OBJECT])
       ) {
-        const dataEntries = self.createQuantMEDataEntry(element);
+        const dataEntries = self.createBlockMEDataEntry(element);
         return Object.assign(dataEntries, entries);
       }
 

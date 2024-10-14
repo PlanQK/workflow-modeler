@@ -166,7 +166,7 @@ export function OutputArgsEntry({ element }) {
   };
 
   return (
-    <TextFieldEntry
+    <TextAreaEntry
       id={consts.OUTPUT_ARGS}
       label={translate("Output Args")}
       getValue={getValue}

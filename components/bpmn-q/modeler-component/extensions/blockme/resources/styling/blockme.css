@@ -8,7 +8,9 @@
   background-image: url("../icons/blockme.svg");
   background-repeat: no-repeat;
   display: inline-block;
-  float: left;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
 }
 
 
@@ -91,44 +93,93 @@
 
 .qwm .bpmn-icon-invoke-sc-function-task:before {
   content: "";
-  display: block;
-  background: url("../icons/invoke.png")
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/invoke.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
 }
 
 .qwm .bpmn-icon-ensure-tx-state-task:before {
   content: "";
-  display: block;
-  background: url("../icons/ensure.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/ensure.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
 }
 
 .qwm .bpmn-icon-send-tx-task:before {
   content: "";
-  display: block;
-  background: url("../icons/send.png")
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/send.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
 }
 
 .qwm .bpmn-icon-receive-tx-task:before {
   content: "";
-  display: block;
-  background: url("../icons/receive.png") no-repeat;
-  width: 20px;
-  height: 20px;
-  float: left;
-  margin: 0 6px 0 0;
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/receive.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
+}
+
+.qwm .bpmn-icon-invoke-sc-function-output:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/invoke-output.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
+}
+
+.qwm .bpmn-icon-send-tx-output:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/send-output.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
+}
+
+.qwm .bpmn-icon-receive-tx-output:before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-image: url("../icons/receive-output.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+  outline: none;
 }
 
 .djs-popup-label {

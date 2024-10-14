@@ -58,6 +58,7 @@ export function getActivePlugins() {
     activePlugins = [];
 
     const loadPlugin = (plugin) => {
+
       if (!activePlugins.includes(plugin.plugin)) {
         activePlugins.push(plugin.plugin);
         for (const dependency of plugin.dependencies) {
@@ -75,6 +76,7 @@ export function getActivePlugins() {
     };
 
     for (const pluginConfig of getAllConfigs()) {
+      console.info("Trying to load plugin config: " + pluginConfig.name);
       const plugin = PLUGINS.find(
         (p) =>
           p.plugin.name === pluginConfig.name &&
@@ -90,6 +92,7 @@ export function getActivePlugins() {
 }
 
 export function checkEnabledStatus(pluginName) {
+  console.info("Trying to load plugin: " + pluginName);
   switch (pluginName) {
     case pluginNames.DATAFLOW:
       //console.log("process.env.ENABLE_DATA_FLOW_PLUGIN===" + process.env.ENABLE_DATA_FLOW_PLUGIN);
@@ -104,6 +107,8 @@ export function checkEnabledStatus(pluginName) {
       return process.env.ENABLE_PATTERN_PLUGIN !== "false";
     case pluginNames.OPENTOSCA:
       return process.env.ENABLE_OPENTOSCA_PLUGIN !== "false";
+    case pluginNames.BLOCKME:
+      return process.env.ENABLE_BLOCKME_PLUGIN !== "false";
   }
 }
 

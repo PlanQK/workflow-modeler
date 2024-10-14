@@ -132,7 +132,7 @@
       "superClass": ["bpmn:DataObjectReference"],
       "properties": [
         {
-          "name": "outputArgs",
+          "name": "outArgs",
           "isAttr": true,
           "type": "String"
         },

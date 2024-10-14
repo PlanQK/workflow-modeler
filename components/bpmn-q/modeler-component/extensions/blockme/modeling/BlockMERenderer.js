@@ -43,6 +43,24 @@ export default class BlockMERenderer extends BpmnRenderer {
         drawDataElementSVG(parentGfx, getBlockMESVG("TASK_TYPE_ENSURE_TX_STATE"));
 
         return task;
+      },
+      [consts.BLOCKME_INVOKE_SC_FUNCTION_TASK_OUTPUT]: function(self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataElementSVG(parentGfx, getBlockMESVG("OBJECT_TYPE_INVOKE_SC_FUNCTION_OUTPUT"));
+
+        return task;
+      },
+      [consts.BLOCKME_SEND_TX_TASK_OUTPUT]: function(self, parentGfx, element) {
+      const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+      drawDataElementSVG(parentGfx, getBlockMESVG("OBJECT_TYPE_SEND_TX_OUTPUT"));
+
+      return task;
+    },
+      [consts.BLOCKME_RECEIVE_TX_TASK_OUTPUT]: function(self, parentGfx, element) {
+        const task = self.renderer("bpmn:DataObject")(parentGfx, element);
+        drawDataElementSVG(parentGfx, getBlockMESVG("OBJECT_TYPE_RECEIVE_TX_OUTPUT"));
+
+        return task;
       }
     };
   }

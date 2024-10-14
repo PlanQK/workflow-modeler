@@ -373,6 +373,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
    * @param pluginConfigs The plugin config as an array of {name: string, (optional) config: {}}
    */
   set pluginConfigs(pluginConfigs) {
+    console.log("got the following plugin configs:");
     console.log(pluginConfigs);
     this.pluginConfigsList = pluginConfigs;
     const configs = this.pluginConfigsList;

@@ -6,6 +6,7 @@ export const pluginNames = {
   QHANA: "qhana",
   PATTERN: "pattern",
   DATAFLOW: "dataflow",
+  BLOCKME: "blockme",
 };
 
 // names of the editorTabs
