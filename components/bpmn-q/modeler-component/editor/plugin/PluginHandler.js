@@ -87,6 +87,7 @@ export function getActivePlugins() {
 export function checkEnabledStatus(pluginName) {
   switch (pluginName) {
     case pluginNames.DATAFLOW:
+      //console.log("process.env.ENABLE_DATA_FLOW_PLUGIN===" + process.env.ENABLE_DATA_FLOW_PLUGIN);
       return process.env.ENABLE_DATA_FLOW_PLUGIN !== "false";
     case pluginNames.PLANQK:
       return process.env.ENABLE_PLANQK_PLUGIN !== "false";

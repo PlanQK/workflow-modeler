@@ -1,0 +1,202 @@
+{
+  "name": "BLOCKME",
+  "uri": "https://github.com/TIHBS",
+  "prefix": "blockme",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "BlockMEProcess",
+      "extends": ["bpmn:Process"],
+      "properties": [
+        {
+          "name": "flowElements",
+          "isMany": true,
+          "replaces": "bpmn:Process#flowElements",
+          "type": "bpmn:FlowElement"
+        }
+      ]
+    },
+    {
+      "name": "InvokeSCFunctionTask",
+      "superClass": ["bpmn:Task"],
+      "properties": [
+        {
+          "name": "sc",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "signature",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "outputs",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "inArgs",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "isStateful",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "corrId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "doc",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "SendTxTask",
+      "superClass": ["bpmn:Task"],
+      "properties": [
+        {
+          "name": "to",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "value",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "corrId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "doc",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ReceiveTxTask",
+      "superClass": ["bpmn:Task"],
+      "properties": [
+        {
+          "name": "from",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "corrId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "doc",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "EnsureTxStateTask",
+      "superClass": ["bpmn:Task"],
+      "properties": [
+        {
+          "name": "corrId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "ref",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "doc",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "InvokeSCFunctionTaskOutput",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "outputArgs",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "SendTxTaskOutput",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "timestamp",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ReceiveTxTaskOutput",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "from",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "value",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "EnsureTxStateTaskOutput",
+      "superClass": ["bpmn:DataObjectReference"],
+      "properties": [
+        {
+          "name": "corrId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "ref",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "doc",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}

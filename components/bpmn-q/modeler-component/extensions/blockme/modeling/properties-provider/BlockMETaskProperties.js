@@ -1,0 +1,147 @@
+import * as consts from "../../Constants";
+import {
+  isTextFieldEntryEdited
+} from "@bpmn-io/properties-panel";
+import {
+  SmartContractEntry,
+  SignatureEntry,
+  OutputsEntry,
+  InputArgsEntry,
+  IsStatefulEntry,
+  CorrelationIdEntry,
+  DegreeOfConfidenceEntry,
+  ToEntry,
+  ValueEntry,
+  FromEntry,
+  RefEntry
+} from "./BlockMEPropertyEntries";
+
+/**
+ * This file contains all properties of the BlockME task types and the entries they define.
+ */
+
+export function InvokeSCFunctionTaskProperties(element) {
+  // add algorithm and provider attributes
+  return [
+    {
+      id: consts.SMART_CONTRACT,
+      element,
+      component: SmartContractEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.SIGNATURE,
+      element,
+      component: SignatureEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.OUTPUTS,
+      element,
+      component: OutputsEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.INPUT_ARGS,
+      element,
+      component: InputArgsEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.IS_STATEFUL,
+      element,
+      component: IsStatefulEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.CORRELATION_ID,
+      element,
+      component: CorrelationIdEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.DEGREE_OF_CONFIDENCE,
+      element,
+      component: DegreeOfConfidenceEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function SendTxTaskProperties(element) {
+  // add quantumCircuit and url attributes
+  return [
+    {
+      id: consts.TO,
+      element,
+      component: ToEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.VALUE,
+      element,
+      component: ValueEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.CORRELATION_ID,
+      element,
+      component: CorrelationIdEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.DEGREE_OF_CONFIDENCE,
+      element,
+      component: DegreeOfConfidenceEntry,
+      isEdited: isTextFieldEntryEdited,
+    }
+  ];
+}
+
+export function ReceiveTxTaskProperties(element) {
+  // add encodingSchema and programmingLanguage attributes
+  return [
+    {
+      id: consts.FROM,
+      element,
+      component: FromEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.CORRELATION_ID,
+      element,
+      component: CorrelationIdEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.DEGREE_OF_CONFIDENCE,
+      element,
+      component: DegreeOfConfidenceEntry,
+      isEdited: isTextFieldEntryEdited,
+    }
+  ];
+}
+
+export function EnsureTxStateProperties(element) {
+  // add oracleId, oracleCircuit, oracleFunction and programmingLanguage attributes
+  return [
+    {
+      id: consts.CORRELATION_ID,
+      element,
+      component: CorrelationIdEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.REF,
+      element,
+      component: RefEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.DEGREE_OF_CONFIDENCE,
+      element,
+      component: DegreeOfConfidenceEntry,
+      isEdited: isTextFieldEntryEdited,
+    }
+  ];
+}
