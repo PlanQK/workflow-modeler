@@ -2,6 +2,56 @@ import ConfigurationsEndpoint from "../../../editor/configurations/Configuration
 import * as configManager from "../framework-config/QHAnaConfigManager";
 import * as consts from "../Constants";
 
+const CUSTOM_PLUGIN_CONFIG = {
+  name: "CUSTOM",
+  id: "CUSTOM",
+  description: "",
+  appliesTo: "qhana:QHAnaServiceTask",
+  groupLabel: "Service Properties",
+  attributes: [
+    {
+      name: "identifier",
+      label: "Identifier",
+      type: "string",
+      value: "",
+      editable: "true",
+      bindTo: {
+        name: "qhanaIdentifier",
+      },
+    },
+    {
+      name: "version",
+      label: "Version",
+      type: "string",
+      value: "",
+      editable: "true",
+      bindTo: {
+        name: "qhanaVersion",
+      },
+    },
+    {
+      name: "name",
+      label: "Title",
+      type: "string",
+      value: "CUSTOM",
+      editable: "true",
+      bindTo: {
+        name: "qhanaName",
+      },
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "string",
+      value: "",
+      editable: "true",
+      bindTo: {
+        name: "qhanaDescription",
+      },
+    },
+  ],
+};
+
 /**
  * Custom ConfigurationsEndpoint for the QHAna Plugin. Extends the ConfigurationsEndpoint to fetch the configurations directly
  * from the QHAna plugin registry.
@@ -14,71 +64,105 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
   /**
    * Fetch all plugins from the QHAna plugin registry and transform them into configurations for QHAna service tasks.
    */
-  fetchConfigurations() {
-    const self = this;
+  async fetchConfigurations() {
+    const newConfigurations = [];
 
-    // fetch all QHAna services from the QHAna plugin registry
-    fetch(configManager.getListPluginsURL())
-      .then((response) => response.json())
-      .then((data) => {
-        try {
-          const allServices = data.data.items;
-          console.log("Received " + allServices.length + " QHAna services: ");
+    const registryUrl = configManager.getPluginRegistryURL();
 
-          let serviceId;
+    if (!registryUrl) {
+      console.info(
+        "Cannot fetch QHAna Plugins, Plugin Registry URL is not configured."
+      );
+      return; // nothing to fetch, registry is not configured
+    }
 
-          // fetch details for each service and create configuration
-          allServices.forEach(function (service) {
-            serviceId = service.resourceKey.pluginId;
+    let pluginsLink = null;
+    try {
+      const apiResult = await (await fetch(registryUrl)).json();
+      pluginsLink = apiResult?.links?.find?.(
+        (link) =>
+          link.resourceType === "plugin" &&
+          link.rel.some((r) => r === "collection")
+      );
+    } catch (error) {
+      console.error(
+        "Could not reach QHAna Plugin Registry to load available plugins!",
+        error
+      );
+    }
 
-            // fetch plugin details for serviceId
-            fetch(configManager.getGetPluginsURL() + serviceId + "/")
-              .then((response) => response.json())
-              .then((data) => {
-                const serviceData = data.data;
-                console.log(
-                  "Received QHAna service details for service " + serviceId
-                );
-                console.log(serviceData);
+    if (!pluginsLink) {
+      // no plugins found
+      this.configurations = newConfigurations;
+      return;
+    }
 
-                // create configuration from serviceData
-                self._configurations.push(
-                  createConfigurationForServiceData(serviceData)
-                );
-              })
-              .catch((error) => {
-                console.error(
-                  "Error fetching QHAna service with id " +
-                    serviceId +
-                    ": \n" +
-                    error
-                );
-              });
-          });
-        } catch (error) {
-          console.error(
-            "Error while parsing QHAna services from " +
-              configManager.getGetPluginsURL() +
-              ": \n" +
-              error
-          );
-        }
-      })
-      .catch((error) => {
-        console.error(
-          "Error fetching configurations from " +
-            configManager.getListPluginsURL() +
-            ": \n" +
-            error
+    async function loadPlugins(url, configurations, seen) {
+      try {
+        const pluginListResponse = await (await fetch(url)).json();
+
+        await Promise.allSettled(
+          pluginListResponse.data.items.map(async (pluginLink) => {
+            if (seen.has(pluginLink.href)) {
+              return; // plugin already processed
+            }
+            seen.add(pluginLink.href);
+
+            let pluginResponse = pluginListResponse.embedded.find(
+              (e) => e.data.self.href === pluginLink.href
+            );
+
+            try {
+              if (!pluginResponse) {
+                pluginResponse = await (await fetch(pluginLink.href)).json();
+              }
+
+              // create configuration from plugin data
+              configurations.push(
+                createConfigurationForServiceData(pluginResponse.data)
+              );
+            } catch (error) {
+              console.error(
+                `Failed to load plugin ${pluginLink.name} (${pluginLink.href})!`,
+                error
+              );
+            }
+          })
         );
-      });
+
+        const nextLink = pluginListResponse.links.find(
+          (link) =>
+            link.resourceType === "plugin" &&
+            link.rel.some((r) => r === "page") &&
+            link.rel.some((r) => r === "next")
+        );
+        if (nextLink && nextLink.href !== url) {
+          await loadPlugins(nextLink.href, configurations, seen);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to fetch plugin page from QHAna Plugin Registry.",
+          error
+        );
+      }
+    }
+
+    await loadPlugins(pluginsLink.href, newConfigurations, new Set());
+
+    console.info(`${newConfigurations.length} QHAna plugins loaded`);
+
+    this.configurations = newConfigurations;
+    return;
   }
 
   /**
    * Returns all Configurations for QHAna service tasks which are saved in this endpoint.
    */
   getQHAnaServiceConfigurations() {
-    return this.getConfigurations(consts.QHANA_SERVICE_TASK);
+    return [
+      CUSTOM_PLUGIN_CONFIG,
+      ...this.getConfigurations(consts.QHANA_SERVICE_TASK),
+    ];
   }
 
   /**
@@ -88,6 +172,9 @@ export default class QHAnaConfigurationsEndpoint extends ConfigurationsEndpoint 
    * @return {*}
    */
   getQHAnaServiceConfiguration(id) {
+    if (id === "CUSTOM") {
+      return CUSTOM_PLUGIN_CONFIG;
+    }
     return this.getConfiguration(id);
   }
 
@@ -208,7 +295,5 @@ export function createConfigurationForServiceData(serviceData) {
     });
   });
 
-  console.log("Created configuration for QHAna service");
-  console.log(configuration);
   return configuration;
 }

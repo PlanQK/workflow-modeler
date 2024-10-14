@@ -9,17 +9,13 @@ describe("Test QHAna plugin config", function () {
         {
           name: "qhana",
           config: {
-            qhanaListPluginsURL: "http://test:5006/api/plugins/?item-count=100",
-            qhanqGetPluginURL: "http://test:5006/api/plugins/",
+            qhanaPluginRegistryURL: "http://test:5006/api/",
           },
         },
       ]);
 
-      expect(qhanaConfig.getListPluginsURL()).to.equal(
-        "http://test:5006/api/plugins/?item-count=100"
-      );
-      expect(qhanaConfig.getGetPluginsURL()).to.equal(
-        "http://test:5006/api/plugins/"
+      expect(qhanaConfig.getPluginRegistryURL()).to.equal(
+        "http://test:5006/api/"
       );
     });
   });

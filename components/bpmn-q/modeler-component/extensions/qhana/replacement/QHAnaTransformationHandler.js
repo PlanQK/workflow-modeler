@@ -155,7 +155,7 @@ async function replaceQHAnaServiceTaskByServiceTask(
   const bpmnFactory = modeler.get("bpmnFactory");
 
   // create a BPMN service task with implementation external
-  const topic = "qhana-plugin." + qhanaServiceTask.get(consts.IDENTIFIER);
+  const topic = "qhana-task";
   const newServiceTask = bpmnFactory.create("bpmn:ServiceTask", {
     type: "external",
     topic: topic,
@@ -176,13 +176,13 @@ async function replaceQHAnaServiceTaskByServiceTask(
     const newElement = result.element;
     addCamundaInputParameter(
       newElement.businessObject,
-      "qhanaIdentifier",
+      "qhanaPlugin",
       qhanaServiceTask.qhanaIdentifier,
       bpmnFactory
     );
     addCamundaInputParameter(
       newElement.businessObject,
-      "qhanaVersion",
+      "qhanaPluginVersion",
       qhanaServiceTask.qhanaVersion,
       bpmnFactory
     );
@@ -221,7 +221,7 @@ async function replaceQHAnaServiceStepTaskByServiceTask(
   const bpmnFactory = modeler.get("bpmnFactory");
 
   // create a BPMN service task with implementation external and the topic defined in the next step attribute
-  const topic = "plugin-step." + consts.NEXT_STEP;
+  const topic = "qhana-task";
   const newServiceTask = bpmnFactory.create("bpmn:ServiceTask", {
     type: "external",
     topic: topic,
@@ -242,7 +242,7 @@ async function replaceQHAnaServiceStepTaskByServiceTask(
     const newElement = result.element;
     addCamundaInputParameter(
       newElement.businessObject,
-      "qhanaNextStep",
+      "qhanaPluginStep",
       qhanaServiceTask.qhanaNextStep,
       bpmnFactory
     );
