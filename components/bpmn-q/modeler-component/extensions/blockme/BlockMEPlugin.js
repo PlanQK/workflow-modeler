@@ -1,18 +1,10 @@
 import React from "react";
 
-import QuantMEExtensionModule from "./modeling";
-import QuantMEConfigTab from "./configTabs/QuantMEConfigTab";
-import { getQRMs } from "./qrm-manager";
-import { startQuantmeReplacementProcess } from "./replacement/QuantMETransformator";
-import {
-  createQuantMEView,
-  updateQuantMEView,
-} from "./replacement/QuantMEViewGenerator";
-import * as camundaConfig from "../../editor/config/EditorConfigManager";
-import * as config from "./framework-config/config-manager";
+import BlockMEExtensionModule from "./modeling";
+
 import TransformationButton from "../../editor/ui/TransformationButton";
-import quantMEStyles from "./resources/styling/quantme.css";
-import { getModeler } from "../../editor/ModelerHandler";
+import blockmeStyles from "./resources/styling/blockme.css";
+import BlockMEConfigTab from "../blockme/configTabs/BlockMEConfigTab";
 
 let blockModdleExtension = require("./resources/blockme.json");
 
@@ -21,11 +13,16 @@ let blockModdleExtension = require("./resources/blockme.json");
  */
 export default {
   configTabs: [
+    {
+      tabId: "BlockMEConfigTab",
+      tabTitle: "BlocME Plugin",
+      configTab: BlockMEConfigTab,
+    },
   ],
   name: "blockme",
-  extensionModule: QuantMEExtensionModule,
+  extensionModule: BlockMEExtensionModule,
   moddleDescription: blockModdleExtension,
-  styling: [quantMEStyles],
+  styling: [blockmeStyles],
   transformExtensionButton: (
     <TransformationButton
       name="BlockME Transformation"

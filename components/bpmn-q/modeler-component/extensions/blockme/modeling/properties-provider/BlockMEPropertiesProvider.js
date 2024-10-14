@@ -1,31 +1,18 @@
 import * as consts from "../../Constants";
 import {
-  DataPreparationTaskProperties,
-  HardwareSelectionSubprocessProperties,
-  OracleExpansionTaskProperties,
-  QuantumCircuitExecutionTaskProperties,
-  QuantumCircuitLoadingTaskProperties,
-  QuantumComputationTaskProperties,
-  ReadoutErrorMitigationTaskProperties,
-  CircuitCuttingSubprocessEntries,
-  ResultEvaluationTaskEntries,
-  ParameterOptimizationTaskEntries,
-  VariationalQuantumAlgorithmTaskEntries,
-  WarmStartingTaskEntries,
-  CuttingResultCombinationTaskEntries,
-  QuantumCircuitObjectEntries,
-  ResultObjectEntries,
-  InitialStateObjectEntries,
-  ParametrizationObjectEntries,
-  EvaluationResultObjectEntries,
-  ErrorCorrectionTaskEntries,
+  InvokeSCFunctionTaskProperties,
+  EnsureTxStateTaskProperties,
+  ReceiveTxTaskProperties,
+  SendTxTaskProperties,
+  ReceiveTxTaskOutputProperties,
+  InvokeSCFunctionTaskOutputProperties,
+  SendTxTaskOutputProperties
+
 } from "./BlockMETaskProperties";
 import { getType } from "../../../../editor/util/ModellingUtilities";
-import { RequirementsEntry } from "./BlockMEPropertyEntries";
-import { isTextFieldEntryEdited } from "@bpmn-io/properties-panel";
 
 const LOW_PRIORITY = 100;
-const SCRIPT_GROUP_ID = "CamundaPlatform__Script";
+
 
 /**
  * A provider with a `#getGroups(element)` method that exposes groups for a diagram element.
@@ -37,8 +24,7 @@ const SCRIPT_GROUP_ID = "CamundaPlatform__Script";
 export default function BlockMEPropertiesProvider(
   propertiesPanel,
   injector,
-  translate,
-  modeling
+  translate
 ) {
   /**
    * Return the groups provided for the given element.
@@ -57,22 +43,12 @@ export default function BlockMEPropertiesProvider(
      * @return {Object[]} modified groups
      */
     return function (groups) {
-      // add the requirements field to the script group
-      if (element.type === "bpmn:ScriptTask") {
-        let scriptGroup = groups.find((group) => group.id === SCRIPT_GROUP_ID);
-        scriptGroup.entries.push({
-          id: "requirements",
-          element,
-          component: RequirementsEntry,
-          isEdited: isTextFieldEntryEdited,
-        });
-      }
 
       // add properties of BlockME tasks to panel
       if (element.type && element.type.startsWith("blockme:")) {
         groups.unshift(createBlockMEGroup(element, translate));
-        groups.unshift(DeploymentModelGroup(element, injector, modeling));
       }
+
       return groups;
     };
   };
@@ -112,73 +88,29 @@ function createBlockMEGroup(element, translate) {
 export function BlockMEProps(element) {
   console.log("Element for props: ", element);
   switch (getType(element)) {
-    case consts.QUANTUM_COMPUTATION_TASK:
-      return QuantumComputationTaskProperties(element);
+    case consts.BLOCKME_INVOKE_SC_FUNCTION_TASK:
+      return InvokeSCFunctionTaskProperties(element);
 
-    case consts.QUANTUM_CIRCUIT_LOADING_TASK:
-      return QuantumCircuitLoadingTaskProperties(element);
+    case consts.BLOCKME_SEND_TX_TASK:
+      return SendTxTaskProperties(element);
 
-    case consts.DATA_PREPARATION_TASK:
-      return DataPreparationTaskProperties(element);
+    case consts.BLOCKME_RECEIVE_TX_TASK:
+      return ReceiveTxTaskProperties(element);
 
-    case consts.ORACLE_EXPANSION_TASK:
-      return OracleExpansionTaskProperties(element);
+    case consts.BLOCKME_ENSURE_TX_STATE_TASK:
+      return EnsureTxStateTaskProperties(element);
 
-    case consts.QUANTUM_CIRCUIT_EXECUTION_TASK:
-      return QuantumCircuitExecutionTaskProperties(element);
+    case consts.BLOCKME_INVOKE_SC_FUNCTION_TASK_OUTPUT:
+      return InvokeSCFunctionTaskOutputProperties(element);
 
-    case consts.READOUT_ERROR_MITIGATION_TASK:
-      return ReadoutErrorMitigationTaskProperties(element);
+    case consts.BLOCKME_SEND_TX_TASK_OUTPUT:
+      return SendTxTaskOutputProperties(element);
 
-    case consts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS:
-      return HardwareSelectionSubprocessProperties(element);
-    case consts.CIRCUIT_CUTTING_SUBPROCESS:
-      return CircuitCuttingSubprocessEntries(element);
-    case consts.CIRCUIT_CUTTING_TASK:
-      return CircuitCuttingSubprocessEntries(element);
-    case consts.RESULT_EVALUATION_TASK:
-      return ResultEvaluationTaskEntries(element);
-    case consts.PARAMETER_OPTIMIZATION_TASK:
-      return ParameterOptimizationTaskEntries(element);
-    case consts.VARIATIONAL_QUANTUM_ALGORITHM_TASK:
-      return VariationalQuantumAlgorithmTaskEntries(element);
-    case consts.WARM_STARTING_TASK:
-      return WarmStartingTaskEntries(element);
-    case consts.CUTTING_RESULT_COMBINATION_TASK:
-      return CuttingResultCombinationTaskEntries(element);
-    case consts.ERROR_CORRECTION_TASK:
-      return ErrorCorrectionTaskEntries(element);
+    case consts.BLOCKME_RECEIVE_TX_TASK_OUTPUT:
+      return ReceiveTxTaskOutputProperties(element);
 
-    case consts.QUANTUM_CIRCUIT_OBJECT:
-      return QuantumCircuitObjectEntries(element);
-    case consts.RESULT_OBJECT:
-      return ResultObjectEntries(element);
-    case consts.EVALUATION_RESULT_OBJECT:
-      return EvaluationResultObjectEntries(element);
-    case consts.PARAMETRIZATION_OBJECT:
-      return ParametrizationObjectEntries(element);
-    case consts.INITIAL_STATE_OBJECT:
-      return InitialStateObjectEntries(element);
     default:
       console.log("Unsupported BlockME element of type: ", element.type);
   }
 }
 
-/**
- * Properties group showing options to define deployment models for service tasks.
- *
- * @param element The element to show the properties for.
- * @param injector The injector of the bpmn-js modeler
- * @param wineryEndpoint The winery endpoint of the BlockME plugin
- * @return {null|{component: ((function(*): preact.VNode<any>)|*), entries: *[], label, id: string}}
- * @constructor
- */
-function DeploymentModelGroup(element, injector, modeling) {
-  const translate = injector.get("translate");
-
-  return {
-    id: "blockmeDeploymentModelDetails",
-    label: translate("Deployment Models"),
-    entries: DeploymentModelProps({ element, modeling }),
-  };
-}

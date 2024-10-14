@@ -13,7 +13,7 @@ import {
   ToEntry,
   ValueEntry,
   FromEntry,
-  RefEntry
+  RefEntry, OutputArgsEntry, TimestampEntry
 } from "./BlockMEPropertyEntries";
 
 /**
@@ -122,7 +122,7 @@ export function ReceiveTxTaskProperties(element) {
   ];
 }
 
-export function EnsureTxStateProperties(element) {
+export function EnsureTxStateTaskProperties(element) {
   // add oracleId, oracleCircuit, oracleFunction and programmingLanguage attributes
   return [
     {
@@ -141,6 +141,57 @@ export function EnsureTxStateProperties(element) {
       id: consts.DEGREE_OF_CONFIDENCE,
       element,
       component: DegreeOfConfidenceEntry,
+      isEdited: isTextFieldEntryEdited,
+    }
+  ];
+}
+
+export function InvokeSCFunctionTaskOutputProperties(element) {
+  return [
+    {
+      id: consts.OUTPUT_ARGS,
+      element,
+      component: OutputArgsEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.TIMESTAMP,
+      element,
+      component: TimestampEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function SendTxTaskOutputProperties(element) {
+  return [
+    {
+      id: consts.TIMESTAMP,
+      element,
+      component: TimestampEntry,
+      isEdited: isTextFieldEntryEdited,
+    }
+  ];
+}
+
+export function ReceiveTxTaskOutputProperties(element) {
+  return [
+    {
+      id: consts.FROM,
+      element,
+      component: FromEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.VALUE,
+      element,
+      component: ValueEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.TIMESTAMP,
+      element,
+      component: TimestampEntry,
       isEdited: isTextFieldEntryEdited,
     }
   ];

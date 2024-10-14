@@ -8,41 +8,17 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-import QuantMERenderer from "./QuantMERenderer";
-import QuantMEReplaceMenuProvider from "./QuantMEReplaceMenuProvider";
-import QuantMEFactory from "./QuantMEFactory";
-import QuantMEPathMap from "./QuantMEPathMap";
-import QuantMEPropertiesProvider from "./properties-provider/BlockMEPropertiesProvider";
-import BpmnKeyboardBinding from "./BpmnKeyboardBindings";
-import BpmnEditorActions from "./BpmnEditorActions";
-import BpmnKeyboard from "./BpmnKeyboard";
-import QuantMEActivityBehavior from "./QuantMEActivityBehavior";
-import QuantMESubProcessBehavior from "./QuantMESubProcessBehavior";
-import QuantMERules from "./QuantMERules";
+import BlockMERenderer from "./BlockMERenderer";
+import BlockMEReplaceMenuProvider from "./BlockMEReplaceMenuProvider";
+import BlockMEPropertiesProvider from "./properties-provider/BlockMEPropertiesProvider";
 
 export default {
   __init__: [
-    "quantMERenderer",
-    "quantMEReplaceMenu",
-    "bpmnFactory",
-    "quantMEPathMap",
-    "propertiesProvider",
-    "keyboardBindings",
-    "editorActions",
-    "keyboard",
-    "quantMEActivityBehavior",
-    "quantMESubProcessBehavior",
-    "quantMERules",
+    "BlockMERenderer",
+    "BlockMEReplaceMenu",
+    "propertiesProvider"
   ],
-  quantMERenderer: ["type", QuantMERenderer],
-  quantMEReplaceMenu: ["type", QuantMEReplaceMenuProvider],
-  bpmnFactory: ["type", QuantMEFactory],
-  quantMEPathMap: ["type", QuantMEPathMap],
-  propertiesProvider: ["type", QuantMEPropertiesProvider],
-  keyboardBindings: ["type", BpmnKeyboardBinding],
-  editorActions: ["type", BpmnEditorActions],
-  keyboard: ["type", BpmnKeyboard],
-  quantMEActivityBehavior: ["type", QuantMEActivityBehavior],
-  quantMESubProcessBehavior: ["type", QuantMESubProcessBehavior],
-  quantMERules: ["type", QuantMERules],
+  BlockMERenderer: ["type", BlockMERenderer],
+  BlockMEReplaceMenu: ["type", BlockMEReplaceMenuProvider],
+  propertiesProvider: ["type", BlockMEPropertiesProvider]
 };

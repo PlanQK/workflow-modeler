@@ -1,0 +1,154 @@
+@import url("~bpmn-font/dist/css/bpmn-embedded.css");
+
+.qwm .blockme-logo:before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/blockme.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  float: left;
+}
+
+
+.qwm .qrm-reload:before {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../icons/qrm-reload-icon.png") no-repeat center center;
+  float: left;
+}
+
+.qwm .hybrid-loop-adaptation:before {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../icons/hybrid-loop-adapation-icon.png") no-repeat center
+    center;
+  float: left;
+}
+
+.qwm .workflow-transformation:before {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../icons/worklow-transformation-icon.png") no-repeat center
+    center;
+  float: left;
+}
+
+.qwm .workflow-deployment:before {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../icons/workflow-deployment-icon.png") no-repeat center
+    center;
+  float: left;
+}
+
+.qwm .config:before {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-size: contain;
+  background: url("../icons/config-icon.png") no-repeat center center;
+  float: left;
+}
+
+.qwm .indent {
+  margin-left: 5px;
+}
+
+.qwm .spaceUnder {
+  padding-bottom: 1em;
+}
+
+.qwm .spaceUnderSmall {
+  padding-bottom: 0.3em;
+}
+
+.qwm .spaceAbove {
+  padding-top: 1em;
+}
+
+.qwm .hidden {
+  display: none;
+}
+
+.qwm .djs-label {
+  font-family: "Arial", sans-serif;
+}
+
+.qwm .bpmn-icon-invoke-sc-function-task:before {
+  content: "";
+  display: block;
+  background: url("../icons/invoke.png")
+    no-repeat;
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin: 0 6px 0 0;
+}
+
+.qwm .bpmn-icon-ensure-tx-state-task:before {
+  content: "";
+  display: block;
+  background: url("../icons/ensure.png") no-repeat;
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin: 0 6px 0 0;
+}
+
+.qwm .bpmn-icon-send-tx-task:before {
+  content: "";
+  display: block;
+  background: url("../icons/send.png")
+    no-repeat;
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin: 0 6px 0 0;
+}
+
+.qwm .bpmn-icon-receive-tx-task:before {
+  content: "";
+  display: block;
+  background: url("../icons/receive.png") no-repeat;
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin: 0 6px 0 0;
+}
+
+.djs-popup-label {
+  margin-top: -2px;
+}
+
+.djs-popup-entry-name .qwm .quantme-tasks-icon-result-evaluation {
+  margin-top: 5px;
+}
+
+.djs-popup-results
+  .djs-popup-group
+  .entry[data-id="replace-with-hardware-selection-subprocess"]
+  .djs-popup-label {
+  margin-left: 10px; /* Adjust the value as per your requirements */
+}
+
+.djs-popup-results
+  .djs-popup-group
+  .entry[data-id="replace-by-more-options"]
+  .djs-popup-label {
+  margin-top: -1px; /* Adjust the value as per your requirements */
+}

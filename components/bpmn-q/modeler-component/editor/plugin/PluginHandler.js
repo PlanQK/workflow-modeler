@@ -1,6 +1,7 @@
 import PlanQKPlugin from "../../extensions/planqk/PlanQKPlugin";
 import QuantMEPlugin from "../../extensions/quantme/QuantMEPlugin";
 import DataFlowPlugin from "../../extensions/dataflow/DataFlowPlugin";
+import BlockMEPlugin from "../../extensions/blockme/BlockMEPlugin";
 import QHAnaPlugin from "../../extensions/qhana/QHAnaPlugin";
 import PatternPlugin from "../../extensions/pattern/PatternPlugin";
 import OpenTOSCAPlugin from "../../extensions/opentosca/OpenTOSCAPlugin";
@@ -39,6 +40,10 @@ const PLUGINS = [
   },
   {
     plugin: OpenTOSCAPlugin,
+    dependencies: [],
+  },
+  {
+    plugin: BlockMEPlugin,
     dependencies: [],
   },
 ];

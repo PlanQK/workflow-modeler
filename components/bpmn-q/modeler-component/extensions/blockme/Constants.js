@@ -19,7 +19,6 @@ export const BLOCKME_ENSURE_TX_STATE_TASK = "blockme:EnsureTxStateTask";
 export const BLOCKME_INVOKE_SC_FUNCTION_TASK_OUTPUT = "blockme:InvokeSCFunctionTaskOutput";
 export const BLOCKME_SEND_TX_TASK_OUTPUT = "blockme:SendTxTaskOutput";
 export const BLOCKME_RECEIVE_TX_TASK_OUTPUT = "blockme:ReceiveTxTaskOutput";
-export const BLOCKME_ENSURE_TX_STATE_TASK_OUTPUT = "blockme:EnsureTxStateTaskOutput";
 
 // Property names of the QuantME constructs
 export const SMART_CONTRACT = "sc";
@@ -62,5 +61,7 @@ export const BLOCKE_TASKS = [
 ];
 
 export const BLOCKME_DATA_OBJECTS = [
-  RESULT_OBJECT,
+  BLOCKME_SEND_TX_TASK_OUTPUT,
+  BLOCKME_INVOKE_SC_FUNCTION_TASK_OUTPUT,
+  BLOCKME_RECEIVE_TX_TASK_OUTPUT
 ];
