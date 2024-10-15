@@ -53,8 +53,10 @@ for (let env_var_name in defaultConfig) {
 
   let build_time_env_var = process.env[env_var_name];
 
-  if (build_time_env_var) {
+  if (build_time_env_var && build_time_env_var.trim().length > 0) {
     build_time_env_var = JSON.stringify(build_time_env_var);
+  } else {
+    build_time_env_var = undefined;
   }
 
   let default_env_var_value = JSON.stringify(defaultConfig[env_var_name]);

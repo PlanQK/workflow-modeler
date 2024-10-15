@@ -68,7 +68,7 @@ export default class BlockMEReplaceMenuProvider {
 
       // add additional elements to replace tasks
       if (is(element, "bpmn:Task")) {
-        const blockMETasks = self.createBlockMETasks(element);
+        const blockMETasks = self.createBlockMETaskEntry(element, blockmeReplaceOptions.TASK);
         return Object.assign(blockMETasks, entries);
       }
 
@@ -111,36 +111,6 @@ export default class BlockMEReplaceMenuProvider {
     };
   }
 
-  /**
-   * Creates MoreOptionsEntry for the BlockME data objects configurations.
-   *
-   * @param element the given element the menu entries are requested for.
-   * @return {{'replace-by-blockme-data-options': {label: string, className: string, action: Function}}}
-   */
-  createBlockMETasks(element) {
-    const popupMenu = this.popupMenu;
-
-    // get entry for BlockME tasks and their configurations
-    const blockmeTaskEntries = this.createBlockMETaskEntry(
-      element,
-      blockmeReplaceOptions.TASK
-    );
-
-    const blockmeEntries = Object.assign(
-      blockmeTaskEntries
-    );
-
-    return {
-      ["replace-by-more-options"]: createMoreOptionsEntryWithReturn(
-        element,
-        "BlockME Constructs",
-        "BlockME Constructs",
-        popupMenu,
-        blockmeEntries,
-        "blockme-logo"
-      ),
-    };
-  }
 
   /**
    * Create a MoreOptionsEntry consisting of menu entries for all configurations loaded for BlockME tasks.

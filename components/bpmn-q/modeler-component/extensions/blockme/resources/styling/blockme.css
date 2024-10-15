@@ -6,11 +6,12 @@
   height: 15px;
   background-size: contain;
   background-image: url("../icons/blockme.svg");
+  background-position-y: 6px;
   background-repeat: no-repeat;
   display: inline-block;
-  margin-top: 5px;
-  padding: 5px 5px 5px 5px;
-  outline: none;
+  padding-left: 4px;
+  padding-right: 4px;
+  float: left;
 }
 
 

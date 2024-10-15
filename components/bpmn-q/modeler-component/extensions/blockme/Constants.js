@@ -52,7 +52,7 @@ export const REF = "ref";
    REF,
 ];
 
-export const BLOCKE_TASKS = [
+export const BLOCKME_TASKS = [
   // QNames of the QuantME constructs
   BLOCKME_INVOKE_SC_FUNCTION_TASK,
   BLOCKME_SEND_TX_TASK,
