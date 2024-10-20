@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// QNames of the QuantME constructs
+// QNames of the BlockME constructs
 export const BLOCKME_INVOKE_SC_FUNCTION_TASK = "blockme:InvokeSCFunctionTask";
 export const BLOCKME_SEND_TX_TASK = "blockme:SendTxTask";
 export const BLOCKME_RECEIVE_TX_TASK = "blockme:ReceiveTxTask";
@@ -20,7 +20,7 @@ export const BLOCKME_INVOKE_SC_FUNCTION_TASK_OUTPUT = "blockme:InvokeSCFunctionT
 export const BLOCKME_SEND_TX_TASK_OUTPUT = "blockme:SendTxTaskOutput";
 export const BLOCKME_RECEIVE_TX_TASK_OUTPUT = "blockme:ReceiveTxTaskOutput";
 
-// Property names of the QuantME constructs
+// Property names of the BlockME constructs
 export const SMART_CONTRACT = "sc";
 export const SIGNATURE = "signature";
 export const OUTPUTS = "outputs";
