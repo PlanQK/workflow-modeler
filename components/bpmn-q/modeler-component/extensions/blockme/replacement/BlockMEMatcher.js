@@ -62,7 +62,7 @@ export function taskMatchesDetector(detectorElement, task, idMatching) {
  * Compare the properties of InvokeSCFunctionTask
  */
 function matchInvokeSCFunctionTask(detectorElement, task) {
-    return matchesProperty(detectorElement.sc, task.sc, false, consts.SMART_CONTRACT) &&
+    return matchesProperty(detectorElement.scl, task.scl, false, consts.SCL) &&
         matchesProperty(detectorElement.signature, task.signature, false, consts.SIGNATURE) &&
         matchesProperty(detectorElement.outputs, task.outputs, false, consts.OUTPUTS) &&
         matchesProperty(detectorElement.inArgs, task.inArgs, false, consts.INPUT_ARGS) &&
@@ -75,7 +75,7 @@ function matchInvokeSCFunctionTask(detectorElement, task) {
  * Compare the properties of SendTxTask
  */
 function matchSendTxTask(detectorElement, task) {
-    return matchesProperty(detectorElement.to, task.to, false, consts.TO) &&
+    return matchesProperty(detectorElement.scl, task.scl, false, consts.SCL) &&
         matchesProperty(detectorElement.value, task.value, false, consts.VALUE) &&
         matchesProperty(detectorElement.corrId, task.corrId, false, consts.CORRELATION_ID) &&
         matchesProperty(detectorElement.doc, task.doc, false, consts.DEGREE_OF_CONFIDENCE);
@@ -85,7 +85,8 @@ function matchSendTxTask(detectorElement, task) {
  * Compare the properties of matchReceiveTxTask
  */
 function matchReceiveTxTask(detectorElement, task) {
-    return matchesProperty(detectorElement.from, task.from, false, consts.FROM) &&
+    return matchesProperty(detectorElement.scl, task.scl, false, consts.SCL) &&
+        matchesProperty(detectorElement.from, task.from, false, consts.FROM) &&
         matchesProperty(detectorElement.corrId, task.corrId, false, consts.CORRELATION_ID) &&
         matchesProperty(detectorElement.doc, task.doc, false, consts.DEGREE_OF_CONFIDENCE) &&
         matchesProperty(detectorElement.inArgs, task.inArgs, false, consts.INPUT_ARGS);
@@ -95,7 +96,8 @@ function matchReceiveTxTask(detectorElement, task) {
  * Compare the properties of EnsureTxStateTask
  */
 function matchEnsureTxStateTask(detectorElement, task) {
-    return matchesProperty(detectorElement.ref, task.ref, false, consts.REF) &&
+    return matchesProperty(detectorElement.scl, task.scl, false, consts.SCL) &&
+        matchesProperty(detectorElement.ref, task.ref, false, consts.REF) &&
         matchesProperty(detectorElement.corrId, task.corrId, false, consts.CORRELATION_ID) &&
         matchesProperty(detectorElement.doc, task.doc, false, consts.DEGREE_OF_CONFIDENCE);
 }

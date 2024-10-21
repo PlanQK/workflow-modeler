@@ -23,7 +23,7 @@
       "superClass": ["bpmn:Task"],
       "properties": [
         {
-          "name": "sc",
+          "name": "scl",
           "isAttr": true,
           "type": "String"
         },
@@ -64,7 +64,7 @@
       "superClass": ["bpmn:Task"],
       "properties": [
         {
-          "name": "to",
+          "name": "scl",
           "isAttr": true,
           "type": "String"
         },
@@ -90,6 +90,11 @@
       "superClass": ["bpmn:Task"],
       "properties": [
         {
+          "name": "scl",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "from",
           "isAttr": true,
           "type": "String"
@@ -110,6 +115,11 @@
       "name": "EnsureTxStateTask",
       "superClass": ["bpmn:Task"],
       "properties": [
+        {
+          "name": "scl",
+          "isAttr": true,
+          "type": "String"
+        },
         {
           "name": "corrId",
           "isAttr": true,

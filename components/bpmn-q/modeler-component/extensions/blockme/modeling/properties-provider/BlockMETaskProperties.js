@@ -3,14 +3,13 @@ import {
   isTextFieldEntryEdited
 } from "@bpmn-io/properties-panel";
 import {
-  SmartContractEntry,
+  SCLEntry,
   SignatureEntry,
   OutputsEntry,
   InputArgsEntry,
   IsStatefulEntry,
   CorrelationIdEntry,
   DegreeOfConfidenceEntry,
-  ToEntry,
   ValueEntry,
   FromEntry,
   RefEntry, OutputArgsEntry, TimestampEntry
@@ -24,9 +23,9 @@ export function InvokeSCFunctionTaskProperties(element) {
   // add algorithm and provider attributes
   return [
     {
-      id: consts.SMART_CONTRACT,
+      id: consts.SCL,
       element,
-      component: SmartContractEntry,
+      component: SCLEntry,
       isEdited: isTextFieldEntryEdited,
     },
     {
@@ -72,9 +71,9 @@ export function SendTxTaskProperties(element) {
   // add quantumCircuit and url attributes
   return [
     {
-      id: consts.TO,
+      id: consts.SCL,
       element,
-      component: ToEntry,
+      component: SCLEntry,
       isEdited: isTextFieldEntryEdited,
     },
     {
@@ -102,6 +101,12 @@ export function ReceiveTxTaskProperties(element) {
   // add encodingSchema and programmingLanguage attributes
   return [
     {
+      id: consts.SCL,
+      element,
+      component: SCLEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
       id: consts.FROM,
       element,
       component: FromEntry,
@@ -125,6 +130,12 @@ export function ReceiveTxTaskProperties(element) {
 export function EnsureTxStateTaskProperties(element) {
   // add oracleId, oracleCircuit, oracleFunction and programmingLanguage attributes
   return [
+    {
+      id: consts.SCL,
+      element,
+      component: SCLEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
     {
       id: consts.CORRELATION_ID,
       element,

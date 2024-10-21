@@ -21,7 +21,7 @@ export const BLOCKME_SEND_TX_TASK_OUTPUT = "blockme:SendTxTaskOutput";
 export const BLOCKME_RECEIVE_TX_TASK_OUTPUT = "blockme:ReceiveTxTaskOutput";
 
 // Property names of the BlockME constructs
-export const SMART_CONTRACT = "sc";
+export const SCL = "scl";
 export const SIGNATURE = "signature";
 export const OUTPUTS = "outputs";
 export const INPUT_ARGS = "inArgs";
@@ -29,7 +29,6 @@ export const OUTPUT_ARGS = "outArgs";
 export const IS_STATEFUL = "isStateful";
 export const CORRELATION_ID = "corrId";
 export const DEGREE_OF_CONFIDENCE = "doc";
-export const TO = "to";
 export const VALUE = "value";
 export const TIMESTAMP = "timestamp";
 export const FROM = "from";
@@ -37,7 +36,7 @@ export const REF = "ref";
 
 // list of QuantME attributes to check if a given attribute belongs to the extension or not
  export const BLOCKME_ATTRIBUTES = [
-   SMART_CONTRACT,
+   SCL,
    SIGNATURE,
    OUTPUTS,
    INPUT_ARGS,
@@ -45,7 +44,6 @@ export const REF = "ref";
    IS_STATEFUL,
    CORRELATION_ID,
    DEGREE_OF_CONFIDENCE,
-   TO,
    VALUE,
    TIMESTAMP,
    FROM,

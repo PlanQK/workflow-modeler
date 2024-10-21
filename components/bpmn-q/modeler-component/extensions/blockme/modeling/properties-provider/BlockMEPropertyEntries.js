@@ -23,7 +23,7 @@ import { useService } from "bpmn-js-properties-panel";
  * property.
  */
 
-export function SmartContractEntry({ element }) {
+export function SCLEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
     useService("translate") ||
@@ -33,20 +33,20 @@ export function SmartContractEntry({ element }) {
   const debounce = useService("debounceInput");
 
   const getValue = function () {
-    return element.businessObject.sc;
+    return element.businessObject.scl;
   };
 
   const setValue = function (newValue) {
     return modeling.updateProperties(element, {
-      sc: newValue,
+      scl: newValue,
     });
   };
 
   return (
     <TextFieldEntry
-      id={consts.SMART_CONTRACT}
+      id={consts.SCL}
       element={element}
-      label={translate("Smart Contract")}
+      label={translate("SCL")}
       getValue={getValue}
       setValue={setValue}
       debounce={debounce}
@@ -259,36 +259,6 @@ export function DegreeOfConfidenceEntry({ element }) {
     <TextFieldEntry
       id={consts.DEGREE_OF_CONFIDENCE}
       label={translate("Degree of Confidence")}
-      getValue={getValue}
-      setValue={setValue}
-      debounce={debounce}
-    />
-  );
-}
-
-export function ToEntry({ element }) {
-  const modeling = useService("modeling");
-  const translate =
-    useService("translate") ||
-    function (str) {
-      return str;
-    };
-  const debounce = useService("debounceInput");
-
-  const getValue = function () {
-    return element.businessObject.to;
-  };
-
-  const setValue = function (newValue) {
-    return modeling.updateProperties(element, {
-      to: newValue,
-    });
-  };
-
-  return (
-    <TextFieldEntry
-      id={consts.TO}
-      label={translate("To")}
       getValue={getValue}
       setValue={setValue}
       debounce={debounce}
