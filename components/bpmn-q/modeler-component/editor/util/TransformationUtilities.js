@@ -39,7 +39,7 @@ export function insertShape(
     if (replace) {
       // replace old element to retain attached sequence flow, associations, data objects, ...
       element = bpmnReplace.replaceElement(elementRegistry.get(oldElement.id), {
-        type: newElement.$type,
+        type: newElement.$type
       });
     } else {
       // create new shape for this element
@@ -55,7 +55,7 @@ export function insertShape(
     let sourceElement = elementRegistry.get(idMap[newElement.sourceRef.id]);
     let targetElement = elementRegistry.get(idMap[newElement.targetRef.id]);
     element = modeling.connect(sourceElement, targetElement, {
-      type: newElement.$type,
+      type: newElement.$type
     });
   }
   // store id to create sequence flows
@@ -66,15 +66,15 @@ export function insertShape(
     [
       "bpmn:SubProcess",
       "quantme:QuantumHardwareSelectionSubprocess",
-      "quantme:CircuitCuttingSubprocess",
+      "quantme:CircuitCuttingSubprocess"
     ].includes(newElement.$type)
   ) {
     // get the shape element related to the subprocess and expand it
     let shape = getDi(element);
     shape.isExpanded = true;
 
-    // preserve messages defined in ReceiveTasks
-  } else if (newElement.$type === "bpmn:ReceiveTask" && newElement.messageRef) {
+    // preserve messages defined in ReceiveTasks or events
+  } else if (newElement.messageRef) {
     // get message from the replacement and check if a corresponding message was already created
     let oldMessage = newElement.messageRef;
     if (idMap[oldMessage.id] === undefined) {
@@ -90,13 +90,34 @@ export function insertShape(
       // reuse already created message and add it to receive task
       modeling.updateProperties(element, { messageRef: idMap[oldMessage.id] });
     }
+  } else if (newElement.eventDefinitions && newElement.eventDefinitions.length > 0) {
+    if (newElement.eventDefinitions[0].messageRef) {
+      let oldMessage = newElement.eventDefinitions[0].messageRef;
+      if (idMap[oldMessage.id] === undefined) {
+        let messageDef = bpmnFactory.create("bpmn:MessageEventDefinition");
+        // add a new message element to the definitions document and link it to the receive task
+        let message = bpmnFactory.create("bpmn:Message");
+        message.name = oldMessage.name;
+        messageDef.messageRef = message;
+        definitions.rootElements.push(message);
+        newElement.eventDefinitions[0] = messageDef;
+
+        // store id if other receive tasks reference the same message
+        idMap[oldMessage.id] = message.id;
+
+      } else {
+        let messageDef = bpmnFactory.create("bpmn:MessageEventDefinition");
+        messageDef.messageRef = idMap[oldMessage.id];
+        newElement.eventDefinitions[0] = messageDef;
+      }
+    }
   }
 
   // add element to which a boundary event is attached
   if (newElement.$type === "bpmn:BoundaryEvent") {
     let hostElement = elementRegistry.get(idMap[newElement.attachedToRef.id]);
     modeling.updateProperties(element, {
-      attachedToRef: hostElement.businessObject,
+      attachedToRef: hostElement.businessObject
     });
     element.host = hostElement;
   }
