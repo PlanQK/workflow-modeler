@@ -302,6 +302,7 @@ async function replaceByFragment(
     );
     let resultShape = result.element;
     console.log("Inserted shape: ", resultShape);
+    handleErrorEvents(getRootProcess(definitions), resultShape, task);
 
     // add all attributes of the replaced BlockME task to the input parameters of the replacement fragment
     let inputOutputExtension = getCamundaInputOutput(
@@ -358,4 +359,37 @@ async function replaceByFragment(
     }
 
     return result["success"];
+}
+
+function handleErrorEvents(rootElement,
+                           resultShape,
+                           oldTask) {
+
+    if (isBlockMETask(oldTask)) {
+        let errorDefs = rootElement.flowElements
+          .filter(element => element.$type === "bpmn:BoundaryEvent")
+          .filter(element => element.attachedToRef.id === resultShape.businessObject.id)
+          .flatMap(element => element.eventDefinitions)
+          .filter(def => def.$type === "bpmn:ErrorEventDefinition");
+
+        if (errorDefs.length > 0) {
+            let errorRef = errorDefs[0].errorRef;
+            console.log("Found boundary error event ", errorRef);
+
+            let errorThrowEventDef = resultShape.businessObject.flowElements
+              .filter(element=> element.$type === "bpmn:SubProcess")
+              .flatMap(element => element.flowElements)
+              .filter(element => element.$type === "bpmn:EndEvent")
+              .flatMap(event => event.eventDefinitions)
+              .filter(def => def.$type === "bpmn:ErrorEventDefinition");
+            console.log("Found replacement error throw end event ", errorThrowEventDef);
+
+            if (errorThrowEventDef.length > 0) {
+                errorThrowEventDef[0].errorRef = errorRef;
+            }
+        }
+
+
+    }
+
 }

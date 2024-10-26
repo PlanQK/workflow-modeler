@@ -88,7 +88,7 @@ function matchReceiveTxTask(detectorElement, task) {
     return matchesProperty(detectorElement.scl, task.scl, false, consts.SCL) &&
         matchesProperty(detectorElement.from, task.from, false, consts.FROM) &&
         matchesProperty(detectorElement.corrId, task.corrId, false, consts.CORRELATION_ID) &&
-        matchesProperty(detectorElement.doc, task.doc, false, consts.DEGREE_OF_CONFIDENCE)
+        matchesProperty(detectorElement.doc, task.doc, false, consts.DEGREE_OF_CONFIDENCE);
 }
 
 /**
