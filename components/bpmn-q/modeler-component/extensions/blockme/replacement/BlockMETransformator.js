@@ -373,11 +373,7 @@ function handleErrorEvents(rootElement,
       .flatMap(element => element.flowElements)
       .filter(element => element.$type === "bpmn:EndEvent");
 
-    if (endEvents && endEvents.length > 0 && endEvents[0].eventDefinitions) {
-      console.log("Creating new ErrorEventDefinition for end event ", endEvents[0]);
-      let errorDef = bpmnFactory.create("bpmn:ErrorEventDefinition");
-      endEvents[0].eventDefinitions[0] = errorDef;
-
+    if (endEvents && endEvents.length > 0) {
       // see if there is a surrounding error catch event.
       let errorDefs = rootElement.flowElements
         .filter(element => element.$type === "bpmn:BoundaryEvent")
@@ -385,10 +381,17 @@ function handleErrorEvents(rootElement,
         .flatMap(element => element.eventDefinitions)
         .filter(def => def.$type === "bpmn:ErrorEventDefinition");
 
+      // if we found a surrounding error catch event, we copy its definition to the end event
       if (errorDefs.length > 0) {
         let errorRef = errorDefs[0].errorRef;
         console.log("Found boundary error event ", errorRef);
+        console.log("Creating new ErrorEventDefinition for end event ", endEvents[0]);
+        let errorDef = bpmnFactory.create("bpmn:ErrorEventDefinition");
         errorDef.errorRef = errorRef;
+        endEvents[0].eventDefinitions[0] = errorDef;
+      } else {
+        // if no surrounding error catch event, we ensure the end event is a regular end event (non-throwing)
+        endEvents[0].eventDefinitions = [];
       }
     }
   }
