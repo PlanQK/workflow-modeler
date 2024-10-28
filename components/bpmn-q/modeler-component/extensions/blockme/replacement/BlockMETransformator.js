@@ -24,6 +24,7 @@ import {
 import { getXml } from "../../../editor/util/IoUtilities";
 import { getPolicies, movePolicies } from "../../opentosca/utilities/Utilities";
 import { isBlockMETask } from "../utilities/Utilities";
+import { CORRELATION_ID } from "../Constants";
 
 /**
  * Initiate the replacement process for the BlockME tasks that are contained in the current process model
@@ -137,6 +138,7 @@ export async function startBlockmeReplacementProcess(
     }
   }
   removeDiagramElements(modeler);
+  resolveCorrelationIds(definitions);
 
 
   // layout diagram after successful transformation
@@ -364,23 +366,23 @@ function handleErrorEvents(rootElement,
                            oldTask,
                            modeler) {
   let bpmnFactory = modeler.get("bpmnFactory");
+
   if (isBlockMETask(oldTask)) {
 
-    // first, we ensure a dedicated ErrorEventDefinition is created for every end event that is supposed to throw
-    // a SCIP error to the surrounding process
+    // See if there is a surrounding error catch event.
+    let errorDefs = rootElement.flowElements
+      .filter(element => element.$type === "bpmn:BoundaryEvent")
+      .filter(element => element.attachedToRef.id === resultShape.businessObject.id)
+      .flatMap(element => element.eventDefinitions)
+      .filter(def => def.$type === "bpmn:ErrorEventDefinition");
+
+    // First, we handle event the subprocess that catches asynchronous SCIP errors
     let endEvents = resultShape.businessObject.flowElements
-      .filter(element => element.$type === "bpmn:SubProcess" && element.name === "Catch and Rethrow SCIP Error")
+      .filter(element => element.$type === "bpmn:SubProcess" && element.name === "Catch and Rethrow Async SCIP Error")
       .flatMap(element => element.flowElements)
       .filter(element => element.$type === "bpmn:EndEvent");
 
     if (endEvents && endEvents.length > 0) {
-      // see if there is a surrounding error catch event.
-      let errorDefs = rootElement.flowElements
-        .filter(element => element.$type === "bpmn:BoundaryEvent")
-        .filter(element => element.attachedToRef.id === resultShape.businessObject.id)
-        .flatMap(element => element.eventDefinitions)
-        .filter(def => def.$type === "bpmn:ErrorEventDefinition");
-
       // if we found a surrounding error catch event, we copy its definition to the end event
       if (errorDefs.length > 0) {
         let errorRef = errorDefs[0].errorRef;
@@ -394,7 +396,75 @@ function handleErrorEvents(rootElement,
         endEvents[0].eventDefinitions = [];
       }
     }
+
+    // Second, we handle the end event that rethrows caught synchronous SCIP errors
+
+    endEvents = resultShape.businessObject.flowElements
+      .filter(element => element.$type === "bpmn:EndEvent" && element.name === "Rethrow Sync SCIP Error");
+
+    if (endEvents && endEvents.length > 0) {
+      // if we found a surrounding error catch event, we copy its definition to the end event
+      if (errorDefs.length > 0) {
+        let errorRef = errorDefs[0].errorRef;
+        console.log("Creating new ErrorEventDefinition for end event ", endEvents[0]);
+        let errorDef = bpmnFactory.create("bpmn:ErrorEventDefinition");
+        errorDef.errorRef = errorRef;
+        endEvents[0].eventDefinitions[0] = errorDef;
+      } else {
+        // if no surrounding error catch event, we ensure the end event is a regular end event (non-throwing)
+        endEvents[0].eventDefinitions = [];
+      }
+    }
+
+    // Third, we handle the boundary event that catches synchronous SCIP errors
+    let boundaryEvents = endEvents = resultShape.businessObject.flowElements
+      .filter(element => element.$type === "bpmn:BoundaryEvent");
+
+    if (boundaryEvents && boundaryEvents.length > 0) {
+      // if we found a surrounding error catch event, we copy its definition to the end event
+      boundaryEvents[0].eventDefinitions[0] = bpmnFactory.create("bpmn:ErrorEventDefinition");
+    }
+
   }
 
+
+}
+
+function resolveCorrelationIds(definitions) {
+  let subProcesses = getRootProcess(definitions).flowElements.filter(element => element.$type === "bpmn:SubProcess");
+  let messages = definitions.rootElements.filter(element => ["bpmn:Message"].includes(element.$type) && element.name.includes(CORRELATION_ID) );
+
+  for(let subProcess of subProcesses) {
+    if(subProcess.extensionElements && subProcess.extensionElements.values && subProcess.extensionElements.values.length > 0) {
+      let inputParameters = subProcess.extensionElements.values.filter(extension => extension.$type === "camunda:InputOutput");
+
+      if (inputParameters && inputParameters.length > 0 && inputParameters[0].inputParameters) {
+        let corrIdParam = inputParameters[0].inputParameters.filter(param => param.name === CORRELATION_ID);
+
+        if (corrIdParam && corrIdParam.length > 0) {
+          let resolvedCorrId = corrIdParam[0].value;
+          let resultMessageId = subProcess.flowElements
+            .filter(element => element.$type === "bpmn:ReceiveTask" && element.messageRef)
+            .map(element => element.messageRef.id)[0];
+          let errorMessageId = subProcess.flowElements
+            .filter(element => element.$type === "bpmn:SubProcess" && element.flowElements)
+            .flatMap(element => element.flowElements)
+            .filter(element => element.$type === "bpmn:StartEvent" && element.eventDefinitions && element.eventDefinitions.length > 0 && element.eventDefinitions[0].messageRef)
+            .map(element => element.eventDefinitions[0].messageRef.id)[0];
+          // let's find the result message
+          if (resultMessageId && errorMessageId) {
+            for(let message of messages) {
+              if ([resultMessageId, errorMessageId].includes(message.id)) {
+                console.log("Replacing ${" + CORRELATION_ID + "} with " + resolvedCorrId + "in the name of the message ", message.id);
+                message.name = message.name.replace("${" + CORRELATION_ID + "}", resolvedCorrId);
+              }
+            }
+          } else {
+            console.error("Cannot find ids of the error/result messages of the blockme task ", subProcess.name);
+          }
+        }
+      }
+    }
+  }
 
 }
