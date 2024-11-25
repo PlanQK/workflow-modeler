@@ -172,34 +172,36 @@ function getScriptTasks(rootElement, language, splittingCandidates) {
   console.log("find script tasks inside ", rootElement);
 
   const flowElements = rootElement.flowElements;
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    if (flowElement.$type && flowElement.$type === "bpmn:ScriptTask") {
-      console.log("Found script task: ", flowElement);
+  if (flowElements !== undefined) {
+    for (let i = 0; i < flowElements.length; i++) {
+      let flowElement = flowElements[i];
+      if (flowElement.$type && flowElement.$type === "bpmn:ScriptTask") {
+        console.log("Found script task: ", flowElement);
 
-      // Check if the script task is already in splittingCandidates
-      console.log(splittingCandidates);
-      const isCandidate = splittingCandidates.some(
-        (candidate) => candidate.id === flowElement.id
-      );
+        // Check if the script task is already in splittingCandidates
+        console.log(splittingCandidates);
+        const isCandidate = splittingCandidates.some(
+          (candidate) => candidate.id === flowElement.id
+        );
 
-      // return only the script task which the script splitter is able to split
-      if (flowElement.scriptFormat === language && !isCandidate) {
-        flowElement.$parent = rootElement;
-        console.log(flowElement.$parent);
-        console.log("Script task is found: ", flowElement);
-        scriptTasks.push(flowElement);
+        // return only the script task which the script splitter is able to split
+        if (flowElement.scriptFormat === language && !isCandidate) {
+          flowElement.$parent = rootElement;
+          console.log(flowElement.$parent);
+          console.log("Script task is found: ", flowElement);
+          scriptTasks.push(flowElement);
+        }
       }
-    }
 
-    if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
-      console.log("Found subprocess ", flowElement);
+      if (flowElement.$type && flowElement.$type === "bpmn:SubProcess") {
+        console.log("Found subprocess ", flowElement);
 
-      // recursively call method to find optimization candidates
-      Array.prototype.push.apply(
-        scriptTasks,
-        getScriptTasks(flowElement, language, splittingCandidates)
-      );
+        // recursively call method to find optimization candidates
+        Array.prototype.push.apply(
+          scriptTasks,
+          getScriptTasks(flowElement, language, splittingCandidates)
+        );
+      }
     }
   }
 

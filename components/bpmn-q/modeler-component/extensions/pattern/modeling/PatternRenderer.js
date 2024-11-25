@@ -267,6 +267,17 @@ export default class PatternRenderer extends BpmnRenderer {
         drawTaskSVG(parentGfx, "CIRCUIT_CUTTING");
         return task;
       },
+      [consts.QUANTUM_HARDWARE_SELECTION]: function (self, parentGfx, element) {
+        let attrs = {
+          fill: "none",
+          stroke: "none",
+        };
+        element.width = 44;
+        element.height = 44;
+        var task = self.renderer("bpmn:Activity")(parentGfx, element, attrs);
+        drawTaskSVG(parentGfx, "QUANTUM_HARDWARE_SELECTION");
+        return task;
+      },
       [consts.PATTERN]: function (self, parentGfx, element) {
         let attrs = {
           fill: "none",

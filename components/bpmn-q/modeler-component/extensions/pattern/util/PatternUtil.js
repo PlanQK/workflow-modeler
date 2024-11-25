@@ -22,7 +22,11 @@ import { fetchDataFromEndpoint } from "../../../editor/util/HttpUtilities";
 import JSZip from "jszip";
 import { saveFileFormats } from "../../../editor/EditorConstants";
 import { createTempModelerFromXml } from "../../../editor/ModelerHandler";
-import { getRootProcess } from "../../../editor/util/ModellingUtilities";
+import {
+  getRootProcess,
+  getType,
+} from "../../../editor/util/ModellingUtilities";
+import { QuantMEProps } from "../../quantme/modeling/properties-provider/QuantMEPropertiesProvider";
 
 export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
   let dimensions = computeDimensionsOfSubprocess(subprocess);
@@ -162,6 +166,21 @@ export function attachPatternsToSuitableConstruct(
 
         if (
           patternType === consts.CIRCUIT_CUTTING &&
+          type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
+        ) {
+          createPattern(
+            modeling,
+            patternType,
+            pattern.businessObject.patternId,
+            construct.x + construct.width,
+            construct.y + construct.height,
+            construct
+          );
+          console.log("added cutting");
+        }
+
+        if (
+          patternType === consts.QUANTUM_HARDWARE_SELECTION &&
           type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK
         ) {
           createPattern(
@@ -321,7 +340,10 @@ export function removeAlgorithmAndAugmentationPatterns(
     // check if pattern is attached to a flow element of the workflow
     if (hostFlowElements !== undefined) {
       // behavioral patterns are deleted after acting on the optimization candidate
-      if (!constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type)) {
+      if (
+        !constants.BEHAVIORAL_PATTERNS.includes(patterns[i].task.$type) ||
+        patterns[i].task.$type === constants.QUANTUM_HARDWARE_SELECTION
+      ) {
         modeling.removeShape(elementRegistry.get(patterns[i].task.id));
       }
     } else {
@@ -458,7 +480,6 @@ export function copyQuantMEProperties(
   if (quantMEProperties !== undefined) {
     let propertyEntries = {};
     quantMEProperties.forEach((propertyEntry) => {
-      console.log(propertyEntry);
       let entryId = propertyEntry.id;
       let entry = sourceTask[entryId];
       entry =
@@ -481,4 +502,76 @@ export function copyQuantMEProperties(
       propertyEntries
     );
   }
+}
+
+export function wrapExecutionTaskIntoSubprocess(
+  pattern,
+  subprocess,
+  modeling,
+  elementRegistry,
+  modeler
+) {
+  let host = elementRegistry.get(pattern.id).host;
+  if (getType(host) !== quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
+    return {
+      replaced: true,
+      flows: [],
+      pattern: elementRegistry.get(pattern.id),
+    };
+  }
+  let startEvent = modeling.createShape(
+    { type: "bpmn:StartEvent" },
+    { x: 50, y: 50 },
+    subprocess,
+    {}
+  );
+
+  let propertiesExecution = QuantMEProps(host);
+
+  let copiedTask = modeling.createShape(
+    { type: getType(host) },
+    { x: 50, y: 50 },
+    subprocess,
+    {}
+  );
+  copiedTask.businessObject.name = host.businessObject.name;
+  copyQuantMEProperties(
+    propertiesExecution,
+    host.businessObject,
+    copiedTask,
+    modeler
+  );
+  let flows = [];
+  host.outgoing.forEach((flow) => {
+    flows.push(flow);
+    modeling.connect(subprocess, elementRegistry.get(flow.target.id), {
+      type: "bpmn:SequenceFlow",
+    });
+  });
+  host.incoming.forEach((flow) => {
+    flows.push(flow);
+    modeling.connect(elementRegistry.get(flow.source.id), subprocess, {
+      type: "bpmn:SequenceFlow",
+    });
+  });
+  for (let i = 0; i < flows.length; i++) {
+    let flow = elementRegistry.get(flows[i].id);
+    modeling.removeConnection(flow);
+  }
+
+  let endEvent = modeling.createShape(
+    { type: "bpmn:EndEvent" },
+    { x: 50, y: 50 },
+    subprocess,
+    {}
+  );
+  modeling.connect(startEvent, copiedTask, {
+    type: "bpmn:SequenceFlow",
+  });
+
+  modeling.connect(copiedTask, endEvent, {
+    type: "bpmn:SequenceFlow",
+  });
+
+  return { replaced: true, flows: flows, pattern: host };
 }

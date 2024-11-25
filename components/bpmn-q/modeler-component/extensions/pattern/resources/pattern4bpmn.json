@@ -97,6 +97,11 @@
       "properties": []
     },
     {
+      "name": "QuantumHardwareSelection",
+      "superClass": ["pattern:Pattern"],
+      "properties": []
+    },
+    {
       "name": "Pattern",
       "superClass": ["bpmn:BoundaryEvent"],
       "properties": [

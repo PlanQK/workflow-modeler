@@ -240,6 +240,15 @@
   display: inline-block;
 }
 
+.qwm .bpmn-pattern-quantum-hardware-selection-icon:before {
+  content: "";
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/quantum_hardware_selection_icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
 .progress-bar-modal {
   position: fixed;
   top: 0;
