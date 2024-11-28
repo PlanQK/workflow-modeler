@@ -255,7 +255,7 @@ export async function replaceHardwareSelectionSubprocess(
       return true;
     }
   } else {
-    console.log(element)
+    console.log(element);
     let startEvent = element.children[0];
     let scriptTask = modeling.createShape(
       { type: "bpmn:ScriptTask" },

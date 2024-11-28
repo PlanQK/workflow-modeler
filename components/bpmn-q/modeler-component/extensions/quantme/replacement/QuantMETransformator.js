@@ -73,13 +73,12 @@ export async function startQuantmeReplacementProcess(
   let replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
 
   for (let replacementConstruct of replacementConstructs) {
-    let replacementSuccess = false;
     if (
       replacementConstruct.task.$type ===
       constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
       console.log("Transforming QuantumHardwareSelectionSubprocess...");
-      replacementSuccess = await replaceHardwareSelectionSubprocess(
+      await replaceHardwareSelectionSubprocess(
         replacementConstruct.task,
         replacementConstruct.parent,
         modeler,
@@ -87,7 +86,7 @@ export async function startQuantmeReplacementProcess(
         endpointConfig.transformationFrameworkEndpoint,
         endpointConfig.camundaEndpoint
       );
-    } 
+    }
   }
   updated_xml = await getXml(modeler);
   definitions = modeler.getDefinitions();
