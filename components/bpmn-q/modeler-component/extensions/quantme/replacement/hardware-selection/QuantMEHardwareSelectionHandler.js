@@ -52,7 +52,7 @@ export async function replaceHardwareSelectionSubprocess(
   let moddle = modeler.get("moddle");
 
   const automatedSelection = subprocess.automatedSelection;
-  console.log(subprocess);
+  console.log(elementRegistry.get(subprocess.id));
   const replacementSubprocess = subprocess.replacementSubprocess;
 
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
@@ -257,6 +257,10 @@ export async function replaceHardwareSelectionSubprocess(
   } else {
     console.log(element);
     let startEvent = element.children[0];
+    console.log((startEvent));
+    if (startEvent === undefined){
+      return true;
+    }
     let scriptTask = modeling.createShape(
       { type: "bpmn:ScriptTask" },
       { x: 50, y: 50 },

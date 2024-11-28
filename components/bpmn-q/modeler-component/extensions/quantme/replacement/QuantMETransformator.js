@@ -71,7 +71,7 @@ export async function startQuantmeReplacementProcess(
 
   // get all QuantME modeling constructs from the process
   let replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
-
+  console.log(replacementConstructs);
   for (let replacementConstruct of replacementConstructs) {
     if (
       replacementConstruct.task.$type ===
@@ -89,6 +89,9 @@ export async function startQuantmeReplacementProcess(
     }
   }
   updated_xml = await getXml(modeler);
+  modeling = modeler.get("modeling");
+  elementRegistry = modeler.get("elementRegistry");
+  moddle = modeler.get("moddle");
   definitions = modeler.getDefinitions();
   rootElement = getRootProcess(definitions);
   replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
