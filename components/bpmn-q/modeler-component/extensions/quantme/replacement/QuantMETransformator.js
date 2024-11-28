@@ -57,8 +57,8 @@ export async function startQuantmeReplacementProcess(
   let moddle = modeler.get("moddle");
 
   // get root element of the current diagram
-  const definitions = modeler.getDefinitions();
-  const rootElement = getRootProcess(definitions);
+  let definitions = modeler.getDefinitions();
+  let rootElement = getRootProcess(definitions);
 
   console.log(rootElement);
   if (typeof rootElement === "undefined") {
@@ -71,6 +71,28 @@ export async function startQuantmeReplacementProcess(
 
   // get all QuantME modeling constructs from the process
   let replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
+
+  for (let replacementConstruct of replacementConstructs) {
+    let replacementSuccess = false;
+    if (
+      replacementConstruct.task.$type ===
+      constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+    ) {
+      console.log("Transforming QuantumHardwareSelectionSubprocess...");
+      replacementSuccess = await replaceHardwareSelectionSubprocess(
+        replacementConstruct.task,
+        replacementConstruct.parent,
+        modeler,
+        endpointConfig.nisqAnalyzerEndpoint,
+        endpointConfig.transformationFrameworkEndpoint,
+        endpointConfig.camundaEndpoint
+      );
+    } 
+  }
+  updated_xml = await getXml(modeler);
+  definitions = modeler.getDefinitions();
+  rootElement = getRootProcess(definitions);
+  replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
   console.log(
     "Process contains " +
       replacementConstructs.length +

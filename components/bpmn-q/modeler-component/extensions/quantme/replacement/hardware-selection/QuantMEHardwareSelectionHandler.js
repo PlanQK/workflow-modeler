@@ -255,6 +255,29 @@ export async function replaceHardwareSelectionSubprocess(
       return true;
     }
   } else {
+    console.log(element)
+    let startEvent = element.children[0];
+    let scriptTask = modeling.createShape(
+      { type: "bpmn:ScriptTask" },
+      { x: 50, y: 50 },
+      element,
+      {}
+    );
+    let flows = [];
+    startEvent.outgoing.forEach((flow) => {
+      flows.push(flow);
+      modeling.connect(scriptTask, elementRegistry.get(flow.target.id), {
+        type: "bpmn:SequenceFlow",
+      });
+    });
+    for (let i = 0; i < flows.length; i++) {
+      let flow = elementRegistry.get(flows[i].id);
+      modeling.removeConnection(flow);
+    }
+    modeling.connect(startEvent, scriptTask, {
+      type: "bpmn:SequenceFlow",
+    });
+    scriptTask.businessObject.name = "Select Quantum Device";
     return true;
   }
 }
