@@ -32,6 +32,7 @@ export const VARIATIONAL_QUANTUM_EIGENSOLVER =
 export const ORCHESTRATED_EXECUTION = "pattern:OrchestratedExecution";
 export const PRE_DEPLOYED_EXECUTION = "pattern:PredeployedExecution";
 export const PRIORITIZED_EXECUTION = "pattern:PrioritizedExecution";
+export const QUANTUM_HARDWARE_SELECTION = "pattern:QuantumHardwareSelection";
 
 export const ERROR_CORRECTION = "pattern:ErrorCorrection";
 export const GATE_ERROR_MITIGATION = "pattern:GateErrorMitigation";
@@ -60,6 +61,7 @@ export const BEHAVIORAL_PATTERNS = [
   ORCHESTRATED_EXECUTION,
   PRE_DEPLOYED_EXECUTION,
   PRIORITIZED_EXECUTION,
+  QUANTUM_HARDWARE_SELECTION,
 ];
 
 export const WARM_STARTING_PATTERNS = [

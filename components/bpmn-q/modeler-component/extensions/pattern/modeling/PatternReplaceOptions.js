@@ -88,6 +88,14 @@ export var BEHAVIORAL_PATTERN = [
       type: consts.PRIORITIZED_EXECUTION,
     },
   },
+  {
+    label: "Quantum Hardware Selection",
+    actionName: "replace-with-pattern-quantum-hadrware-selection",
+    className: "qwm bpmn-pattern-quantum-hardware-selection-icon",
+    target: {
+      type: consts.QUANTUM_HARDWARE_SELECTION,
+    },
+  },
 ];
 export var AUGMENTATION_PATTERN = [
   {

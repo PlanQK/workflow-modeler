@@ -79,11 +79,9 @@ export default class PatternRules extends RuleProvider {
       }
 
       let attachedElementTypesWithPolicy = 0;
-      let specificPolicies = consts.PATTERNS;
-      specificPolicies = specificPolicies.filter(
-        (policy) => policy !== consts.PATTERN
-      );
-      specificPolicies = specificPolicies.filter(
+      let patterns = consts.PATTERNS;
+      patterns = patterns.filter((policy) => policy !== consts.PATTERN);
+      patterns = patterns.filter(
         (policy) => !consts.ALGORITHM_PATTERNS.includes(policy)
       );
 
@@ -109,8 +107,8 @@ export default class PatternRules extends RuleProvider {
       }
 
       for (let i = 0; i < target.attachers.length; i++) {
-        if (specificPolicies.includes(target.attachers[i].type)) {
-          specificPolicies = specificPolicies.filter(
+        if (patterns.includes(target.attachers[i].type)) {
+          patterns = patterns.filter(
             (policy) => policy !== target.attachers[i].type
           );
         }
@@ -150,7 +148,7 @@ export default class PatternRules extends RuleProvider {
       }
 
       // If the specific policies are included, prevent attaching another policy
-      if (specificPolicies.length === 0) {
+      if (patterns.length === 0) {
         return false;
       }
       if (

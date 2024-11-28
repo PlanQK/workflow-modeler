@@ -25,6 +25,7 @@ import {
   findPatternIdByName,
   getSolutionForPattern,
   removeAlgorithmAndAugmentationPatterns,
+  wrapExecutionTaskIntoSubprocess,
 } from "../util/PatternUtil";
 import { findOptimizationCandidates } from "../../quantme/ui/adaptation/CandidateDetector";
 import { getQRMs } from "../../quantme/qrm-manager";
@@ -32,7 +33,7 @@ import { rewriteWorkflow } from "../../quantme/ui/adaptation/WorkflowRewriter";
 import { getQiskitRuntimeProgramDeploymentModel } from "../../quantme/ui/adaptation/runtimes/QiskitRuntimeHandler";
 import { getHybridRuntimeProvenance } from "../../quantme/framework-config/config-manager";
 import { isQuantMESubprocess } from "../../quantme/utilities/Utilities";
-import { PATTERN_PREFIX } from "../Constants";
+import * as quantmeConsts from "../../quantme/Constants";
 
 /**
  * Initiate the replacement process for the patterns that are contained in the current process model
@@ -246,10 +247,12 @@ export async function startPatternReplacementProcess(xml) {
   console.log("Applying behavioral patterns...");
   console.log(elementsToDelete);
   modeling.removeElements(elementsToDelete);
+  let elementFactory = modeler.get("elementFactory");
   console.log(`Time taken for step E: ${Date.now() - startTime}ms`);
   let behaviorReplacementConstructs = replacementConstructs.filter(
     (construct) => constants.BEHAVIORAL_PATTERNS.includes(construct.task.$type)
   );
+
   console.log("Begin of measurement of step F: ");
   startTime = Date.now();
   let optimizationCandidates = [];
@@ -257,6 +260,57 @@ export async function startPatternReplacementProcess(xml) {
     optimizationCandidates = await findOptimizationCandidates(modeler);
   }
 
+  // first handle handware selection
+  for (let replacementConstruct of behaviorReplacementConstructs) {
+    let replacementSuccess = false;
+    if (
+      replacementConstruct.task.$type === constants.QUANTUM_HARDWARE_SELECTION
+    ) {
+      let collapsedSubprocess = elementFactory.createShape({
+        type: quantmeConsts.QUANTUM_HARDWARE_SELECTION_SUBPROCESS,
+        isExpanded: true,
+      });
+      console.log(replacementConstruct.task);
+      let shape = modeling.createShape(
+        collapsedSubprocess,
+        { x: 50, y: 50 },
+        elementRegistry.get(replacementConstruct.task.id).parent
+      );
+      shape.businessObject.$attrs["quantme:replacementSubprocess"] = true;
+
+      let { replaced, flows, pattern } = wrapExecutionTaskIntoSubprocess(
+        replacementConstruct.task,
+        shape,
+        modeling,
+        elementRegistry,
+        modeler
+      );
+      allFlow.push(flows);
+      //patterns.push(pattern);
+      replacementSuccess = replaced;
+      modeling.removeElements([pattern]);
+      if (!replacementSuccess) {
+        console.log(
+          "Replacement of Pattern with Id " +
+            replacementConstruct.task.id +
+            " of type " +
+            replacementConstruct.task.$type +
+            " failed. Aborting process!"
+        );
+        return {
+          status: "failed",
+          cause:
+            "Replacement of Pattern with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!",
+        };
+      }
+    }
+  }
+  behaviorReplacementConstructs = behaviorReplacementConstructs.filter(
+    (replacementConstruct) =>
+      replacementConstruct.task.$type !== constants.QUANTUM_HARDWARE_SELECTION
+  );
   for (let replacementConstruct of behaviorReplacementConstructs) {
     let replacementSuccess = false;
     if (replacementConstruct.task.$type === constants.ORCHESTRATED_EXECUTION) {
@@ -481,23 +535,28 @@ export function getPatterns(process, elementRegistry) {
   const processBo = elementRegistry.get(process.id);
   const patterns = [];
   const flowElements = process.flowElements;
-  for (let i = 0; i < flowElements.length; i++) {
-    let flowElement = flowElements[i];
-    console.log(flowElement);
-    if (flowElement.$type && flowElement.$type.startsWith(PATTERN_PREFIX)) {
-      patterns.push({
-        task: flowElement,
-        parent: processBo,
-        attachedToRef: flowElement.attachedToRef,
-      });
-    }
+  if (flowElements !== undefined) {
+    for (let i = 0; i < flowElements.length; i++) {
+      let flowElement = flowElements[i];
+      console.log(flowElement);
+      if (
+        flowElement.$type &&
+        flowElement.$type.startsWith(constants.PATTERN_PREFIX)
+      ) {
+        patterns.push({
+          task: flowElement,
+          parent: processBo,
+          attachedToRef: flowElement.attachedToRef,
+        });
+      }
 
-    // recursively retrieve patterns if subprocess is found
-    if (flowElement.$type && isQuantMESubprocess(flowElement)) {
-      Array.prototype.push.apply(
-        patterns,
-        getPatterns(flowElement, elementRegistry)
-      );
+      // recursively retrieve patterns if subprocess is found
+      if (flowElement.$type && isQuantMESubprocess(flowElement)) {
+        Array.prototype.push.apply(
+          patterns,
+          getPatterns(flowElement, elementRegistry)
+        );
+      }
     }
   }
   return patterns;

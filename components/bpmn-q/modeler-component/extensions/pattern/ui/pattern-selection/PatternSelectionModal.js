@@ -341,64 +341,69 @@ export default function PatternSelectionModal({
               </tr>
             </thead>
             <tbody>
-              {behavioralPatterns.map((pattern) => (
-                <tr key={pattern.id}>
-                  <td>
-                    <a
-                      className="pattern-links"
-                      href={
-                        patternAtlasUIEndpoint +
-                        "/pattern-languages/" +
-                        pattern.patternLanguageId +
-                        "/" +
-                        pattern.id
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {pattern.name}
-                    </a>
-                  </td>
-                  <td>
-                    <img
-                      src={pattern.iconUrl}
-                      alt={pattern.name}
-                      style={{ width: "30%", height: "auto" }}
-                    />
-                  </td>
-                  <td>
-                    {pattern.name !== "Prioritized Execution" ? (
-                      <input
-                        id="behavioral-pattern"
-                        name="behavioral-pattern"
-                        type="radio"
-                        checked={
-                          (selectedBehavioralExclusivePattern === pattern ||
-                            selectedBehavioralPatterns.includes(pattern)) &&
-                          selectedBehavioralExclusivePatternRadioButton
-                        }
-                        onChange={() =>
-                          handlePatternSelection(
-                            pattern,
-                            PATTERN_BEHAVIORAL_EXCLUSIVE
-                          )
-                        }
-                        onClick={() =>
-                          handleClick(PATTERN_BEHAVIORAL_EXCLUSIVE)
-                        }
+              {behavioralPatterns
+                .sort((a, b) =>
+                  a.name === "Prioritized Execution"
+                    ? 1
+                    : b.name === "Prioritized Execution"
+                    ? -1
+                    : 0
+                )
+                .map((pattern) => (
+                  <tr key={pattern.id}>
+                    <td>
+                      <a
+                        className="pattern-links"
+                        href={`${patternAtlasUIEndpoint}/pattern-languages/${pattern.patternLanguageId}/${pattern.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {pattern.name}
+                      </a>
+                    </td>
+                    <td>
+                      <img
+                        src={pattern.iconUrl}
+                        alt={pattern.name}
+                        style={{ width: "30%", height: "auto" }}
                       />
-                    ) : (
-                      <input
-                        type="checkbox"
-                        checked={selectedBehavioralPatterns.includes(pattern)}
-                        onChange={() =>
-                          handlePatternSelection(pattern, PATTERN_BEHAVIORAL)
-                        }
-                      />
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td>
+                      {pattern.name !== "Prioritized Execution" && (
+                        <input
+                          id={`behavioral-pattern-${pattern.name}`}
+                          name="behavioral-pattern"
+                          type="radio"
+                          checked={
+                            selectedBehavioralExclusivePattern === pattern &&
+                            selectedBehavioralExclusivePatternRadioButton
+                          }
+                          onChange={() =>
+                            handlePatternSelection(
+                              pattern,
+                              PATTERN_BEHAVIORAL_EXCLUSIVE
+                            )
+                          }
+                          onClick={() =>
+                            handleClick(PATTERN_BEHAVIORAL_EXCLUSIVE)
+                          }
+                        />
+                      )}
+
+                      {pattern.name === "Prioritized Execution" && (
+                        <input
+                          id={`behavioral-pattern-checkbox-${pattern.name}`}
+                          name="behavioral-pattern-checkbox"
+                          type="checkbox"
+                          checked={selectedBehavioralPatterns.includes(pattern)}
+                          onChange={() =>
+                            handlePatternSelection(pattern, PATTERN_BEHAVIORAL)
+                          }
+                        />
+                      )}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

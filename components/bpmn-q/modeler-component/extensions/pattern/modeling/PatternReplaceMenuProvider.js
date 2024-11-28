@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as quantmeReplaceOptions from "./PatternReplaceOptions";
+import * as patternReplaceOptions from "./PatternReplaceOptions";
 import { is } from "bpmn-js/lib/util/ModelUtil";
 import {
   createMenuEntries,
@@ -94,14 +94,25 @@ export default class PatternReplaceMenuProvider {
     if (element.host.type === "bpmn:SubProcess") {
       behavioralPatterns = this.createPatternTypeReplacementOptions(
         element,
-        quantmeReplaceOptions.BEHAVIORAL_PATTERN,
+        patternReplaceOptions.BEHAVIORAL_PATTERN,
         consts.PATTERN_BEHAVIORAL,
         attacherTypes
       );
     }
+
+    // quantum hardware selection is allowed at a circuit execution task to enable qpu selection
+    if (element.host.type === quantmeConsts.QUANTUM_CIRCUIT_EXECUTION_TASK) {
+      behavioralPatterns = this.createPatternTypeReplacementOptions(
+        element,
+        patternReplaceOptions.BEHAVIORAL_PATTERN,
+        consts.PATTERN_BEHAVIORAL,
+        attacherTypes
+      );
+    }
+
     let augmentationPatterns = this.createPatternTypeReplacementOptions(
       element,
-      quantmeReplaceOptions.AUGMENTATION_PATTERN,
+      patternReplaceOptions.AUGMENTATION_PATTERN,
       consts.PATTERN_AUGMENTATION,
       attacherTypes
     );
@@ -167,6 +178,16 @@ export default class PatternReplaceMenuProvider {
           return option.target.type !== consts.BIASED_INITIAL_STATE;
         }
       );
+      // Keep augmentation patterns and QUANTUM_HARDWARE_SELECTION, exclude other behavioral patterns
+      filteredOptionsBasedOnAttachers = filteredOptionsBasedOnAttachers.filter(
+        (option) => {
+          return (
+            consts.AUGMENTATION_PATTERNS.includes(option.target.type) ||
+            option.target.type === consts.QUANTUM_HARDWARE_SELECTION ||
+            !consts.BEHAVIORAL_PATTERNS.includes(option.target.type)
+          );
+        }
+      );
     }
 
     // error correction is not allowed with error mitigation
@@ -198,26 +219,47 @@ export default class PatternReplaceMenuProvider {
       );
     }
 
-    // pre deployed execution is not allowd with orchestrated execution
+    // pre deployed execution is not allowed with orchestrated execution
     if (
       element.type === consts.PRE_DEPLOYED_EXECUTION ||
       attacherTypes.includes(consts.PRE_DEPLOYED_EXECUTION)
     ) {
       filteredOptionsBasedOnAttachers = filteredOptionsBasedOnAttachers.filter(
         (option) => {
-          return option.target.type !== consts.ORCHESTRATED_EXECUTION;
+          return (
+            option.target.type !== consts.ORCHESTRATED_EXECUTION &&
+            option.target.type !== consts.QUANTUM_HARDWARE_SELECTION
+          );
         }
       );
     }
 
-    // pre deployed execution is not allowd with orchestrated execution
+    // pre deployed execution is not allowed with orchestrated execution
     if (
       element.type === consts.ORCHESTRATED_EXECUTION ||
       attacherTypes.includes(consts.ORCHESTRATED_EXECUTION)
     ) {
       filteredOptionsBasedOnAttachers = filteredOptionsBasedOnAttachers.filter(
         (option) => {
-          return option.target.type !== consts.PRE_DEPLOYED_EXECUTION;
+          return (
+            option.target.type !== consts.PRE_DEPLOYED_EXECUTION &&
+            option.target.type !== consts.QUANTUM_HARDWARE_SELECTION
+          );
+        }
+      );
+    }
+
+    // pre deployed execution is not allowed with orchestrated execution
+    if (
+      element.type === consts.QUANTUM_HARDWARE_SELECTION ||
+      attacherTypes.includes(consts.QUANTUM_HARDWARE_SELECTION)
+    ) {
+      filteredOptionsBasedOnAttachers = filteredOptionsBasedOnAttachers.filter(
+        (option) => {
+          return (
+            option.target.type !== consts.PRE_DEPLOYED_EXECUTION &&
+            option.target.type !== consts.ORCHESTRATED_EXECUTION
+          );
         }
       );
     }
