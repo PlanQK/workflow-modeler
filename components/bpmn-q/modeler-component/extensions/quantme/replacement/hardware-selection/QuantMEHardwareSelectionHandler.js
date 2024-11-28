@@ -267,6 +267,10 @@ export async function replaceHardwareSelectionSubprocess(
       element,
       {}
     );
+    scriptTask.businessObject.name = "Select Quantum Device";
+    scriptTask.businessObject.scriptFormat = "groovy";
+    scriptTask.businessObject.script = "println selectDevice";
+    scriptTask.businessObject.asyncBefore = true;
     let flows = [];
     startEvent.outgoing.forEach((flow) => {
       flows.push(flow);
@@ -281,7 +285,7 @@ export async function replaceHardwareSelectionSubprocess(
     modeling.connect(startEvent, scriptTask, {
       type: "bpmn:SequenceFlow",
     });
-    scriptTask.businessObject.name = "Select Quantum Device";
+
     return true;
   }
 }
