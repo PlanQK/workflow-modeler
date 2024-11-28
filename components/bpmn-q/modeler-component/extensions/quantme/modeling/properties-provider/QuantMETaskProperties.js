@@ -52,6 +52,7 @@ import {
   ErrorCorrectionMethodEntry,
   WarmStartingPatternEntry,
   RequirementsEntry,
+  QrmReplacementEntry,
 } from "./QuantMEPropertyEntries";
 
 /**
@@ -275,6 +276,12 @@ export function HardwareSelectionSubprocessProperties(element) {
       id: consts.AUTOMATED_SELECTION,
       element,
       component: AutomatedSelectionEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.QRM_REPLACEMENT,
+      element,
+      component: QrmReplacementEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];

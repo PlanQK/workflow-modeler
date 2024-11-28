@@ -52,7 +52,8 @@ export async function replaceHardwareSelectionSubprocess(
   let moddle = modeler.get("moddle");
 
   const automatedSelection = subprocess.automatedSelection;
-  const replacementSubprocess = subprocess.$attrs.replacementSubprocess;
+  console.log(subprocess);
+  const replacementSubprocess = subprocess.replacementSubprocess;
 
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {

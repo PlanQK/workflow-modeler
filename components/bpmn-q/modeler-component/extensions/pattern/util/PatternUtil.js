@@ -558,6 +558,12 @@ export function wrapExecutionTaskIntoSubprocess(
     let flow = elementRegistry.get(flows[i].id);
     modeling.removeConnection(flow);
   }
+  let scriptTask = modeling.createShape(
+    { type: "bpmn:ScriptTask" },
+    { x: 50, y: 50 },
+    subprocess,
+    {}
+  );
 
   let endEvent = modeling.createShape(
     { type: "bpmn:EndEvent" },
@@ -565,7 +571,11 @@ export function wrapExecutionTaskIntoSubprocess(
     subprocess,
     {}
   );
-  modeling.connect(startEvent, copiedTask, {
+  modeling.connect(startEvent, scriptTask, {
+    type: "bpmn:SequenceFlow",
+  });
+
+  modeling.connect(scriptTask, copiedTask, {
     type: "bpmn:SequenceFlow",
   });
 

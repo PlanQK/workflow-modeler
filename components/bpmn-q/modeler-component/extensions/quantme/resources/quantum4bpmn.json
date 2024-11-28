@@ -41,6 +41,11 @@
           "name": "automatedSelection",
           "isAttr": true,
           "type": "Boolean"
+        },
+        {
+          "name": "replacementSubprocess",
+          "isAttr": true,
+          "type": "Boolean"
         }
       ]
     },
