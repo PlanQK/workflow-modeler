@@ -278,7 +278,7 @@ export async function replaceHardwareSelectionSubprocess(
     );
     scriptTask.businessObject.name = "Select Quantum Device";
     scriptTask.businessObject.scriptFormat = "groovy";
-    scriptTask.businessObject.script = "println selectDevice";
+    scriptTask.businessObject.script = `println "selectDevice";`;
     scriptTask.businessObject.asyncBefore = true;
     let flows = [];
     startEvent.outgoing.forEach((flow) => {
