@@ -52,7 +52,8 @@ export async function replaceHardwareSelectionSubprocess(
   let moddle = modeler.get("moddle");
 
   const automatedSelection = subprocess.automatedSelection;
-  const replacementSubprocess = subprocess.$attrs.replacementSubprocess;
+  console.log(elementRegistry.get(subprocess.id));
+  const replacementSubprocess = subprocess.replacementSubprocess;
 
   // replace QuantumHardwareSelectionSubprocess with traditional subprocess
   let element = bpmnReplace.replaceElement(elementRegistry.get(subprocess.id), {
@@ -66,6 +67,7 @@ export async function replaceHardwareSelectionSubprocess(
     providers: undefined,
     simulatorsAllowed: undefined,
     automatedSelection: undefined,
+    replacementSubprocess: undefined,
   });
 
   console.log(element.businessObject.$attrs["quantme:replacementSubprocess"]);
@@ -254,6 +256,46 @@ export async function replaceHardwareSelectionSubprocess(
       return true;
     }
   } else {
+    console.log(element);
+    // if the subprocess does not contain any children then the subprocess is invalid
+    if (element.children === undefined) {
+      return false;
+    }
+    // retrieve the first start event
+    let startEvent = element.children.filter(
+      (child) => child.type === "bpmn:StartEvent"
+    )[0];
+    console.log(startEvent);
+    if (startEvent === undefined) {
+      return false;
+    }
+
+    let scriptTask = modeling.createShape(
+      { type: "bpmn:ScriptTask" },
+      { x: 50, y: 50 },
+      element,
+      {}
+    );
+    scriptTask.businessObject.name = "Select Quantum Device";
+    scriptTask.businessObject.scriptFormat = "groovy";
+    scriptTask.businessObject.script = `println "selectDevice";`;
+    scriptTask.businessObject.asyncBefore = true;
+    let flows = [];
+    startEvent.outgoing.forEach((flow) => {
+      flows.push(flow);
+      modeling.connect(scriptTask, elementRegistry.get(flow.target.id), {
+        type: "bpmn:SequenceFlow",
+      });
+    });
+    for (let i = 0; i < flows.length; i++) {
+      let flow = elementRegistry.get(flows[i].id);
+      modeling.removeConnection(flow);
+    }
+    modeling.connect(startEvent, scriptTask, {
+      type: "bpmn:SequenceFlow",
+    });
+    console.log("finished tran");
+
     return true;
   }
 }

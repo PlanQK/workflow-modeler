@@ -57,8 +57,8 @@ export async function startQuantmeReplacementProcess(
   let moddle = modeler.get("moddle");
 
   // get root element of the current diagram
-  const definitions = modeler.getDefinitions();
-  const rootElement = getRootProcess(definitions);
+  let definitions = modeler.getDefinitions();
+  let rootElement = getRootProcess(definitions);
 
   console.log(rootElement);
   if (typeof rootElement === "undefined") {
@@ -71,13 +71,50 @@ export async function startQuantmeReplacementProcess(
 
   // get all QuantME modeling constructs from the process
   let replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
+  console.log(replacementConstructs);
+  for (let replacementConstruct of replacementConstructs) {
+    if (
+      replacementConstruct.task.$type ===
+      constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
+    ) {
+      console.log("Transforming QuantumHardwareSelectionSubprocess...");
+      let replacementSuccess = await replaceHardwareSelectionSubprocess(
+        replacementConstruct.task,
+        replacementConstruct.parent,
+        modeler,
+        endpointConfig.nisqAnalyzerEndpoint,
+        endpointConfig.transformationFrameworkEndpoint,
+        endpointConfig.camundaEndpoint
+      );
+      if (!replacementSuccess) {
+        console.log(
+          "Replacement of QuantME modeling construct with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!"
+        );
+        return {
+          status: "failed",
+          cause:
+            "Replacement of QuantME modeling construct with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!",
+        };
+      }
+    }
+  }
+
+  definitions = modeler.getDefinitions();
+  rootElement = getRootProcess(definitions);
+  layout(modeling, elementRegistry, rootElement);
+  updated_xml = await getXml(modeler);
+  replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
   console.log(
     "Process contains " +
       replacementConstructs.length +
       " QuantME modeling constructs to replace..."
   );
   if (!replacementConstructs || !replacementConstructs.length) {
-    return { status: "transformed", xml: xml };
+    return { status: "transformed", xml: updated_xml };
   }
 
   addQProvEndpoint(rootElement, elementRegistry, modeling, moddle);

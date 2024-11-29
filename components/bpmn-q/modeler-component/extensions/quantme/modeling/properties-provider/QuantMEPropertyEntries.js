@@ -517,6 +517,7 @@ export function AutomatedSelectionEntry({ element }) {
     />
   );
 }
+
 export function CalibrationMethodEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
@@ -1730,6 +1731,36 @@ export function RequirementsEntry({ element }) {
       id={consts.REQUIREMENTS}
       element={element}
       label={translate("Requirements")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
+export function QrmReplacementEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.replacementSubprocess;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      replacementSubprocess: newValue,
+    });
+  };
+
+  return (
+    <CheckboxEntry
+      id={consts.QRM_REPLACEMENT}
+      label={translate("QRM Replacement")}
       getValue={getValue}
       setValue={setValue}
       debounce={debounce}
