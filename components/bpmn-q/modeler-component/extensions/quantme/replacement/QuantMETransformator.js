@@ -78,7 +78,7 @@ export async function startQuantmeReplacementProcess(
       constants.QUANTUM_HARDWARE_SELECTION_SUBPROCESS
     ) {
       console.log("Transforming QuantumHardwareSelectionSubprocess...");
-      await replaceHardwareSelectionSubprocess(
+      let replacementSuccess = await replaceHardwareSelectionSubprocess(
         replacementConstruct.task,
         replacementConstruct.parent,
         modeler,
@@ -86,14 +86,27 @@ export async function startQuantmeReplacementProcess(
         endpointConfig.transformationFrameworkEndpoint,
         endpointConfig.camundaEndpoint
       );
+      if (!replacementSuccess) {
+        console.log(
+          "Replacement of QuantME modeling construct with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!"
+        );
+        return {
+          status: "failed",
+          cause:
+            "Replacement of QuantME modeling construct with Id " +
+            replacementConstruct.task.id +
+            " failed. Aborting process!",
+        };
+      }
     }
   }
-  updated_xml = await getXml(modeler);
-  modeling = modeler.get("modeling");
-  elementRegistry = modeler.get("elementRegistry");
-  moddle = modeler.get("moddle");
+
   definitions = modeler.getDefinitions();
   rootElement = getRootProcess(definitions);
+  layout(modeling, elementRegistry, rootElement);
+  updated_xml = await getXml(modeler);
   replacementConstructs = getQuantMETasks(rootElement, elementRegistry);
   console.log(
     "Process contains " +
@@ -101,7 +114,7 @@ export async function startQuantmeReplacementProcess(
       " QuantME modeling constructs to replace..."
   );
   if (!replacementConstructs || !replacementConstructs.length) {
-    return { status: "transformed", xml: xml };
+    return { status: "transformed", xml: updated_xml };
   }
 
   addQProvEndpoint(rootElement, elementRegistry, modeling, moddle);

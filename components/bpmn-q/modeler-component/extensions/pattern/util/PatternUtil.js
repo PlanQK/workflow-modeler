@@ -191,11 +191,12 @@ export function attachPatternsToSuitableConstruct(
             construct.y + construct.height,
             construct
           );
-          console.log("added cutting");
+          console.log("added hardware selection");
         }
 
         if (
           consts.BEHAVIORAL_PATTERNS.includes(patternType) &&
+          patternType !== consts.QUANTUM_HARDWARE_SELECTION &&
           type === "bpmn:SubProcess"
         ) {
           createPattern(
@@ -334,6 +335,7 @@ export function removeAlgorithmAndAugmentationPatterns(
   modeling,
   elementRegistry
 ) {
+  console.log(patterns);
   for (let i = 0; i < patterns.length; i++) {
     let hostFlowElements = patterns[i].attachedToRef.flowElements;
 

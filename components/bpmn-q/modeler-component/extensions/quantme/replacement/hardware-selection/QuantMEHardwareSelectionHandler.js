@@ -67,6 +67,7 @@ export async function replaceHardwareSelectionSubprocess(
     providers: undefined,
     simulatorsAllowed: undefined,
     automatedSelection: undefined,
+    replacementSubprocess: undefined,
   });
 
   console.log(element.businessObject.$attrs["quantme:replacementSubprocess"]);
@@ -256,11 +257,19 @@ export async function replaceHardwareSelectionSubprocess(
     }
   } else {
     console.log(element);
-    let startEvent = element.children[0];
-    console.log((startEvent));
-    if (startEvent === undefined){
-      return true;
+    // if the subprocess does not contain any children then the subprocess is invalid
+    if (element.children === undefined) {
+      return false;
     }
+    // retrieve the first start event
+    let startEvent = element.children.filter(
+      (child) => child.type === "bpmn:StartEvent"
+    )[0];
+    console.log(startEvent);
+    if (startEvent === undefined) {
+      return false;
+    }
+
     let scriptTask = modeling.createShape(
       { type: "bpmn:ScriptTask" },
       { x: 50, y: 50 },
@@ -282,6 +291,7 @@ export async function replaceHardwareSelectionSubprocess(
       type: "bpmn:SequenceFlow",
     });
     scriptTask.businessObject.name = "Select Quantum Device";
+    console.log("finished tran");
     return true;
   }
 }
