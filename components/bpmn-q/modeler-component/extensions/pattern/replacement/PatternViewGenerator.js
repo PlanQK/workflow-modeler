@@ -17,7 +17,7 @@ import { getPatterns } from "./PatternTransformator";
 /**
  * Initiate the replacement process for the pattern that are contained in the current process model
  *
- * @param xml the diagram to crete the view from
+ * @param xml the diagram to create the view from
  */
 export async function createPatternView(xml) {
   let modeler = await createTempModelerFromXml(xml);
