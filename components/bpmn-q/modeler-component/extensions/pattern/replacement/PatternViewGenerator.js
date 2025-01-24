@@ -17,9 +17,7 @@ import { getPatterns } from "./PatternTransformator";
 /**
  * Initiate the replacement process for the pattern that are contained in the current process model
  *
- * @param xml the BPMN diagram in XML format
- * @param currentQRMs the set of currently in the framework available QRMs
- * @param endpointConfig endpoints of the services required for the dynamic hardware selection
+ * @param xml the diagram to crete the view from
  */
 export async function createPatternView(xml) {
   let modeler = await createTempModelerFromXml(xml);
@@ -38,7 +36,7 @@ export async function createPatternView(xml) {
     };
   }
 
-  // get all QuantME modeling constructs from the process
+  // get all patterns from the process
   let replacementConstructs = getPatterns(rootElement, elementRegistry);
   console.log(
     "Process contains " +
