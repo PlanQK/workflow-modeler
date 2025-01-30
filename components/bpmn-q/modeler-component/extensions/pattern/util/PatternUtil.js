@@ -37,7 +37,8 @@ export function attachPatternsToSubprocess(subprocess, patterns, modeling) {
       const patternName = patternList[i].name.replace(/[\s-]/g, "");
       console.log("Adding pattern: ", patternList[i]);
 
-      let patternX = subprocess.x + patternSpacing * (i + offsetX);
+      // Adds a pattern to the bottom-left corner of the subprocess with rightward spacing to prevent overlap with other elements in the view
+      let patternX = subprocess.x + 50 + patternSpacing * (i + offsetX);
       let patternY = subprocess.y + dimensions.height;
       createPattern(
         modeling,
