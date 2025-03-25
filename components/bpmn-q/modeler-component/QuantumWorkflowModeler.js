@@ -17,6 +17,7 @@ import Toolbar from "./editor/ui/Toolbar";
 import {
   createNewDiagram,
   loadDiagram,
+  openFile,
   setAutoSaveInterval,
 } from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
@@ -354,6 +355,18 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
     if (modeler) {
       return await loadDiagram(xmlDiagram, this.bpmnjsModeler);
+    } else {
+      console.log(
+        "Loading of Workflow via external interface not possible until modeler is loaded."
+      );
+    }
+  }
+
+  async loadWorkflowFile(file) {
+    const modeler = this.bpmnjsModeler;
+
+    if (modeler) {
+      await openFile(file);
     } else {
       console.log(
         "Loading of Workflow via external interface not possible until modeler is loaded."
