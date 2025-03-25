@@ -33,8 +33,12 @@ export function dispatchWorkflowEvent(type, workflowXml, workflowName, extra) {
     detail.workflow = workflowXml;
   }
   if (extra) {
-    Object.keys(extra).forEach(key => {
-      if (extra.hasOwnProperty(key) && key !== "workflowName" && key !== "workflow") {
+    Object.keys(extra).forEach((key) => {
+      if (
+        extra.hasOwnProperty(key) &&
+        key !== "workflowName" &&
+        key !== "workflow"
+      ) {
         detail[key] = extra[key];
       }
     });

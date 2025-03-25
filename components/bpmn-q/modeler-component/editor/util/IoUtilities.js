@@ -31,10 +31,10 @@ let FormData = require("form-data");
  * @param autoSave Set this to true if save is performed as an automatic save.
  * @returns {Promise<void>}
  */
-export async function saveXmlAsLocalFile( 
+export async function saveXmlAsLocalFile(
   xml,
   fileName = editorConfig.getFileName(),
-  autoSave = false,
+  autoSave = false
 ) {
   let suggestedName = fileName;
   if (suggestedName.includes(saveFileFormats.BPMN)) {
@@ -46,7 +46,7 @@ export async function saveXmlAsLocalFile(
     workflowEventTypes.BEFORE_SAVE,
     xml,
     editorConfig.getFileName(),
-    {fileType: "xml", autoSave: autoSave},
+    { fileType: "xml", autoSave: autoSave }
   );
 
   if (!continueSave) {
@@ -89,7 +89,7 @@ export async function saveModelerAsLocalFile(
       workflowEventTypes.BEFORE_SAVE,
       xml,
       fileName,
-      {fileType: "bpmn", autoSave: false},
+      { fileType: "bpmn", autoSave: false }
     );
 
     if (!continueSave) {
@@ -126,7 +126,7 @@ export async function saveAllFilesAsZip(
   modeler,
   views,
   zipFileName = editorConfig.getFileName(),
-  autoSave = false,
+  autoSave = false
 ) {
   let suggestedName = zipFileName;
   if (suggestedName.includes(saveFileFormats.BPMN)) {
@@ -162,7 +162,7 @@ export async function saveAllFilesAsZip(
     workflowEventTypes.BEFORE_SAVE,
     xml,
     editorConfig.getFileName(),
-    {fileType: "zip", blob: zipBlob, autoSave: autoSave},
+    { fileType: "zip", blob: zipBlob, autoSave: autoSave }
   );
 
   if (!continueSave) {
@@ -639,7 +639,7 @@ export async function saveQAA(
   modeler,
   views,
   qaaFileName = editorConfig.getFileName(),
-  autoSave = false,
+  autoSave = false
 ) {
   let startTimeStepH = Date.now();
   console.log("Storing QAA for workflow with name: ", qaaFileName);
@@ -719,7 +719,7 @@ export async function saveQAA(
     workflowEventTypes.BEFORE_SAVE,
     xml,
     editorConfig.getFileName(),
-    {fileType: "qaa", blob: zipBlob, autoSave: autoSave},
+    { fileType: "qaa", blob: zipBlob, autoSave: autoSave }
   );
 
   if (!continueSave) {

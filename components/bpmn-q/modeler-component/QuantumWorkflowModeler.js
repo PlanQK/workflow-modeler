@@ -299,9 +299,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
     const transformationButtons = getTransformationButtons();
 
     // integrate the React ButtonToolbar into its DOM container
-    const toolbarRoot = createRoot(
-      this.querySelector(".toolbar-container")
-    );
+    const toolbarRoot = createRoot(this.querySelector(".toolbar-container"));
     toolbarRoot.render(
       <Toolbar
         modeler={this.bpmnjsModeler}
@@ -324,11 +322,9 @@ export class QuantumWorkflowModeler extends HTMLElement {
     this.workflowModel =
       this.workflowModel || getPluginConfig("editor").defaultWorkflow;
     this.bpmnjsModeler.on("commandStack.changed", function () {
-      self.bpmnjsModeler
-        .saveXML({ format: true })
-        .then(function (result) {
-          self.bpmnjsModeler.xml = result;
-        });
+      self.bpmnjsModeler.saveXML({ format: true }).then(function (result) {
+        self.bpmnjsModeler.xml = result;
+      });
     });
     if (!this.bpmnjsModeler.config) {
       this.bpmnjsModeler.config = {};

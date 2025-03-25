@@ -13,7 +13,9 @@ export default function OpenButton() {
   const inputRef = useRef(null);
 
   function handleClick() {
-    const defaultBehaviour = dispatchWorkflowEvent(workflowEventTypes.REQUEST_OPEN);
+    const defaultBehaviour = dispatchWorkflowEvent(
+      workflowEventTypes.REQUEST_OPEN
+    );
     if (defaultBehaviour) {
       inputRef.current.click();
     }

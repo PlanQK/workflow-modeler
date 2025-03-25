@@ -173,7 +173,7 @@ export default function DeploymentButton(props) {
       workflowEventTypes.BEFORE_DEPLOY,
       workflowXml,
       filename,
-      extra,
+      extra
     );
     if (defaultBehaviour) {
       setWindowOpenDemandSelection(planqkEnabled);

@@ -60,7 +60,9 @@ export default function Toolbar(props) {
   };
 
   function handleOpenClick() {
-    const defaultBehaviour = dispatchWorkflowEvent(workflowEventTypes.REQUEST_OPEN);
+    const defaultBehaviour = dispatchWorkflowEvent(
+      workflowEventTypes.REQUEST_OPEN
+    );
     if (defaultBehaviour) {
       inputRef.current.click();
     }
