@@ -53,6 +53,9 @@ import {
   WarmStartingPatternEntry,
   RequirementsEntry,
   QrmReplacementEntry,
+  ErrorCorrectionPeriodEntry,
+  MaxCircuitDepthEntry,
+  GateErrorMitigationMethodEntry,
 } from "./QuantMEPropertyEntries";
 
 /**
@@ -491,6 +494,12 @@ export function ErrorCorrectionTaskEntries(element) {
       component: ErrorCorrectionMethodEntry,
       isEdited: isTextFieldEntryEdited,
     },
+    {
+      id: consts.ERROR_CORRECTION_PERIOD,
+      element,
+      component: ErrorCorrectionPeriodEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
   ];
 }
 
@@ -561,6 +570,35 @@ export function ScriptTaskEntries(element) {
       id: consts.REQUIREMENTS,
       element,
       component: RequirementsEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+  ];
+}
+
+export function GateErrorMitigationTaskProperties(element) {
+  return [
+    {
+      id: consts.PROVIDER,
+      element,
+      component: ProviderEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.QPU,
+      element,
+      component: QpuEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: consts.MITIGATION_METHOD,
+      element,
+      component: GateErrorMitigationMethodEntry,
+      isEdited: isSelectEntryEdited,
+    },
+    {
+      id: consts.MAX_CIRCUIT_DEPTH,
+      element,
+      component: MaxCircuitDepthEntry,
       isEdited: isTextFieldEntryEdited,
     },
   ];
