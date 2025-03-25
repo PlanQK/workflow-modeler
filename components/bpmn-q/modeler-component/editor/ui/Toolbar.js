@@ -9,12 +9,13 @@ import {
   saveQAA,
 } from "../util/IoUtilities";
 import * as editorConfig from "../config/EditorConfigManager";
-import { saveFileFormats } from "../EditorConstants";
+import { saveFileFormats, workflowEventTypes } from "../EditorConstants";
 import ConfigModal from "../config/ConfigModal";
 import { getActivePlugins, getConfigTabs } from "../plugin/PluginHandler";
 import * as consts from "../EditorConstants";
 import { uploadToGitHub } from "../../extensions/quantme/qrm-manager/git-handler";
 import ConfirmationModal from "./ConfirmationModal";
+import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
 
 /**
  * React component which displays the toolbar of the modeler
@@ -59,7 +60,10 @@ export default function Toolbar(props) {
   };
 
   function handleOpenClick() {
-    inputRef.current.click();
+    const defaultBehaviour = dispatchWorkflowEvent(workflowEventTypes.REQUEST_OPEN);
+    if (defaultBehaviour) {
+      inputRef.current.click();
+    }
   }
 
   const handleQHAnaClick = () => {

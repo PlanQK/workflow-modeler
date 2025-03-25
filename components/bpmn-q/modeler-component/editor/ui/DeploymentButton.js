@@ -7,7 +7,9 @@ import DeploymentSelectionModal from "./DeploymentSelectionModal";
 import { startDataFlowReplacementProcess } from "../../extensions/dataflow/replacement/DataFlowTransformator";
 import { startPlanqkReplacementProcess } from "../../extensions/planqk/replacement/PlanQKTransformator";
 import { checkEnabledStatus } from "../plugin/PluginHandler";
-import { pluginNames } from "../EditorConstants";
+import { pluginNames, workflowEventTypes } from "../EditorConstants";
+import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
+import * as editorConfig from "../config/EditorConfigManager";
 
 /**
  * React button for starting the deployment of the workflow.
@@ -159,10 +161,26 @@ export default function DeploymentButton(props) {
 
   async function onClick() {
     const planqkEnabled = checkEnabledStatus(pluginNames.PLANQK);
-    setWindowOpenDemandSelection(planqkEnabled);
-    console.log("PlanQK enabled: " + planqkEnabled);
-    if (!planqkEnabled) {
-      deploy((await modeler.saveXML({ format: true })).xml);
+    const workflowXml = (await modeler.saveXML({ format: true })).xml;
+    const filename = editorConfig.getFileName();
+    const extra = {
+      deployToCamunda: (xml) => deploy(xml),
+    };
+    if (planqkEnabled) {
+      extra.deployToPlanqk = (xml) => deployAsPlanQKService(xml);
+    }
+    const defaultBehaviour = dispatchWorkflowEvent(
+      workflowEventTypes.BEFORE_DEPLOY,
+      workflowXml,
+      filename,
+      extra,
+    );
+    if (defaultBehaviour) {
+      setWindowOpenDemandSelection(planqkEnabled);
+      console.log("PlanQK enabled: " + planqkEnabled);
+      if (!planqkEnabled) {
+        deploy(workflowXml);
+      }
     }
   }
 

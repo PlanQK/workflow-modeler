@@ -101,12 +101,35 @@
       );
 
       modelerComponent.addEventListener(
+        "quantum-workflow-before-save",
+        (event) => {
+          console.log("------------------------------------------------");
+          console.log(
+            "Received save request for quantum workflow " + event.detail.workflowName + ":",
+            event.detail
+          );
+          console.log("------------------------------------------------");
+        },
+        false
+      );
+
+      modelerComponent.addEventListener(
         "quantum-workflow-saved",
         (event) => {
           console.log("------------------------------------------------");
           console.log(
             "Received saved quantum workflow " + event.detail.workflowName + ":"
           );
+          console.log("------------------------------------------------");
+        },
+        false
+      );
+
+      modelerComponent.addEventListener(
+        "quantum-workflow-request-open",
+        (event) => {
+          console.log("------------------------------------------------");
+          console.log("Received request to open quantum workflow");
           console.log("------------------------------------------------");
         },
         false
@@ -134,6 +157,21 @@
             "Received transformed quantum workflow " +
               event.detail.workflowName +
               ":"
+          );
+          console.log("------------------------------------------------");
+        },
+        false
+      );
+
+      modelerComponent.addEventListener(
+        "quantum-workflow-before-deploy",
+        (event) => {
+          console.log("------------------------------------------------");
+          console.log(
+            "Received quantum workflow deployment request " +
+              event.detail.workflowName +
+              ":",
+            event.detail
           );
           console.log("------------------------------------------------");
         },

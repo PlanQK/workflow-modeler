@@ -24,9 +24,12 @@ export const transformedWorkflowHandlers = {
 
 // workflow event types dispatched by the EditorEventHandler
 export const workflowEventTypes = {
+  REQUEST_OPEN: "quantum-workflow-request-open", // Fired when the user wants to open a Workflow
   LOADED: "quantum-workflow-loaded", // New Workflow loaded in modeler
+  BEFORE_SAVE: "quantum-workflow-before-save", // Fired before a Workflow is saved
   SAVED: "quantum-workflow-saved", // Workflow saved
   TRANSFORMED: "quantum-workflow-transformed", // Workflow transformed
+  BEFORE_DEPLOY: "quantum-workflow-before-deploy", // Fired before Workflow is deployed
   DEPLOYED: "quantum-workflow-deployed", // Workflow deployed to workflow engine
 };
 
