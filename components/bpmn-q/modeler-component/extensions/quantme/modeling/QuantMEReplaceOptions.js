@@ -45,6 +45,14 @@ export var TASK = [
     },
   },
   {
+    label: "Gate-Error Mitigation Task",
+    actionName: "replace-with-gate-error-mitigation-task",
+    className: "qwm quantme-tasks-icon-gate-error",
+    target: {
+      type: consts.GATE_ERROR_MITIGATION_TASK,
+    },
+  },
+  {
     label: "Oracle Expansion Task",
     actionName: "replace-with-oracle-expansion-task",
     className: "qwm quantme-tasks-icon-oracle",

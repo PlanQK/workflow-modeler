@@ -19,6 +19,7 @@ import {
   ParametrizationObjectEntries,
   EvaluationResultObjectEntries,
   ErrorCorrectionTaskEntries,
+  GateErrorMitigationTaskProperties,
 } from "./QuantMETaskProperties";
 import { DeploymentModelProps } from "./DeploymentModelProps";
 import { getType } from "../../../../editor/util/ModellingUtilities";
@@ -149,6 +150,8 @@ export function QuantMEProps(element) {
       return CuttingResultCombinationTaskEntries(element);
     case consts.ERROR_CORRECTION_TASK:
       return ErrorCorrectionTaskEntries(element);
+    case consts.GATE_ERROR_MITIGATION_TASK:
+      return GateErrorMitigationTaskProperties(element);
 
     case consts.QUANTUM_CIRCUIT_OBJECT:
       return QuantumCircuitObjectEntries(element);

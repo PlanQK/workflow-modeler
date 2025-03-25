@@ -625,6 +625,32 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "GateErrorMitigationTask",
+      "superClass": ["bpmn:Task"],
+      "properties": [
+        {
+          "name": "provider",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "qpu",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "mitigationMethod",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "maxCircuitDepth",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ],
   "enumerations": [],

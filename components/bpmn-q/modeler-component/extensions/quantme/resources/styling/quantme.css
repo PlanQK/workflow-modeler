@@ -539,3 +539,14 @@
   background-size: contain;
   float: left;
 }
+
+.qwm .quantme-tasks-icon-gate-error:before {
+  content: "";
+  width: 25px;
+  height: 15px;
+  background-size: contain;
+  background-image: url("../icons/GateErrorMitigation_Icon.svg");
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-top: 3px;
+}
