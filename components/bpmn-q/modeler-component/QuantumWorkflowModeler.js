@@ -17,10 +17,11 @@ import Toolbar from "./editor/ui/Toolbar";
 import {
   createNewDiagram,
   loadDiagram,
+  openFile,
   setAutoSaveInterval,
 } from "./editor/util/IoUtilities";
 import NotificationHandler from "./editor/ui/notifications/NotificationHandler";
-import { createModeler, getModeler } from "./editor/ModelerHandler";
+import { createModeler } from "./editor/ModelerHandler";
 import {
   getConfigTabs,
   getPluginButtons,
@@ -42,6 +43,8 @@ import ace from "ace-builds";
  */
 export class QuantumWorkflowModeler extends HTMLElement {
   workflowModel;
+  bpmnjsModeler;
+
   constructor() {
     super();
   }
@@ -66,7 +69,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
         // open sent workflow and save its file name
         editorConfig.setFileName(event.data.name);
-        loadDiagram(xmlString, getModeler()).then();
+        loadDiagram(xmlString, self.bpmnjsModeler).then();
       }
     });
 
@@ -89,27 +92,26 @@ export class QuantumWorkflowModeler extends HTMLElement {
   setInnerHtml() {
     this.innerHTML = `
             <div style="display: flex; flex-direction: column; height: 100%;" class="qwm">
-              <div id="toolbar-container" style="flex-shrink: 0;"></div>
-              <div id="button-container" style="flex-shrink: 0;"></div>
+              <div class="toolbar-container" id="toolbar-container" style="flex-shrink: 0;"></div>
+              <div class="button-container" id="button-container" style="flex-shrink: 0;"></div>
               <hr class="qwm-toolbar-splitter" />
-              <div id="main-div" style="display: flex; flex: 1; height: 100%">
-                <div id="canvas" style="width: 100%"></div>
-                <div id="properties" style="overflow: auto; width:350px; max-height: 93.5vh; background: #f8f8f8;"></div>
-                <div id="modal-container"></div>
+              <div class="main-div" id="main-div" style="display: flex; flex: 1; height: 100%">
+                <div class="canvas" id="canvas" style="width: 100%"></div>
+                <div class="properties" id="properties" style="overflow: auto; width:350px; max-height: 93.5vh; background: #f8f8f8;"></div>
+                <div class="modal-container" id="modal-container"></div>
               </div>
-              <div id="qwm-notification-container"></div>
+              <div class="qwm-notification-container" id="qwm-notification-container"></div>
             </div>`;
 
-    let panel = document.getElementById("properties");
-    let maindiv = document.getElementById("main-div");
+    let propertiesPanel = this.querySelector(".properties");
+    let maindiv = this.querySelector(".main-div");
 
     let isResizing = false;
     let startX;
     let startWidth;
-    let width = panel.style.width;
-    let propertiesElement = document.getElementById("properties");
+    let width = propertiesPanel.style.width;
 
-    propertiesElement.addEventListener("mousemove", function (e) {
+    propertiesPanel.addEventListener("mousemove", function (e) {
       let rect = this.getBoundingClientRect();
       let x = e.clientX - rect.left;
       let y = e.clientY - rect.top;
@@ -129,9 +131,9 @@ export class QuantumWorkflowModeler extends HTMLElement {
     });
 
     // Mouse down event listener
-    panel.addEventListener("mousedown", handleMouseDown);
+    propertiesPanel.addEventListener("mousedown", handleMouseDown);
 
-    panel.addEventListener("mouseup", function () {
+    propertiesPanel.addEventListener("mouseup", function () {
       this.style.cursor = "default";
     });
 
@@ -143,7 +145,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
 
     // Mouse down handler
     function handleMouseDown(event) {
-      let rect = panel.getBoundingClientRect();
+      let rect = propertiesPanel.getBoundingClientRect();
       let x = event.clientX - rect.left;
 
       let borderSize = 5;
@@ -152,7 +154,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         isResizing = true;
       }
       startX = event.clientX;
-      startWidth = parseFloat(panel.style.width);
+      startWidth = parseFloat(propertiesPanel.style.width);
     }
     let isCollapsed = false;
     const resizeButton = document.createElement("button");
@@ -166,7 +168,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
         return;
       }
       maindiv.style.cursor = "w-resize";
-      panel.style.cursor = "w-resize";
+      propertiesPanel.style.cursor = "w-resize";
       const deltaX = event.clientX - startX;
       let newWidth = startWidth - deltaX;
 
@@ -176,26 +178,26 @@ export class QuantumWorkflowModeler extends HTMLElement {
         isCollapsed = true;
         resizeButton.className = "fa fa-angle-left resize";
       }
-      panel.style.width = `${newWidth}px`;
+      propertiesPanel.style.width = `${newWidth}px`;
     }
 
     // Mouse up handler
     function handleMouseUp() {
-      panel.style.cursor = "default";
+      propertiesPanel.style.cursor = "default";
       isResizing = false;
     }
 
     resizeButton.addEventListener("click", function () {
-      let offsetWidth = panel.offsetWidth;
+      let offsetWidth = propertiesPanel.offsetWidth;
       if (isCollapsed) {
-        panel.style.display = "block";
-        panel.style.width = offsetWidth;
-        if (panel.offsetWidth < parseInt(width, 10)) {
-          panel.style.width = width;
+        propertiesPanel.style.display = "block";
+        propertiesPanel.style.width = offsetWidth;
+        if (propertiesPanel.offsetWidth < parseInt(width, 10)) {
+          propertiesPanel.style.width = width;
         }
         resizeButton.className = "fa fa-angle-right resize";
       } else {
-        panel.style.display = "none";
+        propertiesPanel.style.display = "none";
         resizeButton.className = "fa fa-angle-left resize";
       }
 
@@ -223,7 +225,7 @@ export class QuantumWorkflowModeler extends HTMLElement {
       let startTop = parseInt(editorElement.css("top"));
       let startHeight = editor_wrap.height();
 
-      $(document).mousemove(function (e) {
+      $(document).on("mousemove", function (e) {
         if (!dragging) return;
 
         let actualY = e.pageY;
@@ -251,10 +253,10 @@ export class QuantumWorkflowModeler extends HTMLElement {
       });
     });
 
-    $(document).mouseup(function () {
+    $(document).on("mouseup", function () {
       if (dragging) {
         dragging = false;
-        $(document).unbind("mousemove");
+        $(document).off("mousemove");
       }
     });
   }
@@ -270,18 +272,18 @@ export class QuantumWorkflowModeler extends HTMLElement {
     initEditorEventHandler(this);
 
     // get and reset the container in which the bpmn-js modeler and its properties panel should be rendered
-    const bpmnContainer = document.getElementById("canvas");
-    const propertiesPanelContainer = document.getElementById("properties");
+    const bpmnContainer = this.querySelector(".canvas");
+    const propertiesPanelContainer = this.querySelector(".properties");
     bpmnContainer.innerHTML = "";
     propertiesPanelContainer.innerHTML = "";
 
     // create a new bpmn-js modeler instance with all additional modules and extensions defined by the plugins
-    const modeler = createModeler(bpmnContainer, propertiesPanelContainer);
+    this.bpmnjsModeler = createModeler(bpmnContainer, propertiesPanelContainer);
     console.log("Created Modeler");
 
     // set up the notification handler and render it into the DOM
-    const notificationsContainer = document.getElementById(
-      "qwm-notification-container"
+    const notificationsContainer = this.querySelector(
+      ".qwm-notification-container"
     );
     const handler = NotificationHandler.getInstance();
     const notificationComponent = handler.createNotificationsComponent(
@@ -297,46 +299,44 @@ export class QuantumWorkflowModeler extends HTMLElement {
     const transformationButtons = getTransformationButtons();
 
     // integrate the React ButtonToolbar into its DOM container
-    const toolbarRoot = createRoot(
-      document.getElementById("toolbar-container")
-    );
+    const toolbarRoot = createRoot(this.querySelector(".toolbar-container"));
     toolbarRoot.render(
       <Toolbar
-        modeler={modeler}
+        modeler={this.bpmnjsModeler}
         pluginButtons={getPluginButtons()}
         transformButtons={transformationButtons}
       />
     );
-    const root = createRoot(document.getElementById("button-container"));
+    const root = createRoot(this.querySelector(".button-container"));
     root.render(
       <ButtonToolbar
-        modeler={modeler}
+        modeler={this.bpmnjsModeler}
         pluginButtons={getPluginButtons()}
         transformButtons={transformationButtons}
       />
     );
 
+    const self = this;
+
     // load initial workflow
     this.workflowModel =
       this.workflowModel || getPluginConfig("editor").defaultWorkflow;
-    getModeler().on("commandStack.changed", function () {
-      getModeler()
-        .saveXML({ format: true })
-        .then(function (result) {
-          modeler.xml = result;
-        });
+    this.bpmnjsModeler.on("commandStack.changed", function () {
+      self.bpmnjsModeler.saveXML({ format: true }).then(function (result) {
+        self.bpmnjsModeler.xml = result;
+      });
     });
-    if (!modeler.config) {
-      modeler.config = {};
+    if (!this.bpmnjsModeler.config) {
+      this.bpmnjsModeler.config = {};
       let configTabs = getConfigTabs();
       for (let tab of configTabs) {
         tab.configTab.prototype.config();
       }
     }
     if (this.workflowModel) {
-      loadDiagram(this.workflowModel, getModeler()).then();
+      loadDiagram(this.workflowModel, this.bpmnjsModeler).then();
     } else {
-      createNewDiagram(modeler);
+      createNewDiagram(this.bpmnjsModeler);
     }
   }
 
@@ -347,10 +347,22 @@ export class QuantumWorkflowModeler extends HTMLElement {
    * @return {Promise<*|undefined>}
    */
   async loadWorkflowDiagram(xmlDiagram) {
-    const modeler = getModeler();
+    const modeler = this.bpmnjsModeler;
 
     if (modeler) {
-      return await loadDiagram(xmlDiagram, getModeler());
+      return await loadDiagram(xmlDiagram, this.bpmnjsModeler);
+    } else {
+      console.log(
+        "Loading of Workflow via external interface not possible until modeler is loaded."
+      );
+    }
+  }
+
+  async loadWorkflowFile(file) {
+    const modeler = this.bpmnjsModeler;
+
+    if (modeler) {
+      await openFile(file);
     } else {
       console.log(
         "Loading of Workflow via external interface not possible until modeler is loaded."
