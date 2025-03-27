@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 import { openFile } from "../util/IoUtilities";
+import { workflowEventTypes } from "../EditorConstants";
+import { dispatchWorkflowEvent } from "../events/EditorEventHandler";
 
 /**
  * React button which starts loading a saved workflow from the users local file system
@@ -11,7 +13,12 @@ export default function OpenButton() {
   const inputRef = useRef(null);
 
   function handleClick() {
-    inputRef.current.click();
+    const defaultBehaviour = dispatchWorkflowEvent(
+      workflowEventTypes.REQUEST_OPEN
+    );
+    if (defaultBehaviour) {
+      inputRef.current.click();
+    }
   }
 
   function handleChange(event) {

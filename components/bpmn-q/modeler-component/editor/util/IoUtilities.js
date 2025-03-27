@@ -28,17 +28,31 @@ let FormData = require("form-data");
  *
  * @param xml The bpmn diagram as xml diagram.
  * @param fileName The name of the file.
+ * @param autoSave Set this to true if save is performed as an automatic save.
  * @returns {Promise<void>}
  */
 export async function saveXmlAsLocalFile(
   xml,
-  fileName = editorConfig.getFileName()
+  fileName = editorConfig.getFileName(),
+  autoSave = false
 ) {
   let suggestedName = fileName;
   if (suggestedName.includes(saveFileFormats.BPMN)) {
     suggestedName = suggestedName.split(saveFileFormats.BPMN)[0];
   }
   const bpmnFile = await new File([xml], suggestedName, { type: "text/xml" });
+
+  const continueSave = dispatchWorkflowEvent(
+    workflowEventTypes.BEFORE_SAVE,
+    xml,
+    editorConfig.getFileName(),
+    { fileType: "xml", autoSave: autoSave }
+  );
+
+  if (!continueSave) {
+    // event was cancelled, abort standard save behaviour
+    return;
+  }
 
   const link = document.createElement("a");
   link.download = fileName + saveFileFormats.BPMN;
@@ -71,8 +85,26 @@ export async function saveModelerAsLocalFile(
   }
 
   if (fileFormat === saveFileFormats.BPMN) {
+    const continueSave = dispatchWorkflowEvent(
+      workflowEventTypes.BEFORE_SAVE,
+      xml,
+      fileName,
+      { fileType: "bpmn", autoSave: false }
+    );
+
+    if (!continueSave) {
+      // event was cancelled, abort standard save behaviour
+      return;
+    }
+
     await openFileDialog(modeler, xml, fileName, saveFileFormats.BPMN);
     modeler.oldXml = xml;
+
+    dispatchWorkflowEvent(
+      workflowEventTypes.SAVED,
+      xml,
+      editorConfig.getFileName()
+    );
   }
 
   if (
@@ -88,11 +120,13 @@ export async function saveModelerAsLocalFile(
  * @param modeler modeler to extract the xml
  * @param views the views generated during transformation
  * @param zipFileName the name of the zip
+ * @param autoSave Set this to true if save is performed as an automatic save.
  */
 export async function saveAllFilesAsZip(
   modeler,
   views,
-  zipFileName = editorConfig.getFileName()
+  zipFileName = editorConfig.getFileName(),
+  autoSave = false
 ) {
   let suggestedName = zipFileName;
   if (suggestedName.includes(saveFileFormats.BPMN)) {
@@ -123,6 +157,19 @@ export async function saveAllFilesAsZip(
 
   // Generate the zip blob
   const zipBlob = await zip.generateAsync({ type: "blob" });
+
+  const continueSave = dispatchWorkflowEvent(
+    workflowEventTypes.BEFORE_SAVE,
+    xml,
+    editorConfig.getFileName(),
+    { fileType: "zip", blob: zipBlob, autoSave: autoSave }
+  );
+
+  if (!continueSave) {
+    // event was cancelled, abort standard save behaviour
+    return;
+  }
+
   try {
     const handle = await window.showSaveFilePicker({
       suggestedName: `${suggestedName}.zip`,
@@ -572,9 +619,9 @@ export function saveFile() {
           .getFileName()
           .replace(saveFileFormats.BPMN, "")}_autosave_${timestamp}`;
         if (views !== undefined) {
-          saveQAA(xml, views, filename);
+          saveQAA(xml, views, filename, true);
         } else {
-          saveXmlAsLocalFile(xml, filename);
+          saveXmlAsLocalFile(xml, filename, true);
         }
       }
     }
@@ -586,11 +633,13 @@ export function saveFile() {
  * @param modeler modeler to extract the xml
  * @param views the views generated during transformation
  * @param qaaFileName the name of the QAA
+ * @param autoSave set this to true if save is performed as an automatic save
  */
 export async function saveQAA(
   modeler,
   views,
-  qaaFileName = editorConfig.getFileName()
+  qaaFileName = editorConfig.getFileName(),
+  autoSave = false
 ) {
   let startTimeStepH = Date.now();
   console.log("Storing QAA for workflow with name: ", qaaFileName);
@@ -665,6 +714,18 @@ export async function saveQAA(
     type: "application/zip",
   });
   console.log("Successfully created Zip file comprising QAA: ", zipFile);
+
+  const continueSave = dispatchWorkflowEvent(
+    workflowEventTypes.BEFORE_SAVE,
+    xml,
+    editorConfig.getFileName(),
+    { fileType: "qaa", blob: zipBlob, autoSave: autoSave }
+  );
+
+  if (!continueSave) {
+    // event was cancelled, abort standard save behaviour
+    return;
+  }
 
   // Create a link element to trigger the download
   const link = document.createElement("a");
