@@ -30,6 +30,7 @@ export const CIRCUIT_CUTTING_TASK = "quantme:CircuitCuttingTask";
 export const CUTTING_RESULT_COMBINATION_TASK =
   "quantme:CuttingResultCombinationTask";
 export const ERROR_CORRECTION_TASK = "quantme:ErrorCorrectionTask";
+export const GATE_ERROR_MITIGATION_TASK = "quantme:GateErrorMitigationTask";
 
 export const QUANTUM_CIRCUIT_OBJECT = "quantme:QuantumCircuitObject";
 export const RESULT_OBJECT = "quantme:ResultObject";
@@ -81,6 +82,8 @@ export const AUTOMATED_SELECTION = "automatedSelection";
 export const ERROR_CORRECTION_METHOD = "errorCorrectionMethod";
 export const WARM_STARTING_PATTERN = "warmStartingPattern";
 export const QRM_REPLACEMENT = "replacementSubprocess";
+export const ERROR_CORRECTION_PERIOD = "errorCorrectionPeriod";
+export const MAX_CIRCUIT_DEPTH = "maxCircuitDepth";
 
 export const EXECUTION_RESULT = "executionResult";
 export const EVALUATION_RESULT = "evaluationResult";
@@ -138,6 +141,8 @@ export const QUANTME_ATTRIBUTES = [
   MAX_NUMBER_OF_CUTS,
   MAXIMUM_NUM_SUBCIRCUITS,
   WARM_STARTING_PATTERN,
+  ERROR_CORRECTION_METHOD,
+  ERROR_CORRECTION_PERIOD,
 ];
 
 export const QUANTME_TASKS = [
@@ -155,6 +160,7 @@ export const QUANTME_TASKS = [
   CIRCUIT_CUTTING_TASK,
   CUTTING_RESULT_COMBINATION_TASK,
   ERROR_CORRECTION_TASK,
+  GATE_ERROR_MITIGATION_TASK,
 ];
 
 export const QUANTME_DATA_OBJECTS = [

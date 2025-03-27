@@ -1653,6 +1653,37 @@ export function ErrorCorrectionMethodEntry({ element }) {
   );
 }
 
+export function ErrorCorrectionPeriodEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.errorCorrectionPeriod;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      errorCorrectionPeriod: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.ERROR_CORRECTION_PERIOD}
+      element={element}
+      label={translate("Error Correction Period")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
 export function WarmStartingPatternEntry({ element }) {
   const modeling = useService("modeling");
   const translate =
@@ -1761,6 +1792,68 @@ export function QrmReplacementEntry({ element }) {
     <CheckboxEntry
       id={consts.QRM_REPLACEMENT}
       label={translate("QRM Replacement")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
+export function MaxCircuitDepthEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.maxCircuitDepth;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      maxCircuitDepth: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.MAX_CIRCUIT_DEPTH}
+      element={element}
+      label={translate("Maximum Circuit Depth")}
+      getValue={getValue}
+      setValue={setValue}
+      debounce={debounce}
+    />
+  );
+}
+
+export function GateErrorMitigationMethodEntry({ element }) {
+  const modeling = useService("modeling");
+  const translate =
+    useService("translate") ||
+    function (str) {
+      return str;
+    };
+  const debounce = useService("debounceInput");
+
+  const getValue = function () {
+    return element.businessObject.mitigationMethod;
+  };
+
+  const setValue = function (newValue) {
+    return modeling.updateProperties(element, {
+      mitigationMethod: newValue,
+    });
+  };
+
+  return (
+    <TextFieldEntry
+      id={consts.MITIGATION_METHOD}
+      element={element}
+      label={translate("Mitigation Method")}
       getValue={getValue}
       setValue={setValue}
       debounce={debounce}
