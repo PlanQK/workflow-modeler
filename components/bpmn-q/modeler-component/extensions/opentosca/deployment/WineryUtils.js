@@ -393,7 +393,7 @@ export async function createServiceTemplateWithNodeAndArtifact(
   artifactName,
   artifactTypeQName
 ) {
-  const serviceTemplateAddress = await createServiceTemplate(name);
+  const serviceTemplateAddress = await createServiceTemplate(name, "http://quantil.org/quantme/push");
   await addNodeWithArtifactToServiceTemplate(
     serviceTemplateAddress,
     nodeTypeQName,
