@@ -100,9 +100,8 @@ export default function ArtifactUploadModal({
       const artifactTemplateInfo = await getArtifactTemplateInfo(
         artifactTemplateAddress
       );
-      const artifactTemplateQName =
-        artifactTemplateInfo
-          .serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].type;
+      const artifactTemplateQName = "{" + artifactTemplateInfo.targetNamespace + "}" + artifactTemplateInfo.serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].id;
+          // artifactTemplateInfo.serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].type;
       const nodeTypeQName = getNodeTypeQName(selectedOption);
       const serviceTemplateName = `${namePrefix}ServiceTemplate-${element.id}`;
       const doesExist = await serviceTemplateExists(serviceTemplateName);
