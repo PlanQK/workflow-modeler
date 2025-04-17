@@ -288,7 +288,8 @@ export async function addNodeWithArtifactToServiceTemplate(
   name,
   artifactTemplateQName,
   artifactName,
-  artifactTypeQName
+  artifactTypeQName,
+  requirementTypes
 ) {
   const nodeTemplate = {
     documentation: [],
@@ -321,7 +322,7 @@ export async function addNodeWithArtifactToServiceTemplate(
         x: 1245,
         y: 350,
         capabilities: [],
-        requirements: [],
+        requirements: requirementTypes,
         deploymentArtifacts: [
           {
             documentation: [],
@@ -391,7 +392,8 @@ export async function createServiceTemplateWithNodeAndArtifact(
   nodeName,
   artifactTemplateQName,
   artifactName,
-  artifactTypeQName
+  artifactTypeQName,
+  requirementTypes
 ) {
   const serviceTemplateAddress = await createServiceTemplate(name, "http://quantil.org/quantme/push");
   await addNodeWithArtifactToServiceTemplate(
@@ -400,7 +402,8 @@ export async function createServiceTemplateWithNodeAndArtifact(
     nodeName,
     artifactTemplateQName,
     artifactName,
-    artifactTypeQName
+    artifactTypeQName,
+    requirementTypes
   );
   return serviceTemplateAddress;
 }

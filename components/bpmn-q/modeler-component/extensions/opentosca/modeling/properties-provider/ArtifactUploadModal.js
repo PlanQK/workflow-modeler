@@ -54,6 +54,7 @@ export default function ArtifactUploadModal({
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOptionName, setSelectedOptionName] = useState("");
   const [artifactTypes, setArtifactTypes] = useState([]);
+  const [requirementTypes, setRequirementTypes] = useState([]);
   const [acceptTypes, setAcceptTypes] = useState("");
 
   async function updateArtifactSelect() {
@@ -124,7 +125,8 @@ export default function ArtifactUploadModal({
           `${namePrefix}Node-${element.id}`,
           artifactTemplateQName,
           `${namePrefix}Artifact-${element.id}`,
-          selectedOption
+          selectedOption,
+          requirementTypes
         );
       }
       await insertTopNodeTag(serviceTemplateAddress, nodeTypeQName);
@@ -191,8 +193,11 @@ export default function ArtifactUploadModal({
     setSelectedOptionName(artifactTypes.find((x) => x.qName === value).name);
     if (value.includes("WAR")) {
       setAcceptTypes(allowedFileTypes.war);
+      setRequirementTypes([]);
     } else if (value.includes("PythonArchive")) {
       setAcceptTypes(allowedFileTypes.zip);
+      const pythonReq = {name: "canHostPythonApp", id: "req1", type:"{https://ust-quantil.github.io/requirementtypes}ReqCanInstallQiskit"};
+      setRequirementTypes([pythonReq]);
     }
   };
 
