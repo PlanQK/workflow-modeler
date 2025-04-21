@@ -110,7 +110,7 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
 
     const methodInputParameter = moddle.create("camunda:InputParameter", {
       name: "method",
-      value: value,
+      value: value.toUpperCase(),
     });
     const urlInputParameter = moddle.create("camunda:InputParameter", {
       name: "url",
@@ -125,8 +125,7 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
     let scriptValue = constructScript(endpointParameters);
     const script = moddle.create("camunda:Script", {
       scriptFormat: "Groovy",
-      value: scriptValue,
-      resource: "Inline",
+      value: scriptValue
     });
 
     const payloadInputParameter = moddle.create("camunda:InputParameter", {
@@ -317,16 +316,15 @@ function constructCamundaOutputParameters(parameters) {
         "resp = new groovy.json.JsonSlurper().parseText(resp);\n" +
         "def " +
         param +
-        " = resp.get(" +
+        " = resp.get('" +
         param +
-        ");\n" +
+        "');\n" +
         "println(" +
         param +
         ");\n" +
         "return " +
         param +
         ";",
-      resource: "Inline",
     });
 
     const outputParameter = moddle.create("camunda:OutputParameter", {
