@@ -125,7 +125,7 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
     let scriptValue = constructScript(endpointParameters);
     const script = moddle.create("camunda:Script", {
       scriptFormat: "Groovy",
-      value: scriptValue
+      value: scriptValue,
     });
 
     const payloadInputParameter = moddle.create("camunda:InputParameter", {

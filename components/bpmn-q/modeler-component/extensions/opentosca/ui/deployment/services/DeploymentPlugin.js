@@ -527,7 +527,10 @@ export default class DeploymentPlugin extends PureComponent {
               .split("/")
               .filter((x) => x.length > 1)
               .pop();
-            csar.url = getWineryEndpoint() + locationOfCompletedCSAR.split("/winery").pop() + "?csar";
+            csar.url =
+              getWineryEndpoint() +
+              locationOfCompletedCSAR.split("/winery").pop() +
+              "?csar";
             csar.csarName = nameOfCompletedCSAR + ".csar";
             csar.incomplete = false;
             console.log("Completed CSAR. New name: ", csar.csarName);

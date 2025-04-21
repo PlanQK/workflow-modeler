@@ -398,7 +398,10 @@ export async function createServiceTemplateWithNodeAndArtifact(
   requirementTypes,
   kvProperties
 ) {
-  const serviceTemplateAddress = await createServiceTemplate(name, "http://quantil.org/quantme/push");
+  const serviceTemplateAddress = await createServiceTemplate(
+    name,
+    "http://quantil.org/quantme/push"
+  );
   await addNodeWithArtifactToServiceTemplate(
     serviceTemplateAddress,
     nodeTypeQName,
@@ -462,9 +465,10 @@ const artifactTypeKVMapping = new Map([
   [
     "Flask",
     {
-      StartupCommand: "export FLASK_APP=app.py &amp;&amp; export FLASK_ENV=development &amp;&amp; export FLASK_DEBUG=0 &amp;&amp; python3 -m flask run --host=0.0.0.0",
+      StartupCommand:
+        "export FLASK_APP=app.py &amp;&amp; export FLASK_ENV=development &amp;&amp; export FLASK_DEBUG=0 &amp;&amp; python3 -m flask run --host=0.0.0.0",
       Name: "app",
-    }
+    },
   ],
 ]);
 
@@ -472,9 +476,8 @@ export function getNodeTypeQName(artifactTypeQName) {
   return nodeTypeQNameMapping.get(artifactTypeQName);
 }
 
-
 export function getArtifactTypeKVMapping(artifactType) {
-  console.log("retrieving kv mapping for type", artifactType)
+  console.log("retrieving kv mapping for type", artifactType);
   return artifactTypeKVMapping.get(artifactType);
 }
 

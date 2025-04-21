@@ -104,11 +104,20 @@ export default function ArtifactUploadModal({
       const artifactTemplateInfo = await getArtifactTemplateInfo(
         artifactTemplateAddress
       );
-      const artifactTemplateQName = "{" + artifactTemplateInfo.targetNamespace + "}" + artifactTemplateInfo.serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].id;
-          // artifactTemplateInfo.serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].type;
+      const artifactTemplateQName =
+        "{" +
+        artifactTemplateInfo.targetNamespace +
+        "}" +
+        artifactTemplateInfo
+          .serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].id;
+      // artifactTemplateInfo.serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].type;
       let nodeTypeQName = getNodeTypeQName(selectedOption);
-      if (isFlask && nodeTypeQName === "{http://opentosca.org/nodetypes}PythonApp_3-w1") {
-        nodeTypeQName = "{https://ust-quantil.github.io/nodetypes}QuokkaPythonApp_latest-w1-wip1";
+      if (
+        isFlask &&
+        nodeTypeQName === "{http://opentosca.org/nodetypes}PythonApp_3-w1"
+      ) {
+        nodeTypeQName =
+          "{https://ust-quantil.github.io/nodetypes}QuokkaPythonApp_latest-w1-wip1";
       }
       console.log("nodetypeqname", nodeTypeQName);
       console.log("kvproperties", kvProperties);
@@ -208,7 +217,11 @@ export default function ArtifactUploadModal({
       setKvProperties(getArtifactTypeKVMapping("WAR"));
     } else if (value.includes("PythonArchive")) {
       setAcceptTypes(allowedFileTypes.zip);
-      const pythonReq = {name: "canHostPythonApp", id: "req1", type:"{https://ust-quantil.github.io/requirementtypes}ReqCanInstallQiskit"};
+      const pythonReq = {
+        name: "canHostPythonApp",
+        id: "req1",
+        type: "{https://ust-quantil.github.io/requirementtypes}ReqCanInstallQiskit",
+      };
       setRequirementTypes([pythonReq]);
       setKvProperties(getArtifactTypeKVMapping("Python"));
     }
@@ -221,14 +234,14 @@ export default function ArtifactUploadModal({
   const handleIsFlaskCheckboxChange = () => {
     setIsFlask(!isFlask);
     let artifactType = "";
-    if (isFlask) {  // For some reason this works the other way round as expected
+    if (isFlask) {
+      // For some reason this works the other way round as expected
       artifactType = "Python";
     } else {
       artifactType = "Flask";
     }
     console.log("artifacttype", artifactType);
     setKvProperties(getArtifactTypeKVMapping(artifactType));
-
   };
 
   if (artifactTypes.length === 0) {
@@ -286,16 +299,17 @@ export default function ArtifactUploadModal({
                 </div>
 
                 {isOptionSelected && isPythonArchive && (
-                    <div className="set-flask">
-                      <div>
-                        <label htmlFor="flaskCheckbox">Run as Flask App</label>
-                        <input type="checkbox"
-                               id="flaskCheckbox"
-                               onChange={handleIsFlaskCheckboxChange}
-                               checked={isFlask}/>
-
-                      </div>
+                  <div className="set-flask">
+                    <div>
+                      <label htmlFor="flaskCheckbox">Run as Flask App</label>
+                      <input
+                        type="checkbox"
+                        id="flaskCheckbox"
+                        onChange={handleIsFlaskCheckboxChange}
+                        checked={isFlask}
+                      />
                     </div>
+                  </div>
                 )}
                 {isOptionSelected && (
                   <div className="upload-file-upload">
