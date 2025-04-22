@@ -299,22 +299,39 @@ function constructCamundaOutputParameters(parameters) {
   let outputParameters = [];
   for (let param of parameters) {
     let moddle = getModeler().get("moddle");
-    const script = moddle.create("camunda:Script", {
-      scriptFormat: "Groovy",
-      value:
+    let scriptContent;
+    if (param === "visualization") {
+      scriptContent =
+        "import org.camunda.bpm.engine.variable.value.FileValue\n" +
+        "import org.camunda.bpm.engine.variable.Variables\n" +
+        "import groovy.json.JsonSlurper\n" +
+        'def slurper = new JsonSlurper().parseText(connector.getVariable("response"))\n' +
+        'String filename = "circuit.png"\n' +
+        "FileValue typedFileValue = Variables.fileValue(filename)\n" +
+        "  .file(slurper.visualization.decodeBase64())\n" +
+        '  .mimeType("image/png")\n' +
+        "  .create()\n" +
+        "return typedFileValue";
+    } else {
+      scriptContent =
         'def resp = connector.getVariable("response");\n' +
         "resp = new groovy.json.JsonSlurper().parseText(resp);\n" +
         "def " +
         param +
-        " = resp.get('" +
+        ' = resp.get("' +
         param +
-        "');\n" +
+        '");\n' +
         "println(" +
         param +
         ");\n" +
         "return " +
         param +
-        ";",
+        ";";
+    }
+
+    const script = moddle.create("camunda:Script", {
+      scriptFormat: "Groovy",
+      value: scriptContent,
     });
 
     const outputParameter = moddle.create("camunda:OutputParameter", {
