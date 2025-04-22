@@ -93,15 +93,21 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
 
   const setMethodValue = function (value) {
     const moddle = getModeler().get("moddle");
-    const entry = moddle.create(
-      "camunda:Entry",
-      { key: "Accept", value: "application/json" },
-      { key: "Content-Type", value: "application/json" }
-    );
+    const acceptEntry = moddle.create("camunda:Entry", {
+      key: "Accept",
+      value: "application/json",
+    });
+    const contentEntry = moddle.create("camunda:Entry", {
+      key: "Content-Type",
+      value: "application/json",
+    });
 
-    const map = moddle.create("camunda:Map", { entries: [entry] });
+    const map = moddle.create("camunda:Map", {
+      entries: [acceptEntry, contentEntry],
+    });
 
-    entry.$parent = map;
+    acceptEntry.$parent = map;
+    contentEntry.$parent = map;
 
     const headersInputParameter = moddle.create("camunda:InputParameter", {
       definition: map,
