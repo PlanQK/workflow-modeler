@@ -101,6 +101,13 @@
   text-overflow: ellipsis;
 }
 
+.set-flask {
+  flex: 1;
+  max-width: 282px;
+  overflow: clip;
+  text-overflow: ellipsis;
+}
+
 .upload-file-upload-button {
   overflow: hidden;
   text-overflow: ellipsis;

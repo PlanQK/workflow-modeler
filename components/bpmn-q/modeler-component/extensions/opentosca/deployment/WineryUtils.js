@@ -208,7 +208,9 @@ export async function addNodeWithArtifactToServiceTemplateByName(
   name,
   artifactTemplateQName,
   artifactName,
-  artifactTypeQName
+  artifactTypeQName,
+  requirementTypes,
+  kvProperties
 ) {
   const serviceTemplateAddress =
     encodeURIComponent(encodeURIComponent(QUANTME_NAMESPACE_PUSH)) +
@@ -221,7 +223,9 @@ export async function addNodeWithArtifactToServiceTemplateByName(
     name,
     artifactTemplateQName,
     artifactName,
-    artifactTypeQName
+    artifactTypeQName,
+    requirementTypes,
+    kvProperties
   );
   return serviceTemplateAddress;
 }
@@ -288,7 +292,9 @@ export async function addNodeWithArtifactToServiceTemplate(
   name,
   artifactTemplateQName,
   artifactName,
-  artifactTypeQName
+  artifactTypeQName,
+  requirementTypes,
+  kvProperties
 ) {
   const nodeTemplate = {
     documentation: [],
@@ -305,10 +311,7 @@ export async function addNodeWithArtifactToServiceTemplate(
         },
         properties: {
           propertyType: "KV",
-          kvproperties: {
-            Port: "",
-            Name: "",
-          },
+          kvproperties: kvProperties,
           elementName: "properties",
           namespace:
             "http://opentosca.org/nodetypes/propertiesdefinition/winery",
@@ -321,7 +324,7 @@ export async function addNodeWithArtifactToServiceTemplate(
         x: 1245,
         y: 350,
         capabilities: [],
-        requirements: [],
+        requirements: requirementTypes,
         deploymentArtifacts: [
           {
             documentation: [],
@@ -391,16 +394,23 @@ export async function createServiceTemplateWithNodeAndArtifact(
   nodeName,
   artifactTemplateQName,
   artifactName,
-  artifactTypeQName
+  artifactTypeQName,
+  requirementTypes,
+  kvProperties
 ) {
-  const serviceTemplateAddress = await createServiceTemplate(name);
+  const serviceTemplateAddress = await createServiceTemplate(
+    name,
+    "http://quantil.org/quantme/push"
+  );
   await addNodeWithArtifactToServiceTemplate(
     serviceTemplateAddress,
     nodeTypeQName,
     nodeName,
     artifactTemplateQName,
     artifactName,
-    artifactTypeQName
+    artifactTypeQName,
+    requirementTypes,
+    kvProperties
   );
   return serviceTemplateAddress;
 }
@@ -436,8 +446,39 @@ const nodeTypeQNameMapping = new Map([
     "{http://opentosca.org/nodetypes}PythonApp_3-w1",
   ],
 ]);
+
+const artifactTypeKVMapping = new Map([
+  [
+    "WAR",
+    {
+      Port: "",
+      Name: "",
+    },
+  ],
+  [
+    "Python",
+    {
+      Port: "",
+      Name: "",
+    },
+  ],
+  [
+    "Flask",
+    {
+      StartupCommand:
+        "export FLASK_APP=app.py && export FLASK_ENV=development && export FLASK_DEBUG=0 && python3 -m flask run --host=0.0.0.0",
+      Name: "app",
+    },
+  ],
+]);
+
 export function getNodeTypeQName(artifactTypeQName) {
   return nodeTypeQNameMapping.get(artifactTypeQName);
+}
+
+export function getArtifactTypeKVMapping(artifactType) {
+  console.log("retrieving kv mapping for type", artifactType);
+  return artifactTypeKVMapping.get(artifactType);
 }
 
 export async function loadTopology(deploymentModelUrl) {

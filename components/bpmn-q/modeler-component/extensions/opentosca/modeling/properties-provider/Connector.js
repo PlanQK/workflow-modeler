@@ -93,15 +93,21 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
 
   const setMethodValue = function (value) {
     const moddle = getModeler().get("moddle");
-    const entry = moddle.create(
-      "camunda:Entry",
-      { key: "Accept", value: "application/json" },
-      { key: "Content-Type", value: "application/json" }
-    );
+    const acceptEntry = moddle.create("camunda:Entry", {
+      key: "Accept",
+      value: "application/json",
+    });
+    const contentEntry = moddle.create("camunda:Entry", {
+      key: "Content-Type",
+      value: "application/json",
+    });
 
-    const map = moddle.create("camunda:Map", { entries: [entry] });
+    const map = moddle.create("camunda:Map", {
+      entries: [acceptEntry, contentEntry],
+    });
 
-    entry.$parent = map;
+    acceptEntry.$parent = map;
+    contentEntry.$parent = map;
 
     const headersInputParameter = moddle.create("camunda:InputParameter", {
       definition: map,
@@ -110,7 +116,7 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
 
     const methodInputParameter = moddle.create("camunda:InputParameter", {
       name: "method",
-      value: value,
+      value: value.toUpperCase(),
     });
     const urlInputParameter = moddle.create("camunda:InputParameter", {
       name: "url",
@@ -126,7 +132,6 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
     const script = moddle.create("camunda:Script", {
       scriptFormat: "Groovy",
       value: scriptValue,
-      resource: "Inline",
     });
 
     const payloadInputParameter = moddle.create("camunda:InputParameter", {
@@ -140,8 +145,11 @@ export function Connector({ element, translate, filteredUrls, methodUrlList }) {
     inputParameters.push(payloadInputParameter);
 
     let outputParameters = determineOutputParameters(
-      element.businessObject.yaml
+      element.businessObject.yaml,
+      element.businessObject.connectorUrl,
+      value
     );
+
     let camundaOutputParameters =
       constructCamundaOutputParameters(outputParameters);
 
@@ -245,88 +253,85 @@ function determineInputParameters(yamlData, schemePath, method) {
   }
 }
 
-function determineOutputParameters(yamlData) {
-  // Parse the YAML data
+function determineOutputParameters(yamlData, schemePath, method) {
   const data = yaml.load(yamlData);
-
-  // Initialize an object to store the input parameters
   let outputParameters = [];
 
-  // Extract the request bodies and their parameters
-  for (const methods of Object.values(data.paths)) {
-    console.log(data.paths);
-    for (const details of Object.values(methods)) {
-      console.log(details);
-      if (details.responses) {
-        const response = details.responses;
-        // Access the properties of the schema
-        // Access the schema referenced by "200"
-        const statusCode = "200";
-        let responseStatusCode = statusCode;
+  const methods = data.paths[schemePath];
+  if (!methods || !methods[method]) return [];
 
-        if (response[statusCode] === undefined) {
-          // If the response for the specified status code is not defined
-          // Find another response with a status code starting with 2
-          responseStatusCode = Object.keys(response).find((code) =>
-            code.startsWith("2")
-          );
-          console.log(responseStatusCode);
-        }
+  const details = methods[method];
 
-        if (responseStatusCode !== undefined) {
-          let schema =
-            response[responseStatusCode].content["application/json"].schema;
-          if (schema.$ref) {
-            const schemaPath = schema.$ref
-              .replace("#/", "")
-              .replaceAll("/", ".");
-            schema = getObjectByPath2(data, schemaPath);
-          }
-          // Function to access an object property by path
-          // eslint-disable-next-line no-inner-declarations
-          function getObjectByPath2(obj, path) {
-            const parts = path.split(".");
-            let currentObj = obj;
-            for (const part of parts) {
-              if (!currentObj || !currentObj.hasOwnProperty(part)) {
-                return undefined;
-              }
-              currentObj = currentObj[part];
-            }
-            return currentObj;
-          }
-          // Access the properties of the schema
-          outputParameters = Object.keys(schema.properties);
-        }
-      } else {
-        return [];
+  if (details.responses) {
+    const response = details.responses;
+    let responseStatusCode = "200";
+
+    if (!response[responseStatusCode]) {
+      responseStatusCode = Object.keys(response).find((code) =>
+        code.startsWith("2")
+      );
+    }
+
+    if (responseStatusCode && response[responseStatusCode]) {
+      let schema =
+        response[responseStatusCode].content?.["application/json"]?.schema;
+      if (!schema) return [];
+
+      if (schema.$ref) {
+        const schemaPath = schema.$ref.replace("#/", "").replaceAll("/", ".");
+        schema = getObjectByPath(yaml.load(yamlData), schemaPath);
+      }
+
+      if (schema?.properties) {
+        outputParameters = Object.keys(schema.properties);
       }
     }
   }
+
   return outputParameters;
+
+  function getObjectByPath(obj, path) {
+    return path.split(".").reduce((o, key) => (o ? o[key] : undefined), obj);
+  }
 }
 
 function constructCamundaOutputParameters(parameters) {
   let outputParameters = [];
   for (let param of parameters) {
     let moddle = getModeler().get("moddle");
-    const script = moddle.create("camunda:Script", {
-      scriptFormat: "Groovy",
-      value:
+    let scriptContent;
+    if (param === "visualization") {
+      scriptContent =
+        "import org.camunda.bpm.engine.variable.value.FileValue\n" +
+        "import org.camunda.bpm.engine.variable.Variables\n" +
+        "import groovy.json.JsonSlurper\n" +
+        'def slurper = new JsonSlurper().parseText(connector.getVariable("response"))\n' +
+        'String filename = "circuit.png"\n' +
+        "FileValue typedFileValue = Variables.fileValue(filename)\n" +
+        "  .file(slurper.visualization.decodeBase64())\n" +
+        '  .mimeType("image/png")\n' +
+        "  .create()\n" +
+        "return typedFileValue";
+    } else {
+      scriptContent =
         'def resp = connector.getVariable("response");\n' +
         "resp = new groovy.json.JsonSlurper().parseText(resp);\n" +
         "def " +
         param +
-        " = resp.get(" +
+        ' = resp.get("' +
         param +
-        ");\n" +
+        '");\n' +
         "println(" +
         param +
         ");\n" +
         "return " +
         param +
-        ";",
-      resource: "Inline",
+        ";";
+    }
+
+    const script = moddle.create("camunda:Script", {
+      scriptFormat: "Groovy",
+      value: scriptContent,
     });
 
     const outputParameter = moddle.create("camunda:OutputParameter", {

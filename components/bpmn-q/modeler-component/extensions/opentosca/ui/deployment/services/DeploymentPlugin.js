@@ -497,7 +497,7 @@ export default class DeploymentPlugin extends PureComponent {
             );
 
             // complete CSAR and refresh meta data
-            const locationOfCompletedCSAR = completeIncompleteDeploymentModel(
+            let locationOfCompletedCSAR = completeIncompleteDeploymentModel(
               csar.url,
               blacklistedNodetypes,
               policies
@@ -527,7 +527,10 @@ export default class DeploymentPlugin extends PureComponent {
               .split("/")
               .filter((x) => x.length > 1)
               .pop();
-            csar.url = locationOfCompletedCSAR + "?csar";
+            csar.url =
+              getWineryEndpoint() +
+              locationOfCompletedCSAR.split("/winery").pop() +
+              "?csar";
             csar.csarName = nameOfCompletedCSAR + ".csar";
             csar.incomplete = false;
             console.log("Completed CSAR. New name: ", csar.csarName);

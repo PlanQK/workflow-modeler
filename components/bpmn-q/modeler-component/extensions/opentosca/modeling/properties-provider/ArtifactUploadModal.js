@@ -18,6 +18,7 @@ import {
   createArtifactTemplateWithFile,
   createServiceTemplateWithNodeAndArtifact,
   getNodeTypeQName,
+  getArtifactTypeKVMapping,
   getArtifactTemplateInfo,
   insertTopNodeTag,
   serviceTemplateExists,
@@ -54,6 +55,9 @@ export default function ArtifactUploadModal({
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOptionName, setSelectedOptionName] = useState("");
   const [artifactTypes, setArtifactTypes] = useState([]);
+  const [requirementTypes, setRequirementTypes] = useState([]);
+  const [kvProperties, setKvProperties] = useState({});
+  const [isFlask, setIsFlask] = useState(false);
   const [acceptTypes, setAcceptTypes] = useState("");
 
   async function updateArtifactSelect() {
@@ -101,9 +105,22 @@ export default function ArtifactUploadModal({
         artifactTemplateAddress
       );
       const artifactTemplateQName =
+        "{" +
+        artifactTemplateInfo.targetNamespace +
+        "}" +
         artifactTemplateInfo
-          .serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].type;
-      const nodeTypeQName = getNodeTypeQName(selectedOption);
+          .serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].id;
+      // artifactTemplateInfo.serviceTemplateOrNodeTypeOrNodeTypeImplementation[0].type;
+      let nodeTypeQName = getNodeTypeQName(selectedOption);
+      if (
+        isFlask &&
+        nodeTypeQName === "{http://opentosca.org/nodetypes}PythonApp_3-w1"
+      ) {
+        nodeTypeQName =
+          "{https://ust-quantil.github.io/nodetypes}QuokkaPythonApp_latest-w1-wip1";
+      }
+      console.log("nodetypeqname", nodeTypeQName);
+      console.log("kvproperties", kvProperties);
       const serviceTemplateName = `${namePrefix}ServiceTemplate-${element.id}`;
       const doesExist = await serviceTemplateExists(serviceTemplateName);
       console.log("doesExist", doesExist);
@@ -115,7 +132,9 @@ export default function ArtifactUploadModal({
             `${namePrefix}Node-${element.id}`,
             artifactTemplateQName,
             `${namePrefix}Artifact-${element.id}`,
-            selectedOption
+            selectedOption,
+            requirementTypes,
+            kvProperties
           );
         await deleteTopNodeTag(serviceTemplateAddress);
       } else {
@@ -125,7 +144,9 @@ export default function ArtifactUploadModal({
           `${namePrefix}Node-${element.id}`,
           artifactTemplateQName,
           `${namePrefix}Artifact-${element.id}`,
-          selectedOption
+          selectedOption,
+          requirementTypes,
+          kvProperties
         );
       }
       await insertTopNodeTag(serviceTemplateAddress, nodeTypeQName);
@@ -192,12 +213,36 @@ export default function ArtifactUploadModal({
     setSelectedOptionName(artifactTypes.find((x) => x.qName === value).name);
     if (value.includes("WAR")) {
       setAcceptTypes(allowedFileTypes.war);
+      setRequirementTypes([]);
+      setKvProperties(getArtifactTypeKVMapping("WAR"));
     } else if (value.includes("PythonArchive")) {
       setAcceptTypes(allowedFileTypes.zip);
+      const pythonReq = {
+        name: "canHostPythonApp",
+        id: "req1",
+        type: "{https://ust-quantil.github.io/requirementtypes}ReqCanInstallQiskit",
+      };
+      setRequirementTypes([pythonReq]);
+      setKvProperties(getArtifactTypeKVMapping("Python"));
     }
+    console.log("handle dropdown change");
   };
 
   const isOptionSelected = selectedOption !== "";
+  const isPythonArchive = selectedOption.includes("PythonArchive");
+
+  const handleIsFlaskCheckboxChange = () => {
+    setIsFlask(!isFlask);
+    let artifactType = "";
+    if (isFlask) {
+      // For some reason this works the other way round as expected
+      artifactType = "Python";
+    } else {
+      artifactType = "Flask";
+    }
+    console.log("artifacttype", artifactType);
+    setKvProperties(getArtifactTypeKVMapping(artifactType));
+  };
 
   if (artifactTypes.length === 0) {
     updateArtifactSelect();
@@ -252,6 +297,20 @@ export default function ArtifactUploadModal({
                     ))}
                   </select>
                 </div>
+
+                {isOptionSelected && isPythonArchive && (
+                  <div className="set-flask">
+                    <div>
+                      <label htmlFor="flaskCheckbox">Run as Flask App</label>
+                      <input
+                        type="checkbox"
+                        id="flaskCheckbox"
+                        onChange={handleIsFlaskCheckboxChange}
+                        checked={isFlask}
+                      />
+                    </div>
+                  </div>
+                )}
                 {isOptionSelected && (
                   <div className="upload-file-upload">
                     <div>
