@@ -199,8 +199,20 @@ try {
        println post;
        println post.getInputStream();
        def location = post.getHeaderFields()['Location'][0];
+       println("retrieved location with possibly wrong ip and port: " + location);      
+
+      // Parse both URLs
+      def correctBase = new URL(url).getProtocol() + "://" + new URL(url).getAuthority()
+      def brokenPath = new URL(location).getPath()
+      
+      // Construct the fixed URL
+      def fixedLocation= correctBase + brokenPath
+      println("Fixed location of completed deployment model: "+ fixedLocation)
+
+       
        def saveVarName = "completeModelUrl_" + "${taskId}";
-       execution.setVariable(saveVarName, location);
+       execution.setVariable(saveVarName, fixedLocation);
+       println("Set completed deploymentmodel location with variable name: " + saveVarName +  " and value: " + fixedLocation);
    }else{
        throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while completing Deployment Model!");
    }
@@ -219,6 +231,7 @@ function createCheckForEquivalencyScript(taskId) {
 import groovy.json.*
 def url = execution.getVariable("completeModelUrl_" + "${taskId}");
 url = url + "topologytemplate/checkforequivalentcsars?includeSelf=true"
+println("Check for equivalent Csars at: " + url);
 
 try {
    def post = new URL(url).openConnection();
