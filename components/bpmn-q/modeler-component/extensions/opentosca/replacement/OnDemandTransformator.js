@@ -239,7 +239,7 @@ try {
        def saveVarName = "equivalentCSARs_" + "${taskId}";
        execution.setVariable(saveVarName, json);
    }else{
-       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while completing Deployment Model!");
+       throw new org.camunda.bpm.engine.delegate.BpmnError("Received status code " + status + " while checking for equivalent Deployment Model!");
    }
 } catch(org.camunda.bpm.engine.delegate.BpmnError e) {
    println e.errorCode;
