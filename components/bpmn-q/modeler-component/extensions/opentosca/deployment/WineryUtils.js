@@ -466,7 +466,7 @@ const artifactTypeKVMapping = new Map([
     "Flask",
     {
       StartupCommand:
-        "export FLASK_APP=app.py &amp;&amp; export FLASK_ENV=development &amp;&amp; export FLASK_DEBUG=0 &amp;&amp; python3 -m flask run --host=0.0.0.0",
+        "export FLASK_APP=app.py && export FLASK_ENV=development && export FLASK_DEBUG=0 && python3 -m flask run --host=0.0.0.0",
       Name: "app",
     },
   ],
